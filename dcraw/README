@@ -1,0 +1,4 @@
+This directory contains a dump of all the dcraw source files. There are released
+under their own license.
+
+Only Makefile.am and this README are part of libopenraw source code.

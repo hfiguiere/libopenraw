@@ -1,0 +1,24 @@
+
+
+AC_PREREQ(2.50)
+AC_INIT(dcraw/dcraw.h)
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE(libopenraw, 0.0.1)
+AM_MAINTAINER_MODE
+AC_LIBTOOL_DLOPEN
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LIBTOOL
+
+
+AC_OUTPUT([
+Makefile
+include/Makefile
+dcraw/Makefile
+lib/Makefile
+lib/io/Makefile
+test/Makefile
+])
