@@ -2,7 +2,7 @@ dnl libopenraw configure
 dnl written by Hubert Figuiere
 
 AC_PREREQ(2.50)
-AC_INIT(dcraw/dcraw.h)
+AC_INIT(include/libopenraw/libopenraw.h)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(libopenraw, 0.0.1)
 AM_MAINTAINER_MODE
