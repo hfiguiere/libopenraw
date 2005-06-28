@@ -1,1 +1,16 @@
 Makefile.in
+Makefile
+aclocal.m4
+autom4te.cache
+config.guess
+config.sub
+config.log
+config.status
+config.h
+configure
+compile
+depcomp
+install-sh
+missing
+stamp-*
+libtool

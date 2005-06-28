@@ -1,4 +1,5 @@
-
+dnl libopenraw configure
+dnl written by Hubert Figuiere
 
 AC_PREREQ(2.50)
 AC_INIT(dcraw/dcraw.h)
@@ -12,6 +13,7 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
+AC_PROG_PERL
 
 
 AC_OUTPUT([

@@ -6,6 +6,6 @@ SUBDIRS = io
 
 lib_LTLIBRARIES = libopenraw.la
 
-libopenraw_la_LDADD = io/libio.a
+libopenraw_la_LIBADD = io/libio.a
 
 libopenraw_la_SOURCES =

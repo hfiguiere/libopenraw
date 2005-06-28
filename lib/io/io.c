@@ -18,7 +18,7 @@
  */
 
 
-#include "io/io.h"
+#include "libopenraw/io.h"
 #include "io_private.h"
 #include "posix_io.h"
 

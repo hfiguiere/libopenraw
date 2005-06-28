@@ -1,1 +1,5 @@
 Makefile.in
+Makefile
+*.la
+.deps
+.libs

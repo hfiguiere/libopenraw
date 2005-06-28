@@ -1,2 +1,7 @@
 Makefile.in
+Makefile
+compile
+lib-dcraw.c
 dcraw.c
+.libs
+.deps

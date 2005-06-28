@@ -1,5 +1,8 @@
 #!/bin/sh
 
+#
+# part of libopenraw
+#
 
 
 aclocal
