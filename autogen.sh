@@ -4,8 +4,8 @@
 # part of libopenraw
 #
 
-
-aclocal
+rm -f autogen.err
+aclocal >> autogen.err 2>&1
 
 automake --add-missing --copy --foreign 
 autoconf
