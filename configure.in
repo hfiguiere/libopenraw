@@ -15,6 +15,13 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_PERL
 
+AC_CHECK_LIB(tiff, TIFFOpen,
+	LIBTIFF='-ltiff', 
+	AC_MSG_ERROR([TIFF library not found]))
+AC_SUBST(LIBTIFF)
+AC_CHECK_HEADER(tiffio.h, ,
+	AC_MSG_ERROR([TIFF headers not found]))
+
 
 AC_OUTPUT([
 Makefile
