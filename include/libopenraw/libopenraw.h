@@ -12,10 +12,13 @@
 extern "C" {
 #endif
 
+	typedef struct _ORThumbnail *ORThumbnailRef;
+
 	typedef enum {
  		OR_ERROR_NONE = 0,
 		OR_ERROR_BUF_TOO_SMALL = 1,
-		
+		OR_ERROR_NOTAREF = 2,
+		OR_ERROR_LAST_ 
 	} or_error;
 
 	typedef enum {
@@ -24,25 +27,35 @@ extern "C" {
 		OR_THUMB_SIZE_LARGE
 	} or_thumb_size;
 
+
+	typedef enum {
+		OR_DATA_TYPE_NONE = 0,
+		OR_DATA_TYPE_PIXMAP,
+		OR_DATA_TYPE_JPEG,
+		
+		OR_DATA_TYPE_UNKNOWN
+	} or_data_type;
+
 	/*! Extract thumbnail for raw file
 
 	\param filename the file name to extract from
 	\param preferred_size preferred thumnail size
-	\param buf buffer to store the thumnail
-	\param buf_size size of the buffer. On exit, returns
-	the size actuall fed OR the need size if 
-	OR_ERROR_BUF_TOO_SMALL
+	\param thumb the thumbnail object ref to store it in
+	If the ref is NULL, then a new one is allocated. It is
+	the responsibility of the caller to release it.
 	\return error code
-
-	Returns OR_ERROR_BUF_TOO_SMALL if the passed buffer 
-	size is too small. In that case, buf_size will contain 
-	the size required.
 	 */
 	or_error openraw_get_extract_thumbnail(const char* filename,
 					 or_thumb_size preferred_size,
-					 void *buf, size_t *buf_size);
-
+					 ORThumbnailRef *thumb);
 	
+	/*! Allocate a thumbnail
+	 */
+	ORThumbnailRef openraw_thumbnail_new(void);
+
+	/*! Release a thumbnail object
+	 */
+	or_error openraw_thumbnail_release(ORThumbnailRef thumb);
 
 #ifdef __cplusplus
 };
