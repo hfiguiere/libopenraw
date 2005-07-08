@@ -19,8 +19,8 @@
 
 
 
-#ifndef __LIBCWK_IO_H
-#define __LIBCWK_IO_H
+#ifndef __LIBOPENRAW_IO_H
+#define __LIBOPENRAW_IO_H
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -33,26 +33,26 @@ extern "C" {
 
 
 /*! a file reference. Opaque structure */
-typedef struct cwk_file *cwk_file_ref;
+typedef struct _RawFile *RawFileRef;
 	
 	
 /*! IO methods for the IO subsystem.*/
 struct io_methods {
-	cwk_file_ref (*open)(const char *path, int mode);
-	int (*close) (cwk_file_ref f);
-	int (*seek) (cwk_file_ref f, off_t offset, int whence);
-	int (*read) (cwk_file_ref f, void *buf, size_t count);
+	RawFileRef (*open)(const char *path, int mode);
+	int (*close) (RawFileRef f);
+	int (*seek) (RawFileRef f, off_t offset, int whence);
+	int (*read) (RawFileRef f, void *buf, size_t count);
 };
 
 extern struct io_methods* get_default_io_methods(void);
 
-extern cwk_file_ref cwk_open(struct io_methods * methods, const char *path, 
+extern RawFileRef raw_open(struct io_methods * methods, const char *path, 
 			      int mode);
-extern int cwk_close(cwk_file_ref f);
-extern int cwk_seek(cwk_file_ref f, off_t offset, int whence);
-extern int cwk_read(cwk_file_ref f, void *buf, size_t count);
+extern int raw_close(RawFileRef f);
+extern int raw_seek(RawFileRef f, off_t offset, int whence);
+extern int raw_read(RawFileRef f, void *buf, size_t count);
 
-extern int cwk_get_error(cwk_file_ref f);
+extern int raw_get_error(RawFileRef f);
 
 
 #ifdef __cplusplus
