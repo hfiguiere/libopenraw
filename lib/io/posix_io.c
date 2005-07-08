@@ -29,15 +29,15 @@
 #include "posix_io.h"
 
 
-/*! private data to be store in the cwk_file */
+/*! private data to be store in the _RawFile */
 struct io_data_posix {
 	int fd;
 };
 
-static cwk_file_ref posix_open(const char *path, int mode);
-static int posix_close(cwk_file_ref f);
-static int posix_seek(cwk_file_ref f, off_t offset, int whence);
-static int posix_read(cwk_file_ref f, void *buf, size_t count);
+static RawFileRef posix_open(const char *path, int mode);
+static int posix_close(RawFileRef f);
+static int posix_seek(RawFileRef f, off_t offset, int whence);
+static int posix_read(RawFileRef f, void *buf, size_t count);
 
 /*! posix io methods instance. Constant. */
 struct io_methods posix_io_methods = {
@@ -49,12 +49,12 @@ struct io_methods posix_io_methods = {
 
 
 /*! posix implementation for open() */
-static cwk_file_ref posix_open(const char *path, int mode)
+static RawFileRef posix_open(const char *path, int mode)
 {
 	struct io_data_posix *data = malloc(sizeof(struct io_data_posix));
-	cwk_file_ref f = (cwk_file_ref)malloc(sizeof(struct cwk_file));
+	RawFileRef f = (RawFileRef)malloc(sizeof(struct _RawFile));
 
-	memset(f, 0, sizeof(struct cwk_file));
+	memset(f, 0, sizeof(struct _RawFile));
 	memset(data, 0, sizeof(struct io_data_posix));
 	
 	f->methods = &posix_io_methods;
@@ -73,7 +73,7 @@ static cwk_file_ref posix_open(const char *path, int mode)
 
 
 /*! posix implementation for close() */
-static int posix_close(cwk_file_ref f)
+static int posix_close(RawFileRef f)
 {
 	int retval = 0;
 	struct io_data_posix *data = (struct io_data_posix*)f->private;
@@ -85,7 +85,7 @@ static int posix_close(cwk_file_ref f)
 
 
 /*! posix implementation for seek() */
-static int posix_seek(cwk_file_ref f, off_t offset, int whence)
+static int posix_seek(RawFileRef f, off_t offset, int whence)
 {
 	int retval = 0;
 	struct io_data_posix *data = (struct io_data_posix*)f->private;
@@ -102,7 +102,7 @@ static int posix_seek(cwk_file_ref f, off_t offset, int whence)
 
 
 /*! posix implementation for read() */
-static int posix_read(cwk_file_ref f, void *buf, size_t count)
+static int posix_read(RawFileRef f, void *buf, size_t count)
 {
 	int retval = 0;
 	struct io_data_posix *data = (struct io_data_posix*)f->private;

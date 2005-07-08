@@ -23,7 +23,7 @@
 #define __LIBCWK_IO_PRIVATE_H
 
 /*! private structure that define the file */
-struct cwk_file {
+struct _RawFile {
 	struct io_methods* methods;
 	void* private;
 	int error;

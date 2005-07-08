@@ -39,7 +39,7 @@ struct io_methods* get_default_io_methods(void)
   \param path the file path
   \param mode the POSIX file mode
  */
-cwk_file_ref cwk_open(struct io_methods * methods, const char *path, int mode)
+RawFileRef raw_open(struct io_methods * methods, const char *path, int mode)
 {
 	return methods->open(path, mode);
 }
@@ -53,7 +53,7 @@ cwk_file_ref cwk_open(struct io_methods * methods, const char *path, int mode)
 
   \return -1 if error.
  */
-int cwk_close(cwk_file_ref f)
+int raw_close(RawFileRef f)
 {
 	int retval = f->methods->close(f);
 	free(f);
@@ -68,7 +68,7 @@ int cwk_close(cwk_file_ref f)
 
   \return -1 if error
  */
-int cwk_seek(cwk_file_ref f, off_t offset, int whence)
+int raw_seek(RawFileRef f, off_t offset, int whence)
 {
 	return f->methods->seek(f, offset, whence);
 }
@@ -81,7 +81,7 @@ int cwk_seek(cwk_file_ref f, off_t offset, int whence)
 
   \return -1 if error
 */
-int cwk_read(cwk_file_ref f, void *buf, size_t count)
+int raw_read(RawFileRef f, void *buf, size_t count)
 {
 	return f->methods->read(f, buf, count);
 }
@@ -92,7 +92,7 @@ int cwk_read(cwk_file_ref f, void *buf, size_t count)
   \param f the file 
   \return the errno code
 */
-int cwk_get_error(cwk_file_ref f)
+int raw_get_error(RawFileRef f)
 {
 	return f->error;
 }

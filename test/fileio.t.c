@@ -28,19 +28,19 @@
 
 int main (int argc, char **argv)
 {
-	cwk_file_ref f;
+	RawFileRef f;
 	int retval;
 	char buf[128];
 
-	f = cwk_open(get_default_io_methods(), "/etc/hosts", O_RDONLY);
+	f = raw_open(get_default_io_methods(), "/etc/hosts", O_RDONLY);
 
 	if (f == NULL) {
 		fprintf(stderr, "failed to open /etc/hosts\n");
 		return 1;
 	}
-	fprintf(stderr, "error code is %d\n", cwk_get_error(f));
+	fprintf(stderr, "error code is %d\n", raw_get_error(f));
 
-	retval = cwk_seek(f, 0, SEEK_SET);
+	retval = raw_seek(f, 0, SEEK_SET);
 	if (retval == -1) {
 		fprintf(stderr, "failed to seek\n");
 		return 2;
@@ -48,15 +48,15 @@ int main (int argc, char **argv)
 
 	fprintf(stderr, "position is %d\n", retval);
 
-	retval = cwk_read(f, buf, 10);
+	retval = raw_read(f, buf, 10);
 	if (retval == -1) {
-		fprintf(stderr, "failed to read with error %d\n", cwk_get_error(f));
+		fprintf(stderr, "failed to read with error %d\n", raw_get_error(f));
 		return 3;
 	}
 
 	fprintf(stderr, "read %d bytes\n", retval);
 
-	retval = cwk_close(f);
+	retval = raw_close(f);
 	if (retval == -1) {
 		fprintf(stderr, "failed to close\n");
 		return 4;
