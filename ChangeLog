@@ -1,0 +1,5 @@
+2005-12-30  Hubert Figuiere  <hub@figuiere.net>
+
+	* dcraw/Makefile.am (dcraw.c): allow building in
+	a different builddir
+

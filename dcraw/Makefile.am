@@ -4,7 +4,7 @@ noinst_LIBRARIES = libdcraw.a libdcparse.a
 CLEANFILES = dcraw.c lib-dcraw.c lib-parse.c
 
 dcraw.c: $(top_srcdir)/dcraw/dcraw.c,v
-	co $@
+	co $<
 
 lib-dcraw.c: dcraw.c
 	rm -f $@
