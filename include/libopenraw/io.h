@@ -38,9 +38,15 @@ typedef struct _RawFile *RawFileRef;
 	
 /*! IO methods for the IO subsystem.*/
 struct io_methods {
+	/** open method 
+	 * @return a descriptor
+	 */
 	RawFileRef (*open)(const char *path, int mode);
+	/** close method */
 	int (*close) (RawFileRef f);
+	/** seek in the file */
 	int (*seek) (RawFileRef f, off_t offset, int whence);
+	/** read method */
 	int (*read) (RawFileRef f, void *buf, size_t count);
 };
 

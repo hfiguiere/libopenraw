@@ -19,13 +19,16 @@
 
 
 
-#ifndef __LIBCWK_IO_PRIVATE_H
-#define __LIBCWK_IO_PRIVATE_H
+#ifndef __LIBOPENRAW_IO_PRIVATE_H
+#define __LIBOPENRAW_IO_PRIVATE_H
 
 /*! private structure that define the file */
 struct _RawFile {
+	/** methods for the file IO  */
 	struct io_methods* methods;
-	void* private;
+	/** private data for the methods implementation */
+	void* _private;
+	/** error code */
 	int error;
 };
 

@@ -24,34 +24,33 @@
 
 
 
-/*! get the default io methods instance 
+/** get the default io methods instance 
 
-  \fixme currently hardcoded to POSIX
-  \return the default io_methods instance, currentlty posix_io_methods
+  @fixme currently hardcoded to POSIX
+  @return the default io_methods instance, currentlty posix_io_methods
 */
 struct io_methods* get_default_io_methods(void)
 {
-	return &posix_io_methods;
-}
+	return &posix_io_methods;}
 
-/*! open a file
-  \param methods the io_methods instance to use
-  \param path the file path
-  \param mode the POSIX file mode
+/** open a file
+  @param methods the io_methods instance to use
+  @param path the file path
+  @param mode the POSIX file mode
  */
 RawFileRef raw_open(struct io_methods * methods, const char *path, int mode)
 {
 	return methods->open(path, mode);
 }
 
-/*! close the file
+/** close the file
 
-  \param f the file to close
+  @param f the file to close
 
   The implement should free the private data is at will free the file ref. 
   f will be invalid on return
 
-  \return -1 if error.
+  @return -1 if error.
  */
 int raw_close(RawFileRef f)
 {
@@ -61,12 +60,12 @@ int raw_close(RawFileRef f)
 }
 
 
-/*! seek in the file
-  \param f the file to seek
-  \param offset the offset to seek
-  \param whence the the directive for seek. See lseek(2) man page
+/** seek in the file
+  @param f the file to seek
+  @param offset the offset to seek
+  @param whence the the directive for seek. See lseek(2) man page
 
-  \return -1 if error
+  @return -1 if error
  */
 int raw_seek(RawFileRef f, off_t offset, int whence)
 {
@@ -74,12 +73,12 @@ int raw_seek(RawFileRef f, off_t offset, int whence)
 }
 
 
-/*! read in the file
-  \param f the file to readk
-  \param buf the buffer to read in
-  \param count the number of byte to read
+/** read in the file
+  @param f the file to readk
+  @param buf the buffer to read in
+  @param count the number of byte to read
 
-  \return -1 if error
+  @return -1 if error
 */
 int raw_read(RawFileRef f, void *buf, size_t count)
 {
@@ -87,10 +86,10 @@ int raw_read(RawFileRef f, void *buf, size_t count)
 }
 
 
-/*! get the error for the file
+/** get the error for the file
 
-  \param f the file 
-  \return the errno code
+  @param f the file 
+  @return the errno code
 */
 int raw_get_error(RawFileRef f)
 {
