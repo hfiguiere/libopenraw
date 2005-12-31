@@ -28,5 +28,7 @@ include/Makefile
 dcraw/Makefile
 lib/Makefile
 lib/io/Makefile
+doc/Makefile
+doc/doxygen/Makefile
 test/Makefile
 ])
