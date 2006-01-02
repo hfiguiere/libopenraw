@@ -1,3 +1,7 @@
+2006-01-02  Hubert Figuiere  <hub@figuiere.net>
+
+	* Basic implementation of thumbnail extraction.
+
 2005-12-30  Hubert Figuiere  <hub@figuiere.net>
 
 	* dcraw/Makefile.am (dcraw.c): allow building in

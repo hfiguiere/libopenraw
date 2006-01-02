@@ -1,7 +1,7 @@
 /*
- * libopenraw - io_private.h
+ * libopenraw - or_debug.c
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2006 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,22 +18,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdio.h>
 
-#ifndef __LIBOPENRAW_IO_PRIVATE_H
-#define __LIBOPENRAW_IO_PRIVATE_H
-
-/*! private structure that define the file */
-struct _RawFile {
-	/** methods for the file IO  */
-	struct io_methods* methods;
-	/** private data for the methods implementation */
-	void* _private;
-	/** file name */
-	char * path;
-	/** error code */
-	int error;
-};
+#include "or_debug.h"
 
 
-
-#endif
+void
+or_debug(char * msg)
+{
+	fprintf(stderr, "ORDEBUG: %s\n", msg);
+}

@@ -1,27 +1,30 @@
 /*
+ * libopenraw - posix_io.c
+ *
  * Copyright (C) 2005 Hubert Figuiere
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include <fcntl.h>
 #include <errno.h>
 
@@ -39,13 +42,19 @@ static RawFileRef posix_open(const char *path, int mode);
 static int posix_close(RawFileRef f);
 static int posix_seek(RawFileRef f, off_t offset, int whence);
 static int posix_read(RawFileRef f, void *buf, size_t count);
+static off_t posix_filesize(RawFileRef f);
+static void *posix_mmap(RawFileRef f, size_t length, off_t offset);
+static int posix_munmap(RawFileRef f, void *addr, size_t length);
 
 /** posix io methods instance. Constant. */
 struct io_methods posix_io_methods = {
 	&posix_open,
 	&posix_close,
 	&posix_seek,
-	&posix_read
+	&posix_read,
+	&posix_filesize,
+	&posix_mmap,
+	&posix_munmap
 };
 
 
@@ -60,6 +69,7 @@ static RawFileRef posix_open(const char *path, int mode)
 	
 	f->methods = &posix_io_methods;
 	f->_private = data;
+	f->path = strdup(path);
 	data->fd = open(path, mode);
 	if (data->fd == -1) {
 		free(data);
@@ -81,6 +91,7 @@ static int posix_close(RawFileRef f)
 
 	retval = close(data->fd);
 	free(data);
+	free(f->path);
 	return retval;
 }
 
@@ -119,3 +130,30 @@ static int posix_read(RawFileRef f, void *buf, size_t count)
 }
 
 
+static off_t posix_filesize(RawFileRef f)
+{
+	off_t size = -1;
+	struct io_data_posix *data = (struct io_data_posix*)f->_private;
+	struct stat sb;
+    
+	if(fstat(data->fd, &sb) >= 0) {
+		size = sb.st_size;
+	}
+
+	return size;
+}
+
+
+
+static void *posix_mmap(RawFileRef f, size_t length, off_t offset)
+{
+	struct io_data_posix *data = (struct io_data_posix*)f->_private;
+	
+	return mmap(NULL, length, PROT_READ, MAP_SHARED, data->fd, offset);
+}
+
+
+static int posix_munmap(RawFileRef f, void *addr, size_t length)
+{
+	return munmap(addr, length);
+}

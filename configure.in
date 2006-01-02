@@ -31,4 +31,5 @@ lib/io/Makefile
 doc/Makefile
 doc/doxygen/Makefile
 test/Makefile
+demo/Makefile
 ])

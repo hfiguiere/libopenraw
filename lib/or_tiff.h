@@ -1,7 +1,7 @@
 /*
- * libopenraw - io_private.h
+ * libopenraw - or_tiff.h
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2005 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,21 +19,15 @@
  */
 
 
-#ifndef __LIBOPENRAW_IO_PRIVATE_H
-#define __LIBOPENRAW_IO_PRIVATE_H
 
-/*! private structure that define the file */
-struct _RawFile {
-	/** methods for the file IO  */
-	struct io_methods* methods;
-	/** private data for the methods implementation */
-	void* _private;
-	/** file name */
-	char * path;
-	/** error code */
-	int error;
-};
+#ifndef _OR_TIFF_H_
+#define _OR_TIFF_H_
 
+#include <libopenraw/libopenraw.h>
+
+#include "thumbnails.h"
+
+or_error tiff_get_thumbnail(RawFileRef raw_file, ORThumbnailRef thumbnail);
 
 
 #endif
