@@ -21,6 +21,13 @@ AC_SUBST(LIBTIFF)
 AC_CHECK_HEADER(tiffio.h, ,
 	AC_MSG_ERROR([TIFF headers not found]))
 
+dnl libexif 
+AC_CHECK_LIB(exif, exif_loader_get_data,
+	LIBEXIF='-lexif',
+	AC_MSG_ERROR([libexif library not found]))
+AC_SUBST(LIBEXIF)
+AC_CHECK_HEADER(libexif/exif-loader.h, ,
+	AC_MSG_ERROR([libexif headers not found]))
 
 AC_OUTPUT([
 Makefile

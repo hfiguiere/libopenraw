@@ -1,3 +1,8 @@
+2006-01-08  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/or_exif.c (exif_get_thumbnail): added thumbnail
+	extraction with EXIF
+
 2006-01-02  Hubert Figuiere  <hub@figuiere.net>
 
 	* Basic implementation of thumbnail extraction.
