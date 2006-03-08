@@ -1,7 +1,7 @@
 /*
  * libopenraw - or_tiff.c
  *
- * Copyright (C) 2005 Hubert Figuiere
+ * Copyright (C) 2005-2006 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,26 +33,30 @@ tiff_get_thumbnail(RawFileRef raw_file, ORThumbnailRef thumbnail)
 	if (tif == NULL) {
 		/*err = ;*/
 	}
-	else {
-		if(TIFFReadDirectory(tif)) {
+	else {		
+		//if(TIFFReadDirectory(tif)) 
+		{
 			tsize_t read_size;
 			int compression;
 
 			compression = TIFFGetField(tif, TIFFTAG_COMPRESSION);
-			if(compression == COMPRESSION_OJPEG) {
+			printf("compression: %d\n", compression);
+			//if(compression == COMPRESSION_OJPEG) {
 				tsize_t size = TIFFStripSize(tif);
 
 				thumbnail->data = (char*)malloc(size);
+				printf("strip size %d\n", size);
 				read_size = TIFFReadRawStrip(tif, 0, thumbnail->data, size);
+				printf("read size %d\n", read_size);
 				thumbnail->data_size = read_size;
 				thumbnail->data_type = OR_DATA_TYPE_JPEG;
 				thumbnail->thumb_size = OR_THUMB_SIZE_SMALL;
 				thumbnail->x = TIFFGetField(tif, TIFFTAG_IMAGEWIDTH);
 				thumbnail->y = TIFFGetField(tif, TIFFTAG_IMAGELENGTH);
-			}
-			else {
+			//}
+			//else {
 				/* FIXME */
-			}
+			//}
 		}
 
 		TIFFClose(tif);

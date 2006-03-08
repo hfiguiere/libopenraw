@@ -13,6 +13,7 @@ libopenraw_la_LIBADD = -lio \
 
 libopenraw_la_SOURCES = thumbnails.c \
 	cr2.c \
+	nef.c \
 	or_debug.c \
 	or_exif.c \
 	or_tiff.c

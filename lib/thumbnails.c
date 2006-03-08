@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "cr2.h"
+#include "nef.h"
 #include "thumbnails.h"
 
 #include <libopenraw/libopenraw.h>
@@ -67,7 +68,7 @@ or_get_extract_thumbnail(const char* filename,
 
     raw_file = raw_open(get_default_io_methods(), filename, O_RDONLY);
 
-    cr2_get_thumbnail(raw_file, *thumbnail);
+    nef_get_thumbnail(raw_file, *thumbnail);
 
     raw_close(raw_file);
     raw_file = NULL;
