@@ -36,6 +36,7 @@ dcraw/Makefile
 lib/Makefile
 lib/io/Makefile
 doc/Makefile
+doc/Doxyfile
 doc/doxygen/Makefile
 test/Makefile
 demo/Makefile

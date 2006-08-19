@@ -1,7 +1,7 @@
 /*
- * libopenraw - or_exif.h
+ * libopenraw - iofile.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006 Hubert Figuière
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,15 +19,47 @@
  */
 
 
-
-#ifndef _OR_EXIF_H_
-#define _OR_EXIF_H_
-
 #include <libopenraw/libopenraw.h>
-
-#include "thumbnails.h"
-
-or_error exif_get_thumbnail(RawFileRef raw_file, ORThumbnailRef thumbnail);
+#include "iofile.h"
 
 
-#endif
+namespace OpenRaw {
+	namespace Internals {
+	
+	IOFile::IOFile(const char *filename)
+		: m_fileName(filename),
+		  m_methods(::get_default_io_methods()),
+		  m_ioRef(NULL)
+	{
+	}
+
+	IOFile::~IOFile()
+	{
+	}
+	
+	IOFile::Error IOFile::open()
+	{
+		m_ioRef = ::raw_open(m_methods, m_fileName.c_str(), O_RDONLY);
+		if (m_ioRef == NULL) {
+			return OR_ERROR_CANT_OPEN;
+		}
+		return OR_ERROR_NONE;
+	}
+
+	int IOFile::close()
+	{
+		return ::raw_close(m_ioRef);
+	}
+
+	int IOFile::seek(off_t offset, int whence)
+	{
+		return ::raw_seek(m_ioRef, offset, whence);
+	}
+
+	int IOFile::read(void *buf, size_t count)
+	{
+		return ::raw_read(m_ioRef, buf, count);
+	}
+
+}
+}

@@ -41,7 +41,7 @@ struct io_methods* get_default_io_methods(void)
   @param path the file path
   @param mode the POSIX file mode
  */
-RawFileRef raw_open(struct io_methods * methods, const char *path, int mode)
+IOFileRef raw_open(struct io_methods * methods, const char *path, int mode)
 {
 	return methods->open(path, mode);
 }
@@ -55,7 +55,7 @@ RawFileRef raw_open(struct io_methods * methods, const char *path, int mode)
 
   @return -1 if error.
  */
-int raw_close(RawFileRef f)
+int raw_close(IOFileRef f)
 {
 	int retval = f->methods->close(f);
 	free(f);
@@ -70,7 +70,7 @@ int raw_close(RawFileRef f)
 
   @return -1 if error
  */
-int raw_seek(RawFileRef f, off_t offset, int whence)
+int raw_seek(IOFileRef f, off_t offset, int whence)
 {
 	return f->methods->seek(f, offset, whence);
 }
@@ -83,23 +83,23 @@ int raw_seek(RawFileRef f, off_t offset, int whence)
 
   @return -1 if error
 */
-int raw_read(RawFileRef f, void *buf, size_t count)
+int raw_read(IOFileRef f, void *buf, size_t count)
 {
 	return f->methods->read(f, buf, count);
 }
 
-off_t raw_filesize(RawFileRef f)
+off_t raw_filesize(IOFileRef f)
 {
 	return f->methods->filesize(f);
 }
 
-void *raw_mmap(RawFileRef f, size_t l, off_t offset)
+void *raw_mmap(IOFileRef f, size_t l, off_t offset)
 {
 	return f->methods->mmap(f, l, offset);
 }
 
 
-int raw_munmap(RawFileRef f, void *addr, size_t l)
+int raw_munmap(IOFileRef f, void *addr, size_t l)
 {
 	return f->methods->munmap(f, addr, l);
 }
@@ -110,7 +110,7 @@ int raw_munmap(RawFileRef f, void *addr, size_t l)
   @param f the file 
   @return the errno code
 */
-int raw_get_error(RawFileRef f)
+int raw_get_error(IOFileRef f)
 {
 	return f->error;
 }
@@ -124,86 +124,9 @@ int raw_get_error(RawFileRef f)
   @param f the file
   @return the pathname
 */
-char *raw_get_path(RawFileRef f)
+char *raw_get_path(IOFileRef f)
 {
 	return f->path;
 }
 
 
-
-#include <tiffio.h>
-
-/* These are the glue routing for TIFFIO */
-static tsize_t 
-_TIFFRead(thandle_t fileRef, tdata_t data, tsize_t size)
-{	
-	or_debug("_TIFFRead()");
-	return raw_read((RawFileRef)fileRef, data, size);
-}
-
-static tsize_t 
-_TIFFWrite(thandle_t fileRef, tdata_t data, tsize_t size)
-{	
-	or_debug("_TIFFWrite()");
-	return -1;
-}
-
-
-static toff_t 
-_TIFFSeek(thandle_t fileRef, toff_t off, int offmode)
-{
-	or_debug("_TIFFSeek()");
-	return raw_seek((RawFileRef)fileRef, off, offmode);
-}
-
-
-static int 
-_TIFFClose(thandle_t fileRef)
-{
-	or_debug("_TIFFClose()");
-	/* this is a no op*/
-	return 0;
-}
-
-
-static toff_t 
-_TIFFSize(thandle_t fileRef)
-{
-	or_debug("_TIFFSize()");
-	
-	return raw_filesize((RawFileRef)fileRef);
-}
-
-
-static int 
-_TIFFMapFile(thandle_t fileRef, tdata_t* d, toff_t* s)
-{
-	or_debug("_TIFFMapFile()");
-	toff_t size = _TIFFSize(fileRef);
-
-	if (size != -1) {
-		*d = raw_mmap((RawFileRef)fileRef, size, 0);
-		if (*d != (tdata_t) -1) {
-			*s = size;
-			return 1;
-		}
-	}
-
-	return 0;
-}
-
-
-static void 
-_TIFFUnmapFile(thandle_t fileRef, tdata_t d, toff_t o)
-{
-	or_debug("_TIFFUnmapFile()");
-	raw_munmap((RawFileRef)fileRef, d, o);
-}
-
-
-TIFF *raw_tiff_open(RawFileRef f)
-{
-	return TIFFClientOpen("", "r", (thandle_t)f, 
-						  &_TIFFRead, &_TIFFWrite, &_TIFFSeek, &_TIFFClose,
-						  &_TIFFSize, &_TIFFMapFile, &_TIFFUnmapFile);
-}

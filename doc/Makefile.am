@@ -2,5 +2,5 @@
 SUBDIRS = doxygen
 
 
-dox:
+dox: Doxyfile
 	doxygen Doxyfile

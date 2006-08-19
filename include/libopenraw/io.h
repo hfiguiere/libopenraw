@@ -33,7 +33,7 @@ extern "C" {
 
 
 /*! a file reference. Opaque structure */
-typedef struct _RawFile *RawFileRef;
+typedef struct _IOFile *IOFileRef;
 	
 	
 /*! IO methods for the IO subsystem.*/
@@ -41,34 +41,34 @@ struct io_methods {
 	/** open method 
 	 * @return a descriptor
 	 */
-	RawFileRef (*open)(const char *path, int mode);
+	IOFileRef (*open)(const char *path, int mode);
 	/** close method */
-	int (*close) (RawFileRef f);
+	int (*close) (IOFileRef f);
 	/** seek in the file */
-	int (*seek) (RawFileRef f, off_t offset, int whence);
+	int (*seek) (IOFileRef f, off_t offset, int whence);
 	/** read method */
-	int (*read) (RawFileRef f, void *buf, size_t count);
+	int (*read) (IOFileRef f, void *buf, size_t count);
 
-	off_t (*filesize) (RawFileRef f);
-	void* (*mmap) (RawFileRef f, size_t l, off_t offset);
-	int   (*munmap) (RawFileRef f, void *addr, size_t l);
+	off_t (*filesize) (IOFileRef f);
+	void* (*mmap) (IOFileRef f, size_t l, off_t offset);
+	int   (*munmap) (IOFileRef f, void *addr, size_t l);
 };
 
 extern struct io_methods* get_default_io_methods(void);
 
-extern RawFileRef raw_open(struct io_methods * methods, const char *path, 
+extern IOFileRef raw_open(struct io_methods * methods, const char *path, 
 			      int mode);
-extern int raw_close(RawFileRef f);
-extern int raw_seek(RawFileRef f, off_t offset, int whence);
-extern int raw_read(RawFileRef f, void *buf, size_t count);
-extern off_t raw_filesize(RawFileRef f);
-extern void *raw_mmap(RawFileRef f, size_t l, off_t offset);
-extern int raw_munmap(RawFileRef f, void *addr, size_t l);
+extern int raw_close(IOFileRef f);
+extern int raw_seek(IOFileRef f, off_t offset, int whence);
+extern int raw_read(IOFileRef f, void *buf, size_t count);
+extern off_t raw_filesize(IOFileRef f);
+extern void *raw_mmap(IOFileRef f, size_t l, off_t offset);
+extern int raw_munmap(IOFileRef f, void *addr, size_t l);
 
-extern int raw_get_error(RawFileRef f);
-extern char *raw_get_path(RawFileRef f);
+extern int raw_get_error(IOFileRef f);
+extern char *raw_get_path(IOFileRef f);
 
-extern TIFF *raw_tiff_open(RawFileRef f);
+extern TIFF *raw_tiff_open(IOFileRef f);
 
 #ifdef __cplusplus
 };

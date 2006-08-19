@@ -38,13 +38,13 @@ struct io_data_posix {
 	int fd;
 };
 
-static RawFileRef posix_open(const char *path, int mode);
-static int posix_close(RawFileRef f);
-static int posix_seek(RawFileRef f, off_t offset, int whence);
-static int posix_read(RawFileRef f, void *buf, size_t count);
-static off_t posix_filesize(RawFileRef f);
-static void *posix_mmap(RawFileRef f, size_t length, off_t offset);
-static int posix_munmap(RawFileRef f, void *addr, size_t length);
+static IOFileRef posix_open(const char *path, int mode);
+static int posix_close(IOFileRef f);
+static int posix_seek(IOFileRef f, off_t offset, int whence);
+static int posix_read(IOFileRef f, void *buf, size_t count);
+static off_t posix_filesize(IOFileRef f);
+static void *posix_mmap(IOFileRef f, size_t length, off_t offset);
+static int posix_munmap(IOFileRef f, void *addr, size_t length);
 
 /** posix io methods instance. Constant. */
 struct io_methods posix_io_methods = {
@@ -59,12 +59,12 @@ struct io_methods posix_io_methods = {
 
 
 /** posix implementation for open() */
-static RawFileRef posix_open(const char *path, int mode)
+static IOFileRef posix_open(const char *path, int mode)
 {
 	struct io_data_posix *data = malloc(sizeof(struct io_data_posix));
-	RawFileRef f = (RawFileRef)malloc(sizeof(struct _RawFile));
+	IOFileRef f = (IOFileRef)malloc(sizeof(struct _IOFile));
 
-	memset(f, 0, sizeof(struct _RawFile));
+	memset(f, 0, sizeof(struct _IOFile));
 	memset(data, 0, sizeof(struct io_data_posix));
 	
 	f->methods = &posix_io_methods;
@@ -84,7 +84,7 @@ static RawFileRef posix_open(const char *path, int mode)
 
 
 /** posix implementation for close() */
-static int posix_close(RawFileRef f)
+static int posix_close(IOFileRef f)
 {
 	int retval = 0;
 	struct io_data_posix *data = (struct io_data_posix*)f->_private;
@@ -97,7 +97,7 @@ static int posix_close(RawFileRef f)
 
 
 /** posix implementation for seek() */
-static int posix_seek(RawFileRef f, off_t offset, int whence)
+static int posix_seek(IOFileRef f, off_t offset, int whence)
 {
 	int retval = 0;
 	struct io_data_posix *data = (struct io_data_posix*)f->_private;
@@ -114,7 +114,7 @@ static int posix_seek(RawFileRef f, off_t offset, int whence)
 
 
 /** posix implementation for read() */
-static int posix_read(RawFileRef f, void *buf, size_t count)
+static int posix_read(IOFileRef f, void *buf, size_t count)
 {
 	int retval = 0;
 	struct io_data_posix *data = (struct io_data_posix*)f->_private;
@@ -130,7 +130,7 @@ static int posix_read(RawFileRef f, void *buf, size_t count)
 }
 
 
-static off_t posix_filesize(RawFileRef f)
+static off_t posix_filesize(IOFileRef f)
 {
 	off_t size = -1;
 	struct io_data_posix *data = (struct io_data_posix*)f->_private;
@@ -145,7 +145,7 @@ static off_t posix_filesize(RawFileRef f)
 
 
 
-static void *posix_mmap(RawFileRef f, size_t length, off_t offset)
+static void *posix_mmap(IOFileRef f, size_t length, off_t offset)
 {
 	struct io_data_posix *data = (struct io_data_posix*)f->_private;
 	
@@ -153,7 +153,7 @@ static void *posix_mmap(RawFileRef f, size_t length, off_t offset)
 }
 
 
-static int posix_munmap(RawFileRef f, void *addr, size_t length)
+static int posix_munmap(IOFileRef f, void *addr, size_t length)
 {
 	return munmap(addr, length);
 }

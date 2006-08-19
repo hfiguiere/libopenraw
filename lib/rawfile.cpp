@@ -1,5 +1,5 @@
 /*
- * libopenraw - or_exif.c
+ * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -19,29 +19,13 @@
  */
 
 
-#include <libexif/exif-loader.h>
 
-#include "or_exif.h"
+#include "rawfile.h"
 
-or_error 
-exif_get_thumbnail(RawFileRef raw_file, ORThumbnailRef thumbnail)
-{
-	or_error err = OR_ERROR_NONE;	
-	ExifLoader *loader;
-	ExifData   *exifData;
 
-	loader = exif_loader_new();
-	exif_loader_write_file(loader, raw_get_path(raw_file));
-	exifData = exif_loader_get_data(loader);
-	exif_loader_unref(loader);
+namespace OpenRaw {
 
-	thumbnail->data = malloc(exifData->size);
-	memcpy(thumbnail->data, exifData->data, exifData->size);
-	thumbnail->data_size = exifData->size;
-	thumbnail->data_type = OR_DATA_TYPE_JPEG;
-	thumbnail->thumb_size = OR_THUMB_SIZE_SMALL;
 
-	exif_data_unref(exifData);
 
-	return err;
 }
+

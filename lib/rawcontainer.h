@@ -1,7 +1,7 @@
 /*
- * libopenraw - or_tiff.h
+ * libopenraw - rawcontainer.h
  *
- * Copyright (C) 2005 Hubert Figuiere
+ * Copyright (C) 2006 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,14 +20,44 @@
 
 
 
-#ifndef _OR_TIFF_H_
-#define _OR_TIFF_H_
 
-#include <libopenraw/libopenraw.h>
+#ifndef _RAWCONTAINER_H_
+#define _RAWCONTAINER_H_
 
-#include "thumbnails.h"
+#include <sys/types.h>
+#include <libopenraw/io.h>
 
-or_error tiff_get_thumbnail(RawFileRef raw_file, ORThumbnailRef thumbnail);
+namespace OpenRaw {
+	namespace Internals {
+
+
+class IOFile;
+
+/**
+   Generic interface for the RAW file container
+ */
+class RawContainer
+{
+public:
+	/** 
+		@param file the file handle
+		@param offset the offset since starting the 
+		begining of the file for the container
+	 */
+	RawContainer(IOFile *file, off_t offset);
+	/** destructor */
+	virtual ~RawContainer();
+
+protected:
+	/** the file handle */
+	IOFile *m_file;
+	/** the offset from the begining of the file */
+	off_t m_offset;
+};
+
+
+}
+}
 
 
 #endif

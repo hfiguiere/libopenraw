@@ -1,7 +1,7 @@
 /*
- * libopenraw - cr2.h
+ * libopenraw - cr2file.h
  *
- * Copyright (C) 2005 Hubert Figuiere
+ * Copyright (C) 2005-2006 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,15 +19,26 @@
  */
 
 
-#ifndef _CR2_H__
-#define _CR2_H__
 
-#include <libopenraw/libopenraw.h>
 
-#include "thumbnails.h"
+#ifndef __CR2FILE_H_
+#define __CR2FILE_H_
 
-or_error cr2_get_thumbnail(RawFileRef raw_file, ORThumbnailRef thumbnail);
+#include "rawfile.h"
 
+namespace OpenRaw {
+	namespace Internals {
+
+		class CR2File
+			: OpenRaw::RawFile
+		{
+		public:
+			CR2File(const char* filename);
+			~CR2File();
+
+		};
+	}
+
+}
 
 #endif
-

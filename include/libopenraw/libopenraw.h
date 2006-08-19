@@ -17,10 +17,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+/**
+ * @brief the libopenraw public API header
+ * @author Hubert Figuiere <hub@figuiere.net>
+ */
 
 #ifndef __LIBOPENRAW_H__
 #define __LIBOPENRAW_H__
 
+#include <libopenraw/types.h>
 #include <libopenraw/io.h>
 
 #ifdef __cplusplus
@@ -29,10 +34,12 @@ extern "C" {
 
 	typedef struct _ORThumbnail *ORThumbnailRef;
 
+	/** Error code returned by libopenraw. */
 	typedef enum {
- 		OR_ERROR_NONE = 0,
+ 		OR_ERROR_NONE = 0,     /** no error */
 		OR_ERROR_BUF_TOO_SMALL = 1,
 		OR_ERROR_NOTAREF = 2,
+		OR_ERROR_CANT_OPEN = 3, /** can't open file. Check OS error codes */
 		OR_ERROR_LAST_ 
 	} or_error;
 

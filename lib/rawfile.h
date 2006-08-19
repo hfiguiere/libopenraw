@@ -1,7 +1,7 @@
 /*
- * libopenraw - nef.h
+ * libopenraw - rawfile.h
  *
- * Copyright (C) 2005 Hubert Figuiere
+ * Copyright (C) 2005-2006 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,15 +19,36 @@
  */
 
 
-#ifndef _NEF_H__
-#define _NEF_H__
 
-#include <libopenraw/libopenraw.h>
+#ifndef __RAWFILE_H
+#define __RAWFILE_H
 
-#include "thumbnails.h"
+#include <string>
 
-or_error nef_get_thumbnail(RawFileRef raw_file, ORThumbnailRef thumbnail);
+
+namespace OpenRaw {
+
+	class RawFile
+	{
+	public:
+		/** factory method */
+		static RawFile *newRawFile(const char*_filename);
+
+		/** destructor */
+		virtual ~RawFile();
+		
+		// standard api, like get thumbnail
+		// and get exif.
+	protected:
+		/** @param _filename the RAW file name */
+		RawFile(const char *_filename);
+
+	private:
+		/** the name of the file */
+		std::string m_filename;
+		
+	};
+}
 
 
 #endif
-

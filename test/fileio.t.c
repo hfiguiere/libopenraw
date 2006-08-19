@@ -28,7 +28,7 @@
 
 int main (int argc, char **argv)
 {
-	RawFileRef f;
+	IOFileRef f;
 	int retval;
 	char buf[128];
 
