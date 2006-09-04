@@ -19,9 +19,15 @@
  */
 
 
+#include <iostream>
+
+#include "ifd.h"
 #include "ifdfilecontainer.h"
+#include "ifddir.h"
+#include "ifdentry.h"
 #include "iofile.h"
 #include "neffile.h"
+#include "thumbnail.h"
 
 
 namespace OpenRaw {
@@ -41,12 +47,41 @@ namespace OpenRaw {
 			delete m_io;
 		}
 
-		bool NEFFile::getThumbnail(Thumbnail & thumbnail)
+
+		bool NEFFile::_getSmallThumbnail(Thumbnail & thumbnail)
 		{
+			int c = m_container->countDirectories();
+			if (c < 1) {
+				return false;
+			}
+			IFDDir::Ref dir = m_container->setDirectory(0);
+			if (dir == NULL) {
+				std::cerr << "dir NULL" << std::endl;
+				return false;
+			}
+
+			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_OFFSETS);
+			off_t offset = e->getLong();
+			e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
+			size_t size = e->getLong();
+			void *buf = thumbnail.allocData(size);
+
+			int x, y;
+			e = dir->getEntry(IFD::EXIF_TAG_IMAGE_WIDTH);
+			x = e->getLong();
+			e = dir->getEntry(IFD::EXIF_TAG_IMAGE_LENGTH);
+			y = e->getLong();
+
+			size_t real_size = m_container->fetchData(buf, offset, size);
+			if (real_size != size) {
+				std::cerr << "wrong size" << std::endl;
+			}
+			thumbnail.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
+			thumbnail.setDimensions(x, y);
+
 
 			return false;
 		}
-
 	}
 }
 

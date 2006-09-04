@@ -47,23 +47,6 @@ namespace OpenRaw {
 			delete m_io;
 		}
 
-		bool CR2File::getThumbnail(Thumbnail & thumbnail)
-		{
-			bool ret = false;
-			Thumbnail::Size tsize = thumbnail.thumbSize();
-			switch (tsize)
-			{
-			case OR_THUMB_SIZE_SMALL:
-				ret = _getSmallThumbnail(thumbnail);
-				break;
-			case OR_THUMB_SIZE_LARGE:
-				break;
-			default:
-				break;
-			}
-			return ret;
-		}
-
 		bool CR2File::_getSmallThumbnail(Thumbnail & thumbnail)
 		{
 			int c = m_container->countDirectories();
@@ -95,6 +78,7 @@ namespace OpenRaw {
 				std::cerr << "wrong size" << std::endl;
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
+			thumbnail.setDimensions(160, 120);
 			return true;
 		}
 	}

@@ -1,6 +1,14 @@
 2006-09-04  Hubert Figuiere  <hub@figuiere.net>
 
+	* include/libopenraw/libopenraw.h: Renamed OR_DATA_TYPE_PIXMAP
+	to OR_DATA_TYPE_PIXMAP_8RGB
+
+	* lib/neffile.cpp: implement reading thumbnail out of NEF files.
+
+	* lib/thumbnail.cpp: -added setDimensions()
+
 	* lib/cr2file.cpp (_getSmallThumbnail): use ExifTag defines
+	-set the dimensions
 
 	* lib/ifdentry.cpp (getLong): use defines from IFD 
 

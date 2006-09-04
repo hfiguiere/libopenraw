@@ -41,15 +41,14 @@ namespace OpenRaw {
 			CR2File(const char* _filename);
 			virtual ~CR2File();
 
-			virtual bool getThumbnail(Thumbnail & thumbnail);
+		protected:
+			/** get the small size thumbnail */
+			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
 
 		private:
 
 			CR2File(const CR2File&);
 			CR2File & operator=(const CR2File&);
-
-			/** get the small size thumbnail */
-			bool _getSmallThumbnail(Thumbnail & thumbnail);
 
 			IOFile *m_io; /**< the IO handle */
 			IFDFileContainer *m_container; /**< the real container */

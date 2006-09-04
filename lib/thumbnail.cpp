@@ -125,5 +125,10 @@ namespace OpenRaw {
 		return d->data;
 	}
 
+	void Thumbnail::setDimensions(int x, int y)
+	{
+		d->x = x;
+		d->y = y;
+	}
 
 }

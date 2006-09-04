@@ -72,10 +72,10 @@ extern "C" {
 
 	typedef enum {
 		OR_DATA_TYPE_NONE = 0,
-		OR_DATA_TYPE_PIXMAP,
-		OR_DATA_TYPE_JPEG,
-		OR_DATA_TYPE_TIFF,
-		OR_DATA_TYPE_PNG,
+		OR_DATA_TYPE_PIXMAP_8RGB, /**< 8bit per channel RGB pixmap */
+		OR_DATA_TYPE_JPEG,        /**< JPEG data */
+		OR_DATA_TYPE_TIFF,        /**< TIFF container */ 
+		OR_DATA_TYPE_PNG,         /**< PNG container */
 
 		OR_DATA_TYPE_UNKNOWN
 	} or_data_type;

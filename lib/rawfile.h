@@ -55,7 +55,7 @@ namespace OpenRaw {
 		/** Get the thumbnail from the raw file 
 				@param thumbnail the thumbnail to extract into
 		 */
-		virtual bool getThumbnail(Thumbnail & thumbnail) = 0;
+		bool getThumbnail(Thumbnail & thumbnail);
 	protected:
 		/** 
 		 * Construct a raw file
@@ -63,6 +63,9 @@ namespace OpenRaw {
 		 * @param _type the type
 		 */
 		RawFile(const char *_filename, Type _type);
+
+		/** get the small size thumbnail */
+		virtual bool _getSmallThumbnail(Thumbnail & thumbnail) = 0;
 
 	private:
 		static Type identify(const char*_filename);

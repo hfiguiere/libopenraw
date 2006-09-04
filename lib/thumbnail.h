@@ -53,6 +53,8 @@ namespace OpenRaw {
 		/** return the size of the data */
 		size_t size() const;
 		void *data() const;
+		/** set the pixel dimensions of the thumbnail */
+		void setDimensions(int x, int y);
 	private:
 
 		Thumbnail(const Thumbnail&);

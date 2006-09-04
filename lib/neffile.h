@@ -41,8 +41,6 @@ namespace OpenRaw {
 			NEFFile(const char* _filename);
 			virtual ~NEFFile();
 
-			virtual bool getThumbnail(Thumbnail & thumbnail);
-
 		private:
 
 			NEFFile(const NEFFile&);

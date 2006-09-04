@@ -25,6 +25,7 @@
 #include "rawfile.h"
 #include "cr2file.h"
 #include "neffile.h"
+#include "thumbnail.h"
 
 using std::string;
 
@@ -86,15 +87,34 @@ namespace OpenRaw {
 		
 	}
 
+
 	RawFile::~RawFile()
 	{
 	}
+
 
 	RawFile::Type RawFile::type() const
 	{
 		return m_type;
 	}
 
+
+	bool RawFile::getThumbnail(Thumbnail & thumbnail)
+	{
+		bool ret = false;
+		Thumbnail::Size tsize = thumbnail.thumbSize();
+		switch (tsize)
+		{
+		case OR_THUMB_SIZE_SMALL:
+			ret = _getSmallThumbnail(thumbnail);
+			break;
+		case OR_THUMB_SIZE_LARGE:
+			break;
+		default:
+			break;
+		}
+		return ret;
+	}
 
 }
 
