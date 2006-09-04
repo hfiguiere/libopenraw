@@ -1,5 +1,11 @@
 2006-09-03  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/Makefile.am: added nefile.{cpp,h} 
+
+	* lib/neffile.{cpp,h}: new files 
+
+	* lib/rawfile.cpp (newRawFile): instanciate NEF 
+
 	* lib/ifdfilecontainer.cpp (setDirectory): better
 	error handling.
 

@@ -24,6 +24,7 @@
 
 #include "rawfile.h"
 #include "cr2file.h"
+#include "neffile.h"
 
 using std::string;
 
@@ -43,7 +44,10 @@ namespace OpenRaw {
 		case OR_RAWFILE_TYPE_CR2:
 			return new Internals::CR2File(_filename);
 			break;
-		default: 
+		case OR_RAWFILE_TYPE_NEF:
+			return new Internals::NEFFile(_filename);
+			break;
+		default:
 			break;
 		}
 		return NULL;
