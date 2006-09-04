@@ -72,9 +72,6 @@ namespace OpenRaw {
 				IFD_INTEROP = -4 /** interoperability IFD: see field 0xa005 in exif IFD*/ 
 			};
 
-			/** identify a tag */
-			typedef short int tag_t;
-
 			/** 
 					Check the IFD magic header
 		
@@ -120,14 +117,6 @@ namespace OpenRaw {
 			 */
 			size_t fetchData(void *buf, const off_t offset, const size_t buf_size);
 
-
-			/**
-				 Get the IFD field tagged by tag
-				 @param tag the tag to get
-				 @param value a value returning the field content
-				 @return the error code
-			*/
-			bool getField(const tag_t tag, IFDEntry &value);
 
 			/**
 				 Return the last error

@@ -1,7 +1,10 @@
 2006-09-04  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/orffile.{h,cpp}: new file
+
 	* lib/rawfile.cpp (identify): Added Olympus ORF.
 	Use strcasecmp to compare.
+	(newRawFile): instanciate ORFile 
 
 	* include/libopenraw/libopenraw.h: Renamed OR_DATA_TYPE_PIXMAP
 	to OR_DATA_TYPE_PIXMAP_8RGB
