@@ -116,7 +116,7 @@ extern "C" {
 	or_thumbnail_data(ORThumbnailRef thumb);
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif

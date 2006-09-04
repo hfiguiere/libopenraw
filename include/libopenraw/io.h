@@ -68,7 +68,7 @@ extern char *raw_get_path(IOFileRef f);
 
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 
