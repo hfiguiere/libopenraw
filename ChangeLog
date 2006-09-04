@@ -1,5 +1,13 @@
 2006-09-04  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/cr2file.cpp (_getSmallThumbnail): use ExifTag defines
+
+	* lib/ifdentry.cpp (getLong): use defines from IFD 
+
+	* lib/Makefile.am (noinst_HEADERS): ifd.h
+
+	* lib/ifd.h: New file 
+
 	* lib/neffile.{h,cpp}, lib/iofile.h,
 	lib/cr2file.h, lib/thumbnail.{h,cpp},
 	lib/ifdfilecontainer.h, lib/ifddir.cpp,

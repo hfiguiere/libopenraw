@@ -25,6 +25,7 @@
 
 #include "iofile.h"
 #include "ifdfilecontainer.h"
+#include "ifd.h"
 #include "thumbnail.h"
 #include "cr2file.h"
 
@@ -74,15 +75,16 @@ namespace OpenRaw {
 				std::cerr << "dir NULL" << std::endl;
 				return false;
 			}
-			IFDEntry::Ref e = dir->getEntry(513);
+			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT);
 			if (e == NULL) {
-				std::cerr << "513 NULL" << std::endl;
+				std::cerr << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT NULL" << std::endl;
 				return false;
 			}
 			off_t offset = e->getLong();
-			e = dir->getEntry(514);
+			e = dir->getEntry(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
 			if (e == NULL) {
-				std::cerr << "514 NULL" << std::endl;
+				std::cerr << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH NULL" 
+									<< std::endl;
 				return false;
 			}
 			size_t size = e->getLong();

@@ -9,6 +9,7 @@ noinst_HEADERS = \
 	rawfile.h \
 	cr2file.h \
 	neffile.h \
+	ifd.h \
 	ifdfilecontainer.h \
 	ifddir.h ifdentry.h
 

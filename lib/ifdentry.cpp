@@ -23,6 +23,7 @@
 
 #include "ifdfilecontainer.h"
 #include "ifdentry.h"
+#include "ifd.h"
 
 namespace OpenRaw {
 	namespace Internals {
@@ -44,7 +45,7 @@ namespace OpenRaw {
 
 		Int32 IFDEntry::getLong()
 		{
-			assert(m_type == 4);
+			assert(m_type == IFD::EXIF_FORMAT_LONG);
 			assert(m_count == 1);
 			return m_offset;
 		}
