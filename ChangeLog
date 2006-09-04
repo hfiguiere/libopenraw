@@ -1,7 +1,11 @@
 2006-09-04  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/rawfile.cpp (identify): Added Olympus ORF.
+	Use strcasecmp to compare.
+
 	* include/libopenraw/libopenraw.h: Renamed OR_DATA_TYPE_PIXMAP
 	to OR_DATA_TYPE_PIXMAP_8RGB
+	Added Olympus ORF type. 
 
 	* lib/neffile.cpp: implement reading thumbnail out of NEF files.
 

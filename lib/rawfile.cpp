@@ -57,25 +57,28 @@ namespace OpenRaw {
 
 	RawFile::Type RawFile::identify(const char*_filename)
 	{
-		string extension = ::strrchr(_filename, '.') + 1;
-		if (extension.size() > 3) {
+		const char * extension = ::strrchr(_filename, '.') + 1;
+		if (::strlen(extension) > 3) {
 			return OR_RAWFILE_TYPE_UNKNOWN;
 		}
 
-		if (extension == "cr2") {
+		if (::strcasecmp(extension, "cr2") == 0) {
 			return OR_RAWFILE_TYPE_CR2;
 		}
-		else if (extension == "crw") {
+		else if (::strcasecmp(extension, "crw") == 0) {
 			return OR_RAWFILE_TYPE_CRW;
 		}
-		else if (extension == "nef") {
+		else if (::strcasecmp(extension, "nef") == 0) {
 			return OR_RAWFILE_TYPE_NEF;
 		}
-		else if (extension == "mrw") {
+		else if (::strcasecmp(extension, "mrw") == 0) {
 			return OR_RAWFILE_TYPE_MRW;
 		}
-		else if (extension == "dng") {
+		else if (::strcasecmp(extension, "dng") == 0) {
 			return OR_RAWFILE_TYPE_DNG;
+		}
+		else if (::strcasecmp(extension, "orf") == 0) {
+			return OR_RAWFILE_TYPE_ORF;
 		}
 		return OR_RAWFILE_TYPE_UNKNOWN;
 	}

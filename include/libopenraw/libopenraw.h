@@ -52,7 +52,8 @@ extern "C" {
 		OR_RAWFILE_TYPE_CRW, /**< Canon CRW */
 		OR_RAWFILE_TYPE_NEF, /**< Nikon NEF */
 		OR_RAWFILE_TYPE_MRW, /**< Minolta MRW */
-		OR_RAWFILE_TYPE_DNG  /**< Adobe DNG */
+		OR_RAWFILE_TYPE_DNG, /**< Adobe DNG */
+		OR_RAWFILE_TYPE_ORF  /**< Olympus ORF */
 	} or_rawfile_type;
 
 	/** the thumbnail size 
