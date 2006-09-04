@@ -82,9 +82,13 @@ namespace OpenRaw {
 		IFDDir::Ref
 		IFDFileContainer::setDirectory(int dir)
 		{
+			if (dir < 0) {
+				// FIXME set error
+				return IFDDir::Ref((IFDDir*)NULL);
+			}
 			// FIXME handle negative values
-			countDirectories();
-			if (m_dirs.size() == 0) {
+			int n = countDirectories();
+			if (n <= 0) {
 				// FIXME set error
 				return IFDDir::Ref((IFDDir*)NULL);
 			}

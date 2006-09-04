@@ -1,3 +1,6 @@
 2006-09-03  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdfilecontainer.cpp (setDirectory): better
+	error handling.
+
 	* Initial implementation of thumbnail in CR2.
