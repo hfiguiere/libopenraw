@@ -37,7 +37,9 @@ namespace OpenRaw {
 		IFDFileContainer::IFDFileContainer(IOFile *file, off_t offset)
 			: RawContainer(file, offset), 
 				m_error(0),
-				m_endian(ENDIAN_NULL)
+				m_endian(ENDIAN_NULL),
+				m_current_dir(),
+				m_dirs()
 		{
 		}
 	

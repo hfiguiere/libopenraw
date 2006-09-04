@@ -1,3 +1,10 @@
+2006-09-04  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/neffile.{h,cpp}, lib/iofile.h,
+	lib/cr2file.h, lib/thumbnail.{h,cpp},
+	lib/ifdfilecontainer.h, lib/ifddir.cpp,
+	lib/rawcontainer.h: make sure it builds with -Weffc++
+
 2006-09-03  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/Makefile.am: added nefile.{cpp,h} 

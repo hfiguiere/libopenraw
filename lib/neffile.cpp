@@ -19,6 +19,8 @@
  */
 
 
+#include "ifdfilecontainer.h"
+#include "iofile.h"
 #include "neffile.h"
 
 
@@ -26,14 +28,17 @@ namespace OpenRaw {
 	namespace Internals {
 
 		NEFFile::NEFFile(const char* _filename)
-			: RawFile(_filename, OR_RAWFILE_TYPE_NEF)
+			: RawFile(_filename, OR_RAWFILE_TYPE_NEF),
+				m_io(new IOFile(_filename)),
+				m_container(new IFDFileContainer(m_io, 0))
 		{
 		}
 
 
 		NEFFile::~NEFFile()
 		{
-
+			delete m_container;
+			delete m_io;
 		}
 
 		bool NEFFile::getThumbnail(Thumbnail & thumbnail)

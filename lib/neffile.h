@@ -44,6 +44,10 @@ namespace OpenRaw {
 			virtual bool getThumbnail(Thumbnail & thumbnail);
 
 		private:
+
+			NEFFile(const NEFFile&);
+			NEFFile & operator=(const NEFFile &);
+
 			bool _getSmallThumbnail(Thumbnail & thumbnail);
 
 			IOFile *m_io; /**< the IO handle */

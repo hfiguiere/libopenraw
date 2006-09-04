@@ -44,6 +44,11 @@ namespace OpenRaw {
 			virtual bool getThumbnail(Thumbnail & thumbnail);
 
 		private:
+
+			CR2File(const CR2File&);
+			CR2File & operator=(const CR2File&);
+
+			/** get the small size thumbnail */
 			bool _getSmallThumbnail(Thumbnail & thumbnail);
 
 			IOFile *m_io; /**< the IO handle */

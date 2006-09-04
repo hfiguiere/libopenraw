@@ -60,6 +60,9 @@ namespace OpenRaw {
 					free(data);
 				}
 			}
+	private:
+		Private(const Private &);
+		Private & operator=(const Private &);
 	};
 
 	Thumbnail::Thumbnail(Size _size)

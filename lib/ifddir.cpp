@@ -30,7 +30,8 @@ namespace OpenRaw {
 	namespace Internals {
 
 		IFDDir::IFDDir(off_t _offset, IFDFileContainer & _container)
-			: m_offset(_offset), m_container(_container)
+			: m_offset(_offset), m_container(_container), 
+				m_entries()
 		{
 			
 		}

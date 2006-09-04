@@ -70,6 +70,11 @@ public:
 		}
 
 private:
+	/** private copy constructor to make sure it is not called */
+	IOFile(const IOFile& f);
+  /** private = operator to make sure it is never called */
+	IOFile & operator=(const IOFile&);
+
 	/** the file name (full path) */
 	std::string m_fileName;
 	/** the interface to the C io */

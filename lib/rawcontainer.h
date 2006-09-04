@@ -53,6 +53,10 @@ namespace OpenRaw {
 					return m_file;
 				}
 		protected:
+
+			RawContainer(const RawContainer&);
+			RawContainer & operator=(const RawContainer &);
+
 			/** the file handle */
 			IOFile *m_file;
 			/** the offset from the begining of the file */

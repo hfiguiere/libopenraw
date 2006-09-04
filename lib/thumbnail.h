@@ -54,6 +54,10 @@ namespace OpenRaw {
 		size_t size() const;
 		void *data() const;
 	private:
+
+		Thumbnail(const Thumbnail&);
+		Thumbnail & operator=(const Thumbnail &);
+
 		class Private;
 		Thumbnail::Private *d;
 	};
