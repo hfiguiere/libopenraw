@@ -26,6 +26,7 @@
 #include "cr2file.h"
 #include "neffile.h"
 #include "orffile.h"
+#include "arwfile.h"
 #include "thumbnail.h"
 
 using std::string;
@@ -48,6 +49,9 @@ namespace OpenRaw {
 			break;
 		case OR_RAWFILE_TYPE_NEF:
 			return new Internals::NEFFile(_filename);
+			break;
+		case OR_RAWFILE_TYPE_ARW:
+			return new Internals::ARWFile(_filename);
 			break;
 		case OR_RAWFILE_TYPE_ORF:
 			return new Internals::ORFFile(_filename);
@@ -76,6 +80,9 @@ namespace OpenRaw {
 		}
 		else if (::strcasecmp(extension, "mrw") == 0) {
 			return OR_RAWFILE_TYPE_MRW;
+		}
+		else if (::strcasecmp(extension, "arw") == 0) {
+			return OR_RAWFILE_TYPE_ARW;
 		}
 		else if (::strcasecmp(extension, "dng") == 0) {
 			return OR_RAWFILE_TYPE_DNG;
