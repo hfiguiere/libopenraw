@@ -25,6 +25,9 @@
 #include "posix_io.h"
 #include "or_debug.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** get the default io methods instance 
 
@@ -129,4 +132,8 @@ char *raw_get_path(IOFileRef f)
 	return f->path;
 }
 
+
+#ifdef __cplusplus
+};
+#endif
 

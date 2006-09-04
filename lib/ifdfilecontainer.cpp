@@ -18,11 +18,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <sys/types.h>
 
+#include <cstdlib>
+#include <cstdio>
 #include <vector>
+#include <iostream>
 
 #include "ifdfilecontainer.h"
 #include "iofile.h"
@@ -33,215 +34,196 @@ namespace OpenRaw {
 	namespace Internals {
 
 
-	IFDFileContainer::IFDFileContainer(IOFile *file, off_t offset)
-		: RawContainer(file, offset), 
-		  m_error(0),
-		  m_currentDir(-1),
-		  m_numDirs(-1),
-		  m_numTags(-1),
-		  m_endian(ENDIAN_NULL)
-	{
-	}
+		IFDFileContainer::IFDFileContainer(IOFile *file, off_t offset)
+			: RawContainer(file, offset), 
+				m_error(0),
+				m_endian(ENDIAN_NULL)
+		{
+		}
 	
-	IFDFileContainer::~IFDFileContainer()
-	{
+		IFDFileContainer::~IFDFileContainer()
+		{
+			m_dirs.clear();
+		}
 
-	}
 
-
-	IFDFileContainer::EndianType 
-	IFDFileContainer::isMagicHeader(const char *p, int len)
-	{
-		if (len < 4){
-			// we need at least 4 bytes to check
+		IFDFileContainer::EndianType 
+		IFDFileContainer::isMagicHeader(const char *p, int len)
+		{
+			if (len < 4){
+				// we need at least 4 bytes to check
+				return ENDIAN_NULL;
+			}
+			if ((p[0] == 0x49) && (p[1] == 0x49)
+					&& (p[2] == 0x2a) && (p[3] == 0x00)) {
+				return ENDIAN_LITTLE;
+			}
+			else if ((p[0] == 0x4d) && (p[1] == 0x4d)
+							 && (p[2] == 0x00) && (p[3] == 0x2a)) {
+				return ENDIAN_BIG;
+			}
 			return ENDIAN_NULL;
 		}
-		if ((p[0] == 0x49) && (p[1] == 0x49)
-			&& (p[2] == 0x2a) && (p[3] == 0x00)) {
-			return ENDIAN_LITTLE;
-		}
-		else if ((p[0] == 0x4d) && (p[1] == 0x4d)
-				 && (p[2] == 0x00) && (p[3] == 0x2a)) {
-			return ENDIAN_BIG;
-		}
-		return ENDIAN_NULL;
-	}
 
 
-
-	bool 
-	IFDFileContainer::SetDirectory(int dir)
-	{
-		bool ret = true;
-		if (m_numDirs == -1) {
-			// FIXME check result
-			ret = _locateDirs();
-			if (!ret) {
-				return ret;
+		int IFDFileContainer::countDirectories(void)
+		{
+			if (m_dirs.size() == 0) {
+				// FIXME check result
+				bool ret = _locateDirs();
+				if (!ret) {
+					return -1;
+				}
 			}
+			return m_dirs.size();
 		}
-		if (dir > m_dirsOffsets.size()) {
-			// FIXME set error
-			return false;
-		}
-		off_t offset = m_dirsOffsets[dir];
-		// FIXME check error
-		m_file->seek(offset, SEEK_SET);
-		m_currentDir = dir;
-		ReadInt16(m_file, m_numTags);
-		m_file->seek(offset, SEEK_SET);
-		return ret;
-	}
 
 
-	bool 
-	IFDFileContainer::ReadInt16(IOFile *f, Int16 & v)
-	{
-		if (m_endian == ENDIAN_NULL) {
-			return false;
+		IFDDir::Ref
+		IFDFileContainer::setDirectory(int dir)
+		{
+			// FIXME handle negative values
+			countDirectories();
+			if (m_dirs.size() == 0) {
+				// FIXME set error
+				return IFDDir::Ref((IFDDir*)NULL);
+			}
+			// dir is signed here because we can pass negative 
+			// value for specific Exif IFDs.
+			if (dir > (int)m_dirs.size()) {
+				// FIXME set error
+				return IFDDir::Ref((IFDDir*)NULL);
+			}
+			m_current_dir = m_dirs[dir];
+			m_current_dir->load();
+			return m_current_dir;
 		}
-		char buf[2];
-		int s = f->read(buf, 2);
-		if (s != 2) {
-			return false;
-		}
-		if (m_endian == ENDIAN_LITTLE) {
-			v = buf[1] | (buf[0] << 8);
-		}
-		else {
-			v = buf[0] | (buf[1] << 8);
-		}
-		return true;
-	}
 
 
-	bool 
-	IFDFileContainer::ReadInt32(IOFile *f, Int32 & v)
-	{
-		if (m_endian == ENDIAN_NULL) {
-			return false;
+		size_t 
+		IFDFileContainer::getDirectoryDataSize()
+		{
+			// TODO move to IFDirectory
+			std::cerr << "getDirectoryDataSize()" << std::endl;
+			off_t offset = m_current_dir->offset();
+			// FIXME check error
+			std::cerr << "offset = " << offset 
+								<< " m_numTags = " << m_current_dir->numTags() << std::endl;
+			off_t begin = offset + 2 + (m_current_dir->numTags()*12);
+			std::cerr << "begin = " << begin << std::endl;
+			m_file->seek(begin, SEEK_SET);
+			begin += 2;
+			Int32 nextIFD;
+			readInt32(m_file, nextIFD);
+			std::cerr << "nextIFD = " << nextIFD << std::endl;
+			if (nextIFD == 0) {
+				// FIXME not good
+			}
+			return nextIFD - begin;
 		}
-		char buf[4];
-		int s = f->read(buf, 4);
-		if (s != 4) {
-			return false;
+
+		size_t 
+		IFDFileContainer::fetchData(void *buf, const off_t offset,
+																const size_t buf_size)
+		{
+			size_t s;
+			m_file->seek(offset, SEEK_SET);
+			s = m_file->read(buf, buf_size);
+			return s;
 		}
-		if (m_endian == ENDIAN_LITTLE) {
-			v = buf[3] | (buf[2] << 8) | (buf[1] << 16) | (buf[0] << 24);
-		}
-		else {
-			v = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
-		}
-		return true;
-	}
 
 
-	bool
-	IFDFileContainer::_locateDirs(void)
-	{
-		if (m_endian == ENDIAN_NULL) {
-			char buf[4];
-			m_file->read(buf, 4);
-			m_endian = isMagicHeader(buf, 4);
+		bool 
+		IFDFileContainer::readInt16(IOFile *f, Int16 & v)
+		{
+//			std::cerr << "read16" << std::endl;
 			if (m_endian == ENDIAN_NULL) {
-				// FIXME set error code
+				std::cerr << "null endian" << std::endl;
 				return false;
 			}
-		}
-		m_file->seek(4, SEEK_SET);
-		off_t offset = 0;
-		m_dirsOffsets.clear();
-		do {
-			if (ReadInt32(m_file, (Int32&)offset) && (offset != 0)) {
-				m_dirsOffsets.push_back(offset);
+			unsigned char buf[2];
+			int s = f->read(buf, 2);
+			if (s != 2) {
+				return false;
 			}
-		} while(offset != 0);
-		return (m_dirsOffsets.size() != 0);
-	}
-
-
-#if 0
-#include <tiffio.h>
-
-/* These are the glue routing for TIFFIO */
-	static tsize_t
-	_TIFFRead(thandle_t fileRef, tdata_t data, tsize_t size)
-	{
-		or_debug("_TIFFRead()");
-		return static_cast<RawFile*>(fileRef)->read(data, size);
-	}
-
-	static tsize_t
-	_TIFFWrite(thandle_t fileRef, tdata_t data, tsize_t size)
-	{
-		or_debug("_TIFFWrite()");
-		return -1;
-	}
-
-
-	static toff_t
-	_TIFFSeek(thandle_t fileRef, toff_t off, int offmode)
-	{
-		or_debug("_TIFFSeek()");
-		return static_cast<RawFile*>(fileRef)->seek(off, offmode);
-	}
-
-	static int
-	_TIFFClose(thandle_t fileRef)
-	{
-		or_debug("_TIFFClose()");
-		/* this is a no op*/
-		return 0;
-	}
-
-
-	static toff_t
-	_TIFFSize(thandle_t fileRef)
-	{
-		or_debug("_TIFFSize()");
-	
-		return static_cast<RawFile*>(fileRef)->filesize();
-	}
-
-
-	static int
-	_TIFFMapFile(thandle_t fileRef, tdata_t* d, toff_t* s)
-	{
-		or_debug("_TIFFMapFile()");
-		toff_t size = _TIFFSize(fileRef);
-	
-		if (size != -1) {
-			*d = static_cast<RawFile*>(fileRef)->mmap(size, 0);
-			if (*d != (tdata_t) -1) {
-				*s = size;
-				return 1;
+			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
+			std::cerr << "read16 " << (int)buf[0] << " " << (int)buf [1] 
+								<< std::endl;
+			if (m_endian == ENDIAN_LITTLE) {
+				v = buf[0] | (buf[1] << 8);
 			}
+			else {
+				v = buf[1] | (buf[0] << 8);
+			}
+			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
+			std::cerr << "value = " << v << std::endl;
+			return true;
 		}
-	
-		return 0;
+
+
+		bool 
+		IFDFileContainer::readInt32(IOFile *f, Int32 & v)
+		{
+//			std::cerr << "read32" << std::endl;
+			if (m_endian == ENDIAN_NULL) {
+				std::cerr << "null endian" << std::endl;
+				return false;
+			}
+			unsigned char buf[4];
+			int s = f->read(buf, 4);
+			if (s != 4) {
+				return false;
+			}
+			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
+			std::cerr << "read32 " << (int)buf[0] << " " << (int)buf [1] 
+								<< " " << (int)buf [2] << " " << (int)buf[3] 
+								<< std::endl;
+			if (m_endian == ENDIAN_LITTLE) {
+				v = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
+			}
+			else {
+ 				v = buf[3] | (buf[2] << 8) | (buf[1] << 16) | (buf[0] << 24);
+			}
+			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
+			std::cerr << "value = " << v << std::endl;
+			return true;
+		}
+
+
+		bool
+		IFDFileContainer::_locateDirs(void)
+		{
+			std::cerr << "_locateDirs()" << std::endl;
+			if (m_endian == ENDIAN_NULL) {
+				char buf[4];
+				m_file->read(buf, 4);
+				m_endian = isMagicHeader(buf, 4);
+				if (m_endian == ENDIAN_NULL) {
+					// FIXME set error code
+					return false;
+				}
+			}
+			m_file->seek(4, SEEK_SET);
+			off_t offset = 0;
+			readInt32(m_file, (Int32&)offset);
+			m_dirs.clear();
+			do {
+				if (offset != 0) {
+					std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
+					std::cerr << "push offset =0x" << offset << std::endl;
+					IFDDir::Ref dir(new IFDDir(offset,*this));
+					m_dirs.push_back(dir);
+					std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
+
+					offset = dir->nextIFD();
+				}
+			} while(offset != 0);
+
+			std::cerr << "# dir found = " << m_dirs.size() << std::endl;
+			return (m_dirs.size() != 0);
+		}
+
+
 	}
-	static void
-	_TIFFUnmapFile(thandle_t fileRef, tdata_t d, toff_t o)
-	{
-		or_debug("_TIFFUnmapFile()");
-		static_cast<RawFile*>(fileRef)->munmap(d, o);
-	}
-
-
-	::TIFF *TIFF::raw_tiff_open()
-	{
-		return TIFFClientOpen("", "r", (thandle_t)this,
-							  &_TIFFRead, &_TIFFWrite, &_TIFFSeek, &_TIFFClose,
-							  &_TIFFSize, &_TIFFMapFile, &_TIFFUnmapFile);
-	}
-
-
-};
-
-#endif
-
-
-}
-
 }
 

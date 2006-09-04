@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.h
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2006 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,15 +27,27 @@
 #include "rawfile.h"
 
 namespace OpenRaw {
+
+	class Thumbnail;
+
 	namespace Internals {
+		class IOFile;
+		class IFDFileContainer;
 
 		class CR2File
-			: OpenRaw::RawFile
+			: public OpenRaw::RawFile
 		{
 		public:
-			CR2File(const char* filename);
-			~CR2File();
+			CR2File(const char* _filename);
+			virtual ~CR2File();
 
+			virtual bool getThumbnail(Thumbnail & thumbnail);
+
+		private:
+			bool _getSmallThumbnail(Thumbnail & thumbnail);
+
+			IOFile *m_io; /**< the IO handle */
+			IFDFileContainer *m_container; /**< the real container */
 		};
 	}
 

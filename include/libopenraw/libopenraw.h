@@ -36,17 +36,37 @@ extern "C" {
 
 	/** Error code returned by libopenraw. */
 	typedef enum {
- 		OR_ERROR_NONE = 0,     /** no error */
+ 		OR_ERROR_NONE = 0,     /**< no error */
 		OR_ERROR_BUF_TOO_SMALL = 1,
 		OR_ERROR_NOTAREF = 2,
-		OR_ERROR_CANT_OPEN = 3, /** can't open file. Check OS error codes */
+		OR_ERROR_CANT_OPEN = 3, /**< can't open file. Check OS error codes */
 		OR_ERROR_LAST_ 
 	} or_error;
 
+	
+	/** different types of RAW files 
+	 */
 	typedef enum {
-		OR_THUMB_SIZE_NONE = 0,
-		OR_THUMB_SIZE_SMALL,
-		OR_THUMB_SIZE_LARGE
+		OR_RAWFILE_TYPE_UNKNOWN = 0, /**< no type. Invalid value. */
+		OR_RAWFILE_TYPE_CR2, /**< Canon CR2 */
+		OR_RAWFILE_TYPE_CRW, /**< Canon CRW */
+		OR_RAWFILE_TYPE_NEF, /**< Nikon NEF */
+		OR_RAWFILE_TYPE_MRW, /**< Minolta MRW */
+		OR_RAWFILE_TYPE_DNG  /**< Adobe DNG */
+	} or_rawfile_type;
+
+	/** the thumbnail size 
+			They are heavily dependent of the file type, but
+			small is always the exif thumbnail and large always the largest 
+			available. If there is a JPEG version embedded (RAW+JPEG) it is 
+			"preview"
+	 */
+	typedef enum {
+		OR_THUMB_SIZE_NONE = 0, /**< none, undefined */
+		OR_THUMB_SIZE_SMALL,    /**< small aka Exif size */
+		OR_THUMB_SIZE_MEDIUM,   /**< medium */
+		OR_THUMB_SIZE_LARGE,    /**< the largest */
+		OT_THUMB_SIZE_PREVIEW   /**< embedded JPEG version. Not always available */
 	} or_thumb_size;
 
 
@@ -54,7 +74,9 @@ extern "C" {
 		OR_DATA_TYPE_NONE = 0,
 		OR_DATA_TYPE_PIXMAP,
 		OR_DATA_TYPE_JPEG,
-		
+		OR_DATA_TYPE_TIFF,
+		OR_DATA_TYPE_PNG,
+
 		OR_DATA_TYPE_UNKNOWN
 	} or_data_type;
 

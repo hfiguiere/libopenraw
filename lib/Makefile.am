@@ -8,7 +8,8 @@ noinst_HEADERS = \
 	rawcontainer.h \
 	rawfile.h \
 	cr2file.h \
-	ifdfilecontainer.h
+	ifdfilecontainer.h \
+	ifddir.h ifdentry.h
 
 lib_LTLIBRARIES = libopenraw.la
 
@@ -19,7 +20,10 @@ libopenraw_la_LIBADD = -lio \
 
 libopenraw_la_SOURCES = \
 	iofile.cpp \
-	thumbnails.c \
+	rawfile.cpp \
+	cr2file.cpp \
+	thumbnail.cpp \
 	or_debug.c \
 	ifdfilecontainer.cpp \
+	ifddir.cpp ifdentry.cpp \
 	rawcontainer.cpp

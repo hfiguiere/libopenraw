@@ -1,5 +1,5 @@
 /*
- * libopenraw - rawcontainer.h
+ * libopenraw - ifdentry.cpp
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -19,48 +19,35 @@
  */
 
 
+#include <cassert>
 
-
-#ifndef _RAWCONTAINER_H_
-#define _RAWCONTAINER_H_
-
-#include <sys/types.h>
-#include <libopenraw/io.h>
+#include "ifdfilecontainer.h"
+#include "ifdentry.h"
 
 namespace OpenRaw {
 	namespace Internals {
 
-		
-		class IOFile;
-		
-/**
-   Generic interface for the RAW file container
- */
-		class RawContainer
+
+		IFDEntry::IFDEntry(Int16 _id, Int16 _type, 
+											 Int32 _count, Int32 _offset,
+											 IFDFileContainer &_container)
+			: m_id(_id), m_type(_type),
+				m_count(_count), m_offset(_offset), 
+				m_container(_container)
 		{
-		public:
-			/** 
-					@param file the file handle
-					@param offset the offset since starting the 
-					begining of the file for the container
-			*/
-			RawContainer(IOFile *file, off_t offset);
-			/** destructor */
-			virtual ~RawContainer();
-			
-			IOFile *file()
-				{
-					return m_file;
-				}
-		protected:
-			/** the file handle */
-			IOFile *m_file;
-			/** the offset from the begining of the file */
-			off_t m_offset;
-		};
-		
+		}
+
+
+		IFDEntry::~IFDEntry()
+		{
+		}
+
+		Int32 IFDEntry::getLong()
+		{
+			assert(m_type == 4);
+			assert(m_count == 1);
+			return m_offset;
+		}
+
 	}
 }
-
-
-#endif

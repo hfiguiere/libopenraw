@@ -1,5 +1,5 @@
 /*
- * libopenraw - rawcontainer.h
+ * libopenraw - ifddir.h
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -19,48 +19,55 @@
  */
 
 
+#ifndef _OPENRAW_INTERNALS_IFDDIR_H
+#define _OPENRAW_INTERNALS_IFDDIR_H
 
+#include <map>
 
-#ifndef _RAWCONTAINER_H_
-#define _RAWCONTAINER_H_
-
-#include <sys/types.h>
-#include <libopenraw/io.h>
+#include <boost/shared_ptr.hpp>
+#include "ifdentry.h"
 
 namespace OpenRaw {
 	namespace Internals {
+		
+		class IFDFileContainer;
 
-		
-		class IOFile;
-		
-/**
-   Generic interface for the RAW file container
- */
-		class RawContainer
+		class IFDDir
 		{
 		public:
-			/** 
-					@param file the file handle
-					@param offset the offset since starting the 
-					begining of the file for the container
-			*/
-			RawContainer(IOFile *file, off_t offset);
-			/** destructor */
-			virtual ~RawContainer();
+			typedef boost::shared_ptr<IFDDir> Ref;
+
+			IFDDir(off_t _offset, IFDFileContainer & _container);
+			virtual ~IFDDir();
 			
-			IOFile *file()
+      /** return the offset */
+			off_t offset() const
 				{
-					return m_file;
+					return m_offset;
 				}
-		protected:
-			/** the file handle */
-			IOFile *m_file;
-			/** the offset from the begining of the file */
+
+			/** load the directory to memory */
+			bool load();
+			/** return the number of entries*/
+			int numTags()
+				{
+					return m_entries.size();
+				}
+			IFDEntry::Ref getEntry(int id);
+			/** get the offset of the next IFD 
+			 * in absolute
+			 */
+			off_t nextIFD();
+		private:
 			off_t m_offset;
+			IFDFileContainer & m_container;
+			std::map<int, IFDEntry::Ref> m_entries;
 		};
-		
+
+
 	}
 }
 
 
 #endif
+

@@ -25,8 +25,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include <tiffio.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -68,7 +66,6 @@ extern int raw_munmap(IOFileRef f, void *addr, size_t l);
 extern int raw_get_error(IOFileRef f);
 extern char *raw_get_path(IOFileRef f);
 
-extern TIFF *raw_tiff_open(IOFileRef f);
 
 #ifdef __cplusplus
 };

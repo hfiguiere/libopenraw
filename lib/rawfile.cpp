@@ -19,13 +19,79 @@
  */
 
 
+#include <cstring>
+#include <string>
 
 #include "rawfile.h"
+#include "cr2file.h"
 
+using std::string;
 
 namespace OpenRaw {
+	
+	RawFile *RawFile::newRawFile(const char*_filename, RawFile::Type _typeHint)
+	{
+		Type type;
+		if (_typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
+			type = identify(_filename);
+		}
+		else {
+			type = _typeHint;
+		}
+		switch(type)
+		{
+		case OR_RAWFILE_TYPE_CR2:
+			return new Internals::CR2File(_filename);
+			break;
+		default: 
+			break;
+		}
+		return NULL;
+	}
 
+
+	RawFile::Type RawFile::identify(const char*_filename)
+	{
+		string extension = ::strrchr(_filename, '.') + 1;
+		if (extension.size() > 3) {
+			return OR_RAWFILE_TYPE_UNKNOWN;
+		}
+
+		if (extension == "cr2") {
+			return OR_RAWFILE_TYPE_CR2;
+		}
+		else if (extension == "crw") {
+			return OR_RAWFILE_TYPE_CRW;
+		}
+		else if (extension == "nef") {
+			return OR_RAWFILE_TYPE_NEF;
+		}
+		else if (extension == "mrw") {
+			return OR_RAWFILE_TYPE_MRW;
+		}
+		else if (extension == "dng") {
+			return OR_RAWFILE_TYPE_DNG;
+		}
+		return OR_RAWFILE_TYPE_UNKNOWN;
+	}
+
+	RawFile::RawFile(const char * _filename, RawFile::Type _type)
+		: m_filename(_filename),
+			m_type(_type)
+	{
+		
+	}
+
+	RawFile::~RawFile()
+	{
+	}
+
+	RawFile::Type RawFile::type() const
+	{
+		return m_type;
+	}
 
 
 }
+
 

@@ -8,26 +8,18 @@ AM_INIT_AUTOMAKE(libopenraw, 0.0.1)
 AM_MAINTAINER_MODE
 AC_LIBTOOL_DLOPEN
 
+CXXFLAGS="-g -Wall -Werror"
+CFLAGS="-g -Wall "
+
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
-AC_CHECK_LIB(tiff, TIFFOpen,
-	LIBTIFF='-ltiff', 
-	AC_MSG_ERROR([TIFF library not found]))
-AC_SUBST(LIBTIFF)
-AC_CHECK_HEADER(tiffio.h, ,
-	AC_MSG_ERROR([TIFF headers not found]))
-
-dnl libexif 
-AC_CHECK_LIB(exif, exif_loader_get_data,
-	LIBEXIF='-lexif',
-	AC_MSG_ERROR([libexif library not found]))
-AC_SUBST(LIBEXIF)
-AC_CHECK_HEADER(libexif/exif-loader.h, ,
-	AC_MSG_ERROR([libexif headers not found]))
+AC_LANG(C++)
+AC_CHECK_HEADER(boost/shared_ptr.hpp, ,
+	AC_MSG_ERROR([boost headers not found]))
 
 AC_OUTPUT([
 Makefile

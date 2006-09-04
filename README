@@ -1,0 +1,5 @@
+Prerequistes to build:
+
+-a C++ compiler
+-libboost (boost::shared_ptr)
+-automake

@@ -25,28 +25,52 @@
 
 #include <string>
 
+#include <libopenraw/libopenraw.h>
 
 namespace OpenRaw {
+
+	class Thumbnail;
 
 	class RawFile
 	{
 	public:
-		/** factory method */
-		static RawFile *newRawFile(const char*_filename);
+		typedef ::or_rawfile_type Type;
 
-		/** destructor */
+		/** factory method to create the proper RawFile instance.
+		 * @param _filename the name of the file to load
+		 * @param _typeHint a hint on the type. Use UNKNOWN_TYPE
+		 * if you want to let the library detect it for you.
+		 */
+		static RawFile *newRawFile(const char*_filename, 
+															 Type _typeHint = OR_RAWFILE_TYPE_UNKNOWN);
+
+		/** Destructor */
 		virtual ~RawFile();
-		
+		/** Accessor for the type */
+		Type type() const;
+
 		// standard api, like get thumbnail
 		// and get exif.
+
+		/** Get the thumbnail from the raw file 
+				@param thumbnail the thumbnail to extract into
+		 */
+		virtual bool getThumbnail(Thumbnail & thumbnail) = 0;
 	protected:
-		/** @param _filename the RAW file name */
-		RawFile(const char *_filename);
+		/** 
+		 * Construct a raw file
+		 * @param _filename the RAW file name 
+		 * @param _type the type
+		 */
+		RawFile(const char *_filename, Type _type);
 
 	private:
+		static Type identify(const char*_filename);
+
 		/** the name of the file */
 		std::string m_filename;
-		
+		/** the real type of the raw file */
+		Type m_type;
 	};
 }
 

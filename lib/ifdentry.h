@@ -1,5 +1,5 @@
 /*
- * libopenraw - rawcontainer.h
+ * libopenraw - ifdentry.h
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -19,48 +19,42 @@
  */
 
 
+#ifndef _OPENRAW_INTERNALS_IFDENTRY_H
+#define _OPENRAW_INTERNALS_IFDENTRY_H
 
-
-#ifndef _RAWCONTAINER_H_
-#define _RAWCONTAINER_H_
-
-#include <sys/types.h>
-#include <libopenraw/io.h>
+#include <boost/shared_ptr.hpp>
+#include <libopenraw/types.h>
 
 namespace OpenRaw {
 	namespace Internals {
 
-		
-		class IOFile;
-		
-/**
-   Generic interface for the RAW file container
- */
-		class RawContainer
+		class IFDFileContainer;
+
+		class IFDEntry
 		{
 		public:
-			/** 
-					@param file the file handle
-					@param offset the offset since starting the 
-					begining of the file for the container
-			*/
-			RawContainer(IOFile *file, off_t offset);
-			/** destructor */
-			virtual ~RawContainer();
-			
-			IOFile *file()
-				{
-					return m_file;
-				}
-		protected:
-			/** the file handle */
-			IOFile *m_file;
-			/** the offset from the begining of the file */
-			off_t m_offset;
+			/** Ref (ie shared pointer) */
+			typedef boost::shared_ptr<IFDEntry> Ref;
+
+			IFDEntry(Int16 _id, Int16 _type, Int32 _count, Int32 _offset,
+							 IFDFileContainer &_container);
+			virtual ~IFDEntry();
+
+
+			Int32 getLong();
+		private:
+			Int16 m_id;
+			Int16 m_type;
+			Int32 m_count;
+			Int32 m_offset;
+			IFDFileContainer & m_container;
 		};
-		
+
+
 	}
 }
 
 
 #endif
+
+
