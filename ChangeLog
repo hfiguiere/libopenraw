@@ -1,5 +1,7 @@
 2006-09-04  Hubert Figuiere  <hub@figuiere.net>
 
+	* configure.in (CXXFLAGS): -pedantic -ansi
+
 	* lib/orffile.{h,cpp}: new file
 
 	* lib/rawfile.cpp (identify): Added Olympus ORF.
