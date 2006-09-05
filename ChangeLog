@@ -1,16 +1,18 @@
 2006-09-04  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/arwfile.{h,cpp}: new files
+
 	* configure.in (CXXFLAGS): -pedantic -ansi
 
-	* lib/orffile.{h,cpp}: new file
+	* lib/orffile.{h,cpp}: new files
 
-	* lib/rawfile.cpp (identify): Added Olympus ORF.
+	* lib/rawfile.cpp (identify): Added Olympus ORF and Sony ARW.
 	Use strcasecmp to compare.
-	(newRawFile): instanciate ORFile 
+	(newRawFile): instanciate ORFile, ARWFile 
 
 	* include/libopenraw/libopenraw.h: Renamed OR_DATA_TYPE_PIXMAP
 	to OR_DATA_TYPE_PIXMAP_8RGB
-	Added Olympus ORF type. 
+	Added Olympus ORF and Sony ARW types. 
 
 	* lib/neffile.cpp: implement reading thumbnail out of NEF files.
 
