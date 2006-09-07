@@ -18,9 +18,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <iostream>
-
-
+#include "debug.h"
 #include "orffile.h"
 #include "thumbnail.h"
 #include "ifd.h"
@@ -31,6 +29,9 @@
 
 
 namespace OpenRaw {
+
+	using Debug::Trace;
+
 	namespace Internals {
 
 		ORFFile::ORFFile(const char* _filename)
@@ -62,7 +63,7 @@ namespace OpenRaw {
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
-				std::cerr << "wrong size" << std::endl;
+				Trace(Debug::WARNING) << "wrong size\n";
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
 			thumbnail.setDimensions(160, 120);

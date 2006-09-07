@@ -5,6 +5,7 @@ SUBDIRS = io
 
 noinst_HEADERS = \
 	iofile.h \
+	debug.h	\
 	rawcontainer.h \
 	rawfile.h \
 	cr2file.h \
@@ -14,8 +15,7 @@ noinst_HEADERS = \
 	ifd.h \
 	ifdfilecontainer.h \
 	ifddir.h ifdentry.h \
-	orfcontainer.h \
-	ciffcontainer.h
+	orfcontainer.h
 
 lib_LTLIBRARIES = libopenraw.la
 
@@ -26,6 +26,7 @@ libopenraw_la_LIBADD = -lio \
 
 libopenraw_la_SOURCES = \
 	iofile.cpp \
+	debug.cpp \
 	rawfile.cpp \
 	cr2file.cpp \
 	neffile.cpp \
@@ -36,5 +37,4 @@ libopenraw_la_SOURCES = \
 	ifdfilecontainer.cpp \
 	ifddir.cpp ifdentry.cpp \
 	rawcontainer.cpp \
-	orfcontainer.cpp \
-	ciffcontainer.cpp 
+	orfcontainer.cpp

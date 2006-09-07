@@ -19,10 +19,9 @@
  */
 
 
-#include <iostream>
-
 #include <libopenraw/libopenraw.h>
 
+#include "debug.h"
 #include "iofile.h"
 #include "ifdfilecontainer.h"
 #include "ifd.h"
@@ -31,6 +30,9 @@
 
 
 namespace OpenRaw {
+
+	using Debug::Trace;
+
 	namespace Internals {
 
 		CR2File::CR2File(const char* _filename)
@@ -55,19 +57,20 @@ namespace OpenRaw {
 			}
 			IFDDir::Ref dir = m_container->setDirectory(1);
 			if (dir == NULL) {
-				std::cerr << "dir NULL" << std::endl;
+				Trace(Debug::WARNING) << "dir NULL\n";
 				return false;
 			}
 			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT);
 			if (e == NULL) {
-				std::cerr << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT NULL" << std::endl;
+				Trace(Debug::WARNING) << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT NULL\n";
 				return false;
 			}
 			off_t offset = e->getLong();
 			e = dir->getEntry(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
 			if (e == NULL) {
-				std::cerr << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH NULL" 
-									<< std::endl;
+
+				Trace(Debug::WARNING) << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH NULL\n";
+
 				return false;
 			}
 			size_t size = e->getLong();
@@ -75,7 +78,7 @@ namespace OpenRaw {
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
-				std::cerr << "wrong size" << std::endl;
+				Trace(Debug::WARNING) << "wrong size\n";
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
 			thumbnail.setDimensions(160, 120);

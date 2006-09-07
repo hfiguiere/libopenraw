@@ -1,5 +1,5 @@
 /*
- * libopenraw - orfcontainer.cpp
+ * libopenraw - debug.h
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -19,47 +19,33 @@
  */
 
 
-#include "debug.h"
-#include "orfcontainer.h"
-
-
 namespace OpenRaw {
+	namespace Debug {
 
-	using Debug::Trace;
+		typedef enum {
+			ERROR = 0,
+			WARNING,
+			NOTICE,
+			DEBUG1,
+			DEBUG2
+		} debug_level;
 
-	namespace Internals {
+		extern int debugLevel;
 
-
-		ORFContainer::ORFContainer(IOFile *file, off_t offset)
-			: IFDFileContainer(file, offset)
+		/** a basic Trace class for debug */
+		class Trace 
 		{
-		}
-
-
-		ORFContainer::~ORFContainer()
-		{
-		}
-
-
-		IFDFileContainer::EndianType 
-		ORFContainer::isMagicHeader(const char *p, int len)
-		{
-			if (len < 4){
-				// we need at least 4 bytes to check
-				return ENDIAN_NULL;
-			}
-			if ((p[0] == 0x49) && (p[1] == 0x49)
-					&& (p[2] == 0x52) && (p[3] == 0x4f)) {
-
-				Trace(Debug::DEBUG1) << "Identified ORF file\n";
-
-				return ENDIAN_LITTLE;
-			}
-
-			Trace(Debug::DEBUG1) << "Unidentified ORF file\n";
-
-			return ENDIAN_NULL;
-		}
+		public:
+			Trace(debug_level level)
+			  : m_level(level)
+				{
+				}
+			Trace & operator<<(int i);
+			Trace & operator<<(const char * s);
+			Trace & operator<<(void *);
+		private:
+			int m_level;
+		};
 
 	}
 }

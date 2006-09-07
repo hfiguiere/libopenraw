@@ -18,15 +18,18 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <iostream>
 
 #include <libopenraw/types.h>
 
+#include "debug.h"
 #include "iofile.h"
 #include "ifdfilecontainer.h"
 #include "ifddir.h"
 
 namespace OpenRaw {
+
+	using Debug::Trace;
+
 	namespace Internals {
 
 		IFDDir::IFDDir(off_t _offset, IFDFileContainer & _container)
@@ -43,14 +46,14 @@ namespace OpenRaw {
 
 		bool IFDDir::load()
 		{
-			std::cerr << "IFDDir::load() m_offset =" << m_offset << std::endl;
+			Trace(Debug::DEBUG1) << "IFDDir::load() m_offset =" << m_offset << "\n";
 			Int16 numEntries = 0;
 			IOFile *file = m_container.file();
 			m_entries.clear();
 			file->seek(m_offset, SEEK_SET);
 			m_container.readInt16(file, numEntries);
 
-			std::cerr << "num =" << numEntries << std::endl;
+			Trace(Debug::DEBUG1) << "num =" << numEntries << "\n";
 
 			for(Int16 i = 0; i < numEntries; i++) {
 				Int16 id;
@@ -63,7 +66,7 @@ namespace OpenRaw {
 				m_container.readInt32(file, offset);
 				IFDEntry::Ref entry(new IFDEntry(id, type, 
 																				 count, offset, m_container));
-				std::cerr << "adding elem for " << id << std::endl;
+				Trace(Debug::DEBUG1) << "adding elem for " << id << "\n";
 				m_entries[id] = entry;
 			}
 
@@ -72,7 +75,6 @@ namespace OpenRaw {
 
 		IFDEntry::Ref IFDDir::getEntry(int id)
 		{
-//			std::cerr << "num entries = " << m_entries.size() << std::endl;
 			return m_entries[id];
 		}
 
@@ -85,9 +87,9 @@ namespace OpenRaw {
 			if(m_entries.size() == 0) {
 				file->seek(m_offset, SEEK_SET);
 				m_container.readInt16(file, numEntries);
-				std::cerr << "numEntries =" << numEntries 
+				Trace(Debug::DEBUG1) << "numEntries =" << numEntries 
 									<< " shifting " << (numEntries * 12) + 2
-									<< "bytes" << std::endl;
+									<< "bytes\n";
 			}
 			else {
 				numEntries = m_entries.size();

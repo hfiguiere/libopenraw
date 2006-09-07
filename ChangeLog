@@ -1,3 +1,17 @@
+2006-09-06  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/thumbnail.cpp, lib/ifdfilecontainer.cpp,
+	lib/orffile.cpp, lib/orfcontainer.cpp, lib/ifddir.cpp,
+	lib/arwfile.cpp, lib/cr2file.cpp, lib/neffile.cpp: 
+	convert to use Debug::Trace 
+
+	* lib/debug.{h,cpp}: new files. 
+
+2006-09-05  Hubert Figuiere  <hub@figuiere.net>
+
+	* autogen.sh (ACLOCAL): Allow running autogen.sh from
+	builddir. Will run configure at the same time.
+
 2006-09-04  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/arwfile.{h,cpp}: new files

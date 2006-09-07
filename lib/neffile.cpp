@@ -21,6 +21,7 @@
 
 #include <iostream>
 
+#include "debug.h"
 #include "ifd.h"
 #include "ifdfilecontainer.h"
 #include "ifddir.h"
@@ -31,6 +32,9 @@
 
 
 namespace OpenRaw {
+
+	using Debug::Trace;
+
 	namespace Internals {
 
 		NEFFile::NEFFile(const char* _filename)
@@ -56,7 +60,7 @@ namespace OpenRaw {
 			}
 			IFDDir::Ref dir = m_container->setDirectory(0);
 			if (dir == NULL) {
-				std::cerr << "dir NULL" << std::endl;
+				Trace(Debug::WARNING) << "dir NULL\n";
 				return false;
 			}
 
@@ -74,7 +78,7 @@ namespace OpenRaw {
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
-				std::cerr << "wrong size" << std::endl;
+				Trace(Debug::WARNING) << "wrong size\n";
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
 			thumbnail.setDimensions(x, y);
