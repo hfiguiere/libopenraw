@@ -84,5 +84,50 @@ namespace OpenRaw {
 			thumbnail.setDimensions(160, 120);
 			return true;
 		}
+
+
+		bool CR2File::_getLargeThumbnail(Thumbnail & thumbnail)
+		{
+			int c = m_container->countDirectories();
+			if (c < 3) {
+				return false;
+			}
+			IFDDir::Ref dir = m_container->setDirectory(2);
+			if (dir == NULL) {
+				Trace(Debug::WARNING) << "dir NULL\n";
+				return false;
+			}
+			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_OFFSETS);
+			if (e == NULL) {
+				Trace(Debug::WARNING) << "EXIF_TAG_STRIP_OFFSETS NULL\n";
+				return false;
+			}
+			off_t offset = e->getLong();
+			e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
+			if (e == NULL) {
+
+				Trace(Debug::WARNING) << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH NULL\n";
+
+				return false;
+			}
+			size_t size = e->getLong();
+
+			int x, y;
+			e = dir->getEntry(IFD::EXIF_TAG_IMAGE_WIDTH);
+			x = e->getShort();
+			e = dir->getEntry(IFD::EXIF_TAG_IMAGE_LENGTH);
+			y = e->getShort();
+			
+			Trace(Debug::DEBUG1) << "x, y " << x << " " << y << "\n";
+			void *buf = thumbnail.allocData(size);
+
+			size_t real_size = m_container->fetchData(buf, offset, size);
+			if (real_size != size) {
+				Trace(Debug::WARNING) << "wrong size\n";
+			}
+			thumbnail.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
+			thumbnail.setDimensions(x, y);
+			return true;
+		}
 	}
 }

@@ -66,7 +66,6 @@ extern "C" {
 	typedef enum {
 		OR_THUMB_SIZE_NONE = 0, /**< none, undefined */
 		OR_THUMB_SIZE_SMALL,    /**< small aka Exif size */
-		OR_THUMB_SIZE_MEDIUM,   /**< medium */
 		OR_THUMB_SIZE_LARGE,    /**< the largest */
 		OT_THUMB_SIZE_PREVIEW   /**< embedded JPEG version. Not always available */
 	} or_thumb_size;

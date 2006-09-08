@@ -66,7 +66,8 @@ namespace OpenRaw {
 
 		/** get the small size thumbnail */
 		virtual bool _getSmallThumbnail(Thumbnail & thumbnail) = 0;
-
+		/** get the large thumbnail */
+		virtual bool _getLargeThumbnail(Thumbnail & thumbnail) = 0;
 	private:
 		static Type identify(const char*_filename);
 

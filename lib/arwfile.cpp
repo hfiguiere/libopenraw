@@ -82,5 +82,40 @@ namespace OpenRaw {
 			thumbnail.setDimensions(160, 120);
 			return true;
 		}
+
+		bool ARWFile::_getLargeThumbnail(Thumbnail & thumbnail)
+		{
+			int c = m_container->countDirectories();
+			if (c < 2) {
+				return false;
+			}
+			IFDDir::Ref dir = m_container->setDirectory(0);
+			if (dir == NULL) {
+				Trace(Debug::WARNING) << "dir NULL\n";
+				return false;
+			}
+			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT);
+			if (e == NULL) {
+				Trace(Debug::WARNING) << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT NULL\n";
+				return false;
+			}
+			off_t offset = e->getLong();
+			e = dir->getEntry(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
+			if (e == NULL) {
+				Trace(Debug::WARNING) << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH NULL\n";
+				return false;
+			}
+			size_t size = e->getLong();
+			void *buf = thumbnail.allocData(size);
+
+			size_t real_size = m_container->fetchData(buf, offset, size);
+			if (real_size != size) {
+				Trace(Debug::WARNING) << "wrong size\n";
+			}
+			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
+			/* dimensions are hardcoded */
+			thumbnail.setDimensions(640, 480);
+			return true;
+		}
 	}
 }

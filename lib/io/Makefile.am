@@ -1,7 +1,7 @@
 
 INCLUDES = -I$(top_srcdir)/include -I$(srcdir)/..
 
-noinst_LIBRARIES = libio.a
+noinst_LTLIBRARIES = libio.la
 
-libio_a_SOURCES = io.c \
+libio_la_SOURCES = io.c \
 	posix_io.c

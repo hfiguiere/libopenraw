@@ -84,7 +84,12 @@ namespace OpenRaw {
 			thumbnail.setDimensions(x, y);
 
 
-			return false;
+			return true;
+		}
+
+		bool NEFFile::_getLargeThumbnail(Thumbnail & thumbnail)
+		{
+			return true;
 		}
 	}
 }

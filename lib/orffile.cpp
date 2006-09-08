@@ -70,6 +70,10 @@ namespace OpenRaw {
 			return true;
 		}
 
+		bool ORFFile::_getLargeThumbnail(Thumbnail & thumbnail)
+		{
+			return false;
+		}
 	}
 }
 

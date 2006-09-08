@@ -122,6 +122,7 @@ namespace OpenRaw {
 			ret = _getSmallThumbnail(thumbnail);
 			break;
 		case OR_THUMB_SIZE_LARGE:
+			ret = _getLargeThumbnail(thumbnail);
 			break;
 		default:
 			break;

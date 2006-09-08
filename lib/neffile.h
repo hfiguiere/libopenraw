@@ -46,7 +46,8 @@ namespace OpenRaw {
 			NEFFile(const NEFFile&);
 			NEFFile & operator=(const NEFFile &);
 
-			bool _getSmallThumbnail(Thumbnail & thumbnail);
+			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
+			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
 
 			IOFile *m_io; /**< the IO handle */
 			IFDFileContainer *m_container; /**< the real container */

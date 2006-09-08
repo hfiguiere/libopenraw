@@ -29,6 +29,18 @@ main(int argc, char** argv)
 
 	delete thumb;
 
+	thumb =
+		Thumbnail::getAndExtractThumbnail(argv[1],
+													 OR_THUMB_SIZE_LARGE);
+	std::cerr << "thumb data size =" << thumb->size() << std::endl;
+	std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
+
+	f = fopen("thumbl.jpg", "wb");
+	fwrite(thumb->data(), 1, thumb->size(), f);
+	fclose(f);
+
+	delete thumb;
+
 	return 0;
 }
 

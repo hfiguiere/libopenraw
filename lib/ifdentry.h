@@ -42,6 +42,7 @@ namespace OpenRaw {
 
 
 			Int32 getLong();
+			Int16 getShort();
 		private:
 			Int16 m_id;
 			Int16 m_type;

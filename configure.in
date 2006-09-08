@@ -8,8 +8,8 @@ AM_INIT_AUTOMAKE(libopenraw, 0.0.1)
 AM_MAINTAINER_MODE
 AC_LIBTOOL_DLOPEN
 
-CXXFLAGS="-ansi -pedantic -g -Wall -Werror  -Weffc++"
-CFLAGS="-pedantic -g -Wall"
+AM_CXXFLAGS="-ansi -pedantic -g -Wall -Werror  -Weffc++"
+AM_CFLAGS="-pedantic -g -Wall"
 
 dnl Checks for programs.
 AC_PROG_CC

@@ -44,7 +44,7 @@ namespace OpenRaw {
 		protected:
 			/** get the small size thumbnail */
 			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
-
+			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
 		private:
 
 			ARWFile(const ARWFile&);

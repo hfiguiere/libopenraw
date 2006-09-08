@@ -46,7 +46,10 @@ namespace OpenRaw {
 			ORFFile(const ORFFile&);
 			ORFFile & operator=(const ORFFile &);
 
-			bool _getSmallThumbnail(Thumbnail & thumbnail);
+			/** Return the smal thumbnail in IFD1 */
+			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
+			/** There does not seems to be any large thumbnail */
+			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
 
 			IOFile *m_io; /**< the IO handle */
 			ORFContainer *m_container; /**< the real container */

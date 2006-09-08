@@ -42,9 +42,10 @@ namespace OpenRaw {
 			virtual ~CR2File();
 
 		protected:
-			/** get the small size thumbnail */
+			/** get the small size thumbnail in IFD 1*/
 			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
-
+			/** get the small size thumbnail in IFD 2*/
+			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
 		private:
 
 			CR2File(const CR2File&);

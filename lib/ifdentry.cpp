@@ -50,5 +50,12 @@ namespace OpenRaw {
 			return m_offset;
 		}
 
+		Int16 IFDEntry::getShort()
+		{
+			assert(m_type == IFD::EXIF_FORMAT_SHORT);
+			assert(m_count == 1);
+			return m_offset;
+		}
+
 	}
 }

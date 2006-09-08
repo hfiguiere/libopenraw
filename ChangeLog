@@ -1,3 +1,27 @@
+2006-09-07  Hubert Figuiere  <hub@figuiere.net>
+
+	* demo/thumb.cpp (main): fetch the large thumbnail.
+
+	* lib/ifdentry.{h,cpp}: added getShort()
+
+	* lib/rawfile.{h,cpp}, cr2file.{h,cpp}, arwfile.{h,cpp}: 
+	implemented _getLargeThumbnail()
+
+	* lib/orffile.{h,cpp}, neffile.{h,cpp}
+	subbed _getLargeThumbnail()
+
+	* include/libopenraw/libopenraw.h: removed medium thumbnail
+	size.
+
+2006-09-07  Edouard Gomez <ed.gomez *AT* free.fr>
+
+	* configure.in: properly define CFLAGS
+
+	* lib/io/Makefile.am: use libtool for libio to work on
+	64-bits.
+
+	* demo/Makefile.am: use libtool
+
 2006-09-06  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/thumbnail.cpp, lib/ifdfilecontainer.cpp,
