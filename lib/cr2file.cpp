@@ -51,6 +51,7 @@ namespace OpenRaw {
 
 		bool CR2File::_getSmallThumbnail(Thumbnail & thumbnail)
 		{
+			bool success;
 			int c = m_container->countDirectories();
 			if (c < 2) {
 				return false;
@@ -60,20 +61,14 @@ namespace OpenRaw {
 				Trace(Debug::WARNING) << "dir NULL\n";
 				return false;
 			}
-			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT);
-			if (e == NULL) {
-				Trace(Debug::WARNING) << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT NULL\n";
-				return false;
-			}
-			off_t offset = e->getLong();
-			e = dir->getEntry(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
-			if (e == NULL) {
 
-				Trace(Debug::WARNING) << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH NULL\n";
+			long offset = 0;
+			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
+																	offset);				
+			long size = 0;
+			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
+																	size);
 
-				return false;
-			}
-			size_t size = e->getLong();
 			void *buf = thumbnail.allocData(size);
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
@@ -97,26 +92,17 @@ namespace OpenRaw {
 				Trace(Debug::WARNING) << "dir NULL\n";
 				return false;
 			}
-			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_OFFSETS);
-			if (e == NULL) {
-				Trace(Debug::WARNING) << "EXIF_TAG_STRIP_OFFSETS NULL\n";
-				return false;
-			}
-			off_t offset = e->getLong();
-			e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
-			if (e == NULL) {
 
-				Trace(Debug::WARNING) << "EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH NULL\n";
+			bool success;
+			long offset = 0;
+			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+			long size = 0;
+			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, size);
 
-				return false;
-			}
-			size_t size = e->getLong();
-
-			int x, y;
-			e = dir->getEntry(IFD::EXIF_TAG_IMAGE_WIDTH);
-			x = e->getShort();
-			e = dir->getEntry(IFD::EXIF_TAG_IMAGE_LENGTH);
-			y = e->getShort();
+			short x = 0;
+			short y = 0;
+			success = dir->getShortValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
+			success = dir->getShortValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
 			
 			Trace(Debug::DEBUG1) << "x, y " << x << " " << y << "\n";
 			void *buf = thumbnail.allocData(size);

@@ -28,6 +28,7 @@
 #include "orffile.h"
 #include "arwfile.h"
 #include "thumbnail.h"
+#include "dngfile.h"
 
 using std::string;
 
@@ -55,6 +56,10 @@ namespace OpenRaw {
 			break;
 		case OR_RAWFILE_TYPE_ORF:
 			return new Internals::ORFFile(_filename);
+			break;
+		case OR_RAWFILE_TYPE_DNG:
+			return new Internals::DNGFile(_filename);
+			break;
 		default:
 			break;
 		}

@@ -9,3 +9,5 @@ Supported file format:
 -Canon CR2: 20D, 350D, 5D
 -Nikon NEF: D100, D70
 -Olympus ORF: E-300
+-DNG
+-Sony ARW: A-100 (experimental/broken)

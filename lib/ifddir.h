@@ -54,10 +54,33 @@ namespace OpenRaw {
 					return m_entries.size();
 				}
 			IFDEntry::Ref getEntry(int id);
+
+			/** Get a long value from and entry
+			 * @param id the IFD field id
+			 * @retval v the long value
+			 * @return true if success
+			 */
+			bool getLongValue(int id, long &v);
+			/** Get a short value from and entry
+			 * @param id the IFD field id
+			 * @retval v the long value
+			 * @return true if success
+			 */
+			bool getShortValue(int id, short &v);
 			/** get the offset of the next IFD 
 			 * in absolute
 			 */
 			off_t nextIFD();
+
+			/** get the SubIFD.
+			 * @return Ref to the new IFDDir if found
+			 */
+			Ref getSubIFD();
+
+			/** get the Exif IFD.
+			 * @return Ref to the new IFDDir if found
+			 */
+			Ref getExifIFD();
 		private:
 			off_t m_offset;
 			IFDFileContainer & m_container;

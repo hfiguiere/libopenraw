@@ -1,3 +1,25 @@
+2006-09-09  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ifddir.{h,cpp} (getExifIFD): get the Exif IFD 
+
+2006-09-08  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ifddir.cpp (getSubIFD): get the SubIFD. 
+
+	* lib/rawfile.cpp (newRawFile): register DNG
+
+	* lib/Makefile.am (libopenraw_la_SOURCES): added dngfile.cpp
+
+	* lib/dngfile.{cpp,h}: added files for DNG support
+	
+	* lib/arwfile.cpp, lib/cr2file.cpp, 
+	lib/neffile.cpp, lib/orffile.cpp: use getShortValue()
+	and getLongValue()
+
+	* lib/ifddir.{h,cpp}: Added getLongValue() and getShortValue()
+
+	* include/libopenraw/types.h: Add unsigned types
+
 2006-09-07  Hubert Figuiere  <hub@figuiere.net>
 
 	* demo/thumb.cpp (main): fetch the large thumbnail.

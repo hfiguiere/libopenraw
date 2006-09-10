@@ -1,5 +1,5 @@
 /*
- * libopenraw - arwfile.cpp
+ * libopenraw - dngfile.cpp
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -26,7 +26,7 @@
 #include "ifdfilecontainer.h"
 #include "ifd.h"
 #include "thumbnail.h"
-#include "arwfile.h"
+#include "dngfile.h"
 
 
 namespace OpenRaw {
@@ -35,55 +35,32 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		ARWFile::ARWFile(const char* _filename)
-			: RawFile(_filename, OR_RAWFILE_TYPE_ARW),
+		DNGFile::DNGFile(const char* _filename)
+			: RawFile(_filename, OR_RAWFILE_TYPE_DNG),
 				m_io(new IOFile(_filename)),
 				m_container(new IFDFileContainer(m_io, 0))
 		{
 
 		}
 
-		ARWFile::~ARWFile()
+		DNGFile::~DNGFile()
 		{
 			delete m_container;
 			delete m_io;
 		}
 
-		bool ARWFile::_getSmallThumbnail(Thumbnail & thumbnail)
+		/** does not have a small thumbnail */
+		bool DNGFile::_getSmallThumbnail(Thumbnail & thumbnail)
 		{
-			int c = m_container->countDirectories();
-			if (c < 2) {
-				return false;
-			}
-			IFDDir::Ref dir = m_container->setDirectory(1);
-			if (dir == NULL) {
-				Trace(Debug::WARNING) << "dir NULL\n";
-				return false;
-			}
-
-			bool success;
-			long offset = 0;
-			long size = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, 
-																	offset);
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-																	size);
-
-			void *buf = thumbnail.allocData(size);
-
-			size_t real_size = m_container->fetchData(buf, offset, size);
-			if (real_size != size) {
-				Trace(Debug::WARNING) << "wrong size\n";
-			}
-			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-			thumbnail.setDimensions(160, 120);
-			return true;
+			return false;
 		}
 
-		bool ARWFile::_getLargeThumbnail(Thumbnail & thumbnail)
+
+		/** DNG has only one RGB thumbnail in IFD 0 */
+		bool DNGFile::_getLargeThumbnail(Thumbnail & thumbnail)
 		{
 			int c = m_container->countDirectories();
-			if (c < 2) {
+			if (c < 1) {
 				return false;
 			}
 			IFDDir::Ref dir = m_container->setDirectory(0);
@@ -91,23 +68,27 @@ namespace OpenRaw {
 				Trace(Debug::WARNING) << "dir NULL\n";
 				return false;
 			}
+
 			bool success;
 			long offset = 0;
+			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
 			long size = 0;
-			
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, 
-																	offset);
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-																	size);
+			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, size);
 
+			short x = 0;
+			short y = 0;
+			success = dir->getShortValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
+			success = dir->getShortValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
+			
+			Trace(Debug::DEBUG1) << "x, y " << x << " " << y << "\n";
 			void *buf = thumbnail.allocData(size);
+
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
 				Trace(Debug::WARNING) << "wrong size\n";
 			}
-			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-			/* dimensions are hardcoded */
-			thumbnail.setDimensions(640, 480);
+			thumbnail.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
+			thumbnail.setDimensions(x, y);
 			return true;
 		}
 	}

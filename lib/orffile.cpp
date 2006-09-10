@@ -55,10 +55,15 @@ namespace OpenRaw {
 			}
 			IFDDir::Ref dir = m_container->setDirectory(1);
 
-			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT);
-			off_t offset = e->getLong();
-			e = dir->getEntry(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
-			size_t size = e->getLong();
+			bool success;
+
+			long offset = 0;
+			long size = 0;
+			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, 
+																	offset);
+			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
+																	size);
+
 			void *buf = thumbnail.allocData(size);
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
@@ -66,6 +71,8 @@ namespace OpenRaw {
 				Trace(Debug::WARNING) << "wrong size\n";
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
+			/* size has to be hardcoded, it does not seems to be 
+			 * in the tags */
 			thumbnail.setDimensions(160, 120);
 			return true;
 		}

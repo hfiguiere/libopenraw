@@ -12,6 +12,7 @@ noinst_HEADERS = \
 	neffile.h \
 	orffile.h \
 	arwfile.h \
+	dngfile.h \
 	ifd.h \
 	ifdfilecontainer.h \
 	ifddir.h ifdentry.h \
@@ -32,6 +33,7 @@ libopenraw_la_SOURCES = \
 	neffile.cpp \
 	orffile.cpp \
 	arwfile.cpp \
+	dngfile.cpp \
 	thumbnail.cpp \
 	or_debug.c \
 	ifdfilecontainer.cpp \

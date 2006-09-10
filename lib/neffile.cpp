@@ -64,17 +64,19 @@ namespace OpenRaw {
 				return false;
 			}
 
-			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_OFFSETS);
-			off_t offset = e->getLong();
-			e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
-			size_t size = e->getLong();
+			bool success;
+			long offset = 0; 
+			long size = 0;
+			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, size);
+
 			void *buf = thumbnail.allocData(size);
 
-			int x, y;
-			e = dir->getEntry(IFD::EXIF_TAG_IMAGE_WIDTH);
-			x = e->getLong();
-			e = dir->getEntry(IFD::EXIF_TAG_IMAGE_LENGTH);
-			y = e->getLong();
+			long x = 0;
+			long y = 0;
+
+			success = dir->getLongValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
+			success = dir->getLongValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
@@ -82,8 +84,6 @@ namespace OpenRaw {
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
 			thumbnail.setDimensions(x, y);
-
-
 			return true;
 		}
 

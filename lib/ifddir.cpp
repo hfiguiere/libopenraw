@@ -22,6 +22,7 @@
 #include <libopenraw/types.h>
 
 #include "debug.h"
+#include "ifd.h"
 #include "iofile.h"
 #include "ifdfilecontainer.h"
 #include "ifddir.h"
@@ -79,6 +80,29 @@ namespace OpenRaw {
 		}
 
 
+		bool IFDDir::getLongValue(int id, long &v)
+		{
+			bool success = false;
+			IFDEntry::Ref e = getEntry(id);
+			if (e != NULL) {
+				v = e->getLong();
+				success = true;
+			}
+			return success;
+		}
+
+
+		bool IFDDir::getShortValue(int id, short &v)
+		{
+			bool success = false;
+			IFDEntry::Ref e = getEntry(id);
+			if (e != NULL) {
+				v = e->getShort();
+				success = true;
+			}
+			return success;
+		}
+
 		off_t IFDDir::nextIFD()
 		{
 			Int16 numEntries;
@@ -101,6 +125,34 @@ namespace OpenRaw {
 			return next;
 		}
 		
+		/** The SubIFD is locate at offset found in the field
+		 * EXIF_TAG_SUB_IFDS
+		 */
+		IFDDir::Ref IFDDir::getSubIFD()
+		{
+			bool success;
+			long offset = 0;
+			success = getLongValue(IFD::EXIF_TAG_SUB_IFDS, offset);
+			if (success) {
+				Ref ref(new IFDDir(offset, m_container));
+			}
+			return Ref(static_cast<IFDDir*>(NULL));
+		}
+
+		/** The SubIFD is locate at offset found in the field
+		 * EXIF_TAG_SUB_IFDS
+		 */
+		IFDDir::Ref IFDDir::getExifIFD()
+		{
+			bool success;
+			long offset = 0;
+			success = getLongValue(IFD::EXIF_TAG_EXIF_IFD_POINTER, offset);
+			if (success) {
+				Ref ref(new IFDDir(offset, m_container));
+			}
+			return Ref(static_cast<IFDDir*>(NULL));
+		}
+
 	}
 }
 

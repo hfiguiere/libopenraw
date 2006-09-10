@@ -1,5 +1,5 @@
 /*
- * libopenraw - types.h
+ * libopenraw - dngfile.h
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -20,12 +20,42 @@
 
 
 
-#ifndef _LIBOPENRAW_TYPES_H_
-#define _LIBOPENRAW_TYPES_H_
 
-typedef short int Int16;
-typedef unsigned short int UInt16;
-typedef int Int32;
-typedef unsigned int UInt32;
+#ifndef __DNGFILE_H_
+#define __DNGFILE_H_
+
+#include "rawfile.h"
+
+namespace OpenRaw {
+
+	class Thumbnail;
+
+	namespace Internals {
+		class IOFile;
+		class IFDFileContainer;
+
+		class DNGFile
+			: public OpenRaw::RawFile
+		{
+		public:
+			DNGFile(const char* _filename);
+			virtual ~DNGFile();
+
+		protected:
+			/** get nothing */
+			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
+			/** get the large size thumbnail in IFD 0*/
+			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
+		private:
+
+			DNGFile(const DNGFile&);
+			DNGFile & operator=(const DNGFile&);
+
+			IOFile *m_io; /**< the IO handle */
+			IFDFileContainer *m_container; /**< the real container */
+		};
+	}
+
+}
 
 #endif
