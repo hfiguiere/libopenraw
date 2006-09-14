@@ -31,13 +31,11 @@
 #include "iofile.h"
 
 
+using namespace Debug;
 
 namespace OpenRaw {
 
-	using Debug::Trace;
-
 	namespace Internals {
-
 
 		IFDFileContainer::IFDFileContainer(IOFile *file, off_t offset)
 			: RawContainer(file, offset), 
@@ -115,20 +113,20 @@ namespace OpenRaw {
 		IFDFileContainer::getDirectoryDataSize()
 		{
 			// TODO move to IFDirectory
-			Trace(Debug::DEBUG1) << "getDirectoryDataSize()" << "\n";
+			Trace(DEBUG1) << "getDirectoryDataSize()" << "\n";
 			off_t offset = m_current_dir->offset();
 			// FIXME check error
-			Trace(Debug::DEBUG1) << "offset = " << offset 
+			Trace(DEBUG1) << "offset = " << offset 
 								<< " m_numTags = " << m_current_dir->numTags() << "\n";
 			off_t begin = offset + 2 + (m_current_dir->numTags()*12);
 			
-			Trace(Debug::DEBUG1) << "begin = " << begin << "\n";
+			Trace(DEBUG1) << "begin = " << begin << "\n";
 
 			m_file->seek(begin, SEEK_SET);
 			begin += 2;
 			Int32 nextIFD;
 			readInt32(m_file, nextIFD);
-			Trace(Debug::DEBUG1) << "nextIFD = " << nextIFD << "\n";
+			Trace(DEBUG1) << "nextIFD = " << nextIFD << "\n";
 			if (nextIFD == 0) {
 				// FIXME not good
 			}
@@ -151,7 +149,7 @@ namespace OpenRaw {
 		{
 			if (m_endian == ENDIAN_NULL) {
 
-				Trace(Debug::ERROR) << "null endian\n";
+				Trace(ERROR) << "null endian\n";
 
 				return false;
 			}
@@ -161,7 +159,7 @@ namespace OpenRaw {
 				return false;
 			}
 			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-			Trace(Debug::DEBUG1) << "read16 " << (int)buf[0] << " " << (int)buf [1] 
+			Trace(DEBUG1) << "read16 " << (int)buf[0] << " " << (int)buf [1] 
 								<< "\n";
 			if (m_endian == ENDIAN_LITTLE) {
 				v = buf[0] | (buf[1] << 8);
@@ -170,7 +168,7 @@ namespace OpenRaw {
 				v = buf[1] | (buf[0] << 8);
 			}
 			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
-			Trace(Debug::DEBUG1) << "value = " << v << "\n";
+			Trace(DEBUG1) << "value = " << v << "\n";
 			return true;
 		}
 
@@ -180,7 +178,7 @@ namespace OpenRaw {
 		{
 			if (m_endian == ENDIAN_NULL) {
 
-				Trace(Debug::ERROR) << "null endian\n";
+				Trace(ERROR) << "null endian\n";
 
 				return false;
 			}
@@ -191,7 +189,7 @@ namespace OpenRaw {
 			}
 
 			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-			Trace(Debug::DEBUG1) << "read32 " << (int)buf[0] << " " << (int)buf [1] 
+			Trace(DEBUG1) << "read32 " << (int)buf[0] << " " << (int)buf [1] 
 								<< " " << (int)buf [2] << " " << (int)buf[3] 
 								<< "\n";
 
@@ -203,7 +201,7 @@ namespace OpenRaw {
 			}
 
 			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
-			Trace(Debug::DEBUG1) << "value = " << v << "\n";
+			Trace(DEBUG1) << "value = " << v << "\n";
 
 			return true;
 		}
@@ -212,7 +210,7 @@ namespace OpenRaw {
 		bool
 		IFDFileContainer::_locateDirs(void)
 		{
-			Trace(Debug::DEBUG1) << "_locateDirs()\n";
+			Trace(DEBUG1) << "_locateDirs()\n";
 			if (m_endian == ENDIAN_NULL) {
 				char buf[4];
 				m_file->read(buf, 4);
@@ -229,7 +227,7 @@ namespace OpenRaw {
 			do {
 				if (offset != 0) {
 					std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-					Trace(Debug::DEBUG1) << "push offset =0x" << offset << "\n";
+					Trace(DEBUG1) << "push offset =0x" << offset << "\n";
 
 					IFDDir::Ref dir(new IFDDir(offset,*this));
 					m_dirs.push_back(dir);
@@ -240,7 +238,7 @@ namespace OpenRaw {
 				}
 			} while(offset != 0);
 
-			Trace(Debug::DEBUG1) << "# dir found = " << m_dirs.size() << "\n";
+			Trace(DEBUG1) << "# dir found = " << m_dirs.size() << "\n";
 			return (m_dirs.size() != 0);
 		}
 

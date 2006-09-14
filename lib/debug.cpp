@@ -24,34 +24,33 @@
 #include "debug.h"
 
 
-namespace OpenRaw {
-	namespace Debug {
+
+namespace Debug {
 		
-		int debugLevel = NOTICE;
+	int debugLevel = NOTICE;
 
-		Trace & Trace::operator<<(int i)
-		{
-			if (m_level <= debugLevel) {
-				std::cerr << i;
-			}
-			return *this;
+	Trace & Trace::operator<<(int i)
+	{
+		if (m_level <= debugLevel) {
+			std::cerr << i;
 		}
-
-		Trace & Trace::operator<<(const char * s)
-		{
-			if (m_level <= debugLevel) {
-				std::cerr << s;
-			}
-			return *this;
-		}
-
-		Trace & Trace::operator<<(void *p)
-		{
-			if (m_level <= debugLevel) {
-				std::cerr << p;
-			}
-			return *this;
-		}
-
+		return *this;
 	}
+
+	Trace & Trace::operator<<(const char * s)
+	{
+		if (m_level <= debugLevel) {
+			std::cerr << s;
+		}
+		return *this;
+	}
+
+	Trace & Trace::operator<<(void *p)
+	{
+		if (m_level <= debugLevel) {
+			std::cerr << p;
+		}
+		return *this;
+	}
+
 }

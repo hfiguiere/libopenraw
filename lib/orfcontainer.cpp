@@ -23,9 +23,9 @@
 #include "orfcontainer.h"
 
 
-namespace OpenRaw {
+using namespace Debug;
 
-	using Debug::Trace;
+namespace OpenRaw {
 
 	namespace Internals {
 
@@ -51,12 +51,12 @@ namespace OpenRaw {
 			if ((p[0] == 0x49) && (p[1] == 0x49)
 					&& (p[2] == 0x52) && (p[3] == 0x4f)) {
 
-				Trace(Debug::DEBUG1) << "Identified ORF file\n";
+				Trace(DEBUG1) << "Identified ORF file\n";
 
 				return ENDIAN_LITTLE;
 			}
 
-			Trace(Debug::DEBUG1) << "Unidentified ORF file\n";
+			Trace(DEBUG1) << "Unidentified ORF file\n";
 
 			return ENDIAN_NULL;
 		}

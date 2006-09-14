@@ -28,10 +28,10 @@
 #include "thumbnail.h"
 #include "dngfile.h"
 
+using namespace Debug;
 
 namespace OpenRaw {
 
-	using Debug::Trace;
 
 	namespace Internals {
 
@@ -65,7 +65,7 @@ namespace OpenRaw {
 			}
 			IFDDir::Ref dir = m_container->setDirectory(0);
 			if (dir == NULL) {
-				Trace(Debug::WARNING) << "dir NULL\n";
+				Trace(WARNING) << "dir NULL\n";
 				return false;
 			}
 
@@ -80,12 +80,12 @@ namespace OpenRaw {
 			success = dir->getShortValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
 			success = dir->getShortValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
 			
-			Trace(Debug::DEBUG1) << "x, y " << x << " " << y << "\n";
+			Trace(DEBUG1) << "x, y " << x << " " << y << "\n";
 			void *buf = thumbnail.allocData(size);
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
-				Trace(Debug::WARNING) << "wrong size\n";
+				Trace(WARNING) << "wrong size\n";
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
 			thumbnail.setDimensions(x, y);

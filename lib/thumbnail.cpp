@@ -28,10 +28,9 @@
 
 #include <libopenraw/libopenraw.h>
 
+using namespace Debug;
 
 namespace OpenRaw {
-
-	using Debug::Trace;
 
 	/** Private data for the thumbnail class */
 	class Thumbnail::Private {
@@ -110,10 +109,10 @@ namespace OpenRaw {
 
  	void * Thumbnail::allocData(const size_t s)
 	{
-		Trace(Debug::DEBUG1) << "allocate s=" << s << " data =" 
+		Trace(DEBUG1) << "allocate s=" << s << " data =" 
 							<< d->data << "\n";
 		d->data = malloc(s);
-		Trace(Debug::DEBUG1) << " data =" << d->data << "\n";
+		Trace(DEBUG1) << " data =" << d->data << "\n";
 		d->data_size = s;
 		return d->data;
 	}

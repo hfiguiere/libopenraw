@@ -1,3 +1,19 @@
+2006-09-13  Hubert Figuiere  <hfiguiere@teaser.fr>
+
+	* configure.in: add an option to build with fink on MacOSX to
+	locate boost properly.
+
+	* autogen.sh: don't hardcode the versions.
+
+2006-09-12  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/arwfile.cpp, lib/cr2file.cpp, lib/debug.cpp, lib/debug.h,
+	lib/dngfile.cpp, lib/ifddir.cpp, lib/ifdfilecontainer.cpp,
+	lib/neffile.cpp, lib/orfcontainer.cpp, lib/orffile.cpp,
+	lib/thumbnail.cpp: Change namespace for debug to workaround
+	gcc 3.3 buginess.
+
+
 2006-09-09  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ifddir.{h,cpp} (getExifIFD): get the Exif IFD 

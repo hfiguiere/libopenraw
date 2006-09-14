@@ -14,8 +14,8 @@ builddir=`pwd`
 
 AUTOCONF=autoconf
 LIBTOOL=libtool
-AUTOMAKE=automake-1.9
-ACLOCAL=aclocal-1.9
+AUTOMAKE=automake
+ACLOCAL=aclocal
 
 cd $topsrcdir
 
@@ -24,6 +24,7 @@ $ACLOCAL >> autogen.err 2>&1
 
 $AUTOMAKE --add-missing --copy --foreign 
 libtoolize --force
+autoheader --force
 $AUTOCONF
 
 cd $builddir

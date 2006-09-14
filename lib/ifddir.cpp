@@ -27,9 +27,9 @@
 #include "ifdfilecontainer.h"
 #include "ifddir.h"
 
-namespace OpenRaw {
+using namespace Debug;
 
-	using Debug::Trace;
+namespace OpenRaw {
 
 	namespace Internals {
 
@@ -47,14 +47,14 @@ namespace OpenRaw {
 
 		bool IFDDir::load()
 		{
-			Trace(Debug::DEBUG1) << "IFDDir::load() m_offset =" << m_offset << "\n";
+			Trace(DEBUG1) << "IFDDir::load() m_offset =" << m_offset << "\n";
 			Int16 numEntries = 0;
 			IOFile *file = m_container.file();
 			m_entries.clear();
 			file->seek(m_offset, SEEK_SET);
 			m_container.readInt16(file, numEntries);
 
-			Trace(Debug::DEBUG1) << "num =" << numEntries << "\n";
+			Trace(DEBUG1) << "num =" << numEntries << "\n";
 
 			for(Int16 i = 0; i < numEntries; i++) {
 				Int16 id;
@@ -67,7 +67,7 @@ namespace OpenRaw {
 				m_container.readInt32(file, offset);
 				IFDEntry::Ref entry(new IFDEntry(id, type, 
 																				 count, offset, m_container));
-				Trace(Debug::DEBUG1) << "adding elem for " << id << "\n";
+				Trace(DEBUG1) << "adding elem for " << id << "\n";
 				m_entries[id] = entry;
 			}
 
@@ -111,7 +111,7 @@ namespace OpenRaw {
 			if(m_entries.size() == 0) {
 				file->seek(m_offset, SEEK_SET);
 				m_container.readInt16(file, numEntries);
-				Trace(Debug::DEBUG1) << "numEntries =" << numEntries 
+				Trace(DEBUG1) << "numEntries =" << numEntries 
 									<< " shifting " << (numEntries * 12) + 2
 									<< "bytes\n";
 			}

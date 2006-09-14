@@ -19,34 +19,39 @@
  */
 
 
-namespace OpenRaw {
-	namespace Debug {
+#ifndef _OPENRAW_DEBUG_H_
+#define _OPENRAW_DEBUG_H_
 
-		typedef enum {
-			ERROR = 0,
-			WARNING,
-			NOTICE,
-			DEBUG1,
-			DEBUG2
-		} debug_level;
 
-		extern int debugLevel;
 
-		/** a basic Trace class for debug */
-		class Trace 
-		{
-		public:
-			Trace(debug_level level)
-			  : m_level(level)
-				{
-				}
-			Trace & operator<<(int i);
-			Trace & operator<<(const char * s);
-			Trace & operator<<(void *);
-		private:
-			int m_level;
-		};
+namespace Debug {
+	
+	typedef enum _debug_level {
+		ERROR = 0,
+		WARNING,
+		NOTICE,
+		DEBUG1,
+		DEBUG2
+	} debug_level;
 
-	}
+	extern int debugLevel;
+	
+	/** a basic Trace class for debug */
+	class Trace 
+	{
+	public:
+		
+		Trace(debug_level level)
+			: m_level(level)
+			{
+			}
+		Trace & operator<<(int i);
+		Trace & operator<<(const char * s);
+		Trace & operator<<(void *);
+	private:
+		int m_level;
+	};
+	
 }
 
+#endif

@@ -28,10 +28,10 @@
 #include "thumbnail.h"
 #include "arwfile.h"
 
+using namespace Debug;
 
 namespace OpenRaw {
 
-	using Debug::Trace;
 
 	namespace Internals {
 
@@ -57,7 +57,7 @@ namespace OpenRaw {
 			}
 			IFDDir::Ref dir = m_container->setDirectory(1);
 			if (dir == NULL) {
-				Trace(Debug::WARNING) << "dir NULL\n";
+				Trace(WARNING) << "dir NULL\n";
 				return false;
 			}
 
@@ -73,7 +73,7 @@ namespace OpenRaw {
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
-				Trace(Debug::WARNING) << "wrong size\n";
+				Trace(WARNING) << "wrong size\n";
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
 			thumbnail.setDimensions(160, 120);
@@ -88,7 +88,7 @@ namespace OpenRaw {
 			}
 			IFDDir::Ref dir = m_container->setDirectory(0);
 			if (dir == NULL) {
-				Trace(Debug::WARNING) << "dir NULL\n";
+				Trace(WARNING) << "dir NULL\n";
 				return false;
 			}
 			bool success;
@@ -103,7 +103,7 @@ namespace OpenRaw {
 			void *buf = thumbnail.allocData(size);
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
-				Trace(Debug::WARNING) << "wrong size\n";
+				Trace(WARNING) << "wrong size\n";
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
 			/* dimensions are hardcoded */

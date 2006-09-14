@@ -17,6 +17,13 @@ AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
+AC_ARG_WITH(fink,[  --with-fink          add /sw/... to CPP/LDFLAGS (Mac OSX)],[
+        if test "x$withval" != "xno"; then
+                CPPFLAGS="$CPPFLAGS -I/sw/include"
+                LDFLAGS="$LDFLAGS -L/sw/lib"
+        fi
+])
+
 AC_LANG(C++)
 AC_CHECK_HEADER(boost/shared_ptr.hpp, ,
 	AC_MSG_ERROR([boost headers not found]))

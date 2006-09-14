@@ -27,10 +27,9 @@
 #include "orfcontainer.h"
 #include "iofile.h"
 
+using namespace Debug;
 
 namespace OpenRaw {
-
-	using Debug::Trace;
 
 	namespace Internals {
 
@@ -68,7 +67,7 @@ namespace OpenRaw {
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
-				Trace(Debug::WARNING) << "wrong size\n";
+				Trace(WARNING) << "wrong size\n";
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
 			/* size has to be hardcoded, it does not seems to be 
