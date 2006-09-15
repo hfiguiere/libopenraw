@@ -29,6 +29,12 @@ namespace Debug {
 		
 	int debugLevel = NOTICE;
 
+	void Trace::setDebugLevel(debug_level lvl)
+	{
+		debugLevel = lvl;
+	}
+
+
 	Trace & Trace::operator<<(int i)
 	{
 		if (m_level <= debugLevel) {

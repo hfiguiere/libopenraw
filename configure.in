@@ -33,6 +33,7 @@ Makefile
 include/Makefile
 dcraw/Makefile
 lib/Makefile
+lib/capi/Makefile
 lib/io/Makefile
 doc/Makefile
 doc/Doxyfile

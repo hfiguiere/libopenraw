@@ -34,7 +34,6 @@ namespace Debug {
 		DEBUG2
 	} debug_level;
 
-	extern int debugLevel;
 	
 	/** a basic Trace class for debug */
 	class Trace 
@@ -48,6 +47,8 @@ namespace Debug {
 		Trace & operator<<(int i);
 		Trace & operator<<(const char * s);
 		Trace & operator<<(void *);
+
+		static void setDebugLevel(debug_level lvl);
 	private:
 		int m_level;
 	};

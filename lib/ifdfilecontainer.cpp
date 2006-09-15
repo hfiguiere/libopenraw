@@ -221,18 +221,18 @@ namespace OpenRaw {
 				}
 			}
 			m_file->seek(4, SEEK_SET);
-			off_t offset = 0;
-			readInt32(m_file, (Int32&)offset);
+			Int32 offset = 0;
+			readInt32(m_file, offset);
 			m_dirs.clear();
 			do {
 				if (offset != 0) {
-					std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
+//					std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
 					Trace(DEBUG1) << "push offset =0x" << offset << "\n";
 
 					IFDDir::Ref dir(new IFDDir(offset,*this));
 					m_dirs.push_back(dir);
 
-					std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
+//					std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
 
 					offset = dir->nextIFD();
 				}

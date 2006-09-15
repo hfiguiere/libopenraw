@@ -1,3 +1,38 @@
+2006-09-15  Hubert Figuiere  <hub@figuiere.net>
+
+	* include/libopenraw/consts.h: added OR_ERROR_UNKNOWN
+
+	* include/libopenraw/thumbnails.h: added or_thumbnail_data_size()
+
+	* demo/Makefile.am: build thumbc.c
+	
+	* lib/Makefile.am: adde capi
+	
+	* demo/thumbc.c: renamed. Fixed.
+	
+	* lib/capi/*: add C API.
+
+	* configure.in: added capi.
+
+2006-09-14  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ifdfilecontainer.cpp (IFDContainer::_locateDirs):
+	Don't cast off_t to Int32 and pass by ref. Fails on MacOS X
+	PowerPC.
+
+	* include/libopenraw/Makefile.am (HEADERS): added the 2 new headers
+
+	* include/libopenraw/libopenraw.h: Moved things to consts.h
+	and thumbnails.h
+
+	* include/libopenraw/consts.h: new header.
+
+	* include/libopenraw/thumbnails.h: new header.
+
+	* demo/thumb.cpp (main): set the DebugLevel
+
+	* lib/debug.{h,cpp}: added setDebugLevel()
+
 2006-09-13  Hubert Figuiere  <hfiguiere@teaser.fr>
 
 	* configure.in: add an option to build with fink on MacOSX to
@@ -20,7 +55,7 @@
 
 2006-09-08  Hubert Figuiere  <hub@figuiere.net>
 
-	* lib/ifddir.cpp (getSubIFD): get the SubIFD. 
+	* lib/ifddir.cpp (getSubIFD): get the SubIFD .
 
 	* lib/rawfile.cpp (newRawFile): register DNG
 

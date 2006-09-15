@@ -1,7 +1,7 @@
 
 INCLUDES = -I$(top_srcdir)/include
 
-SUBDIRS = io
+SUBDIRS = io capi
 
 noinst_HEADERS = \
 	iofile.h \
@@ -20,10 +20,8 @@ noinst_HEADERS = \
 
 lib_LTLIBRARIES = libopenraw.la
 
-libopenraw_la_LDFLAGS = -L$(top_builddir)/dcraw \
-	-L$(top_builddir)/lib/io 
-libopenraw_la_LIBADD = -lio \
-	-ldcparse
+libopenraw_la_LDFLAGS = 
+libopenraw_la_LIBADD = io/libio.la capi/libopenrawc.la
 
 libopenraw_la_SOURCES = \
 	iofile.cpp \

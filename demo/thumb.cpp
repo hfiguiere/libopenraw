@@ -5,6 +5,7 @@
 
 // FIXME
 #include "thumbnail.h"
+#include "debug.h"
 
 using OpenRaw::Thumbnail;
 
@@ -16,6 +17,8 @@ main(int argc, char** argv)
 		std::cerr << "missing parameter" << std::endl;
 		return 1;
 	}
+
+	Debug::Trace::setDebugLevel(Debug::DEBUG2);
 
 	Thumbnail * thumb =
 		Thumbnail::getAndExtractThumbnail(argv[1],
