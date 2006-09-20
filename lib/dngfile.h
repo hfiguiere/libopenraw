@@ -46,6 +46,8 @@ namespace OpenRaw {
 			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
 			/** get the large size thumbnail in IFD 0*/
 			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
+			/** get the preview */
+			virtual bool _getPreview(Thumbnail & thumbnail);
 		private:
 
 			DNGFile(const DNGFile&);

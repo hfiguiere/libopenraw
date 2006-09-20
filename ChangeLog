@@ -1,4 +1,41 @@
+2006-09-18  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/Makefile.am (libopenraw_la_LDFLAGS): versionning
+
+	* configure.in: versionning and pkgconfig
+
+	* include/libopenraw/Makefile.am (libopenrawdir): change the 
+	includes to be versionned
+
+	* lib/libopenraw-1.0.pc.in: pkgconfig
+
+2006-09-16  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/Makefile.am (libopenraw_la_LDFLAGS): Add -export-symbols
+	to restrict the exporte symbols.
+
+	* lib/libopenraw.sym: Added symbol list
+
 2006-09-15  Hubert Figuiere  <hub@figuiere.net>
+
+	* peffile.{h,cpp}: PEF file support
+
+	* lib/arwfile.{h,cpp}, lib/cr2file.{h,cpp},
+	lib/dngfile.{h,cpp}, lib/neffile.{h,cpp},
+	lib/orffile.{h,cpp}, lib/rawfile.{h,cpp}:
+	preview support.
+
+	
+	* include/libopenraw/consts.h: Fix a typo in consts. Add PEF
+	file type.
+
+	* Makefile.am, configure.in, include/libopenraw/Makefile.am,
+	lib/Makefile.am, lib/io/Makefile.am: make distcheck now works.
+	Removed dcraw from the build as it is useless.
+	
+	* README: added a support table.
+
+	* TODO: added.
 
 	* include/libopenraw/consts.h: added OR_ERROR_UNKNOWN
 
@@ -6,7 +43,7 @@
 
 	* demo/Makefile.am: build thumbc.c
 	
-	* lib/Makefile.am: adde capi
+	* lib/Makefile.am: added capi
 	
 	* demo/thumbc.c: renamed. Fixed.
 	

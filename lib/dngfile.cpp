@@ -91,5 +91,11 @@ namespace OpenRaw {
 			thumbnail.setDimensions(x, y);
 			return true;
 		}
+
+		bool DNGFile::_getPreview(Thumbnail & thumbnail)
+		{
+			return false;
+		}
+
 	}
 }

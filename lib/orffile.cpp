@@ -80,6 +80,11 @@ namespace OpenRaw {
 		{
 			return false;
 		}
+
+		bool ORFFile::_getPreview(Thumbnail & thumbnail)
+		{
+			return false;
+		}
 	}
 }
 

@@ -1,7 +1,7 @@
 
 
 
-SUBDIRS = dcraw lib doc test demo
+SUBDIRS = lib doc test demo include
 
 
 

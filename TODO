@@ -1,0 +1,12 @@
+TODO for 0.0.1
+--------------
+
+Write a parser for CRW
+Write a parser for RAF (FujiFilm)
+Write a parser for MRW
+Write a parser for X3F
+Fix ARW
+Support PEF (ifd based)
+Better implement DNG to fix the spec.
+
+Write a testsuite, even without data.

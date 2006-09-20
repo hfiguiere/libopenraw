@@ -48,6 +48,8 @@ namespace OpenRaw {
 
 			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
 			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
+			/** get the preview */
+			virtual bool _getPreview(Thumbnail & thumbnail);
 
 			IOFile *m_io; /**< the IO handle */
 			IFDFileContainer *m_container; /**< the real container */

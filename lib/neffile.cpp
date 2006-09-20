@@ -89,8 +89,14 @@ namespace OpenRaw {
 
 		bool NEFFile::_getLargeThumbnail(Thumbnail & thumbnail)
 		{
-			return true;
+			return false;
 		}
+
+		bool NEFFile::_getPreview(Thumbnail & thumbnail)
+		{
+			return false;
+		}
+
 	}
 }
 

@@ -11,3 +11,56 @@ Supported file format:
 -Olympus ORF: E-300
 -DNG
 -Sony ARW: A-100 (experimental/broken)
+
+
+
+Support table:
+--------------
+T=tested (I have a sample)
+Y=yes it is there (untested I don't have a sample but the format is know 
+  to be similar)
+N=no
+B=known to be broken (needs to be fixed I have a sample but further work is
+  needed)
+
+
+
+                       ThNail
+
+Canon CR2                Y
+ 20D                     T
+ 30D                     Y
+ 350D                    T
+ 5D                      T
+
+Canon CRW                N
+ 300D                    N
+ 10D                     N
+ G1                      N
+
+Nikon NEF                Y
+ D100                    T
+ D70                     T
+
+Olympus ORF              Y
+ E-300                   T
+ E-10                    Y
+
+Adobe DNG                Y
+ Leica DMR               T
+
+Sony ARW                 B
+ A-100                   B
+
+Pentax PEF               N
+
+Minolta MRW              N
+
+Sony SRF                 N
+
+Kodak DCR                N
+
+FujiFilm RAF             N
+
+Foveon X3F               N
+

@@ -3,7 +3,11 @@ INCLUDES = -I$(top_srcdir)/include
 
 SUBDIRS = io capi
 
-noinst_HEADERS = \
+EXTRA_DIST = libopenraw.sym libopenraw-1.0.pc.in
+
+pkgconfig_DATA = libopenraw-1.0.pc
+
+noinst_HEADERS = or_debug.h \
 	iofile.h \
 	debug.h	\
 	rawcontainer.h \
@@ -13,14 +17,19 @@ noinst_HEADERS = \
 	orffile.h \
 	arwfile.h \
 	dngfile.h \
+	peffile.h \
 	ifd.h \
 	ifdfilecontainer.h \
 	ifddir.h ifdentry.h \
+	thumbnail.h \
 	orfcontainer.h
 
 lib_LTLIBRARIES = libopenraw.la
 
-libopenraw_la_LDFLAGS = 
+libopenraw_la_LDFLAGS = \
+	-export-symbols $(srcdir)/libopenraw.sym \
+	-version-info @LIBOPENRAW_VERSION_INFO@
+
 libopenraw_la_LIBADD = io/libio.la capi/libopenrawc.la
 
 libopenraw_la_SOURCES = \
@@ -32,6 +41,7 @@ libopenraw_la_SOURCES = \
 	orffile.cpp \
 	arwfile.cpp \
 	dngfile.cpp \
+	peffile.cpp \
 	thumbnail.cpp \
 	or_debug.c \
 	ifdfilecontainer.cpp \

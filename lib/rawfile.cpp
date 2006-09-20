@@ -27,6 +27,7 @@
 #include "neffile.h"
 #include "orffile.h"
 #include "arwfile.h"
+#include "peffile.h"
 #include "thumbnail.h"
 #include "dngfile.h"
 
@@ -59,6 +60,9 @@ namespace OpenRaw {
 			break;
 		case OR_RAWFILE_TYPE_DNG:
 			return new Internals::DNGFile(_filename);
+			break;
+		case OR_RAWFILE_TYPE_PEF:
+			return new Internals::PEFFile(_filename);
 			break;
 		default:
 			break;
@@ -95,6 +99,9 @@ namespace OpenRaw {
 		else if (::strcasecmp(extension, "orf") == 0) {
 			return OR_RAWFILE_TYPE_ORF;
 		}
+		else if (::strcasecmp(extension, "pef") == 0) {
+			return OR_RAWFILE_TYPE_PEF;
+		}
 		return OR_RAWFILE_TYPE_UNKNOWN;
 	}
 
@@ -128,6 +135,9 @@ namespace OpenRaw {
 			break;
 		case OR_THUMB_SIZE_LARGE:
 			ret = _getLargeThumbnail(thumbnail);
+			break;
+		case OR_THUMB_SIZE_PREVIEW:
+			ret = _getPreview(thumbnail);
 			break;
 		default:
 			break;

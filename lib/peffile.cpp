@@ -1,5 +1,5 @@
 /*
- * libopenraw - cr2file.cpp
+ * libopenraw - peffile.cpp
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -19,38 +19,41 @@
  */
 
 
-#include <libopenraw/libopenraw.h>
+#include <iostream>
 
 #include "debug.h"
-#include "iofile.h"
-#include "ifdfilecontainer.h"
 #include "ifd.h"
+#include "ifdfilecontainer.h"
+#include "ifddir.h"
+#include "ifdentry.h"
+#include "iofile.h"
+#include "peffile.h"
 #include "thumbnail.h"
-#include "cr2file.h"
 
 using namespace Debug;
 
 namespace OpenRaw {
 
+
 	namespace Internals {
 
-		CR2File::CR2File(const char* _filename)
-			: RawFile(_filename, OR_RAWFILE_TYPE_CR2),
+		PEFFile::PEFFile(const char* _filename)
+			: RawFile(_filename, OR_RAWFILE_TYPE_PEF),
 				m_io(new IOFile(_filename)),
 				m_container(new IFDFileContainer(m_io, 0))
 		{
-
 		}
 
-		CR2File::~CR2File()
+
+		PEFFile::~PEFFile()
 		{
 			delete m_container;
 			delete m_io;
 		}
 
-		bool CR2File::_getSmallThumbnail(Thumbnail & thumbnail)
+
+		bool PEFFile::_getSmallThumbnail(Thumbnail & thumbnail)
 		{
-			bool success;
 			int c = m_container->countDirectories();
 			if (c < 2) {
 				return false;
@@ -61,26 +64,34 @@ namespace OpenRaw {
 				return false;
 			}
 
-			long offset = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
-																	offset);				
+			bool success;
+			long offset = 0; 
 			long size = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-																	size);
+			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, offset);
+			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, size);
 
+			Trace(DEBUG2) << "JPEG offset " << offset << "\n";
+			Trace(DEBUG2) << "JPEG size " << size << "\n"; 
 			void *buf = thumbnail.allocData(size);
+
+			long x = 160;
+			long y = 120;
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
 				Trace(WARNING) << "wrong size\n";
 			}
 			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-			thumbnail.setDimensions(160, 120);
+			thumbnail.setDimensions(x, y);
 			return true;
 		}
 
+		bool PEFFile::_getLargeThumbnail(Thumbnail & thumbnail)
+		{
+			return true;
+		}
 
-		bool CR2File::_getLargeThumbnail(Thumbnail & thumbnail)
+		bool PEFFile::_getPreview(Thumbnail & thumbnail)
 		{
 			int c = m_container->countDirectories();
 			if (c < 3) {
@@ -93,31 +104,28 @@ namespace OpenRaw {
 			}
 
 			bool success;
-			long offset = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+			long offset = 0; 
 			long size = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, size);
+			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, offset);
+			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, size);
 
-			short x = 0;
-			short y = 0;
-			success = dir->getShortValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
-			success = dir->getShortValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
-			
-			Trace(DEBUG1) << "x, y " << x << " " << y << "\n";
+			Trace(DEBUG2) << "preview JPEG offset " << offset << "\n";
+			Trace(DEBUG2) << "preview JPEG size " << size << "\n"; 
 			void *buf = thumbnail.allocData(size);
+
+			// FIXME this is probably dependent on the camera
+			// FIXME check the JPEG stream instead
+			long x = 3008;
+			long y = 2008;
 
 			size_t real_size = m_container->fetchData(buf, offset, size);
 			if (real_size != size) {
 				Trace(WARNING) << "wrong size\n";
 			}
-			thumbnail.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
+			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
 			thumbnail.setDimensions(x, y);
 			return true;
 		}
-
-		bool CR2File::_getPreview(Thumbnail & thumbnail)
-		{
-			return false;
-		}
 	}
 }
+

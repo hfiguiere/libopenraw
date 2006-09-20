@@ -1,5 +1,5 @@
 /*
- * libopenraw - arwfile.h
+ * libopenraw - peffile.h
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -21,8 +21,8 @@
 
 
 
-#ifndef __ARWFILE_H_
-#define __ARWFILE_H_
+#ifndef __PEFFILE_H_
+#define __PEFFILE_H_
 
 #include "rawfile.h"
 
@@ -34,23 +34,21 @@ namespace OpenRaw {
 		class IOFile;
 		class IFDFileContainer;
 
-		class ARWFile
+		class PEFFile
 			: public OpenRaw::RawFile
 		{
 		public:
-			ARWFile(const char* _filename);
-			virtual ~ARWFile();
+			PEFFile(const char* _filename);
+			virtual ~PEFFile();
 
-		protected:
-			/** get the small size thumbnail */
-			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
-			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
-			/** get the preview */
-			virtual bool _getPreview(Thumbnail & thumbnail);
 		private:
 
-			ARWFile(const ARWFile&);
-			ARWFile & operator=(const ARWFile&);
+			PEFFile(const PEFFile&);
+			PEFFile & operator=(const PEFFile &);
+
+			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
+			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
+			virtual bool _getPreview(Thumbnail & thumbnail);
 
 			IOFile *m_io; /**< the IO handle */
 			IFDFileContainer *m_container; /**< the real container */

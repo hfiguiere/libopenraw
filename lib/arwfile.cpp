@@ -110,5 +110,11 @@ namespace OpenRaw {
 			thumbnail.setDimensions(640, 480);
 			return true;
 		}
+
+		bool ARWFile::_getPreview(Thumbnail & thumbnail)
+		{
+			return false;
+		}
+
 	}
 }

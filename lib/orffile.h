@@ -50,6 +50,8 @@ namespace OpenRaw {
 			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
 			/** There does not seems to be any large thumbnail */
 			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
+			/** get the preview */
+			virtual bool _getPreview(Thumbnail & thumbnail);
 
 			IOFile *m_io; /**< the IO handle */
 			ORFContainer *m_container; /**< the real container */

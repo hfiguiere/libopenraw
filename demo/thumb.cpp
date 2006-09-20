@@ -44,6 +44,19 @@ main(int argc, char** argv)
 
 	delete thumb;
 
+	thumb =
+		Thumbnail::getAndExtractThumbnail(argv[1],
+													 OR_THUMB_SIZE_PREVIEW);
+	std::cerr << "preview data size =" << thumb->size() << std::endl;
+	std::cerr << "preview data type =" << thumb->dataType() << std::endl;
+
+	f = fopen("preview.jpg", "wb");
+	fwrite(thumb->data(), 1, thumb->size(), f);
+	fclose(f);
+
+	delete thumb;
+
+
 	return 0;
 }
 
