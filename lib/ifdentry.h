@@ -36,18 +36,18 @@ namespace OpenRaw {
 			/** Ref (ie shared pointer) */
 			typedef boost::shared_ptr<IFDEntry> Ref;
 
-			IFDEntry(Int16 _id, Int16 _type, Int32 _count, Int32 _offset,
+			IFDEntry(int16_t _id, int16_t _type, int32_t _count, int32_t _offset,
 							 IFDFileContainer &_container);
 			virtual ~IFDEntry();
 
 
-			Int32 getLong();
-			Int16 getShort();
+			int32_t getLong();
+			int16_t getShort();
 		private:
-			Int16 m_id;
-			Int16 m_type;
-			Int32 m_count;
-			Int32 m_offset;
+			int16_t m_id;
+			int16_t m_type;
+			int32_t m_count;
+			int32_t m_offset;
 			IFDFileContainer & m_container;
 		};
 

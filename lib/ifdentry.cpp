@@ -29,8 +29,8 @@ namespace OpenRaw {
 	namespace Internals {
 
 
-		IFDEntry::IFDEntry(Int16 _id, Int16 _type, 
-											 Int32 _count, Int32 _offset,
+		IFDEntry::IFDEntry(int16_t _id, int16_t _type, 
+											 int32_t _count, int32_t _offset,
 											 IFDFileContainer &_container)
 			: m_id(_id), m_type(_type),
 				m_count(_count), m_offset(_offset), 
@@ -43,14 +43,14 @@ namespace OpenRaw {
 		{
 		}
 
-		Int32 IFDEntry::getLong()
+		int32_t IFDEntry::getLong()
 		{
 			assert(m_type == IFD::EXIF_FORMAT_LONG);
 			assert(m_count == 1);
 			return m_offset;
 		}
 
-		Int16 IFDEntry::getShort()
+		int16_t IFDEntry::getShort()
 		{
 			assert(m_type == IFD::EXIF_FORMAT_SHORT);
 			assert(m_count == 1);

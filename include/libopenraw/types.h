@@ -23,9 +23,7 @@
 #ifndef _LIBOPENRAW_TYPES_H_
 #define _LIBOPENRAW_TYPES_H_
 
-typedef short int Int16;
-typedef unsigned short int UInt16;
-typedef int Int32;
-typedef unsigned int UInt32;
+/* C99 standard */
+#include <stdint.h>
 
 #endif

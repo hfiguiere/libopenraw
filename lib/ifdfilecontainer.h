@@ -128,9 +128,9 @@ namespace OpenRaw {
 				}
 
 			/** Read an int16 following the m_endian set */
-			bool readInt16(IOFile *f, Int16 & v);
+			bool readInt16(IOFile *f, int16_t & v);
 			/** Read an int32 following the m_endian set */
-			bool readInt32(IOFile *f, Int32 & v);
+			bool readInt32(IOFile *f, int32_t & v);
 		private:
 			int m_error;
 			EndianType m_endian;

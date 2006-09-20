@@ -48,7 +48,7 @@ namespace OpenRaw {
 		bool IFDDir::load()
 		{
 			Trace(DEBUG1) << "IFDDir::load() m_offset =" << m_offset << "\n";
-			Int16 numEntries = 0;
+			int16_t numEntries = 0;
 			IOFile *file = m_container.file();
 			m_entries.clear();
 			file->seek(m_offset, SEEK_SET);
@@ -56,11 +56,11 @@ namespace OpenRaw {
 
 			Trace(DEBUG1) << "num =" << numEntries << "\n";
 
-			for(Int16 i = 0; i < numEntries; i++) {
-				Int16 id;
-				Int16 type;
-				Int32 count;
-				Int32 offset;
+			for(int16_t i = 0; i < numEntries; i++) {
+				int16_t id;
+				int16_t type;
+				int32_t count;
+				int32_t offset;
 				m_container.readInt16(file, id);
 				m_container.readInt16(file, type);
 				m_container.readInt32(file, count);
@@ -105,7 +105,7 @@ namespace OpenRaw {
 
 		off_t IFDDir::nextIFD()
 		{
-			Int16 numEntries;
+			int16_t numEntries;
 			IOFile *file = m_container.file();
 
 			if(m_entries.size() == 0) {
@@ -120,7 +120,7 @@ namespace OpenRaw {
 			}
 
 			file->seek(m_offset + (numEntries * 12) + 2, SEEK_SET);
-			Int32 next;
+			int32_t next;
 			m_container.readInt32(file, next);
 			return next;
 		}

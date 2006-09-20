@@ -1,3 +1,11 @@
+2006-09-19  Hubert Figuiere  <hub@figuiere.net>
+
+	* include/libopenraw/types.h: use stdint.h
+	instead of custom type. C99 required.
+
+	* lib/ifdfilecontainer.{h,cpp}, lib/ifddir.cpp,
+	lib/ifdentry.{h,cpp}: use C99 stdint types
+
 2006-09-18  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/Makefile.am (libopenraw_la_LDFLAGS): versionning

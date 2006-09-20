@@ -124,7 +124,7 @@ namespace OpenRaw {
 
 			m_file->seek(begin, SEEK_SET);
 			begin += 2;
-			Int32 nextIFD;
+			int32_t nextIFD;
 			readInt32(m_file, nextIFD);
 			Trace(DEBUG1) << "nextIFD = " << nextIFD << "\n";
 			if (nextIFD == 0) {
@@ -145,7 +145,7 @@ namespace OpenRaw {
 
 
 		bool 
-		IFDFileContainer::readInt16(IOFile *f, Int16 & v)
+		IFDFileContainer::readInt16(IOFile *f, int16_t & v)
 		{
 			if (m_endian == ENDIAN_NULL) {
 
@@ -174,7 +174,7 @@ namespace OpenRaw {
 
 
 		bool 
-		IFDFileContainer::readInt32(IOFile *f, Int32 & v)
+		IFDFileContainer::readInt32(IOFile *f, int32_t & v)
 		{
 			if (m_endian == ENDIAN_NULL) {
 
@@ -221,7 +221,7 @@ namespace OpenRaw {
 				}
 			}
 			m_file->seek(4, SEEK_SET);
-			Int32 offset = 0;
+			int32_t offset = 0;
 			readInt32(m_file, offset);
 			m_dirs.clear();
 			do {
