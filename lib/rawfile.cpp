@@ -20,7 +20,11 @@
 
 
 #include <cstring>
+#include <cassert>
+#include <map>
 #include <string>
+
+#include "debug.h"
 
 #include "rawfile.h"
 #include "cr2file.h"
@@ -31,12 +35,58 @@
 #include "thumbnail.h"
 #include "dngfile.h"
 
+#include "rawfilefactory.h"
+
 using std::string;
+using namespace Debug;
 
 namespace OpenRaw {
-	
+
+	using Internals::RawFileFactory;
+
+	void init(void)
+	{
+ 		static RawFileFactory fctcr2(OR_RAWFILE_TYPE_CR2, 
+																 &Internals::CR2File::factory,
+																 "cr2");
+		static RawFileFactory fctnef(OR_RAWFILE_TYPE_NEF, 
+																 &Internals::NEFFile::factory,
+																 "nef");
+		static RawFileFactory fctarw(OR_RAWFILE_TYPE_ARW, 
+																 &Internals::ARWFile::factory,
+																 "arw");
+		static RawFileFactory fctorf(OR_RAWFILE_TYPE_ORF, 
+																 &Internals::ORFFile::factory,
+																 "orf");
+		static RawFileFactory fctdng(OR_RAWFILE_TYPE_DNG, 
+																 &Internals::DNGFile::factory,
+																 "dng");
+		static RawFileFactory fctpef(OR_RAWFILE_TYPE_PEF, 
+																 &Internals::PEFFile::factory,
+																 "pef");
+	}	
+
+	class RawFile::Private 
+	{
+	public:
+		Private(std::string f, Type t)
+			: m_filename(f),
+			m_type(t)
+			{
+			}
+		
+		/** the name of the file */
+		std::string m_filename;
+		/** the real type of the raw file */
+		Type m_type;
+	};
+
+
+
 	RawFile *RawFile::newRawFile(const char*_filename, RawFile::Type _typeHint)
 	{
+		init();
+
 		Type type;
 		if (_typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
 			type = identify(_filename);
@@ -44,30 +94,17 @@ namespace OpenRaw {
 		else {
 			type = _typeHint;
 		}
-		switch(type)
-		{
-		case OR_RAWFILE_TYPE_CR2:
-			return new Internals::CR2File(_filename);
-			break;
-		case OR_RAWFILE_TYPE_NEF:
-			return new Internals::NEFFile(_filename);
-			break;
-		case OR_RAWFILE_TYPE_ARW:
-			return new Internals::ARWFile(_filename);
-			break;
-		case OR_RAWFILE_TYPE_ORF:
-			return new Internals::ORFFile(_filename);
-			break;
-		case OR_RAWFILE_TYPE_DNG:
-			return new Internals::DNGFile(_filename);
-			break;
-		case OR_RAWFILE_TYPE_PEF:
-			return new Internals::PEFFile(_filename);
-			break;
-		default:
-			break;
+		Trace(DEBUG1) << "factory size " << RawFileFactory::table().size() << "\n";
+		RawFileFactory::Table::iterator iter = RawFileFactory::table().find(type);
+		if (iter == RawFileFactory::table().end()) {
+			Trace(WARNING) << "factory not found\n";
+			return NULL;
 		}
-		return NULL;
+		if (iter->second == NULL) {
+			Trace(WARNING) << "factory is NULL\n";
+			return NULL;
+		}
+		return (*(iter->second))(_filename);
 	}
 
 
@@ -78,36 +115,19 @@ namespace OpenRaw {
 			return OR_RAWFILE_TYPE_UNKNOWN;
 		}
 
-		if (::strcasecmp(extension, "cr2") == 0) {
-			return OR_RAWFILE_TYPE_CR2;
+		RawFileFactory::Extensions & extensions = RawFileFactory::extensions();
+		RawFileFactory::Extensions::iterator iter 
+			= extensions.find(string(extension));
+		if (iter == extensions.end())
+		{
+			return OR_RAWFILE_TYPE_UNKNOWN;
 		}
-		else if (::strcasecmp(extension, "crw") == 0) {
-			return OR_RAWFILE_TYPE_CRW;
-		}
-		else if (::strcasecmp(extension, "nef") == 0) {
-			return OR_RAWFILE_TYPE_NEF;
-		}
-		else if (::strcasecmp(extension, "mrw") == 0) {
-			return OR_RAWFILE_TYPE_MRW;
-		}
-		else if (::strcasecmp(extension, "arw") == 0) {
-			return OR_RAWFILE_TYPE_ARW;
-		}
-		else if (::strcasecmp(extension, "dng") == 0) {
-			return OR_RAWFILE_TYPE_DNG;
-		}
-		else if (::strcasecmp(extension, "orf") == 0) {
-			return OR_RAWFILE_TYPE_ORF;
-		}
-		else if (::strcasecmp(extension, "pef") == 0) {
-			return OR_RAWFILE_TYPE_PEF;
-		}
-		return OR_RAWFILE_TYPE_UNKNOWN;
+		return iter->second;
 	}
 
+
 	RawFile::RawFile(const char * _filename, RawFile::Type _type)
-		: m_filename(_filename),
-			m_type(_type)
+		: d(new Private(_filename, _type))
 	{
 		
 	}
@@ -115,12 +135,13 @@ namespace OpenRaw {
 
 	RawFile::~RawFile()
 	{
+		delete d;
 	}
 
 
 	RawFile::Type RawFile::type() const
 	{
-		return m_type;
+		return d->m_type;
 	}
 
 
@@ -144,6 +165,7 @@ namespace OpenRaw {
 		}
 		return ret;
 	}
+
 
 }
 

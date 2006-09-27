@@ -35,6 +35,12 @@ namespace OpenRaw {
 
 	namespace Internals {
 
+		RawFile *DNGFile::factory(const char* _filename)
+		{
+			return new DNGFile(_filename);
+		}
+
+
 		DNGFile::DNGFile(const char* _filename)
 			: RawFile(_filename, OR_RAWFILE_TYPE_DNG),
 				m_io(new IOFile(_filename)),

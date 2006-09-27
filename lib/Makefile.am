@@ -12,6 +12,7 @@ noinst_HEADERS = or_debug.h \
 	debug.h	\
 	rawcontainer.h \
 	rawfile.h \
+	rawfilefactory.h \
 	cr2file.h \
 	neffile.h \
 	orffile.h \
@@ -27,8 +28,9 @@ noinst_HEADERS = or_debug.h \
 lib_LTLIBRARIES = libopenraw.la
 
 libopenraw_la_LDFLAGS = \
-	-export-symbols $(srcdir)/libopenraw.sym \
 	-version-info @LIBOPENRAW_VERSION_INFO@
+
+#	-export-symbols $(srcdir)/libopenraw.sym 
 
 libopenraw_la_LIBADD = io/libio.la capi/libopenrawc.la
 
@@ -36,6 +38,7 @@ libopenraw_la_SOURCES = \
 	iofile.cpp \
 	debug.cpp \
 	rawfile.cpp \
+	rawfilefactory.cpp \
 	cr2file.cpp \
 	neffile.cpp \
 	orffile.cpp \

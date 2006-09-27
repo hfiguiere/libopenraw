@@ -31,12 +31,14 @@ namespace OpenRaw {
 
 	class Thumbnail;
 
+	void init();
+
 	class RawFile
 	{
 	public:
 		typedef ::or_rawfile_type Type;
 
-		/** factory method to create the proper RawFile instance.
+    /** factory method to create the proper RawFile instance.
 		 * @param _filename the name of the file to load
 		 * @param _typeHint a hint on the type. Use UNKNOWN_TYPE
 		 * if you want to let the library detect it for you.
@@ -63,7 +65,6 @@ namespace OpenRaw {
 		 * @param _type the type
 		 */
 		RawFile(const char *_filename, Type _type);
-
 		/** get the small size thumbnail */
 		virtual bool _getSmallThumbnail(Thumbnail & thumbnail) = 0;
 		/** get the large thumbnail */
@@ -73,11 +74,13 @@ namespace OpenRaw {
 	private:
 		static Type identify(const char*_filename);
 
-		/** the name of the file */
-		std::string m_filename;
-		/** the real type of the raw file */
-		Type m_type;
+		class Private;
+
+		Private *d;
 	};
+
+
+
 }
 
 

@@ -1,10 +1,21 @@
+2006-09-23  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/iofile.cpp: implemented filesize() call
+
+	* Implementad extension map in the factory.
+	
+	* Implemented factory for RAW.
+
 2006-09-19  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/rawfile.{h,cpp}: use d pointer for private
+	values.
 
 	* include/libopenraw/types.h: use stdint.h
 	instead of custom type. C99 required.
 
 	* lib/ifdfilecontainer.{h,cpp}, lib/ifddir.cpp,
-	lib/ifdentry.{h,cpp}: use C99 stdint types
+	lib/ifdentry.{h,cpp}: use C99 stdint types.
 
 2006-09-18  Hubert Figuiere  <hub@figuiere.net>
 

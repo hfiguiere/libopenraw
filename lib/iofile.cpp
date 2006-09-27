@@ -26,40 +26,45 @@
 namespace OpenRaw {
 	namespace Internals {
 	
-	IOFile::IOFile(const char *filename)
-		: m_fileName(filename),
-		  m_methods(::get_default_io_methods()),
-		  m_ioRef(NULL)
-	{
-	}
-
-	IOFile::~IOFile()
-	{
-	}
-	
-	IOFile::Error IOFile::open()
-	{
-		m_ioRef = ::raw_open(m_methods, m_fileName.c_str(), O_RDONLY);
-		if (m_ioRef == NULL) {
-			return OR_ERROR_CANT_OPEN;
+		IOFile::IOFile(const char *filename)
+			: m_fileName(filename),
+				m_methods(::get_default_io_methods()),
+				m_ioRef(NULL)
+		{
 		}
-		return OR_ERROR_NONE;
-	}
 
-	int IOFile::close()
-	{
-		return ::raw_close(m_ioRef);
-	}
+		IOFile::~IOFile()
+		{
+		}
+	
+		IOFile::Error IOFile::open()
+		{
+			m_ioRef = ::raw_open(m_methods, m_fileName.c_str(), O_RDONLY);
+			if (m_ioRef == NULL) {
+				return OR_ERROR_CANT_OPEN;
+			}
+			return OR_ERROR_NONE;
+		}
 
-	int IOFile::seek(off_t offset, int whence)
-	{
-		return ::raw_seek(m_ioRef, offset, whence);
-	}
+		int IOFile::close()
+		{
+			return ::raw_close(m_ioRef);
+		}
 
-	int IOFile::read(void *buf, size_t count)
-	{
-		return ::raw_read(m_ioRef, buf, count);
-	}
+		int IOFile::seek(off_t offset, int whence)
+		{
+			return ::raw_seek(m_ioRef, offset, whence);
+		}
 
-}
+		int IOFile::read(void *buf, size_t count)
+		{
+			return ::raw_read(m_ioRef, buf, count);
+		}
+
+		off_t IOFile::filesize()
+		{
+			return ::raw_filesize(m_ioRef);
+		}
+
+	}
 }

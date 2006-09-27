@@ -37,6 +37,11 @@ namespace OpenRaw {
 
 	namespace Internals {
 
+		RawFile *NEFFile::factory(const char* _filename)
+		{
+			return new NEFFile(_filename);
+		}
+
 		NEFFile::NEFFile(const char* _filename)
 			: RawFile(_filename, OR_RAWFILE_TYPE_NEF),
 				m_io(new IOFile(_filename)),

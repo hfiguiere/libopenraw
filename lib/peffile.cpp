@@ -37,6 +37,11 @@ namespace OpenRaw {
 
 	namespace Internals {
 
+		RawFile *PEFFile::factory(const char* _filename)
+		{
+			return new PEFFile(_filename);
+		}
+
 		PEFFile::PEFFile(const char* _filename)
 			: RawFile(_filename, OR_RAWFILE_TYPE_PEF),
 				m_io(new IOFile(_filename)),

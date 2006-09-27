@@ -38,6 +38,7 @@ namespace OpenRaw {
 			: public OpenRaw::RawFile
 		{
 		public:
+			static RawFile *factory(const char* _filename);
 			NEFFile(const char* _filename);
 			virtual ~NEFFile();
 

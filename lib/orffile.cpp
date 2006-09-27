@@ -33,6 +33,12 @@ namespace OpenRaw {
 
 	namespace Internals {
 
+		RawFile *ORFFile::factory(const char* _filename)
+		{
+			return new ORFFile(_filename);
+		}
+
+
 		ORFFile::ORFFile(const char* _filename)
 			: RawFile(_filename, OR_RAWFILE_TYPE_ORF),
 			  m_io(new IOFile(_filename)),

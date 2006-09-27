@@ -38,6 +38,7 @@ namespace OpenRaw {
 			: public OpenRaw::RawFile
 		{
 		public:
+			static RawFile *factory(const char* _filename);
 			ARWFile(const char* _filename);
 			virtual ~ARWFile();
 

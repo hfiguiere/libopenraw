@@ -25,6 +25,7 @@
 #define __CR2FILE_H_
 
 #include "rawfile.h"
+#include "rawfilefactory.h"
 
 namespace OpenRaw {
 
@@ -38,6 +39,7 @@ namespace OpenRaw {
 			: public OpenRaw::RawFile
 		{
 		public:
+			static RawFile *factory(const char* _filename);
 			CR2File(const char* _filename);
 			virtual ~CR2File();
 
@@ -49,7 +51,6 @@ namespace OpenRaw {
 			/** get the preview */
 			virtual bool _getPreview(Thumbnail & thumbnail);
 		private:
-
 			CR2File(const CR2File&);
 			CR2File & operator=(const CR2File&);
 

@@ -28,11 +28,18 @@
 #include "thumbnail.h"
 #include "cr2file.h"
 
+#include "rawfilefactory.h"
+
 using namespace Debug;
 
 namespace OpenRaw {
 
 	namespace Internals {
+
+		RawFile *CR2File::factory(const char* _filename)
+		{
+			return new CR2File(_filename);
+		}
 
 		CR2File::CR2File(const char* _filename)
 			: RawFile(_filename, OR_RAWFILE_TYPE_CR2),

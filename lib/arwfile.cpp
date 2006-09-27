@@ -35,6 +35,11 @@ namespace OpenRaw {
 
 	namespace Internals {
 
+		RawFile *ARWFile::factory(const char* _filename)
+		{
+			return new ARWFile(_filename);
+		}
+
 		ARWFile::ARWFile(const char* _filename)
 			: RawFile(_filename, OR_RAWFILE_TYPE_ARW),
 				m_io(new IOFile(_filename)),
