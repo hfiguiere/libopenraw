@@ -1,8 +1,11 @@
 Prerequistes to build:
 
--a C++ compiler
+-a C++ compiler (tested on gcc 3.3 and up)
 -libboost (boost::shared_ptr)
+
 -automake
+OR
+-CMake 2.4 <http://cmake.org>
 
 
 Supported file format:

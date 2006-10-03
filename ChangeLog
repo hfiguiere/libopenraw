@@ -1,3 +1,14 @@
+2006-10-02  Hubert Figuiere  <hub@figuiere.net>
+
+	* CMakeLists.txt: force use of Fink on Mac with CMake
+
+2006-09-24  Hubert Figuiere  <hub@figuiere.net>
+
+	* README: added note about cmake
+
+	* */CMakeLists.txt: basic cmake support. Untested on 
+	!Linux
+
 2006-09-23  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/iofile.cpp: implemented filesize() call
