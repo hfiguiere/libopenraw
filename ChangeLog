@@ -1,3 +1,7 @@
+2006-10-10  Hubert Figuiere  <hub@figuiere.net>
+
+	* debian/*: added Debian subdir
+
 2006-10-03  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/rawfilefactory.cpp: #include <cassert> to comply

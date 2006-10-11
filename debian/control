@@ -1,0 +1,30 @@
+Source: libopenraw
+Section: libs
+Priority: extra
+Maintainer: Hubert Figuiere <hub@figuiere.net>
+Build-Depends: debhelper (>> 5.0.0), cdbs (>= 0.4.30), libboost-dev (>= 1.33)
+Standards-Version: 3.7.2
+
+
+Package: libopenraw-dev
+Section: libdevel
+Architecture: any
+Description: A library to open camera RAW files. (Development files)
+ libopenraw is a library to parse and process digital camera RAW
+ files.
+
+Package: libopenraw0-dbg
+Architecture: any
+Depends: libopenraw0 (= ${Source-Version})
+Description: A library to open camera RAW files. (Debug files)
+ libopenraw is a library to parse and process digital camera RAW
+ files.
+
+
+Package: libopenraw0
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: A library to open camera RAW files. (Library files)
+ libopenraw is a library to parse and process digital camera RAW
+ files.
