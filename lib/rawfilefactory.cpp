@@ -19,6 +19,7 @@
  */
 
 #include <iostream>
+#include <cassert>
 
 #include "rawfilefactory.h"
 #include "debug.h"

@@ -1,6 +1,14 @@
+2006-10-03  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/rawfilefactory.cpp: #include <cassert> to comply
+	with gcc 4.1
+
 2006-10-02  Hubert Figuiere  <hub@figuiere.net>
 
+	* test/CMakeLists.txt: build test subdir
+
 	* CMakeLists.txt: force use of Fink on Mac with CMake
+	Added test subdir
 
 2006-09-24  Hubert Figuiere  <hub@figuiere.net>
 
