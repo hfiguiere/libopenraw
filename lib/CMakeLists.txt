@@ -10,6 +10,7 @@ set(LIBOPENRAW_SRCS ${LIBOPENRAW_SRCS}
 		    orffile.cpp rawfilefactory.cpp
 		    dngfile.cpp iofile.cpp
 		    peffile.cpp thumbnail.cpp
+                    ciffcontainer.cpp crwfile.cpp
 		    io/io.c io/posix_io.c capi/capi.cpp)
 add_library(openraw SHARED ${LIBOPENRAW_SRCS})
 

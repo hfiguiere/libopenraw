@@ -5,11 +5,14 @@ INCLUDES = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/lib
 
-check_PROGRAMS = fileio 
+check_PROGRAMS = fileio ciffcontainertest
 
 
-CFLAGS = -g
-LDFLAGS = -L$(top_builddir)/lib/io
-LDADD = -lio
-
+CFLAGS = -Wall -pedantic -g
+fileio_LDFLAGS = -L$(top_builddir)/lib/io
+fileio_LDADD = -lio
 fileio_SOURCES = fileio.t.c
+
+ciffcontainertest_LDFLAGS = -L$(top_builddir)/lib
+ciffcontainertest_LDADD = -lopenraw
+ciffcontainertest_SOURCES = ciffcontainertest.cpp

@@ -55,12 +55,6 @@ namespace OpenRaw {
 			/** destructor */
 			virtual ~IFDFileContainer();
 
-			/** define the endian of the container */
-			typedef enum {
-				ENDIAN_NULL = 0, /** no endian found: means invalid file */
-				ENDIAN_BIG,      /** big endian found */
-				ENDIAN_LITTLE    /** little endian found */
-			} EndianType;
 			/** 
 					due to the way Exif works, we have to set specific index
 					to address these IFD 
@@ -108,14 +102,6 @@ namespace OpenRaw {
 			 * @return the size of the data chunk in bytes
 			 */
 			size_t getDirectoryDataSize();
-			/** 
-			 * Fetch the data chunnk from the current image directory
-			 * @param buf the buffer to load into
-			 * @param offset the offset
-			 * @param buf_size the size of the data to fetch
-			 * @return the size retrieved, <= buf_size likely equal
-			 */
-			size_t fetchData(void *buf, const off_t offset, const size_t buf_size);
 
 
 			/**
@@ -127,13 +113,8 @@ namespace OpenRaw {
 					return m_error;
 				}
 
-			/** Read an int16 following the m_endian set */
-			bool readInt16(IOFile *f, int16_t & v);
-			/** Read an int32 following the m_endian set */
-			bool readInt32(IOFile *f, int32_t & v);
 		private:
 			int m_error;
-			EndianType m_endian;
 
 			IFDDir::Ref m_current_dir;
 			std::vector<IFDDir::Ref> m_dirs;

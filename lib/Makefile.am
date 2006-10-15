@@ -19,11 +19,13 @@ noinst_HEADERS = or_debug.h \
 	arwfile.h \
 	dngfile.h \
 	peffile.h \
+	crwfile.h \
 	ifd.h \
 	ifdfilecontainer.h \
 	ifddir.h ifdentry.h \
 	thumbnail.h \
-	orfcontainer.h
+	orfcontainer.h \
+	ciffcontainer.h
 
 lib_LTLIBRARIES = libopenraw.la
 
@@ -45,9 +47,11 @@ libopenraw_la_SOURCES = \
 	arwfile.cpp \
 	dngfile.cpp \
 	peffile.cpp \
+	crwfile.cpp \
 	thumbnail.cpp \
 	or_debug.c \
 	ifdfilecontainer.cpp \
 	ifddir.cpp ifdentry.cpp \
 	rawcontainer.cpp \
-	orfcontainer.cpp
+	orfcontainer.cpp \
+	ciffcontainer.cpp

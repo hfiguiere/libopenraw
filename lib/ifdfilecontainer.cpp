@@ -40,7 +40,6 @@ namespace OpenRaw {
 		IFDFileContainer::IFDFileContainer(IOFile *file, off_t offset)
 			: RawContainer(file, offset), 
 				m_error(0),
-				m_endian(ENDIAN_NULL),
 				m_current_dir(),
 				m_dirs()
 		{
@@ -131,79 +130,6 @@ namespace OpenRaw {
 				// FIXME not good
 			}
 			return nextIFD - begin;
-		}
-
-		size_t 
-		IFDFileContainer::fetchData(void *buf, const off_t offset,
-																const size_t buf_size)
-		{
-			size_t s;
-			m_file->seek(offset, SEEK_SET);
-			s = m_file->read(buf, buf_size);
-			return s;
-		}
-
-
-		bool 
-		IFDFileContainer::readInt16(IOFile *f, int16_t & v)
-		{
-			if (m_endian == ENDIAN_NULL) {
-
-				Trace(ERROR) << "null endian\n";
-
-				return false;
-			}
-			unsigned char buf[2];
-			int s = f->read(buf, 2);
-			if (s != 2) {
-				return false;
-			}
-			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-			Trace(DEBUG1) << "read16 " << (int)buf[0] << " " << (int)buf [1] 
-								<< "\n";
-			if (m_endian == ENDIAN_LITTLE) {
-				v = buf[0] | (buf[1] << 8);
-			}
-			else {
-				v = buf[1] | (buf[0] << 8);
-			}
-			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
-			Trace(DEBUG1) << "value = " << v << "\n";
-			return true;
-		}
-
-
-		bool 
-		IFDFileContainer::readInt32(IOFile *f, int32_t & v)
-		{
-			if (m_endian == ENDIAN_NULL) {
-
-				Trace(ERROR) << "null endian\n";
-
-				return false;
-			}
-			unsigned char buf[4];
-			int s = f->read(buf, 4);
-			if (s != 4) {
-				return false;
-			}
-
-			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-			Trace(DEBUG1) << "read32 " << (int)buf[0] << " " << (int)buf [1] 
-								<< " " << (int)buf [2] << " " << (int)buf[3] 
-								<< "\n";
-
-			if (m_endian == ENDIAN_LITTLE) {
-				v = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
-			}
-			else {
- 				v = buf[3] | (buf[2] << 8) | (buf[1] << 16) | (buf[0] << 24);
-			}
-
-			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
-			Trace(DEBUG1) << "value = " << v << "\n";
-
-			return true;
 		}
 
 

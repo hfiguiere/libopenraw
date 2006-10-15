@@ -32,6 +32,7 @@
 #include "orffile.h"
 #include "arwfile.h"
 #include "peffile.h"
+#include "crwfile.h"
 #include "thumbnail.h"
 #include "dngfile.h"
 
@@ -64,6 +65,9 @@ namespace OpenRaw {
 		static RawFileFactory fctpef(OR_RAWFILE_TYPE_PEF, 
 																 &Internals::PEFFile::factory,
 																 "pef");
+		static RawFileFactory fctcrw(OR_RAWFILE_TYPE_CRW,
+																 &Internals::CRWFile::factory,
+																 "crw");																 
 	}	
 
 	class RawFile::Private 

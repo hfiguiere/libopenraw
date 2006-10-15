@@ -1,3 +1,25 @@
+2006-10-14  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ciffcontainer.{h,cpp} (fetchData): added fetchData(). 
+
+	* lib/rawfile.cpp (init): add CRW to the factory. 
+
+	* lib/crwfile.{h,cpp}, lib/CMakeLists.txt, lib/Makefile.am: 
+	new file for CRW support.
+
+	* lib/rawcontainer.{h,cpp}, ifdfilecontainer.{h.cpp}: 
+	move fetchData() from IFDFileContainer.
+
+2006-10-12  Hubert Figuiere  <hub@figuiere.net>
+
+	* test/ciffcontainertest.cpp: new test file for CIFF support.
+	* test/CMakeLists.txt, test/Makefile.am: added test
+	* lib/ciffcontainer.{h,cpp}: new CIFF container
+	* lib/CMakeLists.txt, lib/Makefile.am: CIFF container added to build
+	* lib/ifdfilecontainer.{h,cpp}, lib/rawcontainer.{h,cpp}:
+	moved read functions to the base RawContainer class
+
+
 2006-10-10  Hubert Figuiere  <hub@figuiere.net>
 
 	* debian/*: added Debian subdir

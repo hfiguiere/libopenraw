@@ -39,6 +39,13 @@ namespace OpenRaw {
 		class RawContainer
 		{
 		public:
+			/** define the endian of the container */
+			typedef enum {
+				ENDIAN_NULL = 0, /** no endian found: means invalid file */
+				ENDIAN_BIG,      /** big endian found */
+				ENDIAN_LITTLE    /** little endian found */
+			} EndianType;
+
 			/** 
 					@param file the file handle
 					@param offset the offset since starting the 
@@ -52,15 +59,39 @@ namespace OpenRaw {
 				{
 					return m_file;
 				}
+
+			/** Read an int16 following the m_endian set */
+			bool readInt16(IOFile *f, int16_t & v);
+			/** Read an int32 following the m_endian set */
+			bool readInt32(IOFile *f, int32_t & v);
+			/** Read an uint16 following the m_endian set */
+			bool readUInt16(IOFile *f, uint16_t & v);
+			/** Read an uint32 following the m_endian set */
+			bool readUInt32(IOFile *f, uint32_t & v);
+			/** 
+			 * Fetch the data chunk from the file
+			 * @param buf the buffer to load into
+			 * @param offset the offset
+			 * @param buf_size the size of the data to fetch
+			 * @return the size retrieved, <= buf_size likely equal
+			 */
+			size_t fetchData(void *buf, const off_t offset, const size_t buf_size);
+
 		protected:
 
 			RawContainer(const RawContainer&);
 			RawContainer & operator=(const RawContainer &);
 
+			void setEndian(EndianType endian)
+				{
+					m_endian = endian;
+				}
+
 			/** the file handle */
 			IOFile *m_file;
 			/** the offset from the begining of the file */
 			off_t m_offset;
+			EndianType m_endian;
 		};
 		
 	}
