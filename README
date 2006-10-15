@@ -10,6 +10,7 @@ OR
 
 Supported file format:
 -Canon CR2: 20D, 350D, 5D
+-Canon CRW: 300D
 -Nikon NEF: D100, D70
 -Olympus ORF: E-300
 -DNG
@@ -36,10 +37,10 @@ Canon CR2                Y
  350D                    T
  5D                      T
 
-Canon CRW                N
- 300D                    N
- 10D                     N
- G1                      N
+Canon CRW                Y
+ 300D                    T
+ 10D                     Y
+ G1                      T
 
 Nikon NEF                Y
  D100                    T
