@@ -1,3 +1,7 @@
+2006-10-15  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ciffcontainer.h: added a comprehensive list of CIFF tags.
+
 2006-10-14  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ciffcontainer.{h,cpp} (fetchData): added fetchData(). 
