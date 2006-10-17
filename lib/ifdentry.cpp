@@ -21,6 +21,8 @@
 
 #include <cassert>
 
+#include "endianutils.h"
+
 #include "ifdfilecontainer.h"
 #include "ifdentry.h"
 #include "ifd.h"
@@ -30,10 +32,10 @@ namespace OpenRaw {
 
 
 		IFDEntry::IFDEntry(int16_t _id, int16_t _type, 
-											 int32_t _count, int32_t _offset,
+											 int32_t _count, uint32_t _data,
 											 IFDFileContainer &_container)
-			: m_id(_id), m_type(_type),
-				m_count(_count), m_offset(_offset), 
+			: m_id(_id), m_type(_type),				
+				m_count(_count), m_data(_data), 
 				m_container(_container)
 		{
 		}
@@ -47,14 +49,28 @@ namespace OpenRaw {
 		{
 			assert(m_type == IFD::EXIF_FORMAT_LONG);
 			assert(m_count == 1);
-			return m_offset;
+			int32_t val;
+			if (m_container.endian() == RawContainer::ENDIAN_LITTLE) {
+				val = EL32((uint8_t*)&m_data);
+			}
+			else {
+				val = BE32((uint8_t*)&m_data);
+			}
+			return val;
 		}
 
 		int16_t IFDEntry::getShort()
 		{
 			assert(m_type == IFD::EXIF_FORMAT_SHORT);
 			assert(m_count == 1);
-			return m_offset;
+			int32_t val;
+			if (m_container.endian() == RawContainer::ENDIAN_LITTLE) {
+				val = EL16((uint8_t*)&m_data);
+			}
+			else {
+				val = BE16((uint8_t*)&m_data);
+			}
+			return val;
 		}
 
 	}

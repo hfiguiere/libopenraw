@@ -1,5 +1,5 @@
 /*
- * libopenraw - ifdentry.h
+ * libopenraw - endiantutils.h
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -19,43 +19,24 @@
  */
 
 
-#ifndef _OPENRAW_INTERNALS_IFDENTRY_H
-#define _OPENRAW_INTERNALS_IFDENTRY_H
-
-#include <boost/shared_ptr.hpp>
-#include <libopenraw/types.h>
-
-namespace OpenRaw {
-	namespace Internals {
-
-		class IFDFileContainer;
-
-		class IFDEntry
-		{
-		public:
-			/** Ref (ie shared pointer) */
-			typedef boost::shared_ptr<IFDEntry> Ref;
-
-			IFDEntry(int16_t _id, int16_t _type, int32_t _count, uint32_t _data,
-							 IFDFileContainer &_container);
-			virtual ~IFDEntry();
 
 
-			int32_t getLong();
-			int16_t getShort();
-		private:
-			int16_t m_id;
-			int16_t m_type;
-			int32_t m_count;
-			uint32_t m_data; /**< raw data without endian conversion */
-			IFDFileContainer & m_container;
-		};
 
+#ifndef __ENDIANUTILS_H_
+#define __ENDIANUTILS_H_
 
-	}
-}
+#define EL16(b) \
+  ((b)[0] | ((b)[1] << 8))
+
+#define BE16(b) \
+  ((b)[1] | ((b)[0] << 8))
+
+#define EL32(b) \
+  ((b)[0] | ((b)[1] << 8) | ((b)[2] << 16) | ((b)[3] << 24))
+
+#define BE32(b) \
+  ((b)[3] | ((b)[2] << 8) | ((b)[1] << 16) | ((b)[0] << 24))
 
 
 #endif
-
 

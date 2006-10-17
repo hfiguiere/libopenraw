@@ -59,6 +59,10 @@ namespace OpenRaw {
 				{
 					return m_file;
 				}
+			EndianType endian() const
+				{
+					return m_endian;
+				}
 
 			/** Read an int16 following the m_endian set */
 			bool readInt16(IOFile *f, int16_t & v);

@@ -23,6 +23,7 @@
 #include <libopenraw/types.h>
 
 #include "debug.h"
+#include "endianutils.h"
 #include "iofile.h"
 #include "rawcontainer.h"
 
@@ -68,10 +69,10 @@ namespace OpenRaw {
 			Trace(DEBUG1) << "read16 " << (int)buf[0] << " " << (int)buf [1] 
 								<< "\n";
 			if (m_endian == ENDIAN_LITTLE) {
-				v = buf[0] | (buf[1] << 8);
+				v = EL16(buf);
 			}
 			else {
-				v = buf[1] | (buf[0] << 8);
+				v = BE16(buf);
 			}
 			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
 			Trace(DEBUG1) << "value = " << v << "\n";
@@ -101,10 +102,10 @@ namespace OpenRaw {
 								<< "\n";
 
 			if (m_endian == ENDIAN_LITTLE) {
-				v = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
+				v = EL32(buf);
 			}
 			else {
- 				v = buf[3] | (buf[2] << 8) | (buf[1] << 16) | (buf[0] << 24);
+				v = BE32(buf);
 			}
 
 			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
@@ -132,10 +133,10 @@ namespace OpenRaw {
 			Trace(DEBUG1) << "readu16 " << (int)buf[0] << " " << (int)buf [1] 
 								<< "\n";
 			if (m_endian == ENDIAN_LITTLE) {
-				v = buf[0] | (buf[1] << 8);
+				v = EL16(buf);
 			}
 			else {
-				v = buf[1] | (buf[0] << 8);
+				v = BE16(buf);
 			}
 			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
 			Trace(DEBUG1) << "value = " << v << "\n";
@@ -164,10 +165,10 @@ namespace OpenRaw {
 								<< "\n";
 
 			if (m_endian == ENDIAN_LITTLE) {
-				v = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
+				v = EL32(buf);
 			}
 			else {
- 				v = buf[3] | (buf[2] << 8) | (buf[1] << 16) | (buf[0] << 24);
+ 				v = BE32(buf);
 			}
 
 			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);

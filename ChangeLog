@@ -1,3 +1,12 @@
+2006-10-17  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/rawcontainer.{h,cpp}: call the new endianutils.h
+	* lib/ifdentry.{h,cpp}: the data in the entry is stored
+	as is an converted when requested.
+	* lib/ifddir.cpp: data replace offset in IFDEntry.
+
+	* lib/endianutils.h: new endian comnversion macro.
+
 2006-10-15  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ciffcontainer.h: added a comprehensive list of CIFF tags.
@@ -22,7 +31,6 @@
 	* lib/CMakeLists.txt, lib/Makefile.am: CIFF container added to build
 	* lib/ifdfilecontainer.{h,cpp}, lib/rawcontainer.{h,cpp}:
 	moved read functions to the base RawContainer class
-
 
 2006-10-10  Hubert Figuiere  <hub@figuiere.net>
 

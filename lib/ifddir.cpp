@@ -43,7 +43,7 @@ namespace OpenRaw {
 		IFDDir::~IFDDir()
 		{
 
-		}
+ 		}
 
 		bool IFDDir::load()
 		{
@@ -60,13 +60,13 @@ namespace OpenRaw {
 				int16_t id;
 				int16_t type;
 				int32_t count;
-				int32_t offset;
+				uint32_t data;
 				m_container.readInt16(file, id);
 				m_container.readInt16(file, type);
 				m_container.readInt32(file, count);
-				m_container.readInt32(file, offset);
+				file->read(&data, 4);
 				IFDEntry::Ref entry(new IFDEntry(id, type, 
-																				 count, offset, m_container));
+																				 count, data, m_container));
 				Trace(DEBUG1) << "adding elem for " << id << "\n";
 				m_entries[id] = entry;
 			}
