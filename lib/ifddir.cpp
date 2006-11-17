@@ -22,8 +22,9 @@
 #include <libopenraw/types.h>
 
 #include "debug.h"
+#include "exception.h"
 #include "ifd.h"
-#include "iofile.h"
+#include "io/stream.h"
 #include "ifdfilecontainer.h"
 #include "ifddir.h"
 
@@ -49,7 +50,7 @@ namespace OpenRaw {
 		{
 			Trace(DEBUG1) << "IFDDir::load() m_offset =" << m_offset << "\n";
 			int16_t numEntries = 0;
-			IOFile *file = m_container.file();
+			IO::Stream *file = m_container.file();
 			m_entries.clear();
 			file->seek(m_offset, SEEK_SET);
 			m_container.readInt16(file, numEntries);
@@ -80,25 +81,66 @@ namespace OpenRaw {
 		}
 
 
-		bool IFDDir::getLongValue(int id, long &v)
+		bool IFDDir::getIntegerValue(int id, uint32_t &v)
 		{
 			bool success = false;
 			IFDEntry::Ref e = getEntry(id);
 			if (e != NULL) {
-				v = e->getLong();
-				success = true;
+				try {
+					switch(e->type())
+					{
+					case IFD::EXIF_FORMAT_LONG:
+						v = e->getLong();
+						success = true;
+						break;
+					case IFD::EXIF_FORMAT_SHORT:
+						v = e->getShort();
+						success = true;
+						break;
+					default:
+						break;
+					}
+				}
+				catch(std::exception & e) {
+					Trace(ERROR) << "Exception raised " << e.what() 
+											 << " fetch integer value for " << id << "\n";
+				}
 			}
 			return success;
 		}
 
 
-		bool IFDDir::getShortValue(int id, short &v)
+		bool IFDDir::getLongValue(int id, uint32_t &v)
 		{
 			bool success = false;
 			IFDEntry::Ref e = getEntry(id);
 			if (e != NULL) {
-				v = e->getShort();
-				success = true;
+				try {
+					v = e->getLong();
+					success = true;
+				}
+				catch(std::exception & e) {
+					Trace(ERROR) << "Exception raised " << e.what() 
+											 << " fetch long value for " << id << "\n";
+				}
+			}
+			return success;
+		}
+
+
+		bool IFDDir::getShortValue(int id, uint16_t &v)
+		{
+			bool success = false;
+			IFDEntry::Ref e = getEntry(id);
+			if (e != NULL) {
+				try {
+					v = e->getShort();
+					success = true;
+				}
+				catch(std::exception & e) {
+					Trace(ERROR) << "Exception raised " << e.what() 
+											 << " fetch long value for " << id << "\n";
+				}
 			}
 			return success;
 		}
@@ -106,7 +148,7 @@ namespace OpenRaw {
 		off_t IFDDir::nextIFD()
 		{
 			int16_t numEntries;
-			IOFile *file = m_container.file();
+			IO::Stream *file = m_container.file();
 
 			if(m_entries.size() == 0) {
 				file->seek(m_offset, SEEK_SET);
@@ -131,7 +173,7 @@ namespace OpenRaw {
 		IFDDir::Ref IFDDir::getSubIFD()
 		{
 			bool success;
-			long offset = 0;
+			uint32_t offset = 0;
 			success = getLongValue(IFD::EXIF_TAG_SUB_IFDS, offset);
 			if (success) {
 				Ref ref(new IFDDir(offset, m_container));
@@ -145,7 +187,7 @@ namespace OpenRaw {
 		IFDDir::Ref IFDDir::getExifIFD()
 		{
 			bool success;
-			long offset = 0;
+			uint32_t offset = 0;
 			success = getLongValue(IFD::EXIF_TAG_EXIF_IFD_POINTER, offset);
 			if (success) {
 				Ref ref(new IFDDir(offset, m_container));

@@ -37,7 +37,7 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		IFDFileContainer::IFDFileContainer(IOFile *file, off_t offset)
+		IFDFileContainer::IFDFileContainer(IO::Stream *file, off_t offset)
 			: RawContainer(file, offset), 
 				m_error(0),
 				m_current_dir(),
@@ -82,6 +82,14 @@ namespace OpenRaw {
 			return m_dirs.size();
 		}
 
+		std::vector<IFDDir::Ref> & 
+		IFDFileContainer::directories()
+		{
+			if (m_dirs.size() == 0) {
+				countDirectories();
+			}
+			return m_dirs;
+		}
 
 		IFDDir::Ref
 		IFDFileContainer::setDirectory(int dir)

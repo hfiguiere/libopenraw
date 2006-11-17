@@ -41,85 +41,15 @@ namespace OpenRaw {
 		}
 
 		ARWFile::ARWFile(const char* _filename)
-			: RawFile(_filename, OR_RAWFILE_TYPE_ARW),
-				m_io(new IOFile(_filename)),
-				m_container(new IFDFileContainer(m_io, 0))
+			: IFDFile(_filename, OR_RAWFILE_TYPE_ARW)
 		{
 
 		}
 
 		ARWFile::~ARWFile()
 		{
-			delete m_container;
-			delete m_io;
 		}
 
-		bool ARWFile::_getSmallThumbnail(Thumbnail & thumbnail)
-		{
-			int c = m_container->countDirectories();
-			if (c < 2) {
-				return false;
-			}
-			IFDDir::Ref dir = m_container->setDirectory(1);
-			if (dir == NULL) {
-				Trace(WARNING) << "dir NULL\n";
-				return false;
-			}
-
-			bool success;
-			long offset = 0;
-			long size = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, 
-																	offset);
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-																	size);
-
-			void *buf = thumbnail.allocData(size);
-
-			size_t real_size = m_container->fetchData(buf, offset, size);
-			if (real_size != size) {
-				Trace(WARNING) << "wrong size\n";
-			}
-			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-			thumbnail.setDimensions(160, 120);
-			return true;
-		}
-
-		bool ARWFile::_getLargeThumbnail(Thumbnail & thumbnail)
-		{
-			int c = m_container->countDirectories();
-			if (c < 2) {
-				return false;
-			}
-			IFDDir::Ref dir = m_container->setDirectory(0);
-			if (dir == NULL) {
-				Trace(WARNING) << "dir NULL\n";
-				return false;
-			}
-			bool success;
-			long offset = 0;
-			long size = 0;
-			
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, 
-																	offset);
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-																	size);
-
-			void *buf = thumbnail.allocData(size);
-			size_t real_size = m_container->fetchData(buf, offset, size);
-			if (real_size != size) {
-				Trace(WARNING) << "wrong size\n";
-			}
-			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-			/* dimensions are hardcoded */
-			thumbnail.setDimensions(640, 480);
-			return true;
-		}
-
-		bool ARWFile::_getPreview(Thumbnail & thumbnail)
-		{
-			return false;
-		}
 
 	}
 }

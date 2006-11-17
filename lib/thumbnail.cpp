@@ -42,17 +42,15 @@ namespace OpenRaw {
 		/** type of thumbnail data */
 		DataType data_type;
 		/** x dimension in pixels of thumbnail data */
-		int x;
+		uint32_t x;
 		/** y dimension in pixels of thumbnail data */
-		int y;
-		/** size type of thumbnail */
-		Size thumb_size;
+		uint32_t y;
 		
-		Private(Size _size)
+		Private()
 			: data(NULL),
 				data_size(0),
 				data_type(OR_DATA_TYPE_NONE),
-				x(0), y(0), thumb_size(_size)
+				x(0), y(0)
 			{
 			}
 		
@@ -67,8 +65,8 @@ namespace OpenRaw {
 		Private & operator=(const Private &);
 	};
 
-	Thumbnail::Thumbnail(Size _size)
-		: d(new Thumbnail::Private(_size))
+	Thumbnail::Thumbnail()
+		: d(new Thumbnail::Private())
 	{
 	}
 
@@ -79,14 +77,14 @@ namespace OpenRaw {
 
 	Thumbnail *
 	Thumbnail::getAndExtractThumbnail(const char* _filename,
-																		Thumbnail::Size preferred_size)
+																		uint32_t preferred_size)
 	{
 		Thumbnail *thumb = NULL;
 
 		RawFile *file = RawFile::newRawFile(_filename);
 		if (file) {
-			thumb = new Thumbnail(preferred_size);
-			file->getThumbnail(*thumb);
+			thumb = new Thumbnail();
+			file->getThumbnail(preferred_size, *thumb);
 			delete file;
 		}
 		return thumb;
@@ -100,11 +98,6 @@ namespace OpenRaw {
 	void Thumbnail::setDataType(Thumbnail::DataType _type)
 	{
 		d->data_type = _type;
-	}
-
-	Thumbnail::Size Thumbnail::thumbSize() const
-	{
-		return d->thumb_size;
 	}
 
  	void * Thumbnail::allocData(const size_t s)
@@ -127,7 +120,17 @@ namespace OpenRaw {
 		return d->data;
 	}
 
-	void Thumbnail::setDimensions(int x, int y)
+	uint32_t Thumbnail::x()
+	{
+		return d->x;
+	}
+
+	uint32_t Thumbnail::y()
+	{
+		return d->y;
+	}
+
+	void Thumbnail::setDimensions(uint32_t x, uint32_t y)
 	{
 		d->x = x;
 		d->y = y;

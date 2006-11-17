@@ -39,6 +39,7 @@ extern "C" {
 		OR_ERROR_BUF_TOO_SMALL = 1,
 		OR_ERROR_NOTAREF = 2,
 		OR_ERROR_CANT_OPEN = 3, /**< can't open file. Check OS error codes */
+		OR_ERROR_CLOSED_STREAM = 4, /**< stream closed */
 		OR_ERROR_UNKNOWN = 42,
 		OR_ERROR_LAST_ 
 	} or_error;
@@ -58,6 +59,7 @@ extern "C" {
 		OR_RAWFILE_TYPE_PEF  /**< Pentax PEF */
 	} or_rawfile_type;
 
+#if 0
 	/** the thumbnail size 
 			They are heavily dependent of the file type, but
 			small is always the exif thumbnail and large always the largest 
@@ -70,6 +72,7 @@ extern "C" {
 		OR_THUMB_SIZE_LARGE,    /**< the largest */
 		OR_THUMB_SIZE_PREVIEW   /**< embedded JPEG version. Not always available */
 	} or_thumb_size;
+#endif
 
 
 	typedef enum {

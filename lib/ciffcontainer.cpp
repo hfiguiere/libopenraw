@@ -42,7 +42,7 @@ namespace OpenRaw {
 			bool RecordEntry::readFrom(CIFFContainer *container)
 			{
 				bool ret;
-				IOFile *file = container->file();
+				IO::Stream *file = container->file();
 				ret = container->readUInt16(file, typeCode);
 				ret = container->readUInt32(file, length);
 				ret = container->readUInt32(file, offset);
@@ -59,7 +59,8 @@ namespace OpenRaw {
 			Heap::Heap(off_t start, off_t length, CIFFContainer * container)
 				: m_start(start),
 					m_length(length),
-					m_container(container)
+					m_container(container),
+					m_records()
 			{
 			}
 
@@ -75,7 +76,7 @@ namespace OpenRaw {
 			bool Heap::_loadRecords()
 			{
 				std::cout << "_loadRecord()\n";
-				IOFile *file = m_container->file();
+				IO::Stream *file = m_container->file();
 				file->seek(m_start + m_length - 4, SEEK_SET);
 				int32_t offset;
 				bool ret = m_container->readInt32(file, offset);
@@ -110,16 +111,11 @@ namespace OpenRaw {
 #endif
 
 
-			HeapFileHeader::HeapFileHeader()
-			{
-			}
-
-
 			bool HeapFileHeader::readFrom(CIFFContainer *container)
 			{
 				endian = RawContainer::ENDIAN_NULL;
 				bool ret = false;
-				IOFile *file = container->file();
+				IO::Stream *file = container->file();
 				int s = file->read(byteOrder, 2);
 				if (s == 2) {
 					if((byteOrder[0] == 'I') && (byteOrder[1] == 'I')) {
@@ -144,8 +140,9 @@ namespace OpenRaw {
 			}
 		}
 		
-		CIFFContainer::CIFFContainer(IOFile *file)
+		CIFFContainer::CIFFContainer(IO::Stream *file)
 			: RawContainer(file, 0),
+				m_hdr(),
 				m_heap((CIFF::Heap*)NULL)
 		{
 			m_endian = _readHeader();

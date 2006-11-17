@@ -26,6 +26,7 @@
 #ifndef __LIBOPENRAW_THUMBNAILS_H_
 #define __LIBOPENRAW_THUMBNAILS_H_
 
+#include <libopenraw/types.h>
 #include <libopenraw/consts.h>
 
 #ifdef __cplusplus
@@ -43,7 +44,7 @@ extern "C" {
 	 *	@return error code
 	 */
 	or_error or_get_extract_thumbnail(const char* filename,
-					 or_thumb_size preferred_size,
+					 uint32_t preferred_size,
 					 ORThumbnailRef *thumb);
 	
 	/** Allocate a thumbnail
@@ -61,15 +62,15 @@ extern "C" {
 	extern or_data_type 
 	or_thumbnail_format(ORThumbnailRef thumb);
 
-	extern int
-	or_thumbnail_size(ORThumbnailRef thumb);
-
 	extern void *
 	or_thumbnail_data(ORThumbnailRef thumb);
 
 	extern size_t
 	or_thumbnail_data_size(ORThumbnailRef thumb);
 
+	extern void
+	or_thumbnail_dimensions(ORThumbnailRef thumb, 
+													uint32_t *x, uint32_t *y);
 
 #ifdef __cplusplus
 }

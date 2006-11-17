@@ -1,5 +1,5 @@
 /*
- * libopenraw - orfcontainer.cpp
+ * libopenraw - exception.h
  *
  * Copyright (C) 2006 Hubert Figuiere
  *
@@ -19,48 +19,37 @@
  */
 
 
-#include "debug.h"
-#include "orfcontainer.h"
 
+#ifndef _OPENRAW_EXCEPTION_H_
+#define _OPENRAW_EXCEPTION_H_
 
-using namespace Debug;
+#include <exception>
 
 namespace OpenRaw {
-
 	namespace Internals {
 
-
-		ORFContainer::ORFContainer(IO::Stream *file, off_t offset)
-			: IFDFileContainer(file, offset)
+		/** generic OpenRaw exception */
+		class Exception
+			: public std::exception
 		{
-		}
+
+		};
 
 
-		ORFContainer::~ORFContainer()
+		/** data is of bad type */
+		class BadTypeException
+			: public Exception
 		{
-		}
 
+		};
 
-		IFDFileContainer::EndianType 
-		ORFContainer::isMagicHeader(const char *p, int len)
+		/** data is of too big */
+		class TooBigException
+			: public Exception
 		{
-			if (len < 4){
-				// we need at least 4 bytes to check
-				return ENDIAN_NULL;
-			}
-			if ((p[0] == 0x49) && (p[1] == 0x49)
-					&& (p[2] == 0x52) && (p[3] == 0x4f)) {
-
-				Trace(DEBUG1) << "Identified ORF file\n";
-
-				return ENDIAN_LITTLE;
-			}
-
-			Trace(DEBUG1) << "Unidentified ORF file\n";
-
-			return ENDIAN_NULL;
-		}
+		};
 
 	}
 }
 
+#endif

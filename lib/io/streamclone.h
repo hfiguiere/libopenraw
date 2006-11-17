@@ -1,5 +1,5 @@
 /*
- * libopenraw - iofile.h
+ * libopenraw - streamclone.h
  *
  * Copyright (C) 2006 Hubert Figuière
  *
@@ -19,58 +19,42 @@
  */
 
 
-
-#ifndef __IO_FILE_H__
-#define __IO_FILE_H__
+#ifndef __IO_STREAMCLONE_H__
+#define __IO_STREAMCLONE_H__
 
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <libopenraw/libopenraw.h>
-
-#include "io/stream.h"
-
+#include "stream.h"
 
 namespace OpenRaw {
 	namespace IO {
 
-
-/** file IO stream */
-		class File
+		/** @brief cloned stream. Allow reading from a different offset
+		 */
+		class StreamClone
 			: public Stream
 		{
 		public:
-			/** Contruct the file 
-			 * @param filename the full pathname for the file
-			 */
-			File(const char *filename);
-			virtual ~File();
+			StreamClone(Stream *clone, off_t offset);
+			virtual ~StreamClone();
 			
-// file APIs
-			/** open the file */
 			virtual Error open();
-			/** close the file */
 			virtual int close();
-			/** seek in the file. Semantics are similar to POSIX */
 			virtual int seek(off_t offset, int whence);
-			/** read in the file. Semantics are similar to POSIX */
 			virtual int read(void *buf, size_t count);
 			virtual off_t filesize();
-//			virtual void *mmap(size_t l, off_t offset);
-//			virtual int munmap(void *addr, size_t l);
-			
+
+
 		private:
 			/** private copy constructor to make sure it is not called */
-			File(const File& f);
+			StreamClone(const StreamClone& f);
 			/** private = operator to make sure it is never called */
-			File & operator=(const File&);
-			
-			/** the interface to the C io */
-			::io_methods *m_methods;
-			/** the C io file handle */
-			::IOFileRef m_ioRef;
-		};
+			StreamClone & operator=(const StreamClone&);
 
+			Stream *m_cloned;
+			off_t m_offset;
+		};
 
 	}
 }

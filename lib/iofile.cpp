@@ -24,44 +24,44 @@
 
 
 namespace OpenRaw {
-	namespace Internals {
+	namespace IO {
 	
-		IOFile::IOFile(const char *filename)
-			: m_fileName(filename),
+		File::File(const char *filename)
+			: OpenRaw::IO::Stream(filename),
 				m_methods(::get_default_io_methods()),
 				m_ioRef(NULL)
 		{
 		}
 
-		IOFile::~IOFile()
+		File::~File()
 		{
 		}
 	
-		IOFile::Error IOFile::open()
+		File::Error File::open()
 		{
-			m_ioRef = ::raw_open(m_methods, m_fileName.c_str(), O_RDONLY);
+			m_ioRef = ::raw_open(m_methods, get_path().c_str(), O_RDONLY);
 			if (m_ioRef == NULL) {
 				return OR_ERROR_CANT_OPEN;
 			}
 			return OR_ERROR_NONE;
 		}
 
-		int IOFile::close()
+		int File::close()
 		{
 			return ::raw_close(m_ioRef);
 		}
 
-		int IOFile::seek(off_t offset, int whence)
+		int File::seek(off_t offset, int whence)
 		{
 			return ::raw_seek(m_ioRef, offset, whence);
 		}
 
-		int IOFile::read(void *buf, size_t count)
+		int File::read(void *buf, size_t count)
 		{
 			return ::raw_read(m_ioRef, buf, count);
 		}
 
-		off_t IOFile::filesize()
+		off_t File::filesize()
 		{
 			return ::raw_filesize(m_ioRef);
 		}

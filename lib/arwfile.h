@@ -24,7 +24,7 @@
 #ifndef __ARWFILE_H_
 #define __ARWFILE_H_
 
-#include "rawfile.h"
+#include "ifdfile.h"
 
 namespace OpenRaw {
 
@@ -35,7 +35,7 @@ namespace OpenRaw {
 		class IFDFileContainer;
 
 		class ARWFile
-			: public OpenRaw::RawFile
+			: public IFDFile
 		{
 		public:
 			static RawFile *factory(const char* _filename);
@@ -43,18 +43,11 @@ namespace OpenRaw {
 			virtual ~ARWFile();
 
 		protected:
-			/** get the small size thumbnail */
-			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
-			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
-			/** get the preview */
-			virtual bool _getPreview(Thumbnail & thumbnail);
+
 		private:
 
 			ARWFile(const ARWFile&);
 			ARWFile & operator=(const ARWFile&);
-
-			IOFile *m_io; /**< the IO handle */
-			IFDFileContainer *m_container; /**< the real container */
 		};
 	}
 

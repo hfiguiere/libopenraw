@@ -12,6 +12,7 @@ noinst_HEADERS = or_debug.h \
 	debug.h	\
 	rawcontainer.h \
 	rawfile.h \
+	ifdfile.h \
 	rawfilefactory.h \
 	cr2file.h \
 	neffile.h \
@@ -25,7 +26,7 @@ noinst_HEADERS = or_debug.h \
 	ifddir.h ifdentry.h \
 	thumbnail.h \
 	orfcontainer.h \
-	ciffcontainer.h
+	ciffcontainer.h 
 
 lib_LTLIBRARIES = libopenraw.la
 
@@ -40,6 +41,7 @@ libopenraw_la_SOURCES = \
 	iofile.cpp \
 	debug.cpp \
 	rawfile.cpp \
+	ifdfile.cpp \
 	rawfilefactory.cpp \
 	cr2file.cpp \
 	neffile.cpp \

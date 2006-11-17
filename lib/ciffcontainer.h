@@ -35,7 +35,6 @@
 namespace OpenRaw {
 	namespace Internals {
 
-		class IOFile;
 		class CIFFContainer;
 
 		namespace CIFF {
@@ -44,7 +43,7 @@ namespace OpenRaw {
 			enum {
 				STORAGELOC_MASK = 0xc000, /**< storage location bit mask */
 				FORMAT_MASK = 0x3800,     /**< format of the data */
-				TAGCODE_MASK = 0x3fff, /**< include the format, because the last
+				TAGCODE_MASK = 0x3fff  /**< include the format, because the last
 																* part is non significant */
 			};
 			/** tags for the CIFF records. 
@@ -152,6 +151,9 @@ namespace OpenRaw {
 					}
 			private:
 				bool _loadRecords();
+				
+				Heap(const Heap &);
+				Heap & operator=(const Heap &);
 
 				off_t m_start;
 				off_t m_length;
@@ -164,9 +166,6 @@ namespace OpenRaw {
 			class HeapFileHeader 
 			{
 			public:
-				HeapFileHeader();
-				
-
 				bool readFrom(CIFFContainer *);
 				char       byteOrder[2];/* 'MM' for Motorola,'II' for Intel */
 				uint32_t   headerLength;/* length of header (in bytes) */
@@ -186,7 +185,7 @@ namespace OpenRaw {
 			: public RawContainer
 		{
 		public:
-			CIFFContainer(IOFile *file);
+			CIFFContainer(IO::Stream *file);
 			virtual ~CIFFContainer();
 
 			CIFF::Heap::Ref heap();

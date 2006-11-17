@@ -18,23 +18,24 @@ main(int argc, char **argv)
 		int thumbnailSize;
 		size_t dataSize;
 		FILE *output;
+		uint32_t x, y;
 
 		or_get_extract_thumbnail(filename, 
-								 OR_THUMB_SIZE_SMALL, &thumbnail);
+								 160, &thumbnail);
 
 		thumbnailFormat = or_thumbnail_format(thumbnail);
-		thumbnailSize = or_thumbnail_size(thumbnail);
 		dataSize = or_thumbnail_data_size(thumbnail);
+		or_thumbnail_dimensions(thumbnail, &x, &y);
 
 		switch (thumbnailFormat) {
 		case OR_DATA_TYPE_JPEG:
-			printf("Thumbnail in JPEG format, thumb size is %d\n", thumbnailSize);
+			printf("Thumbnail in JPEG format, thumb size is %u, %u\n", x, y);
 			break;
 		case OR_DATA_TYPE_PIXMAP_8RGB:
-			printf("Thumbnail in 8RGB format, thumb size is %d\n", thumbnailSize);
+			printf("Thumbnail in 8RGB format, thumb size is %u, %u\n", x, y);
 			break;
 		default:
-			printf("Thumbnail in UNKNOWN format, thumb size is %d\n", thumbnailSize);
+			printf("Thumbnail in UNKNOWN format, thumb size is %u, %u\n", x, y);
 			break;
 		}
 		output = fopen("thumb.jpg", "wb");

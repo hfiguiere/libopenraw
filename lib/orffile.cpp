@@ -40,57 +40,17 @@ namespace OpenRaw {
 
 
 		ORFFile::ORFFile(const char* _filename)
-			: RawFile(_filename, OR_RAWFILE_TYPE_ORF),
-			  m_io(new IOFile(_filename)),
-				m_container(new ORFContainer(m_io, 0))
+			: IFDFile(_filename, OR_RAWFILE_TYPE_ORF)
 		{
+			// FIXME this is hackish... find a way to override that better.
+			delete m_container;
+			m_container = new ORFContainer(m_io, 0);
 		}
 		
 		ORFFile::~ORFFile()
 		{
-			delete m_container;
-			delete m_io;
 		}
 
-		bool ORFFile::_getSmallThumbnail(Thumbnail & thumbnail)
-		{
-			int c = m_container->countDirectories();
-			if (c < 2) {
-				return false;
-			}
-			IFDDir::Ref dir = m_container->setDirectory(1);
-
-			bool success;
-
-			long offset = 0;
-			long size = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, 
-																	offset);
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-																	size);
-
-			void *buf = thumbnail.allocData(size);
-
-			size_t real_size = m_container->fetchData(buf, offset, size);
-			if (real_size != size) {
-				Trace(WARNING) << "wrong size\n";
-			}
-			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-			/* size has to be hardcoded, it does not seems to be 
-			 * in the tags */
-			thumbnail.setDimensions(160, 120);
-			return true;
-		}
-
-		bool ORFFile::_getLargeThumbnail(Thumbnail & thumbnail)
-		{
-			return false;
-		}
-
-		bool ORFFile::_getPreview(Thumbnail & thumbnail)
-		{
-			return false;
-		}
 	}
 }
 

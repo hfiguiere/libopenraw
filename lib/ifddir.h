@@ -55,18 +55,27 @@ namespace OpenRaw {
 				}
 			IFDEntry::Ref getEntry(int id);
 
-			/** Get a long value from and entry
+			/** Get an loosely typed integer value from an entry.
+			 * This method is to be prefered from getLongValue() 
+			 * or getShortValue() unless you really want the strong 
+			 * typing that IFD structure provide
 			 * @param id the IFD field id
 			 * @retval v the long value
 			 * @return true if success
 			 */
-			bool getLongValue(int id, long &v);
-			/** Get a short value from and entry
+			bool getIntegerValue(int id, uint32_t &v);
+			/** Get a long value from an entry
 			 * @param id the IFD field id
 			 * @retval v the long value
 			 * @return true if success
 			 */
-			bool getShortValue(int id, short &v);
+			bool getLongValue(int id, uint32_t &v);
+			/** Get a short value from an entry
+			 * @param id the IFD field id
+			 * @retval v the long value
+			 * @return true if success
+			 */
+			bool getShortValue(int id, uint16_t &v);
 			/** get the offset of the next IFD 
 			 * in absolute
 			 */

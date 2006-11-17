@@ -24,41 +24,32 @@
 #ifndef __CR2FILE_H_
 #define __CR2FILE_H_
 
-#include "rawfile.h"
+#include "ifdfile.h"
 #include "rawfilefactory.h"
+#include "ifdfilecontainer.h"
 
 namespace OpenRaw {
 
 	class Thumbnail;
-
+	
 	namespace Internals {
-		class IOFile;
-		class IFDFileContainer;
-
+		
 		class CR2File
-			: public OpenRaw::RawFile
+			: public IFDFile
 		{
 		public:
 			static RawFile *factory(const char* _filename);
 			CR2File(const char* _filename);
 			virtual ~CR2File();
-
-		protected:
-			/** get the small size thumbnail in IFD 1*/
-			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
-			/** get the small size thumbnail in IFD 2*/
-			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
-			/** get the preview */
-			virtual bool _getPreview(Thumbnail & thumbnail);
+			
 		private:
+			
 			CR2File(const CR2File&);
 			CR2File & operator=(const CR2File&);
-
-			IOFile *m_io; /**< the IO handle */
-			IFDFileContainer *m_container; /**< the real container */
+			
 		};
-	}
 
+	}
 }
 
 #endif

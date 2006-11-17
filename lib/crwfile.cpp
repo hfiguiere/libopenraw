@@ -23,9 +23,11 @@
 
 #include "debug.h"
 #include "iofile.h"
+#include "io/streamclone.h"
 #include "thumbnail.h"
 #include "crwfile.h"
 #include "ciffcontainer.h"
+#include "jfifcontainer.h"
 
 #include "rawfilefactory.h"
 
@@ -44,7 +46,7 @@ namespace OpenRaw {
 
 		CRWFile::CRWFile(const char* _filename)
 			: RawFile(_filename, OR_RAWFILE_TYPE_CRW),
-				m_io(new IOFile(_filename)),
+				m_io(new IO::File(_filename)),
 				m_container(new CIFFContainer(m_io))
 		{
 
@@ -56,18 +58,34 @@ namespace OpenRaw {
 			delete m_io;
 		}
 
-		bool CRWFile::_getSmallThumbnail(Thumbnail & thumbnail)
+		bool CRWFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 		{
-			return false;
+			Heap::Ref heap = m_container->heap();
+
+			RecordEntry::List & records = heap->records();
+			RecordEntry::List::iterator iter;
+			for(iter = records.begin(); iter != records.end(); ++iter) {
+				if ((*iter).typeCode == (TAGCODE_MASK & TAG_JPEGIMAGE)) {
+					Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
+					uint32_t x = 0;
+					uint32_t y = 0;
+
+					IO::StreamClone *s = new IO::StreamClone(m_io, heap->offset()
+																									 + (*iter).offset);
+					JFIFContainer *jfif = new JFIFContainer(s, 0);
+					jfif->getDimensions(x,y);
+					delete jfif;
+					delete s;
+					Trace(DEBUG1) << "JPEG dimensions x=" << x 
+															<< " y=" << y << "\n";
+					list.push_back(std::max(x,y));
+				}
+			}
+
+			return true;
 		}
 
-
-		bool CRWFile::_getLargeThumbnail(Thumbnail & thumbnail)
-		{
-			return false;
-		}
-
-		bool CRWFile::_getPreview(Thumbnail & thumbnail)
+		bool CRWFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
 		{
 			Heap::Ref heap = m_container->heap();
 
@@ -77,10 +95,10 @@ namespace OpenRaw {
 			for(iter = records.begin(); iter != records.end(); ++iter) {
 				if ((*iter).typeCode == (TAGCODE_MASK & TAG_JPEGIMAGE)) {
 					Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
-					size_t size = (*iter).length;
-					void *buf = thumbnail.allocData(size);
-					size_t real_size = (*iter).fetchData(heap.get(), buf, size);
-					if (real_size != size) {
+					size_t byte_size = (*iter).length;
+					void *buf = thumbnail.allocData(byte_size);
+					size_t real_size = (*iter).fetchData(heap.get(), buf, byte_size);
+					if (real_size != byte_size) {
 						Trace(WARNING) << "wrong size\n";
 					}
 					thumbnail.setDataType(OR_DATA_TYPE_JPEG);

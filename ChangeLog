@@ -1,3 +1,61 @@
+2006-11-15  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/crwfile.{h,cpp}: fix CRW thumnail extraction with
+	new API
+
+	* lib/orffile.{h,cpp}: override container properly.
+
+	* lib/ifdfile.{h,cpp}: decode JPEG to get the size of the
+	JPEG thumbnail.
+	* lib/jfifcontainer.{h,cpp}: JFIFContainer.
+
+	* lib/io/streamclone.cpp (open): on open, seek() in the
+	stream
+	* lib/io/teststream.cpp (main): test for streams
+
+2006-11-11  Hubert Figuiere  <hub@figuiere.net>
+
+	* IOFile moved to IO::File
+	
+	* lib/io/Makefile.am: +streamclone.cpp
+	* include/libopenraw/consts.h: add closed stream error
+	* lib/io/streamclone.{h,cpp}: implemented stream clone
+
+	* lib/io/stream.{h,cpp}: better error handling 
+
+	* demo/thumb.cpp (main): delete the raw file that
+	was leaking.
+
+2006-11-10  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/iofile.{h,cpp}: inherit from IO::Stream
+	* lib/io/stream.{h,cpp}: add stream class
+
+2006-11-06  Hubert Figuiere  <hub@figuiere.net>
+
+	* New API for thumbnails. Now fetch the thumbnail using pixel
+	size. Can enumerate thumbnails and IFD code refactored.
+	
+2006-11-05  Hubert Figuiere  <hub@figuiere.net>
+
+	* CMakeLists.txt: add warnings to CFLAGS and CXXFLAGS
+	* lib/ciffcontainer.{h,cpp}: fix warnings
+
+2006-11-04  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/rawfile.cpp: make extension detection case insensitive
+
+2006-10-18  Hubert Figuiere  <hub@figuiere.net>
+
+	* Introduce exceptions to replace assert() in IFDEntry
+
+	* IFDDir::getIntegerValue() for loosely typed integer retrieval.
+
+	* lib/dngfile.cpp: use getIntegerValue() to fix an assert on
+	DNG converted files.
+	
+	* enforce the use of stdint types whenever applicable.
+	
 2006-10-17  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/rawcontainer.{h,cpp}: call the new endianutils.h

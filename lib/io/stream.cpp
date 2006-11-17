@@ -1,7 +1,7 @@
 /*
- * libopenraw - orfcontainer.cpp
+ * libopenraw - iostream.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006 Hubert Figuière
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,48 +19,23 @@
  */
 
 
-#include "debug.h"
-#include "orfcontainer.h"
+#include "stream.h"
 
-
-using namespace Debug;
 
 namespace OpenRaw {
-
-	namespace Internals {
-
-
-		ORFContainer::ORFContainer(IO::Stream *file, off_t offset)
-			: IFDFileContainer(file, offset)
+	namespace IO {
+		
+		Stream::Stream(const char *filename)
+			: m_fileName(filename),
+				m_error(OR_ERROR_NONE)
 		{
 		}
 
-
-		ORFContainer::~ORFContainer()
+		Stream::~Stream()
 		{
-		}
-
-
-		IFDFileContainer::EndianType 
-		ORFContainer::isMagicHeader(const char *p, int len)
-		{
-			if (len < 4){
-				// we need at least 4 bytes to check
-				return ENDIAN_NULL;
-			}
-			if ((p[0] == 0x49) && (p[1] == 0x49)
-					&& (p[2] == 0x52) && (p[3] == 0x4f)) {
-
-				Trace(DEBUG1) << "Identified ORF file\n";
-
-				return ENDIAN_LITTLE;
-			}
-
-			Trace(DEBUG1) << "Unidentified ORF file\n";
-
-			return ENDIAN_NULL;
 		}
 
 	}
 }
+
 

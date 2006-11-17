@@ -31,6 +31,7 @@
 
 #include <vector>
 
+#include <libopenraw/consts.h>
 #include <libopenraw/types.h>
 
 #include "rawcontainer.h"
@@ -41,7 +42,6 @@ namespace OpenRaw {
 	namespace Internals {
 		
 
-
 		class IFDFileContainer
 			: public RawContainer
 		{
@@ -51,7 +51,7 @@ namespace OpenRaw {
 					@param file the file handle
 					@param offset the offset from the start of the file
 			*/
-			IFDFileContainer(IOFile *file, off_t offset);
+			IFDFileContainer(IO::Stream *file, off_t offset);
 			/** destructor */
 			virtual ~IFDFileContainer();
 
@@ -60,10 +60,10 @@ namespace OpenRaw {
 					to address these IFD 
 			*/
 			enum {
-				IFD_NONE = -1, /** invalid IFD. Means an error */
-				IFD_EXIF = -2, /** exif IFD: see field 0x6789 in IFD 0 */
-				IFD_GPS = -3,  /** GPS IFD: see field 0x8825 in IFD 0 */
-				IFD_INTEROP = -4 /** interoperability IFD: see field 0xa005 in exif IFD*/ 
+				IFD_NONE = -1, /**< invalid IFD. Means an error */
+				IFD_EXIF = -2, /**< exif IFD: see field 0x6789 in IFD 0 */
+				IFD_GPS = -3,  /**< GPS IFD: see field 0x8825 in IFD 0 */
+				IFD_INTEROP = -4 /**< interoperability IFD: see field 0xa005 in exif IFD*/ 
 			};
 
 			/** 
@@ -90,6 +90,11 @@ namespace OpenRaw {
 				 @return the number of image file directories
 			*/
 			int countDirectories(void);
+			/** Get the directories, loading them if necessary
+			 * @return the directories
+			 */
+			std::vector<IFDDir::Ref> & directories();
+
 			/**
 				 Get the number of the current directory
 				 @return the index of the current directory. By default we

@@ -25,6 +25,8 @@
 #include <boost/shared_ptr.hpp>
 #include <libopenraw/types.h>
 
+#include "exception.h"
+
 namespace OpenRaw {
 	namespace Internals {
 
@@ -40,9 +42,13 @@ namespace OpenRaw {
 							 IFDFileContainer &_container);
 			virtual ~IFDEntry();
 
+			int16_t type() const
+				{
+					return m_type;
+				}
 
-			int32_t getLong();
-			int16_t getShort();
+			uint32_t getLong() throw (BadTypeException, TooBigException);
+			uint16_t getShort() throw (BadTypeException, TooBigException);
 		private:
 			int16_t m_id;
 			int16_t m_type;

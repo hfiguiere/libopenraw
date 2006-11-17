@@ -33,7 +33,7 @@ namespace OpenRaw {
 			: public IFDFileContainer
 		{
 		public:
-			ORFContainer(IOFile *file, off_t offset);
+			ORFContainer(IO::Stream *file, off_t offset);
 			/** destructor */
 			virtual ~ORFContainer();
 

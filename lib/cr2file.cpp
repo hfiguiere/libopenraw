@@ -42,89 +42,15 @@ namespace OpenRaw {
 		}
 
 		CR2File::CR2File(const char* _filename)
-			: RawFile(_filename, OR_RAWFILE_TYPE_CR2),
-				m_io(new IOFile(_filename)),
-				m_container(new IFDFileContainer(m_io, 0))
+			: IFDFile(_filename, OR_RAWFILE_TYPE_CR2)
 		{
 
 		}
 
 		CR2File::~CR2File()
 		{
-			delete m_container;
-			delete m_io;
-		}
-
-		bool CR2File::_getSmallThumbnail(Thumbnail & thumbnail)
-		{
-			bool success;
-			int c = m_container->countDirectories();
-			if (c < 2) {
-				return false;
-			}
-			IFDDir::Ref dir = m_container->setDirectory(1);
-			if (dir == NULL) {
-				Trace(WARNING) << "dir NULL\n";
-				return false;
-			}
-
-			long offset = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
-																	offset);				
-			long size = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-																	size);
-
-			void *buf = thumbnail.allocData(size);
-
-			size_t real_size = m_container->fetchData(buf, offset, size);
-			if (real_size != size) {
-				Trace(WARNING) << "wrong size\n";
-			}
-			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-			thumbnail.setDimensions(160, 120);
-			return true;
 		}
 
 
-		bool CR2File::_getLargeThumbnail(Thumbnail & thumbnail)
-		{
-			int c = m_container->countDirectories();
-			if (c < 3) {
-				return false;
-			}
-			IFDDir::Ref dir = m_container->setDirectory(2);
-			if (dir == NULL) {
-				Trace(WARNING) << "dir NULL\n";
-				return false;
-			}
-
-			bool success;
-			long offset = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-			long size = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, size);
-
-			short x = 0;
-			short y = 0;
-			success = dir->getShortValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
-			success = dir->getShortValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
-			
-			Trace(DEBUG1) << "x, y " << x << " " << y << "\n";
-			void *buf = thumbnail.allocData(size);
-
-			size_t real_size = m_container->fetchData(buf, offset, size);
-			if (real_size != size) {
-				Trace(WARNING) << "wrong size\n";
-			}
-			thumbnail.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
-			thumbnail.setDimensions(x, y);
-			return true;
-		}
-
-		bool CR2File::_getPreview(Thumbnail & thumbnail)
-		{
-			return false;
-		}
 	}
 }

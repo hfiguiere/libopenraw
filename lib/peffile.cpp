@@ -43,94 +43,15 @@ namespace OpenRaw {
 		}
 
 		PEFFile::PEFFile(const char* _filename)
-			: RawFile(_filename, OR_RAWFILE_TYPE_PEF),
-				m_io(new IOFile(_filename)),
-				m_container(new IFDFileContainer(m_io, 0))
+			: IFDFile(_filename, OR_RAWFILE_TYPE_PEF)
 		{
 		}
 
 
 		PEFFile::~PEFFile()
 		{
-			delete m_container;
-			delete m_io;
 		}
 
-
-		bool PEFFile::_getSmallThumbnail(Thumbnail & thumbnail)
-		{
-			int c = m_container->countDirectories();
-			if (c < 2) {
-				return false;
-			}
-			IFDDir::Ref dir = m_container->setDirectory(1);
-			if (dir == NULL) {
-				Trace(WARNING) << "dir NULL\n";
-				return false;
-			}
-
-			bool success;
-			long offset = 0; 
-			long size = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, offset);
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, size);
-
-			Trace(DEBUG2) << "JPEG offset " << offset << "\n";
-			Trace(DEBUG2) << "JPEG size " << size << "\n"; 
-			void *buf = thumbnail.allocData(size);
-
-			long x = 160;
-			long y = 120;
-
-			size_t real_size = m_container->fetchData(buf, offset, size);
-			if (real_size != size) {
-				Trace(WARNING) << "wrong size\n";
-			}
-			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-			thumbnail.setDimensions(x, y);
-			return true;
-		}
-
-		bool PEFFile::_getLargeThumbnail(Thumbnail & thumbnail)
-		{
-			return true;
-		}
-
-		bool PEFFile::_getPreview(Thumbnail & thumbnail)
-		{
-			int c = m_container->countDirectories();
-			if (c < 3) {
-				return false;
-			}
-			IFDDir::Ref dir = m_container->setDirectory(2);
-			if (dir == NULL) {
-				Trace(WARNING) << "dir NULL\n";
-				return false;
-			}
-
-			bool success;
-			long offset = 0; 
-			long size = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, offset);
-			success = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, size);
-
-			Trace(DEBUG2) << "preview JPEG offset " << offset << "\n";
-			Trace(DEBUG2) << "preview JPEG size " << size << "\n"; 
-			void *buf = thumbnail.allocData(size);
-
-			// FIXME this is probably dependent on the camera
-			// FIXME check the JPEG stream instead
-			long x = 3008;
-			long y = 2008;
-
-			size_t real_size = m_container->fetchData(buf, offset, size);
-			if (real_size != size) {
-				Trace(WARNING) << "wrong size\n";
-			}
-			thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-			thumbnail.setDimensions(x, y);
-			return true;
-		}
 	}
 }
 

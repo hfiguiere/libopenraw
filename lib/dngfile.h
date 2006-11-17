@@ -24,7 +24,7 @@
 #ifndef __DNGFILE_H_
 #define __DNGFILE_H_
 
-#include "rawfile.h"
+#include "ifdfile.h"
 
 namespace OpenRaw {
 
@@ -35,7 +35,7 @@ namespace OpenRaw {
 		class IFDFileContainer;
 
 		class DNGFile
-			: public OpenRaw::RawFile
+			: public IFDFile
 		{
 		public:
 			static RawFile *factory(const char* _filename);
@@ -44,19 +44,12 @@ namespace OpenRaw {
 			virtual ~DNGFile();
 
 		protected:
-			/** get nothing */
-			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
-			/** get the large size thumbnail in IFD 0*/
-			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
-			/** get the preview */
-			virtual bool _getPreview(Thumbnail & thumbnail);
+
 		private:
 
 			DNGFile(const DNGFile&);
 			DNGFile & operator=(const DNGFile&);
 
-			IOFile *m_io; /**< the IO handle */
-			IFDFileContainer *m_container; /**< the real container */
 		};
 	}
 

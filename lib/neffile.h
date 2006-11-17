@@ -24,7 +24,7 @@
 #ifndef __NEFFILE_H_
 #define __NEFFILE_H_
 
-#include "rawfile.h"
+#include "ifdfile.h"
 
 namespace OpenRaw {
 
@@ -35,25 +35,19 @@ namespace OpenRaw {
 		class IFDFileContainer;
 
 		class NEFFile
-			: public OpenRaw::RawFile
+			: public IFDFile
 		{
 		public:
 			static RawFile *factory(const char* _filename);
 			NEFFile(const char* _filename);
 			virtual ~NEFFile();
 
+		protected:
+
 		private:
 
 			NEFFile(const NEFFile&);
 			NEFFile & operator=(const NEFFile &);
-
-			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
-			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
-			/** get the preview */
-			virtual bool _getPreview(Thumbnail & thumbnail);
-
-			IOFile *m_io; /**< the IO handle */
-			IFDFileContainer *m_container; /**< the real container */
 		};
 	}
 

@@ -2,6 +2,9 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
+SET(CMAKE_CXX_FLAGS "-ansi -pedantic -g -Wall -Werror -Weffc++")
+SET(CMAKE_C_FLAGS "-pedantic -g -Wall")
+
 project(LIBOPENRAW)
 
 subdirs(lib demo test)

@@ -25,13 +25,18 @@
 #define _RAWCONTAINER_H_
 
 #include <sys/types.h>
+
 #include <libopenraw/io.h>
+#include <libopenraw/types.h>
+
 
 namespace OpenRaw {
+	namespace IO {
+		class Stream;
+	}
+
 	namespace Internals {
 
-		
-		class IOFile;
 		
 /**
    Generic interface for the RAW file container
@@ -47,15 +52,15 @@ namespace OpenRaw {
 			} EndianType;
 
 			/** 
-					@param file the file handle
+					@param file the stream to read from
 					@param offset the offset since starting the 
 					begining of the file for the container
 			*/
-			RawContainer(IOFile *file, off_t offset);
+			RawContainer(IO::Stream *_file, off_t offset);
 			/** destructor */
 			virtual ~RawContainer();
 			
-			IOFile *file()
+			IO::Stream *file()
 				{
 					return m_file;
 				}
@@ -65,13 +70,13 @@ namespace OpenRaw {
 				}
 
 			/** Read an int16 following the m_endian set */
-			bool readInt16(IOFile *f, int16_t & v);
+			bool readInt16(IO::Stream *f, int16_t & v);
 			/** Read an int32 following the m_endian set */
-			bool readInt32(IOFile *f, int32_t & v);
+			bool readInt32(IO::Stream *f, int32_t & v);
 			/** Read an uint16 following the m_endian set */
-			bool readUInt16(IOFile *f, uint16_t & v);
+			bool readUInt16(IO::Stream *f, uint16_t & v);
 			/** Read an uint32 following the m_endian set */
-			bool readUInt32(IOFile *f, uint32_t & v);
+			bool readUInt32(IO::Stream *f, uint32_t & v);
 			/** 
 			 * Fetch the data chunk from the file
 			 * @param buf the buffer to load into
@@ -92,7 +97,7 @@ namespace OpenRaw {
 				}
 
 			/** the file handle */
-			IOFile *m_file;
+			IO::Stream *m_file;
 			/** the offset from the begining of the file */
 			off_t m_offset;
 			EndianType m_endian;

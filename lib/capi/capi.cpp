@@ -33,7 +33,7 @@ extern "C" {
 //	typedef struct Thumbnail _Thumbnail;
 
 	or_error or_get_extract_thumbnail(const char* _filename,
-					 or_thumb_size _preferred_size,
+					 uint32_t _preferred_size,
 					 ORThumbnailRef *_thumb)
 	{
 		or_error ret = OR_ERROR_NONE;
@@ -51,7 +51,7 @@ extern "C" {
 
 	ORThumbnailRef or_thumbnail_new(void)
 	{
-		Thumbnail *thumb = new Thumbnail(OR_THUMB_SIZE_SMALL);
+		Thumbnail *thumb = new Thumbnail();
 		return reinterpret_cast<ORThumbnailRef>(thumb);
 	}
 
@@ -74,13 +74,6 @@ extern "C" {
 	}
 
 
-	int
-	or_thumbnail_size(ORThumbnailRef thumb)
-	{
-		return reinterpret_cast<Thumbnail *>(thumb)->thumbSize();		
-	}
-
-
 	void *
 	or_thumbnail_data(ORThumbnailRef thumb)
 	{
@@ -92,6 +85,20 @@ extern "C" {
 	{
 		return reinterpret_cast<Thumbnail *>(thumb)->size();		
 	}
+
+	void
+	or_thumbnail_dimensions(ORThumbnailRef thumb, 
+													uint32_t *x, uint32_t *y)
+	{
+		Thumbnail* t = reinterpret_cast<Thumbnail *>(thumb);
+		if (x != NULL) {
+			*x = t->x();
+		}
+		if (y != NULL) {
+			*y = t->y();
+		}
+	}
+
 
 }
 

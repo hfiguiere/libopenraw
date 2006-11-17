@@ -31,8 +31,11 @@ namespace OpenRaw {
 
 	class Thumbnail;
 
+	namespace IO {
+		class File;
+	}
+
 	namespace Internals {
-		class IOFile;
 		class CIFFContainer;
 
 		class CRWFile
@@ -44,17 +47,17 @@ namespace OpenRaw {
 			virtual ~CRWFile();
 
 		protected:
-			/** get the small size thumbnail in IFD 1*/
-			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
-			/** get the small size thumbnail in IFD 2*/
-			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
-			/** get the preview */
-			virtual bool _getPreview(Thumbnail & thumbnail);
+
+
+			virtual bool _enumThumbnailSizes(std::vector<uint32_t> &list);
+
+			virtual bool _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+
 		private:
 			CRWFile(const CRWFile&);
 			CRWFile & operator=(const CRWFile&);
 
-			IOFile *m_io; /**< the IO handle */
+			IO::File *m_io; /**< the IO handle */
 			CIFFContainer *m_container; /**< the real container */
 		};
 	}

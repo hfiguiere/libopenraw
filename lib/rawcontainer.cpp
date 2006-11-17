@@ -35,7 +35,7 @@ namespace OpenRaw {
 	namespace Internals {
 	
 	
-		RawContainer::RawContainer(IOFile *file, off_t offset)
+		RawContainer::RawContainer(IO::Stream *file, off_t offset)
 			: m_file(file),
 				m_offset(offset),
 				m_endian(ENDIAN_NULL)
@@ -52,7 +52,7 @@ namespace OpenRaw {
 
 
 		bool 
-		RawContainer::readInt16(IOFile *f, int16_t & v)
+		RawContainer::readInt16(IO::Stream *f, int16_t & v)
 		{
 			if (m_endian == ENDIAN_NULL) {
 
@@ -81,7 +81,7 @@ namespace OpenRaw {
 
 
 		bool 
-		RawContainer::readInt32(IOFile *f, int32_t & v)
+		RawContainer::readInt32(IO::Stream *f, int32_t & v)
 		{
 			if (m_endian == ENDIAN_NULL) {
 
@@ -116,7 +116,7 @@ namespace OpenRaw {
 
 
 		bool 
-		RawContainer::readUInt16(IOFile *f, uint16_t & v)
+		RawContainer::readUInt16(IO::Stream *f, uint16_t & v)
 		{
 			if (m_endian == ENDIAN_NULL) {
 
@@ -145,7 +145,7 @@ namespace OpenRaw {
 
 
 		bool 
-		RawContainer::readUInt32(IOFile *f, uint32_t & v)
+		RawContainer::readUInt32(IO::Stream *f, uint32_t & v)
 		{
 			if (m_endian == ENDIAN_NULL) {
 

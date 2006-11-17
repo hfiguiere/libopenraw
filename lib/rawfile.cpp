@@ -24,6 +24,8 @@
 #include <map>
 #include <string>
 
+#include <boost/algorithm/string.hpp>
+
 #include "debug.h"
 
 #include "rawfile.h"
@@ -75,7 +77,8 @@ namespace OpenRaw {
 	public:
 		Private(std::string f, Type t)
 			: m_filename(f),
-			m_type(t)
+				m_type(t),
+				m_sizes()
 			{
 			}
 		
@@ -83,6 +86,8 @@ namespace OpenRaw {
 		std::string m_filename;
 		/** the real type of the raw file */
 		Type m_type;
+		/** list of thumbnail sizes */
+		std::vector<uint32_t> m_sizes;
 	};
 
 
@@ -114,14 +119,15 @@ namespace OpenRaw {
 
 	RawFile::Type RawFile::identify(const char*_filename)
 	{
-		const char * extension = ::strrchr(_filename, '.') + 1;
-		if (::strlen(extension) > 3) {
+		std::string extension(::strrchr(_filename, '.') + 1);
+		if (extension.length() > 3) {
 			return OR_RAWFILE_TYPE_UNKNOWN;
 		}
 
+		boost::to_lower(extension);
+
 		RawFileFactory::Extensions & extensions = RawFileFactory::extensions();
-		RawFileFactory::Extensions::iterator iter 
-			= extensions.find(string(extension));
+		RawFileFactory::Extensions::iterator iter = extensions.find(extension);
 		if (iter == extensions.end())
 		{
 			return OR_RAWFILE_TYPE_UNKNOWN;
@@ -148,28 +154,66 @@ namespace OpenRaw {
 		return d->m_type;
 	}
 
-
-	bool RawFile::getThumbnail(Thumbnail & thumbnail)
+	const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
 	{
-		bool ret = false;
-		Thumbnail::Size tsize = thumbnail.thumbSize();
-		switch (tsize)
-		{
-		case OR_THUMB_SIZE_SMALL:
-			ret = _getSmallThumbnail(thumbnail);
-			break;
-		case OR_THUMB_SIZE_LARGE:
-			ret = _getLargeThumbnail(thumbnail);
-			break;
-		case OR_THUMB_SIZE_PREVIEW:
-			ret = _getPreview(thumbnail);
-			break;
-		default:
-			break;
+		if (d->m_sizes.size() == 0) {
+			Trace(DEBUG1) << "_enumThumbnailSizes init\n";
+			bool ret = _enumThumbnailSizes(d->m_sizes);
+			if (!ret) {
+				Trace(DEBUG1) << "_enumThumbnailSizes failed\n";
+			}
 		}
-		return ret;
+		return d->m_sizes;
 	}
 
+
+	bool RawFile::getThumbnail(uint32_t tsize, Thumbnail & thumbnail)
+	{
+		bool ret = false;
+		uint32_t smallest_bigger = 0xffffffff;
+		uint32_t biggest_smaller = 0;
+		uint32_t found_size = 0;
+
+		Trace(DEBUG1) << "requested size " << tsize << "\n";
+
+		const std::vector<uint32_t> & sizes(listThumbnailSizes());
+
+		std::vector<uint32_t>::const_iterator iter;
+		for (iter = sizes.begin(); iter != sizes.end(); ++iter) {
+			Trace(DEBUG1) << "current iter is " << *iter << "\n";
+			if (*iter < tsize) {
+				if (*iter > biggest_smaller) {
+					biggest_smaller = *iter;
+				}
+			}
+			else if(*iter > tsize) {
+				if(*iter < smallest_bigger) {
+					smallest_bigger = *iter;
+				}
+			}
+			else { // *iter == tsize
+				found_size = tsize;
+				break;
+			}
+		}
+
+		if (found_size == 0) {
+			found_size = (smallest_bigger != 0xffffffff ? 
+										smallest_bigger : biggest_smaller);
+		}
+
+		if (found_size != 0) {
+			Trace(DEBUG1) << "size " << found_size << " found\n";
+			ret = _getThumbnail(found_size, thumbnail);
+		}
+		else {
+			// no size found, let's fail gracefuly
+			Trace(DEBUG1) << "no size found\n";
+			ret = false;
+		}
+
+		return ret;
+	}
 
 }
 

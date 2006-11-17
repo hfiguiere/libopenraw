@@ -24,38 +24,30 @@
 #ifndef __ORFFILE_H_
 #define __ORFFILE_H_
 
-#include "rawfile.h"
+#include "ifdfile.h"
 
 namespace OpenRaw {
 
 	class Thumbnail;
 
 	namespace Internals {
-		class IOFile;
+
 		class ORFContainer;
 
 		class ORFFile
-			: public OpenRaw::RawFile
+			: public IFDFile
 		{
 		public:
 			static RawFile *factory(const char* _filename);
 			ORFFile(const char* _filename);
 			virtual ~ORFFile();
 
+		protected:
+
 		private:
 
 			ORFFile(const ORFFile&);
 			ORFFile & operator=(const ORFFile &);
-
-			/** Return the smal thumbnail in IFD1 */
-			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
-			/** There does not seems to be any large thumbnail */
-			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
-			/** get the preview */
-			virtual bool _getPreview(Thumbnail & thumbnail);
-
-			IOFile *m_io; /**< the IO handle */
-			ORFContainer *m_container; /**< the real container */
 		};
 	}
 

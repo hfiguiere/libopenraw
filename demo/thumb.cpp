@@ -23,9 +23,20 @@ main(int argc, char** argv)
 	Debug::Trace::setDebugLevel(Debug::DEBUG2);
 	FILE * f;
 
+	OpenRaw::RawFile * raw_file = OpenRaw::RawFile::newRawFile(argv[1]);
+	std::vector<uint32_t> list = raw_file->listThumbnailSizes();
+	
+	for(std::vector<uint32_t>::iterator i = list.begin();
+			i != list.end(); ++i)
+	{
+		std::cout << "found " << *i << " pixels\n";
+	}
+
+	delete raw_file;
+
 	Thumbnail * thumb =
 		Thumbnail::getAndExtractThumbnail(argv[1],
-													 OR_THUMB_SIZE_SMALL);
+													 160);
 	if (thumb != NULL) {
 		std::cerr << "thumb data size =" << thumb->size() << std::endl;
 		std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
@@ -39,7 +50,7 @@ main(int argc, char** argv)
 
 	thumb =
 		Thumbnail::getAndExtractThumbnail(argv[1],
-													 OR_THUMB_SIZE_LARGE);
+													 640);
 
 	if (thumb != NULL) {
 		std::cerr << "thumb data size =" << thumb->size() << std::endl;
@@ -54,7 +65,7 @@ main(int argc, char** argv)
 
 	thumb =
 		Thumbnail::getAndExtractThumbnail(argv[1],
-													 OR_THUMB_SIZE_PREVIEW);
+													 2048);
 	if (thumb != NULL) {
 		std::cerr << "preview data size =" << thumb->size() << std::endl;
 		std::cerr << "preview data type =" << thumb->dataType() << std::endl;

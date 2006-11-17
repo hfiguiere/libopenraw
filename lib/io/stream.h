@@ -1,5 +1,5 @@
 /*
- * libopenraw - iofile.h
+ * libopenraw - stream.h
  *
  * Copyright (C) 2006 Hubert Figuière
  *
@@ -19,60 +19,79 @@
  */
 
 
-
-#ifndef __IO_FILE_H__
-#define __IO_FILE_H__
+#ifndef __IO_STREAM_H__
+#define __IO_STREAM_H__
 
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <string>
+
 #include <libopenraw/libopenraw.h>
-
-#include "io/stream.h"
-
 
 namespace OpenRaw {
 	namespace IO {
-
-
-/** file IO stream */
-		class File
-			: public Stream
+		
+		/** 
+		 * @brief base virtual class for IO
+		 */
+		class Stream
 		{
 		public:
-			/** Contruct the file 
-			 * @param filename the full pathname for the file
+			/** Construct the file 
+			 * @param filename the full uri for the file
 			 */
-			File(const char *filename);
-			virtual ~File();
+			Stream(const char *filename);
+			virtual ~Stream();
+			
+			/** Error type.
+			 * @see or_error
+			 */
+			typedef ::or_error Error;
 			
 // file APIs
 			/** open the file */
-			virtual Error open();
+			virtual Error open() = 0;
 			/** close the file */
-			virtual int close();
+			virtual int close() = 0;
 			/** seek in the file. Semantics are similar to POSIX */
-			virtual int seek(off_t offset, int whence);
+			virtual int seek(off_t offset, int whence) = 0;
 			/** read in the file. Semantics are similar to POSIX */
-			virtual int read(void *buf, size_t count);
-			virtual off_t filesize();
-//			virtual void *mmap(size_t l, off_t offset);
-//			virtual int munmap(void *addr, size_t l);
+			virtual int read(void *buf, size_t count) = 0;
+			virtual off_t filesize() = 0;
+//			virtual void *mmap(size_t l, off_t offset) = 0;
+//			virtual int munmap(void *addr, size_t l) = 0;
 			
+			Error get_error()
+				{
+					return m_error;
+				}
+
+			/** get the uri path of the file */
+			const std::string &get_path() const
+				{
+					return m_fileName;
+				}
+
+		protected:
+			void set_error(Error error)
+				{
+					m_error = error;
+				}
+
 		private:
 			/** private copy constructor to make sure it is not called */
-			File(const File& f);
+			Stream(const Stream& f);
 			/** private = operator to make sure it is never called */
-			File & operator=(const File&);
+			Stream & operator=(const Stream&);
 			
-			/** the interface to the C io */
-			::io_methods *m_methods;
-			/** the C io file handle */
-			::IOFileRef m_ioRef;
+			/** the file name (full path) */
+			std::string m_fileName;
+			Error m_error;
 		};
-
 
 	}
 }
+
 
 #endif

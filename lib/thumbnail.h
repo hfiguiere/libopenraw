@@ -33,28 +33,28 @@ namespace OpenRaw {
 	{
 	public:
 		typedef ::or_data_type DataType;
-		typedef ::or_thumb_size Size;
 
-		Thumbnail(Size default_size = ::OR_THUMB_SIZE_SMALL);
+		Thumbnail();
 		~Thumbnail();
 
 		/** quick and dirty "get this thumbnail" */
 		static Thumbnail *
 		getAndExtractThumbnail(const char *_filename,
-													 Size preferred_size);
+													 uint32_t preferred_size);
 
 		/** return the data type */
 		DataType dataType() const;
 		/** set the data type */
 		void setDataType(Thumbnail::DataType _type);
-		/** the thumbnail size  */
-		Size thumbSize() const;
 		void *allocData(const size_t s);
 		/** return the size of the data */
 		size_t size() const;
 		void *data() const;
+		
+		uint32_t x();
+		uint32_t y();
 		/** set the pixel dimensions of the thumbnail */
-		void setDimensions(int x, int y);
+		void setDimensions(uint32_t x, uint32_t y);
 	private:
 
 		Thumbnail(const Thumbnail&);

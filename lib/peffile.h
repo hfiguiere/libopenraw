@@ -24,7 +24,7 @@
 #ifndef __PEFFILE_H_
 #define __PEFFILE_H_
 
-#include "rawfile.h"
+#include "ifdfile.h"
 
 namespace OpenRaw {
 
@@ -35,24 +35,20 @@ namespace OpenRaw {
 		class IFDFileContainer;
 
 		class PEFFile
-			: public OpenRaw::RawFile
+			: public IFDFile
 		{
 		public:
 			static RawFile *factory(const char* _filename);
 			PEFFile(const char* _filename);
 			virtual ~PEFFile();
 
+		protected:
+
 		private:
 
 			PEFFile(const PEFFile&);
 			PEFFile & operator=(const PEFFile &);
 
-			virtual bool _getSmallThumbnail(Thumbnail & thumbnail);
-			virtual bool _getLargeThumbnail(Thumbnail & thumbnail);
-			virtual bool _getPreview(Thumbnail & thumbnail);
-
-			IOFile *m_io; /**< the IO handle */
-			IFDFileContainer *m_container; /**< the real container */
 		};
 	}
 

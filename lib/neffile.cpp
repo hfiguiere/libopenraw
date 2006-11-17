@@ -43,64 +43,15 @@ namespace OpenRaw {
 		}
 
 		NEFFile::NEFFile(const char* _filename)
-			: RawFile(_filename, OR_RAWFILE_TYPE_NEF),
-				m_io(new IOFile(_filename)),
-				m_container(new IFDFileContainer(m_io, 0))
+			: IFDFile(_filename, OR_RAWFILE_TYPE_NEF)
 		{
 		}
 
 
 		NEFFile::~NEFFile()
 		{
-			delete m_container;
-			delete m_io;
 		}
 
-
-		bool NEFFile::_getSmallThumbnail(Thumbnail & thumbnail)
-		{
-			int c = m_container->countDirectories();
-			if (c < 1) {
-				return false;
-			}
-			IFDDir::Ref dir = m_container->setDirectory(0);
-			if (dir == NULL) {
-				Trace(WARNING) << "dir NULL\n";
-				return false;
-			}
-
-			bool success;
-			long offset = 0; 
-			long size = 0;
-			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-			success = dir->getLongValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, size);
-
-			void *buf = thumbnail.allocData(size);
-
-			long x = 0;
-			long y = 0;
-
-			success = dir->getLongValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
-			success = dir->getLongValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
-
-			size_t real_size = m_container->fetchData(buf, offset, size);
-			if (real_size != size) {
-				Trace(WARNING) << "wrong size\n";
-			}
-			thumbnail.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
-			thumbnail.setDimensions(x, y);
-			return true;
-		}
-
-		bool NEFFile::_getLargeThumbnail(Thumbnail & thumbnail)
-		{
-			return false;
-		}
-
-		bool NEFFile::_getPreview(Thumbnail & thumbnail)
-		{
-			return false;
-		}
 
 	}
 }

@@ -21,6 +21,7 @@
 
 #include <cassert>
 
+#include "exception.h"
 #include "endianutils.h"
 
 #include "ifdfilecontainer.h"
@@ -45,11 +46,16 @@ namespace OpenRaw {
 		{
 		}
 
-		int32_t IFDEntry::getLong()
+		uint32_t IFDEntry::getLong() 
+			throw (BadTypeException, TooBigException)
 		{
-			assert(m_type == IFD::EXIF_FORMAT_LONG);
-			assert(m_count == 1);
-			int32_t val;
+			if (m_type != IFD::EXIF_FORMAT_LONG) {
+				throw BadTypeException();
+			}
+			if (m_count > 1) {
+				throw TooBigException();
+			}
+			uint32_t val;
 			if (m_container.endian() == RawContainer::ENDIAN_LITTLE) {
 				val = EL32((uint8_t*)&m_data);
 			}
@@ -59,11 +65,16 @@ namespace OpenRaw {
 			return val;
 		}
 
-		int16_t IFDEntry::getShort()
+		uint16_t IFDEntry::getShort() 
+			throw (BadTypeException, TooBigException)
 		{
-			assert(m_type == IFD::EXIF_FORMAT_SHORT);
-			assert(m_count == 1);
-			int32_t val;
+			if (m_type != IFD::EXIF_FORMAT_SHORT) {
+				throw BadTypeException();
+			}
+			if (m_count > 1) {
+				throw TooBigException();
+			}
+			uint32_t val;
 			if (m_container.endian() == RawContainer::ENDIAN_LITTLE) {
 				val = EL16((uint8_t*)&m_data);
 			}

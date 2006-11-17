@@ -24,6 +24,7 @@
 #define __RAWFILE_H
 
 #include <string>
+#include <vector>
 
 #include <libopenraw/libopenraw.h>
 
@@ -54,10 +55,14 @@ namespace OpenRaw {
 		// standard api, like get thumbnail
 		// and get exif.
 
-		/** Get the thumbnail from the raw file 
-				@param thumbnail the thumbnail to extract into
+		/** list the available thumbnail sizes
 		 */
-		bool getThumbnail(Thumbnail & thumbnail);
+		const std::vector<uint32_t> & listThumbnailSizes(void);
+		/** Get the thumbnail from the raw file 
+		 * @param thumbnail the thumbnail to extract into
+		 * @param size the square size in px
+		 */
+		bool getThumbnail(uint32_t size, Thumbnail & thumbnail);
 	protected:
 		/** 
 		 * Construct a raw file
@@ -65,14 +70,25 @@ namespace OpenRaw {
 		 * @param _type the type
 		 */
 		RawFile(const char *_filename, Type _type);
-		/** get the small size thumbnail */
-		virtual bool _getSmallThumbnail(Thumbnail & thumbnail) = 0;
-		/** get the large thumbnail */
-		virtual bool _getLargeThumbnail(Thumbnail & thumbnail) = 0;
-		/** get the preview */
-		virtual bool _getPreview(Thumbnail & thumbnail) = 0;
+		/** enumerate the thumbnail sizes. 
+		 * @param list the list to enumerate into
+		 * @return true if success
+		 */
+		virtual bool _enumThumbnailSizes(std::vector<uint32_t> &list) = 0;
+		
+		/** get the thumbnail of exact size. 
+		 * @param size the size in pixel of the square
+		 * @retval thumbnail the thumbnail to load
+		 * @return true in case of success
+		 * @seealso listThumbnailSizes() to understand how to fetch the sizes
+		 * available
+		 */
+		virtual bool _getThumbnail(uint32_t size, Thumbnail & thumbnail) = 0;
 	private:
 		static Type identify(const char*_filename);
+
+		RawFile(const RawFile&);
+		RawFile & operator=(const RawFile &);
 
 		class Private;
 

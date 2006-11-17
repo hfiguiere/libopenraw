@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 {
 	Debug::Trace::setDebugLevel(Debug::DEBUG2);
 
-	IOFile file(argv[1]);
+	OpenRaw::IO::File file(argv[1]);
 	CIFFContainer container(&file);
 	
 	const CIFF::HeapFileHeader & hdr = container.header();
