@@ -1,6 +1,12 @@
 # written by Hubert Figuiere
 
-include_directories (${LIBOPENRAW_SOURCE_DIR}/lib/ ${LIBOPENRAW_SOURCE_DIR}/lib/io)
+find_package(JPEG REQUIRED) 
+
+include_directories (${LIBOPENRAW_SOURCE_DIR}/lib/ 
+  ${LIBOPENRAW_SOURCE_DIR}/lib/io/
+  ${JPEG_DIR}
+  )
+
 
 set(LIBOPENRAW_SRCS ${LIBOPENRAW_SRCS}
 		    arwfile.cpp 
@@ -31,5 +37,6 @@ set(LIBOPENRAW_SRCS ${LIBOPENRAW_SRCS}
 		    )
 
 add_library(openraw SHARED ${LIBOPENRAW_SRCS})
-target_link_libraries(openraw jpeg)
+
+target_link_libraries(openraw ${JPEG_LIBRARY})
 

@@ -75,6 +75,9 @@ AC_LANG(C++)
 AC_CHECK_HEADER(boost/shared_ptr.hpp, ,
 	AC_MSG_ERROR([boost headers not found]))
 
+AC_CHECK_HEADER(jpeglib.h, ,
+	AC_MSG_ERROR([jpeglib headers not found]))
+
 AC_OUTPUT([
 Makefile
 include/Makefile
