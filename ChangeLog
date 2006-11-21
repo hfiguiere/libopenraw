@@ -1,3 +1,8 @@
+2006-11-20  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/Makefile.am: add libjpeg and jfifcontainer.{h,cpp}
+	* demo/Makefile.am: add libjpeg
+
 2006-11-19  Hubert Figuiere  <hub@figuiere.net>
 
 	* configure.in: Detect libjpeg in configure.

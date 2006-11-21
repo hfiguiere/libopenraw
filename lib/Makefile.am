@@ -26,7 +26,8 @@ noinst_HEADERS = or_debug.h \
 	ifddir.h ifdentry.h \
 	thumbnail.h \
 	orfcontainer.h \
-	ciffcontainer.h 
+	ciffcontainer.h \
+	jfifcontainer.h
 
 lib_LTLIBRARIES = libopenraw.la
 
@@ -35,7 +36,7 @@ libopenraw_la_LDFLAGS = \
 
 #	-export-symbols $(srcdir)/libopenraw.sym 
 
-libopenraw_la_LIBADD = io/libio.la capi/libopenrawc.la
+libopenraw_la_LIBADD = io/libio.la capi/libopenrawc.la -ljpeg
 
 libopenraw_la_SOURCES = \
 	iofile.cpp \
@@ -56,4 +57,5 @@ libopenraw_la_SOURCES = \
 	ifddir.cpp ifdentry.cpp \
 	rawcontainer.cpp \
 	orfcontainer.cpp \
-	ciffcontainer.cpp
+	ciffcontainer.cpp \
+	jfifcontainer.cpp
