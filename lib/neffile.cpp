@@ -26,7 +26,7 @@
 #include "ifdfilecontainer.h"
 #include "ifddir.h"
 #include "ifdentry.h"
-#include "iofile.h"
+#include "io/file.h"
 #include "neffile.h"
 #include "thumbnail.h"
 

@@ -25,7 +25,7 @@
 #include "ifddir.h"
 #include "ifdentry.h"
 #include "orfcontainer.h"
-#include "iofile.h"
+#include "io/file.h"
 
 using namespace Debug;
 

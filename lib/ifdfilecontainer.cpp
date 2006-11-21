@@ -28,7 +28,7 @@
 #include "debug.h"
 
 #include "ifdfilecontainer.h"
-#include "iofile.h"
+#include "io/file.h"
 
 
 using namespace Debug;

@@ -8,7 +8,6 @@ EXTRA_DIST = libopenraw.sym libopenraw-1.0.pc.in
 pkgconfig_DATA = libopenraw-1.0.pc
 
 noinst_HEADERS = or_debug.h \
-	iofile.h \
 	debug.h	\
 	rawcontainer.h \
 	rawfile.h \
@@ -39,7 +38,6 @@ libopenraw_la_LDFLAGS = \
 libopenraw_la_LIBADD = io/libio.la capi/libopenrawc.la -ljpeg
 
 libopenraw_la_SOURCES = \
-	iofile.cpp \
 	debug.cpp \
 	rawfile.cpp \
 	ifdfile.cpp \

@@ -1,5 +1,5 @@
 /*
- * libopenraw - iofile.h
+ * libopenraw - file.h
  *
  * Copyright (C) 2006 Hubert Figuière
  *
@@ -28,7 +28,7 @@
 
 #include <libopenraw/libopenraw.h>
 
-#include "io/stream.h"
+#include "stream.h"
 
 
 namespace OpenRaw {

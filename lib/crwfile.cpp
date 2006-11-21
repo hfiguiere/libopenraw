@@ -22,7 +22,7 @@
 #include <libopenraw/libopenraw.h>
 
 #include "debug.h"
-#include "iofile.h"
+#include "io/file.h"
 #include "io/streamclone.h"
 #include "thumbnail.h"
 #include "crwfile.h"

@@ -24,7 +24,7 @@
 
 #include <libopenraw/types.h>
 
-#include "iofile.h"
+#include "io/file.h"
 #include "ciffcontainer.h"
 
 
