@@ -23,7 +23,6 @@ set(LIBOPENRAW_SRCS ${LIBOPENRAW_SRCS}
 		    orffile.cpp 
 		    rawfilefactory.cpp
 		    dngfile.cpp 
-		    iofile.cpp
 		    peffile.cpp 
 		    thumbnail.cpp
                     ciffcontainer.cpp 
@@ -32,6 +31,7 @@ set(LIBOPENRAW_SRCS ${LIBOPENRAW_SRCS}
 		    io/io.c 
 		    io/posix_io.c 
 		    io/stream.cpp
+		    io/file.cpp
 		    io/streamclone.cpp
 		    capi/capi.cpp
 		    )

@@ -1,5 +1,8 @@
 2006-11-21  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/CMakeLists.txt, test/ciffcontainertest.cpp: 
+	iofile.h moved.
+
 	* lib/io/file.{h,cpp}: moved from lib/iofile.{h,cpp}
 	* lib/*: fix build for said moved file.
 

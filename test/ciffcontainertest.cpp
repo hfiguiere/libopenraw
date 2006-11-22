@@ -23,7 +23,7 @@
 
 #include "debug.h"
 #include "ciffcontainer.h"
-#include "iofile.h"
+#include "io/file.h"
 
 using namespace OpenRaw::Internals;
 
