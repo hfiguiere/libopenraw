@@ -5,3 +5,8 @@ CMakeCache.txt
 CMakeFiles
 *.cmake
 progress.make
+aclocal.m4
+config.guess
+config.sub
+configure
+autogen.err
