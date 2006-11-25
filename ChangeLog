@@ -1,5 +1,8 @@
 2006-11-24  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/crwfile.{h,cpp}: make sure the JPEG dimensions
+	are set for the CRW preview.
+
 	* debian/control: depend on libjpeg62-dev
 
 	* lib/debug.h: moved some const to the public header

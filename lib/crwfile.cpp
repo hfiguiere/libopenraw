@@ -47,7 +47,8 @@ namespace OpenRaw {
 		CRWFile::CRWFile(const char* _filename)
 			: RawFile(_filename, OR_RAWFILE_TYPE_CRW),
 				m_io(new IO::File(_filename)),
-				m_container(new CIFFContainer(m_io))
+				m_container(new CIFFContainer(m_io)),
+				m_x(0), m_y(0)
 		{
 
 		}
@@ -67,18 +68,17 @@ namespace OpenRaw {
 			for(iter = records.begin(); iter != records.end(); ++iter) {
 				if ((*iter).typeCode == (TAGCODE_MASK & TAG_JPEGIMAGE)) {
 					Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
-					uint32_t x = 0;
-					uint32_t y = 0;
+					m_x = m_y = 0;
 
 					IO::StreamClone *s = new IO::StreamClone(m_io, heap->offset()
 																									 + (*iter).offset);
 					JFIFContainer *jfif = new JFIFContainer(s, 0);
-					jfif->getDimensions(x,y);
+					jfif->getDimensions(m_x, m_y);
 					delete jfif;
 					delete s;
-					Trace(DEBUG1) << "JPEG dimensions x=" << x 
-															<< " y=" << y << "\n";
-					list.push_back(std::max(x,y));
+					Trace(DEBUG1) << "JPEG dimensions x=" << m_x 
+															<< " y=" << m_y << "\n";
+					list.push_back(std::max(m_x,m_y));
 				}
 			}
 
@@ -101,6 +101,7 @@ namespace OpenRaw {
 					if (real_size != byte_size) {
 						Trace(WARNING) << "wrong size\n";
 					}
+					thumbnail.setDimensions(m_x, m_y);
 					thumbnail.setDataType(OR_DATA_TYPE_JPEG);
 				}
 			}

@@ -59,6 +59,8 @@ namespace OpenRaw {
 
 			IO::File *m_io; /**< the IO handle */
 			CIFFContainer *m_container; /**< the real container */
+			uint32_t m_x;
+			uint32_t m_y;
 		};
 	}
 
