@@ -8,7 +8,6 @@ INCLUDES = \
 check_PROGRAMS = fileio ciffcontainertest
 
 
-CFLAGS = -Wall -pedantic -g
 fileio_LDFLAGS = -L$(top_builddir)/lib/io
 fileio_LDADD = -lio
 fileio_SOURCES = fileio.t.c
