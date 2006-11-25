@@ -2,7 +2,7 @@ Source: libopenraw
 Section: libs
 Priority: extra
 Maintainer: Hubert Figuiere <hub@figuiere.net>
-Build-Depends: debhelper (>> 5.0.0), cdbs (>= 0.4.30), libboost-dev (>= 1.33)
+Build-Depends: debhelper (>> 5.0.0), cdbs (>= 0.4.30), libboost-dev (>= 1.33), libjpeg62-dev
 Standards-Version: 3.7.2
 
 

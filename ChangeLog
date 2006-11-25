@@ -1,5 +1,7 @@
 2006-11-24  Hubert Figuiere  <hub@figuiere.net>
 
+	* debian/control: depend on libjpeg62-dev
+
 	* lib/debug.h: moved some const to the public header
 	* lib/capi/*: debug.cpp	add for debug C API
 	* include/libopenraw++/*: C++ API headers
