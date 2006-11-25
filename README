@@ -1,15 +1,18 @@
 Prerequistes to build:
+======================
 
 -a C++ compiler (tested on gcc 3.3 and up)
 -libboost (boost::shared_ptr)
 -libjpeg
 
--automake
+-automake/autoconf
 OR
 -CMake 2.4 <http://cmake.org>
 
 
 Supported file format:
+======================
+
 -Canon CR2
 -Canon CRW
 -Nikon NEF
@@ -19,9 +22,28 @@ Supported file format:
 -Sony ARW
 
 
+How to build:
+=============
+
+  Using automake/autoconf:
+
+    $ mkdir libopenraw-ambuild && cd libopenraw-ambuild
+    $ autoreconf --install --symlink ../libopenraw
+    $ ../libopenraw/configure --prefix=...
+    $ make
+    $ make install DESTDIR=...
+
+  Using cmake:
+
+    $ mkdir libopenraw-build && cd libopenraw-build
+    $ cmake ../libopenraw
+    $ make
+    $ make install DESTDIR=...
+
 
 Support table:
---------------
+==============
+
 T=tested (I have a sample)
 Y=yes it is there (untested I don't have a sample but the format is know 
   to be similar)
