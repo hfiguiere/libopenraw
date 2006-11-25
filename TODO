@@ -10,3 +10,5 @@ Support PEF (ifd based)
 Better implement DNG to fix the spec.
 
 Write a testsuite, even without data.
+
+Make cmake build work and document how to use it.
