@@ -1,25 +1,25 @@
 Prerequistes to build:
 ======================
 
--a C++ compiler (tested on gcc 3.3 and up)
--libboost (boost::shared_ptr)
--libjpeg
+    - a C++ compiler (tested on gcc 3.3 and up)
+    - libboost (boost::shared_ptr)
+    - libjpeg
 
--automake/autoconf
-OR
--CMake 2.4 <http://cmake.org>
+    - automake/autoconf
+  or
+    - CMake 2.4 <http://cmake.org>
 
 
 Supported file format:
 ======================
 
--Canon CR2
--Canon CRW
--Nikon NEF
--Olympus ORF: E-300
--Pentax PEF
--DNG
--Sony ARW
+    - Canon CR2
+    - Canon CRW
+    - Nikon NEF
+    - Olympus ORF: E-300
+    - Pentax PEF
+    - DNG
+    - Sony ARW
 
 
 How to build:
@@ -44,13 +44,12 @@ How to build:
 Support table:
 ==============
 
-T=tested (I have a sample)
-Y=yes it is there (untested I don't have a sample but the format is know 
-  to be similar)
-N=no
-B=known to be broken (needs to be fixed I have a sample but further work is
-  needed)
-
+  T  Tested and proven to work. (I have a sample.)
+  Y  Yes, it is there. (Untested as I do not have a sample but the format
+     is known to be similar.)
+  N  Not supported.
+  B  Known to be Broken. (Needs to be fixed. I have a sample but further
+     work is required.)
 
 
                        ThNail
