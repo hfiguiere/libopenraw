@@ -5,4 +5,4 @@ INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/lib
 
 noinst_LTLIBRARIES = libopenrawc.la
 
-libopenrawc_la_SOURCES = capi.cpp
+libopenrawc_la_SOURCES = capi.cpp debug.cpp

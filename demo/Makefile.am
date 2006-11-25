@@ -2,7 +2,7 @@
 
 noinst_PROGRAMS = thumb thumbc
 
-INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/lib
+INCLUDES = -I$(top_srcdir)/include
 
 thumbc_LDADD = ../lib/libopenraw.la -lstdc++ -ljpeg
 thumbc_LDFLAGS = -L$(top_builddir)/lib -static

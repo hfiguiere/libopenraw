@@ -82,6 +82,7 @@ AC_OUTPUT([
 Makefile
 include/Makefile
 include/libopenraw/Makefile
+include/libopenraw++/Makefile
 lib/Makefile
 lib/capi/Makefile
 lib/io/Makefile

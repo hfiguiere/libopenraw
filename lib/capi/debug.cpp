@@ -1,7 +1,7 @@
 /*
- * libopenraw - libopenraw.h
+ * libopenraw - debug.h
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2006 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,28 +18,26 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /**
- * @brief the libopenraw public API header
- * @author Hubert Figuiere <hub@figuiere.net>
+ * @brief C API for Debug
  */
 
-#ifndef __LIBOPENRAW_H__
-#define __LIBOPENRAW_H__
 
-#include <libopenraw/types.h>
-#include <libopenraw/consts.h>
-#include <libopenraw/io.h>
-#include <libopenraw/thumbnails.h>
+
 #include <libopenraw/debug.h>
-
+#include "debug.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+	
+	
+	void or_debug_set_level(debug_level lvl)
+	{
+		Debug::Trace::setDebugLevel(lvl);
+	}
 
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

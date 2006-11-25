@@ -29,7 +29,7 @@ using namespace OpenRaw::Internals;
 
 int main(int argc, char **argv)
 {
-	Debug::Trace::setDebugLevel(Debug::DEBUG2);
+	Debug::Trace::setDebugLevel(DEBUG2);
 
 	OpenRaw::IO::File file(argv[1]);
 	CIFFContainer container(&file);

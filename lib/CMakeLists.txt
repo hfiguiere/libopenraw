@@ -34,6 +34,7 @@ set(LIBOPENRAW_SRCS ${LIBOPENRAW_SRCS}
 		    io/file.cpp
 		    io/streamclone.cpp
 		    capi/capi.cpp
+		    capi/debug.cpp
 		    )
 
 add_library(openraw SHARED ${LIBOPENRAW_SRCS})

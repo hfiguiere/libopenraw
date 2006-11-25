@@ -19,21 +19,12 @@
  */
 
 
-#ifndef _OPENRAW_DEBUG_H_
-#define _OPENRAW_DEBUG_H_
+#ifndef _OPENRAWPP_DEBUG_H_
+#define _OPENRAWPP_DEBUG_H_
 
-
+#include <libopenraw/debug.h>
 
 namespace Debug {
-	
-	typedef enum _debug_level {
-		ERROR = 0,
-		WARNING,
-		NOTICE,
-		DEBUG1,
-		DEBUG2
-	} debug_level;
-
 	
 	/** a basic Trace class for debug */
 	class Trace 

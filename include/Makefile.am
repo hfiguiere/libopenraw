@@ -1,4 +1,4 @@
 
 
 
-SUBDIRS = libopenraw
+SUBDIRS = libopenraw libopenraw++
