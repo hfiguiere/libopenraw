@@ -2,6 +2,7 @@ Prerequistes to build:
 
 -a C++ compiler (tested on gcc 3.3 and up)
 -libboost (boost::shared_ptr)
+-libjpeg
 
 -automake
 OR
@@ -9,12 +10,13 @@ OR
 
 
 Supported file format:
--Canon CR2: 20D, 350D, 5D
--Canon CRW: 300D
--Nikon NEF: D100, D70
+-Canon CR2
+-Canon CRW
+-Nikon NEF
 -Olympus ORF: E-300
+-Pentax PEF
 -DNG
--Sony ARW: A-100 (experimental/broken)
+-Sony ARW
 
 
 
@@ -41,6 +43,7 @@ Canon CRW                Y
  300D                    T
  10D                     T
  G1                      T
+ G2                      T
  G5                      T
  Pro1                    T
 
@@ -51,15 +54,17 @@ Nikon NEF                Y
 
 Olympus ORF              Y
  E-300                   T
- E-10                    Y
+ E-10                    B
 
-Adobe DNG                B
+Adobe DNG                Y
  Leica DMR               T
+ Adobe DNG converter     T
 
-Sony ARW                 B
- A-100                   B
+Sony ARW                 Y
+ A-100                   T
 
-Pentax PEF               N
+Pentax PEF               Y
+ *-ist D                 T
 
 Minolta MRW              N
 
