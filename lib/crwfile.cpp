@@ -20,11 +20,11 @@
 
 
 #include <libopenraw/libopenraw.h>
+#include <libopenraw++/thumbnail.h>
 
 #include "debug.h"
 #include "io/file.h"
 #include "io/streamclone.h"
-#include "thumbnail.h"
 #include "crwfile.h"
 #include "ciffcontainer.h"
 #include "jfifcontainer.h"

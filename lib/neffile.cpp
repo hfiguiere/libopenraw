@@ -20,6 +20,7 @@
 
 
 #include <iostream>
+#include <libopenraw++/thumbnail.h>
 
 #include "debug.h"
 #include "ifd.h"
@@ -28,7 +29,6 @@
 #include "ifdentry.h"
 #include "io/file.h"
 #include "neffile.h"
-#include "thumbnail.h"
 
 using namespace Debug;
 

@@ -20,12 +20,12 @@
 
 
 #include <libopenraw/libopenraw.h>
+#include <libopenraw++/thumbnail.h>
 
 #include "debug.h"
 #include "io/file.h"
 #include "ifdfilecontainer.h"
 #include "ifd.h"
-#include "thumbnail.h"
 #include "arwfile.h"
 
 using namespace Debug;

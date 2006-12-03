@@ -25,8 +25,8 @@
 
 #include <vector>
 #include <libopenraw/types.h>
+#include <libopenraw++/rawfile.h>
 
-#include "rawfile.h"
 #include "ifddir.h"
 
 namespace OpenRaw {

@@ -18,6 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <libopenraw++/thumbnail.h>
+
 #include "debug.h"
 #include "io/stream.h"
 #include "io/streamclone.h"
@@ -25,7 +27,6 @@
 #include "ifd.h"
 #include "ifdfile.h"
 #include "ifdfilecontainer.h"
-#include "thumbnail.h"
 #include "jfifcontainer.h"
 
 using namespace Debug;

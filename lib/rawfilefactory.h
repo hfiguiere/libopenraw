@@ -24,9 +24,10 @@
 #define __RAWFILEFACTORY_H
 
 
+#include <string>
 #include <map>
 
-#include "rawfile.h"
+#include <libopenraw++/rawfile.h>
 
 namespace OpenRaw {
 

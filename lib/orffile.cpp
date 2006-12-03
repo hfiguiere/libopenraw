@@ -18,9 +18,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <libopenraw++/thumbnail.h>
+
 #include "debug.h"
 #include "orffile.h"
-#include "thumbnail.h"
 #include "ifd.h"
 #include "ifddir.h"
 #include "ifdentry.h"

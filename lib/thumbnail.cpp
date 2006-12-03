@@ -1,7 +1,7 @@
 /*
  * libopenraw - thumbnail.cpp
  *
- * Copyright (C) 2005 Hubert Figuiere
+ * Copyright (C) 2005-2006 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,10 +23,10 @@
 #include <iostream>
 
 #include "debug.h"
-#include "rawfile.h"
-#include "thumbnail.h"
 
 #include <libopenraw/libopenraw.h>
+#include <libopenraw++/rawfile.h>
+#include <libopenraw++/thumbnail.h>
 
 using namespace Debug;
 

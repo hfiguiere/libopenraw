@@ -28,14 +28,15 @@
 
 #include "debug.h"
 
-#include "rawfile.h"
+#include <libopenraw++/rawfile.h>
+#include <libopenraw++/thumbnail.h>
+
 #include "cr2file.h"
 #include "neffile.h"
 #include "orffile.h"
 #include "arwfile.h"
 #include "peffile.h"
 #include "crwfile.h"
-#include "thumbnail.h"
 #include "dngfile.h"
 
 #include "rawfilefactory.h"

@@ -10,7 +10,6 @@ pkgconfig_DATA = libopenraw-1.0.pc
 noinst_HEADERS = or_debug.h \
 	debug.h	\
 	rawcontainer.h \
-	rawfile.h \
 	ifdfile.h \
 	rawfilefactory.h \
 	cr2file.h \
@@ -23,7 +22,6 @@ noinst_HEADERS = or_debug.h \
 	ifd.h \
 	ifdfilecontainer.h \
 	ifddir.h ifdentry.h \
-	thumbnail.h \
 	orfcontainer.h \
 	ciffcontainer.h \
 	jfifcontainer.h

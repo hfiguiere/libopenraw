@@ -24,7 +24,8 @@
 #ifndef __CRWFILE_H_
 #define __CRWFILE_H_
 
-#include "rawfile.h"
+#include <libopenraw++/rawfile.h>
+
 #include "rawfilefactory.h"
 
 namespace OpenRaw {
