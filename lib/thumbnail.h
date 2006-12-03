@@ -1,5 +1,0 @@
-
-
-
-#include <libopenraw++/thumbnail.h>
-

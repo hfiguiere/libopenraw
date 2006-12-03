@@ -1,5 +1,0 @@
-
-
-#include <libopenraw++/rawfile.h>
-
-
