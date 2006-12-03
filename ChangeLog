@@ -1,3 +1,12 @@
+2006-12-03  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/io/teststream.cpp: changed include. Added LGPL header.
+
+	* lib/*: change include "rawfile.h" to <libopenraw++/rawfile.h>
+	Same for thumbnail.h.
+	* lib/thumbnail.h, lib/rawfile.h: remove these proxy headers
+	since they refer to one of the public ones.
+
 2006-11-24  Hubert Figuiere  <hub@figuiere.net>
 
 	* README: updated to match the current requirement and
