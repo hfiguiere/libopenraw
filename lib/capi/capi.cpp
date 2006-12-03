@@ -24,7 +24,7 @@
 
 #include <libopenraw/libopenraw.h>
 
-#include "thumbnail.h"
+#include <libopenraw++/thumbnail.h>
 
 using OpenRaw::Thumbnail;
 
