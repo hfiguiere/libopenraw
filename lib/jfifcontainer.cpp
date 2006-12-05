@@ -23,7 +23,13 @@
 #include <cstdio>
 
 namespace JPEG {
+	/*
+	 * The extern "C" below is REQUIRED for libjpeg-mmx-dev
+	 * as found on debian because some people have this installed.
+	 */
+	extern "C" {
 #include <jpeglib.h>
+	}
 }
 
 #include "io/stream.h"

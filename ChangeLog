@@ -1,5 +1,8 @@
 2006-12-05  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/jfifcontainer.cpp: libjpeg surrounded by extern "C"
+	to not break with weird variants of the library.
+
 	* configure.in: Remove un-needed AC_LIBTOOL_DLOPEN
 	* INSTALL: new file that bugs older automake if not present
 
