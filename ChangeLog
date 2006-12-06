@@ -1,5 +1,12 @@
 2006-12-05  Hubert Figuiere  <hub@figuiere.net>
 
+	* include/libopenraw/Makefile.am (libopenraw_HEADERS): missing
+	public header in install.
+
+	* lib/Makefile.am (noinst_HEADERS): missing headers in dist.
+
+	* lib/io/teststream.cpp (main): skip test if file not found
+
 	* lib/jfifcontainer.cpp: libjpeg surrounded by extern "C"
 	to not break with weird variants of the library.
 

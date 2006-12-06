@@ -24,7 +24,9 @@ noinst_HEADERS = or_debug.h \
 	ifddir.h ifdentry.h \
 	orfcontainer.h \
 	ciffcontainer.h \
-	jfifcontainer.h
+	jfifcontainer.h \
+	exception.h \
+	endianutils.h
 
 lib_LTLIBRARIES = libopenraw.la
 
