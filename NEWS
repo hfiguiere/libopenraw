@@ -1,2 +1,15 @@
-libopenraw 0.0.1:
-  - A lot of work in progress.
+libopenraw 0.0.2
+
+
+
+libopenraw 0.0.1 - 12/09/06
+
+  - First release.
+	It features: 
+	-C and C++ api
+	-Thumbnail extraction
+	-Supported file formats are: Canon CR2 and CRW, 
+	Nikon NEF, Pentax PEF, Olympus ORF, 
+	Adobe DNG, Sony ARW.
+
+
