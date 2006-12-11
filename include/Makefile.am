@@ -1,4 +1,5 @@
 
 
 
-SUBDIRS = libopenraw libopenraw++
+SUBDIRS = libopenraw libopenraw++ libopenraw-gnome
+

@@ -1,5 +1,7 @@
 2006-12-10  Hubert Figuiere  <hub@figuiere.net>
 
+	* include/libopenraw-gnome/*: libopenraw-gnome headers
+	
 	* autogen.sh: --enable-maintainer-mode by default when
 	run from the autogen.sh
 

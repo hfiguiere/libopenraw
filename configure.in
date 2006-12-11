@@ -123,6 +123,7 @@ Makefile
 include/Makefile
 include/libopenraw/Makefile
 include/libopenraw++/Makefile
+include/libopenraw-gnome/Makefile
 lib/Makefile
 lib/capi/Makefile
 lib/io/Makefile
