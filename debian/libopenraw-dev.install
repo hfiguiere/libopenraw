@@ -1,3 +1,4 @@
-usr/lib/lib*.{a,la,so}
-usr/lib/pkgconfig
-usr/include
+usr/lib/libopenraw.{a,la,so}
+usr/lib/pkgconfig/libopenraw-1.0*
+usr/include/libopenraw-*/libopenraw
+usr/include/libopenraw-*/libopenraw++
