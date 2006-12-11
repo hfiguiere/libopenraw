@@ -63,6 +63,17 @@ AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
+
+dnl Requirements
+
+dnl Needed for GdkPixbuf
+LIBGLIB_REQUIRED=2.0.0
+dnl Optional GdkPixbuf support
+LIBGDKPIXBUF_REQUIRED=2.0.0
+
+AC_SUBST(LIBGLIB_REQUIRED)
+AC_SUBST(LIBGDKPIXBUF_REQUIRED)
+
 AC_ARG_WITH(fink,[  --with-fink          add /sw/... to CPP/LDFLAGS (Mac OSX)],[
         if test "x$withval" != "xno"; then
                 CPPFLAGS="$CPPFLAGS -I/sw/include"
@@ -74,8 +85,38 @@ AC_LANG(C++)
 AC_CHECK_HEADER(boost/shared_ptr.hpp, ,
 	AC_MSG_ERROR([boost headers not found]))
 
+AC_LANG(C)
 AC_CHECK_HEADER(jpeglib.h, ,
 	AC_MSG_ERROR([jpeglib headers not found]))
+
+
+#
+# Checks for libglib-2.0
+#
+HAVE_LIBGLIB=no
+PKG_CHECK_MODULES(LIBGLIB, glib-2.0 >= $LIBGLIB_REQUIRED,
+                    [AC_DEFINE(HAVE_LIBGLIB, 1, [Define to 1 to enable libglib support])
+                     HAVE_LIBGLIB=yes],
+                    [HAVE_LIBGLIB=no])
+
+#
+# Checks for libgdkpixbuf
+#
+AC_ARG_ENABLE([libgdkpixbuf],	
+              [AC_HELP_STRING([--disable-libgdkpixbuf],[disable support for libgdkpixbuf])],,
+              [enable_libgdkpixbuf=yes])
+HAVE_LIBGDKPIXBUF=no
+if test x$enable_libgdkpixbuf = xyes ; then
+   if test x$HAVE_LIBGLIB = xyes ; then
+      PKG_CHECK_MODULES(LIBGDKPIXBUF, gdk-pixbuf-2.0 >= $LIBGDKPIXBUF_REQUIRED,
+                     [AC_DEFINE(HAVE_LIBGDKPIXBUF, 1, [Define to 1 to enable libgdkpixbuf support])
+                      HAVE_LIBGDKPIXBUF=yes],
+                     [HAVE_LIBGDKPIXBUF=no])
+   else
+      AC_MSG_WARN([glib-2.0 missing, ignore GdkPixbuf support.])
+   fi
+fi
+
 
 AC_OUTPUT([
 Makefile
@@ -86,9 +127,18 @@ lib/Makefile
 lib/capi/Makefile
 lib/io/Makefile
 lib/libopenraw-1.0.pc
+gnome/Makefile
+gnome/libopenraw-gnome-1.0.pc
 doc/Makefile
 doc/Doxyfile
 doc/doxygen/Makefile
 test/Makefile
 demo/Makefile
 ])
+
+
+echo "
+Options:
+
+  GdkPixbuf support:     ${HAVE_LIBGDKPIXBUF}
+"

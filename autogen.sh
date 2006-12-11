@@ -30,9 +30,10 @@ $AUTOCONF
 cd $builddir
 
 if test -z "$*"; then
-        echo "I am going to run ./configure with no arguments - if you wish "
-        echo "to pass any to it, please specify them on the $0 command line."
+        echo "I am going to run ./configure with --enable-maintainer-mode"
+	echo "If you wish to pass any to it, please specify them on "
+	echo "the $0 command line."
 fi
 
 echo "Running configure..."
-$topsrcdir/configure "$@"
+$topsrcdir/configure --enable-maintainer-mode "$@"
