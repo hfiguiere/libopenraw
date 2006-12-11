@@ -20,8 +20,6 @@
 
 /** @brief gdkpixbuf support */
 
-#ifdef HAVE_LIBGDKPIXBUF
-
 #include <glib.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <libopenraw/thumbnails.h>
@@ -88,4 +86,3 @@ GdkPixbuf *or_gdkpixbuf_extract_thumbnail(const char *path, uint32_t preferred_s
 }
 
 
-#endif

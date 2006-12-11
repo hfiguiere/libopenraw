@@ -91,22 +91,25 @@ AC_CHECK_HEADER(jpeglib.h, ,
 
 
 #
-# Checks for libglib-2.0
+dnl do we want GNOME ?
 #
-HAVE_LIBGLIB=no
-PKG_CHECK_MODULES(LIBGLIB, glib-2.0 >= $LIBGLIB_REQUIRED,
+AC_ARG_ENABLE([gnome],	
+              [AC_HELP_STRING([--disable-gnome],[disable support for Gnome])],,
+              [enable_gnome=yes])
+#
+# Checks for libgdkpixbuf
+#
+if test x$enable_gnome = xyes ; then
+   #
+   # Checks for libglib-2.0
+   # 
+   HAVE_LIBGLIB=no
+   PKG_CHECK_MODULES(LIBGLIB, glib-2.0 >= $LIBGLIB_REQUIRED,
                     [AC_DEFINE(HAVE_LIBGLIB, 1, [Define to 1 to enable libglib support])
                      HAVE_LIBGLIB=yes],
                     [HAVE_LIBGLIB=no])
 
-#
-# Checks for libgdkpixbuf
-#
-AC_ARG_ENABLE([libgdkpixbuf],	
-              [AC_HELP_STRING([--disable-libgdkpixbuf],[disable support for libgdkpixbuf])],,
-              [enable_libgdkpixbuf=yes])
-HAVE_LIBGDKPIXBUF=no
-if test x$enable_libgdkpixbuf = xyes ; then
+   HAVE_LIBGDKPIXBUF=no
    if test x$HAVE_LIBGLIB = xyes ; then
       PKG_CHECK_MODULES(LIBGDKPIXBUF, gdk-pixbuf-2.0 >= $LIBGDKPIXBUF_REQUIRED,
                      [AC_DEFINE(HAVE_LIBGDKPIXBUF, 1, [Define to 1 to enable libgdkpixbuf support])
@@ -115,8 +118,18 @@ if test x$enable_libgdkpixbuf = xyes ; then
    else
       AC_MSG_WARN([glib-2.0 missing, ignore GdkPixbuf support.])
    fi
+   if test x$HAVE_LIBGDKPIXBUF = xyes ; then
+     HAVE_GNOME=yes
+   else
+     HAVE_GNOME=no
+   fi
+else
+   HAVE_GNOME=no
+   AC_MSG_CHECKING([for Gnome])
+   AC_MSG_RESULT([disabled])
 fi
 
+AM_CONDITIONAL(BUILD_GNOME_SUPPORT, test x$HAVE_GNOME = xyes)
 
 AC_OUTPUT([
 Makefile
@@ -141,5 +154,5 @@ demo/Makefile
 echo "
 Options:
 
-  GdkPixbuf support:     ${HAVE_LIBGDKPIXBUF}
+  Gnome support:     ${HAVE_GNOME}
 "

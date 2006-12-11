@@ -1,16 +1,20 @@
 
 
-
-
+if BUILD_GNOME_SUPPORT
+GNOME_TARGETS = libopenrawgnome.la
+PKG_CONFIG_FILES = libopenraw-gnome-1.0.pc
+else 
+GNOME_TARGETS = 
+PKG_CONFIG_FILES =
+endif
 
 INCLUDES = -I$(top_srcdir)/include \
 	$(LIBGLIB_CFLAGS) \
 	$(LIBGDKPIXBUF_CFLAGS)
 
+pkgconfig_DATA = $(PKG_CONFIG_FILES)
 
-pkgconfig_DATA = libopenraw-gnome-1.0.pc
-
-lib_LTLIBRARIES = libopenrawgnome.la
+lib_LTLIBRARIES = $(GNOME_TARGETS)
 
 libopenrawgnome_la_LDFLAGS = \
 	-version-info @LIBOPENRAW_VERSION_INFO@
