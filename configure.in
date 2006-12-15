@@ -136,13 +136,14 @@ Makefile
 include/Makefile
 include/libopenraw/Makefile
 include/libopenraw++/Makefile
-include/libopenraw-gnome/Makefile
 lib/Makefile
 lib/capi/Makefile
 lib/io/Makefile
 lib/libopenraw-1.0.pc
 gnome/Makefile
 gnome/libopenraw-gnome-1.0.pc
+gnome/include/Makefile
+gnome/include/libopenraw-gnome/Makefile
 doc/Makefile
 doc/Doxyfile
 doc/doxygen/Makefile

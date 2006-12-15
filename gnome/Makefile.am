@@ -1,4 +1,5 @@
 
+SUBDIRS = include
 
 if BUILD_GNOME_SUPPORT
 GNOME_TARGETS = libopenrawgnome.la
