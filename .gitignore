@@ -16,3 +16,7 @@ config.guess
 config.sub
 configure
 autogen.err
+missing
+ltmain.sh
+install-sh
+depcomp
