@@ -10,6 +10,7 @@ PKG_CONFIG_FILES =
 endif
 
 INCLUDES = -I$(top_srcdir)/include \
+	-I$(srcdir)/include \
 	$(LIBGLIB_CFLAGS) \
 	$(LIBGDKPIXBUF_CFLAGS)
 
