@@ -1,3 +1,7 @@
+2006-12-21  Hubert Figuiere  <hub@figuiere.net>
+
+	* include/libopenraw++/Makefile.am: no longer install C++ headers.
+
 2006-12-14  Hubert Figuiere  <hub@figuiere.net>
 
 	* include/libopenraw-gnome/*: moved to 
