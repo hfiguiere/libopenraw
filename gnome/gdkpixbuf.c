@@ -70,17 +70,21 @@ GdkPixbuf *or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail)
 GdkPixbuf *or_gdkpixbuf_extract_thumbnail(const char *path, uint32_t preferred_size)
 {
 	GdkPixbuf *pixbuf = NULL;
-
-	ORThumbnailRef thumbnail;
+	or_error err = OR_ERROR_NONE;
+	ORThumbnailRef thumbnail = NULL;
 	g_debug("file %s is raw", path);
-	if (or_get_extract_thumbnail(path, preferred_size,
-															 &thumbnail) 
-			== OR_ERROR_NONE)	{
+
+	err = or_get_extract_thumbnail(path, preferred_size,
+																 &thumbnail);
+	if (err == OR_ERROR_NONE)	{
 		pixbuf = or_thumbnail_to_pixbuf(thumbnail);
-		or_thumbnail_release(thumbnail);
+		err = or_thumbnail_release(thumbnail);
+		if (err != OR_ERROR_NONE) {
+			g_warning("or_thumbnail_release() failed with %d", err);
+		}
 	}
 	else {
-		g_debug("or_get_extract_thumbnail() failed.");
+		g_debug("or_get_extract_thumbnail() failed with %d.", err);
 	}
 	return pixbuf;
 }

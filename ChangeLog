@@ -1,5 +1,9 @@
 2006-12-31  Hubert Figuiere  <hub@figuiere.net>
 
+	* demo/thumbc.c (main): better error handling.
+	* gnome/gdkpixbuf.c (or_gdkpixbuf_extract_thumbnail): better 
+	error code handling.
+
 	* gnome/libopenraw-gnome-1.0.pc.in (Requires): require proper
 	libopenraw package.
 
