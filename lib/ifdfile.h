@@ -25,6 +25,7 @@
 
 #include <vector>
 #include <libopenraw/types.h>
+#include <libopenraw/consts.h>
 #include <libopenraw++/rawfile.h>
 
 #include "ifddir.h"
@@ -65,17 +66,24 @@ namespace OpenRaw {
 		protected:
 			IFDFile(const char *_filename, Type _type);
 
-			virtual bool _enumThumbnailSizes(std::vector<uint32_t> &list);
+			/** list the thumbnails in the IFD
+			 * @retval list the list of thumbnails
+			 * @return the error code. OR_ERROR_NOT_FOUND if no
+			 * thumbnail are found. 
+			 */
+			virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 
 			/** locate the thumnaile in the IFD 
 			 * @param dir the IFDDir where to locate the thumbnail
+			 * @return the error code. OR_ERROR_NOT_FOUND if the
+			 * thumbnail are not found.
 			 */
-			virtual bool _locateThumbnail(const IFDDir::Ref & dir,
+			virtual ::or_error _locateThumbnail(const IFDDir::Ref & dir,
 																		std::vector<uint32_t> &list);
 
 			typedef std::map<uint32_t, IFDThumbDesc> ThumbLocations;
-			ThumbLocations m_thumbLocations;
-			IO::Stream *m_io; /**< the IO handle */
+			ThumbLocations    m_thumbLocations;
+			IO::Stream       *m_io; /**< the IO handle */
 			IFDFileContainer *m_container; /**< the real container */
 
 		private:
@@ -83,7 +91,7 @@ namespace OpenRaw {
 			IFDFile(const IFDFile&);
 			IFDFile & operator=(const IFDFile &);
 
-			virtual bool _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
 		};
 
 	}

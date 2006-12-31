@@ -59,8 +59,10 @@ namespace OpenRaw {
 			delete m_io;
 		}
 
-		bool CRWFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
+		::or_error CRWFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 		{
+			::or_error err = OR_ERROR_NOT_FOUND;
+
 			Heap::Ref heap = m_container->heap();
 
 			RecordEntry::List & records = heap->records();
@@ -79,14 +81,16 @@ namespace OpenRaw {
 					Trace(DEBUG1) << "JPEG dimensions x=" << m_x 
 															<< " y=" << m_y << "\n";
 					list.push_back(std::max(m_x,m_y));
+					err = OR_ERROR_NONE;
 				}
 			}
 
-			return true;
+			return err;
 		}
 
-		bool CRWFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
+		::or_error CRWFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
 		{
+			::or_error err = OR_ERROR_NOT_FOUND;
 			Heap::Ref heap = m_container->heap();
 
 			RecordEntry::List & records = heap->records();
@@ -103,10 +107,11 @@ namespace OpenRaw {
 					}
 					thumbnail.setDimensions(m_x, m_y);
 					thumbnail.setDataType(OR_DATA_TYPE_JPEG);
+					err = OR_ERROR_NONE;
 				}
 			}
 
-			return true;
+			return err;
 		}
 	}
 }

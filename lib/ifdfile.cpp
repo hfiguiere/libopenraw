@@ -45,8 +45,10 @@ namespace OpenRaw {
 		}
 
 
-		bool IFDFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
+		::or_error IFDFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 		{
+			::or_error err = OR_ERROR_NONE;
+
 			Trace(DEBUG1) << "_enumThumbnailSizes()\n";
 			std::vector<IFDDir::Ref> & dirs = m_container->directories();
 			std::vector<IFDDir::Ref>::iterator iter; 
@@ -57,20 +59,23 @@ namespace OpenRaw {
 			{
 				IFDDir::Ref & dir = *iter;
 				dir->load();
-				bool ret = _locateThumbnail(dir, list);
-				if (ret)
+				or_error ret = _locateThumbnail(dir, list);
+				if (ret == OR_ERROR_NONE)
 				{
 					Trace(DEBUG1) << "Found " << list.back() << " pixels\n";
 				}
 			}
-			return (list.size() > 0);
+			if (list.size() <= 0) {
+				err = OR_ERROR_NOT_FOUND;
+			}
+			return err;
 		}
 
 
-		bool IFDFile::_locateThumbnail(const IFDDir::Ref & dir,
+		::or_error IFDFile::_locateThumbnail(const IFDDir::Ref & dir,
 																	 std::vector<uint32_t> &list)
 		{
-			bool ret = false;
+			::or_error ret = OR_ERROR_NOT_FOUND;
 			bool got_it;
 			uint32_t x = 0;
 			uint32_t y = 0;
@@ -125,7 +130,7 @@ namespace OpenRaw {
 						uint32_t dim = std::max(x, y);
 						m_thumbLocations[dim] = IFDThumbDesc(x, y, type, dir);
 						list.push_back(dim);
-						ret = true;
+						ret = OR_ERROR_NONE;
 					}
 				}
 			}
@@ -134,9 +139,9 @@ namespace OpenRaw {
 		}
 
 
-		bool IFDFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
+		::or_error IFDFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
 		{
-			bool ret = false;
+			::or_error ret = OR_ERROR_NOT_FOUND;
 			ThumbLocations::iterator iter = m_thumbLocations.find(size);
 			if(iter != m_thumbLocations.end()) 
 			{
@@ -182,7 +187,7 @@ namespace OpenRaw {
 					}
 
 					thumbnail.setDimensions(x, y);
-					ret = true;
+					ret = OR_ERROR_NONE;
 				}
 			}
 

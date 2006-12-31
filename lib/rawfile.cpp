@@ -168,9 +168,9 @@ namespace OpenRaw {
 	}
 
 
-	bool RawFile::getThumbnail(uint32_t tsize, Thumbnail & thumbnail)
+	::or_error RawFile::getThumbnail(uint32_t tsize, Thumbnail & thumbnail)
 	{
-		bool ret = false;
+		::or_error ret = OR_ERROR_NOT_FOUND;
 		uint32_t smallest_bigger = 0xffffffff;
 		uint32_t biggest_smaller = 0;
 		uint32_t found_size = 0;
@@ -180,6 +180,7 @@ namespace OpenRaw {
 		const std::vector<uint32_t> & sizes(listThumbnailSizes());
 
 		std::vector<uint32_t>::const_iterator iter;
+
 		for (iter = sizes.begin(); iter != sizes.end(); ++iter) {
 			Trace(DEBUG1) << "current iter is " << *iter << "\n";
 			if (*iter < tsize) {
@@ -210,7 +211,7 @@ namespace OpenRaw {
 		else {
 			// no size found, let's fail gracefuly
 			Trace(DEBUG1) << "no size found\n";
-			ret = false;
+			ret = OR_ERROR_NOT_FOUND;
 		}
 
 		return ret;

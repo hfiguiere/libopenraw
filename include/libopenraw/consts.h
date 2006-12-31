@@ -40,6 +40,7 @@ extern "C" {
 		OR_ERROR_NOTAREF = 2,
 		OR_ERROR_CANT_OPEN = 3, /**< can't open file. Check OS error codes */
 		OR_ERROR_CLOSED_STREAM = 4, /**< stream closed */
+		OR_ERROR_NOT_FOUND = 5,   /**< requested "object" not found */
 		OR_ERROR_UNKNOWN = 42,
 		OR_ERROR_LAST_ 
 	} or_error;

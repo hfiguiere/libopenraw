@@ -31,7 +31,7 @@ dnl  increment AGE, Otherwise AGE is reset to 0. If CURRENT has changed,
 dnl  REVISION is set to 0, otherwise REVISION is incremented.
 dnl ---------------------------------------------------------------------------
 AC_SUBST([LIBOPENRAW_REVISION], [0])
-AC_SUBST([LIBOPENRAW_AGE],      [1])
+AC_SUBST([LIBOPENRAW_AGE],      [0])
 AC_SUBST([LIBOPENRAW_CURRENT],  [1])
 AC_SUBST([LIBOPENRAW_CURRENT_MIN],
          [`expr $LIBOPENRAW_CURRENT - $LIBOPENRAW_AGE`])

@@ -32,6 +32,7 @@ using OpenRaw::Thumbnail;
 int
 main(int argc, char** argv)
 {
+	::or_error err = OR_ERROR_NONE;
 
 	if (argc < 2) {
 		std::cerr << "missing parameter" << std::endl;
@@ -55,7 +56,7 @@ main(int argc, char** argv)
 
 	Thumbnail * thumb =
 		Thumbnail::getAndExtractThumbnail(argv[1],
-													 160);
+													 160, err);
 	if (thumb != NULL) {
 		std::cerr << "thumb data size =" << thumb->size() << std::endl;
 		std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
@@ -66,10 +67,13 @@ main(int argc, char** argv)
 		
 		delete thumb;
 	}
+	else {
+		std::cerr << "error = " << err << std::endl;
+	}
 
 	thumb =
 		Thumbnail::getAndExtractThumbnail(argv[1],
-													 640);
+													 640, err);
 
 	if (thumb != NULL) {
 		std::cerr << "thumb data size =" << thumb->size() << std::endl;
@@ -81,10 +85,13 @@ main(int argc, char** argv)
 		
 		delete thumb;
 	}
+	else {
+		std::cerr << "error = " << err << std::endl;
+	}
 
 	thumb =
 		Thumbnail::getAndExtractThumbnail(argv[1],
-													 2048);
+													 2048, err);
 	if (thumb != NULL) {
 		std::cerr << "preview data size =" << thumb->size() << std::endl;
 		std::cerr << "preview data type =" << thumb->dataType() << std::endl;
@@ -94,6 +101,9 @@ main(int argc, char** argv)
 		fclose(f);
 		
 		delete thumb;
+	}
+	else {
+		std::cerr << "error = " << err << std::endl;
 	}
 
 

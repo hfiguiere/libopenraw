@@ -40,11 +40,7 @@ extern "C" {
 
 		Thumbnail ** pThumbnail = reinterpret_cast<Thumbnail **>(_thumb);
 		*pThumbnail = Thumbnail::getAndExtractThumbnail(_filename,
-																										_preferred_size);
-		// FIXME check for the real error
-		if (*pThumbnail != NULL) {
-			ret = OR_ERROR_UNKNOWN;
-		}
+																										_preferred_size, ret);
 		return ret;
 	}
 

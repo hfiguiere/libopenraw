@@ -37,10 +37,16 @@ namespace OpenRaw {
 		Thumbnail();
 		~Thumbnail();
 
-		/** quick and dirty "get this thumbnail" */
+		/** quick and dirty "get this thumbnail" 
+		 * @param _filename the filename
+		 * @param preferred_size the size of the thumbnail
+		 * @retval err the error code
+		 * @return a Thumbnail object. Callers own it and must delete it.
+		 */
 		static Thumbnail *
 		getAndExtractThumbnail(const char *_filename,
-													 uint32_t preferred_size);
+													 uint32_t preferred_size,
+													 ::or_error & err);
 
 		/** return the data type */
 		DataType dataType() const;
