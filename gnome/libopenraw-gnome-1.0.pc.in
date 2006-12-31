@@ -6,7 +6,7 @@ VERSION=@VERSION@
 
 Name: libopenraw-gnome
 Description: Library for easy decoding of camera RAW files. Gnome support.
-Requires: libopenraw
+Requires: libopenraw-1.0
 Version: @VERSION@
 Libs: -L${libdir} -lopenraw -lopenrawgnome
 Cflags: -I${includedir}/@LIBOPENRAW_INCLUDE_BASE@ -I${includedir}

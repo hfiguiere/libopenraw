@@ -1,5 +1,8 @@
 2006-12-31  Hubert Figuiere  <hub@figuiere.net>
 
+	* gnome/libopenraw-gnome-1.0.pc.in (Requires): require proper
+	libopenraw package.
+
 	* lib/ifdfile.{cpp,h}: add destructor ~IFDFile() (fix a serious
 	memory leak)
 
