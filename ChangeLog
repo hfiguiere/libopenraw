@@ -1,5 +1,8 @@
 2006-12-31  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdfile.{cpp,h}: add destructor ~IFDFile() (fix a serious
+	memory leak)
+
 	* lib/capi/capi.cpp (or_get_extract_thumbnail): retrieve error
 	code. Fix a bug where an error was reported on success and 
 	vice-versa

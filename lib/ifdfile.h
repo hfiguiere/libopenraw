@@ -65,6 +65,7 @@ namespace OpenRaw {
 
 		protected:
 			IFDFile(const char *_filename, Type _type);
+			virtual ~IFDFile();
 
 			/** list the thumbnails in the IFD
 			 * @retval list the list of thumbnails

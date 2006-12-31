@@ -44,6 +44,11 @@ namespace OpenRaw {
 
 		}
 
+		IFDFile::~IFDFile()
+		{
+			delete m_container;
+			delete m_io;
+		}
 
 		::or_error IFDFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 		{
