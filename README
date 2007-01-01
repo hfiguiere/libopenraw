@@ -80,12 +80,14 @@ Olympus ORF              Y
 Adobe DNG                Y
  Leica DMR               T
  Adobe DNG converter     T
+ K10D                    T
 
 Sony ARW                 Y
  A-100                   T
 
 Pentax PEF               Y
  *-ist D                 T
+ K10D                    T
 
 Minolta MRW              N
 
@@ -97,3 +99,4 @@ FujiFilm RAF             N
 
 Foveon X3F               N
 
+Epson ERF                N
