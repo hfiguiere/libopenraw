@@ -1,7 +1,7 @@
 /*
  * libopenraw - gdkpixbuf.c
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -56,7 +56,6 @@ GdkPixbuf *or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail)
 			gdk_pixbuf_loader_write(loader, buf, count, NULL);
 			gdk_pixbuf_loader_close(loader, NULL);
 			pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-			g_object_unref(loader);
 		}
 		break;
 	}
