@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -120,9 +120,14 @@ namespace OpenRaw {
 
 	RawFile::Type RawFile::identify(const char*_filename)
 	{
-		std::string extension(::strrchr(_filename, '.') + 1);
-		if (extension.length() > 3) {
+		const char *e = ::strrchr(_filename, '.');
+		if (e == NULL) {
+			Trace(DEBUG1) << "Extension not found\n";
 			return OR_RAWFILE_TYPE_UNKNOWN;
+		}
+		std::string extension(e + 1);
+		if (extension.length() > 3) {
+ 			return OR_RAWFILE_TYPE_UNKNOWN;
 		}
 
 		boost::to_lower(extension);

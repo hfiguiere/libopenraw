@@ -148,6 +148,7 @@ doc/Makefile
 doc/Doxyfile
 doc/doxygen/Makefile
 test/Makefile
+tools/Makefile
 demo/Makefile
 ])
 

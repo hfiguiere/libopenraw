@@ -1,4 +1,12 @@
+2007-01-05  Hubert Figuiere  <hub@figuiere.net>
+
+	* tools/ordiag.cpp: added ordiag utility.
+	* configure.in, Makefile.am: added tools subdir.
+
 2007-01-02  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/rawfile.cpp (identify): don't crash if no extension
+	is found.
 
 	* gnome/gdkpixbuf.c (or_thumbnail_to_pixbuf): don't unref()
 	the loader, otherwise it crashes. CRW thumnailing was crashing

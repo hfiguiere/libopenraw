@@ -1,7 +1,7 @@
 
 
 
-SUBDIRS = lib gnome doc test demo include
+SUBDIRS = lib gnome doc test demo tools include
 
 
 
