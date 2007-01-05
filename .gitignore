@@ -14,9 +14,14 @@ aclocal.m4
 autom4te.cache
 config.guess
 config.sub
+config.log
+config.status
+config.h.in
 configure
 autogen.err
 missing
 ltmain.sh
+libtool
 install-sh
 depcomp
+*.pc
