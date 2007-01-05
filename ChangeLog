@@ -1,5 +1,8 @@
 2007-01-05  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ciffcontainer.cpp: remove direct logging to cout and
+	replace it by Debug::Trace where appropriate.
+
 	* tools/ordiag.cpp: added ordiag utility.
 	* configure.in, Makefile.am: added tools subdir.
 
