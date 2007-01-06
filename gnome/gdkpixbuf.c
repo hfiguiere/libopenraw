@@ -41,7 +41,7 @@ GdkPixbuf *or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail)
 		or_thumbnail_dimensions(thumbnail, &x, &y);
 		pixbuf = gdk_pixbuf_new_from_data(buf, 
 																			GDK_COLORSPACE_RGB,
-																			FALSE, 24, x, y, 0, 
+																			FALSE, 8, x, y, x * 3, 
 																			NULL, NULL);
 		break;
 	}
