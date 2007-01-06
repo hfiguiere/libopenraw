@@ -74,6 +74,12 @@ LIBGDKPIXBUF_REQUIRED=2.0.0
 AC_SUBST(LIBGLIB_REQUIRED)
 AC_SUBST(LIBGDKPIXBUF_REQUIRED)
 
+AC_ARG_WITH(darwinports,[  --with-darwinports     add /opt/local/... to CPP/LDFLAGS (Mac OSX)],[
+        if test "x$withval" != "xno"; then
+                CPPFLAGS="$CPPFLAGS -I/opt/local/include"
+                LDFLAGS="$LDFLAGS -L/opt/local/lib"
+        fi
+])
 AC_ARG_WITH(fink,[  --with-fink          add /sw/... to CPP/LDFLAGS (Mac OSX)],[
         if test "x$withval" != "xno"; then
                 CPPFLAGS="$CPPFLAGS -I/sw/include"
