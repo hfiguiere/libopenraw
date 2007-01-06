@@ -13,7 +13,16 @@ fi
 builddir=`pwd`
 
 AUTOCONF=autoconf
-LIBTOOL=libtool
+if test -x /usr/bin/glibtool ; then
+    LIBTOOL=glibtool
+else
+    LIBTOOL=libtool
+fi
+if test -x /usr/bin/glibtoolize ; then
+    LIBTOOLIZE=glibtoolize
+else
+    LIBTOOLIZE=libtoolize
+fi
 AUTOMAKE=automake
 ACLOCAL=aclocal
 
@@ -23,7 +32,7 @@ rm -f autogen.err
 $ACLOCAL >> autogen.err 2>&1
 
 $AUTOMAKE --add-missing --copy --foreign 
-libtoolize --force
+$LIBTOOLIZE --force
 autoheader --force
 $AUTOCONF
 
