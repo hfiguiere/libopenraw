@@ -1,3 +1,9 @@
+Copyright
+=========
+
+libopenraw is Copyright (c) 2005-2007 Hubert Figuiere
+It is licensed under LGPL. See file COPYING.
+
 Prerequistes to build:
 ======================
 
@@ -79,6 +85,7 @@ Olympus ORF              Y
 
 Adobe DNG                Y
  Leica DMR               T
+ Leica M8                B
  Adobe DNG converter     T
  K10D                    T
 

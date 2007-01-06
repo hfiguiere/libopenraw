@@ -56,7 +56,7 @@ namespace OpenRaw {
 			IFDEntry::Ref getEntry(int id);
 
 			/** Get an loosely typed integer value from an entry.
-			 * This method is to be prefered from getLongValue() 
+			 * This method is  preferred over getLongValue() 
 			 * or getShortValue() unless you really want the strong 
 			 * typing that IFD structure provide
 			 * @param id the IFD field id

@@ -54,7 +54,7 @@ namespace OpenRaw {
 			/** 
 					@param file the stream to read from
 					@param offset the offset since starting the 
-					begining of the file for the container
+					beginning of the file for the container
 			*/
 			RawContainer(IO::Stream *_file, off_t offset);
 			/** destructor */
@@ -98,7 +98,7 @@ namespace OpenRaw {
 
 			/** the file handle */
 			IO::Stream *m_file;
-			/** the offset from the begining of the file */
+			/** the offset from the beginning of the file */
 			off_t m_offset;
 			EndianType m_endian;
 		};
