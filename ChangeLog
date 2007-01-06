@@ -1,6 +1,10 @@
 2007-01-06  Hubert Figuiere  <hub@figuiere.net>
 
 	* configure.in: add --with-darwinports to build on MacOS X
+	set CC to g++ on Mac.
+
+	* tools/Makefile.am (LDFLAGS): add local lib path to link tools with
+	locally compiled libopenraw
 
 2007-01-06  Hubert Figuiere  <hub@figuiere.net>
 
