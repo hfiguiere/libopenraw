@@ -77,15 +77,20 @@ namespace OpenRaw {
 
 	Thumbnail *
 	Thumbnail::getAndExtractThumbnail(const char* _filename,
-																		uint32_t preferred_size)
+																		uint32_t preferred_size, 
+																		or_error & err)
 	{
+		err = OR_ERROR_NONE;
 		Thumbnail *thumb = NULL;
 
 		RawFile *file = RawFile::newRawFile(_filename);
 		if (file) {
 			thumb = new Thumbnail();
-			file->getThumbnail(preferred_size, *thumb);
+			err = file->getThumbnail(preferred_size, *thumb);
 			delete file;
+		}
+		else {
+			err = OR_ERROR_CANT_OPEN; // file error
 		}
 		return thumb;
 	}

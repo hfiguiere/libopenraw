@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -120,9 +120,14 @@ namespace OpenRaw {
 
 	RawFile::Type RawFile::identify(const char*_filename)
 	{
-		std::string extension(::strrchr(_filename, '.') + 1);
-		if (extension.length() > 3) {
+		const char *e = ::strrchr(_filename, '.');
+		if (e == NULL) {
+			Trace(DEBUG1) << "Extension not found\n";
 			return OR_RAWFILE_TYPE_UNKNOWN;
+		}
+		std::string extension(e + 1);
+		if (extension.length() > 3) {
+ 			return OR_RAWFILE_TYPE_UNKNOWN;
 		}
 
 		boost::to_lower(extension);
@@ -168,9 +173,9 @@ namespace OpenRaw {
 	}
 
 
-	bool RawFile::getThumbnail(uint32_t tsize, Thumbnail & thumbnail)
+	::or_error RawFile::getThumbnail(uint32_t tsize, Thumbnail & thumbnail)
 	{
-		bool ret = false;
+		::or_error ret = OR_ERROR_NOT_FOUND;
 		uint32_t smallest_bigger = 0xffffffff;
 		uint32_t biggest_smaller = 0;
 		uint32_t found_size = 0;
@@ -180,6 +185,7 @@ namespace OpenRaw {
 		const std::vector<uint32_t> & sizes(listThumbnailSizes());
 
 		std::vector<uint32_t>::const_iterator iter;
+
 		for (iter = sizes.begin(); iter != sizes.end(); ++iter) {
 			Trace(DEBUG1) << "current iter is " << *iter << "\n";
 			if (*iter < tsize) {
@@ -210,7 +216,7 @@ namespace OpenRaw {
 		else {
 			// no size found, let's fail gracefuly
 			Trace(DEBUG1) << "no size found\n";
-			ret = false;
+			ret = OR_ERROR_NOT_FOUND;
 		}
 
 		return ret;

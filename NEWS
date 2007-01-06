@@ -1,6 +1,7 @@
 libopenraw 0.0.2
 
-
+  - Added GdkPixbuf support for Gnome
+  - No longer install libopenraw++ headers
 
 libopenraw 0.0.1 - 12/09/06
 

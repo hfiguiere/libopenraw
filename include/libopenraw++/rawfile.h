@@ -61,8 +61,9 @@ namespace OpenRaw {
 		/** Get the thumbnail from the raw file 
 		 * @param thumbnail the thumbnail to extract into
 		 * @param size the square size in px
+		 * @return the error code
 		 */
-		bool getThumbnail(uint32_t size, Thumbnail & thumbnail);
+		::or_error getThumbnail(uint32_t size, Thumbnail & thumbnail);
 	protected:
 		/** 
 		 * Construct a raw file
@@ -72,18 +73,18 @@ namespace OpenRaw {
 		RawFile(const char *_filename, Type _type);
 		/** enumerate the thumbnail sizes. 
 		 * @param list the list to enumerate into
-		 * @return true if success
+		 * @return OR_ERROR_NONE if success
 		 */
-		virtual bool _enumThumbnailSizes(std::vector<uint32_t> &list) = 0;
+		virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) = 0;
 		
 		/** get the thumbnail of exact size. 
 		 * @param size the size in pixel of the square
 		 * @retval thumbnail the thumbnail to load
-		 * @return true in case of success
+		 * @return OR_ERROR_NONE if success
 		 * @seealso listThumbnailSizes() to understand how to fetch the sizes
 		 * available
 		 */
-		virtual bool _getThumbnail(uint32_t size, Thumbnail & thumbnail) = 0;
+		virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail) = 0;
 	private:
 		static Type identify(const char*_filename);
 

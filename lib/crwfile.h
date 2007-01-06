@@ -50,9 +50,9 @@ namespace OpenRaw {
 		protected:
 
 
-			virtual bool _enumThumbnailSizes(std::vector<uint32_t> &list);
+			virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 
-			virtual bool _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
 
 		private:
 			CRWFile(const CRWFile&);

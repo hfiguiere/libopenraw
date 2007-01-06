@@ -1,7 +1,7 @@
 /*
  * libopenraw - gdkpixbuf.c
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ GdkPixbuf *or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail)
 		or_thumbnail_dimensions(thumbnail, &x, &y);
 		pixbuf = gdk_pixbuf_new_from_data(buf, 
 																			GDK_COLORSPACE_RGB,
-																			FALSE, 24, x, y, 0, 
+																			FALSE, 8, x, y, x * 3, 
 																			NULL, NULL);
 		break;
 	}
@@ -56,7 +56,6 @@ GdkPixbuf *or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail)
 			gdk_pixbuf_loader_write(loader, buf, count, NULL);
 			gdk_pixbuf_loader_close(loader, NULL);
 			pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-			g_object_unref(loader);
 		}
 		break;
 	}
@@ -70,17 +69,21 @@ GdkPixbuf *or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail)
 GdkPixbuf *or_gdkpixbuf_extract_thumbnail(const char *path, uint32_t preferred_size)
 {
 	GdkPixbuf *pixbuf = NULL;
-
-	ORThumbnailRef thumbnail;
+	or_error err = OR_ERROR_NONE;
+	ORThumbnailRef thumbnail = NULL;
 	g_debug("file %s is raw", path);
-	if (or_get_extract_thumbnail(path, preferred_size,
-															 &thumbnail) 
-			== OR_ERROR_NONE)	{
+
+	err = or_get_extract_thumbnail(path, preferred_size,
+																 &thumbnail);
+	if (err == OR_ERROR_NONE)	{
 		pixbuf = or_thumbnail_to_pixbuf(thumbnail);
-		or_thumbnail_release(thumbnail);
+		err = or_thumbnail_release(thumbnail);
+		if (err != OR_ERROR_NONE) {
+			g_warning("or_thumbnail_release() failed with %d", err);
+		}
 	}
 	else {
-		g_debug("or_get_extract_thumbnail() failed.");
+		g_debug("or_get_extract_thumbnail() failed with %d.", err);
 	}
 	return pixbuf;
 }

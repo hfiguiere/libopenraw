@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainer.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,9 @@
 
 #include "io/file.h"
 #include "ciffcontainer.h"
+#include "debug.h"
 
+using namespace Debug;
 
 namespace OpenRaw {
 	namespace Internals {
@@ -75,12 +77,10 @@ namespace OpenRaw {
 
 			bool Heap::_loadRecords()
 			{
-				std::cout << "_loadRecord()\n";
 				IO::Stream *file = m_container->file();
 				file->seek(m_start + m_length - 4, SEEK_SET);
 				int32_t offset;
 				bool ret = m_container->readInt32(file, offset);
-				std::cout << "ret = " << ret << std::endl;
 					
 				if (ret) {
 					int16_t numRecords;
@@ -90,9 +90,9 @@ namespace OpenRaw {
 					ret = m_container->readInt16(file, numRecords);
 					if (!ret) 
 					{
-						std::cout << "read failed\n";
+						Trace(DEBUG1) << "read failed: " << ret << "\n";
 					}
-					std::cout << "numRecords " << numRecords << std::endl;
+					Trace(DEBUG2) << "numRecords " << numRecords << "\n";
 					int16_t i;
 					for (i = 0; i < numRecords; i++) {
 						m_records.push_back(RecordEntry());
@@ -164,18 +164,17 @@ namespace OpenRaw {
 		{
 			bool ret = false;
 			if (m_heap == NULL) {
-				std::cout << "loading heap\n";
 				if(m_endian != ENDIAN_NULL) {
 					off_t heapLength = m_file->filesize() - m_hdr.headerLength;
 
-					std::cout << "heap len " << heapLength << std::endl;
+					Trace(DEBUG1) << "heap len " << heapLength << "\n";
 					m_heap = CIFF::Heap::Ref(new CIFF::Heap(m_hdr.headerLength, 
 																									heapLength, this));
 					
 					ret = true;
 				}
 				else {
-					std::cout << "Unknown endian\n";
+					Trace(DEBUG1) << "Unknown endian\n";
 				}
 			}
 			return ret;
