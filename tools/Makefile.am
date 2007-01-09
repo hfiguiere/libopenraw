@@ -6,4 +6,5 @@ noinst_PROGRAMS = ordiag
 
 
 ordiag_SOURCES = ordiag.cpp
-ordiag_LDADD = -lopenraw
+ordiag_LDADD = -lopenraw  -lstdc++ -ljpeg
+ordiag_LDFLAGS = -L$(top_builddir)/lib -static
