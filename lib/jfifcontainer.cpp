@@ -1,7 +1,7 @@
 /*
  * libopenraw - jfifcontainer.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
  */
 
 
-
+#include <setjmp.h>
 #include <cstdio>
 
 namespace JPEG {
@@ -64,6 +64,7 @@ namespace OpenRaw {
 			using namespace JPEG;
 
 			m_cinfo.err = JPEG::jpeg_std_error(&m_jerr);
+			m_jerr.error_exit = &j_error_exit;
 			JPEG::jpeg_create_decompress(&m_cinfo);
 
 			/* inspired by jdatasrc.c */
@@ -93,26 +94,39 @@ namespace OpenRaw {
 		}
 
 
-		void JFIFContainer::getDimensions(uint32_t &x, uint32_t &y)
+		bool JFIFContainer::getDimensions(uint32_t &x, uint32_t &y)
 		{
 			if(!m_headerLoaded) {
-				_loadHeader();
+				if (_loadHeader() == 0) {
+					Trace(DEBUG1) << "load error failed\n";
+					return false;
+				}
 			}
 			x = m_cinfo.output_width;
 			y = m_cinfo.output_height;
+			return true;
 		}
 
 		int JFIFContainer::_loadHeader()
 		{
-			int ret;
-			ret = JPEG::jpeg_read_header(&m_cinfo, TRUE);
-			//Trace(DEBUG1) << "jpeg_read_header " << ret << "\n";
+			int ret = 0;
+			if (::setjmp(m_jpegjmp) == 0) {
+				ret = JPEG::jpeg_read_header(&m_cinfo, TRUE);
+				//Trace(DEBUG1) << "jpeg_read_header " << ret << "\n";
+				
+				JPEG::jpeg_calc_output_dimensions(&m_cinfo);
+			}
 			m_headerLoaded = (ret == 1);
-
-			JPEG::jpeg_calc_output_dimensions(&m_cinfo);
 			return ret;
 		}
 
+
+		void JFIFContainer::j_error_exit(JPEG::j_common_ptr cinfo)
+		{
+			(*cinfo->err->output_message) (cinfo);
+			JFIFContainer *self = ((jpeg_src_t *)(((JPEG::j_decompress_ptr)cinfo)->src))->self;
+			::longjmp(self->m_jpegjmp, 1);
+		}
 
 		void JFIFContainer::j_init_source(JPEG::j_decompress_ptr)
 		{

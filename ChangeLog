@@ -1,5 +1,10 @@
 2007-01-09  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdfile.cpp (_locateThumbnail): check that getDimensions() 
+	succeeds.
+	* lib/jfifcontainer.{h,cpp}: handle JPEG errors more properly
+	and return proper errors.
+
 	* tools/Makefile.am (ordiag_LDADD): link static and using
 	locally built lib
 

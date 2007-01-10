@@ -28,6 +28,7 @@
 #ifndef _JFIFCONTAINER_H_
 #define _JFIFCONTAINER_H_
 
+#include <setjmp.h>
 #include <cstdio>
 
 namespace JPEG {
@@ -37,6 +38,7 @@ namespace JPEG {
 #include <libopenraw/types.h>
 #include <libopenraw/consts.h>
 
+#include "exception.h"
 #include "rawcontainer.h"
 
 namespace OpenRaw {
@@ -51,7 +53,7 @@ namespace OpenRaw {
 			/** destructor */
 			virtual ~JFIFContainer();
 
-			void getDimensions(uint32_t &x, uint32_t &y);
+			bool getDimensions(uint32_t &x, uint32_t &y);
 
 			/* libjpeg callbacks j_ is the prefix for these callbacks */
 			static void j_init_source(JPEG::j_decompress_ptr cinfo);
@@ -60,12 +62,14 @@ namespace OpenRaw {
 																		long num_bytes);
 //			static void j_jpeg_resync_to_restart(JPEG::j_decompress_ptr cinfo);
 			static void j_term_source(JPEG::j_decompress_ptr cinfo);
+			static void j_error_exit(JPEG::j_common_ptr cinfo);
 
 		private:
 		  int _loadHeader();
 
 			struct JPEG::jpeg_decompress_struct m_cinfo;
 			struct JPEG::jpeg_error_mgr m_jerr;
+			jmp_buf m_jpegjmp;
 			bool m_headerLoaded;
 		};
 
