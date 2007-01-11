@@ -61,7 +61,8 @@ struct io_methods posix_io_methods = {
 /** posix implementation for open() */
 static IOFileRef posix_open(const char *path, int mode)
 {
-	struct io_data_posix *data = malloc(sizeof(struct io_data_posix));
+	struct io_data_posix *data = 
+		(struct io_data_posix *)malloc(sizeof(struct io_data_posix));
 	IOFileRef f = (IOFileRef)malloc(sizeof(struct _IOFile));
 
 	memset(f, 0, sizeof(struct _IOFile));
