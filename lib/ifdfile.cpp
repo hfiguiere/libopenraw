@@ -109,19 +109,23 @@ namespace OpenRaw {
 					uint32_t offset = 0;
 					got_it = dir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
 					if (!got_it) {
-						Trace(DEBUG1) << "looking for JPEG\n";
 						got_it = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
 																			 offset);
+ 						Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
 						if (got_it) {
 							type = OR_DATA_TYPE_JPEG;
 							if (x == 0 || y == 0) {
 								IO::StreamClone *s = new IO::StreamClone(m_io, offset);
 								JFIFContainer *jfif = new JFIFContainer(s, 0);
-								jfif->getDimensions(x,y);
+								if (jfif->getDimensions(x,y)) {
+									Trace(DEBUG1) << "JPEG dimensions x=" << x 
+																<< " y=" << y << "\n";
+								}
+								else {
+									type = OR_DATA_TYPE_NONE;
+								}
 								delete jfif;
 								delete s;
-								Trace(DEBUG1) << "JPEG dimensions x=" << x 
-															<< " y=" << y << "\n";
 							}
 						}
 					}
