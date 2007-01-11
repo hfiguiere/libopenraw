@@ -1,6 +1,7 @@
 
 
 INCLUDES = -I$(top_srcdir)/include
+LDFLAGS = -L$(top_builddir)/lib
 
 noinst_PROGRAMS = ordiag
 
