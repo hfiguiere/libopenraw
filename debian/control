@@ -8,20 +8,21 @@ Standards-Version: 3.7.2
 
 Package: libopenraw-dev
 Section: libdevel
+Depends: libopenraw1 (= ${Source-Version})
 Architecture: any
 Description: A library to open camera RAW files. (Development files)
  libopenraw is a library to parse and process digital camera RAW
  files.
 
-Package: libopenraw0-dbg
+Package: libopenraw1-dbg
 Architecture: any
-Depends: libopenraw0 (= ${Source-Version})
+Depends: libopenraw1 (= ${Source-Version})
 Description: A library to open camera RAW files. (Debug files)
  libopenraw is a library to parse and process digital camera RAW
  files.
 
 
-Package: libopenraw0
+Package: libopenraw1
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
@@ -32,12 +33,12 @@ Description: A library to open camera RAW files. (Library files)
 Package: libopenrawgnome-dev
 Section: libdevel
 Architecture: any
-Depends: libopenraw-dev
+Depends: libopenraw-dev (= ${Source-Version}), libopenrawgnome1 (= ${Source-Version})
 Description: A library to open camera RAW files. (Development files for Gnome)
  libopenraw is a library to parse and process digital camera RAW
  files.
 
-Package: libopenrawgnome0-dbg
+Package: libopenrawgnome1-dbg
 Architecture: any
 Depends: libopenraw0 (= ${Source-Version})
 Description: A library to open camera RAW files. (Debug files for Gnome)
@@ -45,7 +46,7 @@ Description: A library to open camera RAW files. (Debug files for Gnome)
  files.
 
 
-Package: libopenrawgnome0
+Package: libopenrawgnome1
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
