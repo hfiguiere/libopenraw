@@ -1,0 +1,14 @@
+2007-01-29  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/bitmapdata.cpp, lib/rawdata.cpp,
+	include/libopenraw++/bitmapdata.h, 
+	include/libopenraw++/rawdata.h:
+	Added bitmap data and raw data classes.
+	* include/libopenraw++/thumbnail.h,
+	lib/thumbnail.cpp: inherit from BitmapData.
+	* include/*, lib/*, configure.in: Add RAW data extraction
+	support for CR2 and NEF. 
+	Fix a bug when reading IFDEntry with an that overflow a sint16_t.
+	* tools/Makefile.am: link to the .la
+	* tools/ordiag.cpp: Dump CFA data.
+

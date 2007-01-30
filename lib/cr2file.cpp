@@ -21,6 +21,7 @@
 
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/thumbnail.h>
+#include <libopenraw++/rawdata.h>
 
 #include "debug.h"
 #include "io/file.h"
@@ -51,6 +52,62 @@ namespace OpenRaw {
 		{
 		}
 
+
+		::or_error CR2File::_getRawData(RawData & data)
+		{
+			::or_error ret = OR_ERROR_NONE;
+			IFDDir::Ref dir = m_container->setDirectory(3);
+
+			Trace(DEBUG1) << "_getRawData()\n";
+			uint32_t offset = 0;
+			uint32_t byte_length = 0;
+			bool got_it;
+			got_it = dir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+			if(!got_it) {
+				Trace(DEBUG1) << "offset not found\n";
+				return OR_ERROR_NOT_FOUND;
+			}
+			got_it = dir->getLongValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+			if(!got_it) {
+				Trace(DEBUG1) << "byte len not found\n";
+				return OR_ERROR_NOT_FOUND;
+			}
+
+			IFDDir::Ref dir0 = m_container->setDirectory(0);
+			if (dir0 == NULL) {
+				Trace(DEBUG1) << "Directory 0 not found\n";
+				return OR_ERROR_NOT_FOUND;
+			}
+			IFDDir::Ref exif = dir0->getExifIFD();
+			if (exif != NULL) {
+				uint16_t x, y;
+				x = 0;
+				y = 0;
+				got_it = exif->getShortValue(IFD::EXIF_TAG_PIXEL_X_DIMENSION, x);
+				if(!got_it) {
+					Trace(DEBUG1) << "X not found\n";
+					return OR_ERROR_NOT_FOUND;
+				}
+				got_it = exif->getShortValue(IFD::EXIF_TAG_PIXEL_Y_DIMENSION, y);
+				if(!got_it) {
+					Trace(DEBUG1) << "Y not found\n";
+					return OR_ERROR_NOT_FOUND;
+				}
+				
+				void *p = data.allocData(byte_length);
+				size_t real_size = m_container->fetchData(p, offset, 
+																									byte_length);
+				if (real_size < byte_length) {
+					Trace(WARNING) << "Size mismatch for data: ignoring.\n";
+				}
+				data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+				data.setDimensions(x, y);
+			}
+			else {
+				ret = OR_ERROR_NOT_FOUND;
+			}
+			return ret;
+		}
 
 	}
 }

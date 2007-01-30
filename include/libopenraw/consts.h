@@ -82,6 +82,8 @@ extern "C" {
 		OR_DATA_TYPE_JPEG,        /**< JPEG data */
 		OR_DATA_TYPE_TIFF,        /**< TIFF container */ 
 		OR_DATA_TYPE_PNG,         /**< PNG container */
+		OR_DATA_TYPE_CFA,         /**< bayer CFA container */
+		OR_DATA_TYPE_COMPRESSED_CFA, /**< compressed bayer CFA container */
 
 		OR_DATA_TYPE_UNKNOWN
 	} or_data_type;

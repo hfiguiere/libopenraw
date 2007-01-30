@@ -58,11 +58,11 @@ namespace OpenRaw {
 			Trace(DEBUG1) << "num =" << numEntries << "\n";
 
 			for(int16_t i = 0; i < numEntries; i++) {
-				int16_t id;
+				uint16_t id;
 				int16_t type;
 				int32_t count;
 				uint32_t data;
-				m_container.readInt16(file, id);
+				m_container.readUInt16(file, id);
 				m_container.readInt16(file, type);
 				m_container.readInt32(file, count);
 				file->read(&data, 4);
@@ -101,7 +101,7 @@ namespace OpenRaw {
 						break;
 					}
 				}
-				catch(std::exception & e) {
+				catch(const std::exception & e) {
 					Trace(ERROR) << "Exception raised " << e.what() 
 											 << " fetch integer value for " << id << "\n";
 				}
@@ -119,7 +119,7 @@ namespace OpenRaw {
 					v = e->getLong();
 					success = true;
 				}
-				catch(std::exception & e) {
+				catch(const std::exception & e) {
 					Trace(ERROR) << "Exception raised " << e.what() 
 											 << " fetch long value for " << id << "\n";
 				}
@@ -137,7 +137,7 @@ namespace OpenRaw {
 					v = e->getShort();
 					success = true;
 				}
-				catch(std::exception & e) {
+				catch(const std::exception & e) {
 					Trace(ERROR) << "Exception raised " << e.what() 
 											 << " fetch long value for " << id << "\n";
 				}
@@ -177,6 +177,8 @@ namespace OpenRaw {
 			success = getLongValue(IFD::EXIF_TAG_SUB_IFDS, offset);
 			if (success) {
 				Ref ref(new IFDDir(offset, m_container));
+				ref->load();
+				return ref;
 			}
 			return Ref(static_cast<IFDDir*>(NULL));
 		}
@@ -186,11 +188,17 @@ namespace OpenRaw {
 		 */
 		IFDDir::Ref IFDDir::getExifIFD()
 		{
-			bool success;
+			bool success = false;
 			uint32_t offset = 0;
 			success = getLongValue(IFD::EXIF_TAG_EXIF_IFD_POINTER, offset);
 			if (success) {
+				Trace(DEBUG1) << "Exif IFD offset = " << offset << "\n";
 				Ref ref(new IFDDir(offset, m_container));
+				ref->load();
+				return ref;
+			}
+			else {
+				Trace(DEBUG1) << "Exif IFD offset not found.\n";				
 			}
 			return Ref(static_cast<IFDDir*>(NULL));
 		}

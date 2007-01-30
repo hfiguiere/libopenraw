@@ -29,9 +29,11 @@
 
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/thumbnail.h>
+#include <libopenraw++/rawdata.h>
 
 using OpenRaw::RawFile;
 using OpenRaw::Thumbnail;
+using OpenRaw::RawData;
 
 /**
  * Dump on RawFile. (functor)
@@ -64,6 +66,12 @@ public:
 				break;
 			case OR_DATA_TYPE_PNG:
 				return "PNG container";
+				break;
+			case OR_DATA_TYPE_CFA:
+				return "CFA data";
+				break;
+			case OR_DATA_TYPE_COMPRESSED_CFA:
+				return "Compressed CFA data";
 				break;
 			case OR_DATA_TYPE_UNKNOWN:
 				return "Unknown type";
@@ -133,10 +141,30 @@ public:
 				else {
 					m_out << boost::format("\t\t\tFormat %1%\n") 
 						% dataTypeToString(thumb.dataType());
+					m_out << boost::format("\t\t\tDimensions: x = %1% y = %2%\n")
+						% thumb.x() % thumb.y();
 				}
 			}
 		}
 
+	void dumpRawData(RawFile * rf)
+		{
+			RawData rd;
+			::or_error err = rf->getRawData(rd);
+			if (err == OR_ERROR_NONE) {
+				m_out << "\tRAW data\n";
+				m_out << boost::format("\t\tType: %1%\n")
+					% dataTypeToString(rd.dataType());
+				m_out << boost::format("\t\tByte size: %1%1\n")
+					% rd.size();
+				m_out << boost::format("\t\tDimensions: x = %1% y = %2%\n")
+					% rd.x() % rd.y();
+			}
+			else {
+				m_out << boost::format("\tNo Raw Data found! (error = %1%)\n")
+					% err;
+			}
+		}
 	void operator()(const std::string &s)
 		{
 			m_out << boost::format("Dumping %1%\n") % s;
@@ -150,6 +178,7 @@ public:
 				m_out << boost::format("\tType = %1% (%2%)\n") % rf->type() 
 															 % typeToString(rf->type());
 				dumpPreviews(rf);
+				dumpRawData(rf);
 			}
 		}
 private:

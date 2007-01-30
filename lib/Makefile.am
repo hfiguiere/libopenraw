@@ -49,7 +49,9 @@ libopenraw_la_SOURCES = \
 	dngfile.cpp \
 	peffile.cpp \
 	crwfile.cpp \
+	bitmapdata.cpp \
 	thumbnail.cpp \
+	rawdata.cpp \
 	or_debug.c \
 	ifdfilecontainer.cpp \
 	ifddir.cpp ifdentry.cpp \

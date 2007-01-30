@@ -1,7 +1,7 @@
 /*
- * libopenraw - thumbnail.h
+ * libopenraw - bitmapdata.h
  *
- * Copyright (C) 2005-2007 Hubert Figuiere
+ * Copyright (C) 2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,44 +19,43 @@
  */
 
 
-#ifndef __OPENRAW_THUMBNAIL_H__
-#define __OPENRAW_THUMBNAIL_H__
+#ifndef __OPENRAW_BITMAPDATA_H__
+#define __OPENRAW_BITMAPDATA_H__
 
 
 #include <libopenraw/libopenraw.h>
-#include <libopenraw++/bitmapdata.h>
+
 
 namespace OpenRaw {
 
-/** real thumbnail extracted */
-	class Thumbnail 
-		: public BitmapData
+	class BitmapData
 	{
 	public:
-		Thumbnail();
-		virtual ~Thumbnail();
+		typedef ::or_data_type DataType;
 
-		/** quick and dirty "get this thumbnail" 
-		 * @param _filename the filename
-		 * @param preferred_size the size of the thumbnail
-		 * @retval err the error code
-		 * @return a Thumbnail object. Callers own it and must delete it.
-		 */
-		static Thumbnail *
-		getAndExtractThumbnail(const char *_filename,
-													 uint32_t preferred_size,
-													 ::or_error & err);
+		BitmapData();
+		virtual ~BitmapData();
 
+		/** return the data type */
+		DataType dataType() const;
+		/** set the data type */
+		void setDataType(DataType _type);
+
+		void *allocData(const size_t s);
+		/** return the size of the data */
+		size_t size() const;
+		void *data() const;
+		
+		uint32_t x();
+		uint32_t y();
+		/** set the pixel dimensions of the thumbnail */
+		void setDimensions(uint32_t x, uint32_t y);
 	private:
-
-		Thumbnail(const Thumbnail&);
-		Thumbnail & operator=(const Thumbnail &);
-
 		class Private;
-		Thumbnail::Private *d;
+		BitmapData::Private *d;
 	};
 
 }
 
-#endif
 
+#endif

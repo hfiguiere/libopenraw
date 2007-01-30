@@ -46,7 +46,8 @@ namespace OpenRaw {
 			
 			CR2File(const CR2File&);
 			CR2File & operator=(const CR2File&);
-			
+
+			virtual ::or_error _getRawData(RawData & data);			
 		};
 
 	}

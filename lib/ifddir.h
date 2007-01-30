@@ -93,7 +93,7 @@ namespace OpenRaw {
 		private:
 			off_t m_offset;
 			IFDFileContainer & m_container;
-			std::map<int, IFDEntry::Ref> m_entries;
+			std::map<uint16_t, IFDEntry::Ref> m_entries;
 		};
 
 

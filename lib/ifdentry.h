@@ -38,7 +38,7 @@ namespace OpenRaw {
 			/** Ref (ie shared pointer) */
 			typedef boost::shared_ptr<IFDEntry> Ref;
 
-			IFDEntry(int16_t _id, int16_t _type, int32_t _count, uint32_t _data,
+			IFDEntry(uint16_t _id, int16_t _type, int32_t _count, uint32_t _data,
 							 IFDFileContainer &_container);
 			virtual ~IFDEntry();
 
@@ -50,7 +50,7 @@ namespace OpenRaw {
 			uint32_t getLong() throw (BadTypeException, TooBigException);
 			uint16_t getShort() throw (BadTypeException, TooBigException);
 		private:
-			int16_t m_id;
+			uint16_t m_id;
 			int16_t m_type;
 			int32_t m_count;
 			uint32_t m_data; /**< raw data without endian conversion */

@@ -32,7 +32,7 @@ namespace OpenRaw {
 	namespace Internals {
 
 
-		IFDEntry::IFDEntry(int16_t _id, int16_t _type, 
+		IFDEntry::IFDEntry(uint16_t _id, int16_t _type, 
 											 int32_t _count, uint32_t _data,
 											 IFDFileContainer &_container)
 			: m_id(_id), m_type(_type),				

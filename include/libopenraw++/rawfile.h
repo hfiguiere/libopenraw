@@ -31,6 +31,7 @@
 namespace OpenRaw {
 
 	class Thumbnail;
+	class RawData;
 
 	void init();
 
@@ -59,11 +60,17 @@ namespace OpenRaw {
 		 */
 		const std::vector<uint32_t> & listThumbnailSizes(void);
 		/** Get the thumbnail from the raw file 
-		 * @param thumbnail the thumbnail to extract into
 		 * @param size the square size in px
+		 * @param thumbnail the thumbnail to extract into
 		 * @return the error code
 		 */
 		::or_error getThumbnail(uint32_t size, Thumbnail & thumbnail);
+
+		/** Get the RAW data 
+		 * @param the RawData to put the data into
+		 * @return the error code
+		 */
+		::or_error getRawData(RawData & rawdata);
 	protected:
 		/** 
 		 * Construct a raw file
@@ -85,6 +92,12 @@ namespace OpenRaw {
 		 * available
 		 */
 		virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail) = 0;
+		/** get the RAW data 
+		 * @param data the RAW data
+		 * @return OR_ERROR_NONE if success
+		 * Return the data compressed or uncompressed.
+		 */
+		virtual ::or_error _getRawData(RawData & data) {}
 	private:
 		static Type identify(const char*_filename);
 

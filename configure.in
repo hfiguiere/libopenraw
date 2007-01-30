@@ -90,7 +90,7 @@ AC_ARG_WITH(fink,[  --with-fink          add /sw/... to CPP/LDFLAGS (Mac OSX)],[
 ])
 
 AC_LANG(C++)
-AC_CHECK_HEADER(boost/shared_ptr.hpp, ,
+AC_CHECK_HEADERS(boost/shared_ptr.hpp boost/algorithm/string.hpp, ,
 	AC_MSG_ERROR([boost headers not found]))
 
 AC_LANG(C)

@@ -1,7 +1,7 @@
 /*
- * libopenraw - neffile.h
+ * libopenraw - rawdata.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,39 +20,22 @@
 
 
 
+#include <libopenraw++/rawdata.h>
 
-#ifndef __NEFFILE_H_
-#define __NEFFILE_H_
-
-#include "ifdfile.h"
 
 namespace OpenRaw {
 
-	class Thumbnail;
+	RawData::RawData()
+	{
 
-	namespace Internals {
-		class IOFile;
-		class IFDFileContainer;
-
-		class NEFFile
-			: public IFDFile
-		{
-		public:
-			static RawFile *factory(const char* _filename);
-			NEFFile(const char* _filename);
-			virtual ~NEFFile();
-
-		protected:
-
-		private:
-
-			NEFFile(const NEFFile&);
-			NEFFile & operator=(const NEFFile &);
-
-			virtual ::or_error _getRawData(RawData & data);
-		};
 	}
+
+
+	RawData::~RawData()
+	{
+
+	}
+
 
 }
 
-#endif

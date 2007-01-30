@@ -93,6 +93,7 @@ namespace OpenRaw {
 			IFDFile & operator=(const IFDFile &);
 
 			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+			virtual ::or_error _getRawData(RawData & data);
 		};
 
 	}

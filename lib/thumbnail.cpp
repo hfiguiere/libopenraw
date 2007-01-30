@@ -1,7 +1,7 @@
 /*
  * libopenraw - thumbnail.cpp
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2005-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,30 +35,12 @@ namespace OpenRaw {
 	/** Private data for the thumbnail class */
 	class Thumbnail::Private {
 	public:
-		/** raw data */
-		void *data;
-		/** size in bytes of raw data */
-		size_t data_size;
-		/** type of thumbnail data */
-		DataType data_type;
-		/** x dimension in pixels of thumbnail data */
-		uint32_t x;
-		/** y dimension in pixels of thumbnail data */
-		uint32_t y;
-		
 		Private()
-			: data(NULL),
-				data_size(0),
-				data_type(OR_DATA_TYPE_NONE),
-				x(0), y(0)
 			{
 			}
 		
 		~Private()
 			{
-				if (NULL != data) {
-					free(data);
-				}
 			}
 	private:
 		Private(const Private &);
@@ -95,50 +77,5 @@ namespace OpenRaw {
 		return thumb;
 	}
 
-	Thumbnail::DataType Thumbnail::dataType() const
-	{
-		return d->data_type;
-	}
-
-	void Thumbnail::setDataType(Thumbnail::DataType _type)
-	{
-		d->data_type = _type;
-	}
-
- 	void * Thumbnail::allocData(const size_t s)
-	{
-		Trace(DEBUG1) << "allocate s=" << s << " data =" 
-							<< d->data << "\n";
-		d->data = malloc(s);
-		Trace(DEBUG1) << " data =" << d->data << "\n";
-		d->data_size = s;
-		return d->data;
-	}
-
-	size_t Thumbnail::size() const
-	{
-		return d->data_size;
-	}
-
-	void * Thumbnail::data() const
-	{
-		return d->data;
-	}
-
-	uint32_t Thumbnail::x()
-	{
-		return d->x;
-	}
-
-	uint32_t Thumbnail::y()
-	{
-		return d->y;
-	}
-
-	void Thumbnail::setDimensions(uint32_t x, uint32_t y)
-	{
-		d->x = x;
-		d->y = y;
-	}
 
 }

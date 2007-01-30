@@ -203,5 +203,13 @@ namespace OpenRaw {
 			return ret;
 		}
 
+
+		::or_error IFDFile::_getRawData(RawData & data)
+		{
+			::or_error ret = OR_ERROR_NOT_FOUND;
+			
+			return ret;
+		}
+
 	}
 }

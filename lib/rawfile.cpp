@@ -216,11 +216,19 @@ namespace OpenRaw {
 		else {
 			// no size found, let's fail gracefuly
 			Trace(DEBUG1) << "no size found\n";
-			ret = OR_ERROR_NOT_FOUND;
+ 			ret = OR_ERROR_NOT_FOUND;
 		}
 
 		return ret;
 	}
+
+
+	::or_error RawFile::getRawData(RawData & rawdata)
+	{
+		Trace(DEBUG1) << "getRawData()\n";
+		::or_error ret = _getRawData(rawdata);
+		return ret;
+	}	
 
 }
 
