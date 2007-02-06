@@ -180,6 +180,7 @@ public:
 				dumpPreviews(rf);
 				dumpRawData(rf);
 			}
+			delete rf;
 		}
 private:
 	std::ostream & m_out;
