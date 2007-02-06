@@ -1,5 +1,11 @@
 2007-02-05  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/cr2file.cpp, lib/exception.h, lib/ifddir.{cpp,h},
+	lib/ifdentry.{cpp,h}, lib/ifdfile.cpp, lib/neffile.cpp: 
+	templatize data fetching. Implement fetching arrays and
+	data stored outside IFD. Fetching subIFD need a subscript.
+	Getting CFA data out of a NEF from D70 works.
+
 	* tools/ordiag.cpp: Delete the RawFile instance.
 
 2007-01-30  Hubert Figuiere  <hub@figuiere.net>

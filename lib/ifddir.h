@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifddir.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,10 @@
 
 #include <map>
 
+#include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
 #include "ifdentry.h"
+#include "debug.h"
 
 namespace OpenRaw {
 	namespace Internals {
@@ -36,6 +38,15 @@ namespace OpenRaw {
 		{
 		public:
 			typedef boost::shared_ptr<IFDDir> Ref;
+			typedef std::vector<Ref> RefVec;
+			struct isPrimary
+			{
+				bool operator()(const Ref &dir);
+			};
+			struct isThumbnail
+			{
+				bool operator()(const Ref &dir);
+			};
 
 			IFDDir(off_t _offset, IFDFileContainer & _container);
 			virtual ~IFDDir();
@@ -53,7 +64,30 @@ namespace OpenRaw {
 				{
 					return m_entries.size();
 				}
-			IFDEntry::Ref getEntry(int id);
+			IFDEntry::Ref getEntry(uint16_t id) const ;
+			
+			/** Get a T value from an entry
+			 * @param id the IFD field id
+			 * @retval v the long value
+			 * @return true if success
+			 */
+			template <typename T>
+			bool getValue(uint16_t id, T &v) const
+				{
+					bool success = false;
+					IFDEntry::Ref e = getEntry(id);
+					if (e != NULL) {
+						try {
+							v = e->get<T>();
+							success = true;
+						}
+						catch(const std::exception & e) {
+							Debug::Trace(ERROR) << "Exception raised " << e.what() 
+													 << " fetch value for " << id << "\n";
+						}
+					}
+					return success;
+				}
 
 			/** Get an loosely typed integer value from an entry.
 			 * This method is  preferred over getLongValue() 
@@ -63,28 +97,22 @@ namespace OpenRaw {
 			 * @retval v the long value
 			 * @return true if success
 			 */
-			bool getIntegerValue(int id, uint32_t &v);
-			/** Get a long value from an entry
-			 * @param id the IFD field id
-			 * @retval v the long value
-			 * @return true if success
-			 */
-			bool getLongValue(int id, uint32_t &v);
-			/** Get a short value from an entry
-			 * @param id the IFD field id
-			 * @retval v the long value
-			 * @return true if success
-			 */
-			bool getShortValue(int id, uint16_t &v);
+			bool getIntegerValue(uint16_t id, uint32_t &v);
+
 			/** get the offset of the next IFD 
 			 * in absolute
 			 */
 			off_t nextIFD();
 
-			/** get the SubIFD.
+			/** get the SubIFD at index idx.
 			 * @return Ref to the new IFDDir if found
 			 */
-			Ref getSubIFD();
+			Ref getSubIFD(uint32_t idx = 0) const;
+			/** get all SubIFDs 
+			 * @retval ifds the list of IFDs Ref	
+			 * @return true if found / success
+			 */
+			bool getSubIFDs(std::vector<IFDDir::Ref> & ifds);
 
 			/** get the Exif IFD.
 			 * @return Ref to the new IFDDir if found

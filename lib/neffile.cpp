@@ -60,31 +60,41 @@ namespace OpenRaw {
 
 			Trace(DEBUG1) << "_getRawData()\n";
 
-			IFDDir::Ref subdir = dir->getSubIFD();
-			if (subdir != NULL) {
+			std::vector<IFDDir::Ref> subdirs;
+			if (!dir->getSubIFDs(subdirs)) {
+				// error
+				return OR_ERROR_NOT_FOUND;
+			}
+			
+			IFDDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
+																								 subdirs.end(),
+																								 IFDDir::isPrimary());
+				
+			if (i != subdirs.end()) {
 				uint32_t offset = 0;
 				uint32_t byte_length = 0;
 				bool got_it;
 				uint32_t x, y;
 				x = 0;
 				y = 0;
-				got_it = subdir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+				IFDDir::Ref subdir = *i;
+				got_it = subdir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
 				if(!got_it) {
 					Trace(DEBUG1) << "offset not found\n";
 					return OR_ERROR_NOT_FOUND;
 				}
-				got_it = subdir->getLongValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+				got_it = subdir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
 				if(!got_it) {
 					Trace(DEBUG1) << "byte len not found\n";
 					return OR_ERROR_NOT_FOUND;
 				}
 
-				got_it = subdir->getLongValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
+				got_it = subdir->getValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
 				if(!got_it) {
 					Trace(DEBUG1) << "X not found\n";
 					return OR_ERROR_NOT_FOUND;
 				}
-				got_it = subdir->getLongValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
+				got_it = subdir->getValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
 				if(!got_it) {
 					Trace(DEBUG1) << "Y not found\n";
 					return OR_ERROR_NOT_FOUND;

@@ -89,12 +89,12 @@ namespace OpenRaw {
 
 			Trace(DEBUG1) << "_locateThumbnail\n";
 
-			got_it = dir->getLongValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype);
+			got_it = dir->getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype);
 			Trace(DEBUG1) << "subtype " << subtype  << "\n";
 			if (!got_it || (subtype == 1)) {
 
 				uint16_t photom_int = 0;
-				got_it = dir->getShortValue(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION, 
+				got_it = dir->getValue(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION, 
 																		photom_int);
 
 				if (got_it) {
@@ -107,9 +107,9 @@ namespace OpenRaw {
 					got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
 
 					uint32_t offset = 0;
-					got_it = dir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+					got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
 					if (!got_it) {
-						got_it = dir->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
+						got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
 																			 offset);
  						Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
 						if (got_it) {
@@ -167,17 +167,17 @@ namespace OpenRaw {
 				{
 				case OR_DATA_TYPE_JPEG:
 					got_it = desc.ifddir
-						->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
+						->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
 													 byte_length);
 					got_it = desc.ifddir
-						->getLongValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
+						->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
 													 offset);
 					break;
 				case OR_DATA_TYPE_PIXMAP_8RGB:
 					got_it = desc.ifddir
-						->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+						->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
 					got_it = desc.ifddir
-						->getLongValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+						->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
 
 					got_it = desc.ifddir
 						->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);

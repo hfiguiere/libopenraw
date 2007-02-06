@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -62,12 +62,12 @@ namespace OpenRaw {
 			uint32_t offset = 0;
 			uint32_t byte_length = 0;
 			bool got_it;
-			got_it = dir->getLongValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+			got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
 			if(!got_it) {
 				Trace(DEBUG1) << "offset not found\n";
 				return OR_ERROR_NOT_FOUND;
 			}
-			got_it = dir->getLongValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+			got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
 			if(!got_it) {
 				Trace(DEBUG1) << "byte len not found\n";
 				return OR_ERROR_NOT_FOUND;
@@ -83,12 +83,12 @@ namespace OpenRaw {
 				uint16_t x, y;
 				x = 0;
 				y = 0;
-				got_it = exif->getShortValue(IFD::EXIF_TAG_PIXEL_X_DIMENSION, x);
+				got_it = exif->getValue(IFD::EXIF_TAG_PIXEL_X_DIMENSION, x);
 				if(!got_it) {
 					Trace(DEBUG1) << "X not found\n";
 					return OR_ERROR_NOT_FOUND;
 				}
-				got_it = exif->getShortValue(IFD::EXIF_TAG_PIXEL_Y_DIMENSION, y);
+				got_it = exif->getValue(IFD::EXIF_TAG_PIXEL_Y_DIMENSION, y);
 				if(!got_it) {
 					Trace(DEBUG1) << "Y not found\n";
 					return OR_ERROR_NOT_FOUND;

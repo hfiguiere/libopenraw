@@ -1,7 +1,7 @@
 /*
  * libopenraw - exception.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,11 @@ namespace OpenRaw {
 
 		/** data is of too big */
 		class TooBigException
+			: public Exception
+		{
+		};
+
+		class OutOfRangeException
 			: public Exception
 		{
 		};

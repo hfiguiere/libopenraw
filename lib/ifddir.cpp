@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifddir.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,20 @@ using namespace Debug;
 namespace OpenRaw {
 
 	namespace Internals {
+
+		bool IFDDir::isPrimary::operator()(const Ref &dir)
+		{
+			uint32_t subtype = 1; 
+			return dir->getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype)
+				&& (subtype == 0);
+		}
+
+		bool IFDDir::isThumbnail::operator()(const Ref &dir)
+		{
+			uint32_t subtype = 0; 
+			return dir->getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype)
+				&& (subtype == 1);
+		}
 
 		IFDDir::IFDDir(off_t _offset, IFDFileContainer & _container)
 			: m_offset(_offset), m_container(_container), 
@@ -75,13 +89,18 @@ namespace OpenRaw {
 			return true;
 		}
 
-		IFDEntry::Ref IFDDir::getEntry(int id)
+		IFDEntry::Ref IFDDir::getEntry(uint16_t id) const
 		{
-			return m_entries[id];
+			std::map<uint16_t, IFDEntry::Ref>::const_iterator iter;
+			iter = m_entries.find(id);
+			if (iter != m_entries.end()) {
+				return iter->second;
+			}
+			return IFDEntry::Ref((IFDEntry*)NULL);
 		}
 
 
-		bool IFDDir::getIntegerValue(int id, uint32_t &v)
+		bool IFDDir::getIntegerValue(uint16_t id, uint32_t &v)
 		{
 			bool success = false;
 			IFDEntry::Ref e = getEntry(id);
@@ -90,11 +109,11 @@ namespace OpenRaw {
 					switch(e->type())
 					{
 					case IFD::EXIF_FORMAT_LONG:
-						v = e->getLong();
+						v = e->get<uint32_t>();
 						success = true;
 						break;
 					case IFD::EXIF_FORMAT_SHORT:
-						v = e->getShort();
+						v = e->get<uint16_t>();
 						success = true;
 						break;
 					default:
@@ -109,41 +128,6 @@ namespace OpenRaw {
 			return success;
 		}
 
-
-		bool IFDDir::getLongValue(int id, uint32_t &v)
-		{
-			bool success = false;
-			IFDEntry::Ref e = getEntry(id);
-			if (e != NULL) {
-				try {
-					v = e->getLong();
-					success = true;
-				}
-				catch(const std::exception & e) {
-					Trace(ERROR) << "Exception raised " << e.what() 
-											 << " fetch long value for " << id << "\n";
-				}
-			}
-			return success;
-		}
-
-
-		bool IFDDir::getShortValue(int id, uint16_t &v)
-		{
-			bool success = false;
-			IFDEntry::Ref e = getEntry(id);
-			if (e != NULL) {
-				try {
-					v = e->getShort();
-					success = true;
-				}
-				catch(const std::exception & e) {
-					Trace(ERROR) << "Exception raised " << e.what() 
-											 << " fetch long value for " << id << "\n";
-				}
-			}
-			return success;
-		}
 
 		off_t IFDDir::nextIFD()
 		{
@@ -170,17 +154,48 @@ namespace OpenRaw {
 		/** The SubIFD is locate at offset found in the field
 		 * EXIF_TAG_SUB_IFDS
 		 */
-		IFDDir::Ref IFDDir::getSubIFD()
+		IFDDir::Ref IFDDir::getSubIFD(uint32_t idx) const
 		{
-			bool success;
-			uint32_t offset = 0;
-			success = getLongValue(IFD::EXIF_TAG_SUB_IFDS, offset);
-			if (success) {
-				Ref ref(new IFDDir(offset, m_container));
-				ref->load();
-				return ref;
+			std::vector<uint32_t> offsets;
+			IFDEntry::Ref e = getEntry(IFD::EXIF_TAG_SUB_IFDS);
+			if (e != NULL) {
+				try {
+					e->getArray(offsets);
+					if (idx >= offsets.size()) {
+						Ref ref(new IFDDir(offsets[idx], m_container));
+						ref->load();
+						return ref;
+					}
+				}
+				catch(const std::exception &e) {
+					Trace(ERROR) << "Exception " << e.what() << "\n";
+				}
 			}
 			return Ref(static_cast<IFDDir*>(NULL));
+		}
+
+
+		bool IFDDir::getSubIFDs(std::vector<IFDDir::Ref> & ifds) 
+		{
+			bool success = false;
+			std::vector<uint32_t> offsets;
+			IFDEntry::Ref e = getEntry(IFD::EXIF_TAG_SUB_IFDS);
+			if (e != NULL) {
+				try {
+					e->getArray(offsets);
+					for (std::vector<uint32_t>::const_iterator iter = offsets.begin();
+							 iter != offsets.end(); iter++) {
+						Ref ifd(new IFDDir(*iter, m_container));
+						ifd->load();
+						ifds.push_back(ifd);
+					}
+					success = true;
+				}
+				catch(const std::exception &e) {
+					Trace(ERROR) << "Exception " << e.what() << "\n";					
+				}
+			}
+			return success;
 		}
 
 		/** The SubIFD is locate at offset found in the field
@@ -190,7 +205,7 @@ namespace OpenRaw {
 		{
 			bool success = false;
 			uint32_t offset = 0;
-			success = getLongValue(IFD::EXIF_TAG_EXIF_IFD_POINTER, offset);
+			success = getValue(IFD::EXIF_TAG_EXIF_IFD_POINTER, offset);
 			if (success) {
 				Trace(DEBUG1) << "Exif IFD offset = " << offset << "\n";
 				Ref ref(new IFDDir(offset, m_container));

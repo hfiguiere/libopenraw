@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 
 
 #include <cassert>
+#include <string>
 
 #include "exception.h"
 #include "endianutils.h"
@@ -37,52 +38,61 @@ namespace OpenRaw {
 											 IFDFileContainer &_container)
 			: m_id(_id), m_type(_type),				
 				m_count(_count), m_data(_data), 
-				m_container(_container)
+				m_container(_container), m_loaded(false),
+				m_dataptr(NULL)
 		{
 		}
 
 
 		IFDEntry::~IFDEntry()
 		{
+			if (m_dataptr) {
+				free(m_dataptr);
+			}
 		}
 
-		uint32_t IFDEntry::getLong() 
-			throw (BadTypeException, TooBigException)
+		RawContainer::EndianType IFDEntry::endian() const
 		{
-			if (m_type != IFD::EXIF_FORMAT_LONG) {
-				throw BadTypeException();
-			}
-			if (m_count > 1) {
-				throw TooBigException();
-			}
-			uint32_t val;
-			if (m_container.endian() == RawContainer::ENDIAN_LITTLE) {
-				val = EL32((uint8_t*)&m_data);
+			return m_container.endian();
+		}
+
+
+		bool IFDEntry::loadData(size_t unit_size)
+		{
+			bool success = false;
+			size_t data_size = unit_size * m_count;
+			if (data_size <= 4) {
+				success = true;
 			}
 			else {
-				val = BE32((uint8_t*)&m_data);
+				off_t offset;
+				if (this->endian() == RawContainer::ENDIAN_LITTLE) {
+					offset = IFDTypeDesc<uint32_t>::EL((uint8_t*)&m_data);
+				}
+				else {
+					offset = IFDTypeDesc<uint32_t>::BE((uint8_t*)&m_data);
+				}
+				m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
+				success = (m_container.fetchData(m_dataptr, 
+																				 offset, 
+																				 data_size) == data_size);
 			}
-			return val;
+			return success;
 		}
 
-		uint16_t IFDEntry::getShort() 
-			throw (BadTypeException, TooBigException)
-		{
-			if (m_type != IFD::EXIF_FORMAT_SHORT) {
-				throw BadTypeException();
-			}
-			if (m_count > 1) {
-				throw TooBigException();
-			}
-			uint32_t val;
-			if (m_container.endian() == RawContainer::ENDIAN_LITTLE) {
-				val = EL16((uint8_t*)&m_data);
-			}
-			else {
-				val = BE16((uint8_t*)&m_data);
-			}
-			return val;
-		}
+		template <>
+		const uint16_t IFDTypeDesc<uint16_t>::type = IFD::EXIF_FORMAT_SHORT;
+		template <>
+		const size_t IFDTypeDesc<uint16_t>::size = 2;
 
+		template <>
+		const uint16_t IFDTypeDesc<uint32_t>::type = IFD::EXIF_FORMAT_LONG;
+		template <>
+		const size_t IFDTypeDesc<uint32_t>::size = 4;
+
+		template <>
+		const uint16_t IFDTypeDesc<std::string>::type = IFD::EXIF_FORMAT_ASCII;
+		template <>
+		const size_t IFDTypeDesc<std::string>::size = 1;
 	}
 }
