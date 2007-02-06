@@ -157,8 +157,8 @@ namespace OpenRaw {
 
 		private:
 			uint16_t m_id;
-			int16_t m_type;
-			int32_t m_count;
+			uint16_t m_type;
+			uint32_t m_count;
 			uint32_t m_data; /**< raw data without endian conversion */
 			bool m_loaded;
 			uint8_t *m_dataptr;

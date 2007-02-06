@@ -38,8 +38,8 @@ namespace OpenRaw {
 											 IFDFileContainer &_container)
 			: m_id(_id), m_type(_type),				
 				m_count(_count), m_data(_data), 
-				m_container(_container), m_loaded(false),
-				m_dataptr(NULL)
+				m_loaded(false), m_dataptr(NULL), 
+				m_container(_container)
 		{
 		}
 
