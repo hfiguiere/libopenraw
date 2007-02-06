@@ -36,6 +36,21 @@ namespace OpenRaw {
 		namespace CIFF {
 
 
+			bool ImageSpec::readFrom(off_t offset, CIFFContainer *container)
+			{
+				bool ret;
+				IO::Stream *file = container->file();
+				file->seek(offset, SEEK_SET);
+				ret = container->readUInt32(file, imageWidth);
+				ret = container->readUInt32(file, imageHeight);
+				ret = container->readUInt32(file, pixelAspectRatio);
+				ret = container->readInt32(file, rotationAngle);
+				ret = container->readUInt32(file, componentBitDepth);
+				ret = container->readUInt32(file, colorBitDepth);
+				ret = container->readUInt32(file, colorBW);
+				return ret;
+			}
+
 			RecordEntry::RecordEntry()
 				: typeCode(0), length(0), offset(0)
 			{
@@ -51,7 +66,7 @@ namespace OpenRaw {
 				return ret;
 			}
 
-			size_t RecordEntry::fetchData(Heap* heap, void* buf, size_t size)
+			size_t RecordEntry::fetchData(Heap* heap, void* buf, size_t size) const
 			{
 				return heap->container()->fetchData(buf, 
 																						offset + heap->offset(), size);
@@ -64,6 +79,8 @@ namespace OpenRaw {
 					m_container(container),
 					m_records()
 			{
+				Debug::Trace(DEBUG2) << "Heap @ " << start << " length = "
+														 << m_length << "\n";
 			}
 
 			std::vector<RecordEntry> & Heap::records()

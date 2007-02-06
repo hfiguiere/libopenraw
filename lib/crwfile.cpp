@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,9 +18,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <algorithm>
+#include <boost/bind.hpp>
 
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/thumbnail.h>
+#include <libopenraw++/rawdata.h>
 
 #include "debug.h"
 #include "io/file.h"
@@ -65,24 +68,25 @@ namespace OpenRaw {
 
 			Heap::Ref heap = m_container->heap();
 
-			RecordEntry::List & records = heap->records();
-			RecordEntry::List::iterator iter;
-			for(iter = records.begin(); iter != records.end(); ++iter) {
-				if ((*iter).typeCode == (TAGCODE_MASK & TAG_JPEGIMAGE)) {
-					Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
-					m_x = m_y = 0;
-
-					IO::StreamClone *s = new IO::StreamClone(m_io, heap->offset()
-																									 + (*iter).offset);
-					JFIFContainer *jfif = new JFIFContainer(s, 0);
-					jfif->getDimensions(m_x, m_y);
-					delete jfif;
-					delete s;
-					Trace(DEBUG1) << "JPEG dimensions x=" << m_x 
-															<< " y=" << m_y << "\n";
-					list.push_back(std::max(m_x,m_y));
-					err = OR_ERROR_NONE;
-				}
+			const RecordEntry::List & records = heap->records();
+			RecordEntry::List::const_iterator iter;
+			iter = std::find_if(records.begin(), records.end(), boost::bind(
+														&RecordEntry::isA, _1, 
+														static_cast<uint16_t>(TAG_JPEGIMAGE)));
+			if (iter != records.end()) {
+				Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
+				m_x = m_y = 0;
+				
+				IO::StreamClone *s = new IO::StreamClone(m_io, heap->offset()
+																								 + (*iter).offset);
+				JFIFContainer *jfif = new JFIFContainer(s, 0);
+				jfif->getDimensions(m_x, m_y);
+				delete jfif;
+				delete s;
+				Trace(DEBUG1) << "JPEG dimensions x=" << m_x 
+											<< " y=" << m_y << "\n";
+				list.push_back(std::max(m_x,m_y));
+				err = OR_ERROR_NONE;
 			}
 
 			return err;
@@ -93,25 +97,77 @@ namespace OpenRaw {
 			::or_error err = OR_ERROR_NOT_FOUND;
 			Heap::Ref heap = m_container->heap();
 
-			RecordEntry::List & records = heap->records();
-
-			RecordEntry::List::iterator iter;
-			for(iter = records.begin(); iter != records.end(); ++iter) {
-				if ((*iter).typeCode == (TAGCODE_MASK & TAG_JPEGIMAGE)) {
-					Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
-					size_t byte_size = (*iter).length;
-					void *buf = thumbnail.allocData(byte_size);
-					size_t real_size = (*iter).fetchData(heap.get(), buf, byte_size);
-					if (real_size != byte_size) {
-						Trace(WARNING) << "wrong size\n";
-					}
-					thumbnail.setDimensions(m_x, m_y);
-					thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-					err = OR_ERROR_NONE;
+			const RecordEntry::List & records = heap->records();
+			RecordEntry::List::const_iterator iter;
+			iter = std::find_if(records.begin(), records.end(), boost::bind(
+														&RecordEntry::isA, _1, 
+														static_cast<uint16_t>(TAG_JPEGIMAGE)));
+			if (iter != records.end()) {
+				Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
+				size_t byte_size = (*iter).length;
+				void *buf = thumbnail.allocData(byte_size);
+				size_t real_size = (*iter).fetchData(heap.get(), buf, byte_size);
+				if (real_size != byte_size) {
+					Trace(WARNING) << "wrong size\n";
 				}
+				thumbnail.setDimensions(m_x, m_y);
+				thumbnail.setDataType(OR_DATA_TYPE_JPEG);
+				err = OR_ERROR_NONE;
 			}
 
 			return err;
 		}
+
+		::or_error CRWFile::_getRawData(RawData & data)
+		{
+			::or_error err = OR_ERROR_NOT_FOUND;
+			Heap::Ref heap = m_container->heap();
+
+			const RecordEntry::List & records = heap->records();
+			RecordEntry::List::const_iterator iter;
+
+			// locate the properties
+			iter = std::find_if(records.begin(), records.end(), boost::bind(
+														&RecordEntry::isA, _1, 
+														static_cast<uint16_t>(TAG_IMAGEPROPS)));
+			if (iter == records.end()) {
+				Trace(ERROR) << "Couldn't find the image properties.\n";
+				return err;
+			}
+			
+			Heap props(iter->offset + heap->offset(), iter->length, m_container);
+			const RecordEntry::List & propsRecs = props.records();
+			iter = std::find_if(propsRecs.begin(), propsRecs.end(), boost::bind(
+														&RecordEntry::isA, _1, 
+														static_cast<uint16_t>(TAG_IMAGEINFO)));
+			if (iter == propsRecs.end()) {
+				Trace(ERROR) << "Couldn't find the image info.\n";
+				return err;
+			}
+			ImageSpec img_spec;
+			img_spec.readFrom(iter->offset + props.offset(), m_container);
+			uint32_t x, y;
+			x = img_spec.imageWidth;
+			y = img_spec.imageHeight;
+
+			// locate the RAW data
+			iter = std::find_if(records.begin(), records.end(), boost::bind(
+														&RecordEntry::isA, _1, 
+														static_cast<uint16_t>(TAG_RAWIMAGEDATA)));
+			if (iter != records.end()) {
+				Trace(DEBUG2) << "RAW @" << (*iter).offset << "\n";
+				size_t byte_size = (*iter).length;
+				void *buf = data.allocData(byte_size);
+				size_t real_size = (*iter).fetchData(heap.get(), buf, byte_size);
+				if (real_size != byte_size) {
+					Trace(WARNING) << "wrong size\n";
+				}
+				data.setDimensions(x, y);
+				data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+				err = OR_ERROR_NONE;
+			}
+			return err;
+		}
+
 	}
 }

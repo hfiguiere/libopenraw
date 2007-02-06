@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -54,6 +54,7 @@ namespace OpenRaw {
 
 			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
 
+			virtual ::or_error _getRawData(RawData & data);
 		private:
 			CRWFile(const CRWFile&);
 			CRWFile & operator=(const CRWFile&);

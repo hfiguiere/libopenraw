@@ -31,6 +31,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "rawcontainer.h"
+#include "debug.h"
 
 namespace OpenRaw {
 	namespace Internals {
@@ -107,6 +108,26 @@ namespace OpenRaw {
 			
 			class Heap;
 
+
+			class ImageSpec
+			{
+			public:
+				/** read the struct from container
+				 * @param offset the offset to read from, relative
+				 * to the begining of the container.
+				 * @param container the container to read from.
+				 */
+				bool readFrom(off_t offset, CIFFContainer *container);
+
+				uint32_t imageWidth;
+				uint32_t imageHeight;
+				uint32_t /*float32*/pixelAspectRatio;
+				int32_t rotationAngle;
+				uint32_t componentBitDepth;
+				uint32_t colorBitDepth;
+				uint32_t colorBW;
+			};
+
 			class RecordEntry 
 			{
 			public:
@@ -125,7 +146,16 @@ namespace OpenRaw {
 				 * @param size the size of the allocated buffer
 				 * @return the size actually fetched. MIN(size, this->length);
 				 */
-				size_t fetchData(Heap* heap, void* buf, size_t size);
+				size_t fetchData(Heap* heap, void* buf, size_t size) const;
+				/** determine if entry match type code
+				 * @param _typeCode the code to check
+				 * @return true if match
+				 */
+				bool isA(uint16_t _typeCode) const
+					{ 
+						Debug::Trace(DEBUG2) << "typeCode = " << typeCode << "\n";
+						return typeCode == (TAGCODE_MASK & _typeCode); 
+					}
 
 				uint16_t   typeCode;/* type code of the record */
 				uint32_t   length;/* record length */
@@ -138,6 +168,11 @@ namespace OpenRaw {
 			public:
 				typedef boost::shared_ptr<Heap> Ref;
 
+				/** Construct a heap from a location in the container 
+				 * @param start the begin address relative to the container.
+				 * @param length the length in bytes
+				 * @param container the container to read from
+				 */
 				Heap(off_t start, off_t length, CIFFContainer * container);
 
 				RecordEntry::List & records();
@@ -145,6 +180,7 @@ namespace OpenRaw {
 					{
 						return m_container;
 					}
+				/** Eeturn the offset from the begining of the container. */
 				off_t offset()
 					{
 						return m_start;

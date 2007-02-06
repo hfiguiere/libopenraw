@@ -1,5 +1,8 @@
 2007-02-06  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ciffcontainer.{h,cpp}, lib/crwfile.{h,cpp}: 
+	Retrieve CFA data from Canon CRW.
+
 	* lib/ifdentry.{h,cpp}: fix some warnings.
 
 2007-02-05  Hubert Figuiere  <hub@figuiere.net>
