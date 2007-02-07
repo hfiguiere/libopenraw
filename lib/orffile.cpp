@@ -19,6 +19,7 @@
  */
 
 #include <libopenraw++/thumbnail.h>
+#include <libopenraw++/rawdata.h>
 
 #include "debug.h"
 #include "orffile.h"
@@ -50,6 +51,12 @@ namespace OpenRaw {
 		
 		ORFFile::~ORFFile()
 		{
+		}
+
+		::or_error ORFFile::_getRawData(RawData & data)
+		{
+			IFDDir::Ref dir = m_container->setDirectory(0);
+			return _getRawDataFromDir(data, dir);
 		}
 
 	}

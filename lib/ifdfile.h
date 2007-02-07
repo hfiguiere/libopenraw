@@ -81,6 +81,12 @@ namespace OpenRaw {
 			 */
 			virtual ::or_error _locateThumbnail(const IFDDir::Ref & dir,
 																		std::vector<uint32_t> &list);
+			/** load the compressed rawdata from a standard location in an IFD
+			 * @param data the data storage
+			 * @param dir the IFD
+			 * @return the error code.
+			 */
+			::or_error _getRawDataFromDir(RawData & data, IFDDir::Ref & dir);
 
 			typedef std::map<uint32_t, IFDThumbDesc> ThumbLocations;
 			ThumbLocations    m_thumbLocations;
@@ -93,7 +99,6 @@ namespace OpenRaw {
 			IFDFile & operator=(const IFDFile &);
 
 			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
-			virtual ::or_error _getRawData(RawData & data);
 		};
 
 	}

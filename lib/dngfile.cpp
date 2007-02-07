@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -49,6 +49,33 @@ namespace OpenRaw {
 
 		DNGFile::~DNGFile()
 		{
+		}
+
+		::or_error DNGFile::_getRawData(RawData & data)
+		{
+			::or_error ret = OR_ERROR_NONE;
+			IFDDir::Ref dir = m_container->setDirectory(0);
+
+			Trace(DEBUG1) << "_getRawData()\n";
+
+			std::vector<IFDDir::Ref> subdirs;
+			if (!dir->getSubIFDs(subdirs)) {
+				// error
+				return OR_ERROR_NOT_FOUND;
+			}
+			
+			IFDDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
+																								 subdirs.end(),
+																								 IFDDir::isPrimary());
+				
+			if (i != subdirs.end()) {
+				IFDDir::Ref subdir(*i);
+				ret = _getRawDataFromDir(data, subdir);
+			}
+			else {
+				ret = OR_ERROR_NOT_FOUND;
+			}
+			return ret;
 		}
 
 	}

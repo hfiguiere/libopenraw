@@ -97,7 +97,7 @@ namespace OpenRaw {
 		 * @return OR_ERROR_NONE if success
 		 * Return the data compressed or uncompressed.
 		 */
-		virtual ::or_error _getRawData(RawData & data) {}
+		virtual ::or_error _getRawData(RawData & data) = 0;
 	private:
 		static Type identify(const char*_filename);
 

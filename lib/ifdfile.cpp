@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
  */
 
 #include <libopenraw++/thumbnail.h>
+#include <libopenraw++/rawdata.h>
 
 #include "debug.h"
 #include "io/stream.h"
@@ -203,10 +204,45 @@ namespace OpenRaw {
 			return ret;
 		}
 
-
-		::or_error IFDFile::_getRawData(RawData & data)
+		::or_error IFDFile::_getRawDataFromDir(RawData & data, IFDDir::Ref & dir)
 		{
-			::or_error ret = OR_ERROR_NOT_FOUND;
+			::or_error ret = OR_ERROR_NONE;
+			
+			uint32_t offset = 0;
+			uint32_t byte_length = 0;
+			bool got_it;
+			uint32_t x, y;
+			x = 0;
+			y = 0;
+
+			got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+			if(!got_it) {
+				Trace(DEBUG1) << "offset not found\n";
+				return OR_ERROR_NOT_FOUND;
+			}
+			got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+			if(!got_it) {
+				Trace(DEBUG1) << "byte len not found\n";
+				return OR_ERROR_NOT_FOUND;
+			}
+			got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
+			if(!got_it) {
+				Trace(DEBUG1) << "X not found\n";
+				return OR_ERROR_NOT_FOUND;
+			}
+			got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
+			if(!got_it) {
+				Trace(DEBUG1) << "Y not found\n";
+				return OR_ERROR_NOT_FOUND;
+			}
+			void *p = data.allocData(byte_length);
+			size_t real_size = m_container->fetchData(p, offset, 
+																								byte_length);
+			if (real_size < byte_length) {
+				Trace(WARNING) << "Size mismatch for data: ignoring.\n";
+			}
+			data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+			data.setDimensions(x, y);
 			
 			return ret;
 		}

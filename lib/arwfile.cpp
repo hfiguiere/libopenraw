@@ -50,6 +50,10 @@ namespace OpenRaw {
 		{
 		}
 
+		::or_error ARWFile::_getRawData(RawData & data) 
+		{ 
+			return OR_ERROR_NOT_FOUND; 
+		}
 
 	}
 }

@@ -57,54 +57,56 @@ Support table:
   B  Known to be Broken. (Needs to be fixed. I have a sample but further
      work is required.)
 
+                          ThNail
+                         /  CFA compresses
+                         | /  CFA decompress
+                         | | /
+                         | | |
+Canon CR2                Y Y N
+ 20D                     T T
+ 30D                     T T
+ 350D                    T T
+ 5D                      T T
+ 1DMarkII                T T
 
-                       ThNail
+Canon CRW                Y Y N
+ 300D                    T T
+ 10D                     T T
+ G1                      T T
+ G2                      T T
+ G5                      T T
+ Pro1                    T T
 
-Canon CR2                Y
- 20D                     T
- 30D                     T
- 350D                    T
- 5D                      T
- 1DMarkII                T
+Nikon NEF                Y Y N
+ D100                    T T
+ D70                     T T
+ Cooolpix 5700           T T
 
-Canon CRW                Y
- 300D                    T
- 10D                     T
- G1                      T
- G2                      T
- G5                      T
- Pro1                    T
+Olympus ORF              Y Y N
+ E-300                   T T
+ E-10                    B B
 
-Nikon NEF                Y
- D100                    T
- D70                     T
- Cooolpix 5700           T
+Adobe DNG                Y Y N
+ Leica DMR               T T
+ Leica M8                T T
+ Adobe DNG converter     T T
+ K10D                    T T
 
-Olympus ORF              Y
- E-300                   T
- E-10                    B
-
-Adobe DNG                Y
- Leica DMR               T
- Leica M8                B
- Adobe DNG converter     T
- K10D                    T
-
-Sony ARW                 Y
+Sony ARW                 Y N N
  A-100                   T
 
-Pentax PEF               Y
- *-ist D                 T
- K10D                    T
+Pentax PEF               Y N N
+ *-ist D                 T T
+ K10D                    T T
 
-Minolta MRW              N
+Minolta MRW              N N N
 
-Sony SRF                 N
+Sony SRF                 N N N
 
-Kodak DCR                N
+Kodak DCR                N N N
 
-FujiFilm RAF             N
+FujiFilm RAF             N N N
 
-Foveon X3F               N
+Foveon X3F               N N N
 
-Epson ERF                N
+Epson ERF                N N N

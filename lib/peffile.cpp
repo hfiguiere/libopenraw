@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <libopenraw++/thumbnail.h>
+#include <libopenraw++/rawdata.h>
 
 #include "debug.h"
 #include "ifd.h"
@@ -52,6 +53,11 @@ namespace OpenRaw {
 		{
 		}
 
+		::or_error PEFFile::_getRawData(RawData & data)
+		{
+			IFDDir::Ref dir = m_container->setDirectory(0);
+			return _getRawDataFromDir(data, dir);
+		}
 	}
 }
 
