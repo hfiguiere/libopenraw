@@ -22,7 +22,7 @@ Supported file format:
     - Canon CR2
     - Canon CRW
     - Nikon NEF
-    - Olympus ORF: E-300
+    - Olympus ORF: E-300, E-500
     - Pentax PEF
     - DNG
     - Sony ARW
@@ -58,7 +58,7 @@ Support table:
      work is required.)
 
                           ThNail
-                         /  CFA compresses
+                         /  CFA compressed
                          | /  CFA decompress
                          | | /
                          | | |
@@ -84,6 +84,7 @@ Nikon NEF                Y Y N
 
 Olympus ORF              Y Y N
  E-300                   T T
+ E-500                   T T
  E-10                    B B
 
 Adobe DNG                Y Y N
@@ -93,7 +94,7 @@ Adobe DNG                Y Y N
  K10D                    T T
 
 Sony ARW                 Y N N
- A-100                   T
+ A-100                   T B
 
 Pentax PEF               Y N N
  *-ist D                 T T
