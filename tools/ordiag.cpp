@@ -26,6 +26,7 @@
 #include <algorithm>
 
 #include <boost/format.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/thumbnail.h>
@@ -121,7 +122,7 @@ public:
 
 	/** dump the previews of the raw file to mout
 	 */
-	void dumpPreviews(RawFile * rf)
+	void dumpPreviews(boost::scoped_ptr<RawFile> & rf)
 		{
 			const std::vector<uint32_t> & previews = rf->listThumbnailSizes();
 			m_out << boost::format("\tNumber of previews: %1%\n") 
@@ -147,7 +148,7 @@ public:
 			}
 		}
 
-	void dumpRawData(RawFile * rf)
+	void dumpRawData(boost::scoped_ptr<RawFile> & rf)
 		{
 			RawData rd;
 			::or_error err = rf->getRawData(rd);
@@ -169,7 +170,7 @@ public:
 		{
 			m_out << boost::format("Dumping %1%\n") % s;
 
-			RawFile * rf = RawFile::newRawFile(s.c_str());
+			boost::scoped_ptr<RawFile> rf(RawFile::newRawFile(s.c_str()));
 
 			if (rf == NULL) {
 				m_out << "unrecognized file\n";
@@ -180,7 +181,6 @@ public:
 				dumpPreviews(rf);
 				dumpRawData(rf);
 			}
-			delete rf;
 		}
 private:
 	std::ostream & m_out;

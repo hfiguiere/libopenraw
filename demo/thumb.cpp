@@ -26,8 +26,10 @@
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawfile.h>
 
+#include <boost/scoped_ptr.hpp>
 
 using OpenRaw::Thumbnail;
+using boost::scoped_ptr;
 
 int
 main(int argc, char** argv)
@@ -43,69 +45,65 @@ main(int argc, char** argv)
 	or_debug_set_level(DEBUG2);
 	FILE * f;
 
-	OpenRaw::RawFile * raw_file = OpenRaw::RawFile::newRawFile(argv[1]);
-	std::vector<uint32_t> list = raw_file->listThumbnailSizes();
-	
-	for(std::vector<uint32_t>::iterator i = list.begin();
-			i != list.end(); ++i)
 	{
+		scoped_ptr<OpenRaw::RawFile> raw_file(OpenRaw::RawFile::newRawFile(argv[1]));
+		std::vector<uint32_t> list = raw_file->listThumbnailSizes();
+	
+		for(std::vector<uint32_t>::iterator i = list.begin();
+				i != list.end(); ++i)
+		{
 		std::cout << "found " << *i << " pixels\n";
+		}
 	}
 
-	delete raw_file;
-
-	Thumbnail * thumb =
-		Thumbnail::getAndExtractThumbnail(argv[1],
-													 160, err);
-	if (thumb != NULL) {
-		std::cerr << "thumb data size =" << thumb->size() << std::endl;
-		std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
-		
-		f = fopen("thumb.jpg", "wb");
-		fwrite(thumb->data(), 1, thumb->size(), f);
-		fclose(f);
-		
-		delete thumb;
-	}
-	else {
-		std::cerr << "error = " << err << std::endl;
+	{
+		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
+																																				 160, err));
+		if (thumb != NULL) {
+			std::cerr << "thumb data size =" << thumb->size() << std::endl;
+			std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
+			
+			f = fopen("thumb.jpg", "wb");
+			fwrite(thumb->data(), 1, thumb->size(), f);
+			fclose(f);
+		}
+		else {
+			std::cerr << "error = " << err << std::endl;
+		}
 	}
 
-	thumb =
-		Thumbnail::getAndExtractThumbnail(argv[1],
-													 640, err);
-
-	if (thumb != NULL) {
-		std::cerr << "thumb data size =" << thumb->size() << std::endl;
-		std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
+	{
+		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
+																																	640, err));
 		
-		f = fopen("thumbl.jpg", "wb");
-		fwrite(thumb->data(), 1, thumb->size(), f);
-		fclose(f);
-		
-		delete thumb;
-	}
-	else {
-		std::cerr << "error = " << err << std::endl;
-	}
-
-	thumb =
-		Thumbnail::getAndExtractThumbnail(argv[1],
-													 2048, err);
-	if (thumb != NULL) {
-		std::cerr << "preview data size =" << thumb->size() << std::endl;
-		std::cerr << "preview data type =" << thumb->dataType() << std::endl;
-		
-		f = fopen("preview.jpg", "wb");
-		fwrite(thumb->data(), 1, thumb->size(), f);
-		fclose(f);
-		
-		delete thumb;
-	}
-	else {
-		std::cerr << "error = " << err << std::endl;
+		if (thumb != NULL) {
+			std::cerr << "thumb data size =" << thumb->size() << std::endl;
+			std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
+			
+			f = fopen("thumbl.jpg", "wb");
+			fwrite(thumb->data(), 1, thumb->size(), f);
+			fclose(f);
+		}
+		else {
+			std::cerr << "error = " << err << std::endl;
+		}
 	}
 
+	{
+		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
+																																	2048, err));
+		if (thumb != NULL) {
+			std::cerr << "preview data size =" << thumb->size() << std::endl;
+			std::cerr << "preview data type =" << thumb->dataType() << std::endl;
+			
+			f = fopen("preview.jpg", "wb");
+			fwrite(thumb->data(), 1, thumb->size(), f);
+			fclose(f);
+		}
+		else {
+			std::cerr << "error = " << err << std::endl;
+		}
+	}
 
 	return 0;
 }

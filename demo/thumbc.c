@@ -27,7 +27,6 @@
 int
 main(int argc, char **argv)
 {
-	char thumbFile[256];
 	char *filename = argv[1];
 	ORThumbnailRef thumbnail = NULL;
 
@@ -37,7 +36,6 @@ main(int argc, char **argv)
 	{
 		void *thumbnailData;
 		or_data_type thumbnailFormat;
-		int thumbnailSize;
 		size_t dataSize;
 		FILE *output;
 		uint32_t x, y;

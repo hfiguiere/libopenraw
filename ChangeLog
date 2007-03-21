@@ -1,3 +1,10 @@
+2007-03-20  Hubert Figuiere  <hub@figuiere.net>
+
+	* demo/thumbc.c (main): kill some warnings.
+
+	* demo/thumb.cpp, tools/ordiag.cpp: Use scoped_ptr<> 
+	when applicable.
+
 2007-03-01  Hubert Figuiere  <hub@figuiere.net>
 
 	* README: Added E500 to the list of tested formats.
