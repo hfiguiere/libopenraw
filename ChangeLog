@@ -1,3 +1,9 @@
+2007-03-21  Pav Lucistnik  <pav@FreeBSD.org>
+	
+	* gnome/include/libopenraw-gnome/Makefile.am: 
+	Don't create the Gnome include dir if building
+	without it.
+
 2007-03-21  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/crwfile.cpp, lib/ifdfile.cpp: use scoped_ptr<>
