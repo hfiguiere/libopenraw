@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <boost/bind.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/thumbnail.h>
@@ -35,6 +36,7 @@
 #include "rawfilefactory.h"
 
 using namespace Debug;
+using boost::scoped_ptr;
 
 namespace OpenRaw {
 
@@ -77,12 +79,11 @@ namespace OpenRaw {
 				Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
 				m_x = m_y = 0;
 				
-				IO::StreamClone *s = new IO::StreamClone(m_io, heap->offset()
-																								 + (*iter).offset);
-				JFIFContainer *jfif = new JFIFContainer(s, 0);
+				scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, heap->offset()
+																													+ (*iter).offset));
+				scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+
 				jfif->getDimensions(m_x, m_y);
-				delete jfif;
-				delete s;
 				Trace(DEBUG1) << "JPEG dimensions x=" << m_x 
 											<< " y=" << m_y << "\n";
 				list.push_back(std::max(m_x,m_y));

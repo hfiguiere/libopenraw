@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
+#include <boost/scoped_ptr.hpp>
+
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 
@@ -31,6 +33,8 @@
 #include "jfifcontainer.h"
 
 using namespace Debug;
+using boost::scoped_ptr;
+
 
 namespace OpenRaw {
 	namespace Internals {
@@ -116,8 +120,8 @@ namespace OpenRaw {
 						if (got_it) {
 							type = OR_DATA_TYPE_JPEG;
 							if (x == 0 || y == 0) {
-								IO::StreamClone *s = new IO::StreamClone(m_io, offset);
-								JFIFContainer *jfif = new JFIFContainer(s, 0);
+								scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
+								scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
 								if (jfif->getDimensions(x,y)) {
 									Trace(DEBUG1) << "JPEG dimensions x=" << x 
 																<< " y=" << y << "\n";
@@ -125,8 +129,6 @@ namespace OpenRaw {
 								else {
 									type = OR_DATA_TYPE_NONE;
 								}
-								delete jfif;
-								delete s;
 							}
 						}
 					}
