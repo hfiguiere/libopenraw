@@ -1,3 +1,9 @@
+2007-03-31  Hubert Figuiere  <hub@figuiere.net>
+
+	* autogen.sh: aclocal includes from m4 dir
+	* configure.in: use AX_BOOST_CHECK
+	* m4/ax_boost_base.m4: add macro to check boost.
+
 2007-03-21  Pav Lucistnik  <pav@FreeBSD.org>
 	
 	* gnome/include/libopenraw-gnome/Makefile.am: 
