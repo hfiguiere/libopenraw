@@ -1,5 +1,10 @@
 2007-03-31  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifddir.{h,cpp}: get() API changed.
+	* lib/ifdentry.h: get() is now a static method 
+	of IFDTypeDesc<> as the template member code
+	choke on gcc-3.3.
+
 	* autogen.sh: aclocal includes from m4 dir
 	* configure.in: use AX_BOOST_CHECK
 	* m4/ax_boost_base.m4: add macro to check boost.

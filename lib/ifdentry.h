@@ -34,6 +34,8 @@ namespace OpenRaw {
 
 		class IFDFileContainer;
 
+		class IFDEntry;
+
 		/** Describe and IFDType */
 		template <typename T>
 		struct IFDTypeDesc
@@ -42,7 +44,10 @@ namespace OpenRaw {
 			static const size_t   size; /**< the storage size unit in IFD*/
 			static T EL(const uint8_t* d);
 			static T BE(const uint8_t* d);
+			static T get(IFDEntry & e, uint32_t idx = 0)
+				throw (BadTypeException, OutOfRangeException, TooBigException);
 		};
+
 
 		template <>
 		inline uint16_t IFDTypeDesc<uint16_t>::EL(const uint8_t* b)
@@ -94,46 +99,6 @@ namespace OpenRaw {
 			 */
 			bool loadData(size_t unit_size);
 
-			/** get the value of type T
-			 * @param T the type of the value needed
-			 * @param idx the index, by default 0
-			 * @return the value
-			 * @throw BadTypeException in case of wrong typing.
-			 * @throw OutOfRangeException in case of subscript out of range
-			 */
-			template <typename T> 
-			T get(uint32_t idx = 0)
-				throw (BadTypeException, OutOfRangeException, TooBigException)
-				{
-					if (m_type != IFDTypeDesc<T>::type) {
-						throw BadTypeException();
-					}
-					if (idx + 1 > m_count) {
-						throw OutOfRangeException();
-					}
-					if (!m_loaded) {
-						m_loaded = loadData(IFDTypeDesc<T>::size);
-						if (!m_loaded) {
-							throw TooBigException();
-						}
-					}
-					uint8_t *data;
-					if (m_dataptr == NULL) {
-						data = (uint8_t*)&m_data;
-					}
-					else {
-						data = m_dataptr + (IFDTypeDesc<T>::size * idx);
-					}
-					T val;
-					if (this->endian() == RawContainer::ENDIAN_LITTLE) {
-						val = IFDTypeDesc<T>::EL(data);
-					}
-					else {
-						val = IFDTypeDesc<T>::BE(data);
-					}
-					return val;
-				}
-
 
 			/** get the array values of type T
 			 * @param T the type of the value needed
@@ -145,7 +110,7 @@ namespace OpenRaw {
 				{
 					try {
 						for (uint32_t i = 0; i < m_count; i++) {
-							array.push_back(get<T>(i));
+							array.push_back(IFDTypeDesc<T>::get(*this, i));
 						}
 					}
 					catch(std::exception & e)
@@ -163,9 +128,50 @@ namespace OpenRaw {
 			bool m_loaded;
 			uint8_t *m_dataptr;
 			IFDFileContainer & m_container;
+			template <typename T> friend struct IFDTypeDesc;
 		};
 
 
+
+		/** get the value of type T
+		 * @param T the type of the value needed
+		 * @param idx the index, by default 0
+		 * @return the value
+		 * @throw BadTypeException in case of wrong typing.
+		 * @throw OutOfRangeException in case of subscript out of range
+		 */
+		template <typename T> 
+		T IFDTypeDesc<T>::get(IFDEntry & e, uint32_t idx)
+			throw (BadTypeException, OutOfRangeException, TooBigException)
+		{
+			if (e.m_type != IFDTypeDesc<T>::type) {
+				throw BadTypeException();
+			}
+			if (idx + 1 > e.m_count) {
+				throw OutOfRangeException();
+			}
+			if (!e.m_loaded) {
+				e.m_loaded = e.loadData(IFDTypeDesc<T>::size);
+				if (!e.m_loaded) {
+					throw TooBigException();
+				}
+			}
+			uint8_t *data;
+			if (e.m_dataptr == NULL) {
+				data = (uint8_t*)&e.m_data;
+			}
+			else {
+				data = e.m_dataptr + (IFDTypeDesc<T>::size * idx);
+			}
+			T val;
+			if (e.endian() == RawContainer::ENDIAN_LITTLE) {
+				val = IFDTypeDesc<T>::EL(data);
+			}
+			else {
+				val = IFDTypeDesc<T>::BE(data);
+			}
+			return val;
+		}
 
 	}
 }

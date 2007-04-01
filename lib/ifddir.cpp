@@ -109,11 +109,11 @@ namespace OpenRaw {
 					switch(e->type())
 					{
 					case IFD::EXIF_FORMAT_LONG:
-						v = e->get<uint32_t>();
+						v = IFDTypeDesc<uint32_t>::get(*e);
 						success = true;
 						break;
 					case IFD::EXIF_FORMAT_SHORT:
-						v = e->get<uint16_t>();
+						v = IFDTypeDesc<uint16_t>::get(*e);
 						success = true;
 						break;
 					default:
