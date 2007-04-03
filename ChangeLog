@@ -1,3 +1,8 @@
+2007-04-02  Hubert Figuiere  <hub@figuiere.net>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): make sure
+	aclocal is called properly in maintainer mode.
+
 2007-03-31  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ifddir.{h,cpp}: get() API changed.
