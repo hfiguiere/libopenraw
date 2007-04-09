@@ -1,3 +1,8 @@
+2007-04-09  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ifdentry.{h,cpp}, lib/ifddir.{h,cpp}: IFDTypeDesc
+	renamed IDFTypeTrait.
+
 2007-04-02  Hubert Figuiere  <hub@figuiere.net>
 
 	* Makefile.am (ACLOCAL_AMFLAGS): make sure

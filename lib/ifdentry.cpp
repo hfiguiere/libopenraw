@@ -67,10 +67,10 @@ namespace OpenRaw {
 			else {
 				off_t offset;
 				if (this->endian() == RawContainer::ENDIAN_LITTLE) {
-					offset = IFDTypeDesc<uint32_t>::EL((uint8_t*)&m_data);
+					offset = IFDTypeTrait<uint32_t>::EL((uint8_t*)&m_data);
 				}
 				else {
-					offset = IFDTypeDesc<uint32_t>::BE((uint8_t*)&m_data);
+					offset = IFDTypeTrait<uint32_t>::BE((uint8_t*)&m_data);
 				}
 				m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
 				success = (m_container.fetchData(m_dataptr, 
@@ -81,18 +81,18 @@ namespace OpenRaw {
 		}
 
 		template <>
-		const uint16_t IFDTypeDesc<uint16_t>::type = IFD::EXIF_FORMAT_SHORT;
+		const uint16_t IFDTypeTrait<uint16_t>::type = IFD::EXIF_FORMAT_SHORT;
 		template <>
-		const size_t IFDTypeDesc<uint16_t>::size = 2;
+		const size_t IFDTypeTrait<uint16_t>::size = 2;
 
 		template <>
-		const uint16_t IFDTypeDesc<uint32_t>::type = IFD::EXIF_FORMAT_LONG;
+		const uint16_t IFDTypeTrait<uint32_t>::type = IFD::EXIF_FORMAT_LONG;
 		template <>
-		const size_t IFDTypeDesc<uint32_t>::size = 4;
+		const size_t IFDTypeTrait<uint32_t>::size = 4;
 
 		template <>
-		const uint16_t IFDTypeDesc<std::string>::type = IFD::EXIF_FORMAT_ASCII;
+		const uint16_t IFDTypeTrait<std::string>::type = IFD::EXIF_FORMAT_ASCII;
 		template <>
-		const size_t IFDTypeDesc<std::string>::size = 1;
+		const size_t IFDTypeTrait<std::string>::size = 1;
 	}
 }

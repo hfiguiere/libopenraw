@@ -78,7 +78,7 @@ namespace OpenRaw {
 					IFDEntry::Ref e = getEntry(id);
 					if (e != NULL) {
 						try {
-							v = IFDTypeDesc<T>::get(*e);
+							v = IFDTypeTrait<T>::get(*e);
 							success = true;
 						}
 						catch(const std::exception & e) {

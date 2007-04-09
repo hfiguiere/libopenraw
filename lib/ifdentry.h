@@ -38,7 +38,7 @@ namespace OpenRaw {
 
 		/** Describe and IFDType */
 		template <typename T>
-		struct IFDTypeDesc
+		struct IFDTypeTrait
 		{
 			static const uint16_t type; /**< the EXIF enum for the type */
 			static const size_t   size; /**< the storage size unit in IFD*/
@@ -50,25 +50,25 @@ namespace OpenRaw {
 
 
 		template <>
-		inline uint16_t IFDTypeDesc<uint16_t>::EL(const uint8_t* b)
+		inline uint16_t IFDTypeTrait<uint16_t>::EL(const uint8_t* b)
 		{
 			return EL16(b);
 		}
 
 		template <>
-		inline uint16_t IFDTypeDesc<uint16_t>::BE(const uint8_t* b)
+		inline uint16_t IFDTypeTrait<uint16_t>::BE(const uint8_t* b)
 		{
 			return BE16(b);
 		}
 
 		template <>
-		inline uint32_t IFDTypeDesc<uint32_t>::EL(const uint8_t* b)
+		inline uint32_t IFDTypeTrait<uint32_t>::EL(const uint8_t* b)
 		{
 			return EL32(b);
 		}
 
 		template <>
-		inline uint32_t IFDTypeDesc<uint32_t>::BE(const uint8_t* b)
+		inline uint32_t IFDTypeTrait<uint32_t>::BE(const uint8_t* b)
 		{
 			return BE32(b);
 		}
@@ -110,7 +110,7 @@ namespace OpenRaw {
 				{
 					try {
 						for (uint32_t i = 0; i < m_count; i++) {
-							array.push_back(IFDTypeDesc<T>::get(*this, i));
+							array.push_back(IFDTypeTrait<T>::get(*this, i));
 						}
 					}
 					catch(std::exception & e)
@@ -128,7 +128,7 @@ namespace OpenRaw {
 			bool m_loaded;
 			uint8_t *m_dataptr;
 			IFDFileContainer & m_container;
-			template <typename T> friend struct IFDTypeDesc;
+			template <typename T> friend struct IFDTypeTrait;
 		};
 
 
@@ -141,17 +141,17 @@ namespace OpenRaw {
 		 * @throw OutOfRangeException in case of subscript out of range
 		 */
 		template <typename T> 
-		T IFDTypeDesc<T>::get(IFDEntry & e, uint32_t idx)
+		T IFDTypeTrait<T>::get(IFDEntry & e, uint32_t idx)
 			throw (BadTypeException, OutOfRangeException, TooBigException)
 		{
-			if (e.m_type != IFDTypeDesc<T>::type) {
+			if (e.m_type != IFDTypeTrait<T>::type) {
 				throw BadTypeException();
 			}
 			if (idx + 1 > e.m_count) {
 				throw OutOfRangeException();
 			}
 			if (!e.m_loaded) {
-				e.m_loaded = e.loadData(IFDTypeDesc<T>::size);
+				e.m_loaded = e.loadData(IFDTypeTrait<T>::size);
 				if (!e.m_loaded) {
 					throw TooBigException();
 				}
@@ -161,14 +161,14 @@ namespace OpenRaw {
 				data = (uint8_t*)&e.m_data;
 			}
 			else {
-				data = e.m_dataptr + (IFDTypeDesc<T>::size * idx);
+				data = e.m_dataptr + (IFDTypeTrait<T>::size * idx);
 			}
 			T val;
 			if (e.endian() == RawContainer::ENDIAN_LITTLE) {
-				val = IFDTypeDesc<T>::EL(data);
+				val = IFDTypeTrait<T>::EL(data);
 			}
 			else {
-				val = IFDTypeDesc<T>::BE(data);
+				val = IFDTypeTrait<T>::BE(data);
 			}
 			return val;
 		}
