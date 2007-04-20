@@ -75,6 +75,11 @@ namespace OpenRaw {
 		delete d;
 	}
 
+	void BitmapData::swap(BitmapData & with)
+	{
+		std::swap(this->d, with.d);
+	}
+
 	BitmapData::DataType BitmapData::dataType() const
 	{
 		return d->data_type;
@@ -105,12 +110,12 @@ namespace OpenRaw {
 		return d->data;
 	}
 
-	uint32_t BitmapData::x()
+	uint32_t BitmapData::x() const
 	{
 		return d->x;
 	}
 
-	uint32_t BitmapData::y()
+	uint32_t BitmapData::y() const
 	{
 		return d->y;
 	}

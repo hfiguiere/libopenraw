@@ -1,5 +1,5 @@
 /*
- * libopenraw - bitmapdata.h
+ * libopenraw - decompressor.cpp
  *
  * Copyright (C) 2007 Hubert Figuiere
  *
@@ -19,46 +19,23 @@
  */
 
 
-#ifndef __OPENRAW_BITMAPDATA_H__
-#define __OPENRAW_BITMAPDATA_H__
+#include "decompressor.h"
 
-
-#include <libopenraw/libopenraw.h>
 
 
 namespace OpenRaw {
+	namespace Internals {
 
-	class BitmapData
-	{
-	public:
-		typedef ::or_data_type DataType;
+		Decompressor::Decompressor(const BitmapData *data)
+			: m_data(data)
+		{
+		}
 
-		BitmapData();
-		virtual ~BitmapData();
 
-		/** swap the two objects data. */
-		void swap(BitmapData & with);
-		
-		/** return the data type */
-		DataType dataType() const;
-		/** set the data type */
-		void setDataType(DataType _type);
+		Decompressor::~Decompressor()
+		{
+		}
 
-		void *allocData(const size_t s);
-		/** return the size of the data */
-		size_t size() const;
-		void *data() const;
-		
-		uint32_t x() const;
-		uint32_t y() const;
-		/** set the pixel dimensions of the thumbnail */
-		void setDimensions(uint32_t x, uint32_t y);
-	private:
-		class Private;
-		BitmapData::Private *d;
-	};
-
+	}
 }
 
-
-#endif

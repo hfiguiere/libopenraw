@@ -32,6 +32,7 @@ namespace JPEG {
 	}
 }
 
+#include <libopenraw++/bitmapdata.h>
 #include "io/stream.h"
 #include "debug.h"
 #include "jfifcontainer.h"
@@ -106,6 +107,34 @@ namespace OpenRaw {
 			y = m_cinfo.output_height;
 			return true;
 		}
+
+
+		bool JFIFContainer::getDecompressedData(BitmapData &data)
+		{
+			if(!m_headerLoaded) {
+				if (_loadHeader() == 0) {
+					Trace(DEBUG1) << "load error failed\n";
+					return false;
+				}
+			}
+			JPEG::jpeg_start_decompress(&m_cinfo);
+			int row_size = m_cinfo.output_width * m_cinfo.output_components; 
+			char *dataPtr = (char*)data.allocData(row_size * m_cinfo.output_height);
+			char *currentPtr = dataPtr;
+			JPEG::JSAMPARRAY buffer = (*m_cinfo.mem->alloc_sarray)((JPEG::j_common_ptr)&m_cinfo, 
+																										 JPOOL_IMAGE, row_size, 
+																										 1); 
+			while (m_cinfo.output_scanline < m_cinfo.output_height) { 
+				jpeg_read_scanlines(&m_cinfo, buffer, 1); 
+				memcpy(dataPtr, buffer, row_size);
+				dataPtr += row_size;
+			}
+			data.setDimensions(m_cinfo.output_width, m_cinfo.output_height);
+
+			JPEG::jpeg_finish_decompress(&m_cinfo);
+			return true;
+		}
+
 
 		int JFIFContainer::_loadHeader()
 		{

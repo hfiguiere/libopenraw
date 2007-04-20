@@ -1,5 +1,5 @@
 /*
- * libopenraw - bitmapdata.h
+ * libopenraw - ljpegdecompressor.h
  *
  * Copyright (C) 2007 Hubert Figuiere
  *
@@ -18,47 +18,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-
-#ifndef __OPENRAW_BITMAPDATA_H__
-#define __OPENRAW_BITMAPDATA_H__
-
+#ifndef __OPENRAW_LJPEGDECOMPRESSOR_H__
+#define __OPENRAW_LJPEGDECOMPRESSOR_H__
 
 #include <libopenraw/libopenraw.h>
 
+#include "decompressor.h"
 
 namespace OpenRaw {
 
-	class BitmapData
-	{
-	public:
-		typedef ::or_data_type DataType;
-
-		BitmapData();
-		virtual ~BitmapData();
-
-		/** swap the two objects data. */
-		void swap(BitmapData & with);
+	class BitmapData;
 		
-		/** return the data type */
-		DataType dataType() const;
-		/** set the data type */
-		void setDataType(DataType _type);
+	namespace Internals {
 
-		void *allocData(const size_t s);
-		/** return the size of the data */
-		size_t size() const;
-		void *data() const;
-		
-		uint32_t x() const;
-		uint32_t y() const;
-		/** set the pixel dimensions of the thumbnail */
-		void setDimensions(uint32_t x, uint32_t y);
-	private:
-		class Private;
-		BitmapData::Private *d;
-	};
+		// dcraw
+		struct jhead;
 
+		class LJpegDecompressor
+			: public Decompressor
+		{
+		public:
+			LJpegDecompressor(const BitmapData *);
+			virtual ~LJpegDecompressor();
+			
+			/** decompress the bitmapdata and return a new bitmap
+			 * @return the new bitmap decompressed. NULL is failure.
+			 * Caller must free it.
+			 * @todo use a shared_ptr here, or something
+			 */
+			virtual BitmapData *decompress();
+		private:
+			
+		};
+
+	}
 }
+
 
 
 #endif

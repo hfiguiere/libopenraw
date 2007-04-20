@@ -28,6 +28,7 @@
 #include "ifdfilecontainer.h"
 #include "ifd.h"
 #include "cr2file.h"
+#include "ljpegdecompressor.h"
 
 #include "rawfilefactory.h"
 
@@ -102,6 +103,12 @@ namespace OpenRaw {
 				}
 				data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
 				data.setDimensions(x, y);
+				LJpegDecompressor decomp(&data);
+				BitmapData *dData = decomp.decompress();
+				if (dData != NULL) {
+					data.swap(*dData);
+					delete dData;
+				}
 			}
 			else {
 				ret = OR_ERROR_NOT_FOUND;

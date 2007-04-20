@@ -1,7 +1,7 @@
 /*
- * libopenraw - bitmapdata.h
+ * libopenraw - memstream.h
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007 Hubert Figuière
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,47 +18,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
+#ifndef __IO_MEMSTREAM_H__
+#define __IO_MEMSTREAM_H__
 
-#ifndef __OPENRAW_BITMAPDATA_H__
-#define __OPENRAW_BITMAPDATA_H__
 
-
-#include <libopenraw/libopenraw.h>
-
+#include "io/stream.h"
 
 namespace OpenRaw {
-
-	class BitmapData
-	{
-	public:
-		typedef ::or_data_type DataType;
-
-		BitmapData();
-		virtual ~BitmapData();
-
-		/** swap the two objects data. */
-		void swap(BitmapData & with);
+	namespace IO {
 		
-		/** return the data type */
-		DataType dataType() const;
-		/** set the data type */
-		void setDataType(DataType _type);
+		class MemStream
+			: public Stream
+		{
+		public:
+			MemStream(void *ptr, size_t s);
 
-		void *allocData(const size_t s);
-		/** return the size of the data */
-		size_t size() const;
-		void *data() const;
-		
-		uint32_t x() const;
-		uint32_t y() const;
-		/** set the pixel dimensions of the thumbnail */
-		void setDimensions(uint32_t x, uint32_t y);
+			virtual ~MemStream()
+				{}
+
+			virtual or_error open();
+			virtual int close();
+			virtual int seek(off_t offset, int whence);
+			virtual int read(void *buf, size_t count);
+			virtual off_t filesize();
+
+
 	private:
-		class Private;
-		BitmapData::Private *d;
-	};
+			void * m_ptr;
+			size_t m_size;
+			unsigned char * m_current;
+		};
 
+	}
 }
 
-
 #endif
+

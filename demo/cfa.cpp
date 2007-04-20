@@ -1,5 +1,5 @@
 /*
- * libopenraw - bitmapdata.h
+ * libopenraw - cfa.cpp
  *
  * Copyright (C) 2007 Hubert Figuiere
  *
@@ -19,46 +19,41 @@
  */
 
 
-#ifndef __OPENRAW_BITMAPDATA_H__
-#define __OPENRAW_BITMAPDATA_H__
 
-
+#include <iostream>
 #include <libopenraw/libopenraw.h>
+#include <libopenraw/debug.h>
+#include <libopenraw++/thumbnail.h>
+#include <libopenraw++/rawfile.h>
+#include <libopenraw++/rawdata.h>
 
+#include <boost/scoped_ptr.hpp>
 
-namespace OpenRaw {
+using OpenRaw::Thumbnail;
+using boost::scoped_ptr;
 
-	class BitmapData
-	{
-	public:
-		typedef ::or_data_type DataType;
+int
+main(int argc, char** argv)
+{
+	::or_error err = OR_ERROR_NONE;
 
-		BitmapData();
-		virtual ~BitmapData();
+	if (argc < 2) {
+		std::cerr << "missing parameter" << std::endl;
+		return 1;
+	}
 
-		/** swap the two objects data. */
-		void swap(BitmapData & with);
-		
-		/** return the data type */
-		DataType dataType() const;
-		/** set the data type */
-		void setDataType(DataType _type);
+	OpenRaw::init();
+	or_debug_set_level(DEBUG2);
+	FILE * f;
 
-		void *allocData(const size_t s);
-		/** return the size of the data */
-		size_t size() const;
-		void *data() const;
-		
-		uint32_t x() const;
-		uint32_t y() const;
-		/** set the pixel dimensions of the thumbnail */
-		void setDimensions(uint32_t x, uint32_t y);
-	private:
-		class Private;
-		BitmapData::Private *d;
-	};
+	scoped_ptr<OpenRaw::RawFile> raw_file(OpenRaw::RawFile::newRawFile(argv[1]));
 
+	OpenRaw::RawData rdata;
+	raw_file->getRawData(rdata);
+
+	std::cout << "data size = " << rdata.size() << std::endl;
+	std::cout << "data type = " << rdata.dataType() << std::endl;
+	
+	return 0;
 }
 
-
-#endif

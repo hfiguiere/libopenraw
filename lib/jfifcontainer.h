@@ -1,7 +1,7 @@
 /*
  * libopenraw - jfifcontainer.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,8 @@ namespace JPEG {
 
 namespace OpenRaw {
 
+	class BitmapData;
+
 	namespace Internals {
 
 		class JFIFContainer
@@ -54,6 +56,7 @@ namespace OpenRaw {
 			virtual ~JFIFContainer();
 
 			bool getDimensions(uint32_t &x, uint32_t &y);
+			bool getDecompressedData(BitmapData &data);
 
 			/* libjpeg callbacks j_ is the prefix for these callbacks */
 			static void j_init_source(JPEG::j_decompress_ptr cinfo);
