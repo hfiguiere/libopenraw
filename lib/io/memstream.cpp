@@ -24,6 +24,9 @@
 #include <libopenraw/libopenraw.h>
 
 #include "memstream.h"
+#include "debug.h"
+
+using namespace Debug;
 
 namespace OpenRaw {
 	namespace IO {
@@ -51,6 +54,9 @@ namespace OpenRaw {
 
 		int MemStream::seek(off_t offset, int whence)
 		{
+			Trace(DEBUG1) << "MemStream::seek " << offset 
+										<< " bytes - whence = " 
+										<< whence <<  "\n";
 			// TODO check bounds
 			if (m_current == NULL) {
 				// TODO set error code
@@ -59,13 +65,13 @@ namespace OpenRaw {
 			switch(whence)
 			{
 			case SEEK_SET:
-				m_current = (unsigned char*)m_ptr + whence;
+				m_current = (unsigned char*)m_ptr + offset;
 				break;
 			case SEEK_END:
-				m_current = (unsigned char*)m_ptr + m_size + whence;
+				m_current = (unsigned char*)m_ptr + m_size + offset;
 				break;
 			case SEEK_CUR:
-				m_current += whence;
+				m_current += offset;
 				break;
 			default:
 				return -1;
@@ -77,13 +83,15 @@ namespace OpenRaw {
 
 		int MemStream::read(void *buf, size_t count)
 		{
+//			Trace(DEBUG1) << "MemStream::reading " << count << " bytes\n";
 			if((m_current == NULL) || (m_ptr == NULL)) {
+				Trace(DEBUG1) << "MemStream::failed\n";
 				return -1;
 			}
 			// TODO check the bounds
 			memcpy(buf, m_current, count);
 			m_current += count;
-			return 0;
+			return count;
 		}
 
 

@@ -35,6 +35,15 @@ namespace OpenRaw {
 		{
 		}
 
+		uint8_t Stream::readByte() throw()
+		{
+			uint8_t theByte;
+			int r = read(&theByte, 1);
+			if (r != 1) {
+				throw(std::exception());
+			}
+			return theByte;
+		}
 	}
 }
 

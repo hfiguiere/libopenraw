@@ -19,6 +19,7 @@
  */
 
 
+#include "io/stream.h"
 #include "decompressor.h"
 
 
@@ -26,8 +27,9 @@
 namespace OpenRaw {
 	namespace Internals {
 
-		Decompressor::Decompressor(const BitmapData *data)
-			: m_data(data)
+		Decompressor::Decompressor(IO::Stream *stream,
+															 RawContainer *container)
+			: m_stream(stream), m_container(container)
 		{
 		}
 

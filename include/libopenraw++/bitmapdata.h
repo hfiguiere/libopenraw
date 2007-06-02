@@ -53,12 +53,17 @@ namespace OpenRaw {
 		uint32_t y() const;
 		/** set the pixel dimensions of the thumbnail */
 		void setDimensions(uint32_t x, uint32_t y);
+
+		BitmapData &append(uint8_t c);
+		BitmapData &append(uint16_t c);
+
 	private:
 		class Private;
 		BitmapData::Private *d;
 	};
-
+	
 }
+
 
 
 #endif

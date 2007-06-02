@@ -22,6 +22,7 @@
 #ifndef _OPENRAWPP_DEBUG_H_
 #define _OPENRAWPP_DEBUG_H_
 
+#include <string>
 #include <libopenraw/debug.h>
 
 namespace Debug {
@@ -38,6 +39,7 @@ namespace Debug {
 		Trace & operator<<(int i);
 		Trace & operator<<(const char * s);
 		Trace & operator<<(void *);
+		Trace & operator<<(const std::string & s);
 
 		static void setDebugLevel(debug_level lvl);
 	private:

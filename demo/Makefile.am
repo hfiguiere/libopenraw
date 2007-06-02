@@ -10,7 +10,7 @@ thumbc_LDFLAGS = -L$(top_builddir)/lib -static
 
 thumbc_SOURCES = thumbc.c
 
-thumb_LDADD = $(LIBOPENRAW_LIBS)
+thumb_LDADD = $(LIBOPENRAW_LIBS) 
 thumb_LDFLAGS = -L$(top_builddir)/lib -static
 
 thumb_SOURCES = thumb.cpp

@@ -24,6 +24,8 @@
 #define _OPENRAW_EXCEPTION_H_
 
 #include <exception>
+#include <string>
+#include <typeinfo>
 
 namespace OpenRaw {
 	namespace Internals {
@@ -32,7 +34,25 @@ namespace OpenRaw {
 		class Exception
 			: public std::exception
 		{
-
+		protected:
+			std::string m_what;
+		public:
+			Exception()
+				: std::exception()
+				{}
+			Exception(const std::string &w)
+				: std::exception(),
+					m_what(w)
+				{}
+			virtual ~Exception() throw()
+				{}
+			const char *what() const throw()
+				{ 
+					if(m_what.empty()) {
+						return typeid(this).name();
+					}
+					return m_what.c_str();
+				}
 		};
 
 
@@ -52,6 +72,15 @@ namespace OpenRaw {
 		class OutOfRangeException
 			: public Exception
 		{
+		};
+
+		class DecodingException
+			: public Exception
+		{
+		public:
+			DecodingException(const std::string &w)
+				: Exception(w)
+				{}
 		};
 
 	}

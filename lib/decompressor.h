@@ -29,14 +29,21 @@
 namespace OpenRaw {
 
 	class BitmapData;
-		
+
+	namespace IO {
+		class Stream;
+	}
+
 	namespace Internals {
+
+		class RawContainer;
 
 		class Decompressor
 			: private boost::noncopyable
 		{
 		public:
-			Decompressor(const BitmapData *);
+			Decompressor(IO::Stream * stream,
+									 RawContainer * container);
 			virtual ~Decompressor();
 			
 			/** decompress the bitmapdata and return a new bitmap
@@ -46,7 +53,8 @@ namespace OpenRaw {
 			 */
 			virtual BitmapData *decompress() = 0;
 		protected:
-			const BitmapData *m_data;
+			IO::Stream *m_stream;
+			RawContainer *m_container;
 		};
 
 	}

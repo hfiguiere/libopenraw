@@ -59,4 +59,12 @@ namespace Debug {
 		return *this;
 	}
 
+	Trace & Trace::operator<<(const std::string & s)
+	{
+		if (m_level <= debugLevel) {
+			std::cerr << s;
+		}
+		return *this;
+	}
+
 }

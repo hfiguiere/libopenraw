@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
+#include <boost/scoped_ptr.hpp>
 
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/thumbnail.h>
@@ -25,9 +26,11 @@
 
 #include "debug.h"
 #include "io/file.h"
+#include "io/memstream.h"
 #include "ifdfilecontainer.h"
 #include "ifd.h"
 #include "cr2file.h"
+#include "jfifcontainer.h"
 #include "ljpegdecompressor.h"
 
 #include "rawfilefactory.h"
@@ -103,7 +106,12 @@ namespace OpenRaw {
 				}
 				data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
 				data.setDimensions(x, y);
-				LJpegDecompressor decomp(&data);
+
+				boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
+																													data.size()));
+				s->open(); // TODO check success
+				boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+				LJpegDecompressor decomp(s.get(), jfif.get());
 				BitmapData *dData = decomp.decompress();
 				if (dData != NULL) {
 					data.swap(*dData);

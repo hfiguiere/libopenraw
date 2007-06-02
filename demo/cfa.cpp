@@ -53,6 +53,10 @@ main(int argc, char** argv)
 
 	std::cout << "data size = " << rdata.size() << std::endl;
 	std::cout << "data type = " << rdata.dataType() << std::endl;
+
+	f = fopen("image.cfa", "wb");
+	fwrite(rdata.data(), 1, rdata.size(), f);
+	fclose(f);
 	
 	return 0;
 }

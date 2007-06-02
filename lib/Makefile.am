@@ -62,4 +62,5 @@ libopenraw_la_SOURCES = \
 	ciffcontainer.cpp \
 	jfifcontainer.cpp \
 	decompressor.cpp \
-	ljpegdecompressor.cpp
+	ljpegdecompressor.cpp \
+	huffmandecoder.cpp 

@@ -73,6 +73,7 @@ namespace OpenRaw {
 					return m_fileName;
 				}
 
+			uint8_t readByte() throw();
 		protected:
 			void set_error(Error error)
 				{

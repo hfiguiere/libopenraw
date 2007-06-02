@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <assert.h>
 
 #include "debug.h"
 
@@ -44,12 +45,16 @@ namespace OpenRaw {
 		uint32_t x;
 		/** y dimension in pixels of thumbnail data */
 		uint32_t y;
-		
+
+		uint8_t *pos;
+		size_t offset;
+
 		Private()
 			: data(NULL),
 				data_size(0),
 				data_type(OR_DATA_TYPE_NONE),
-				x(0), y(0)
+				x(0), y(0),
+				pos(NULL), offset(0)
 			{
 			}
 		
@@ -94,9 +99,11 @@ namespace OpenRaw {
 	{
 		Trace(DEBUG1) << "allocate s=" << s << " data =" 
 							<< d->data << "\n";
-		d->data = malloc(s);
+		d->data = calloc(s, 1);
 		Trace(DEBUG1) << " data =" << d->data << "\n";
 		d->data_size = s;
+		d->pos = (uint8_t*)d->data;
+		d->offset = 0;
 		return d->data;
 	}
 
@@ -124,6 +131,27 @@ namespace OpenRaw {
 	{
 		d->x = x;
 		d->y = y;
+	}
+
+	BitmapData &BitmapData::append(uint8_t c)
+	{
+		assert(d->pos);
+		assert(d->offset < d->data_size);
+		*(d->pos) = c;
+		d->pos++;
+		d->offset++;
+		return *this;
+	}
+
+
+	BitmapData &BitmapData::append(uint16_t c)
+	{
+		assert(d->pos);
+		assert(d->offset < d->data_size);
+		*(uint16_t*)(d->pos) = c;
+		d->pos += sizeof(c);
+		d->offset += sizeof(c);
+		return *this;
 	}
 
 }

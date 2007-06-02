@@ -1,3 +1,8 @@
+2007-06-02  Hubert Figuiere  <hub@figuiere.net>
+
+	* support decompressing CFA from the RAW file
+	using ljpeg. CR2 files only for now.
+
 2007-04-19  Hubert Figuiere  <hub@figuiere.net>
 
 	* Added infrastructure for decompression.

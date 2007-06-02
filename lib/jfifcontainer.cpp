@@ -59,6 +59,7 @@ namespace OpenRaw {
 				m_cinfo(), m_jerr(),
 				m_headerLoaded(false)
 		{
+			setEndian(ENDIAN_BIG);
 			/* this is a hack because jpeg_create_decompress is
 			 * implemented as a Macro 
 			 */
@@ -99,7 +100,7 @@ namespace OpenRaw {
 		{
 			if(!m_headerLoaded) {
 				if (_loadHeader() == 0) {
-					Trace(DEBUG1) << "load error failed\n";
+					Trace(DEBUG1) << "load header failed\n";
 					return false;
 				}
 			}
@@ -113,9 +114,12 @@ namespace OpenRaw {
 		{
 			if(!m_headerLoaded) {
 				if (_loadHeader() == 0) {
-					Trace(DEBUG1) << "load error failed\n";
+					Trace(DEBUG1) << "load header failed\n";
 					return false;
 				}
+			}
+			if (::setjmp(m_jpegjmp) != 0) {
+				return false;
 			}
 			JPEG::jpeg_start_decompress(&m_cinfo);
 			int row_size = m_cinfo.output_width * m_cinfo.output_components; 
@@ -126,8 +130,8 @@ namespace OpenRaw {
 																										 1); 
 			while (m_cinfo.output_scanline < m_cinfo.output_height) { 
 				jpeg_read_scanlines(&m_cinfo, buffer, 1); 
-				memcpy(dataPtr, buffer, row_size);
-				dataPtr += row_size;
+				memcpy(currentPtr, buffer, row_size);
+				currentPtr += row_size;
 			}
 			data.setDimensions(m_cinfo.output_width, m_cinfo.output_height);
 

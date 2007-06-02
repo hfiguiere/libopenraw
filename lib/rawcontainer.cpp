@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawcontainer.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,21 @@ namespace OpenRaw {
 			m_file->close();
 		}
 
+
+		bool RawContainer::readUInt8(IO::Stream *f, uint8_t & v)
+		{
+			unsigned char buf;
+			int s = f->read(&buf, 1);
+			if (s != 1) {
+				return false;
+			}
+			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
+			Trace(DEBUG1) << "read8 " << (int)buf	<< "\n";
+			v = buf;
+			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
+			Trace(DEBUG1) << "value = " << v << "\n";
+			return true;
+		}
 
 		bool 
 		RawContainer::readInt16(IO::Stream *f, int16_t & v)
