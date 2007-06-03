@@ -51,6 +51,9 @@ namespace OpenRaw {
 		
 		uint32_t x() const;
 		uint32_t y() const;
+		uint32_t bpc() const;
+	  void setBpc(uint32_t _bpc);
+
 		/** set the pixel dimensions of the thumbnail */
 		void setDimensions(uint32_t x, uint32_t y);
 

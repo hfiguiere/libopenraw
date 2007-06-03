@@ -45,6 +45,8 @@ namespace OpenRaw {
 		uint32_t x;
 		/** y dimension in pixels of thumbnail data */
 		uint32_t y;
+		/** bpc bit per channel. 0 is not a valid value */
+		uint32_t bpc;
 
 		uint8_t *pos;
 		size_t offset;
@@ -53,7 +55,7 @@ namespace OpenRaw {
 			: data(NULL),
 				data_size(0),
 				data_type(OR_DATA_TYPE_NONE),
-				x(0), y(0),
+				x(0), y(0), bpc(0),
 				pos(NULL), offset(0)
 			{
 			}
@@ -93,6 +95,21 @@ namespace OpenRaw {
 	void BitmapData::setDataType(BitmapData::DataType _type)
 	{
 		d->data_type = _type;
+		if(d->bpc == 0) {
+			switch(_type) {
+			case OR_DATA_TYPE_NONE:
+				d->bpc = 0;
+				break;
+			case OR_DATA_TYPE_COMPRESSED_CFA:
+			case OR_DATA_TYPE_CFA:
+				d->bpc = 16;
+				break;
+			case OR_DATA_TYPE_PIXMAP_8RGB:
+			case OR_DATA_TYPE_JPEG:
+			default:
+				d->bpc = 8;
+			}
+		}
 	}
 
  	void * BitmapData::allocData(const size_t s)
@@ -127,10 +144,21 @@ namespace OpenRaw {
 		return d->y;
 	}
 
+	uint32_t BitmapData::bpc() const
+	{
+		return d->bpc;
+	}
+
+
 	void BitmapData::setDimensions(uint32_t x, uint32_t y)
 	{
 		d->x = x;
 		d->y = y;
+	}
+
+	void BitmapData::setBpc(uint32_t _bpc)
+	{
+		d->bpc = _bpc;
 	}
 
 	BitmapData &BitmapData::append(uint8_t c)

@@ -54,7 +54,10 @@ main(int argc, char** argv)
 	std::cout << "data size = " << rdata.size() << std::endl;
 	std::cout << "data type = " << rdata.dataType() << std::endl;
 
-	f = fopen("image.cfa", "wb");
+	f = fopen("image.pgm", "wb");
+	fprintf(f, "P5\n");
+	fprintf(f, "%d %d\n", rdata.x(), rdata.y());
+	fprintf(f, "%d\n", (1 << rdata.bpc()) - 1);
 	fwrite(rdata.data(), 1, rdata.size(), f);
 	fclose(f);
 	

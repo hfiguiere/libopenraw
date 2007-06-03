@@ -1650,6 +1650,12 @@ LJpegDecompressor::ReadScanHeader (DecompressInfo *dcPtr)
 			m_output = new BitmapData();
 			BitmapData *bitmap = m_output;
 			bitmap->setDataType(OR_DATA_TYPE_CFA);
+			// bpc is a multiply of 8
+			uint32_t bpc = dcInfo.dataPrecision;
+			if(bpc % 8) {
+				bpc = ((bpc / 8) + 1) * 8;
+			}
+			bitmap->setBpc(bpc);
 			uint16_t *dataPtr = (uint16_t*)bitmap->allocData(dcInfo.imageWidth
 																											 * sizeof(uint16_t) 
 																											 * dcInfo.imageHeight
