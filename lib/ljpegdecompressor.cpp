@@ -294,7 +294,34 @@ FixHuffTbl (HuffmanTable *htbl)
  * One of the following structures is used to pass around the
  * decompression information.
  */
-typedef struct DecompressInfo {
+struct DecompressInfo 
+{
+	DecompressInfo()
+		: imageWidth(0), imageHeight(0),
+			dataPrecision(0), compInfo(NULL),
+			numComponents(0),
+			compsInScan(0),
+			Ss(0), Pt(0),
+			restartInterval(0), restartInRows(0),
+			restartRowsToGo(0), nextRestartNum(0)
+			
+		{
+			memset(&curCompInfo, 0, sizeof(curCompInfo));
+			memset(&MCUmembership, 0, sizeof(MCUmembership));
+			memset(&dcHuffTblPtrs, 0, sizeof(dcHuffTblPtrs));
+		}
+	~DecompressInfo()
+		{
+			int i;
+			for(i = 0; i < 4; i++) {
+				if(dcHuffTblPtrs[i]) {
+					free(dcHuffTblPtrs[i]);
+				}
+			}
+			if(compInfo) {
+				free(compInfo);
+			}
+		}
     /*
      * Image width, height, and image data precision (bits/sample)
      * These fields are set by ReadFileHeader or ReadScanHeader
@@ -308,14 +335,14 @@ typedef struct DecompressInfo {
      * numComponents is the # of color components in JPEG image.
      */
     JpegComponentInfo *compInfo;
-    short numComponents;
+    int16_t numComponents;
 
     /*
      * *curCompInfo[i] describes component that appears i'th in SOS.
      * compsInScan is the # of color components in current scan.
      */
     JpegComponentInfo *curCompInfo[4];
-    short compsInScan;
+    int16_t compsInScan;
 
     /*
      * MCUmembership[i] indexes the i'th component of MCU into the
@@ -346,7 +373,7 @@ typedef struct DecompressInfo {
      */
     int restartRowsToGo;	/* MCUs rows left in this restart interval */
     short nextRestartNum;	/* # of next RSTn marker (0..7) */
-} DecompressInfo;
+};
 
 
 #define RST0    0xD0	/* RST0 marker code */
@@ -1643,7 +1670,6 @@ LJpegDecompressor::ReadScanHeader (DecompressInfo *dcPtr)
 		BitmapData *LJpegDecompressor::decompress()
 		{
 			DecompressInfo dcInfo;
-			memset(&dcInfo, 0, sizeof(dcInfo));
 			ReadFileHeader (&dcInfo);
 			ReadScanHeader (&dcInfo);
 
