@@ -156,7 +156,7 @@ public:
 				m_out << "\tRAW data\n";
 				m_out << boost::format("\t\tType: %1%\n")
 					% dataTypeToString(rd.dataType());
-				m_out << boost::format("\t\tByte size: %1%1\n")
+				m_out << boost::format("\t\tByte size: %1%\n")
 					% rd.size();
 				m_out << boost::format("\t\tDimensions: x = %1% y = %2%\n")
 					% rd.x() % rd.y();
