@@ -27,7 +27,7 @@
 
 namespace Debug {
 		
-	int debugLevel = NOTICE;
+	int Trace::debugLevel = NOTICE;
 
 	void Trace::setDebugLevel(debug_level lvl)
 	{

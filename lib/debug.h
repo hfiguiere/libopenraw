@@ -23,9 +23,15 @@
 #define _OPENRAWPP_DEBUG_H_
 
 #include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <boost/bind.hpp>
+
 #include <libopenraw/debug.h>
 
 namespace Debug {
+
 	
 	/** a basic Trace class for debug */
 	class Trace 
@@ -41,10 +47,29 @@ namespace Debug {
 		Trace & operator<<(void *);
 		Trace & operator<<(const std::string & s);
 
+		template <class T>
+		Trace & operator<<(const std::vector<T> & v);
+
 		static void setDebugLevel(debug_level lvl);
 	private:
+		static int debugLevel; // global debug level
 		int m_level;
 	};
+
+	inline void print(int i)
+	{
+		std::cerr << i << " ";
+	}
+
+	template <class T>
+	Trace & Trace::operator<<(const std::vector<T> & v)
+	{
+		if (m_level <= debugLevel) {
+			std::for_each(v.begin(), v.end(), boost::bind(&print, _1));
+		}
+		return *this;
+	}
+
 	
 }
 
