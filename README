@@ -12,8 +12,6 @@ Prerequistes to build:
     - libjpeg
 
     - automake/autoconf
-  or
-    - CMake 2.4 <http://cmake.org>
 
 
 Supported file format:
@@ -39,13 +37,6 @@ How to build:
     $ make
     $ make install DESTDIR=...
 
-  Using cmake:
-
-    $ mkdir libopenraw-build && cd libopenraw-build
-    $ cmake ../libopenraw
-    $ make
-    $ make install DESTDIR=...
-
 
 Support table:
 ==============
@@ -56,18 +47,19 @@ Support table:
   N  Not supported.
   B  Known to be Broken. (Needs to be fixed. I have a sample but further
      work is required.)
+  X  Not needed.
 
                           ThNail
-                         /  CFA compressed
+                         /  CFA compressed (as is)
                          | /  CFA decompress
                          | | /
                          | | |
-Canon CR2                Y Y N
- 20D                     T T
- 30D                     T T
- 350D                    T T
- 5D                      T T
- 1DMarkII                T T
+Canon CR2                Y Y Y
+ 20D                     T T T
+ 30D                     T T B
+ 350D                    T T B
+ 5D                      T T B
+ 1DMarkII                T T T
 
 Canon CRW                Y Y N
  300D                    T T
@@ -81,6 +73,7 @@ Nikon NEF                Y Y N
  D100                    T T
  D70                     T T
  Cooolpix 5700           T T
+ D2H                     T T
 
 Olympus ORF              Y Y N
  E-300                   T T
@@ -88,10 +81,10 @@ Olympus ORF              Y Y N
  E-10                    B B
 
 Adobe DNG                Y Y N
- Leica DMR               T T
- Leica M8                T T
+ Leica DMR               T T X
+ Leica M8                T T X
  Adobe DNG converter     T T
- K10D                    T T
+ K10D                    T T X
 
 Sony ARW                 Y N N
  A-100                   T B
