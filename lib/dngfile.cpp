@@ -21,10 +21,16 @@
 
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/thumbnail.h>
+#include <libopenraw++/rawdata.h>
+
+#include <boost/scoped_ptr.hpp>
 
 #include "debug.h"
 #include "io/file.h"
+#include "io/memstream.h"
 #include "ifdfilecontainer.h"
+#include "jfifcontainer.h"
+#include "ljpegdecompressor.h"
 #include "ifd.h"
 #include "dngfile.h"
 
@@ -71,6 +77,22 @@ namespace OpenRaw {
 			if (i != subdirs.end()) {
 				IFDDir::Ref subdir(*i);
 				ret = _getRawDataFromDir(data, subdir);
+
+				uint16_t compression = 0;
+				if (subdir->getValue(IFD::EXIF_TAG_COMPRESSION, compression) &&
+						compression == 7) {
+					
+					boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
+																														data.size()));
+					s->open(); // TODO check success
+					boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+					LJpegDecompressor decomp(s.get(), jfif.get());
+					BitmapData *dData = decomp.decompress();
+					if (dData != NULL) {
+						data.swap(*dData);
+						delete dData;
+					}
+				}
 			}
 			else {
 				ret = OR_ERROR_NOT_FOUND;

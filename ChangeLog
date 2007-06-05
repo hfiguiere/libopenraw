@@ -1,3 +1,8 @@
+2007-06-05  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/dngfile.cpp: decompress RAW from DNG. The spec 
+	is very fuzzy... so it is know to be broken.
+
 2007-06-02  Hubert Figuiere  <hub@figuiere.net>
 
 	* demo/cfa.cpp: will save as .pgm file. 
