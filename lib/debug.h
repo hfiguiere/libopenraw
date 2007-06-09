@@ -1,7 +1,7 @@
 /*
  * libopenraw - debug.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,14 +52,11 @@ namespace Debug {
 
 		static void setDebugLevel(debug_level lvl);
 	private:
+		static void print(int i);
 		static int debugLevel; // global debug level
 		int m_level;
 	};
 
-	inline void print(int i)
-	{
-		std::cerr << i << " ";
-	}
 
 	template <class T>
 	Trace & Trace::operator<<(const std::vector<T> & v)
