@@ -239,7 +239,7 @@ namespace OpenRaw {
 		if(slices.size()) {
 			sliceOffset += slices[slice];
 			slice++;
-			if(slices.size() >= slice) {
+			if(slices.size() > slice) {
 				sliceWidth = slices[slice];
 			}
 			else {
