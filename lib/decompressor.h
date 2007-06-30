@@ -47,11 +47,13 @@ namespace OpenRaw {
 			virtual ~Decompressor();
 			
 			/** decompress the bitmapdata and return a new bitmap
+			 * @param in a preallocated BitmapData instance
+			 * or NULL if decompress has to allocate it.
 			 * @return the new bitmap decompressed. NULL is failure.
-			 * Caller must free it.
+			 * Caller owns it.
 			 * @todo use a shared_ptr here, or something
 			 */
-			virtual BitmapData *decompress() = 0;
+			virtual BitmapData *decompress(BitmapData *in = NULL) = 0;
 		protected:
 			IO::Stream *m_stream;
 			RawContainer *m_container;

@@ -22,6 +22,7 @@
 #ifndef __OPENRAW_BITMAPDATA_H__
 #define __OPENRAW_BITMAPDATA_H__
 
+#include <vector>
 
 #include <libopenraw/libopenraw.h>
 
@@ -51,15 +52,22 @@ namespace OpenRaw {
 		
 		uint32_t x() const;
 		uint32_t y() const;
+		/** bit per channel */
 		uint32_t bpc() const;
-	  void setBpc(uint32_t _bpc);
+		/** set bit per channel */
+		void setBpc(uint32_t _bpc);
 
 		/** set the pixel dimensions of the thumbnail */
 		void setDimensions(uint32_t x, uint32_t y);
 
-		BitmapData &append(uint8_t c);
-		BitmapData &append(uint16_t c);
+		void setSlices(const std::vector<uint16_t> & slices);
 
+		/** append a uint8_t at the current position */
+//		BitmapData &append(uint8_t c);
+		/** append a uint18_t at the current position */
+		BitmapData &append(uint16_t c);
+		/** Jump to next row. Take slicing into account. */
+		void nextRow();
 	private:
 		class Private;
 		BitmapData::Private *d;

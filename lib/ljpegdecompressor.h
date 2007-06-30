@@ -34,7 +34,7 @@ namespace OpenRaw {
 	class BitmapData;
 		
 	namespace Internals {
-
+		struct HuffmanTable;
 		struct DecompressInfo;
 		typedef int16_t ComponentType;
 		typedef ComponentType *MCU;
@@ -48,19 +48,28 @@ namespace OpenRaw {
 			virtual ~LJpegDecompressor();
 			
 			/** decompress the bitmapdata and return a new bitmap
+			 * @param in a preallocated BitmapData instance
+			 * or NULL if decompress has to allocate it.
 			 * @return the new bitmap decompressed. NULL is failure.
-			 * Caller must free it.
+			 * Caller owns it.
 			 * @todo use a shared_ptr here, or something
 			 */
-			virtual BitmapData *decompress();
+			virtual BitmapData *decompress(BitmapData *in = NULL);
+			void setSlices(const std::vector<uint16_t> & slices, 
+										 std::vector<uint16_t>::size_type idx = 0);
+			bool isSliced() const
+				{ 
+					return m_slices.size() > 1; 
+				}
+		private:
+			std::vector<uint16_t> m_slices;
 			/** read the bits
 			 * @param s the stream to read from
 			 * @param bitCount the number of bit
 			 * @return the value
 			 */
 			uint16_t readBits(IO::Stream * s, int bitCount);
-		private:
-/* 
+/** 
  * Enumerate all the JPEG marker codes
  */
 			typedef enum {
@@ -116,8 +125,9 @@ namespace OpenRaw {
 				M_ERROR = 0x100
 			} JpegMarker;
 
-			void HuffDecoderInit (DecompressInfo *dcPtr);
-			void ProcessRestart (DecompressInfo *dcPtr);
+			void DecoderStructInit (DecompressInfo *dcPtr) throw(DecodingException);
+			void HuffDecoderInit (DecompressInfo *dcPtr) throw(DecodingException);
+			void ProcessRestart (DecompressInfo *dcPtr) throw(DecodingException);
 			void DecodeFirstRow(DecompressInfo *dcPtr,
 													MCU *curRowBuf);
 			void DecodeImage(DecompressInfo *dcPtr);
@@ -127,17 +137,17 @@ namespace OpenRaw {
 			void PmPutRow(MCU* RowBuf, int numComp, int numCol, int Pt);
 			uint16_t Get2bytes (DecompressInfo *dcPtr);
 			void SkipVariable (DecompressInfo *dcPtr);
-			void GetDht (DecompressInfo *dcPtr);
-			void GetDri (DecompressInfo *dcPtr);
+			void GetDht (DecompressInfo *dcPtr) throw(DecodingException);
+			void GetDri (DecompressInfo *dcPtr) throw(DecodingException);
 			void GetApp0 (DecompressInfo *dcPtr);
-			void GetSof (DecompressInfo *dcPtr, int code);
-			void GetSos (DecompressInfo *dcPtr);
+			void GetSof (DecompressInfo *dcPtr, int code) throw(DecodingException);
+			void GetSos (DecompressInfo *dcPtr) throw(DecodingException);
 			static void GetSoi (DecompressInfo *dcPtr);
 			int  NextMarker (DecompressInfo *dcPtr);
 			JpegMarker ProcessTables (DecompressInfo *dcPtr);
-			void ReadFileHeader (DecompressInfo *dcPtr);
+			void ReadFileHeader (DecompressInfo *dcPtr) throw(DecodingException);
 			int ReadScanHeader (DecompressInfo *dcPtr);
-			void DecoderStructInit (DecompressInfo *dcPtr);
+			void HuffDecode(HuffmanTable *htbl,int & rv);
 
 
 			MCU *m_mcuROW1, *m_mcuROW2;

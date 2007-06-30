@@ -144,7 +144,8 @@ namespace OpenRaw {
 				EXIF_TAG_SUBJECT_DISTANCE_RANGE		= 0xa40c,
 				EXIF_TAG_IMAGE_UNIQUE_ID		= 0xa420,
 				EXIF_TAG_GAMMA = 0xa500,
-				EXIF_TAG_UNKNOWN_C4A5 = 0xc4a5
+				EXIF_TAG_UNKNOWN_C4A5 = 0xc4a5,
+				EXIF_TAG_CR2_SLICE = 0xc640    /**< Exif tag for CR2 RAW "slices" */
 			} ExifTag;
 
 			/** type for Exif field/tag

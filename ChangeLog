@@ -1,3 +1,8 @@
+2007-06-30  Hubert Figuiere  <hub@figuiere.net>
+
+	* Handle the slicing for CR2 files. Better error 
+	handling.
+
 2007-06-05  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/dngfile.cpp: decompress RAW from DNG. The spec 

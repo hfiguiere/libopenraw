@@ -76,6 +76,13 @@ namespace OpenRaw {
 				Trace(DEBUG1) << "byte len not found\n";
 				return OR_ERROR_NOT_FOUND;
 			}
+			// get the "slicing", tag 0xc640 (3 SHORT)
+			std::vector<uint16_t> slices;
+			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CR2_SLICE);
+			if (e) {
+				e->getArray(slices);
+				Trace(DEBUG1) << "Found slice entry " << slices << "\n";
+			}
 
 			IFDDir::Ref dir0 = m_container->setDirectory(0);
 			if (dir0 == NULL) {
@@ -106,14 +113,22 @@ namespace OpenRaw {
 				}
 				data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
 				data.setDimensions(x, y);
+				Trace(DEBUG1) << "In size is " << data.x() 
+											<< "x" << data.y() << "\n";
 
 				boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
 																													data.size()));
 				s->open(); // TODO check success
 				boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
 				LJpegDecompressor decomp(s.get(), jfif.get());
+				if(slices.size() > 1) {
+					printf("setting slices\n");
+					decomp.setSlices(slices, 1); 
+				}
 				BitmapData *dData = decomp.decompress();
 				if (dData != NULL) {
+					Trace(DEBUG1) << "Out size is " << dData->x() 
+												<< "x" << dData->y() << "\n";
 					data.swap(*dData);
 					delete dData;
 				}

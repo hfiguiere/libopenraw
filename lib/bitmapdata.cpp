@@ -50,13 +50,22 @@ namespace OpenRaw {
 
 		uint8_t *pos;
 		size_t offset;
+		size_t row_offset;
+		uint8_t slice;
+		uint32_t sliceWidth;
+		uint32_t sliceOffset;
+
+		std::vector<uint16_t> slices;
 
 		Private()
 			: data(NULL),
 				data_size(0),
 				data_type(OR_DATA_TYPE_NONE),
 				x(0), y(0), bpc(0),
-				pos(NULL), offset(0)
+				pos(NULL), offset(0),
+				row_offset(0),
+				slice(0), sliceWidth(0),
+				sliceOffset(0)
 			{
 			}
 		
@@ -66,6 +75,9 @@ namespace OpenRaw {
 					free(data);
 				}
 			}
+		void advance(size_t s);
+		void nextSlice();
+		void nextRow();
 	private:
 		Private(const Private &);
 		Private & operator=(const Private &);
@@ -154,32 +166,97 @@ namespace OpenRaw {
 	{
 		d->x = x;
 		d->y = y;
+		if(d->slices.size()) {
+			d->sliceWidth = d->slices[0];
+		}
+		else {
+			d->sliceWidth = d->x;
+		}
 	}
+
+	void BitmapData::setSlices(const std::vector<uint16_t> & slices)
+	{
+		d->slices = slices;
+		if(slices.size()) {
+			d->sliceWidth = slices[0];
+		}
+		else {
+			d->sliceWidth = d->x;
+		}
+	}
+
 
 	void BitmapData::setBpc(uint32_t _bpc)
 	{
 		d->bpc = _bpc;
 	}
 
+#if 0
 	BitmapData &BitmapData::append(uint8_t c)
 	{
 		assert(d->pos);
 		assert(d->offset < d->data_size);
 		*(d->pos) = c;
-		d->pos++;
-		d->offset++;
+		advance(sizeof(c));
 		return *this;
 	}
-
+#endif
 
 	BitmapData &BitmapData::append(uint16_t c)
 	{
 		assert(d->pos);
 		assert(d->offset < d->data_size);
 		*(uint16_t*)(d->pos) = c;
-		d->pos += sizeof(c);
-		d->offset += sizeof(c);
+		d->advance(sizeof(c));
 		return *this;
+	}
+	
+
+	void BitmapData::nextRow()
+	{
+		d->nextRow();
+	}
+
+
+	void BitmapData::Private::nextRow()
+	{
+		uint32_t w = x * 2;
+		uint32_t row = offset / w;
+		row++;
+		if(row == y) 
+		{
+			// on the last
+			nextSlice();
+			row = 0;
+		}
+		offset = row * w + sliceOffset * 2;
+		pos = (uint8_t*)(data) + offset;
+		row_offset = offset;
+	}
+
+	void BitmapData::Private::nextSlice()
+	{
+		if(slices.size()) {
+			sliceOffset += slices[slice];
+			slice++;
+			if(slices.size() >= slice) {
+				sliceWidth = slices[slice];
+			}
+			else {
+				sliceWidth = 0;
+			}
+		}
+	}
+	
+	void BitmapData::Private::advance(size_t s)
+	{
+		if(offset + s - row_offset >= sliceWidth * 2) {
+			nextRow();
+		}
+		else { 
+			pos += s;
+			offset += s;
+		}
 	}
 
 }
