@@ -1,5 +1,8 @@
 2007-06-30  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/peffile.cpp: Mark CFA uncompressed if they
+	are.
+
 	* Handle the slicing for CR2 files. Better error 
 	handling.
 

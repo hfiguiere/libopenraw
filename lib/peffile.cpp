@@ -55,8 +55,24 @@ namespace OpenRaw {
 
 		::or_error PEFFile::_getRawData(RawData & data)
 		{
+			::or_error err;
 			IFDDir::Ref dir = m_container->setDirectory(0);
-			return _getRawDataFromDir(data, dir);
+			err = _getRawDataFromDir(data, dir);
+			if(err == OR_ERROR_NONE) {
+				uint16_t compression = 0;
+				dir->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
+				switch(compression) {
+				case 1:
+					data.setDataType(OR_DATA_TYPE_CFA);
+					break;
+				case 65535:
+					// TODO decompress
+					break;
+				default:
+					break;
+				}
+			}
+			return err;
 		}
 	}
 }
