@@ -57,6 +57,11 @@ namespace OpenRaw {
 		protected:
 			IO::Stream *m_stream;
 			RawContainer *m_container;
+
+			/** private copy constructor to make sure it is not called */
+			Decompressor(const Decompressor& f);
+			/** private = operator to make sure it is never called */
+			Decompressor & operator=(const Decompressor&);
 		};
 
 	}

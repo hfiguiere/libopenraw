@@ -43,11 +43,16 @@ namespace OpenRaw {
 			virtual off_t filesize();
 
 
-	private:
+		private:
 			void * m_ptr;
 			size_t m_size;
 			unsigned char * m_current;
-		};
+
+			/** private copy constructor to make sure it is not called */
+			MemStream(const MemStream& f);
+			/** private = operator to make sure it is never called */
+			MemStream & operator=(const MemStream&);
+};
 
 	}
 }

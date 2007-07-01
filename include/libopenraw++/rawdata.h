@@ -51,6 +51,11 @@ namespace OpenRaw {
 	private:
 		class Private;
 		RawData::Private *d;
+
+		/** private copy constructor to make sure it is not called */
+		RawData(const RawData& f);
+		/** private = operator to make sure it is never called */
+		RawData & operator=(const RawData&);
 	};
 
 }

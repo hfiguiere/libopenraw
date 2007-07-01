@@ -130,6 +130,12 @@ namespace OpenRaw {
 			uint8_t *m_dataptr;
 			IFDFileContainer & m_container;
 			template <typename T> friend struct IFDTypeTrait;
+
+			/** private copy constructor to make sure it is not called */
+			IFDEntry(const IFDEntry& f);
+			/** private = operator to make sure it is never called */
+			IFDEntry & operator=(const IFDEntry&);
+
 		};
 
 

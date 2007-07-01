@@ -41,7 +41,7 @@ namespace OpenRaw {
 			:	self(_self), pos(NULL), offset(0),
 				row_offset(0),
 				slice(0), sliceWidth(0),
-				sliceOffset(0)
+				sliceOffset(0), slices()
 			{
 			}
 		void advance(size_t s);

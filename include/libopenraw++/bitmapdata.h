@@ -62,6 +62,11 @@ namespace OpenRaw {
 	private:
 		class Private;
 		BitmapData::Private *d;
+
+		/** private copy constructor to make sure it is not called */
+		BitmapData(const BitmapData& f);
+		/** private = operator to make sure it is never called */
+		BitmapData & operator=(const BitmapData&);
 	};
 	
 }

@@ -62,7 +62,6 @@ namespace OpenRaw {
 					return m_slices.size() > 1; 
 				}
 		private:
-			std::vector<uint16_t> m_slices;
 			/** read the bits
 			 * @param s the stream to read from
 			 * @param bitCount the number of bit
@@ -149,6 +148,7 @@ namespace OpenRaw {
 			int ReadScanHeader (DecompressInfo *dcPtr);
 			void HuffDecode(HuffmanTable *htbl,int & rv);
 
+			std::vector<uint16_t> m_slices;
 
 			MCU *m_mcuROW1, *m_mcuROW2;
 			char *m_buf1,*m_buf2;
@@ -158,6 +158,11 @@ namespace OpenRaw {
 			uint16_t m_bitsLeft;
 			uint32_t m_getBuffer;
 			RawData *m_output;
+
+			/** private copy constructor to make sure it is not called */
+			LJpegDecompressor(const LJpegDecompressor& f);
+			/** private = operator to make sure it is never called */
+			LJpegDecompressor & operator=(const LJpegDecompressor&);
 		};
 
 	}

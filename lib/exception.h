@@ -38,7 +38,8 @@ namespace OpenRaw {
 			std::string m_what;
 		public:
 			Exception()
-				: std::exception()
+				: std::exception(),
+					m_what()
 				{}
 			Exception(const std::string &w)
 				: std::exception(),

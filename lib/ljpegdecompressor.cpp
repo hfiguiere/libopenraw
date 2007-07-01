@@ -74,10 +74,12 @@ namespace OpenRaw {
 		LJpegDecompressor::LJpegDecompressor(IO::Stream *stream,
 																				 RawContainer *container)
 			: Decompressor(stream, container),
+				m_slices(),
+				m_mcuROW1(NULL), m_mcuROW2(NULL),
+				m_buf1(NULL), m_buf2(NULL),
 				m_bitsLeft(0),
 				m_getBuffer(0),
-				m_mcuROW1(NULL),
-				m_mcuROW2(NULL)
+				m_output(0)
 		{
 		}
 
@@ -310,6 +312,7 @@ namespace OpenRaw {
  * decompression information.
  */
 		struct DecompressInfo 
+			: public boost::noncopyable
 		{
 			DecompressInfo()
 				: imageWidth(0), imageHeight(0),
@@ -388,6 +391,12 @@ namespace OpenRaw {
 			 */
 			int restartRowsToGo;	/* MCUs rows left in this restart interval */
 			short nextRestartNum;	/* # of next RSTn marker (0..7) */
+
+		private:
+			/** private copy constructor to make sure it is not called */
+			DecompressInfo(const DecompressInfo& f);
+			/** private = operator to make sure it is never called */
+			DecompressInfo & operator=(const DecompressInfo&);
 		};
 
 
@@ -877,7 +886,6 @@ namespace OpenRaw {
 			throw(DecodingException)
 		{
 			int c, nbytes;
-			short ci;
 
 			/*
 			 * Throw away any unused bits remaining in bit buffer
@@ -1702,10 +1710,11 @@ namespace OpenRaw {
 					bpc = ((bpc / 8) + 1) * 8;
 				}
 				bitmap->setBpc(bpc);
-				uint16_t *dataPtr = (uint16_t*)bitmap->allocData(dcInfo.imageWidth
-																												 * sizeof(uint16_t) 
-																												 * dcInfo.imageHeight
-																												 * dcInfo.numComponents);
+				/*uint16_t *dataPtr = (uint16_t*)*/
+				bitmap->allocData(dcInfo.imageWidth
+													* sizeof(uint16_t) 
+													* dcInfo.imageHeight
+													* dcInfo.numComponents);
 				
 				Trace(DEBUG1) << "dc width = " << dcInfo.imageWidth
 											<< " dc height = " << dcInfo.imageHeight
