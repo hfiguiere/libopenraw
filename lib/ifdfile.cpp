@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
+#include <algorithm>
+#include <numeric>
 #include <boost/scoped_ptr.hpp>
 
 #include <libopenraw++/thumbnail.h>
@@ -218,14 +220,42 @@ namespace OpenRaw {
 			y = 0;
 
 			got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-			if(!got_it) {
-				Trace(DEBUG1) << "offset not found\n";
-				return OR_ERROR_NOT_FOUND;
+			if(got_it) {
+				got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+				if(!got_it) {
+					Trace(DEBUG1) << "byte len not found\n";
+					return OR_ERROR_NOT_FOUND;
+				}
 			}
-			got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
-			if(!got_it) {
-				Trace(DEBUG1) << "byte len not found\n";
-				return OR_ERROR_NOT_FOUND;
+			else {
+				// the tile are individual JPEGS....
+				// TODO extract all of them.
+				IFDEntry::Ref e = dir->getEntry(IFD::TIFF_TAG_TILE_OFFSETS);
+				if(e) {
+					std::vector<uint32_t> offsets;
+					e->getArray(offsets);
+					if(offsets.size() > 1) {
+						offset = offsets[0];
+					}
+					else {
+						Trace(DEBUG1) << "tile offsets empty\n";
+						return OR_ERROR_NOT_FOUND;						
+					}
+				}
+				else {
+					Trace(DEBUG1) << "tile offsets not found\n";
+					return OR_ERROR_NOT_FOUND;						
+				}
+				e = dir->getEntry(IFD::TIFF_TAG_TILE_BYTECOUNTS);
+				if(e) {
+					std::vector<uint32_t> counts;
+					e->getArray(counts);
+					byte_length = std::accumulate(counts.begin(), counts.end(), 0);
+				}
+				else {
+					Trace(DEBUG1) << "tile byte counts not found\n";
+					return OR_ERROR_NOT_FOUND;						
+				}
 			}
 			got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
 			if(!got_it) {
