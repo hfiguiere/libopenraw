@@ -22,6 +22,7 @@
 #ifndef __OPENRAW_RAWDATA_H__
 #define __OPENRAW_RAWDATA_H__
 
+#include <vector>
 
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/bitmapdata.h>
@@ -35,6 +36,21 @@ namespace OpenRaw {
 	public:
 	  RawData();
 		virtual ~RawData();
+
+		virtual void *allocData(const size_t s);
+		virtual void setDimensions(uint32_t x, uint32_t y);
+
+		void setSlices(const std::vector<uint16_t> & slices);
+
+		/** append a uint8_t at the current position */
+//		BitmapData &append(uint8_t c);
+		/** append a uint18_t at the current position */
+		RawData &append(uint16_t c);
+		/** Jump to next row. Take slicing into account. */
+		void nextRow();
+	private:
+		class Private;
+		RawData::Private *d;
 	};
 
 }

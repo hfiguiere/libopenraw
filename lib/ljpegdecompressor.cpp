@@ -55,7 +55,7 @@
 #include <boost/scoped_array.hpp>
 #include <boost/format.hpp>
 
-#include <libopenraw++/bitmapdata.h>
+#include <libopenraw++/rawdata.h>
 #include "io/memstream.h"
 #include "debug.h"
 #include "rawcontainer.h"
@@ -1683,7 +1683,7 @@ namespace OpenRaw {
 		}
 
 
-		BitmapData *LJpegDecompressor::decompress(BitmapData *bitmap)
+		RawData *LJpegDecompressor::decompress(RawData *bitmap)
 		{
 			DecompressInfo dcInfo;
 			try {
@@ -1692,7 +1692,7 @@ namespace OpenRaw {
 
 				if(bitmap == NULL)
 				{
-					bitmap = new BitmapData();
+					bitmap = new RawData();
 				}
 				m_output = bitmap;
 				bitmap->setDataType(OR_DATA_TYPE_CFA);

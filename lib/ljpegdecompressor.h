@@ -31,7 +31,7 @@
 
 namespace OpenRaw {
 
-	class BitmapData;
+	class RawData;
 		
 	namespace Internals {
 		struct HuffmanTable;
@@ -54,7 +54,7 @@ namespace OpenRaw {
 			 * Caller owns it.
 			 * @todo use a shared_ptr here, or something
 			 */
-			virtual BitmapData *decompress(BitmapData *in = NULL);
+			virtual RawData *decompress(RawData *in = NULL);
 			void setSlices(const std::vector<uint16_t> & slices, 
 										 std::vector<uint16_t>::size_type idx = 0);
 			bool isSliced() const
@@ -157,7 +157,7 @@ namespace OpenRaw {
 			void fillBitBuffer (IO::Stream * s, int nbits);
 			uint16_t m_bitsLeft;
 			uint32_t m_getBuffer;
-			BitmapData *m_output;
+			RawData *m_output;
 		};
 
 	}
