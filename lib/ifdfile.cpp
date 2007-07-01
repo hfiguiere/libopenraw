@@ -91,7 +91,7 @@ namespace OpenRaw {
 			bool got_it;
 			uint32_t x = 0;
 			uint32_t y = 0;
-			::or_data_type type = OR_DATA_TYPE_NONE;
+			::or_data_type _type = OR_DATA_TYPE_NONE;
 			uint32_t subtype = 0;
 
 			Trace(DEBUG1) << "_locateThumbnail\n";
@@ -120,7 +120,7 @@ namespace OpenRaw {
 																			 offset);
  						Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
 						if (got_it) {
-							type = OR_DATA_TYPE_JPEG;
+							_type = OR_DATA_TYPE_JPEG;
 							if (x == 0 || y == 0) {
 								scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
 								scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
@@ -129,7 +129,7 @@ namespace OpenRaw {
 																<< " y=" << y << "\n";
 								}
 								else {
-									type = OR_DATA_TYPE_NONE;
+									_type = OR_DATA_TYPE_NONE;
 								}
 							}
 						}
@@ -137,12 +137,12 @@ namespace OpenRaw {
 					else {
 						Trace(DEBUG1) << "found strip offsets\n";
 						if (x != 0 && y != 0) {
-							type = OR_DATA_TYPE_PIXMAP_8RGB;
+							_type = OR_DATA_TYPE_PIXMAP_8RGB;
 						}
 					}
-					if(type != OR_DATA_TYPE_NONE) {
+					if(_type != OR_DATA_TYPE_NONE) {
 						uint32_t dim = std::max(x, y);
-						m_thumbLocations[dim] = IFDThumbDesc(x, y, type, dir);
+						m_thumbLocations[dim] = IFDThumbDesc(x, y, _type, dir);
 						list.push_back(dim);
 						ret = OR_ERROR_NONE;
 					}

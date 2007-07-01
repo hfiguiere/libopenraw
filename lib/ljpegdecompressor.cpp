@@ -492,8 +492,6 @@ namespace OpenRaw {
 			if (dcPtr->compsInScan == 1) {
 				dcPtr->MCUmembership[0] = 0;
 			} else {
-				short ci;
-
 				if (dcPtr->compsInScan > 4) {
 					throw DecodingException("Too many components for interleaved scan");
 				}

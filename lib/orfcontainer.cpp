@@ -30,8 +30,8 @@ namespace OpenRaw {
 	namespace Internals {
 
 
-		ORFContainer::ORFContainer(IO::Stream *file, off_t offset)
-			: IFDFileContainer(file, offset)
+		ORFContainer::ORFContainer(IO::Stream *_file, off_t offset)
+			: IFDFileContainer(_file, offset)
 		{
 		}
 

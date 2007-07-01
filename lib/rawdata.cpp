@@ -74,14 +74,14 @@ namespace OpenRaw {
 	}
 
 
-	void RawData::setDimensions(uint32_t x, uint32_t y)
+	void RawData::setDimensions(uint32_t _x, uint32_t _y)
 	{
-		BitmapData::setDimensions(x, y);
+		BitmapData::setDimensions(_x, _y);
 		if(d->slices.size()) {
 			d->sliceWidth = d->slices[0];
 		}
 		else {
-			d->sliceWidth = x;
+			d->sliceWidth = _x;
 		}
 	}
 

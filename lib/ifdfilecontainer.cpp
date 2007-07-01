@@ -37,8 +37,8 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		IFDFileContainer::IFDFileContainer(IO::Stream *file, off_t offset)
-			: RawContainer(file, offset), 
+		IFDFileContainer::IFDFileContainer(IO::Stream *_file, off_t offset)
+			: RawContainer(_file, offset), 
 				m_error(0),
 				m_current_dir(),
 				m_dirs()

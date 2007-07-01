@@ -120,8 +120,8 @@ namespace OpenRaw {
 						break;
 					}
 				}
-				catch(const std::exception & e) {
-					Trace(ERROR) << "Exception raised " << e.what() 
+				catch(const std::exception & ex) {
+					Trace(ERROR) << "Exception raised " << ex.what() 
 											 << " fetch integer value for " << id << "\n";
 				}
 			}
@@ -167,8 +167,8 @@ namespace OpenRaw {
 						return ref;
 					}
 				}
-				catch(const std::exception &e) {
-					Trace(ERROR) << "Exception " << e.what() << "\n";
+				catch(const std::exception &ex) {
+					Trace(ERROR) << "Exception " << ex.what() << "\n";
 				}
 			}
 			return Ref(static_cast<IFDDir*>(NULL));
@@ -191,8 +191,8 @@ namespace OpenRaw {
 					}
 					success = true;
 				}
-				catch(const std::exception &e) {
-					Trace(ERROR) << "Exception " << e.what() << "\n";					
+				catch(const std::exception &ex) {
+					Trace(ERROR) << "Exception " << ex.what() << "\n";					
 				}
 			}
 			return success;
@@ -204,11 +204,11 @@ namespace OpenRaw {
 		IFDDir::Ref IFDDir::getExifIFD()
 		{
 			bool success = false;
-			uint32_t offset = 0;
-			success = getValue(IFD::EXIF_TAG_EXIF_IFD_POINTER, offset);
+			uint32_t val_offset = 0;
+			success = getValue(IFD::EXIF_TAG_EXIF_IFD_POINTER, val_offset);
 			if (success) {
-				Trace(DEBUG1) << "Exif IFD offset = " << offset << "\n";
-				Ref ref(new IFDDir(offset, m_container));
+				Trace(DEBUG1) << "Exif IFD offset = " << val_offset << "\n";
+				Ref ref(new IFDDir(val_offset, m_container));
 				ref->load();
 				return ref;
 			}

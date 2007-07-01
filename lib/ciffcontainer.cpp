@@ -73,10 +73,10 @@ namespace OpenRaw {
 			}
 
 
-			Heap::Heap(off_t start, off_t length, CIFFContainer * container)
+			Heap::Heap(off_t start, off_t length, CIFFContainer * _container)
 				: m_start(start),
 					m_length(length),
-					m_container(container),
+					m_container(_container),
 					m_records()
 			{
 				Debug::Trace(DEBUG2) << "Heap @ " << start << " length = "
@@ -96,14 +96,14 @@ namespace OpenRaw {
 			{
 				IO::Stream *file = m_container->file();
 				file->seek(m_start + m_length - 4, SEEK_SET);
-				int32_t offset;
-				bool ret = m_container->readInt32(file, offset);
+				int32_t record_offset;
+				bool ret = m_container->readInt32(file, record_offset);
 					
 				if (ret) {
 					int16_t numRecords;
 
 					m_records.clear();
-					file->seek(m_start + offset, SEEK_SET);
+					file->seek(m_start + record_offset, SEEK_SET);
 					ret = m_container->readInt16(file, numRecords);
 					if (!ret) 
 					{
@@ -158,8 +158,8 @@ namespace OpenRaw {
 			}
 		}
 		
-		CIFFContainer::CIFFContainer(IO::Stream *file)
-			: RawContainer(file, 0),
+		CIFFContainer::CIFFContainer(IO::Stream *_file)
+			: RawContainer(_file, 0),
 				m_hdr(),
 				m_heap((CIFF::Heap*)NULL)
 		{
@@ -201,13 +201,13 @@ namespace OpenRaw {
 
 		RawContainer::EndianType CIFFContainer::_readHeader()
 		{
-			EndianType endian = ENDIAN_NULL;
+			EndianType _endian = ENDIAN_NULL;
 			m_hdr.readFrom(this);
 			if ((::strncmp(m_hdr.type, "HEAP", 4) == 0)
 					&& (::strncmp(m_hdr.subType, "CCDR", 4) == 0)) {
-				endian = m_hdr.endian;
+				_endian = m_hdr.endian;
 			}
-			return endian;
+			return _endian;
 		}
 
 	}

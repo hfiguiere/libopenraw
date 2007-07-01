@@ -81,8 +81,8 @@ namespace OpenRaw {
 							v = IFDTypeTrait<T>::get(*e);
 							success = true;
 						}
-						catch(const std::exception & e) {
-							Debug::Trace(ERROR) << "Exception raised " << e.what() 
+						catch(const std::exception & ex) {
+							Debug::Trace(ERROR) << "Exception raised " << ex.what() 
 													 << " fetch value for " << id << "\n";
 						}
 					}

@@ -54,8 +54,8 @@ namespace OpenRaw {
 			JPEG::JOCTET* buf;
 		} jpeg_src_t;
 
-		JFIFContainer::JFIFContainer(IO::Stream *file, off_t offset)
-			: RawContainer(file, offset),
+		JFIFContainer::JFIFContainer(IO::Stream *_file, off_t offset)
+			: RawContainer(_file, offset),
 				m_cinfo(), m_jerr(),
 				m_headerLoaded(false)
 		{

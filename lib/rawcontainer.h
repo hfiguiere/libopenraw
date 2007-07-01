@@ -92,9 +92,9 @@ namespace OpenRaw {
 			RawContainer(const RawContainer&);
 			RawContainer & operator=(const RawContainer &);
 
-			void setEndian(EndianType endian)
+			void setEndian(EndianType _endian)
 				{
-					m_endian = endian;
+					m_endian = _endian;
 				}
 
 			/** the file handle */

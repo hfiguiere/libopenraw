@@ -35,8 +35,8 @@ namespace OpenRaw {
 	namespace Internals {
 	
 	
-		RawContainer::RawContainer(IO::Stream *file, off_t offset)
-			: m_file(file),
+		RawContainer::RawContainer(IO::Stream *_file, off_t offset)
+			: m_file(_file),
 				m_offset(offset),
 				m_endian(ENDIAN_NULL)
 		{

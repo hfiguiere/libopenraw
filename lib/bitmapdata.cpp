@@ -145,10 +145,10 @@ namespace OpenRaw {
 	}
 
 
-	void BitmapData::setDimensions(uint32_t x, uint32_t y)
+	void BitmapData::setDimensions(uint32_t _x, uint32_t _y)
 	{
-		d->x = x;
-		d->y = y;
+		d->x = _x;
+		d->y = _y;
 	}
 
 	void BitmapData::setBpc(uint32_t _bpc)
