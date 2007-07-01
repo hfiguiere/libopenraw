@@ -35,8 +35,6 @@ using boost::scoped_ptr;
 int
 main(int argc, char** argv)
 {
-	::or_error err = OR_ERROR_NONE;
-
 	if (argc < 2) {
 		std::cerr << "missing parameter" << std::endl;
 		return 1;
