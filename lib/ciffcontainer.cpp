@@ -111,6 +111,7 @@ namespace OpenRaw {
 					}
 					Trace(DEBUG2) << "numRecords " << numRecords << "\n";
 					int16_t i;
+					m_records.reserve(numRecords);
 					for (i = 0; i < numRecords; i++) {
 						m_records.push_back(RecordEntry());
 						m_records.back().readFrom(m_container);

@@ -109,6 +109,7 @@ namespace OpenRaw {
 			void getArray(std::vector<T> & array)
 				{
 					try {
+						array.reserve(m_count);
 						for (uint32_t i = 0; i < m_count; i++) {
 							array.push_back(IFDTypeTrait<T>::get(*this, i));
 						}
