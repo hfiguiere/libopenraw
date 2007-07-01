@@ -122,10 +122,9 @@ namespace OpenRaw {
 				boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
 				LJpegDecompressor decomp(s.get(), jfif.get());
 				if(slices.size() > 1) {
-					printf("setting slices\n");
 					decomp.setSlices(slices, 1); 
 				}
-				BitmapData *dData = decomp.decompress();
+				RawData *dData = decomp.decompress();
 				if (dData != NULL) {
 					Trace(DEBUG1) << "Out size is " << dData->x() 
 												<< "x" << dData->y() << "\n";

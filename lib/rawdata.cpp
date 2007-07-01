@@ -65,6 +65,12 @@ namespace OpenRaw {
 	}
 
 
+	void RawData::swap(RawData & with)
+	{
+		BitmapData::swap(with);
+		std::swap(this->d, with.d);
+	}
+
  	void * RawData::allocData(const size_t s)
 	{
 		void * p = BitmapData::allocData(s);

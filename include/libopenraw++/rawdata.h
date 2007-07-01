@@ -37,6 +37,9 @@ namespace OpenRaw {
 	  RawData();
 		virtual ~RawData();
 
+		/** swap the two objects data. */
+		void swap(RawData & with);
+
 		virtual void *allocData(const size_t s);
 		virtual void setDimensions(uint32_t x, uint32_t y);
 

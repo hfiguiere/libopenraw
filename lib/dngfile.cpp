@@ -88,10 +88,10 @@ namespace OpenRaw {
 						s->open(); // TODO check success
 						boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
 						LJpegDecompressor decomp(s.get(), jfif.get());
-						BitmapData *dData = decomp.decompress();
+						RawData *dData = decomp.decompress();
 						if (dData != NULL) {
-						data.swap(*dData);
-						delete dData;
+							data.swap(*dData);
+							delete dData;
 						}
 					}
 					else {
