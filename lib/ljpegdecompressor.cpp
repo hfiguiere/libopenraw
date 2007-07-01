@@ -1696,7 +1696,7 @@ namespace OpenRaw {
 				}
 				m_output = bitmap;
 				bitmap->setDataType(OR_DATA_TYPE_CFA);
-				// bpc is a multiply of 8
+				// bpc is a multiple of 8
 				uint32_t bpc = dcInfo.dataPrecision;
 				if(bpc % 8) {
 					bpc = ((bpc / 8) + 1) * 8;
