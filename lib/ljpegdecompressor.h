@@ -67,7 +67,12 @@ namespace OpenRaw {
 			 * @param bitCount the number of bit
 			 * @return the value
 			 */
-			uint16_t readBits(IO::Stream * s, int bitCount);
+			int32_t readBits(IO::Stream * s, uint16_t bitCount);
+			int32_t show_bits8(IO::Stream * s);
+			void flush_bits(uint16_t nbits);
+			int32_t get_bits(uint16_t nbits);
+			int32_t get_bit();
+			
 /** 
  * Enumerate all the JPEG marker codes
  */
@@ -133,20 +138,20 @@ namespace OpenRaw {
 			int32_t QuickPredict(int32_t col, int16_t curComp,
 													 MCU *curRowBuf, MCU *prevRowBuf,
 													 int32_t psv);
-			void PmPutRow(MCU* RowBuf, int numComp, int numCol, int Pt);
-			uint16_t Get2bytes (DecompressInfo *dcPtr);
-			void SkipVariable (DecompressInfo *dcPtr);
+			void PmPutRow(MCU* RowBuf, int32_t numComp, int32_t numCol, int32_t Pt);
+			uint16_t Get2bytes ();
+			void SkipVariable();
 			void GetDht (DecompressInfo *dcPtr) throw(DecodingException);
 			void GetDri (DecompressInfo *dcPtr) throw(DecodingException);
-			void GetApp0 (DecompressInfo *dcPtr);
-			void GetSof (DecompressInfo *dcPtr, int code) throw(DecodingException);
+			void GetApp0 ();
+			void GetSof (DecompressInfo *dcPtr) throw(DecodingException);
 			void GetSos (DecompressInfo *dcPtr) throw(DecodingException);
 			static void GetSoi (DecompressInfo *dcPtr);
-			int  NextMarker (DecompressInfo *dcPtr);
+			int32_t  NextMarker ();
 			JpegMarker ProcessTables (DecompressInfo *dcPtr);
 			void ReadFileHeader (DecompressInfo *dcPtr) throw(DecodingException);
-			int ReadScanHeader (DecompressInfo *dcPtr);
-			void HuffDecode(HuffmanTable *htbl,int & rv);
+			int32_t ReadScanHeader (DecompressInfo *dcPtr);
+			int32_t HuffDecode(HuffmanTable *htbl);
 
 			std::vector<uint16_t> m_slices;
 
@@ -154,7 +159,7 @@ namespace OpenRaw {
 			char *m_buf1,*m_buf2;
 
 			/** fill the bit buffer */
-			void fillBitBuffer (IO::Stream * s, int nbits);
+			void fillBitBuffer (IO::Stream * s, uint16_t nbits);
 			uint16_t m_bitsLeft;
 			uint32_t m_getBuffer;
 			RawData *m_output;
