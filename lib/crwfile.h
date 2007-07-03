@@ -54,7 +54,7 @@ namespace OpenRaw {
 
 			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
 
-			virtual ::or_error _getRawData(RawData & data);
+			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 		private:
 			CRWFile(const CRWFile&);
 			CRWFile & operator=(const CRWFile&);

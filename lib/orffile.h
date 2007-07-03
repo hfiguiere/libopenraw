@@ -45,7 +45,7 @@ namespace OpenRaw {
 
 		protected:
 
-			virtual ::or_error _getRawData(RawData & data);
+			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 		private:
 
 			ORFFile(const ORFFile&);

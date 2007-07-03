@@ -93,7 +93,7 @@ namespace OpenRaw {
 			return err;
 		}
 
-		::or_error CRWFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
+		::or_error CRWFile::_getThumbnail(uint32_t /*size*/, Thumbnail & thumbnail)
 		{
 			::or_error err = OR_ERROR_NOT_FOUND;
 			Heap::Ref heap = m_container->heap();
@@ -119,7 +119,7 @@ namespace OpenRaw {
 			return err;
 		}
 
-		::or_error CRWFile::_getRawData(RawData & data)
+		::or_error CRWFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error err = OR_ERROR_NOT_FOUND;
 			Heap::Ref heap = m_container->heap();

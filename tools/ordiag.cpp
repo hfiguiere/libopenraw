@@ -151,7 +151,7 @@ public:
 	void dumpRawData(boost::scoped_ptr<RawFile> & rf)
 		{
 			RawData rd;
-			::or_error err = rf->getRawData(rd);
+			::or_error err = rf->getRawData(rd, 0);
 			if (err == OR_ERROR_NONE) {
 				m_out << "\tRAW data\n";
 				m_out << boost::format("\t\tType: %1%\n")

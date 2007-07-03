@@ -67,10 +67,11 @@ namespace OpenRaw {
 		::or_error getThumbnail(uint32_t size, Thumbnail & thumbnail);
 
 		/** Get the RAW data 
-		 * @param the RawData to put the data into
+		 * @param rawdata the RawData to put the data into
+		 * @param options the option bits defined by %or_options
 		 * @return the error code
 		 */
-		::or_error getRawData(RawData & rawdata);
+		::or_error getRawData(RawData & rawdata, uint32_t options);
 	protected:
 		/** 
 		 * Construct a raw file
@@ -94,10 +95,11 @@ namespace OpenRaw {
 		virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail) = 0;
 		/** get the RAW data 
 		 * @param data the RAW data
+		 * @param option the option bits
 		 * @return OR_ERROR_NONE if success
 		 * Return the data compressed or uncompressed.
 		 */
-		virtual ::or_error _getRawData(RawData & data) = 0;
+		virtual ::or_error _getRawData(RawData & data, uint32_t options) = 0;
 	private:
 		static Type identify(const char*_filename);
 

@@ -88,6 +88,12 @@ extern "C" {
 		OR_DATA_TYPE_UNKNOWN
 	} or_data_type;
 
+	typedef enum {
+		OR_OPTIONS_NONE            = 0x00000000,
+		OR_OPTIONS_DONT_DECOMPRESS = 0x00000001   /**< don't decompress */
+
+	} or_options;
+
 #ifdef __cplusplus
 }
 #endif

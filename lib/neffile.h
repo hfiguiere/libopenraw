@@ -49,7 +49,7 @@ namespace OpenRaw {
 			NEFFile(const NEFFile&);
 			NEFFile & operator=(const NEFFile &);
 
-			virtual ::or_error _getRawData(RawData & data);
+			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 		};
 	}
 

@@ -223,10 +223,10 @@ namespace OpenRaw {
 	}
 
 
-	::or_error RawFile::getRawData(RawData & rawdata)
+	::or_error RawFile::getRawData(RawData & rawdata, uint32_t options)
 	{
 		Trace(DEBUG1) << "getRawData()\n";
-		::or_error ret = _getRawData(rawdata);
+		::or_error ret = _getRawData(rawdata, options);
 		return ret;
 	}	
 

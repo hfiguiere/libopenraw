@@ -57,7 +57,7 @@ namespace OpenRaw {
 		}
 
 
-		::or_error CR2File::_getRawData(RawData & data)
+		::or_error CR2File::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
 			IFDDir::Ref dir = m_container->setDirectory(3);
@@ -115,21 +115,23 @@ namespace OpenRaw {
 				data.setDimensions(x, y);
 				Trace(DEBUG1) << "In size is " << data.x() 
 											<< "x" << data.y() << "\n";
-
-				boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
-																													data.size()));
-				s->open(); // TODO check success
-				boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
-				LJpegDecompressor decomp(s.get(), jfif.get());
-				if(slices.size() > 1) {
-					decomp.setSlices(slices, 1); 
-				}
-				RawData *dData = decomp.decompress();
-				if (dData != NULL) {
-					Trace(DEBUG1) << "Out size is " << dData->x() 
-												<< "x" << dData->y() << "\n";
-					data.swap(*dData);
-					delete dData;
+				// decompress if we need
+				if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
+					boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
+																														data.size()));
+					s->open(); // TODO check success
+					boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+					LJpegDecompressor decomp(s.get(), jfif.get());
+					if(slices.size() > 1) {
+						decomp.setSlices(slices, 1); 
+					}
+					RawData *dData = decomp.decompress();
+					if (dData != NULL) {
+						Trace(DEBUG1) << "Out size is " << dData->x() 
+													<< "x" << dData->y() << "\n";
+						data.swap(*dData);
+						delete dData;
+					}
 				}
 			}
 			else {

@@ -1,3 +1,7 @@
+2007-07-02  Hubert Figuiere  <hub@figuiere.net>
+
+	* Internal API change: can request uncompressed CFA data.
+
 2007-06-30  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/peffile.cpp: Mark CFA uncompressed if they
