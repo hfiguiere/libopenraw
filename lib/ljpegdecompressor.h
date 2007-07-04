@@ -27,6 +27,7 @@
 
 #include <libopenraw/libopenraw.h>
 
+#include "exception.h"
 #include "decompressor.h"
 
 namespace OpenRaw {
@@ -38,6 +39,7 @@ namespace OpenRaw {
 		struct DecompressInfo;
 		typedef int16_t ComponentType;
 		typedef ComponentType *MCU;
+
 
 		class LJpegDecompressor
 			: public Decompressor
@@ -62,6 +64,7 @@ namespace OpenRaw {
 					return m_slices.size() > 1; 
 				}
 		private:
+			
 			/** read the bits
 			 * @param s the stream to read from
 			 * @param bitCount the number of bit
@@ -152,6 +155,7 @@ namespace OpenRaw {
 			void ReadFileHeader (DecompressInfo *dcPtr) throw(DecodingException);
 			int32_t ReadScanHeader (DecompressInfo *dcPtr);
 			int32_t HuffDecode(HuffmanTable *htbl);
+			static void HuffExtend(int32_t & x, int32_t s); 
 
 			std::vector<uint16_t> m_slices;
 
@@ -168,6 +172,8 @@ namespace OpenRaw {
 			LJpegDecompressor(const LJpegDecompressor& f);
 			/** private = operator to make sure it is never called */
 			LJpegDecompressor & operator=(const LJpegDecompressor&);
+
+			friend void test_ljpeg2();
 		};
 
 	}
