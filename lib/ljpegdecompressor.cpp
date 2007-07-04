@@ -277,7 +277,7 @@ namespace OpenRaw {
  * buffer could be used.)  
  */
 
-#define BITS_PER_LONG	(8*sizeof(long))
+#define BITS_PER_LONG	(8*sizeof(int32_t))
 #define MIN_GET_BITS  (BITS_PER_LONG-7)	   /* max value for long getBuffer */
 		
 /*

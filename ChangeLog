@@ -1,5 +1,8 @@
 2007-07-04  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ljpegdecompressor.cpp (MIN_GET_BITS): use int32_t and
+	not long.
+
 	* Added unit testing for the lossless JPEG decompressor. 
 
 2007-07-02  Hubert Figuiere  <hub@figuiere.net>
