@@ -118,7 +118,8 @@ namespace OpenRaw {
 	{
 		assert(d->pos);
 //		assert(d->offset < d->data_size);
-		*(uint16_t*)(d->pos) = c;
+		*(d->pos) = c & 0xff;
+		*(d->pos + 1) = (c >> 8) & 0xff; 
 		d->advance(sizeof(c));
 		return *this;
 	}
