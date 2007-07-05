@@ -21,6 +21,7 @@
 #include <string>
 
 #include <boost/test/auto_unit_test.hpp>
+#include <boost/crc.hpp>      // for boost::crc_basic, boost::crc_optimal
 
 #include <libopenraw++/rawdata.h>
 
@@ -36,69 +37,6 @@ using OpenRaw::IO::File;
 
 std::string g_testfile;
 
-namespace OpenRaw { namespace Internals {
-void test_ljpeg2()
-{
-	RawData *decompData;
-	File *stream = new File(g_testfile.c_str());
-	RawContainer *container = new JFIFContainer(stream, 0);
-
-	LJpegDecompressor decompressor(stream, container);
-
-	DecompressInfo dcInfo;
-
-	decompressor.ReadFileHeader(&dcInfo); 
-	decompressor.ReadScanHeader(&dcInfo);
-
-	decompressor.m_output = new RawData();
-	RawData * bitmap = decompressor.m_output;
-
-	uint32_t bpc = dcInfo.dataPrecision;
-	BOOST_CHECK_EQUAL(bpc, (uint32_t)16);
-
-	bitmap->setDataType(OR_DATA_TYPE_CFA);
-	bitmap->setBpc(bpc);
-	bitmap->allocData(dcInfo.imageWidth
-										* sizeof(uint16_t) 
-										* dcInfo.imageHeight
-										* dcInfo.numComponents);
-
-	uint32_t width = (dcInfo.imageWidth * dcInfo.numComponents);
-	bitmap->setDimensions(width, dcInfo.imageHeight);
-
-	decompressor.DecoderStructInit(&dcInfo);
-	decompressor.HuffDecoderInit(&dcInfo);
-//	decompressor.DecodeImage(&dcInfo);
-
-	JpegComponentInfo *compptr;
-	HuffmanTable *dctbl;
-	uint16_t ci = dcInfo.MCUmembership[0];
-	BOOST_CHECK_EQUAL(ci, 0);
-	compptr = dcInfo.curCompInfo[ci];
-	dctbl = dcInfo.dcHuffTblPtrs[compptr->dcTblNo];
-	int32_t d, s;
-	/*
-	 * Section F.2.2.1: decode the difference
-	 */
-	s = decompressor.HuffDecode (dctbl);
-	if (s) {
-		d = decompressor.get_bits(s);
-		BOOST_CHECK_EQUAL(d, 230);
-		decompressor.HuffExtend(d,s);
-		BOOST_CHECK_EQUAL(d, -32537);
-	} else {
-		d = 0;
-	}
-
-	delete decompressor.m_output;
-	delete decompData;
-	delete container;
-	delete stream;
-}
-
-} }
-
-
 using namespace OpenRaw::Internals;
 
 void test_ljpeg()
@@ -110,6 +48,12 @@ void test_ljpeg()
 	LJpegDecompressor decompressor(s, container);
 
 	decompData = decompressor.decompress();
+
+	boost::crc_optimal<8, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
+	const uint8_t * data = static_cast<uint8_t *>(decompData->data());
+	size_t data_len = decompData->size();
+	crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
+	BOOST_CHECK_EQUAL(crc_ccitt2(), 0x49);
 
 	delete decompData;
 	delete container;
@@ -136,7 +80,6 @@ init_unit_test_suite( int argc, char * argv[] )
 	}
 	
 	test->add(BOOST_TEST_CASE(&test_ljpeg));
-	test->add(BOOST_TEST_CASE(&OpenRaw::Internals::test_ljpeg2));
 
 	return test;
 }

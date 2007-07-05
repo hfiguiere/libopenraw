@@ -1,7 +1,10 @@
 2007-07-04  Hubert Figuiere  <hub@figuiere.net>
 
+	* test/ljpegtest.cpp (test_ljpeg): Make the test check
+	against a checksum. Don't test the decompressor internals.
+
 	* lib/ljpegdecompressor.cpp (MIN_GET_BITS): use int32_t and
-	not long.
+	not long. This Fix the 64-bits issue.
 
 	* Added unit testing for the lossless JPEG decompressor. 
 

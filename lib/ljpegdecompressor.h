@@ -155,7 +155,6 @@ namespace OpenRaw {
 			void ReadFileHeader (DecompressInfo *dcPtr) throw(DecodingException);
 			int32_t ReadScanHeader (DecompressInfo *dcPtr);
 			int32_t HuffDecode(HuffmanTable *htbl);
-			static void HuffExtend(int32_t & x, int32_t s); 
 
 			std::vector<uint16_t> m_slices;
 
@@ -172,8 +171,6 @@ namespace OpenRaw {
 			LJpegDecompressor(const LJpegDecompressor& f);
 			/** private = operator to make sure it is never called */
 			LJpegDecompressor & operator=(const LJpegDecompressor&);
-
-			friend void test_ljpeg2();
 		};
 
 	}

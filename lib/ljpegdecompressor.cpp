@@ -660,8 +660,8 @@ namespace OpenRaw {
 		 ((-1) << 13) + 1, ((-1) << 14) + 1, ((-1) << 15) + 1};
 
 		
-//		inline
-		void LJpegDecompressor::HuffExtend(int32_t & x, int32_t s) 
+		inline
+		void HuffExtend(int32_t & x, int32_t s) 
 		{
 			if ((x) < extendTest[s]) {
 				(x) += extendOffset[s];
