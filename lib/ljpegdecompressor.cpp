@@ -70,6 +70,13 @@ namespace OpenRaw {
 
 	namespace Internals {
 
+
+		static void SkipVariable(IO::Stream *s);
+		static uint16_t Get2bytes (IO::Stream * s);
+		static int32_t  NextMarker(IO::Stream * );
+		static void GetSoi(DecompressInfo *dcPtr);
+		static void GetApp0(IO::Stream *);
+
 		LJpegDecompressor::LJpegDecompressor(IO::Stream *stream,
 																				 RawContainer *container)
 			: Decompressor(stream, container),
@@ -1008,13 +1015,13 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		uint16_t
-		LJpegDecompressor::Get2bytes ()
+		static inline uint16_t
+		Get2bytes (IO::Stream * s)
 		{
 			uint16_t a;
 
-			a = m_stream->readByte();
-			return (a << 8) | m_stream->readByte();
+			a = s->readByte();
+			return (a << 8) | s->readByte();
 		}
 
 /*
@@ -1033,14 +1040,13 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::SkipVariable()
+		static inline void SkipVariable(IO::Stream * s)
 		{
 			int32_t length;
 
-			length = Get2bytes() - 2;
+			length = Get2bytes(s) - 2;
 
-			m_stream->seek(length, SEEK_CUR);
+			s->seek(length, SEEK_CUR);
 		}
 
 /*
@@ -1069,7 +1075,7 @@ namespace OpenRaw {
 			int32_t i, index, count;
 			HuffmanTable **htblptr;
 
-			length = Get2bytes() - 2;
+			length = Get2bytes(m_stream) - 2;
 
 			while (length) {
 				index = m_stream->readByte();
@@ -1133,11 +1139,11 @@ namespace OpenRaw {
 		LJpegDecompressor::GetDri(DecompressInfo *dcPtr)
 			throw(DecodingException)
 		{
-			if (Get2bytes() != 4) {
+			if (Get2bytes(m_stream) != 4) {
 				throw DecodingException("Bogus length in DRI");
 			}
 
-			dcPtr->restartInterval = Get2bytes();
+			dcPtr->restartInterval = Get2bytes(m_stream);
 		}
 
 /*
@@ -1155,13 +1161,12 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::GetApp0()
+		static void	GetApp0(IO::Stream *s)
 		{
 			int32_t length;
 
-			length = Get2bytes() - 2;
-			m_stream->seek(length, SEEK_CUR);
+			length = Get2bytes(s) - 2;
+			s->seek(length, SEEK_CUR);
 		}
 
 /*
@@ -1189,11 +1194,11 @@ namespace OpenRaw {
 			int32_t c;
 			JpegComponentInfo *compptr;
 
-			length = Get2bytes();
+			length = Get2bytes(m_stream);
 
 			dcPtr->dataPrecision = m_stream->readByte();
-			dcPtr->imageHeight = Get2bytes();
-			dcPtr->imageWidth = Get2bytes();
+			dcPtr->imageHeight = Get2bytes(m_stream);
+			dcPtr->imageWidth = Get2bytes(m_stream);
 			dcPtr->numComponents = m_stream->readByte();
 
 			/*
@@ -1255,7 +1260,7 @@ namespace OpenRaw {
 			uint16_t n, ci, c, cc;
 			JpegComponentInfo *compptr;
 
-			length = Get2bytes ();
+			length = Get2bytes (m_stream);
 
 			/* 
 			 * Get the number of image components.
@@ -1313,8 +1318,8 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::GetSoi (DecompressInfo *dcPtr)
+		static inline void
+		GetSoi (DecompressInfo *dcPtr)
 		{
 
 			/*
@@ -1339,8 +1344,8 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		int32_t
-		LJpegDecompressor::NextMarker()
+		static int32_t
+		NextMarker(IO::Stream *s)
 		{
 			int32_t c;
 
@@ -1349,14 +1354,14 @@ namespace OpenRaw {
 				 * skip any non-FF bytes
 				 */
 				do {
-					c = m_stream->readByte();
+					c = s->readByte();
 				} while (c != 0xFF);
 				/*
 				 * skip any duplicate FFs without incrementing nbytes, since
 				 * extra FFs are legal
 				 */
 				do {
-					c = m_stream->readByte();
+					c = s->readByte();
 				} while (c == 0xFF);
 			} while (c == 0);		/* repeat if it was a stuffed FF/00 */
 
@@ -1385,7 +1390,7 @@ namespace OpenRaw {
 			int c;
 
 			while (1) {
-				c = NextMarker ();
+				c = NextMarker (m_stream);
 
 				switch (c) {
 				case M_SOF0:
@@ -1420,7 +1425,7 @@ namespace OpenRaw {
 					break;
 
 				case M_APP0:
-					GetApp0();
+					GetApp0(m_stream);
 					break;
 
 				case M_RST0:		/* these are all parameterless */
@@ -1438,7 +1443,7 @@ namespace OpenRaw {
 
 				default:		/* must be DNL, DHP, EXP, APPn, JPGn, COM,
 										 * or RESn */
-					SkipVariable ();
+					SkipVariable (m_stream);
 					break;
 				}
 			}

@@ -142,15 +142,10 @@ namespace OpenRaw {
 													 MCU *curRowBuf, MCU *prevRowBuf,
 													 int32_t psv);
 			void PmPutRow(MCU* RowBuf, int32_t numComp, int32_t numCol, int32_t Pt);
-			uint16_t Get2bytes ();
-			void SkipVariable();
 			void GetDht (DecompressInfo *dcPtr) throw(DecodingException);
 			void GetDri (DecompressInfo *dcPtr) throw(DecodingException);
-			void GetApp0 ();
 			void GetSof (DecompressInfo *dcPtr) throw(DecodingException);
 			void GetSos (DecompressInfo *dcPtr) throw(DecodingException);
-			static void GetSoi (DecompressInfo *dcPtr);
-			int32_t  NextMarker ();
 			JpegMarker ProcessTables (DecompressInfo *dcPtr);
 			void ReadFileHeader (DecompressInfo *dcPtr) throw(DecodingException);
 			int32_t ReadScanHeader (DecompressInfo *dcPtr);

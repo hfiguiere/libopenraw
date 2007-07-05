@@ -1,5 +1,8 @@
 2007-07-05  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ljpegdecompressor.{h,cpp}: make more methods static or 
+	functions.
+
 	* lib/rawdata.cpp (RawData::append()): fix endianess issue. The
 	code is now endian neutral and works fine on PPC (big endian).
 
