@@ -54,10 +54,6 @@ dnl --------------------------------------------------------------------
 pkgconfigdir='${libdir}/pkgconfig'
 AC_SUBST(pkgconfigdir)
 
-
-AM_CXXFLAGS="-ansi -pedantic -g -Wall -Werror  -Weffc++"
-AM_CFLAGS="-pedantic -g -Wall"
-
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CPP
@@ -139,6 +135,11 @@ else
 fi
 
 AM_CONDITIONAL(BUILD_GNOME_SUPPORT, test x$HAVE_GNOME = xyes)
+
+CXXFLAGS="-ansi -pedantic -g -Wall -Wshadow -Wextra"
+CFLAGS="-pedantic -g -Wall"
+
+
 
 AC_OUTPUT([
 Makefile
