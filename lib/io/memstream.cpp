@@ -54,9 +54,9 @@ namespace OpenRaw {
 
 		int MemStream::seek(off_t offset, int whence)
 		{
-			Trace(DEBUG1) << "MemStream::seek " << offset 
-										<< " bytes - whence = " 
-										<< whence <<  "\n";
+//			Trace(DEBUG1) << "MemStream::seek " << offset 
+//										<< " bytes - whence = " 
+//										<< whence <<  "\n";
 			// TODO check bounds
 			if (m_current == NULL) {
 				// TODO set error code
@@ -83,7 +83,6 @@ namespace OpenRaw {
 
 		int MemStream::read(void *buf, size_t count)
 		{
-//			Trace(DEBUG1) << "MemStream::reading " << count << " bytes\n";
 			if((m_current == NULL) || (m_ptr == NULL)) {
 				Trace(DEBUG1) << "MemStream::failed\n";
 				return -1;
