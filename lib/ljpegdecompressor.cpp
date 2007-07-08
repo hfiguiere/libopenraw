@@ -1070,21 +1070,31 @@ namespace OpenRaw {
 			throw(DecodingException)
 		{
 			int32_t length;
-			uint8_t bits[17];
-			uint8_t huffval[256];
 			int32_t i, index, count;
-			HuffmanTable **htblptr;
 
 			length = Get2bytes(m_stream) - 2;
 
 			while (length) {
 				index = m_stream->readByte();
 
-				bits[0] = 0;
+				if (index < 0 || index >= 4) {
+					throw DecodingException(str(boost::format("Bogus DHT index %1%")
+																										% index));
+				}
+
+				HuffmanTable *& htblptr = dcPtr->dcHuffTblPtrs[index];
+				if (htblptr == NULL) {
+					htblptr = (HuffmanTable *) malloc(sizeof (HuffmanTable));
+					if (htblptr==NULL) {
+						throw DecodingException("Can't malloc HuffmanTable");
+					}
+				}
+
+				htblptr->bits[0] = 0;
 				count = 0;
 				for (i = 1; i <= 16; i++) {
-					bits[i] = m_stream->readByte();
-					count += bits[i];
+					htblptr->bits[i] = m_stream->readByte();
+					count += htblptr->bits[i];
 				}
 
 				if (count > 256) {
@@ -1092,30 +1102,9 @@ namespace OpenRaw {
 				}
 
 				for (i = 0; i < count; i++)
-					huffval[i] = m_stream->readByte();
+					htblptr->huffval[i] = m_stream->readByte();
 
 				length -= 1 + 16 + count;
-
-				if (index & 0x10) {	/* AC table definition */
-					Trace(WARNING) << "Huffman table for lossless JPEG is not defined.\n";
-				} else {		/* DC table definition */
-					htblptr = &dcPtr->dcHuffTblPtrs[index];
-				}
-
-				if (index < 0 || index >= 4) {
-					throw DecodingException(str(boost::format("Bogus DHT index %1%")
-																										% index));
-				}
-
-				if (*htblptr == NULL) {
-					*htblptr = (HuffmanTable *) malloc (sizeof (HuffmanTable));
-					if (*htblptr==NULL) {
-						throw DecodingException("Can't malloc HuffmanTable");
-					}
-				}
-
-				memcpy((*htblptr)->bits, bits, sizeof ((*htblptr)->bits));
-				memcpy((*htblptr)->huffval, huffval, sizeof ((*htblptr)->huffval));
 			}
 		}
 
