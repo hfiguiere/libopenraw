@@ -54,9 +54,9 @@ namespace OpenRaw {
 			virtual Error open() = 0;
 			/** close the file */
 			virtual int close() = 0;
-			/** seek in the file. Semantics are similar to POSIX */
+			/** seek in the file. Semantics are similar to POSIX lseek() */
 			virtual int seek(off_t offset, int whence) = 0;
-			/** read in the file. Semantics are similar to POSIX */
+			/** read in the file. Semantics are similar to POSIX read() */
 			virtual int read(void *buf, size_t count) = 0;
 			virtual off_t filesize() = 0;
 //			virtual void *mmap(size_t l, off_t offset) = 0;

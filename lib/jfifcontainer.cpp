@@ -171,7 +171,7 @@ namespace OpenRaw {
 		{
 			jpeg_src_t *src = (jpeg_src_t*)cinfo->src;
 			JFIFContainer *self = src->self;
-			size_t n = self->file()->read(src->buf, BUF_SIZE * sizeof(*src->buf));
+			int n = self->file()->read(src->buf, BUF_SIZE * sizeof(*src->buf));
 			if (n >= 0) {
 				src->pub.next_input_byte = src->buf;
 				src->pub.bytes_in_buffer = n;
