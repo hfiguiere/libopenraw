@@ -54,6 +54,7 @@ namespace OpenRaw {
 
 		int MemStream::seek(off_t offset, int whence)
 		{
+			int newpos = 0;
 //			Trace(DEBUG1) << "MemStream::seek " << offset 
 //										<< " bytes - whence = " 
 //										<< whence <<  "\n";
@@ -66,18 +67,21 @@ namespace OpenRaw {
 			{
 			case SEEK_SET:
 				m_current = (unsigned char*)m_ptr + offset;
+				newpos = offset;
 				break;
 			case SEEK_END:
 				m_current = (unsigned char*)m_ptr + m_size + offset;
+				newpos = m_size + offset;
 				break;
 			case SEEK_CUR:
 				m_current += offset;
+				newpos = (m_current - (unsigned char*)m_ptr);
 				break;
 			default:
 				return -1;
 				break;
 			}
-			return 0;
+			return newpos;
 		}
 
 

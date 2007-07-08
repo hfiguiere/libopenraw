@@ -1,6 +1,7 @@
 2007-07-07  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/io/memstream.cpp: remove annoying debug message.
+	MemStream::seek return the current position.
 
 	* configure.in: fix configure.in breakage. Setting the CXXFLAGS
 	with -Werror and all these warnings break the detection.
