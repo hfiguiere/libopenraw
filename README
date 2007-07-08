@@ -56,17 +56,19 @@ Support table:
                          | | |
 Canon CR2                Y Y Y
  20D                     T T T
- 30D                     T T B
- 350D                    T T B
- 5D                      T T B
+ 30D                     T T T
+ 350D                    T T T
+ 400D                    T T T
+ 5D                      T T T
  1DMarkII                T T T
 
-Canon CRW                Y Y N
- 300D                    T T
- 10D                     T T
- G1                      T T
- G2                      T T
- G5                      T T
+Canon CRW                Y Y Y
+ 300D                    T T T
+ 10D                     T T T
+ D60                     T T T
+ G1                      T T T
+ G2                      T T T
+ G5                      T T T
  Pro1                    T T
 
 Nikon NEF                Y Y N
@@ -76,22 +78,22 @@ Nikon NEF                Y Y N
  D2H                     T T
 
 Olympus ORF              Y Y N
- E-300                   T T
- E-500                   T T
+ E-300                   T T 
+ E-500                   T T 
  E-10                    B B
 
 Adobe DNG                Y Y N
  Leica DMR               T T X
  Leica M8                T T X
- Adobe DNG converter     T T
+ Adobe DNG converter     T T B
  K10D                    T T X
 
 Sony ARW                 Y N N
  A-100                   T B
 
-Pentax PEF               Y N N
- *-ist D                 T T
- K10D                    T T
+Pentax PEF               Y Y N
+ *-ist D                 T T X
+ K10D                    T T N
 
 Minolta MRW              N N N
 
