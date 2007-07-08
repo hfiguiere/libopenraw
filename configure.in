@@ -136,8 +136,11 @@ fi
 
 AM_CONDITIONAL(BUILD_GNOME_SUPPORT, test x$HAVE_GNOME = xyes)
 
-CXXFLAGS="-ansi -pedantic -g -Wall -Wshadow -Wextra"
-CFLAGS="-pedantic -g -Wall"
+AX_CFLAGS_GCC_OPTION([-Wextra])
+AX_CXXFLAGS_GCC_OPTION([-Wextra])
+
+CXXFLAGS="$CXXFLAGS -ansi -pedantic -g -Wall -Wshadow"
+CFLAGS="$CFLAGS -pedantic -g -Wall"
 
 
 
