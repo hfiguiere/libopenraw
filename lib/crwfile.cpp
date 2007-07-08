@@ -29,9 +29,11 @@
 #include "debug.h"
 #include "io/file.h"
 #include "io/streamclone.h"
+#include "io/memstream.h"
 #include "crwfile.h"
 #include "ciffcontainer.h"
 #include "jfifcontainer.h"
+#include "crwdecompressor.h"
 
 #include "rawfilefactory.h"
 
@@ -151,12 +153,65 @@ namespace OpenRaw {
 			x = img_spec.imageWidth;
 			y = img_spec.imageHeight;
 
+
+
+			// locate decoder table
+			iter = std::find_if(propsRecs.begin(), propsRecs.end(), boost::bind(
+														&RecordEntry::isA, _1, 
+														static_cast<uint16_t>(TAG_EXIFINFORMATION)));
+			if (iter == propsRecs.end()) {
+				Trace(ERROR) << "Couldn't find the Exif information.\n";
+				return err;
+			}
+
+			Heap exifProps(iter->offset + props.offset(), iter->length, m_container);
+
+			const RecordEntry::List & exifPropsRecs = exifProps.records();
+			iter = std::find_if(exifPropsRecs.begin(), exifPropsRecs.end(), 
+													boost::bind(
+														&RecordEntry::isA, _1, 
+														static_cast<uint16_t>(TAG_DECODERTABLE)));
+			if (iter == exifPropsRecs.end()) {
+				Trace(ERROR) << "Couldn't find the decoder table.\n";
+				return err;
+			}
+			Trace(DEBUG2) << "length = " << iter->length << "\n";
+			Trace(DEBUG2) << "offset = " << exifProps.offset() + iter->offset << "\n";
+			IO::Stream *file = m_container->file();
+			file->seek(exifProps.offset() + iter->offset, SEEK_SET);
+			uint32_t decoderTable;
+			if(m_container->readUInt32(file, decoderTable)) {
+				Trace(DEBUG2) << "decoder table = " << decoderTable << "\n";
+			}
+
+			// locate the CFA info
+			uint16_t cfa_x, cfa_y;
+			iter = std::find_if(exifPropsRecs.begin(), exifPropsRecs.end(), boost::bind(
+														&RecordEntry::isA, _1, 
+														static_cast<uint16_t>(TAG_SENSORINFO)));
+			if (iter == exifPropsRecs.end()) {
+				Trace(ERROR) << "Couldn't find the sensor info.\n";
+				return err;
+			}
+			Trace(DEBUG2) << "length = " << iter->length << "\n";
+			Trace(DEBUG2) << "offset = " << exifProps.offset() + iter->offset << "\n";
+
+			// go figure what the +2 is. looks like it is the byte #
+			file->seek(exifProps.offset() + iter->offset + 2, SEEK_SET);
+			if(!(m_container->readUInt16(file, cfa_x) 
+					 && m_container->readUInt16(file, cfa_y))) {
+				Trace(ERROR) << "Couldn't find the sensor size.\n";
+				return err;
+			}
+
+
 			// locate the RAW data
 			iter = std::find_if(records.begin(), records.end(), boost::bind(
 														&RecordEntry::isA, _1, 
 														static_cast<uint16_t>(TAG_RAWIMAGEDATA)));
+
 			if (iter != records.end()) {
-				Trace(DEBUG2) << "RAW @" << (*iter).offset << "\n";
+				Trace(DEBUG2) << "RAW @" << heap->offset() + (*iter).offset << "\n";
 				size_t byte_size = (*iter).length;
 				void *buf = data.allocData(byte_size);
 				size_t real_size = (*iter).fetchData(heap.get(), buf, byte_size);
@@ -165,6 +220,26 @@ namespace OpenRaw {
 				}
 				data.setDimensions(x, y);
 				data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+
+				// decompress if we need
+				if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
+					boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
+																														data.size()));
+					s->open(); // TODO check success
+					
+				  CrwDecompressor decomp(s.get(), m_container);
+					
+					decomp.setOutputDimensions(cfa_x, cfa_y);
+					decomp.setDecoderTable(decoderTable);
+					RawData *dData = decomp.decompress();
+					if (dData != NULL) {
+						Trace(DEBUG1) << "Out size is " << dData->x() 
+													<< "x" << dData->y() << "\n";
+						data.swap(*dData);
+						delete dData;
+					}
+					data.setDataType(OR_DATA_TYPE_CFA);
+				}
 				err = OR_ERROR_NONE;
 			}
 			return err;
