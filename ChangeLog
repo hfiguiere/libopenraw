@@ -1,3 +1,8 @@
+2007-07-09  Hubert Figuiere  <hub@figuiere.net>
+
+	* gnome/gdkpixbuf.c (or_gdkpixbuf_extract_thumbnail): Removing an
+	annoying debug message.
+
 2007-07-08  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/capi/rawdata.cpp, include/libopenraw++/rawdata.h,

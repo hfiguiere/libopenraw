@@ -71,7 +71,6 @@ GdkPixbuf *or_gdkpixbuf_extract_thumbnail(const char *path, uint32_t preferred_s
 	GdkPixbuf *pixbuf = NULL;
 	or_error err = OR_ERROR_NONE;
 	ORThumbnailRef thumbnail = NULL;
-	g_debug("file %s is raw", path);
 
 	err = or_get_extract_thumbnail(path, preferred_size,
 																 &thumbnail);
