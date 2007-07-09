@@ -1,7 +1,7 @@
 /*
  * libopenraw - iostream.h
  *
- * Copyright (C) 2006 Hubert Figuière
+ * Copyright (C) 2006-2007 Hubert Figuière
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
 
 
 #include "stream.h"
-
+#include "exception.h"
 
 namespace OpenRaw {
 	namespace IO {
@@ -40,7 +40,8 @@ namespace OpenRaw {
 			uint8_t theByte;
 			int r = read(&theByte, 1);
 			if (r != 1) {
-				throw std::exception();
+				// TODO add the error code
+				throw Internals::IOException("Stream::readByte() failed.");
 			}
 			return theByte;
 		}

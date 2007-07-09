@@ -56,6 +56,16 @@ namespace OpenRaw {
 				}
 		};
 
+		/** IO exception */
+		class IOException
+			: public Exception
+		{
+		public:
+			IOException(const std::string &w)
+				: Exception(w)
+				{}
+		};
+
 
 		/** data is of bad type */
 		class BadTypeException
