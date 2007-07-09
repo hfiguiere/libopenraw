@@ -48,7 +48,8 @@ namespace OpenRaw {
 	};
 
 	Thumbnail::Thumbnail()
-		: d(new Thumbnail::Private())
+		: BitmapData(),
+			d(new Thumbnail::Private())
 	{
 	}
 

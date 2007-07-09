@@ -1,5 +1,13 @@
 2007-07-08  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/capi/rawdata.cpp, include/libopenraw++/rawdata.h,
+	include/libopenraw/libopenraw.h, include/libopenraw/rawdata.h: 
+	New API in C.
+
+	* demo/ccfa.c (main): New sample for RAW extraction
+	using the C API.
+	
+
 	* lib/ljpegdecompressor.cpp (GetDht): avoid memcpy()
 	on the huffman tables, and check better the index.
 

@@ -29,6 +29,7 @@
 #include <libopenraw/consts.h>
 #include <libopenraw/io.h>
 #include <libopenraw/thumbnails.h>
+#include <libopenraw/rawdata.h>
 #include <libopenraw/debug.h>
 
 

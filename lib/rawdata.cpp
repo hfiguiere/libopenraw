@@ -21,7 +21,7 @@
 #include <assert.h>
 
 #include <libopenraw++/rawdata.h>
-
+#include <libopenraw++/rawfile.h>
 
 namespace OpenRaw {
 
@@ -52,8 +52,30 @@ namespace OpenRaw {
 		Private & operator=(const Private &);
 	};
 
+
+	RawData *
+	RawData::getAndExtractRawData(const char* filename, uint32_t options,
+																or_error & err)
+	{
+		err = OR_ERROR_NONE;
+		RawData *rawdata = NULL;
+
+		RawFile *file = RawFile::newRawFile(filename);
+		if (file) {
+			rawdata = new RawData();
+			err = file->getRawData(*rawdata, options);
+			delete file;
+		}
+		else {
+			err = OR_ERROR_CANT_OPEN; // file error
+		}
+		return rawdata;
+	}
+
+
 	RawData::RawData()
-		: d(new RawData::Private(this))
+		: BitmapData(),
+			d(new RawData::Private(this))
 	{
 
 	}
