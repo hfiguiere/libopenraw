@@ -7,4 +7,5 @@ libopenraw_HEADERS = libopenraw.h \
 	types.h \
 	consts.h \
 	debug.h \
-	thumbnails.h 
+	thumbnails.h \
+	rawdata.h 

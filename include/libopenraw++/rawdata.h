@@ -34,6 +34,9 @@ namespace OpenRaw {
 		: public BitmapData
 	{
 	public:
+		static RawData * getAndExtractRawData(const char* filename, uint32_t options,
+																	 or_error & err);
+
 	  RawData();
 		virtual ~RawData();
 
