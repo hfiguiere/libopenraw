@@ -53,7 +53,7 @@ namespace OpenRaw {
 		{
 		}
 
-		::or_error ORFFile::_getRawData(RawData & data, uint32_t options)
+		::or_error ORFFile::_getRawData(RawData & data, uint32_t /*options*/)
 		{
 			IFDDir::Ref dir = m_container->setDirectory(0);
 			return _getRawDataFromDir(data, dir);

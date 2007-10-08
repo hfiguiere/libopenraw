@@ -50,7 +50,7 @@ namespace OpenRaw {
 		{
 		}
 
-		::or_error ARWFile::_getRawData(RawData & data, uint32_t options) 
+		::or_error ARWFile::_getRawData(RawData & /*data*/, uint32_t /*options*/) 
 		{ 
 			return OR_ERROR_NOT_FOUND; 
 		}

@@ -53,7 +53,7 @@ namespace OpenRaw {
 		{
 		}
 
-		::or_error PEFFile::_getRawData(RawData & data, uint32_t options)
+		::or_error PEFFile::_getRawData(RawData & data, uint32_t /*options*/)
 		{
 			::or_error err;
 			IFDDir::Ref dir = m_container->setDirectory(0);
