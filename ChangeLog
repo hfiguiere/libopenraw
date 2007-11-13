@@ -1,3 +1,8 @@
+2007-11-12  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/io/teststream.cpp: Fix an error triggered by
+	openSUSE Factory: missing header.
+
 2007-07-09  Hubert Figuiere  <hub@figuiere.net>
 
 	* gnome/gdkpixbuf.c (or_gdkpixbuf_extract_thumbnail): Removing an

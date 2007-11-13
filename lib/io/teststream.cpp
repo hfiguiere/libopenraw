@@ -20,6 +20,8 @@
 
 /** @brief test the IO::Stream class */
 
+#include <string.h>
+
 #include <iostream>
 #include <cstdlib>
 
