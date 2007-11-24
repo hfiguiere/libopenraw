@@ -1,3 +1,9 @@
+2007-11-24  Hubert Figuiere  <hub@figuiere.net>
+
+	* gnome/gdkpixbuf.c (or_thumbnail_to_pixbuf): The data is not
+	copied by gdk_pixbuf_new_from_data(). Copy it.
+	Closes bug #13383.
+
 2007-07-09  Hubert Figuiere  <hub@figuiere.net>
 
 	* gnome/gdkpixbuf.c (or_gdkpixbuf_extract_thumbnail): Removing an

@@ -20,10 +20,19 @@
 
 /** @brief gdkpixbuf support */
 
+#include <stdlib.h>
+#include <string.h>
 #include <glib.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <libopenraw/thumbnails.h>
 #include <libopenraw-gnome/gdkpixbuf.h>
+
+
+static void pixbuf_free(guchar * data, gpointer u)
+{
+	(void)u;
+	free(data);
+}
 
 GdkPixbuf *or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail)
 {
@@ -38,11 +47,18 @@ GdkPixbuf *or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail)
 	case OR_DATA_TYPE_PIXMAP_8RGB:
 	{
 		uint32_t x, y;
+		size_t buf_size;
+		guchar * data;
+
+		buf_size = or_thumbnail_data_size(thumbnail);
+		data = (guchar*)malloc(buf_size);
+		memcpy(data, buf, buf_size);
 		or_thumbnail_dimensions(thumbnail, &x, &y);
-		pixbuf = gdk_pixbuf_new_from_data(buf, 
-																			GDK_COLORSPACE_RGB,
-																			FALSE, 8, x, y, x * 3, 
-																			NULL, NULL);
+		
+		pixbuf = gdk_pixbuf_new_from_data(data, 
+										  GDK_COLORSPACE_RGB,
+										  FALSE, 8, x, y, x * 3, 
+										  pixbuf_free, NULL);
 		break;
 	}
 	case OR_DATA_TYPE_JPEG:
