@@ -4,6 +4,11 @@
 	copied by gdk_pixbuf_new_from_data(). Copy it.
 	Closes bug #13383.
 
+2007-11-12  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/io/teststream.cpp: Fix an error triggered by
+	openSUSE Factory: missing header.
+
 2007-07-09  Hubert Figuiere  <hub@figuiere.net>
 
 	* gnome/gdkpixbuf.c (or_gdkpixbuf_extract_thumbnail): Removing an
