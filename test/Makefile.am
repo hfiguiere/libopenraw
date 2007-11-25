@@ -1,5 +1,6 @@
 
 TESTS = fileio ljpegtest
+TESTS_ENVIRONMENT =
 
 OPENRAW_LIB = $(top_builddir)/lib/libopenraw.la
 
@@ -9,6 +10,7 @@ INCLUDES = \
 
 check_PROGRAMS = fileio ciffcontainertest ljpegtest
 
+EXTRA_DIST = ljpegtest1.jpg
 
 fileio_LDFLAGS = -L$(top_builddir)/lib/io
 fileio_LDADD = -lio
@@ -18,4 +20,5 @@ ciffcontainertest_SOURCES = ciffcontainertest.cpp
 ciffcontainertest_LDADD = $(OPENRAW_LIB)
 
 ljpegtest_SOURCES = ljpegtest.cpp
+ljpegtest_LDFLAGS = -static
 ljpegtest_LDADD = $(OPENRAW_LIB) $(BOOST_UNIT_TEST_FRAMEWORK_LIB)

@@ -27,6 +27,7 @@ noinst_HEADERS = or_debug.h \
 	jfifcontainer.h \
 	decompressor.h \
 	ljpegdecompressor.h \
+	ljpegdecompressor_priv.h \
 	crwdecompressor.h \
 	exception.h \
 	endianutils.h
