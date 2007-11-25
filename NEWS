@@ -1,3 +1,10 @@
+libopenraw 0.0.3
+
+  - NEW: Decompress several formatsr: CR2, DNG and CRW.
+  - NEW: Added gdk pixbuf demo.
+  - BUG: fix crash if the file is not found. bug #13371
+  - BUG: fix memory bug in GdkPixbuf support. bug #13383
+
 libopenraw 0.0.2
 
   - Added GdkPixbuf support for Gnome
