@@ -1,5 +1,8 @@
 2007-11-25  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/io/io.c: check input pointer for validity.
+	Closes bug #13371.
+
 	* demo/gdk.c,demo/Makefile.am: new demo.
 	* demo/thumb.cpp (main): Check that the returned rawfile
 	is not null.

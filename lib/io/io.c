@@ -1,7 +1,7 @@
 /*
  * libopenraw - io.c
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2005-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
  */
 
 #include <stdlib.h>
+#include <errno.h>
 
 #include "libopenraw/io.h"
 #include "io_private.h"
@@ -28,6 +29,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/** check pointer validity */
+#define CHECK_PTR(p,r) \
+	if(p == NULL) { return r; }
 
 /** get the default io methods instance 
 
@@ -46,6 +51,7 @@ struct io_methods* get_default_io_methods(void)
  */
 IOFileRef raw_open(struct io_methods * methods, const char *path, int mode)
 {
+	CHECK_PTR(methods, NULL);
 	return methods->open(path, mode);
 }
 
@@ -60,7 +66,9 @@ IOFileRef raw_open(struct io_methods * methods, const char *path, int mode)
  */
 int raw_close(IOFileRef f)
 {
-	int retval = f->methods->close(f);
+	int retval;
+	CHECK_PTR(f,-1);
+	retval = f->methods->close(f);
 	free(f);
 	return retval;
 }
@@ -75,6 +83,7 @@ int raw_close(IOFileRef f)
  */
 int raw_seek(IOFileRef f, off_t offset, int whence)
 {
+	CHECK_PTR(f,-1);
 	return f->methods->seek(f, offset, whence);
 }
 
@@ -88,22 +97,26 @@ int raw_seek(IOFileRef f, off_t offset, int whence)
 */
 int raw_read(IOFileRef f, void *buf, size_t count)
 {
+	CHECK_PTR(f,-1);
 	return f->methods->read(f, buf, count);
 }
 
 off_t raw_filesize(IOFileRef f)
 {
+	CHECK_PTR(f,0);
 	return f->methods->filesize(f);
 }
 
 void *raw_mmap(IOFileRef f, size_t l, off_t offset)
 {
+	CHECK_PTR(f,NULL);
 	return f->methods->mmap(f, l, offset);
 }
 
 
 int raw_munmap(IOFileRef f, void *addr, size_t l)
 {
+	CHECK_PTR(f,-1);
 	return f->methods->munmap(f, addr, l);
 }
 
@@ -115,6 +128,7 @@ int raw_munmap(IOFileRef f, void *addr, size_t l)
 */
 int raw_get_error(IOFileRef f)
 {
+	CHECK_PTR(f,EFAULT);
 	return f->error;
 }
 
@@ -129,6 +143,7 @@ int raw_get_error(IOFileRef f)
 */
 char *raw_get_path(IOFileRef f)
 {
+	CHECK_PTR(f,NULL);
 	return f->path;
 }
 
