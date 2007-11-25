@@ -47,18 +47,23 @@ main(int argc, char** argv)
 
 	{
 		scoped_ptr<OpenRaw::RawFile> raw_file(OpenRaw::RawFile::newRawFile(argv[1]));
+		if(!raw_file)
+		{
+			std::cout << "Unable to open raw file.\n";
+			return 1;
+		}
 		std::vector<uint32_t> list = raw_file->listThumbnailSizes();
 	
 		for(std::vector<uint32_t>::iterator i = list.begin();
 				i != list.end(); ++i)
 		{
-		std::cout << "found " << *i << " pixels\n";
+			std::cout << "found " << *i << " pixels\n";
 		}
 	}
 
 	{
 		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
-																																				 160, err));
+																	  160, err));
 		if (thumb != NULL) {
 			std::cerr << "thumb data size =" << thumb->size() << std::endl;
 			std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
@@ -74,7 +79,7 @@ main(int argc, char** argv)
 
 	{
 		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
-																																	640, err));
+																	  640, err));
 		
 		if (thumb != NULL) {
 			std::cerr << "thumb data size =" << thumb->size() << std::endl;
@@ -91,7 +96,7 @@ main(int argc, char** argv)
 
 	{
 		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
-																																	2048, err));
+																	  2048, err));
 		if (thumb != NULL) {
 			std::cerr << "preview data size =" << thumb->size() << std::endl;
 			std::cerr << "preview data type =" << thumb->dataType() << std::endl;

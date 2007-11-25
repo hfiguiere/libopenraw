@@ -1,3 +1,9 @@
+2007-11-25  Hubert Figuiere  <hub@figuiere.net>
+
+	* demo/gdk.c,demo/Makefile.am: new demo.
+	* demo/thumb.cpp (main): Check that the returned rawfile
+	is not null.
+
 2007-11-24  Hubert Figuiere  <hub@figuiere.net>
 
 	* gnome/gdkpixbuf.c (or_thumbnail_to_pixbuf): The data is not
