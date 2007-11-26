@@ -1,5 +1,11 @@
 2007-11-25  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/jfifcontainer.cpp: Add string.h to fix build on Factory.
+
+==== 0.0.3 ====
+
+2007-11-25  Hubert Figuiere  <hub@figuiere.net>
+
 	* lib/io/io.c: check input pointer for validity.
 	Closes bug #13371.
 

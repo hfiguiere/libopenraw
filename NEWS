@@ -1,3 +1,7 @@
+libopenraw 0.0.4
+
+  - BUG: missing include.
+
 libopenraw 0.0.3
 
   - NEW: Decompress several formatsr: CR2, DNG and CRW.
