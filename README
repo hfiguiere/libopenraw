@@ -18,7 +18,7 @@ Supported file format:
 ======================
 
     - Canon CR2
-    - Canon CRW
+    - Canon CRW (not those coming form hacked firmware like A610)
     - Nikon NEF
     - Olympus ORF: E-300, E-500
     - Pentax PEF
@@ -70,6 +70,7 @@ Canon CRW                Y Y Y
  G2                      T T T
  G5                      T T T
  Pro1                    T T T
+ A610                    N N N
 
 Nikon NEF                Y Y N
  D100                    T T

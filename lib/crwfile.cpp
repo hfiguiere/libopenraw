@@ -71,7 +71,10 @@ namespace OpenRaw {
 			::or_error err = OR_ERROR_NOT_FOUND;
 
 			Heap::Ref heap = m_container->heap();
-
+			if(!heap) {
+				// this is not a CIFF file.
+				return err;
+			}
 			const RecordEntry::List & records = heap->records();
 			RecordEntry::List::const_iterator iter;
 			iter = std::find_if(records.begin(), records.end(), boost::bind(
@@ -82,7 +85,7 @@ namespace OpenRaw {
 				m_x = m_y = 0;
 				
 				scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, heap->offset()
-																													+ (*iter).offset));
+																  + (*iter).offset));
 				scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
 
 				jfif->getDimensions(m_x, m_y);
@@ -99,6 +102,10 @@ namespace OpenRaw {
 		{
 			::or_error err = OR_ERROR_NOT_FOUND;
 			Heap::Ref heap = m_container->heap();
+			if(!heap) {
+				// this is not a CIFF file.
+				return err;
+			}
 
 			const RecordEntry::List & records = heap->records();
 			RecordEntry::List::const_iterator iter;
@@ -125,6 +132,10 @@ namespace OpenRaw {
 		{
 			::or_error err = OR_ERROR_NOT_FOUND;
 			Heap::Ref heap = m_container->heap();
+			if(!heap) {
+				// this is not a CIFF file.
+				return err;
+			}
 
 			const RecordEntry::List & records = heap->records();
 			RecordEntry::List::const_iterator iter;
