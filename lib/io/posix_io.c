@@ -156,5 +156,6 @@ static void *posix_mmap(IOFileRef f, size_t length, off_t offset)
 
 static int posix_munmap(IOFileRef f, void *addr, size_t length)
 {
+	(void)f;
 	return munmap(addr, length);
 }

@@ -1,5 +1,7 @@
 2007-11-25  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/io/posix_io.c (posix_munmap): Fix unused parameter warning.
+
 	* lib/jfifcontainer.cpp: Add string.h to fix build on Factory.
 
 ==== 0.0.3 ====
