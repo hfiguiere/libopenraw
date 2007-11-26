@@ -1,7 +1,7 @@
 /*
  * libopenraw - consts.h
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2005-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,12 +35,13 @@ extern "C" {
  * Error codes returned by libopenraw. 
  */
 	typedef enum {
-		OR_ERROR_NONE = 0,     /**< no error */
+		OR_ERROR_NONE = 0,         /**< no error */
 		OR_ERROR_BUF_TOO_SMALL = 1,
-		OR_ERROR_NOTAREF = 2,
-		OR_ERROR_CANT_OPEN = 3, /**< can't open file. Check OS error codes */
-		OR_ERROR_CLOSED_STREAM = 4, /**< stream closed */
-		OR_ERROR_NOT_FOUND = 5,   /**< requested "object" not found */
+		OR_ERROR_NOTAREF = 2,      /**< the object is not ref */
+		OR_ERROR_CANT_OPEN = 3,    /**< can't open file. Check OS error codes */
+		OR_ERROR_CLOSED_STREAM = 4,/**< stream closed */
+		OR_ERROR_NOT_FOUND = 5,    /**< requested "object" not found */
+		OR_ERROR_INVALID_PARAM = 6,
 		OR_ERROR_UNKNOWN = 42,
 		OR_ERROR_LAST_ 
 	} or_error;
@@ -59,22 +60,6 @@ extern "C" {
 		OR_RAWFILE_TYPE_ORF, /**< Olympus ORF */
 		OR_RAWFILE_TYPE_PEF  /**< Pentax PEF */
 	} or_rawfile_type;
-
-#if 0
-	/** the thumbnail size 
-			They are heavily dependent of the file type, but
-			small is always the exif thumbnail and large always the largest 
-			available. If there is a JPEG version embedded (RAW+JPEG) it is 
-			"preview"
-	 */
-	typedef enum {
-		OR_THUMB_SIZE_NONE = 0, /**< none, undefined */
-		OR_THUMB_SIZE_SMALL,    /**< small aka Exif size */
-		OR_THUMB_SIZE_LARGE,    /**< the largest */
-		OR_THUMB_SIZE_PREVIEW   /**< embedded JPEG version. Not always available */
-	} or_thumb_size;
-#endif
-
 
 	typedef enum {
 		OR_DATA_TYPE_NONE = 0,

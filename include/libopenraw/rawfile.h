@@ -1,7 +1,7 @@
 /*
- * libopenraw - libopenraw.h
+ * libopenraw - rawfile.h
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,29 +17,38 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-/**
- * @brief the libopenraw public API header
- * @author Hubert Figuiere <hub@figuiere.net>
- */
 
-#ifndef __LIBOPENRAW_H__
-#define __LIBOPENRAW_H__
+
+#ifndef __LIBOPENRAW_RAWFILE_H_
+#define __LIBOPENRAW_RAWFILE_H_
 
 #include <libopenraw/types.h>
-#include <libopenraw/consts.h>
-#include <libopenraw/io.h>
-#include <libopenraw/thumbnails.h>
 #include <libopenraw/rawdata.h>
-#include <libopenraw/rawfile.h>
-#include <libopenraw/debug.h>
-
+#include <libopenraw/thumbnails.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+	typedef struct _RawFile *ORRawFileRef;
 
+	ORRawFileRef
+	or_rawfile_new(const char* filename, or_rawfile_type type);
 
+	or_error
+	or_rawfile_release(ORRawFileRef rawfile);
+
+	or_rawfile_type
+	or_rawfile_get_type(ORRawFileRef rawfile);
+
+	or_error
+	or_rawfile_get_thumbnail(ORRawFileRef rawfile, uint32_t _preferred_size,
+							 ORThumbnailRef thumb);
+
+	or_error
+	or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata, 
+						   uint32_t options);
+	
 #ifdef __cplusplus
 }
 #endif

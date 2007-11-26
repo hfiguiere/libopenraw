@@ -1,3 +1,7 @@
+2007-11-26  Hubert Figuiere  <hub@figuiere.net>
+
+	* New rawfile C API.
+
 2007-11-25  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/crwfile.cpp: Fix crash with A610 CRW files and other non-CIFF

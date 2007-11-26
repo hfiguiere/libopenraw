@@ -1,5 +1,6 @@
 libopenraw 0.0.4
 
+  - NEW: rawfile API.
   - BUG: missing include.
   - BUG: fixed compiler warnings.
   - BUG: fix crash on non-CIFF CRW file. bug #13393
