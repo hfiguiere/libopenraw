@@ -25,9 +25,12 @@
 #include <string>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/bind.hpp>
+#include <boost/checked_delete.hpp>
 
 #include "debug.h"
 
+#include <libopenraw/metadata.h>
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/thumbnail.h>
 
@@ -38,6 +41,8 @@
 #include "peffile.h"
 #include "crwfile.h"
 #include "dngfile.h"
+#include "metavalue.h"
+#include "exception.h"
 
 #include "rawfilefactory.h"
 
@@ -82,13 +87,24 @@ namespace OpenRaw {
 				m_sizes()
 			{
 			}
-		
+		~Private()
+			{
+				std::map<int32_t, MetaValue*>::iterator iter;
+				for(iter = m_metadata.begin();
+					iter != m_metadata.end(); ++iter)
+				{
+					if(iter->second) {
+						delete iter->second;
+					}
+				}
+			}
 		/** the name of the file */
 		std::string m_filename;
 		/** the real type of the raw file */
 		Type m_type;
 		/** list of thumbnail sizes */
 		std::vector<uint32_t> m_sizes;
+		std::map<int32_t, MetaValue*> m_metadata;
 	};
 
 
@@ -229,6 +245,39 @@ namespace OpenRaw {
 		::or_error ret = _getRawData(rawdata, options);
 		return ret;
 	}	
+
+
+	int32_t RawFile::getOrientation()
+	{
+		int32_t idx = 0;
+		const MetaValue * value = getMetaValue(META_NS_EXIF | EXIF_TAG_ORIENTATION);
+		if(value == NULL) {
+			return 0;
+		}
+		try {
+			idx = value->getInteger();
+		}
+		catch(const Internals::BadTypeException & e)	{
+			Trace(DEBUG1) << "wrong type - " << e.what() << "\n";
+		}
+		return idx;
+	}
+	
+	const MetaValue *RawFile::getMetaValue(int32_t meta_index)
+	{
+		MetaValue *val = NULL;
+		std::map<int32_t, MetaValue*>::iterator iter = d->m_metadata.find(meta_index);
+		if(iter == d->m_metadata.end()) {
+			val = _getMetaValue(meta_index);
+			if(val != NULL) {
+				d->m_metadata[meta_index] = val;
+			}
+		}
+		else {
+			val = iter->second;
+		}
+		return val;
+	}
 
 }
 

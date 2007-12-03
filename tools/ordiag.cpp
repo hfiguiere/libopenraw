@@ -122,7 +122,7 @@ public:
 
 	/** dump the previews of the raw file to mout
 	 */
-	void dumpPreviews(boost::scoped_ptr<RawFile> & rf)
+	void dumpPreviews(const boost::scoped_ptr<RawFile> & rf)
 		{
 			const std::vector<uint32_t> & previews = rf->listThumbnailSizes();
 			m_out << boost::format("\tNumber of previews: %1%\n") 
@@ -148,7 +148,7 @@ public:
 			}
 		}
 
-	void dumpRawData(boost::scoped_ptr<RawFile> & rf)
+	void dumpRawData(const boost::scoped_ptr<RawFile> & rf)
 		{
 			RawData rd;
 			::or_error err = rf->getRawData(rd, 0);
@@ -166,6 +166,14 @@ public:
 					% err;
 			}
 		}
+	void dumpMetaData(const boost::scoped_ptr<RawFile> & rf)
+		{
+			int32_t o;
+			o = rf->getOrientation();
+			m_out << "\tMeta data\n";
+			m_out << boost::format("\t\tOrientation: %1%\n")
+				% o;
+		}
 	void operator()(const std::string &s)
 		{
 			m_out << boost::format("Dumping %1%\n") % s;
@@ -180,6 +188,7 @@ public:
 															 % typeToString(rf->type());
 				dumpPreviews(rf);
 				dumpRawData(rf);
+				dumpMetaData(rf);
 			}
 		}
 private:

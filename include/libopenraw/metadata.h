@@ -1,7 +1,7 @@
 /*
- * libopenraw - cr2file.h
+ * libopenraw - metadata.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,39 +19,30 @@
  */
 
 
+#ifndef __LIBOPENRAW_METADATA_H_
+#define __LIBOPENRAW_METADATA_H_
+
+#define _INCLUDE_EXIF
+#include <libopenraw/exif.h>
+#undef _INCLUDE_EXIF
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct _MetaValue *ORMetaValueRef;
+typedef const struct _MetaValue *ORConstMetaValueRef;
+
+/** The meta data namespaces, 16 high bits of the index */
+enum {
+	META_NS_EXIF = (1 << 16)
+};
+
+#define META_NS_MASKOUT(x) (x & 0xffff)
 
 
-#ifndef __CR2FILE_H_
-#define __CR2FILE_H_
-
-#include "ifdfile.h"
-#include "rawfilefactory.h"
-#include "ifdfilecontainer.h"
-
-namespace OpenRaw {
-
-	class Thumbnail;
-	
-	namespace Internals {
-		
-		class CR2File
-			: public IFDFile
-		{
-		public:
-			static RawFile *factory(const char* _filename);
-			CR2File(const char* _filename);
-			virtual ~CR2File();
-			
-		private:
-			
-			CR2File(const CR2File&);
-			CR2File & operator=(const CR2File&);
-
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);			
-			virtual MetaValue *_getMetaValue(int32_t meta_index);
-		};
-
-	}
+#ifdef __cplusplus
 }
+#endif
 
 #endif

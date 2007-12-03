@@ -1,5 +1,5 @@
 
-INCLUDES = -I$(top_srcdir)/include
+INCLUDES = -I$(top_srcdir)/include 
 
 SUBDIRS = io capi
 
@@ -30,7 +30,8 @@ noinst_HEADERS = or_debug.h \
 	ljpegdecompressor_priv.h \
 	crwdecompressor.h \
 	exception.h \
-	endianutils.h
+	endianutils.h \
+	metavalue.h
 
 lib_LTLIBRARIES = libopenraw.la
 
@@ -65,4 +66,5 @@ libopenraw_la_SOURCES = \
 	jfifcontainer.cpp \
 	decompressor.cpp \
 	ljpegdecompressor.cpp \
-	crwdecompressor.cpp
+	crwdecompressor.cpp \
+	metavalue.cpp

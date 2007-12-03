@@ -25,29 +25,54 @@
 #include <libopenraw/types.h>
 #include <libopenraw/rawdata.h>
 #include <libopenraw/thumbnails.h>
+#include <libopenraw/metadata.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	typedef struct _RawFile *ORRawFileRef;
+typedef struct _RawFile *ORRawFileRef;
+typedef struct _Xmp *XmpPtr;
 
-	ORRawFileRef
-	or_rawfile_new(const char* filename, or_rawfile_type type);
+ORRawFileRef
+or_rawfile_new(const char* filename, or_rawfile_type type);
 
-	or_error
-	or_rawfile_release(ORRawFileRef rawfile);
+or_error
+or_rawfile_release(ORRawFileRef rawfile);
 
-	or_rawfile_type
-	or_rawfile_get_type(ORRawFileRef rawfile);
+or_rawfile_type
+or_rawfile_get_type(ORRawFileRef rawfile);
 
-	or_error
-	or_rawfile_get_thumbnail(ORRawFileRef rawfile, uint32_t _preferred_size,
-							 ORThumbnailRef thumb);
+or_error
+or_rawfile_get_thumbnail(ORRawFileRef rawfile, uint32_t preferred_size,
+						 ORThumbnailRef thumb);
 
-	or_error
-	or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata, 
+or_error
+or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata, 
 						   uint32_t options);
+
+/** Get the orientation, This is a convenience method.
+ * @param rawfile the RAW file object.
+ * @return the orienation using EXIF semantics. If
+ * there is no orientation attribute, return 0.
+ */
+int32_t
+or_rawfile_get_orientation(ORRawFileRef rawfile);
+
+/** Get the metadata value
+ * @param rawfile the RAW file object.
+ * @param meta_index the index value which is NS | index
+ */
+ORConstMetaValueRef
+or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index);
+
+/** Get the metadata out of the raw file as XMP
+ * @param rawfile the rawfile object
+ * @return the XMP meta. It belongs to the rawfile.
+ * Use Exempi to deal with the content.
+ */
+XmpPtr
+or_rawfile_get_xmp(ORRawFileRef rawfile);
 	
 #ifdef __cplusplus
 }

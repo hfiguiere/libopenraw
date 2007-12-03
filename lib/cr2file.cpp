@@ -19,7 +19,7 @@
  */
 
 #include <boost/scoped_ptr.hpp>
-
+#include <boost/any.hpp>
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
@@ -32,7 +32,7 @@
 #include "cr2file.h"
 #include "jfifcontainer.h"
 #include "ljpegdecompressor.h"
-
+#include "metavalue.h"
 #include "rawfilefactory.h"
 
 using namespace Debug;
@@ -138,6 +138,23 @@ namespace OpenRaw {
 				ret = OR_ERROR_NOT_FOUND;
 			}
 			return ret;
+		}
+
+		MetaValue *CR2File::_getMetaValue(int32_t meta_index)
+		{
+			MetaValue * val = NULL;
+			if(meta_index & META_NS_EXIF) {
+				Trace(DEBUG1) << "Exif meta value for " 
+							  << META_NS_MASKOUT(meta_index) << "\n";
+				uint16_t n = 0;
+				IFDDir::Ref dir = m_container->setDirectory(0);
+				bool got_it = dir->getValue(META_NS_MASKOUT(meta_index), n);
+				if(got_it){
+					Trace(DEBUG1) << "found value\n";
+					val = new MetaValue(boost::any(static_cast<int32_t>(n)));
+				}
+			}
+			return val;
 		}
 
 	}

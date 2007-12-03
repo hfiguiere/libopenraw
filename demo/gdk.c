@@ -32,13 +32,16 @@ main(int argc, char **argv)
 
 	(void)argc;
 	or_debug_set_level(DEBUG2);
+	g_type_init();
 
 	if(filename && *filename)
 	{
 		GdkPixbuf *pixbuf;
 
-		pixbuf = or_gdkpixbuf_extract_thumbnail(filename, 160);
+		pixbuf = or_gdkpixbuf_extract_rotated_thumbnail(filename, 160);
 		if(pixbuf) {
+			gdk_pixbuf_save (pixbuf, "gdk.jpg", "jpeg", NULL,
+							 "quality", "100", NULL);
 			gdk_pixbuf_unref(pixbuf);
 		}
 		else {

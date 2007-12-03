@@ -33,7 +33,9 @@ extern "C" {
 GdkPixbuf *or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail);
 
 GdkPixbuf *or_gdkpixbuf_extract_thumbnail(const char *path, 
-																					uint32_t preferred_size);
+										  uint32_t preferred_size);
+GdkPixbuf *or_gdkpixbuf_extract_rotated_thumbnail(const char *path, 
+												  uint32_t preferred_size);
 
 #ifdef __cplusplus
 }

@@ -32,6 +32,7 @@ namespace OpenRaw {
 
 	class Thumbnail;
 	class RawData;
+	class MetaValue;
 
 	void init();
 
@@ -46,7 +47,7 @@ namespace OpenRaw {
 		 * if you want to let the library detect it for you.
 		 */
 		static RawFile *newRawFile(const char*_filename, 
-															 Type _typeHint = OR_RAWFILE_TYPE_UNKNOWN);
+								   Type _typeHint = OR_RAWFILE_TYPE_UNKNOWN);
 
 		/** Destructor */
 		virtual ~RawFile();
@@ -72,6 +73,11 @@ namespace OpenRaw {
 		 * @return the error code
 		 */
 		::or_error getRawData(RawData & rawdata, uint32_t options);
+
+
+		int32_t getOrientation();
+
+		const MetaValue *getMetaValue(int32_t meta_index);
 	protected:
 		/** 
 		 * Construct a raw file
@@ -100,6 +106,9 @@ namespace OpenRaw {
 		 * Return the data compressed or uncompressed.
 		 */
 		virtual ::or_error _getRawData(RawData & data, uint32_t options) = 0;
+
+		virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) 
+			{ return NULL; } // TODO make that pure virtual
 	private:
 		static Type identify(const char*_filename);
 

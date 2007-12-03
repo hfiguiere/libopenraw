@@ -63,6 +63,7 @@ AC_PROG_LIBTOOL
 
 
 dnl Requirements
+EXEMPI_REQUIRED=1.99.5
 
 dnl Needed for GdkPixbuf
 LIBGLIB_REQUIRED=2.0.0
@@ -94,7 +95,7 @@ AX_BOOST_UNIT_TEST_FRAMEWORK
 AC_LANG(C)
 AC_CHECK_HEADER(jpeglib.h, ,
 	AC_MSG_ERROR([jpeglib headers not found]))
-
+PKG_CHECK_MODULES(EXEMPI, exempi-2.0 >= $EXEMPI_REQUIRED)
 
 #
 dnl do we want GNOME ?

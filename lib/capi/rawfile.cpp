@@ -36,47 +36,55 @@ extern "C" {
 #define CHECK_PTR(p,r) \
 	if(p == NULL) { return r; }
 
-	ORRawFileRef
-	or_rawfile_new(const char* filename, or_rawfile_type type)
-	{
-		CHECK_PTR(filename, NULL);
-		RawFile * rawfile = RawFile::newRawFile(filename, type);
-		return reinterpret_cast<ORRawFileRef>(rawfile);
-	}
+ORRawFileRef
+or_rawfile_new(const char* filename, or_rawfile_type type)
+{
+	CHECK_PTR(filename, NULL);
+	RawFile * rawfile = RawFile::newRawFile(filename, type);
+	return reinterpret_cast<ORRawFileRef>(rawfile);
+}
+	
+or_error
+or_rawfile_release(ORRawFileRef rawfile)
+{
+	CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
+	boost::checked_delete(reinterpret_cast<RawFile *>(rawfile));
+	return OR_ERROR_NONE;
+}
 
-	or_error
-	or_rawfile_release(ORRawFileRef rawfile)
-	{
-		CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
-		boost::checked_delete(reinterpret_cast<RawFile *>(rawfile));
-		return OR_ERROR_NONE;
-	}
+or_rawfile_type
+or_rawfile_get_type(ORRawFileRef rawfile)
+{
+	CHECK_PTR(rawfile, OR_RAWFILE_TYPE_UNKNOWN);
+	RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
+	return prawfile->type();
+}
 
-	or_rawfile_type
-	or_rawfile_get_type(ORRawFileRef rawfile)
-	{
-		CHECK_PTR(rawfile, OR_RAWFILE_TYPE_UNKNOWN);
-		RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
-		return prawfile->type();
-	}
+or_error
+or_rawfile_get_thumbnail(ORRawFileRef rawfile, uint32_t _preferred_size,
+						 ORThumbnailRef thumb)
+{
+	CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
+	RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
+	return prawfile->getThumbnail(_preferred_size, 
+								  *reinterpret_cast<Thumbnail*>(thumb));
+}
 
-	or_error
-	or_rawfile_get_thumbnail(ORRawFileRef rawfile, uint32_t _preferred_size,
-							 ORThumbnailRef thumb)
-	{
-		CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
-		RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
-		return prawfile->getThumbnail(_preferred_size, 
-									  *reinterpret_cast<Thumbnail*>(thumb));
-	}
+or_error
+or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata, 
+					   uint32_t options)
+{
+	RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
+	CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
+	return prawfile->getRawData(*reinterpret_cast<RawData*>(rawdata), options);
+}
 
-	or_error
-	or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata, 
-						   uint32_t options)
-	{
-		RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
-		CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
-		return prawfile->getRawData(*reinterpret_cast<RawData*>(rawdata), options);
-	}
+int32_t
+or_rawfile_get_orientation(ORRawFileRef rawfile)
+{
+	RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
+	CHECK_PTR(rawfile, 0);
+	return prawfile->getOrientation();
+}
 
 }

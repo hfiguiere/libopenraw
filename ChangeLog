@@ -1,3 +1,9 @@
+2007-12-02  Hubert Figuiere  <hub@figuiere.net>
+
+	* Get orientation (CR2-only).
+	* API for orientation.
+	* Rotate gdk pixbuf depending on orientation.
+
 2007-11-26  Hubert Figuiere  <hub@figuiere.net>
 
 	* New rawfile C API.

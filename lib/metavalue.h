@@ -1,7 +1,7 @@
 /*
- * libopenraw - cr2file.h
+ * libopenraw - metavalue.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,39 +19,25 @@
  */
 
 
+#ifndef _OPENRAW_METAVALUE_H
+#define _OPENRAW_METAVALUE_H
 
-
-#ifndef __CR2FILE_H_
-#define __CR2FILE_H_
-
-#include "ifdfile.h"
-#include "rawfilefactory.h"
-#include "ifdfilecontainer.h"
+#include <boost/any.hpp>
+#include <libopenraw/types.h>
 
 namespace OpenRaw {
-
-	class Thumbnail;
 	
-	namespace Internals {
-		
-		class CR2File
-			: public IFDFile
-		{
-		public:
-			static RawFile *factory(const char* _filename);
-			CR2File(const char* _filename);
-			virtual ~CR2File();
-			
-		private:
-			
-			CR2File(const CR2File&);
-			CR2File & operator=(const CR2File&);
+	class MetaValue
+	{
+	public:
+		MetaValue(const MetaValue &);
+		MetaValue(const boost::any &v);
+		int32_t getInteger() const
+			throw(Internals::BadTypeException);
+	private:
+		boost::any m_value;
+	};
 
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);			
-			virtual MetaValue *_getMetaValue(int32_t meta_index);
-		};
-
-	}
 }
 
 #endif
