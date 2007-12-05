@@ -2,13 +2,14 @@ Copyright
 =========
 
 libopenraw is Copyright (c) 2005-2007 Hubert Figuiere
-It is licensed under LGPL. See file COPYING.
+It is licensed under LGPLv2.1 or later. See file COPYING.
 
 Prerequistes to build:
 ======================
 
     - a C++ compiler (tested on gcc 3.3 and up)
-    - libboost (boost::shared_ptr)
+    - libboost 1.33.1 (Boost.Bind, Boost.Smart_pointer, 
+      Boost.String, Boost.Any)
     - libjpeg
 
     - automake/autoconf
@@ -43,7 +44,7 @@ Support table:
 
   T  Tested and proven to work. (I have a sample.)
   Y  Yes, it is there. (Untested as I do not have a sample but the format
-     is known to be similar.)
+     is known to be similar.) Yes, it is for the whole format.
   N  Not supported.
   B  Known to be Broken. (Needs to be fixed. I have a sample but further
      work is required.)
@@ -52,17 +53,18 @@ Support table:
                           ThNail
                          /  CFA compressed (as is)
                          | /  CFA decompress
-                         | | /
-                         | | |
-Canon CR2                Y Y Y
- 20D                     T T T
+                         | | /  Orientation Tag
+                         | | | /
+                         | | | |
+Canon CR2                Y Y Y Y
+ 20D                     T T T T
  30D                     T T T
  350D                    T T T
  400D                    T T T
  5D                      T T T
  1DMarkII                T T T
 
-Canon CRW                Y Y Y
+Canon CRW                Y Y Y N
  300D                    T T T
  10D                     T T T
  D60                     T T T
@@ -72,7 +74,7 @@ Canon CRW                Y Y Y
  Pro1                    T T T
  A610                    N N N
 
-Nikon NEF                Y Y N
+Nikon NEF                Y Y N N
  D100                    T T
  D70                     T T
  Cooolpix 5700           T T
@@ -84,7 +86,7 @@ Nikon NEF                Y Y N
  D70s
  D80
 
-Olympus ORF              Y Y N
+Olympus ORF              Y Y N N
  E-1                     T T 
  E-10                    B B
  E-300                   T T 
@@ -96,7 +98,7 @@ Olympus ORF              Y Y N
  SP-510                  B B
  SP-550                  B B
 
-Adobe DNG                Y Y N
+Adobe DNG                Y Y N N
  Leica DMR               T T X
  Leica M8                T T X
  Adobe DNG converter     T T B
@@ -104,34 +106,34 @@ Adobe DNG                Y Y N
  Samsung GX-10           T B X
  Samsung Pro815          T B X
 
-Sony ARW                 Y N N
+Sony ARW                 Y N N N
  A-100                   T B
 
-Pentax PEF               Y Y N
+Pentax PEF               Y Y N N
  *-ist D                 T T X
  *-ist DL                T T N
  K10D                    T T N
  K100D                   T T N
 
-Minolta MRW              N N N
+Minolta MRW              N N N N
  Maxxum_7D
  Maxxum 5D
 
-Sony SRF                 N N N
+Sony SRF                 N N N N
 
-Sony SR2                 N N N
+Sony SR2                 N N N N
  Sony R1
 
-Kodak DCR                N N N
+Kodak DCR                N N N N
 
-FujiFilm RAF             N N N
+FujiFilm RAF             N N N N
  Finepix S3Pro
  Finepix S6500Fd
 
-Foveon X3F               N N N
+Foveon X3F               N N N N
 
-Epson ERF                N N N
+Epson ERF                N N N N
  Epson RD1
 
-Mamiya MEF               N N N
+Mamiya MEF               N N N N
  Mamiya ZD
