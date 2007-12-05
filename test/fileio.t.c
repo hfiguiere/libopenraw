@@ -30,6 +30,8 @@ int main (int argc, char **argv)
 	IOFileRef f;
 	int retval;
 	char buf[128];
+	(void)argc;
+	(void)argv;
 
 	f = raw_open(get_default_io_methods(), "/etc/hosts", O_RDONLY);
 

@@ -1,3 +1,8 @@
+2007-12-05  Hubert Figuiere  <hub@figuiere.net>
+
+	* demo/thumbc.c, lib/io/teststream.cpp, test/ciffcontainertest.cpp,
+	test/fileio.t.c: warning removal.
+
 2007-11-25  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/crwfile.cpp: Fix crash with A610 CRW files and other non-CIFF
