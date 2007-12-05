@@ -29,6 +29,7 @@ main(int argc, char **argv)
 {
 	char *filename = argv[1];
 	ORThumbnailRef thumbnail = NULL;
+	(void)argc;
 
 	or_debug_set_level(DEBUG2);
 
@@ -64,7 +65,7 @@ main(int argc, char **argv)
 			thumbnailData = or_thumbnail_data(thumbnail);
 			fwrite(thumbnailData, dataSize, 1, output);
 			fclose(output);
-			printf("output %d bytes\n", dataSize);
+			printf("output %ld bytes\n", dataSize);
 			err = or_thumbnail_release(thumbnail);
 			if (err != OR_ERROR_NONE)
 			{

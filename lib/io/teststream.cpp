@@ -31,7 +31,7 @@
 
 using namespace OpenRaw;
 
-int main (int argc, char ** argv)
+int main (int /*argc*/, char ** /*argv*/)
 {
 	IO::File *file = new IO::File("testfile.tmp");
 	char buf1[128];

@@ -27,7 +27,7 @@
 
 using namespace OpenRaw::Internals;
 
-int main(int argc, char **argv)
+int main(int /*argc*/, char **argv)
 {
 	Debug::Trace::setDebugLevel(DEBUG2);
 

@@ -1,5 +1,9 @@
-2007-12-02  Hubert Figuiere  <hub@figuiere.net>
+2007-12-05  Hubert Figuiere  <hub@figuiere.net>
 
+	* demo/thumbc.c, lib/io/teststream.cpp, test/ciffcontainertest.cpp,
+	test/fileio.t.c: warning removal.
+	
+2007-12-02  Hubert Figuiere  <hub@figuiere.net>
 	* Get orientation (CR2-only).
 	* API for orientation.
 	* Rotate gdk pixbuf depending on orientation.
