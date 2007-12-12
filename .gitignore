@@ -9,6 +9,7 @@ Makefile.in
 CMakeCache.txt
 CMakeFiles
 *.cmake
+stamp-*
 progress.make
 aclocal.m4
 autom4te.cache
@@ -25,3 +26,8 @@ libtool
 install-sh
 depcomp
 *.pc
+demo/ccfa
+demo/cfa
+demo/gdk
+lib/io/teststream
+test/ljpegtest
