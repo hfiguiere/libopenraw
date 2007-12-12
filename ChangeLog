@@ -1,3 +1,7 @@
+2007-12-11  Hubert Figuiere  <hub@figuiere.net>
+
+	* README: Update build instruction. Closes bug #13595
+
 2007-12-05  Hubert Figuiere  <hub@figuiere.net>
 
 	* demo/thumbc.c, lib/io/teststream.cpp, test/ciffcontainertest.cpp,
