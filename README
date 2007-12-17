@@ -11,6 +11,9 @@ Prerequistes to build:
     - libboost 1.33.1 (Boost.Bind, Boost.Smart_pointer, 
       Boost.String, Boost.Any)
     - libjpeg
+    - exempi
+
+If building from the git tree you also need:
 
     - automake/autoconf
 
@@ -19,7 +22,7 @@ Supported file format:
 ======================
 
     - Canon CR2
-    - Canon CRW (not those coming form hacked firmware like A610)
+    - Canon CRW (not those coming from hacked firmware like A610)
     - Nikon NEF
     - Olympus ORF: E-300, E-500
     - Pentax PEF
@@ -32,9 +35,8 @@ How to build:
 
   Using automake/autoconf:
 
-    $ mkdir libopenraw-ambuild && cd libopenraw-ambuild
-    $ autoreconf --install --symlink ../libopenraw
-    $ ../libopenraw/configure --prefix=...
+    $ ./autogen.sh
+    $ ./configure --prefix=...
     $ make
     $ make install DESTDIR=...
 
