@@ -1,3 +1,8 @@
+2007-12-17  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ciffcontainer.{cpp,h}, lib/crwfile.cpp: retrieve the orientation
+	from the CIFF/CRW files.
+
 2007-12-05  Hubert Figuiere  <hub@figuiere.net>
 
 	* demo/thumbc.c, lib/io/teststream.cpp, test/ciffcontainertest.cpp,

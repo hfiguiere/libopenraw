@@ -118,6 +118,7 @@ namespace OpenRaw {
 				 * @param container the container to read from.
 				 */
 				bool readFrom(off_t offset, CIFFContainer *container);
+				int32_t exifOrientation();
 
 				uint32_t imageWidth;
 				uint32_t imageHeight;
@@ -140,7 +141,7 @@ namespace OpenRaw {
 				 * @return true if success
 				 */
 				bool readFrom(CIFFContainer *container);
-        /** fetch data define by the record from the heap
+				/** fetch data define by the record from the heap
 				 * @param heap the heap to load from
 				 * @param buf the allocated buffer to load into
 				 * @param size the size of the allocated buffer

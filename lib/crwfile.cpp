@@ -161,10 +161,10 @@ namespace OpenRaw {
 			ImageSpec img_spec;
 			img_spec.readFrom(iter->offset + props.offset(), m_container);
 			uint32_t x, y;
+			int32_t orientation;
 			x = img_spec.imageWidth;
 			y = img_spec.imageHeight;
-
-
+			orientation = img_spec.exifOrientation();
 
 			// locate decoder table
 			iter = std::find_if(propsRecs.begin(), propsRecs.end(), boost::bind(
@@ -235,10 +235,10 @@ namespace OpenRaw {
 				// decompress if we need
 				if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
 					boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
-																														data.size()));
+																	  data.size()));
 					s->open(); // TODO check success
 					
-				  CrwDecompressor decomp(s.get(), m_container);
+					CrwDecompressor decomp(s.get(), m_container);
 					
 					decomp.setOutputDimensions(cfa_x, cfa_y);
 					decomp.setDecoderTable(decoderTable);

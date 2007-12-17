@@ -51,6 +51,26 @@ namespace OpenRaw {
 				return ret;
 			}
 
+			int32_t ImageSpec::exifOrientation()
+			{
+				int32_t orientation = 0;
+				switch(rotationAngle) {
+				case 0:
+					orientation = 1;
+					break;
+				case 90:
+					orientation = 6;
+					break;
+				case 180:
+					orientation = 3;
+					break;
+				case 270:
+					orientation = 8;
+					break;
+				}
+				return orientation;
+			}
+
 			RecordEntry::RecordEntry()
 				: typeCode(0), length(0), offset(0)
 			{
@@ -69,7 +89,7 @@ namespace OpenRaw {
 			size_t RecordEntry::fetchData(Heap* heap, void* buf, size_t size) const
 			{
 				return heap->container()->fetchData(buf, 
-																						offset + heap->offset(), size);
+													offset + heap->offset(), size);
 			}
 
 
