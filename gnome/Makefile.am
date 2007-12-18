@@ -4,9 +4,6 @@ SUBDIRS = include
 if BUILD_GNOME_SUPPORT
 GNOME_TARGETS = libopenrawgnome.la
 PKG_CONFIG_FILES = libopenraw-gnome-1.0.pc
-else 
-GNOME_TARGETS = 
-PKG_CONFIG_FILES =
 endif
 
 INCLUDES = -I$(top_srcdir)/include \

@@ -1,5 +1,7 @@
 2007-12-18  Hubert Figuiere  <hub@figuiere.net>
 
+	* demo/Makefile.am: gdk demo opted out. Closes bug #13718
+
 	* lib/io/io.c: remove stray ';'. Closes bug #13717
 
 2007-12-17  Hubert Figuiere  <hub@figuiere.net>

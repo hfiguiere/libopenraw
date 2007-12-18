@@ -6,6 +6,7 @@ libopenraw 0.0.4
   - BUG: fixed compiler warnings.
   - BUG: fix some compile failures. bug #13717
   - BUG: fix crash on non-CIFF CRW file. bug #13393
+  - BUG: gdk demo shouldn't be compiled without Gnome support. bug #13718
 
 libopenraw 0.0.3
 

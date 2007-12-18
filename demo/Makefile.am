@@ -1,6 +1,10 @@
 
 
-noinst_PROGRAMS = thumb thumbc cfa ccfa gdk
+if BUILD_GNOME_SUPPORT
+GNOME_BINARIES = gdk
+endif
+
+noinst_PROGRAMS = thumb thumbc cfa ccfa $(GNOME_BINARIES)
 
 INCLUDES = -I$(top_srcdir)/include  -I$(top_srcdir)/gnome/include
 LIBOPENRAW_LIBS = ../lib/libopenraw.la -lstdc++ -ljpeg
