@@ -16,6 +16,7 @@ Prerequistes to build:
 If building from the git tree you also need:
 
     - automake/autoconf
+    - pkg-config for the associated m4 macros
 
 
 Supported file format:
