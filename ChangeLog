@@ -1,3 +1,7 @@
+2007-12-18  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/io/io.c: remove stray ';'. Closes bug #13717
+
 2007-12-17  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ciffcontainer.{cpp,h}, lib/crwfile.cpp: retrieve the orientation
