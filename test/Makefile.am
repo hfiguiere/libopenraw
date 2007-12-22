@@ -20,5 +20,5 @@ ciffcontainertest_SOURCES = ciffcontainertest.cpp
 ciffcontainertest_LDADD = $(OPENRAW_LIB)
 
 ljpegtest_SOURCES = ljpegtest.cpp
-ljpegtest_LDFLAGS = -static
-ljpegtest_LDADD = $(OPENRAW_LIB) $(BOOST_UNIT_TEST_FRAMEWORK_LIB)
+ljpegtest_LDFLAGS = -static @BOOST_UNIT_TEST_FRAMEWORK_LDFLAGS@
+ljpegtest_LDADD = $(OPENRAW_LIB) @BOOST_UNIT_TEST_FRAMEWORK_LIBS@
