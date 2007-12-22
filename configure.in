@@ -88,9 +88,11 @@ AC_ARG_WITH(fink,[  --with-fink          add /sw/... to CPP/LDFLAGS (Mac OSX)],[
         fi
 ])
 
-AX_BOOST_BASE([1.33.0])
-AX_BOOST_UNIT_TEST_FRAMEWORK
-
+BOOST_REQUIRE([1.33.0])
+BOOST_TEST([s])
+BOOST_SMART_PTR
+BOOST_STRING_ALGO
+BOOST_BIND
 
 AC_LANG(C)
 AC_CHECK_HEADER(jpeglib.h, ,
