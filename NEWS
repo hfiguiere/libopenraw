@@ -1,5 +1,6 @@
 libopenraw 0.0.4
 
+  - NEW: support for Epson ERF.
   - NEW: support getting the image orientation: CR2, CRW.
   - NEW: rawfile API.
   - BUG: missing include.

@@ -1,5 +1,5 @@
 /*
- * libopenraw - neffile.cpp
+ * libopenraw - peffile.cpp
  *
  * Copyright (C) 2006-2007 Hubert Figuiere
  *
@@ -29,7 +29,7 @@
 #include "ifddir.h"
 #include "ifdentry.h"
 #include "io/file.h"
-#include "neffile.h"
+#include "erffile.h"
 
 using namespace Debug;
 
@@ -38,48 +38,58 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		RawFile *NEFFile::factory(const char* _filename)
+		RawFile *ERFFile::factory(const char* _filename)
 		{
-			return new NEFFile(_filename);
+			return new ERFFile(_filename);
 		}
 
-		NEFFile::NEFFile(const char* _filename)
-			: IFDFile(_filename, OR_RAWFILE_TYPE_NEF)
-		{
-		}
-
-
-		NEFFile::~NEFFile()
+		ERFFile::ERFFile(const char* _filename)
+			: IFDFile(_filename, OR_RAWFILE_TYPE_ERF)
 		{
 		}
 
-		::or_error NEFFile::_getRawData(RawData & data, uint32_t /*options*/)
+
+		ERFFile::~ERFFile()
 		{
-			::or_error ret = OR_ERROR_NONE;
+		}
+
+		::or_error ERFFile::_getRawData(RawData & data, uint32_t /*options*/)
+		{
+			::or_error err;
 			IFDDir::Ref dir = m_container->setDirectory(0);
-
-			Trace(DEBUG1) << "_getRawData()\n";
 
 			std::vector<IFDDir::Ref> subdirs;
 			if (!dir->getSubIFDs(subdirs)) {
 				// error
 				return OR_ERROR_NOT_FOUND;
 			}
-			
 			IFDDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
 													   subdirs.end(),
 													   IFDDir::isPrimary());
-				
 			if (i != subdirs.end()) {
 				IFDDir::Ref subdir(*i);
-				ret = _getRawDataFromDir(data, subdir);
+				err = _getRawDataFromDir(data, subdir);
+				if(err == OR_ERROR_NONE) {
+					uint16_t compression = 0;
+					subdir->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
+					switch(compression) {
+					case 1:
+						data.setDataType(OR_DATA_TYPE_CFA);
+						break;
+					case 32769:
+						// TODO decompress. see nikon_load_raw() in dcraw
+						Trace(DEBUG1) << "Epson compressed\n";
+						break;
+					default:
+						break;
+					}
+				}
 			}
 			else {
-				ret = OR_ERROR_NOT_FOUND;
+				err = OR_ERROR_NOT_FOUND;
 			}
-			return ret;
+			return err;
 		}
-
 	}
 }
 

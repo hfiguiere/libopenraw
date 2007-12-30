@@ -40,6 +40,7 @@
 #include "arwfile.h"
 #include "peffile.h"
 #include "crwfile.h"
+#include "erffile.h"
 #include "dngfile.h"
 #include "metavalue.h"
 #include "exception.h"
@@ -56,26 +57,29 @@ namespace OpenRaw {
 	void init(void)
 	{
  		static RawFileFactory fctcr2(OR_RAWFILE_TYPE_CR2, 
-																 &Internals::CR2File::factory,
-																 "cr2");
+									 &Internals::CR2File::factory,
+									 "cr2");
 		static RawFileFactory fctnef(OR_RAWFILE_TYPE_NEF, 
-																 &Internals::NEFFile::factory,
-																 "nef");
+									 &Internals::NEFFile::factory,
+									 "nef");
 		static RawFileFactory fctarw(OR_RAWFILE_TYPE_ARW, 
-																 &Internals::ARWFile::factory,
-																 "arw");
+									 &Internals::ARWFile::factory,
+									 "arw");
 		static RawFileFactory fctorf(OR_RAWFILE_TYPE_ORF, 
-																 &Internals::ORFFile::factory,
-																 "orf");
+									 &Internals::ORFFile::factory,
+									 "orf");
 		static RawFileFactory fctdng(OR_RAWFILE_TYPE_DNG, 
-																 &Internals::DNGFile::factory,
-																 "dng");
+									 &Internals::DNGFile::factory,
+									 "dng");
 		static RawFileFactory fctpef(OR_RAWFILE_TYPE_PEF, 
-																 &Internals::PEFFile::factory,
-																 "pef");
+									 &Internals::PEFFile::factory,
+									 "pef");
 		static RawFileFactory fctcrw(OR_RAWFILE_TYPE_CRW,
-																 &Internals::CRWFile::factory,
-																 "crw");																 
+									 &Internals::CRWFile::factory,
+									 "crw");
+		static RawFileFactory fcterf(OR_RAWFILE_TYPE_ERF,
+									 &Internals::ERFFile::factory,
+									 "erf");
 	}	
 
 	class RawFile::Private 
