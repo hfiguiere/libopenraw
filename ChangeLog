@@ -1,3 +1,9 @@
+2007-12-30  Hubert Figuiere  <hub@figuiere.net>
+
+	* README, include/libopenraw/consts.h, lib/Makefile.am,
+	lib/erffile.{h,cpp}, lib/rawfile.cpp, tools/ordiag.cpp:
+	Epson ERF support for thumbnail and compressed CFA.
+
 2007-12-22  Hubert Figuiere  <hub@figuiere.net>
 
 	* configure.in, m4/boost.m4, test/Makefile.am: Change boost

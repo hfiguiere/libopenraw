@@ -19,6 +19,7 @@ noinst_HEADERS = or_debug.h \
 	dngfile.h \
 	peffile.h \
 	crwfile.h \
+	erffile.h \
 	ifd.h \
 	ifdfilecontainer.h \
 	ifddir.h ifdentry.h \
@@ -54,6 +55,7 @@ libopenraw_la_SOURCES = \
 	dngfile.cpp \
 	peffile.cpp \
 	crwfile.cpp \
+	erffile.cpp \
 	bitmapdata.cpp \
 	thumbnail.cpp \
 	rawdata.cpp \

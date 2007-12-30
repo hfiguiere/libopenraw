@@ -30,6 +30,7 @@ Supported file format:
     - Nikon NEF
     - Olympus ORF: E-300, E-500
     - Pentax PEF
+    - Epson ERF
     - DNG
     - Sony ARW
 
@@ -138,8 +139,8 @@ FujiFilm RAF             N N N N
 
 Foveon X3F               N N N N
 
-Epson ERF                N N N N
- Epson RD1
+Epson ERF                Y Y N N
+ Epson RD1               T T
 
 Mamiya MEF               N N N N
  Mamiya ZD

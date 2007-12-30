@@ -114,6 +114,9 @@ public:
 			case OR_RAWFILE_TYPE_PEF:
 				return "Pentax PEF";
 				break;
+			case OR_RAWFILE_TYPE_ERF:
+				return "Epson ERF";
+				break;
 			default:
 				break;
 			}
