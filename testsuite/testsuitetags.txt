@@ -1,0 +1,7 @@
+testsuite
+test
+name
+file
+source
+results
+rawType

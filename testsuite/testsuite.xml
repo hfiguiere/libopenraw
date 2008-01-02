@@ -1,0 +1,10 @@
+<testsuite>
+  <test>
+    <name>CR2-test</name>
+    <file>/home/hub/samples/cr2/20D/img_0620.cr2</file>
+    <source></source>
+    <results>
+      <rawType>CR2</rawType>
+    </results>
+  </test>
+</testsuite>

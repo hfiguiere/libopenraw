@@ -1,0 +1,32 @@
+
+TESTS = test_xmlhandler testsuite
+TESTS_ENVIRONMENT =
+
+OPENRAW_LIB = $(top_builddir)/lib/libopenraw.la
+
+INCLUDES = \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/lib \
+	@LIBXML_CFLAGS@
+
+noinst_PROGRAMS = testsuite
+
+check_PROGRAMS = test_xmlhandler
+
+EXTRA_DIST = testsuitetags.pl testsuitetags.txt test.xml testsuite.xml
+BUILT_SOURCES = $(srcdir)/testsuitetags.cpp $(srcdir)/testsuitetags.h
+CLEANFILES = $(BUILT_SOURCES)
+
+test_xmlhandler_SOURCES = test_xmlhandler.cpp xmlhandler.cpp xmlhandler.h
+test_xmlhandler_LDADD = @LIBXML_LIBS@
+
+testsuite_SOURCES =  testsuitetags.cpp testsuitetags.h\
+	testsuite.cpp testsuitehandler.h testsuitehandler.cpp \
+	xmlhandler.cpp xmlhandler.h
+testsuite_LDADD = $(OPENRAW_LIB) @LIBXML_LIBS@
+
+$(srcdir)/testsuitetags.cpp: testsuitetags.pl testsuitetags.txt
+	$(srcdir)/testsuitetags.pl -cpp < $(srcdir)/testsuitetags.txt > $@
+
+$(srcdir)/testsuitetags.h: testsuitetags.pl testsuitetags.txt
+	$(srcdir)/testsuitetags.pl -h < $(srcdir)/testsuitetags.txt > $@

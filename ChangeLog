@@ -1,3 +1,8 @@
+2008-01-02  Hubert Figuiere  <hub@figuiere.net>
+
+	* testsuite/*, Makefile.am, configure.in: bootstrap the test 
+	suite including a new XML parser.
+
 2007-12-30  Hubert Figuiere  <hub@figuiere.net>
 
 	* README, include/libopenraw/consts.h, lib/Makefile.am,

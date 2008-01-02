@@ -1,0 +1,102 @@
+/*
+ * libopenraw - xmlhandler.cpp
+ *
+ * Copyright (C) 2008 Hubert Figuiere
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ */
+
+
+#include <string>
+
+#include <boost/test/minimal.hpp>
+
+#include "xmlhandler.h"
+
+enum {
+	XML_root = 1,
+	XML_foo = 2,
+	XML_bar = 3
+};
+
+static const xml::tag_map_definition_t tags[] = {
+	{ "root", XML_root },
+	{ "foo",  XML_foo },
+	{ "bar",  XML_bar },
+	{ 0,      0 }
+};
+
+class TestHandler 
+	: public xml::Handler
+{
+public:
+	TestHandler(const std::string & filename)
+		: xml::Handler(filename)
+		, rootFound(false)
+		{
+			mapTags(tags);
+		}
+
+	virtual xml::ContextPtr startElement(int32_t element)
+		{
+			xml::ContextPtr ctx;
+
+			switch(element) {
+			case XML_root:
+				rootFound = true;
+				break;
+			case XML_foo:
+				ctx.reset(new xml::SimpleElementContext(boost::static_pointer_cast<xml::Handler>(shared_from_this()),
+														foo));
+				break;
+			case XML_bar:
+				ctx.reset(new xml::SimpleElementContext(boost::static_pointer_cast<xml::Handler>(shared_from_this()),
+														bar));
+				break;
+			default:
+				break;
+			}
+			if(!ctx) {
+				ctx = shared_from_this();
+			}
+			return ctx;
+		}
+
+	bool        rootFound;
+	std::string foo;
+	std::string bar;
+};
+
+int test_main( int, char *[] )             // note the name!
+{
+	std::string dir;
+	const char * pdir = getenv("srcdir");
+	if(pdir == NULL) {
+		dir = ".";
+	}
+	else {
+		dir = pdir;
+	}
+
+	xml::HandlerPtr handler(new TestHandler(dir + "/test.xml"));
+	BOOST_CHECK(handler->process());
+	BOOST_CHECK(boost::static_pointer_cast<TestHandler>(handler)->rootFound);
+	BOOST_CHECK(boost::static_pointer_cast<TestHandler>(handler)->foo == "foo");
+	BOOST_CHECK(boost::static_pointer_cast<TestHandler>(handler)->bar == "bar");
+
+	return 0;
+}
+
+

@@ -31,3 +31,5 @@ demo/cfa
 demo/gdk
 lib/io/teststream
 test/ljpegtest
+testsuite/testsuitetags.h
+testsuite/testsuitetags.cpp

@@ -98,6 +98,7 @@ AC_LANG(C)
 AC_CHECK_HEADER(jpeglib.h, ,
 	AC_MSG_ERROR([jpeglib headers not found]))
 PKG_CHECK_MODULES(EXEMPI, exempi-2.0 >= $EXEMPI_REQUIRED)
+PKG_CHECK_MODULES(LIBXML, libxml-2.0 >= 2.5.0)
 
 #
 dnl do we want GNOME ?
@@ -165,6 +166,7 @@ doc/Makefile
 doc/Doxyfile
 doc/doxygen/Makefile
 test/Makefile
+testsuite/Makefile
 tools/Makefile
 demo/Makefile
 ])
