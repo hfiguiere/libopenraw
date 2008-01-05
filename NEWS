@@ -3,8 +3,9 @@ libopenraw 0.0.4
   - NEW: support for Epson ERF.
   - NEW: support getting the image orientation: CR2, CRW.
   - NEW: rawfile API.
+  - NEW: ordiag dump the thumbnail byte size.
   - BUG: missing include.
-  - BUG: fixed compiler warnings.
+  - BUG: fix compiler warnings.
   - BUG: fix some compile failures. bug #13717
   - BUG: fix crash on non-CIFF CRW file. bug #13393
   - BUG: gdk demo shouldn't be compiled without Gnome support. bug #13718
