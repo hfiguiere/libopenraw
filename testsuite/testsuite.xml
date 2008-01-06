@@ -1,6 +1,6 @@
 <testsuite>
   <test>
-    <name>CR2-test</name>
+    <name>CR2-test 20D</name>
     <file>/home/hub/samples/cr2/20D/img_0620.cr2</file>
     <source></source>
     <results>
@@ -13,6 +13,81 @@
       <rawDataSize>16973120</rawDataSize>
       <rawDataDimensions>3596 2360</rawDataDimensions>
       <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>NEF-test D100</name>
+    <file>/home/hub/samples/nef/D100/dsc_0007.nef</file>
+    <results>
+      <rawType>NEF</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>8RGB</thumbFormats>
+      <thumbDataSizes>57600</thumbDataSizes>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>9844736</rawDataSize>
+      <rawDataDimensions>3034 2024</rawDataDimensions>
+      <metaOrientation>0</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>ERF-test R-D1</name>
+    <file>/home/hub/samples/erf/Epson_RD1/_EPS1021.ERF</file>
+    <results>
+      <rawType>ERF</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>8RGB</thumbFormats>
+      <thumbDataSizes>57600</thumbDataSizes>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>9844736</rawDataSize>
+      <rawDataDimensions>3040 2024</rawDataDimensions>
+      <metaOrientation>0</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>PEF-test K10D</name>
+    <file>/home/hub/samples/pef/K10D/k10d.pef</file>
+    <results>
+      <rawType>PEF</rawType>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3872</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>6696 1254388</thumbDataSizes>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>8025398</rawDataSize>
+      <rawDataDimensions>3936 2624</rawDataDimensions>
+      <metaOrientation>0</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>DNG-test Leica DMR</name>
+    <file>/home/hub/samples/dng/leica_DMR/Dragonfly_L2110015.dng</file>
+    <results>
+      <rawType>DNG</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>310</thumbSizes>
+      <thumbFormats>8RGB</thumbFormats>
+      <thumbDataSizes>191580</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>20134656</rawDataSize>
+      <rawDataDimensions>3884 2592</rawDataDimensions>
+      <metaOrientation>0</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>ORF-test E300</name>
+    <file>/home/hub/samples/orf/Olympus_E300/P7080133.ORF</file>
+    <results>
+      <rawType>ORF</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>10614</thumbDataSizes>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>13461504</rawDataSize>
+      <rawDataDimensions>3360 2504</rawDataDimensions>
+      <metaOrientation>0</metaOrientation>
     </results>
   </test>
 </testsuite>

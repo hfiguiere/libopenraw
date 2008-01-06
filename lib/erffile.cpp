@@ -1,7 +1,7 @@
 /*
- * libopenraw - peffile.cpp
+ * libopenraw - erffile.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ namespace OpenRaw {
 		}
 
 		ERFFile::ERFFile(const char* _filename)
-			: IFDFile(_filename, OR_RAWFILE_TYPE_ERF)
+			: TiffEpFile(_filename, OR_RAWFILE_TYPE_ERF)
 		{
 		}
 
@@ -53,25 +53,16 @@ namespace OpenRaw {
 		{
 		}
 
+
 		::or_error ERFFile::_getRawData(RawData & data, uint32_t /*options*/)
 		{
 			::or_error err;
-			IFDDir::Ref dir = m_container->setDirectory(0);
-
-			std::vector<IFDDir::Ref> subdirs;
-			if (!dir->getSubIFDs(subdirs)) {
-				// error
-				return OR_ERROR_NOT_FOUND;
-			}
-			IFDDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
-													   subdirs.end(),
-													   IFDDir::isPrimary());
-			if (i != subdirs.end()) {
-				IFDDir::Ref subdir(*i);
-				err = _getRawDataFromDir(data, subdir);
+			m_cfaIfd = _locateCfaIfd();
+			if(m_cfaIfd) {
+				err = _getRawDataFromDir(data, m_cfaIfd);
 				if(err == OR_ERROR_NONE) {
 					uint16_t compression = 0;
-					subdir->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
+					m_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
 					switch(compression) {
 					case 1:
 						data.setDataType(OR_DATA_TYPE_CFA);

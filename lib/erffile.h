@@ -24,7 +24,7 @@
 #ifndef __ERFFILE_H_
 #define __ERFFILE_H_
 
-#include "ifdfile.h"
+#include "tiffepfile.h"
 
 namespace OpenRaw {
 
@@ -35,7 +35,7 @@ namespace OpenRaw {
 		class IFDFileContainer;
 
 		class ERFFile
-			: public IFDFile
+			: public TiffEpFile
 		{
 		public:
 			static RawFile *factory(const char* _filename);

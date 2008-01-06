@@ -24,7 +24,7 @@
 #ifndef __NEFFILE_H_
 #define __NEFFILE_H_
 
-#include "ifdfile.h"
+#include "tiffepfile.h"
 
 namespace OpenRaw {
 
@@ -35,14 +35,12 @@ namespace OpenRaw {
 		class IFDFileContainer;
 
 		class NEFFile
-			: public IFDFile
+			: public TiffEpFile
 		{
 		public:
 			static RawFile *factory(const char* _filename);
 			NEFFile(const char* _filename);
 			virtual ~NEFFile();
-
-		protected:
 
 		private:
 

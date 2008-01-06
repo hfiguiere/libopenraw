@@ -1,7 +1,7 @@
 /*
- * libopenraw - neffile.cpp
+ * libopenraw - tiffepfile.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,56 +18,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
+#include <vector>
 
-#include <iostream>
-#include <libopenraw++/thumbnail.h>
-#include <libopenraw++/rawdata.h>
-
-#include "debug.h"
-#include "ifd.h"
+#include "tiffepfile.h"
 #include "ifdfilecontainer.h"
-#include "ifddir.h"
-#include "ifdentry.h"
-#include "io/file.h"
-#include "neffile.h"
-
-using namespace Debug;
 
 namespace OpenRaw {
-
-
 	namespace Internals {
 
-		RawFile *NEFFile::factory(const char* _filename)
-		{
-			return new NEFFile(_filename);
-		}
-
-		NEFFile::NEFFile(const char* _filename)
-			: TiffEpFile(_filename, OR_RAWFILE_TYPE_NEF)
+		TiffEpFile::TiffEpFile(const char* _filename, Type _type)
+			: IFDFile(_filename, _type)
 		{
 		}
 
 
-		NEFFile::~NEFFile()
+		IFDDir::Ref  TiffEpFile::_locateCfaIfd()
 		{
-		}
-
-		::or_error NEFFile::_getRawData(RawData & data, uint32_t /*options*/)
-		{
-			::or_error ret = OR_ERROR_NONE;
-			m_cfaIfd = _locateCfaIfd();
-			Trace(DEBUG1) << "_getRawData()\n";
-
-			if(m_cfaIfd) {
-				ret = _getRawDataFromDir(data, m_cfaIfd);
+			if(!m_mainIfd) {
+				m_mainIfd = _locateMainIfd();
 			}
-			else {
-				ret = OR_ERROR_NOT_FOUND;
+
+			std::vector<IFDDir::Ref> subdirs;
+			if (!m_mainIfd || !m_mainIfd->getSubIFDs(subdirs)) {
+				// error
+				return IFDDir::Ref();
 			}
-			return ret;
+			IFDDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
+													   subdirs.end(),
+													   IFDDir::isPrimary());
+			if (i != subdirs.end()) {
+				return *i;
+			}
+			return IFDDir::Ref();
+		}
+
+		IFDDir::Ref  TiffEpFile::_locateMainIfd()
+		{
+			return m_container->setDirectory(0);
 		}
 
 	}
 }
-

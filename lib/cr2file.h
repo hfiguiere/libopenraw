@@ -41,7 +41,10 @@ namespace OpenRaw {
 			static RawFile *factory(const char* _filename);
 			CR2File(const char* _filename);
 			virtual ~CR2File();
-			
+
+		protected:
+			virtual IFDDir::Ref  _locateCfaIfd();
+			virtual IFDDir::Ref  _locateMainIfd();
 		private:
 			
 			CR2File(const CR2File&);

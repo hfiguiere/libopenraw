@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2007 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -64,7 +64,8 @@ namespace OpenRaw {
 		{
 
 		protected:
-			IFDFile(const char *_filename, Type _type);
+			IFDFile(const char *_filename, Type _type, 
+					bool instantiateContainer = true);
 			virtual ~IFDFile();
 
 			/** list the thumbnails in the IFD
@@ -80,7 +81,7 @@ namespace OpenRaw {
 			 * thumbnail are not found.
 			 */
 			virtual ::or_error _locateThumbnail(const IFDDir::Ref & dir,
-																		std::vector<uint32_t> &list);
+												std::vector<uint32_t> &list);
 			/** load the compressed rawdata from a standard location in an IFD
 			 * @param data the data storage
 			 * @param dir the IFD
@@ -92,6 +93,17 @@ namespace OpenRaw {
 			ThumbLocations    m_thumbLocations;
 			IO::Stream       *m_io; /**< the IO handle */
 			IFDFileContainer *m_container; /**< the real container */
+
+			virtual IFDDir::Ref  _locateCfaIfd() = 0;
+			virtual IFDDir::Ref  _locateMainIfd() = 0;
+			virtual IFDDir::Ref  _locateExifIfd();
+
+			IFDDir::Ref       m_cfaIfd;  /**< the IFD for the CFA */
+			IFDDir::Ref       m_mainIfd; /**< the IFD for the main image 
+										  * does not necessarily reference 
+										  * the CFA
+										  */
+			IFDDir::Ref       m_exifIfd; /**< the Exif IFD */
 
 		private:
 

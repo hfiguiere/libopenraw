@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,7 +48,7 @@ namespace OpenRaw {
 
 
 		DNGFile::DNGFile(const char* _filename)
-			: IFDFile(_filename, OR_RAWFILE_TYPE_DNG)
+			: TiffEpFile(_filename, OR_RAWFILE_TYPE_DNG)
 		{
 
 		}
@@ -60,32 +60,23 @@ namespace OpenRaw {
 		::or_error DNGFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
-			IFDDir::Ref dir = m_container->setDirectory(0);
+			if(!m_cfaIfd) {
+				m_cfaIfd = _locateCfaIfd();
+			}
 
 			Trace(DEBUG1) << "_getRawData()\n";
 
-			std::vector<IFDDir::Ref> subdirs;
-			if (!dir->getSubIFDs(subdirs)) {
-				// error
-				return OR_ERROR_NOT_FOUND;
-			}
-			
-			IFDDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
-																								 subdirs.end(),
-																								 IFDDir::isPrimary());
+			if (m_cfaIfd) {
+				ret = _getRawDataFromDir(data, m_cfaIfd);
 				
-			if (i != subdirs.end()) {
-				IFDDir::Ref subdir(*i);
-				ret = _getRawDataFromDir(data, subdir);
-
 				if(ret == OR_ERROR_NONE) {
 					uint16_t compression = 0;
-					if (subdir->getValue(IFD::EXIF_TAG_COMPRESSION, compression) &&
-							compression == 7) {
+					if (m_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression) &&
+						compression == 7) {
 						// if the option is not set, decompress
 						if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
 							boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
-																																data.size()));
+																			  data.size()));
 							s->open(); // TODO check success
 							boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
 							LJpegDecompressor decomp(s.get(), jfif.get());

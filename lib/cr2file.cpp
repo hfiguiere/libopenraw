@@ -57,49 +57,62 @@ namespace OpenRaw {
 		}
 
 
+		IFDDir::Ref  CR2File::_locateCfaIfd()
+		{
+			return m_container->setDirectory(3);
+		}
+
+		IFDDir::Ref  CR2File::_locateMainIfd()
+		{
+			return m_container->setDirectory(0);
+		}
+
 		::or_error CR2File::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
-			IFDDir::Ref dir = m_container->setDirectory(3);
+			if(!m_cfaIfd) {
+				m_cfaIfd = _locateCfaIfd();
+			}
+			if(!m_cfaIfd) {
+				Trace(DEBUG1) << "cfa IFD not found\n";
+				return OR_ERROR_NOT_FOUND;
+			}
 
 			Trace(DEBUG1) << "_getRawData()\n";
 			uint32_t offset = 0;
 			uint32_t byte_length = 0;
 			bool got_it;
-			got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+			got_it = m_cfaIfd->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
 			if(!got_it) {
 				Trace(DEBUG1) << "offset not found\n";
 				return OR_ERROR_NOT_FOUND;
 			}
-			got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+			got_it = m_cfaIfd->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
 			if(!got_it) {
 				Trace(DEBUG1) << "byte len not found\n";
 				return OR_ERROR_NOT_FOUND;
 			}
 			// get the "slicing", tag 0xc640 (3 SHORT)
 			std::vector<uint16_t> slices;
-			IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CR2_SLICE);
+			IFDEntry::Ref e = m_cfaIfd->getEntry(IFD::EXIF_TAG_CR2_SLICE);
 			if (e) {
 				e->getArray(slices);
 				Trace(DEBUG1) << "Found slice entry " << slices << "\n";
 			}
 
-			IFDDir::Ref dir0 = m_container->setDirectory(0);
-			if (dir0 == NULL) {
-				Trace(DEBUG1) << "Directory 0 not found\n";
-				return OR_ERROR_NOT_FOUND;
+			if(!m_exifIfd) {
+				m_exifIfd = _locateExifIfd();
 			}
-			IFDDir::Ref exif = dir0->getExifIFD();
-			if (exif != NULL) {
+			if (m_exifIfd) {
 				uint16_t x, y;
 				x = 0;
 				y = 0;
-				got_it = exif->getValue(IFD::EXIF_TAG_PIXEL_X_DIMENSION, x);
+				got_it = m_exifIfd->getValue(IFD::EXIF_TAG_PIXEL_X_DIMENSION, x);
 				if(!got_it) {
 					Trace(DEBUG1) << "X not found\n";
 					return OR_ERROR_NOT_FOUND;
 				}
-				got_it = exif->getValue(IFD::EXIF_TAG_PIXEL_Y_DIMENSION, y);
+				got_it = m_exifIfd->getValue(IFD::EXIF_TAG_PIXEL_Y_DIMENSION, y);
 				if(!got_it) {
 					Trace(DEBUG1) << "Y not found\n";
 					return OR_ERROR_NOT_FOUND;
@@ -107,18 +120,18 @@ namespace OpenRaw {
 				
 				void *p = data.allocData(byte_length);
 				size_t real_size = m_container->fetchData(p, offset, 
-																									byte_length);
+														  byte_length);
 				if (real_size < byte_length) {
 					Trace(WARNING) << "Size mismatch for data: ignoring.\n";
 				}
 				data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
 				data.setDimensions(x, y);
 				Trace(DEBUG1) << "In size is " << data.x() 
-											<< "x" << data.y() << "\n";
+							  << "x" << data.y() << "\n";
 				// decompress if we need
 				if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
 					boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
-																														data.size()));
+																	  data.size()));
 					s->open(); // TODO check success
 					boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
 					LJpegDecompressor decomp(s.get(), jfif.get());
@@ -135,6 +148,7 @@ namespace OpenRaw {
 				}
 			}
 			else {
+				Trace(ERROR) << "unable to find ExifIFD\n";
 				ret = OR_ERROR_NOT_FOUND;
 			}
 			return ret;
@@ -147,8 +161,14 @@ namespace OpenRaw {
 				Trace(DEBUG1) << "Exif meta value for " 
 							  << META_NS_MASKOUT(meta_index) << "\n";
 				uint16_t n = 0;
-				IFDDir::Ref dir = m_container->setDirectory(0);
-				bool got_it = dir->getValue(META_NS_MASKOUT(meta_index), n);
+				if(!m_mainIfd) {
+					m_mainIfd = _locateMainIfd();
+				}
+				if(!m_mainIfd) {
+					Trace(ERROR) << "unable to find main IFD\n";
+					return NULL;
+				}
+				bool got_it = m_mainIfd->getValue(META_NS_MASKOUT(meta_index), n);
 				if(got_it){
 					Trace(DEBUG1) << "found value\n";
 					val = new MetaValue(boost::any(static_cast<int32_t>(n)));

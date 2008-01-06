@@ -44,6 +44,8 @@ namespace OpenRaw {
 			virtual ~ORFFile();
 
 		protected:
+			virtual IFDDir::Ref  _locateCfaIfd();
+			virtual IFDDir::Ref  _locateMainIfd();
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 		private:

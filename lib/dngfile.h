@@ -24,7 +24,7 @@
 #ifndef __DNGFILE_H_
 #define __DNGFILE_H_
 
-#include "ifdfile.h"
+#include "tiffepfile.h"
 
 namespace OpenRaw {
 
@@ -35,7 +35,7 @@ namespace OpenRaw {
 		class IFDFileContainer;
 
 		class DNGFile
-			: public IFDFile
+			: public TiffEpFile
 		{
 		public:
 			static RawFile *factory(const char* _filename);

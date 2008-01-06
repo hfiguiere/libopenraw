@@ -50,6 +50,21 @@ namespace OpenRaw {
 		{
 		}
 
+		IFDDir::Ref  ARWFile::_locateCfaIfd()
+		{
+			// in ARW the CFA IFD is the main IFD
+			if(!m_mainIfd) {
+				m_mainIfd = _locateMainIfd();
+			}
+			return m_mainIfd;
+		}
+
+
+		IFDDir::Ref  ARWFile::_locateMainIfd()
+		{
+			return m_container->setDirectory(0);
+		}
+
 		::or_error ARWFile::_getRawData(RawData & /*data*/, uint32_t /*options*/) 
 		{ 
 			return OR_ERROR_NOT_FOUND; 

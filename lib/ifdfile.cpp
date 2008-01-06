@@ -42,13 +42,16 @@ namespace OpenRaw {
 	namespace Internals {
 
 
-		IFDFile::IFDFile(const char *_filename, Type _type)
+		IFDFile::IFDFile(const char *_filename, Type _type, 
+						 bool instantiateContainer)
 			: RawFile(_filename, _type),
 				m_thumbLocations(),
 				m_io(new IO::File(_filename)),
-				m_container(new IFDFileContainer(m_io, 0))
+				m_container(NULL)
 		{
-
+			if(instantiateContainer) {
+				m_container = new IFDFileContainer(m_io, 0);
+			}
 		}
 
 		IFDFile::~IFDFile()
@@ -56,6 +59,20 @@ namespace OpenRaw {
 			delete m_container;
 			delete m_io;
 		}
+
+		// this one seems to be pretty much the same for all the
+		// IFD based raw files
+		IFDDir::Ref  IFDFile::_locateExifIfd()
+		{
+			m_mainIfd = _locateMainIfd();
+			if (!m_mainIfd) {
+				Trace(ERROR) << "IFDFile::_locateExifIfd() "
+					"main IFD not found\n";
+				return IFDDir::Ref();
+			}
+			return m_mainIfd->getExifIFD();
+		}
+
 
 		::or_error IFDFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 		{

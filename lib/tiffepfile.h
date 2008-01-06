@@ -1,7 +1,7 @@
 /*
- * libopenraw - peffile.h
+ * libopenraw - tiffepfile.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2007-2008 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,43 +19,31 @@
  */
 
 
-
-
-#ifndef __PEFFILE_H_
-#define __PEFFILE_H_
+#ifndef _TIFF_EP_FILE_H_
+#define _TIFF_EP_FILE_H_
 
 #include "ifdfile.h"
 
+
 namespace OpenRaw {
-
-	class Thumbnail;
-
 	namespace Internals {
-		class IOFile;
-		class IFDFileContainer;
 
-		class PEFFile
+
+		/** This is for TIFF EP conformant files. This include DNG, NEF, 
+		 *  ERF */
+		class TiffEpFile
 			: public IFDFile
 		{
-		public:
-			static RawFile *factory(const char* _filename);
-			PEFFile(const char* _filename);
-			virtual ~PEFFile();
 
 		protected:
+			TiffEpFile(const char *_filename, Type _type);
+
 			virtual IFDDir::Ref  _locateCfaIfd();
 			virtual IFDDir::Ref  _locateMainIfd();
-		protected:
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-
-		private:
-
-			PEFFile(const PEFFile&);
-			PEFFile & operator=(const PEFFile &);
 
 		};
-	}
 
+	}
 }
 
 #endif

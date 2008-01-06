@@ -10,7 +10,7 @@ pkgconfig_DATA = libopenraw-1.0.pc
 noinst_HEADERS = or_debug.h \
 	debug.h	\
 	rawcontainer.h \
-	ifdfile.h \
+	ifdfile.h tiffepfile.h \
 	rawfilefactory.h \
 	cr2file.h \
 	neffile.h \
@@ -47,6 +47,7 @@ libopenraw_la_SOURCES = \
 	debug.cpp \
 	rawfile.cpp \
 	ifdfile.cpp \
+	tiffepfile.cpp \
 	rawfilefactory.cpp \
 	cr2file.cpp \
 	neffile.cpp \

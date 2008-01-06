@@ -42,21 +42,36 @@ namespace OpenRaw {
 
 
 		ORFFile::ORFFile(const char* _filename)
-			: IFDFile(_filename, OR_RAWFILE_TYPE_ORF)
+			: IFDFile(_filename, OR_RAWFILE_TYPE_ORF, false)
 		{
-			// FIXME this is hackish... find a way to override that better.
-			delete m_container;
-			m_container = new ORFContainer(m_io, 0);
+			 m_container = new ORFContainer(m_io, 0);
 		}
 		
 		ORFFile::~ORFFile()
 		{
 		}
 
+		IFDDir::Ref  ORFFile::_locateCfaIfd()
+		{
+			// in PEF the CFA IFD is the main IFD
+			if(!m_mainIfd) {
+				m_mainIfd = _locateMainIfd();
+			}
+			return m_mainIfd;
+		}
+
+
+		IFDDir::Ref  ORFFile::_locateMainIfd()
+		{
+			return m_container->setDirectory(0);
+		}
+
 		::or_error ORFFile::_getRawData(RawData & data, uint32_t /*options*/)
 		{
-			IFDDir::Ref dir = m_container->setDirectory(0);
-			return _getRawDataFromDir(data, dir);
+			if(!m_cfaIfd) {
+				m_cfaIfd = _locateCfaIfd();
+			}
+			return _getRawDataFromDir(data, m_cfaIfd);
 		}
 
 	}

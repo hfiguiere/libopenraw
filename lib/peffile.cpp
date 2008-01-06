@@ -53,14 +53,31 @@ namespace OpenRaw {
 		{
 		}
 
+		IFDDir::Ref  PEFFile::_locateCfaIfd()
+		{
+			// in PEF the CFA IFD is the main IFD
+			if(!m_mainIfd) {
+				m_mainIfd = _locateMainIfd();
+			}
+			return m_mainIfd;
+		}
+
+
+		IFDDir::Ref  PEFFile::_locateMainIfd()
+		{
+			return m_container->setDirectory(0);
+		}
+
 		::or_error PEFFile::_getRawData(RawData & data, uint32_t /*options*/)
 		{
 			::or_error err;
-			IFDDir::Ref dir = m_container->setDirectory(0);
-			err = _getRawDataFromDir(data, dir);
+			if(!m_cfaIfd) {
+				m_cfaIfd = _locateCfaIfd();
+			}
+			err = _getRawDataFromDir(data, m_cfaIfd);
 			if(err == OR_ERROR_NONE) {
 				uint16_t compression = 0;
-				dir->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
+				m_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
 				switch(compression) {
 				case 1:
 					data.setDataType(OR_DATA_TYPE_CFA);
