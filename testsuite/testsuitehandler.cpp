@@ -1,3 +1,22 @@
+/*
+ * libopenraw - testsuitehandler.cpp
+ *
+ * Copyright (C) 2008 Hubert Figuiere
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ */
 
 
 
@@ -9,10 +28,12 @@
 
 TestContext::TestContext(const xml::HandlerPtr & handler, Test::Ptr test)
 	: xml::Context(handler),
-	  m_test(test)
+	  m_test(test),
+	  m_results(false)
 {
 
 }
+
 
 xml::ContextPtr TestContext::startElement(int32_t element)
 {
@@ -30,6 +51,23 @@ xml::ContextPtr TestContext::startElement(int32_t element)
 		ctxt.reset(new xml::SimpleElementContext(m_handler, m_test->source()));
 		break;
 	case XML_results:
+		m_results = true;
+		break;
+	case XML_rawType:
+	case XML_thumbNum:
+	case XML_thumbSizes:
+	case XML_thumbFormats:
+	case XML_thumbDataSizes:
+	case XML_rawDataType:
+	case XML_rawDataSize:
+	case XML_rawDataDimensions:
+	case XML_metaOrientation:
+		// other tests...
+		if(m_results) {
+			std::string & s(m_test->results()[element]);
+			ctxt.reset(new xml::SimpleElementContext(m_handler, s));
+		}
+		break;
 	default: 
 		break;
 	}
@@ -40,6 +78,20 @@ xml::ContextPtr TestContext::startElement(int32_t element)
 	return ctxt;
 	
 }
+
+
+void TestContext::endElement(int32_t element)
+{
+	switch(element)
+	{
+	case XML_results:
+		m_results = false;
+		break;
+	default:
+		break;
+	}
+}
+
 
 
 TestSuiteHandler::TestSuiteHandler(const std::string & filename, TestSuite * ts)

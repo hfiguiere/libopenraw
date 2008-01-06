@@ -5,3 +5,12 @@ file
 source
 results
 rawType
+thumbNum
+thumbSizes
+thumbFormats
+thumbDataSizes
+rawDataType
+rawDataSize
+rawDataDimensions
+metaOrientation
+

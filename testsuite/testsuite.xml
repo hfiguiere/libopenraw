@@ -5,6 +5,14 @@
     <source></source>
     <results>
       <rawType>CR2</rawType>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>1536 160 384</thumbSizes>
+      <thumbFormats>8RGB JPEG 8RGB</thumbFormats>
+      <thumbDataSizes>377981 7239 294912</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>16973120</rawDataSize>
+      <rawDataDimensions>3596 2360</rawDataDimensions>
+      <metaOrientation>1</metaOrientation>
     </results>
   </test>
 </testsuite>

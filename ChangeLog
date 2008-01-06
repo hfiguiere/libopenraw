@@ -1,5 +1,7 @@
 2008-01-05  Hubert Figuiere  <hub@figuiere.net>
 
+	* testsuite/*: Working testsuite.
+	
 	* tools/ordiag.cpp: Display the thumbnail byte size.
 
 2008-01-02  Hubert Figuiere  <hub@figuiere.net>

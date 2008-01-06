@@ -19,7 +19,6 @@
  */
 
 
-
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -28,14 +27,335 @@
 #include <string>
 #include <vector>
 #include <stack>
+#include <numeric>
 #include <boost/shared_ptr.hpp>
+#include <boost/bind.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+
+#include <libopenraw++/rawfile.h>
+#include <libopenraw++/rawdata.h>
+#include <libopenraw++/thumbnail.h>
+#include <libopenraw++/bitmapdata.h>
 
 #include "xmlhandler.h"
 #include "testsuite.h"
 #include "testsuitehandler.h"
+#include "testsuitetags.h"
+
+using OpenRaw::RawFile;
+using OpenRaw::BitmapData;
+using OpenRaw::RawData;
+using OpenRaw::Thumbnail;
+
+
+#define RETURN_TEST(test,expected)				\
+	{											\
+		bool _success = (test);					\
+		if(!_success) {											\
+			fprintf(stderr, "FAILED: %s on '%s', expected '%s'\n",	\
+					__FUNCTION__, #test, expected.c_str());		\
+		}														\
+		return _success;										\
+	}
+
+#define RETURN_FAIL(message,expected)			\
+	{											\
+		fprintf(stderr, "FAILURE: %s with '%s', expected '%s'\n",	\
+				__FUNCTION__, message, expected.c_str());		\
+		return false;											\
+	}
+
+static bool equalDataType(const std::string & result, BitmapData::DataType t)
+{
+	bool equal = false;
+	switch(t) {
+	case OR_DATA_TYPE_PIXMAP_8RGB:
+		equal = (result == "8RGB");
+		break;
+	case OR_DATA_TYPE_JPEG:
+		equal = (result == "JPEG");
+		break;
+	case OR_DATA_TYPE_TIFF:
+		equal = (result == "TIFF");
+		break;
+	case OR_DATA_TYPE_PNG:
+		equal = (result == "PNG");
+		break;
+	case OR_DATA_TYPE_CFA:
+		equal = (result == "CFA");
+		break;
+	case OR_DATA_TYPE_COMPRESSED_CFA:
+		equal = (result == "COMP_CFA");
+		break;
+	default:
+		break;
+	}
+	return equal;
+}
+
 
 Test::Test()
+	: m_rawfile(NULL),
+	  m_rawdata(NULL),
+	  m_total(0), m_success(0), m_failure(0)
 {
+}
+
+Test::~Test()
+{
+	delete m_rawfile;
+	delete m_rawdata;
+}
+
+bool Test::testRawType(const std::string & result)
+{
+	bool success = false;
+	RawFile::Type t = m_rawfile->type();
+	switch(t) {
+	case OR_RAWFILE_TYPE_CR2:
+		RETURN_TEST(result == "CR2", result);
+		break;
+	case OR_RAWFILE_TYPE_CRW:
+		RETURN_TEST(result == "CRW", result);
+		break;
+	case OR_RAWFILE_TYPE_NEF:
+		RETURN_TEST(result == "NEF", result);
+		break;
+	case OR_RAWFILE_TYPE_MRW:
+		RETURN_TEST(result == "MRW", result);
+		break;
+	case OR_RAWFILE_TYPE_ARW:
+		RETURN_TEST(result == "ARW", result);
+		break;
+	case OR_RAWFILE_TYPE_DNG:
+		RETURN_TEST(result == "DNG", result);
+		break;
+	case OR_RAWFILE_TYPE_ORF:
+		RETURN_TEST(result == "ORF", result);
+		break;
+	case OR_RAWFILE_TYPE_PEF:
+		RETURN_TEST(result == "PEF", result);
+		break;
+	case OR_RAWFILE_TYPE_ERF:
+		RETURN_TEST(result == "ERF", result);
+		break;
+	default:
+		break;
+	}
+	return success;
+}
+
+
+bool Test::testThumbNum(const std::string & result)
+{
+	const std::vector<uint32_t> & thumbs = m_rawfile->listThumbnailSizes();
+	int num = thumbs.size();
+	try {
+		RETURN_TEST(num == boost::lexical_cast<int>(result), result);
+	}
+	catch(...)
+	{
+	}
+	RETURN_FAIL("conversion failed", result);
+}
+
+bool Test::testThumbSizes(const std::string & result)
+{
+	std::vector<uint32_t> thumbs = m_rawfile->listThumbnailSizes();
+	std::vector< std::string > v;
+	boost::split(v, result, boost::is_any_of(" "));
+	if(v.size() != thumbs.size()) {
+		RETURN_FAIL("mismatch number of elements", result);
+	}
+	std::vector<uint32_t> v2;
+	for(std::vector< std::string >::iterator iter = v.begin();
+		iter != v.end(); iter++) 
+	{
+		try {
+			v2.push_back(boost::lexical_cast<uint32_t>(*iter));
+		}
+		catch(...)
+		{
+			RETURN_FAIL("conversion failed", result);
+		}
+	}
+	RETURN_TEST(std::equal(thumbs.begin(), thumbs.end(), v2.begin()), result);
+}
+
+bool Test::testThumbFormats(const std::string & result)
+{
+	bool success = true;
+	std::vector<uint32_t> thumbs = m_rawfile->listThumbnailSizes();
+	std::vector< std::string > v;
+	boost::split(v, result, boost::is_any_of(" "));
+	std::vector< std::string >::iterator result_iter = v.begin();
+	if(v.size() != thumbs.size()) {
+		RETURN_FAIL("mismatch number of elements", result);
+	}
+	for(std::vector<uint32_t>::iterator thumbs_iter = thumbs.begin();
+		thumbs_iter != thumbs.end(); thumbs_iter++, result_iter++) 
+	{
+		Thumbnail t;
+		m_rawfile->getThumbnail(*thumbs_iter, t);
+		success &= equalDataType(*result_iter, t.dataType());
+	}
+	return success;
+}
+
+bool Test::testThumbDataSizes(const std::string & result)
+{
+	bool success = true;
+	std::vector<uint32_t> thumbs = m_rawfile->listThumbnailSizes();
+	std::vector< std::string > v;
+	boost::split(v, result, boost::is_any_of(" "));
+	std::vector< std::string >::iterator result_iter = v.begin();
+	if(v.size() != thumbs.size()) {
+		RETURN_FAIL("mismatch number of elements", result);
+	}
+	for(std::vector<uint32_t>::iterator thumbs_iter = thumbs.begin();
+		thumbs_iter != thumbs.end(); thumbs_iter++, result_iter++) 
+	{
+		Thumbnail t;
+		m_rawfile->getThumbnail(*thumbs_iter, t);
+		try {
+			success &= (boost::lexical_cast<uint32_t>(*result_iter) == t.size());
+		}
+		catch(...) {
+			RETURN_FAIL("conversion failed", result);
+		}
+	}
+	return success;
+}
+
+bool Test::testRawDataType(const std::string & result)
+{
+	if(m_rawdata == NULL) {
+		m_rawdata = new RawData();
+		::or_error err;
+		err = m_rawfile->getRawData(*m_rawdata, OR_OPTIONS_NONE);
+		if(OR_ERROR_NONE != err) {
+			delete m_rawdata; 
+			m_rawdata = NULL;
+			RETURN_FAIL("failed to get rawData", result);
+		}
+	}
+	RETURN_TEST(equalDataType(result, m_rawdata->dataType()), result);
+}
+
+
+bool Test::testRawDataSize(const std::string & result)
+{
+	if(m_rawdata == NULL) {
+		m_rawdata = new RawData();
+		::or_error err;
+		err = m_rawfile->getRawData(*m_rawdata, OR_OPTIONS_NONE);
+		if(OR_ERROR_NONE != err) {
+			delete m_rawdata; 
+			m_rawdata = NULL;
+			RETURN_FAIL("failed to get rawData", result);
+		}
+	}
+	try {
+		RETURN_TEST(boost::lexical_cast<uint32_t>(result) == m_rawdata->size(),
+					result);
+	}
+	catch(...) {
+	}
+	RETURN_FAIL("conversion failed", result);		
+}
+
+bool Test::testRawDataDimensions(const std::string & result)
+{
+	if(m_rawdata == NULL) {
+		m_rawdata = new RawData();
+		::or_error err;
+		err = m_rawfile->getRawData(*m_rawdata, OR_OPTIONS_NONE);
+		if(OR_ERROR_NONE != err) {
+			delete m_rawdata; 
+			m_rawdata = NULL;
+			RETURN_FAIL("failed to get rawData", result);
+		}
+	}
+	std::vector< std::string > v;
+	boost::split(v, result, boost::is_any_of(" "));
+	if(v.size() != 2) {
+		RETURN_FAIL("mismatch number of elements from expected result", result);
+	}
+	uint32_t x, y;
+	try {
+		x = boost::lexical_cast<uint32_t>(v[0]);
+		y = boost::lexical_cast<uint32_t>(v[1]);
+	}
+	catch(...)
+	{
+		RETURN_FAIL("conversion failed", result);
+	}
+	RETURN_TEST(x == m_rawdata->x() && y == m_rawdata->y(), result)
+}
+
+
+bool Test::testMetaOrientation(const std::string & result)
+{
+	int32_t orientation = m_rawfile->getOrientation();
+	RETURN_TEST(orientation == boost::lexical_cast<int32_t>(result), result);
+}
+
+
+int Test::run()
+{
+	// load rawfile
+	fprintf(stderr, "running test %s on file %s\n", m_name.c_str(),
+			m_file.c_str());
+	m_rawfile = RawFile::newRawFile(m_file.c_str());
+
+	std::map<int, std::string>::const_iterator iter;
+	for(iter = m_results.begin(); iter != m_results.end(); iter++) {
+		bool pass = false;
+		switch(iter->first)
+		{
+		case XML_rawType:
+			pass = testRawType(iter->second);
+			break;
+		case XML_thumbNum:
+			pass = testThumbNum(iter->second);
+			break;
+		case XML_thumbSizes:
+			pass = testThumbSizes(iter->second);
+			break;
+		case XML_thumbFormats:
+			pass = testThumbFormats(iter->second);
+			break;
+		case XML_thumbDataSizes:
+			pass = testThumbDataSizes(iter->second);
+			break;
+		case XML_rawDataType:
+			pass = testRawDataType(iter->second);
+			break;
+		case XML_rawDataSize:
+			pass = testRawDataSize(iter->second);
+			break;
+		case XML_rawDataDimensions:
+			pass = testRawDataDimensions(iter->second);
+			break;
+		case XML_metaOrientation:
+			pass = testMetaOrientation(iter->second);
+			break;
+		default:
+			break;
+		}
+		m_total++;
+		if(!pass) {
+			m_failure++;
+		}
+		else {
+			m_success++;
+		}
+	}
+	fprintf(stderr, "total %d, success %d, failure %d\n", m_total,
+		    m_success, m_failure);
+	return 0;
 }
 
 
@@ -44,7 +364,7 @@ TestSuite::TestSuite()
 }
 
 
-void TestSuite::add_test(Test::Ptr t)
+void TestSuite::add_test(const Test::Ptr & t)
 {
 	m_tests.push_back(t);
 }
@@ -61,6 +381,13 @@ int TestSuite::load_tests(const char * testsuite_file)
 	return !has_data;
 }
 
+int TestSuite::run_all()
+{
+	std::for_each(m_tests.begin(), m_tests.end(),
+				  boost::bind(&Test::run, _1));	
+	return 0;
+}
+
 int main(int argc, char ** argv)
 {
 	const char * srcdir = getenv("srcdir");
@@ -73,7 +400,7 @@ int main(int argc, char ** argv)
 
 	TestSuite testsuite;
 	testsuite.load_tests(testsuite_file.c_str());
-
+	testsuite.run_all();
 
 	return 0;
 }
