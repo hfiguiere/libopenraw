@@ -10,6 +10,7 @@ INCLUDES = \
 	@LIBXML_CFLAGS@
 
 noinst_PROGRAMS = testsuite
+noinst_HEADERS = testsuitetags.h
 
 check_PROGRAMS = test_xmlhandler
 
@@ -20,7 +21,7 @@ CLEANFILES = $(BUILT_SOURCES)
 test_xmlhandler_SOURCES = test_xmlhandler.cpp xmlhandler.cpp xmlhandler.h
 test_xmlhandler_LDADD = @LIBXML_LIBS@
 
-testsuite_SOURCES =  testsuitetags.cpp testsuitetags.h\
+testsuite_SOURCES =  testsuitetags.cpp \
 	testsuite.cpp testsuitehandler.h testsuitehandler.cpp \
 	xmlhandler.cpp xmlhandler.h
 testsuite_LDFLAGS = -static
