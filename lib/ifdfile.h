@@ -98,6 +98,8 @@ namespace OpenRaw {
 			virtual IFDDir::Ref  _locateMainIfd() = 0;
 			virtual IFDDir::Ref  _locateExifIfd();
 
+			virtual MetaValue *_getMetaValue(int32_t meta_index);
+
 			IFDDir::Ref       m_cfaIfd;  /**< the IFD for the CFA */
 			IFDDir::Ref       m_mainIfd; /**< the IFD for the main image 
 										  * does not necessarily reference 

@@ -35,11 +35,12 @@ typedef const struct _MetaValue *ORConstMetaValueRef;
 
 /** The meta data namespaces, 16 high bits of the index */
 enum {
-	META_NS_EXIF = (1 << 16)
+	META_NS_EXIF = (1 << 16),
+	META_NS_TIFF = (2 << 16)
 };
 
 #define META_NS_MASKOUT(x) (x & 0xffff)
-
+#define META_INDEX_MASKOUT(x) (x & (0xffff<<16))
 
 #ifdef __cplusplus
 }

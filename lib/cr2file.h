@@ -50,8 +50,7 @@ namespace OpenRaw {
 			CR2File(const CR2File&);
 			CR2File & operator=(const CR2File&);
 
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);			
-			virtual MetaValue *_getMetaValue(int32_t meta_index);
+			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 		};
 
 	}

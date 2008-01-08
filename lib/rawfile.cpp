@@ -254,7 +254,8 @@ namespace OpenRaw {
 	int32_t RawFile::getOrientation()
 	{
 		int32_t idx = 0;
-		const MetaValue * value = getMetaValue(META_NS_EXIF | EXIF_TAG_ORIENTATION);
+		const MetaValue * value = getMetaValue(META_NS_TIFF 
+											   | EXIF_TAG_ORIENTATION);
 		if(value == NULL) {
 			return 0;
 		}

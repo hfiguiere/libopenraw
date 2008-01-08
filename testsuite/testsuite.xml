@@ -31,6 +31,21 @@
     </results>
   </test>
   <test>
+    <name>NEF-test D70</name>
+    <file>/home/hub/samples/nef/D70/dsc_0113.nef</file>
+    <results>
+      <rawType>NEF</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>8RGB</thumbFormats>
+      <thumbDataSizes>57600</thumbDataSizes>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>4823649</rawDataSize>
+      <rawDataDimensions>3040 2014</rawDataDimensions>
+      <metaOrientation>8</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>ERF-test R-D1</name>
     <file>/home/hub/samples/erf/Epson_RD1/_EPS1021.ERF</file>
     <results>
@@ -42,7 +57,7 @@
       <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>9844736</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
-      <metaOrientation>0</metaOrientation>
+      <metaOrientation>1</metaOrientation>
     </results>
   </test>
   <test>
@@ -57,7 +72,22 @@
       <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>8025398</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
-      <metaOrientation>0</metaOrientation>
+      <metaOrientation>8</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>DNG-test K10D</name>
+    <file>/home/hub/samples/dng/K10D/k10d.dng</file>
+    <results>
+      <rawType>DNG</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>8RGB</thumbFormats>
+      <thumbDataSizes>57600</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>15492096</rawDataSize>
+      <rawDataDimensions>3936 2624</rawDataDimensions>
+      <metaOrientation>8</metaOrientation>
     </results>
   </test>
   <test>
@@ -72,7 +102,7 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>20134656</rawDataSize>
       <rawDataDimensions>3884 2592</rawDataDimensions>
-      <metaOrientation>0</metaOrientation>
+      <metaOrientation>1</metaOrientation>
     </results>
   </test>
   <test>
@@ -87,7 +117,19 @@
       <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>13461504</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
-      <metaOrientation>0</metaOrientation>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>ARW-test Sony A100</name>
+    <file>/home/hub/samples/arw/Sony-A100/DSC00028.ARW</file>
+    <results>
+      <rawType>ARW</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>3872</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>15915</thumbDataSizes>
+      <metaOrientation>8</metaOrientation>
     </results>
   </test>
 </testsuite>

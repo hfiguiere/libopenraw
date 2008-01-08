@@ -32,7 +32,6 @@
 #include "cr2file.h"
 #include "jfifcontainer.h"
 #include "ljpegdecompressor.h"
-#include "metavalue.h"
 #include "rawfilefactory.h"
 
 using namespace Debug;
@@ -154,28 +153,6 @@ namespace OpenRaw {
 			return ret;
 		}
 
-		MetaValue *CR2File::_getMetaValue(int32_t meta_index)
-		{
-			MetaValue * val = NULL;
-			if(meta_index & META_NS_EXIF) {
-				Trace(DEBUG1) << "Exif meta value for " 
-							  << META_NS_MASKOUT(meta_index) << "\n";
-				uint16_t n = 0;
-				if(!m_mainIfd) {
-					m_mainIfd = _locateMainIfd();
-				}
-				if(!m_mainIfd) {
-					Trace(ERROR) << "unable to find main IFD\n";
-					return NULL;
-				}
-				bool got_it = m_mainIfd->getValue(META_NS_MASKOUT(meta_index), n);
-				if(got_it){
-					Trace(DEBUG1) << "found value\n";
-					val = new MetaValue(boost::any(static_cast<int32_t>(n)));
-				}
-			}
-			return val;
-		}
 
 	}
 }

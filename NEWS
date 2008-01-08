@@ -1,9 +1,11 @@
 libopenraw 0.0.4
 
   - NEW: support for Epson ERF.
-  - NEW: support getting the image orientation: CR2, CRW.
+  - NEW: support getting the image orientation: CR2, CRW, PEF, NEF, ORF,
+    ARW, DNG.
   - NEW: rawfile API.
   - NEW: ordiag dump the thumbnail byte size.
+  - NEW: configurable testsuite (without sample files).
   - BUG: missing include.
   - BUG: fix compiler warnings.
   - BUG: fix some compile failures. bug #13717
