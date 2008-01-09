@@ -50,6 +50,18 @@ using OpenRaw::RawData;
 using OpenRaw::Thumbnail;
 
 
+#define RETURN_TEST_EQUALS(a,b,expected)			\
+	{											\
+		bool _success = (a == b);					\
+		if(!_success) {											\
+			fprintf(stderr, "FAILED: %s on equality. found %d , " \
+					"expected '%s'\n",	\
+					__FUNCTION__, a, expected.c_str());		\
+		}														\
+		return _success;										\
+	}
+
+
 #define RETURN_TEST(test,expected)				\
 	{											\
 		bool _success = (test);					\
@@ -299,7 +311,7 @@ bool Test::testRawDataDimensions(const std::string & result)
 bool Test::testMetaOrientation(const std::string & result)
 {
 	int32_t orientation = m_rawfile->getOrientation();
-	RETURN_TEST(orientation == boost::lexical_cast<int32_t>(result), result);
+	RETURN_TEST_EQUALS(orientation, boost::lexical_cast<int32_t>(result), result);
 }
 
 
@@ -397,6 +409,8 @@ int main(int argc, char ** argv)
 	std::string testsuite_file = srcdir;
 	testsuite_file += "/";
 	testsuite_file += (argv[1] ? argv[1] : "testsuite.xml");
+
+	or_debug_set_level(ERROR);
 
 	TestSuite testsuite;
 	testsuite.load_tests(testsuite_file.c_str());
