@@ -1,5 +1,5 @@
 
-TESTS = test_xmlhandler testsuite
+TESTS = test_xmlhandler
 TESTS_ENVIRONMENT =
 
 OPENRAW_LIB = $(top_builddir)/lib/libopenraw.la
@@ -21,7 +21,7 @@ CLEANFILES = $(BUILT_SOURCES)
 test_xmlhandler_SOURCES = test_xmlhandler.cpp xmlhandler.cpp xmlhandler.h
 test_xmlhandler_LDADD = @LIBXML_LIBS@
 
-testsuite_SOURCES =  testsuitetags.cpp \
+testsuite_SOURCES =  testsuitetags.cpp testsuite.h \
 	testsuite.cpp testsuitehandler.h testsuitehandler.cpp \
 	xmlhandler.cpp xmlhandler.h
 testsuite_LDFLAGS = -static
