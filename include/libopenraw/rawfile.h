@@ -32,7 +32,6 @@ extern "C" {
 #endif
 
 typedef struct _RawFile *ORRawFileRef;
-typedef struct _Xmp *XmpPtr;
 
 ORRawFileRef
 or_rawfile_new(const char* filename, or_rawfile_type type);
@@ -59,6 +58,7 @@ or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata,
 int32_t
 or_rawfile_get_orientation(ORRawFileRef rawfile);
 
+#if 0
 /** Get the metadata value
  * @param rawfile the RAW file object.
  * @param meta_index the index value which is NS | index
@@ -73,7 +73,9 @@ or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index);
  */
 XmpPtr
 or_rawfile_get_xmp(ORRawFileRef rawfile);
-	
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif

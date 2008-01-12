@@ -97,7 +97,7 @@ BOOST_BIND
 AC_LANG(C)
 AC_CHECK_HEADER(jpeglib.h, ,
 	AC_MSG_ERROR([jpeglib headers not found]))
-PKG_CHECK_MODULES(EXEMPI, exempi-2.0 >= $EXEMPI_REQUIRED)
+dnl PKG_CHECK_MODULES(EXEMPI, exempi-2.0 >= $EXEMPI_REQUIRED)
 PKG_CHECK_MODULES(LIBXML, libxml-2.0 >= 2.5.0)
 
 #

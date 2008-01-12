@@ -1,8 +1,7 @@
 
 
 
-INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/lib \
-	@EXEMPI_CFLAGS@
+INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/lib 
 
 noinst_LTLIBRARIES = libopenrawc.la
 

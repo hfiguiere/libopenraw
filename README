@@ -1,7 +1,7 @@
 Copyright
 =========
 
-libopenraw is Copyright (c) 2005-2007 Hubert Figuiere
+libopenraw is Copyright (c) 2005-2008 Hubert Figuiere
 It is licensed under LGPLv2.1 or later. See file COPYING.
 
 Prerequistes to build:
@@ -11,7 +11,7 @@ Prerequistes to build:
     - libboost 1.33.1 (Boost.Bind, Boost.Smart_pointer, 
       Boost.String, Boost.Any)
     - libjpeg
-    - exempi
+    - libxml > 2.5.0 (for the test suite)
 
 If building from the git tree you also need:
 
@@ -86,7 +86,9 @@ Nikon NEF                Y Y N Y
  D70                     T T   T
  Cooolpix 5700           T T
  D2H                     T T
+ D1
  D200
+ D300
  D40
  D40X
  D50
@@ -102,6 +104,7 @@ Olympus ORF              Y Y N Y
  E-410                   B T
  E-500                   T T 
  E-510                   B T
+ SP-350
  SP-510                  B B
  SP-550                  B B
 
@@ -115,6 +118,7 @@ Adobe DNG                Y Y N Y
 
 Sony ARW                 Y N N Y
  A-100                   T B   T
+ A-700
 
 Pentax PEF               Y Y N Y
  *-ist D                 T T X
@@ -126,8 +130,12 @@ Epson ERF                Y Y N Y
  Epson RD1               T T   T
 
 Minolta MRW              N N N N
- Maxxum_7D
+ Maxxum 7D
  Maxxum 5D
+ A1
+ A2
+ Dimage 7i
+ Dimage 7Hi
 
 Sony SRF                 N N N N
 
@@ -136,11 +144,36 @@ Sony SR2                 N N N N
 
 Kodak DCR                N N N N
 
+Kodak KDC                N N N N
+
 FujiFilm RAF             N N N N
  Finepix S3Pro
  Finepix S6500Fd
 
 Foveon X3F               N N N N
 
+Panasonic RAW            N N N N
+ Lumix FZ30
+ Lumix FZ50
+ Lumix FZ8
+ Lumix FZ18
+
 Mamiya MEF               N N N N
  Mamiya ZD
+
+
+Test suite
+==========
+
+There is a test suite driven by an XML file. It require you to provide
+your own RAW files and configure it.  testsuite/testsuite.xml is an
+example of valid XML configuration file that works on my local
+machine.
+
+TODO: most of these files have been downloaded off the
+internet. Enhance the testsuite to allow downloading the files off the
+internet prior to running.
+
+TODO2: provide a better description of the test file.
+
+TODO3: fix ordiag to allow outputting a test case in XML.

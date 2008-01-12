@@ -1,3 +1,7 @@
+2008-01-12  Hubert Figuiere  <hub@figuiere.net>
+
+	* Remove unused exempi dependency.
+
 2008-01-07  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/cr2file.{cpp,h}, lib/ifdfile.{cpp,h},
