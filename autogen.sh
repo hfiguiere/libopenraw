@@ -29,11 +29,11 @@ ACLOCAL=aclocal
 cd $topsrcdir
 
 rm -f autogen.err
+$LIBTOOLIZE --force
 $ACLOCAL -I m4 >> autogen.err 2>&1
 
-$AUTOMAKE --add-missing --copy --foreign 
-$LIBTOOLIZE --force
 autoheader --force
+$AUTOMAKE --add-missing --copy --foreign 
 $AUTOCONF
 
 cd $builddir

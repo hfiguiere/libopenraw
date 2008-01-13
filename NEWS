@@ -1,5 +1,6 @@
 libopenraw 0.0.5
 
+  - BUG: re-order commands in autogen.sh bug #14055
 
 libopenraw 0.0.4
 

@@ -1,3 +1,7 @@
+2008-01-13  Hubert Figuiere  <hub@figuiere.net>
+
+	* autogen.sh: re-order commands in autogens.sh (Closes bug #14055)
+
 ==== 0.0.4 ====
 
 2008-01-12  Hubert Figuiere  <hub@figuiere.net>
