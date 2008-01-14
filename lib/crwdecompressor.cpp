@@ -29,6 +29,7 @@
 */
 
 #include <assert.h>
+#include <string.h>
 #include <libopenraw++/rawdata.h>
 
 #include "crwdecompressor.h"
@@ -101,7 +102,7 @@ namespace OpenRaw {	namespace Internals {
 	1111111		0xff
  */
 	void CrwDecompressor::make_decoder(decode_t *dest, const uint8_t *source, 
-																				 int level)
+									   int level)
 	{
 		int i, next;
 		
@@ -113,17 +114,21 @@ namespace OpenRaw {	namespace Internals {
 /*
 	At what level should the next leaf appear?
 */
-		for (i=next=0; i <= m_leaf && next < 16; )
+		for (i=next=0; i <= m_leaf && next < 16; ) {
 			i += source[next++];
+		}
 		
-		if (i > m_leaf)
+		if (i > m_leaf) {
 			if (level < next) {		/* Are we there yet? */
 				dest->branch[0] = m_free;
 				make_decoder(m_free,source,level+1);
 				dest->branch[1] = m_free;
 				make_decoder(m_free,source,level+1);
-			} else
+			} 
+			else {
 				dest->leaf = source[16 + m_leaf++];
+			}
+		}
 	}
 	
 	void CrwDecompressor::init_tables(uint32_t table_idx)

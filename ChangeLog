@@ -1,5 +1,8 @@
 2008-01-13  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/crwdecompressor.cpp, testsuite/xmlhandler.cpp: Fix build on
+	openSUSE Factory.
+
 	* autogen.sh: re-order commands in autogens.sh (Closes bug #14055)
 
 ==== 0.0.4 ====
