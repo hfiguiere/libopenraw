@@ -147,6 +147,7 @@ namespace OpenRaw {
 			Trace(DEBUG1) << "_locateDirs()\n";
 			if (m_endian == ENDIAN_NULL) {
 				char buf[4];
+				m_file->seek(m_offset, SEEK_SET);
 				m_file->read(buf, 4);
 				m_endian = isMagicHeader(buf, 4);
 				if (m_endian == ENDIAN_NULL) {
@@ -154,7 +155,7 @@ namespace OpenRaw {
 					return false;
 				}
 			}
-			m_file->seek(4, SEEK_SET);
+			m_file->seek(m_offset + 4, SEEK_SET);
 			int32_t offset = 0;
 			readInt32(m_file, offset);
 			m_dirs.clear();
@@ -163,7 +164,9 @@ namespace OpenRaw {
 //					std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
 					Trace(DEBUG1) << "push offset =0x" << offset << "\n";
 
-					IFDDir::Ref dir(new IFDDir(offset,*this));
+					// we assume the offset is relative to the begining of
+					// the IFD.
+					IFDDir::Ref dir(new IFDDir(m_offset + offset,*this));
 					m_dirs.push_back(dir);
 
 //					std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);

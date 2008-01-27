@@ -1,3 +1,8 @@
+2008-01-26  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ifdfilecontainer.cpp: is the m_offset to create the IFDDir
+	and look up for the IFD. Needed by MRW and RAF (in the future).
+
 2008-01-13  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/crwdecompressor.cpp, testsuite/xmlhandler.cpp: Fix build on
