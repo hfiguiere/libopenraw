@@ -32,7 +32,8 @@ dnl  REVISION is set to 0, otherwise REVISION is incremented.
 dnl ---------------------------------------------------------------------------
 dnl version 0.0.3 is 3 2 0
 dnl version 0.0.4 is 4 3 0
-AC_SUBST([LIBOPENRAW_REVISION], [0])
+dnl version 0.0.5 is 4 3 1 
+AC_SUBST([LIBOPENRAW_REVISION], [1])
 AC_SUBST([LIBOPENRAW_AGE],      [3])
 AC_SUBST([LIBOPENRAW_CURRENT],  [4])
 AC_SUBST([LIBOPENRAW_CURRENT_MIN],

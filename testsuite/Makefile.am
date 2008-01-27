@@ -1,5 +1,5 @@
 
-TESTS = test_xmlhandler
+TESTS = test_xmlhandler testsuite
 TESTS_ENVIRONMENT =
 
 OPENRAW_LIB = $(top_builddir)/lib/libopenraw.la
