@@ -4,6 +4,7 @@ libopenraw 0.0.5
   - BUG: IFDFileContainer inside another container was
     failing because relative offsets were not used. Needed for
     formats like RAF and MRW.
+  - NEW: support for Minolta MRW from Dimage 5
 
 libopenraw 0.0.4
 

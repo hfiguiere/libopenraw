@@ -42,6 +42,7 @@
 #include "crwfile.h"
 #include "erffile.h"
 #include "dngfile.h"
+#include "mrwfile.h"
 #include "metavalue.h"
 #include "exception.h"
 
@@ -80,6 +81,9 @@ namespace OpenRaw {
 		static RawFileFactory fcterf(OR_RAWFILE_TYPE_ERF,
 									 &Internals::ERFFile::factory,
 									 "erf");
+		static RawFileFactory fctmrw(OR_RAWFILE_TYPE_MRW,
+									 &Internals::MRWFile::factory,
+									 "mrw");
 	}	
 
 	class RawFile::Private 

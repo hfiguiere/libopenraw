@@ -89,6 +89,20 @@ namespace OpenRaw {
 					return m_type;
 				}
 			
+			/** the count of items in the entry */
+			uint16_t count() const
+				{
+					return m_count;
+				}
+
+			/** the offset of the data. It can just be the value
+			 * if the entry is self contained.
+			 */
+			off_t offset()
+				{
+					return IFDTypeTrait<uint32_t>::get(*this, 0);
+				}
+
 			RawContainer::EndianType endian() const;
 
 		public:

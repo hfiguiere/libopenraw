@@ -69,6 +69,7 @@ namespace OpenRaw {
 					return m_endian;
 				}
 
+			bool readInt8(IO::Stream *f, int8_t & v);
 			bool readUInt8(IO::Stream *f, uint8_t & v);
 			/** Read an int16 following the m_endian set */
 			bool readInt16(IO::Stream *f, int16_t & v);

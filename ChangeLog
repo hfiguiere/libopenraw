@@ -1,3 +1,11 @@
+2008-02-02  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ifdentry.h: new accessors count() and offset().
+	* lib/rawcontainer.{h,cpp}: added readUInt8()
+	* lib/mrwcontainer.{h,cpp}, lib/mrwfile.{h,cpp}, lib/rawfile.cpp: 
+	MRW support
+	
+
 2008-01-26  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ifdfilecontainer.cpp: is the m_offset to create the IFDDir

@@ -33,6 +33,7 @@ Supported file format:
     - Epson ERF
     - DNG
     - Sony ARW
+    - Minolta MRW
 
 
 How to build:
@@ -129,13 +130,14 @@ Pentax PEF               Y Y N Y
 Epson ERF                Y Y N Y
  Epson RD1               T T   T
 
-Minolta MRW              N N N N
- Maxxum 7D
- Maxxum 5D
+Minolta MRW              Y Y N N
  A1
  A2
+ Dimage 5                Y Y X N
  Dimage 7i
  Dimage 7Hi
+ Maxxum 7D
+ Maxxum 5D
 
 Sony SRF                 N N N N
 

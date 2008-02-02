@@ -51,6 +51,21 @@ namespace OpenRaw {
 		}
 
 
+		bool RawContainer::readInt8(IO::Stream *f, int8_t & v)
+		{
+			unsigned char buf;
+			int s = f->read(&buf, 1);
+			if (s != 1) {
+				return false;
+			}
+			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
+			Trace(DEBUG1) << "read8 " << (int)buf	<< "\n";
+			v = buf;
+			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
+			Trace(DEBUG1) << "value = " << v << "\n";
+			return true;
+		}
+
 		bool RawContainer::readUInt8(IO::Stream *f, uint8_t & v)
 		{
 			unsigned char buf;
