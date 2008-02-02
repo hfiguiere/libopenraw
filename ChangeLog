@@ -1,10 +1,16 @@
 2008-02-02  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/mrwfile.cpp: Fix getting the makernote offset.
+	* lib/ifdentry.h: offset() is implemented properly.
+	Make get() less error prone: allow overriding the type
+	check as well as deal with undefined type.
+	* lib/ifdentry.cpp: Fix some warnings.
+	* lib/ifd.h: Forgot include protection.
+
 	* lib/ifdentry.h: new accessors count() and offset().
 	* lib/rawcontainer.{h,cpp}: added readUInt8()
 	* lib/mrwcontainer.{h,cpp}, lib/mrwfile.{h,cpp}, lib/rawfile.cpp: 
-	MRW support
-	
+	MRW support	
 
 2008-01-26  Hubert Figuiere  <hub@figuiere.net>
 

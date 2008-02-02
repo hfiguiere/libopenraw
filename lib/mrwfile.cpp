@@ -93,13 +93,17 @@ namespace OpenRaw {
 				return ret;
 			}
 
-			uint32_t off;
-			if (!dir->getValue(IFD::EXIF_TAG_MAKER_NOTE, off)) {
+			maker_ent = dir->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
+			if (!maker_ent) {
 				Trace(WARNING) << "maker note offset entry not found\n";
 				return ret;
 			}
+			uint32_t off = 0;
+			off = maker_ent->offset();
 
-			IFDDir::Ref ref(new IFDDir(mc->ttw->offset() + MRW::DataBlockHeaderLength + off, *m_container));
+			IFDDir::Ref ref(new IFDDir(mc->ttw->offset() + 
+									   MRW::DataBlockHeaderLength + off, 
+									   *m_container));
 			ref->load();
 			
 			thumb_ent = ref->getEntry(MRW::MRWTAG_THUMBNAIL);
@@ -114,10 +118,13 @@ namespace OpenRaw {
 
 			size_t length = thumb_ent->count();
 			void *p = thumbnail.allocData (length);
-			size_t fetched = m_container->fetchData (p, mc->ttw->offset() + MRW::DataBlockHeaderLength 
-													 + thumb_ent->offset(), length);
+			size_t fetched = m_container->fetchData(p, mc->ttw->offset() 
+													+ MRW::DataBlockHeaderLength 
+													+ thumb_ent->offset(), 
+													length);
 			if (fetched != length) {
-				Trace(WARNING) << "Unable to fetch all thumbnail data: " << fetched << " not " << length << " bytes\n";
+				Trace(WARNING) << "Unable to fetch all thumbnail data: " 
+							   << fetched << " not " << length << " bytes\n";
 			}
 			/* Need to patch first byte. */
 			((unsigned char *)p)[0] = 0xFF;

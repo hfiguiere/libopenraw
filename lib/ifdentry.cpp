@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,9 +37,9 @@ namespace OpenRaw {
 											 int32_t _count, uint32_t _data,
 											 IFDFileContainer &_container)
 			: m_id(_id), m_type(_type),				
-				m_count(_count), m_data(_data), 
-				m_loaded(false), m_dataptr(NULL), 
-				m_container(_container)
+			  m_count(_count), m_data(_data), 
+			  m_loaded(false), m_dataptr(NULL), 
+			  m_container(_container)
 		{
 		}
 
@@ -65,17 +65,17 @@ namespace OpenRaw {
 				success = true;
 			}
 			else {
-				off_t offset;
-				if (this->endian() == RawContainer::ENDIAN_LITTLE) {
-					offset = IFDTypeTrait<uint32_t>::EL((uint8_t*)&m_data);
+				off_t _offset;
+				if (endian() == RawContainer::ENDIAN_LITTLE) {
+					_offset = IFDTypeTrait<uint32_t>::EL((uint8_t*)&m_data);
 				}
 				else {
-					offset = IFDTypeTrait<uint32_t>::BE((uint8_t*)&m_data);
+					_offset = IFDTypeTrait<uint32_t>::BE((uint8_t*)&m_data);
 				}
 				m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
 				success = (m_container.fetchData(m_dataptr, 
-																				 offset, 
-																				 data_size) == data_size);
+												 _offset, 
+												 data_size) == data_size);
 			}
 			return success;
 		}

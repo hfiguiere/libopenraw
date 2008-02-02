@@ -121,6 +121,21 @@
     </results>
   </test>
   <test>
+    <name>MRW-test Dimage5</name>
+    <file>/home/hub/samples/mrw/Dimage5/test.mrw</file>
+    <results>
+      <rawType>MRW</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>640</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>34222</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>6348928</rawDataSize>
+      <rawDataDimensions>2056 1544</rawDataDimensions>
+      <metaOrientation>0</metaOrientation>
+    </results>    
+  </test>
+  <test>
     <name>ARW-test Sony A100</name>
     <file>/home/hub/samples/arw/Sony-A100/DSC00028.ARW</file>
     <results>

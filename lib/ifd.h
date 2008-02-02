@@ -26,6 +26,8 @@
  * @brief Define IFD values like fields ID and types
  */
 
+#ifndef __OPENRAW_IFD_H__
+#define __OPENRAW_IFD_H__
 
 namespace OpenRaw {
 	namespace Internals {
@@ -56,3 +58,5 @@ namespace OpenRaw {
 		}
 	}
 }
+
+#endif

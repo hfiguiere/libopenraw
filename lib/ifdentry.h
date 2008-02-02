@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@
 #include "exception.h"
 #include "endianutils.h"
 #include "rawcontainer.h"
+#include "ifd.h"
 
 namespace OpenRaw {
 	namespace Internals {
@@ -44,7 +45,7 @@ namespace OpenRaw {
 			static const size_t   size; /**< the storage size unit in IFD*/
 			static T EL(const uint8_t* d);
 			static T BE(const uint8_t* d);
-			static T get(IFDEntry & e, uint32_t idx = 0)
+			static T get(IFDEntry & e, uint32_t idx = 0, bool ignore_type = false)
 				throw (BadTypeException, OutOfRangeException, TooBigException);
 		};
 
@@ -80,8 +81,9 @@ namespace OpenRaw {
 			/** Ref (ie shared pointer) */
 			typedef boost::shared_ptr<IFDEntry> Ref;
 
-			IFDEntry(uint16_t _id, int16_t _type, int32_t _count, uint32_t _data,
-							 IFDFileContainer &_container);
+			IFDEntry(uint16_t _id, int16_t _type, int32_t _count, 
+					 uint32_t _data,
+					 IFDFileContainer &_container);
 			virtual ~IFDEntry();
 
 			int16_t type() const
@@ -100,7 +102,10 @@ namespace OpenRaw {
 			 */
 			off_t offset()
 				{
-					return IFDTypeTrait<uint32_t>::get(*this, 0);
+					if (endian() == RawContainer::ENDIAN_LITTLE) {
+						return IFDTypeTrait<uint32_t>::EL((uint8_t*)&m_data);
+					}
+					return IFDTypeTrait<uint32_t>::BE((uint8_t*)&m_data);
 				}
 
 			RawContainer::EndianType endian() const;
@@ -157,16 +162,20 @@ namespace OpenRaw {
 		/** get the value of type T
 		 * @param T the type of the value needed
 		 * @param idx the index, by default 0
+		 * @param ignore_type if true, don't check type. *DANGEROUS* Default is false.
 		 * @return the value
 		 * @throw BadTypeException in case of wrong typing.
 		 * @throw OutOfRangeException in case of subscript out of range
 		 */
 		template <typename T> 
-		T IFDTypeTrait<T>::get(IFDEntry & e, uint32_t idx)
+		T IFDTypeTrait<T>::get(IFDEntry & e, uint32_t idx, bool ignore_type)
 			throw (BadTypeException, OutOfRangeException, TooBigException)
 		{
-			if (e.m_type != IFDTypeTrait<T>::type) {
-				throw BadTypeException();
+			/* format undefined means that we don't check the type */
+			if(!ignore_type && (e.m_type != IFD::EXIF_FORMAT_UNDEFINED)) {
+				if (e.m_type != IFDTypeTrait<T>::type) {
+					throw BadTypeException();
+				}
 			}
 			if (idx + 1 > e.m_count) {
 				throw OutOfRangeException();
