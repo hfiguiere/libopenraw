@@ -25,6 +25,9 @@ Optional Gnome support
 Supported file format:
 ======================
 
+Here are the supported file formats. For details per-camera, see
+below:
+
     - Canon CR2
     - Canon CRW (not those coming from hacked firmware like A610)
     - Nikon NEF
@@ -133,9 +136,9 @@ Epson ERF                Y Y N Y
 Minolta MRW              Y Y N N
  A1
  A2
- Dimage 5                Y Y X N
- Dimage 7i
- Dimage 7Hi
+ Dimage 5                T T X X
+ Dimage 7i               T T X X
+ Dimage 7Hi              T T X X
  Maxxum 7D
  Maxxum 5D
 

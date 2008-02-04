@@ -118,8 +118,17 @@ namespace OpenRaw {
 					return m_error;
 				}
 
+			int exifOffsetCorrection() const
+				{
+					return m_exif_offset_correction;
+				}
+			void setExifOffsetCorrection(int corr)
+				{
+					m_exif_offset_correction = corr;
+				}
 		private:
 			int m_error;
+			int m_exif_offset_correction;
 
 			IFDDir::Ref m_current_dir;
 			std::vector<IFDDir::Ref> m_dirs;

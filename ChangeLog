@@ -1,3 +1,10 @@
+2008-02-03  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ifddir.cpp, lib/ifdfilecontainer.{cpp,h}:
+	Add hooks to set the Exif offset.
+	* lib/mrwcontainer.{cpp,h}, lib/mrwfile.cpp:
+	Add support for 7HI and 7i MRW files.
+
 2008-02-02  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/mrwfile.cpp: Fix getting the makernote offset.

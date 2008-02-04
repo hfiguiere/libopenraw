@@ -207,6 +207,9 @@ namespace OpenRaw {
 			uint32_t val_offset = 0;
 			success = getValue(IFD::EXIF_TAG_EXIF_IFD_POINTER, val_offset);
 			if (success) {
+				Trace(DEBUG1) << "Exif IFD offset (uncorrected) = " << val_offset 
+							 << "\n";
+				val_offset += m_container.exifOffsetCorrection();
 				Trace(DEBUG1) << "Exif IFD offset = " << val_offset << "\n";
 				Ref ref(new IFDDir(val_offset, m_container));
 				ref->load();

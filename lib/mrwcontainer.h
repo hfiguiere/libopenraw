@@ -200,7 +200,9 @@ namespace OpenRaw {
 
 			/* Known tags found in the Manufacturer's directory. */
 			enum {
-				MRWTAG_THUMBNAIL	= 0x0081   /* Offset to Thumbnail data (early cameras only). */
+				MRWTAG_THUMBNAIL	= 0x0081,   /* Offset to Thumbnail data (early cameras only). */
+				MRWTAG_THUMBNAIL_OFFSET = 0x0088,
+				MRWTAG_THUMBNAIL_LENGTH = 0x0089
 			};
 
 

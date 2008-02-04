@@ -36,17 +36,19 @@ namespace OpenRaw {
 				: m_start(start),
 				  m_container(_container)
 			{
-				Debug::Trace(DEBUG2) << "> DataBlock start == " << start << "\n";
+				Trace(DEBUG2) << "> DataBlock start == " << start << "\n";
 				if (m_container->fetchData (m_name, m_start, 4) != 4) {
 					// FIXME: Handle error
-					Debug::Trace(WARNING) << "  Error reading block name " << start << "\n";
+					Trace(WARNING) << "  Error reading block name " << start << "\n";
 				}
 				if (!m_container->readInt32 (m_container->file(), m_length)) {
 					// FIXME: Handle error
-					Debug::Trace(WARNING) << "  Error reading block length " << start << "\n";
+					Trace(WARNING) << "  Error reading block length " << start << "\n";
 				}
-				Debug::Trace(DEBUG1) << "  DataBlock " << name() << ", length " << m_length << " at " << m_start << "\n";
-				Debug::Trace(DEBUG2) << "< DataBlock\n";
+				Trace(DEBUG1) << "  DataBlock " << name() 
+							  << ", length " << m_length 
+							  << " at " << m_start << "\n";
+				Trace(DEBUG2) << "< DataBlock\n";
 			}
 
 			int8_t DataBlock::int8_val (off_t off)
@@ -164,6 +166,10 @@ namespace OpenRaw {
 			 * the TIFF data (the contents of the TTW data block), and seek there.
 			 */
 			m_offset = ttw->offset() + MRW::DataBlockHeaderLength;
+			if((version[2] != '7') || (version[3] != '3')) {
+				setExifOffsetCorrection(m_offset);
+				Trace(DEBUG1) << "setting correction to " << m_offset << "\n";
+			}
 			m_file->seek (m_offset, SEEK_SET);
 			Trace(DEBUG1) << "< MRWContainer\n";
 		}
@@ -171,8 +177,6 @@ namespace OpenRaw {
 
 		MRWContainer::~MRWContainer()
 		{
-			Trace(DEBUG1) << "> ~MRWContainer\n";
-			Trace(DEBUG1) << "< ~MRWContainer\n";
 		}
 
 
@@ -184,7 +188,8 @@ namespace OpenRaw {
 				return ENDIAN_NULL;
 			}
 
-			if ((p[0] == 0x00) && (p[1] == 'M') && (p[2] == 'R') && (p[3] == 'M')) {
+			if ((p[0] == 0x00) && (p[1] == 'M') && 
+				(p[2] == 'R') && (p[3] == 'M')) {
 
 				Trace(DEBUG1) << "Identified MRW file\n";
 

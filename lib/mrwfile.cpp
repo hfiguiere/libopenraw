@@ -87,7 +87,7 @@ namespace OpenRaw {
 			::or_error ret = OR_ERROR_NOT_FOUND;
 			MRWContainer *mc = (MRWContainer *)m_container;
 			
-			dir = MRWFile::_locateExifIfd();
+			dir = _locateExifIfd();
 			if (!dir) {
 				Trace(WARNING) << "EXIF dir not found\n";
 				return ret;
@@ -106,25 +106,37 @@ namespace OpenRaw {
 									   *m_container));
 			ref->load();
 			
+			size_t tnail_offset = 0;
+			size_t tnail_len = 0;
 			thumb_ent = ref->getEntry(MRW::MRWTAG_THUMBNAIL);
-			if (thumb_ent)
-				Trace(DEBUG1) << "thumbnail offset found, type == " << thumb_ent->type() 
-							  << " offset == " << thumb_ent->offset() << " count == " 
-							  << thumb_ent->count() << "\n";
-			else {
+			if (thumb_ent) {
+				tnail_offset = thumb_ent->offset();
+				tnail_len = thumb_ent->count();
+			}
+			else if(ref->getValue(MRW::MRWTAG_THUMBNAIL_OFFSET, tnail_offset)) {
+				if(!ref->getValue(MRW::MRWTAG_THUMBNAIL_LENGTH, tnail_len)) {
+					Trace(WARNING) << "thumbnail lenght entry not found\n";
+					return ret;
+				}
+			}
+			else 
+			{
 				Trace(WARNING) << "thumbnail offset entry not found\n";
 				return ret;
 			}
-
-			size_t length = thumb_ent->count();
-			void *p = thumbnail.allocData (length);
+			
+			Trace(DEBUG1) << "thumbnail offset found, "
+						  << " offset == " << tnail_offset  << " count == " 
+						  << tnail_len << "\n";
+			void *p = thumbnail.allocData (tnail_len);
 			size_t fetched = m_container->fetchData(p, mc->ttw->offset() 
 													+ MRW::DataBlockHeaderLength 
-													+ thumb_ent->offset(), 
-													length);
-			if (fetched != length) {
+													+ tnail_offset, 
+													tnail_len);
+			if (fetched != tnail_len) {
 				Trace(WARNING) << "Unable to fetch all thumbnail data: " 
-							   << fetched << " not " << length << " bytes\n";
+							   << fetched << " not " << tnail_len 
+							   << " bytes\n";
 			}
 			/* Need to patch first byte. */
 			((unsigned char *)p)[0] = 0xFF;

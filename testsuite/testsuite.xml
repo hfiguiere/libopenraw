@@ -136,6 +136,36 @@
     </results>    
   </test>
   <test>
+    <name>MRW-test Dimage7i</name>
+    <file>/home/hub/samples/mrw/Dimage7i/RAW_MINOLTA_DIMAGE_7I.MRW</file>
+    <results>
+      <rawType>MRW</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>640</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>56306</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>9902208</rawDataSize>
+      <rawDataDimensions>2568 1928</rawDataDimensions>
+      <metaOrientation>0</metaOrientation>
+    </results>    
+  </test>
+  <test>
+    <name>MRW-test Dimage7hi</name>
+    <file>/home/hub/samples/mrw/Dimage7HI/minolta-dimage7hi.mrw</file>
+    <results>
+      <rawType>MRW</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>640</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>67497</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>9902208</rawDataSize>
+      <rawDataDimensions>2568 1928</rawDataDimensions>
+      <metaOrientation>0</metaOrientation>
+    </results>    
+  </test>
+  <test>
     <name>ARW-test Sony A100</name>
     <file>/home/hub/samples/arw/Sony-A100/DSC00028.ARW</file>
     <results>
