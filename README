@@ -134,13 +134,13 @@ Epson ERF                Y Y N Y
  Epson RD1               T T   T
 
 Minolta MRW              Y Y N N
- A1
- A2
+ A1                      T T B X
+ A2                      T T B X
  Dimage 5                T T X X
  Dimage 7i               T T X X
  Dimage 7Hi              T T X X
- Maxxum 7D
- Maxxum 5D
+ Maxxum 5D               T T B N
+ Maxxum 7D               T T B N
 
 Sony SRF                 N N N N
 

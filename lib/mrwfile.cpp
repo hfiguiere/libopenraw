@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006,2008 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software; you can redistribute it and/or
@@ -21,6 +21,7 @@
 
 
 #include <iostream>
+#include <boost/scoped_array.hpp>
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
@@ -146,7 +147,44 @@ namespace OpenRaw {
 			return OR_ERROR_NONE;
 		}
 
-		::or_error MRWFile::_getRawData(RawData & data, uint32_t /*options*/) 
+		/* TODO move out */
+		static size_t unpack_12to16(uint8_t *dest, size_t outsize, 
+									const uint8_t *src, size_t insize) 
+		{
+			size_t inleft = insize;
+			size_t outleft = outsize;
+			do {
+				if(inleft && outleft) {
+					*dest = (*src & 0xf0) >> 4;
+					outleft--; dest++;
+					if(outleft) {
+						*dest = (*src & 0x0f) << 4;
+						inleft--; src++;
+					}
+				}
+				if(inleft && outleft) {
+					*dest |= (*src & 0xf0) >> 4;
+					outleft--; dest++;
+					*dest = (*src & 0x0f);
+					if(outleft) {
+						inleft--; src++;
+						outleft--; dest++;		
+					}
+				}
+				if(inleft && outleft) {
+					*dest = *src;
+					inleft--; src++;
+					outleft--; dest++;
+				}
+			} while(inleft && outleft);
+			if(inleft) {
+				Trace(DEBUG1) << "left " << inleft << " at the end.\n";
+			}
+			return outsize - outleft;
+		}
+
+
+		::or_error MRWFile::_getRawData(RawData & data, uint32_t options) 
 		{ 
 			MRWContainer *mc = (MRWContainer *)m_container;
 
@@ -154,18 +192,59 @@ namespace OpenRaw {
 			uint16_t y = mc->prd->uint16_val (MRW::PRD_SENSOR_LENGTH);
 			uint16_t x = mc->prd->uint16_val (MRW::PRD_SENSOR_WIDTH);
 
+			bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE) == 0x59);
 			/* Allocate space for and retrieve pixel data.
 			 * Currently only for cameras that don't compress pixel data.
 			 */
-			uint32_t datalen = 2 * x * y;
-			void *p = data.allocData (datalen);
-			size_t fetched = m_container->fetchData (p, mc->pixelDataOffset(), datalen);
+			/* Set pixel array parameters. */
+			uint32_t finaldatalen = 2 * x * y;
+			uint32_t datalen =
+				(is_compressed ? x * y + ((x * y) >> 1) : finaldatalen);
+
+			if(options & OR_OPTIONS_DONT_DECOMPRESS) {
+				finaldatalen = datalen;
+			}
+			if(is_compressed && (options & OR_OPTIONS_DONT_DECOMPRESS)) {
+				data.setDataType (OR_DATA_TYPE_COMPRESSED_CFA);
+			}
+			else {
+				data.setDataType (OR_DATA_TYPE_CFA);
+			}
+			Trace(DEBUG1) << "datalen = " << datalen <<
+				" final datalen = " << finaldatalen << "\n";
+			void *p = data.allocData(finaldatalen);
+			size_t fetched = 0;
+			off_t offset = mc->pixelDataOffset();
+			if(!is_compressed || (options & OR_OPTIONS_DONT_DECOMPRESS)) {
+				fetched = m_container->fetchData (p, offset, datalen);
+			}
+			else {
+				const off_t blocksize = 128*1024;
+				boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
+				uint8_t * outdata = (uint8_t*)data.data();
+				size_t outleft = finaldatalen;
+				size_t got;
+				do {
+					got = m_container->fetchData (block.get(), 
+												  offset, blocksize);
+					fetched += got;
+					offset += got;
+					Trace(DEBUG2) << "got " << got << "\n";
+					if(got) {
+						size_t out = unpack_12to16(outdata, outleft, 
+												   block.get(), got);
+						outdata += out;
+						outleft -= out;
+						Trace(DEBUG2) << "unpacked " << out
+									  << " bytes from " << got << "\n";
+					}
+				} while((got != 0) && (fetched < datalen));
+			}
 			if (fetched < datalen) {
-				Trace(WARNING) << "Unable to fetch all required data: continuing anyway.\n";
+				Trace(WARNING) << "Fetched only " << fetched <<
+					" of " << datalen << ": continuing anyway.\n";
 			}
 
-			/* Set pixel array parameters. */
-			data.setDataType (OR_DATA_TYPE_CFA);
 			data.setDimensions (x, y);
 
 			return OR_ERROR_NONE; 

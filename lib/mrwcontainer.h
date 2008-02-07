@@ -121,7 +121,7 @@ namespace OpenRaw {
 
 			enum {
 				STORAGE_TYPE_UNPACKED	= 0x52,	/* Unpacked storage (D5, D7xx) */
-				STORAGE_TYPE_PACKED	= 0x59 	/* Packed storage (A1, A2) */
+				STORAGE_TYPE_PACKED	= 0x59 	/* Packed storage (A1, A2, Maxxum/Dynax) */
 			};
 
 			enum {
