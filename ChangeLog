@@ -1,9 +1,13 @@
+2008-02-11  Hubert Figuiere  <hub@figuiere.net>
+
+	* Kill CMake support for good.
+
 2008-02-07  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/mrwcontainer.h, lib/mrwfile.cpp, README:
 	Extract and unpack RAW for Minolta A1, A2, 5D and 7D.
 	(still with a bug)
-
+	
 2008-02-03  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ifddir.cpp, lib/ifdfilecontainer.{cpp,h}:
