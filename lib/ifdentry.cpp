@@ -62,6 +62,7 @@ namespace OpenRaw {
 			bool success = false;
 			size_t data_size = unit_size * m_count;
 			if (data_size <= 4) {
+				m_dataptr = NULL;
 				success = true;
 			}
 			else {
@@ -79,6 +80,11 @@ namespace OpenRaw {
 			}
 			return success;
 		}
+
+		template <>
+		const uint16_t IFDTypeTrait<uint8_t>::type = IFD::EXIF_FORMAT_BYTE;
+		template <>
+		const size_t IFDTypeTrait<uint8_t>::size = 1;
 
 		template <>
 		const uint16_t IFDTypeTrait<uint16_t>::type = IFD::EXIF_FORMAT_SHORT;

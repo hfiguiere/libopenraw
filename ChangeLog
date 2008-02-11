@@ -1,5 +1,9 @@
 2008-02-11  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdentry.{h,cpp}: fix a bug in get() where fetching
+	a locally stored array failed like array of bytes. Also
+	implement the type trait for BYTE.
+
 	* lib/unpack.{cpp,h}, lib/mrwfile.cpn, lib/Makefile.am: 
 	split off unpack.
 	* test/testunpack.cpp, lib/Makefile.am: test unpack

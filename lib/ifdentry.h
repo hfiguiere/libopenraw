@@ -51,6 +51,19 @@ namespace OpenRaw {
 
 
 		template <>
+		inline uint8_t IFDTypeTrait<uint8_t>::EL(const uint8_t* b)
+		{
+			return *b;
+		}
+
+		template <>
+		inline uint8_t IFDTypeTrait<uint8_t>::BE(const uint8_t* b)
+		{
+			return *b;
+		}
+
+
+		template <>
 		inline uint16_t IFDTypeTrait<uint16_t>::EL(const uint8_t* b)
 		{
 			return EL16(b);
@@ -191,8 +204,9 @@ namespace OpenRaw {
 				data = (uint8_t*)&e.m_data;
 			}
 			else {
-				data = e.m_dataptr + (IFDTypeTrait<T>::size * idx);
+				data = e.m_dataptr;
 			}
+			data += (IFDTypeTrait<T>::size * idx);
 			T val;
 			if (e.endian() == RawContainer::ENDIAN_LITTLE) {
 				val = IFDTypeTrait<T>::EL(data);
