@@ -1,5 +1,9 @@
 2008-02-11  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/unpack.{cpp,h}, lib/mrwfile.cpn, lib/Makefile.am: 
+	split off unpack.
+	* test/testunpack.cpp, lib/Makefile.am: test unpack
+
 	* Kill CMake support for good.
 
 2008-02-07  Hubert Figuiere  <hub@figuiere.net>

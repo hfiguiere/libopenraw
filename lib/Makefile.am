@@ -34,7 +34,8 @@ noinst_HEADERS = or_debug.h \
 	crwdecompressor.h \
 	exception.h \
 	endianutils.h \
-	metavalue.h
+	metavalue.h \
+	unpack.h
 
 lib_LTLIBRARIES = libopenraw.la
 
@@ -74,4 +75,5 @@ libopenraw_la_SOURCES = \
 	decompressor.cpp \
 	ljpegdecompressor.cpp \
 	crwdecompressor.cpp \
-	metavalue.cpp
+	metavalue.cpp \
+	unpack.cpp

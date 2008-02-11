@@ -32,6 +32,7 @@
 #include "mrwcontainer.h"
 #include "ifd.h"
 #include "mrwfile.h"
+#include "unpack.h"
 
 using namespace Debug;
 
@@ -147,42 +148,6 @@ namespace OpenRaw {
 			return OR_ERROR_NONE;
 		}
 
-		/* TODO move out */
-		static size_t unpack_12to16(uint8_t *dest, size_t outsize, 
-									const uint8_t *src, size_t insize) 
-		{
-			size_t inleft = insize;
-			size_t outleft = outsize;
-			do {
-				if(inleft && outleft) {
-					*dest = (*src & 0xf0) >> 4;
-					outleft--; dest++;
-					if(outleft) {
-						*dest = (*src & 0x0f) << 4;
-						inleft--; src++;
-					}
-				}
-				if(inleft && outleft) {
-					*dest |= (*src & 0xf0) >> 4;
-					outleft--; dest++;
-					*dest = (*src & 0x0f);
-					if(outleft) {
-						inleft--; src++;
-						outleft--; dest++;		
-					}
-				}
-				if(inleft && outleft) {
-					*dest = *src;
-					inleft--; src++;
-					outleft--; dest++;
-				}
-			} while(inleft && outleft);
-			if(inleft) {
-				Trace(DEBUG1) << "left " << inleft << " at the end.\n";
-			}
-			return outsize - outleft;
-		}
-
 
 		::or_error MRWFile::_getRawData(RawData & data, uint32_t options) 
 		{ 
@@ -191,7 +156,7 @@ namespace OpenRaw {
 			/* Obtain sensor dimensions from PRD block. */
 			uint16_t y = mc->prd->uint16_val (MRW::PRD_SENSOR_LENGTH);
 			uint16_t x = mc->prd->uint16_val (MRW::PRD_SENSOR_WIDTH);
-
+			
 			bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE) == 0x59);
 			/* Allocate space for and retrieve pixel data.
 			 * Currently only for cameras that don't compress pixel data.
@@ -225,6 +190,7 @@ namespace OpenRaw {
 				size_t outleft = finaldatalen;
 				size_t got;
 				do {
+					Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
 					got = m_container->fetchData (block.get(), 
 												  offset, blocksize);
 					fetched += got;
