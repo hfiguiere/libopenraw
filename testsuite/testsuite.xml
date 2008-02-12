@@ -35,6 +35,7 @@
   <test>
     <name>NEF-test D70</name>
     <file>/home/hub/samples/nef/D70/dsc_0113.nef</file>
+    <source>http://ufraw.sourceforge.net/dsc_0113.nef</source>
     <results>
       <rawType>NEF</rawType>
       <thumbNum>1</thumbNum>
@@ -51,6 +52,7 @@
   <test>
     <name>NEF-test Coolpix5700</name>
     <file>/home/hub/samples/nef/Coolpix5700/NIKON-COOLPIX5700.NEF</file>
+    <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/NIKON-COOLPIX5700.NEF</source>
     <results>
       <rawType>NEF</rawType>
       <thumbNum>1</thumbNum>
@@ -62,6 +64,39 @@
       <rawDataDimensions>3040 2014</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <metaOrientation>1</metaOrientation>      
+    </results>
+  </test>
+  <test>
+    <name>NEF-test D1</name>
+    <file>/home/hub/samples/nef/D1/DSC_0489.nef</file>
+    <source>http://www.steves-digicams.com/nikond1/samples/DSC_0489.nef</source>
+    <results>
+      <rawType>NEF</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>8RGB</thumbFormats>
+      <thumbDataSizes>57600</thumbDataSizes>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>60360</rawDataSize>
+      <rawDataDimensions>2012 1324</rawDataDimensions>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <metaOrientation>0</metaOrientation>            
+    </results>
+  </test>
+  <test>
+    <name>NEF-test D2H</name>
+    <file>/home/hub/samples/nef/D2H/ca-on-anime_north-2007-05-cf05-0100.nef</file>
+    <results>
+      <rawType>NEF</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>8RGB</thumbFormats>
+      <thumbDataSizes>57600</thumbDataSizes>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>3216375</rawDataSize>
+      <rawDataDimensions>2496 1648</rawDataDimensions>
+      <rawCfaPattern>GBRG</rawCfaPattern>
+      <metaOrientation>1</metaOrientation>            
     </results>
   </test>
   <test>
@@ -115,6 +150,7 @@
   <test>
     <name>DNG-test Leica DMR</name>
     <file>/home/hub/samples/dng/leica_DMR/Dragonfly_L2110015.dng</file>
+    <source></source>
     <results>
       <rawType>DNG</rawType>
       <thumbNum>1</thumbNum>
@@ -163,6 +199,7 @@
   <test>
     <name>MRW-test Dimage7i</name>
     <file>/home/hub/samples/mrw/Dimage7i/RAW_MINOLTA_DIMAGE_7I.MRW</file>
+    <source>http://www.rawsamples.ch/raws/minolta/7i/RAW_MINOLTA_DIMAGE_7I.MRW</source>
     <results>
       <rawType>MRW</rawType>
       <thumbNum>1</thumbNum>
@@ -179,6 +216,7 @@
   <test>
     <name>MRW-test Dimage7hi</name>
     <file>/home/hub/samples/mrw/Dimage7HI/minolta-dimage7hi.mrw</file>
+    <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/MINOLTA-DIMAGE7HI.MRW</source>
     <results>
       <rawType>MRW</rawType>
       <thumbNum>1</thumbNum>
@@ -195,6 +233,7 @@
   <test>
     <name>ARW-test Sony A100</name>
     <file>/home/hub/samples/arw/Sony-A100/DSC00028.ARW</file>
+    <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/VERTICAL/DSC00028.ARW</source>
     <results>
       <rawType>ARW</rawType>
       <thumbNum>1</thumbNum>

@@ -1,5 +1,7 @@
 2008-02-12  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* testsuite/testsuite.xml: Add more Nikon samples.
+
 	* testsuite/testsuite.{cpp,h}, testsuite/testsuitehandler.cpp,
 	testsuite/testsuitetags.txt, testsuite/testsuite.xml: add 
 	CFA Pattern test. Return failure if a test fail.
