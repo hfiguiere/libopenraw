@@ -210,7 +210,20 @@ namespace OpenRaw {
 				Trace(WARNING) << "Fetched only " << fetched <<
 					" of " << datalen << ": continuing anyway.\n";
 			}
-
+			uint16_t bpat = mc->prd->uint16_val (MRW::PRD_BAYER_PATTERN);
+			or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
+			switch(bpat) 
+			{
+			case 0x0001:
+				cfa_pattern = OR_CFA_PATTERN_RGGB;
+				break;
+			case 0x0004:
+				cfa_pattern = OR_CFA_PATTERN_GBRG;
+				break;
+			default:
+				break;
+			}
+			data.setCfaPattern(cfa_pattern);
 			data.setDimensions (x, y);
 
 			return OR_ERROR_NONE; 

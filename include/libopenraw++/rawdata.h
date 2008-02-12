@@ -34,10 +34,11 @@ namespace OpenRaw {
 		: public BitmapData
 	{
 	public:
+		typedef or_cfa_pattern CfaPattern;
 		static RawData * getAndExtractRawData(const char* filename, uint32_t options,
 																	 or_error & err);
 
-	  RawData();
+		RawData();
 		virtual ~RawData();
 
 		/** swap the two objects data. */
@@ -45,6 +46,8 @@ namespace OpenRaw {
 
 		virtual void *allocData(const size_t s);
 		virtual void setDimensions(uint32_t x, uint32_t y);
+		void setCfaPattern(CfaPattern t);
+		CfaPattern cfaPattern();
 
 		void setSlices(const std::vector<uint16_t> & slices);
 

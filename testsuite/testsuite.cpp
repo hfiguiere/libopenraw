@@ -2,6 +2,7 @@
  * libopenraw - testsuite.cpp
  *
  * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -78,6 +79,35 @@ using OpenRaw::Thumbnail;
 				__FUNCTION__, message, expected.c_str());		\
 		return false;											\
 	}
+
+static bool equalCfaPattern(const std::string & result, RawData::CfaPattern t)
+{
+	bool equal = false;
+	switch(t) {
+	case OR_CFA_PATTERN_NONE:
+		equal = (result == "NONE");
+		break;
+	case OR_CFA_PATTERN_NON_RGB22:
+		equal = (result == "NON_RGB22");
+		break;
+	case OR_CFA_PATTERN_RGGB:
+		equal = (result == "RGGB");
+		break;
+	case OR_CFA_PATTERN_GBRG:
+		equal = (result == "GBRG");
+		break;
+	case OR_CFA_PATTERN_BGGR:
+		equal = (result == "BGGR");
+		break;
+	case OR_CFA_PATTERN_GRBG:
+		equal = (result == "GRBG");
+		break;
+	default:
+		break;
+	}
+	return equal;
+}
+
 
 static bool equalDataType(const std::string & result, BitmapData::DataType t)
 {
@@ -308,6 +338,21 @@ bool Test::testRawDataDimensions(const std::string & result)
 }
 
 
+bool Test::testRawCfaPattern(const std::string & result)
+{
+	if(m_rawdata == NULL) {
+		m_rawdata = new RawData();
+		::or_error err;
+		err = m_rawfile->getRawData(*m_rawdata, OR_OPTIONS_NONE);
+		if(OR_ERROR_NONE != err) {
+			delete m_rawdata; 
+			m_rawdata = NULL;
+			RETURN_FAIL("failed to get rawData", result);
+		}
+	}
+	RETURN_TEST(equalCfaPattern(result, m_rawdata->cfaPattern()), result);
+}
+
 bool Test::testMetaOrientation(const std::string & result)
 {
 	int32_t orientation = m_rawfile->getOrientation();
@@ -315,6 +360,9 @@ bool Test::testMetaOrientation(const std::string & result)
 }
 
 
+/** run the test.
+ * @return the number of failures. 0 means success
+ */
 int Test::run()
 {
 	// load rawfile
@@ -351,10 +399,14 @@ int Test::run()
 		case XML_rawDataDimensions:
 			pass = testRawDataDimensions(iter->second);
 			break;
+		case XML_rawCfaPattern:
+			pass = testRawCfaPattern(iter->second);
+			break;
 		case XML_metaOrientation:
 			pass = testMetaOrientation(iter->second);
 			break;
 		default:
+			pass = false;
 			break;
 		}
 		m_total++;
@@ -367,7 +419,7 @@ int Test::run()
 	}
 	fprintf(stderr, "total %d, success %d, failure %d\n", m_total,
 		    m_success, m_failure);
-	return 0;
+	return m_failure;
 }
 
 
@@ -395,12 +447,15 @@ int TestSuite::load_tests(const char * testsuite_file)
 
 int TestSuite::run_all()
 {
-	std::for_each(m_tests.begin(), m_tests.end(),
-				  boost::bind(&Test::run, _1));	
-	return 0;
+	int failures = 0;
+	std::vector<Test::Ptr>::iterator iter(m_tests.begin());
+	for( ; iter != m_tests.end(); ++iter) {
+		failures += (*iter)->run();
+	}
+	return failures;
 }
 
-int main(int argc, char ** argv)
+int main(int /*argc*/, char ** argv)
 {
 	const char * srcdir = getenv("srcdir");
 	if(srcdir == NULL) {
@@ -414,9 +469,7 @@ int main(int argc, char ** argv)
 
 	TestSuite testsuite;
 	testsuite.load_tests(testsuite_file.c_str());
-	testsuite.run_all();
-
-	return 0;
+	return testsuite.run_all();
 }
 
 

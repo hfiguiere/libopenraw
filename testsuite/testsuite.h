@@ -61,6 +61,7 @@ private:
 	bool testRawDataType(const std::string & result);
 	bool testRawDataSize(const std::string & result);
 	bool testRawDataDimensions(const std::string & result);
+	bool testRawCfaPattern(const std::string & result);
 	bool testMetaOrientation(const std::string & result);
 
 	std::string m_name;

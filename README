@@ -65,30 +65,31 @@ Support table:
                          /  CFA compressed (as is)
                          | /  CFA decompress
                          | | /  Orientation Tag
-                         | | | /
-                         | | | |
-Canon CR2                Y Y Y Y
- 20D                     T T T T
+                         | | | /  Bayer Type
+                         | | | | /
+                         | | | | |
+Canon CR2                Y Y Y Y Y
+ 20D                     T T T T T
  30D                     T T T
  350D                    T T T
  400D                    T T T
  5D                      T T T
  1DMarkII                T T T
 
-Canon CRW                Y Y Y Y
- 300D                    T T T
- 10D                     T T T
- D60                     T T T
- G1                      T T T
- G2                      T T T
- G5                      T T T
- Pro1                    T T T
+Canon CRW                Y Y Y Y Y
+ 300D                    T T T   T
+ 10D                     T T T   T
+ D60                     T T T   T
+ G1                      T T T   T
+ G2                      T T T   T
+ G5                      T T T   T
+ Pro1                    T T T   T
  A610                    N N N
 
-Nikon NEF                Y Y N Y
- D100                    T T   X
- D70                     T T   T
- Cooolpix 5700           T T
+Nikon NEF                Y Y N Y Y
+ D100                    T T   X T
+ D70                     T T   T T
+ Cooolpix 5700           T T   T T
  D2H                     T T
  D1
  D200
@@ -99,7 +100,7 @@ Nikon NEF                Y Y N Y
  D70s
  D80
 
-Olympus ORF              Y Y N Y
+Olympus ORF              Y Y N Y N
  E-1                     T T 
  E-10                    B B
  E-300                   T T   T 
@@ -112,35 +113,36 @@ Olympus ORF              Y Y N Y
  SP-510                  B B
  SP-550                  B B
 
-Adobe DNG                Y Y N Y
- Leica DMR               T T X T
- Leica M8                T T X
- Adobe DNG converter     T T B
- K10D                    T T X T
- Samsung GX-10           T B X
- Samsung Pro815          T B X
+Adobe DNG                Y Y N Y Y
+ Leica DMR               T T X T T
+ Leica M8                T T X T T
+ Adobe DNG converter     T T B T T
+ K10D                    T T X T T
+ Samsung GX-10           T B X T T
+ Samsung Pro815          T B X T T
 
-Sony ARW                 Y N N Y
+Sony ARW                 Y N N Y N
  A-100                   T B   T
  A-700
 
-Pentax PEF               Y Y N Y
+Pentax PEF               Y Y N Y N
  *-ist D                 T T X
  *-ist DL                T T N
  K10D                    T T N T
  K100D                   T T N
 
-Epson ERF                Y Y N Y
- Epson RD1               T T   T
+Epson ERF                Y Y N Y Y
+ Epson RD1               T T   T T
 
-Minolta MRW              Y Y N N
- A1                      T T B X
- A2                      T T B X
- Dimage 5                T T X X
- Dimage 7i               T T X X
- Dimage 7Hi              T T X X
- Maxxum 5D               T T B N
- Maxxum 7D               T T B N
+Minolta MRW              Y Y B N Y
+ A1                      T T B X T
+ A2                      T T B X T
+ Dimage 5                T T X X T
+ Dimage 7i               T T X X T
+ Dimage 7Hi              T T X X T
+ Maxxum 5D               T T B N T
+ Maxxum 7D               T T B N T
+ A200                    
 
 Sony SRF                 N N N N
 

@@ -2,6 +2,7 @@
  * libopenraw - ifdfile.cpp
  *
  * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -319,12 +320,70 @@ namespace OpenRaw {
 				Trace(DEBUG1) << "Y not found\n";
 				return OR_ERROR_NOT_FOUND;
 			}
+			// TODO move away
+			RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
+			std::vector<uint8_t> cfaPattern;
+			try {
+				IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
+				if(e) {
+					e->getArray(cfaPattern);
+					if(cfaPattern.size() != 4) {
+						Trace(WARNING) << "Unsupported bayer pattern\n";
+					}
+					else {
+						Trace(DEBUG2) << "patter is = "
+									  << cfaPattern[0] << ", "
+									  << cfaPattern[1] << ", "
+									  << cfaPattern[2] << ", "
+									  << cfaPattern[3] << "\n";
+						switch(cfaPattern[0]) {
+						case 0:
+							switch(cfaPattern[1]) {
+							case 1:
+								cfa_pattern = OR_CFA_PATTERN_RGGB;
+								break;
+							}
+							break;
+						case 1:
+							switch(cfaPattern[1]) {
+							case 0:
+								if((cfaPattern[2] == 2) && 
+								   (cfaPattern[3] == 1)) {
+									cfa_pattern = OR_CFA_PATTERN_GRBG;
+								}
+								break;
+							case 2:
+								if((cfaPattern[2] == 0) && 
+								   (cfaPattern[3] == 1)) {
+									cfa_pattern = OR_CFA_PATTERN_GBRG;
+								}
+								break;
+							}
+							break;
+						case 2:
+							switch(cfaPattern[1]) {
+							case 1:
+								cfa_pattern = OR_CFA_PATTERN_BGGR;
+								break;
+							}
+							break;
+						}
+						//
+					}
+				}
+			}
+			catch(...)
+			{
+				Trace(ERROR) << "Exception.\n";
+			}
+
 			void *p = data.allocData(byte_length);
 			size_t real_size = m_container->fetchData(p, offset, 
-																								byte_length);
+													  byte_length);
 			if (real_size < byte_length) {
 				Trace(WARNING) << "Size mismatch for data: ignoring.\n";
 			}
+			data.setCfaPattern(cfa_pattern);
 			data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
 			data.setDimensions(x, y);
 			

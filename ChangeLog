@@ -1,4 +1,15 @@
-2008-02-11  Hubert Figuiere  <hub@figuiere.net>
+2008-02-12  Hubert Figuiere  <hfiguiere@novell.com>
+
+	* testsuite/testsuite.{cpp,h}, testsuite/testsuitehandler.cpp,
+	testsuite/testsuitetags.txt, testsuite/testsuite.xml: add 
+	CFA Pattern test. Return failure if a test fail.
+	* include/libopenraw/rawdata.h, include/libopenraw/consts.h, 
+	include/libopenraw++/rawdata.h, lib/capi/rawdata.cpp, 
+	lib/cr2file.cpp, lib/crwfile.cpp, lib/dngfile.cpp,
+	lib/ifdfile.cpp, lib/mrwfile.cpp, lib/rawdata.cpp,
+	tools/ordiag.cpp: Allow getting the CFA Pattern.
+	
+2008-02-11  Hubert Figuiere  <hfiguiere@novell.com>
 
 	* lib/ifdentry.{h,cpp}: fix a bug in get() where fetching
 	a locally stored array failed like array of bytes. Also

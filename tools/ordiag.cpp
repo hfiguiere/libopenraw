@@ -2,6 +2,7 @@
  * libopenraw - ordiag.cpp
  *
  * Copyright (C) 2007-2008 Hubert Figuiere
+ * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +32,6 @@
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
-
 using OpenRaw::RawFile;
 using OpenRaw::Thumbnail;
 using OpenRaw::RawData;
@@ -49,6 +49,33 @@ public:
 		: m_out(out)
 		{
 		}
+
+	std::string cfaPatternToString(RawData::CfaPattern t) 
+		{
+			switch(t) {
+			case OR_CFA_PATTERN_NONE:
+				return "None";
+				break;
+			case OR_CFA_PATTERN_NON_RGB22:
+				return "Non RGB 2x2";
+				break;
+			case OR_CFA_PATTERN_RGGB:
+				return "R,G,G,B";
+				break;
+			case OR_CFA_PATTERN_GBRG:
+				return "G,B,R,G";
+				break;
+			case OR_CFA_PATTERN_BGGR:
+				return "B,G,G,R";
+				break;
+			case OR_CFA_PATTERN_GRBG:
+				return "B,R,B,G";
+				break;
+			default:
+				break;
+			}
+			return str(boost::format("Unknown %1%") % t);
+		};
 
 	std::string dataTypeToString(Thumbnail::DataType t)
 		{
@@ -165,6 +192,8 @@ public:
 					% rd.size();
 				m_out << boost::format("\t\tDimensions: x = %1% y = %2%\n")
 					% rd.x() % rd.y();
+				m_out << boost::format("\t\tBayer Type: %1%\n")
+					% cfaPatternToString(rd.cfaPattern());
 			}
 			else {
 				m_out << boost::format("\tNo Raw Data found! (error = %1%)\n")

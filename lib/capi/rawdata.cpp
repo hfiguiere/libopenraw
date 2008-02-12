@@ -98,4 +98,10 @@ extern "C" {
 		return reinterpret_cast<RawData *>(rawdata)->bpc();		
 	}
 
+	or_cfa_pattern
+	or_rawdata_get_cfa_pattern(ORRawDataRef rawdata)
+	{
+		return reinterpret_cast<RawData *>(rawdata)->cfaPattern();
+	}
+
 }

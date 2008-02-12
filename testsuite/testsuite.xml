@@ -12,6 +12,7 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>16973120</rawDataSize>
       <rawDataDimensions>3596 2360</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -27,6 +28,7 @@
       <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>9844736</rawDataSize>
       <rawDataDimensions>3034 2024</rawDataDimensions>
+      <rawCfaPattern>GRBG</rawCfaPattern>
       <metaOrientation>0</metaOrientation>
     </results>
   </test>
@@ -42,7 +44,24 @@
       <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>4823649</rawDataSize>
       <rawDataDimensions>3040 2014</rawDataDimensions>
+      <rawCfaPattern>BGGR</rawCfaPattern>
       <metaOrientation>8</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>NEF-test Coolpix5700</name>
+    <file>/home/hub/samples/nef/Coolpix5700/NIKON-COOLPIX5700.NEF</file>
+    <results>
+      <rawType>NEF</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>8RGB</thumbFormats>
+      <thumbDataSizes>57600</thumbDataSizes>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>4829337</rawDataSize>
+      <rawDataDimensions>3040 2014</rawDataDimensions>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <metaOrientation>1</metaOrientation>      
     </results>
   </test>
   <test>
@@ -57,6 +76,7 @@
       <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>9844736</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -72,6 +92,7 @@
       <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>8025398</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
+      <rawCfaPattern>NONE</rawCfaPattern>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -87,6 +108,7 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>15492096</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -102,6 +124,7 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>20134656</rawDataSize>
       <rawDataDimensions>3884 2592</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -117,6 +140,7 @@
       <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>13461504</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
+      <rawCfaPattern>NONE</rawCfaPattern>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -132,6 +156,7 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>6348928</rawDataSize>
       <rawDataDimensions>2056 1544</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>0</metaOrientation>
     </results>    
   </test>
@@ -147,6 +172,7 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>0</metaOrientation>
     </results>    
   </test>
@@ -162,6 +188,7 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>0</metaOrientation>
     </results>    
   </test>

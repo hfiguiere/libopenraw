@@ -12,5 +12,6 @@ thumbDataSizes
 rawDataType
 rawDataSize
 rawDataDimensions
+rawCfaPattern
 metaOrientation
 

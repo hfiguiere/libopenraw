@@ -2,6 +2,7 @@
  * libopenraw - rawdata.h
  *
  * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,10 +56,16 @@ extern "C" {
 
 	void
 	or_rawdata_dimensions(ORRawDataRef rawdata, 
-												uint32_t *x, uint32_t *y);
+						  uint32_t *x, uint32_t *y);
 
 	uint32_t
 	or_rawdata_bpc(ORRawDataRef rawdata);
+
+	/** Return the bayer type for the raw data.
+	 * @return one of the constant defined in %or_cfa_pattern
+	 */
+	or_cfa_pattern
+	or_rawdata_get_cfa_pattern(ORRawDataRef rawdata);
 
 #ifdef __cplusplus
 }

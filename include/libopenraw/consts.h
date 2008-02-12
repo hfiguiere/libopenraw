@@ -1,7 +1,7 @@
 /*
  * libopenraw - consts.h
  *
- * Copyright (C) 2005-2007 Hubert Figuiere
+ * Copyright (C) 2005-2008 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -73,6 +73,15 @@ extern "C" {
 
 		OR_DATA_TYPE_UNKNOWN
 	} or_data_type;
+
+	typedef enum {
+		OR_CFA_PATTERN_NONE = 0,   /**< Invalid value */
+		OR_CFA_PATTERN_NON_RGB22 = 1,
+		OR_CFA_PATTERN_RGGB = 2,
+		OR_CFA_PATTERN_GBRG = 3,
+		OR_CFA_PATTERN_BGGR = 4,
+		OR_CFA_PATTERN_GRBG = 5
+	} or_cfa_pattern;
 
 	typedef enum {
 		OR_OPTIONS_NONE            = 0x00000000,

@@ -61,6 +61,7 @@ xml::ContextPtr TestContext::startElement(int32_t element)
 	case XML_rawDataType:
 	case XML_rawDataSize:
 	case XML_rawDataDimensions:
+	case XML_rawCfaPattern:
 	case XML_metaOrientation:
 		// other tests...
 		if(m_results) {

@@ -4,7 +4,11 @@ libopenraw 0.0.5
   - BUG: IFDFileContainer inside another container was
     failing because relative offsets were not used. Needed for
     formats like RAF and MRW.
-  - NEW: support for Minolta MRW from Dimage 5
+  - BUG: testsuite didn't return a fail if a test failed, causing make check
+    to succeed even if test failed.
+  - NEW: support for Minolta MRW from Dimage 5, Dimage 7x, A1, A2, 5D
+    and 7D.
+  - NEW: API or_rawdata_get_cfa_patter() to fetch the CFA pattern.
 
 libopenraw 0.0.4
 

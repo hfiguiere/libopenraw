@@ -2,6 +2,7 @@
  * libopenraw - crwfile.cpp
  *
  * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -230,6 +231,7 @@ namespace OpenRaw {
 					Trace(WARNING) << "wrong size\n";
 				}
 				data.setDimensions(x, y);
+				data.setCfaPattern(OR_CFA_PATTERN_RGGB);
 				data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
 
 				// decompress if we need
@@ -246,10 +248,10 @@ namespace OpenRaw {
 					if (dData != NULL) {
 						Trace(DEBUG1) << "Out size is " << dData->x() 
 													<< "x" << dData->y() << "\n";
+						dData->setCfaPattern(data.cfaPattern());
 						data.swap(*dData);
 						delete dData;
 					}
-					data.setDataType(OR_DATA_TYPE_CFA);
 				}
 				err = OR_ERROR_NONE;
 			}

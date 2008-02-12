@@ -2,6 +2,7 @@
  * libopenraw - dngfile.cpp
  *
  * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -82,6 +83,7 @@ namespace OpenRaw {
 							LJpegDecompressor decomp(s.get(), jfif.get());
 							RawData *dData = decomp.decompress();
 							if (dData != NULL) {
+								dData->setCfaPattern(data.cfaPattern());
 								data.swap(*dData);
 								delete dData;
 							}

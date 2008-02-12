@@ -28,6 +28,7 @@ namespace OpenRaw {
 	class RawData::Private {
 	public:
 		RawData *self;
+		CfaPattern cfa_pattern;
 		uint8_t *pos;
 		size_t offset;
 		size_t row_offset;
@@ -38,7 +39,8 @@ namespace OpenRaw {
 		std::vector<uint16_t> slices;
 
 		Private(RawData *_self)
-			:	self(_self), pos(NULL), offset(0),
+			:	self(_self), cfa_pattern(OR_CFA_PATTERN_NONE),
+				pos(NULL), offset(0),
 				row_offset(0),
 				slice(0), sliceWidth(0),
 				sliceOffset(0), slices()
@@ -75,7 +77,7 @@ namespace OpenRaw {
 
 	RawData::RawData()
 		: BitmapData(),
-			d(new RawData::Private(this))
+		  d(new RawData::Private(this))
 	{
 
 	}
@@ -122,6 +124,16 @@ namespace OpenRaw {
 		else {
 			d->sliceWidth = x();
 		}
+	}
+
+	void RawData::setCfaPattern(or_cfa_pattern t)
+	{
+		d->cfa_pattern = t;
+	}
+
+	or_cfa_pattern RawData::cfaPattern()
+	{
+		return d->cfa_pattern;
 	}
 
 
