@@ -1,5 +1,8 @@
 2008-02-12  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* lib/ifd.h: CfaCompoment consts.
+	* lib/ifdfile.cpp: Move away the CFA pattern extraction.
+	
 	* testsuite/testsuite.xml: Add more Nikon samples.
 
 	* testsuite/testsuite.{cpp,h}, testsuite/testsuitehandler.cpp,

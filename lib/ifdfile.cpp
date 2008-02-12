@@ -261,6 +261,83 @@ namespace OpenRaw {
 		}
 
 
+		namespace {
+		/** convert the CFA Pattern as stored in the entry */
+		RawData::CfaPattern _convertCfaPattern(const IFDEntry::Ref & e)
+		{
+			std::vector<uint8_t> cfaPattern;
+			RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
+			
+			e->getArray(cfaPattern);
+			if(cfaPattern.size() != 4) {
+				Trace(WARNING) << "Unsupported bayer pattern\n";
+			}
+			else {
+				Trace(DEBUG2) << "patter is = " << cfaPattern[0] << ", "
+							  << cfaPattern[1] << ", " << cfaPattern[2] 
+							  << ", " << cfaPattern[3] << "\n";
+				switch(cfaPattern[0]) {
+				case IFD::CFA_RED:
+					switch(cfaPattern[1]) {
+					case IFD::CFA_GREEN:
+						if((cfaPattern[2] == IFD::CFA_GREEN) && (cfaPattern[3] == IFD::CFA_BLUE)) {
+							cfa_pattern = OR_CFA_PATTERN_RGGB;
+						}
+						break;
+					}
+					break;
+				case IFD::CFA_GREEN:
+					switch(cfaPattern[1]) {
+					case IFD::CFA_RED:
+						if((cfaPattern[2] == 2) && (cfaPattern[3] == IFD::CFA_GREEN)) {
+							cfa_pattern = OR_CFA_PATTERN_GRBG;
+						}
+						break;
+					case 2:
+						if((cfaPattern[2] == IFD::CFA_RED) && (cfaPattern[3] == IFD::CFA_GREEN)) {
+							cfa_pattern = OR_CFA_PATTERN_GBRG;
+						}
+						break;
+					}
+					break;
+				case IFD::CFA_BLUE:
+					switch(cfaPattern[1]) {
+					case IFD::CFA_GREEN:
+						if((cfaPattern[2] == IFD::CFA_GREEN) && (cfaPattern[3] == IFD::CFA_RED)) {
+							cfa_pattern = OR_CFA_PATTERN_BGGR;
+						}
+						break;
+					}
+					break;
+				}
+				//
+			}
+			return cfa_pattern;
+		}
+
+		/** get the CFA Pattern out of the directory
+		 * @param dir the directory
+		 * @return the cfa_pattern value. %OR_CFA_PATTERN_NONE mean that
+		 * nothing has been found.
+		 */
+		static RawData::CfaPattern _getCfaPattern(const IFDDir::Ref & dir)
+		{
+			RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
+			try {
+				IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
+				if(e) {
+					cfa_pattern = _convertCfaPattern(e);
+				}
+			}
+			catch(...)
+			{
+				Trace(ERROR) << "Exception in _getCfaPattern().\n";
+			}
+			return cfa_pattern;
+		}
+
+		} // end anon namespace
+
 		::or_error IFDFile::_getRawDataFromDir(RawData & data, IFDDir::Ref & dir)
 		{
 			::or_error ret = OR_ERROR_NONE;
@@ -320,62 +397,8 @@ namespace OpenRaw {
 				Trace(DEBUG1) << "Y not found\n";
 				return OR_ERROR_NOT_FOUND;
 			}
-			// TODO move away
-			RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
-			std::vector<uint8_t> cfaPattern;
-			try {
-				IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
-				if(e) {
-					e->getArray(cfaPattern);
-					if(cfaPattern.size() != 4) {
-						Trace(WARNING) << "Unsupported bayer pattern\n";
-					}
-					else {
-						Trace(DEBUG2) << "patter is = "
-									  << cfaPattern[0] << ", "
-									  << cfaPattern[1] << ", "
-									  << cfaPattern[2] << ", "
-									  << cfaPattern[3] << "\n";
-						switch(cfaPattern[0]) {
-						case 0:
-							switch(cfaPattern[1]) {
-							case 1:
-								cfa_pattern = OR_CFA_PATTERN_RGGB;
-								break;
-							}
-							break;
-						case 1:
-							switch(cfaPattern[1]) {
-							case 0:
-								if((cfaPattern[2] == 2) && 
-								   (cfaPattern[3] == 1)) {
-									cfa_pattern = OR_CFA_PATTERN_GRBG;
-								}
-								break;
-							case 2:
-								if((cfaPattern[2] == 0) && 
-								   (cfaPattern[3] == 1)) {
-									cfa_pattern = OR_CFA_PATTERN_GBRG;
-								}
-								break;
-							}
-							break;
-						case 2:
-							switch(cfaPattern[1]) {
-							case 1:
-								cfa_pattern = OR_CFA_PATTERN_BGGR;
-								break;
-							}
-							break;
-						}
-						//
-					}
-				}
-			}
-			catch(...)
-			{
-				Trace(ERROR) << "Exception.\n";
-			}
+
+			RawData::CfaPattern cfa_pattern = _getCfaPattern(dir);
 
 			void *p = data.allocData(byte_length);
 			size_t real_size = m_container->fetchData(p, offset, 

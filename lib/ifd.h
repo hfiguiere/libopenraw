@@ -55,6 +55,17 @@ namespace OpenRaw {
 				EXIF_FORMAT_DOUBLE     = 12
 			} ExifTagType;
 
+
+			typedef enum {
+				CFA_RED = 0,
+				CFA_GREEN = 1,
+				CFA_BLUE = 2,
+				CFA_CYAN = 3,
+				CFA_MAGENTA = 4,
+				CFA_YELLOW = 5,
+				CFA_WHITE = 6
+			} CfaComponent;
+
 		}
 	}
 }
