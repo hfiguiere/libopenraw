@@ -34,6 +34,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/crc.hpp>      // for boost::crc_basic, boost::crc_optimal
 
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/rawdata.h>
@@ -271,15 +272,36 @@ bool Test::testThumbDataSizes(const std::string & result)
 	return success;
 }
 
+namespace {
+	RawData * loadRawData(RawFile * file)
+	{
+		RawData *rawdata = new RawData();
+		::or_error err;
+		err = file->getRawData(*rawdata, OR_OPTIONS_NONE);
+		if(OR_ERROR_NONE != err) {
+			delete rawdata; 
+			rawdata = NULL;
+		}
+		return rawdata;
+	}
+
+	uint32_t computeCrc(const RawData * rawdata)
+	{
+		boost::crc_optimal<8, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
+		
+		const uint8_t * data = static_cast<uint8_t *>(rawdata->data());
+		size_t data_len = rawdata->size();
+		crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
+		return crc_ccitt2();
+	}
+
+}
+
 bool Test::testRawDataType(const std::string & result)
 {
 	if(m_rawdata == NULL) {
-		m_rawdata = new RawData();
-		::or_error err;
-		err = m_rawfile->getRawData(*m_rawdata, OR_OPTIONS_NONE);
-		if(OR_ERROR_NONE != err) {
-			delete m_rawdata; 
-			m_rawdata = NULL;
+		m_rawdata = loadRawData(m_rawfile);
+		if(m_rawdata == NULL) {
 			RETURN_FAIL("failed to get rawData", result);
 		}
 	}
@@ -290,12 +312,8 @@ bool Test::testRawDataType(const std::string & result)
 bool Test::testRawDataSize(const std::string & result)
 {
 	if(m_rawdata == NULL) {
-		m_rawdata = new RawData();
-		::or_error err;
-		err = m_rawfile->getRawData(*m_rawdata, OR_OPTIONS_NONE);
-		if(OR_ERROR_NONE != err) {
-			delete m_rawdata; 
-			m_rawdata = NULL;
+		m_rawdata = loadRawData(m_rawfile);
+		if(m_rawdata == NULL) {
 			RETURN_FAIL("failed to get rawData", result);
 		}
 	}
@@ -311,12 +329,8 @@ bool Test::testRawDataSize(const std::string & result)
 bool Test::testRawDataDimensions(const std::string & result)
 {
 	if(m_rawdata == NULL) {
-		m_rawdata = new RawData();
-		::or_error err;
-		err = m_rawfile->getRawData(*m_rawdata, OR_OPTIONS_NONE);
-		if(OR_ERROR_NONE != err) {
-			delete m_rawdata; 
-			m_rawdata = NULL;
+		m_rawdata = loadRawData(m_rawfile);
+		if(m_rawdata == NULL) {
 			RETURN_FAIL("failed to get rawData", result);
 		}
 	}
@@ -341,17 +355,50 @@ bool Test::testRawDataDimensions(const std::string & result)
 bool Test::testRawCfaPattern(const std::string & result)
 {
 	if(m_rawdata == NULL) {
-		m_rawdata = new RawData();
-		::or_error err;
-		err = m_rawfile->getRawData(*m_rawdata, OR_OPTIONS_NONE);
-		if(OR_ERROR_NONE != err) {
-			delete m_rawdata; 
-			m_rawdata = NULL;
+		m_rawdata = loadRawData(m_rawfile);
+		if(m_rawdata == NULL) {
 			RETURN_FAIL("failed to get rawData", result);
 		}
 	}
 	RETURN_TEST(equalCfaPattern(result, m_rawdata->cfaPattern()), result);
 }
+
+bool Test::testRawMd5(const std::string & result)
+{
+	if(m_rawdata == NULL) {
+		m_rawdata = loadRawData(m_rawfile);
+		if(m_rawdata == NULL) {
+			RETURN_FAIL("failed to get rawData", result);
+		}
+	}
+
+	uint32_t crc = computeCrc(m_rawdata);
+
+	uint32_t expected = 0;
+	try { 
+		expected = boost::lexical_cast<uint32_t>(result);
+	}
+	catch(...)
+	{
+		RETURN_FAIL("conversion failed", result);
+	}
+	RETURN_TEST_EQUALS(crc, expected, result);
+
+	return false;
+}
+
+
+bool Test::testRawDecompressedMd5(const std::string & result)
+{
+	if(m_rawdata == NULL) {
+		m_rawdata = loadRawData(m_rawfile);
+		if(m_rawdata == NULL) {
+			RETURN_FAIL("failed to get rawData", result);
+		}
+	}
+	return false;
+}
+
 
 bool Test::testMetaOrientation(const std::string & result)
 {
@@ -401,6 +448,12 @@ int Test::run()
 			break;
 		case XML_rawCfaPattern:
 			pass = testRawCfaPattern(iter->second);
+			break;
+		case XML_rawMd5:
+			pass = testRawMd5(iter->second);
+			break;
+		case XML_rawDecompressedMd5:
+			pass = testRawDecompressedMd5(iter->second);
 			break;
 		case XML_metaOrientation:
 			pass = testMetaOrientation(iter->second);

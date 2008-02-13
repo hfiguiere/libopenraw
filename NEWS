@@ -6,9 +6,10 @@ libopenraw 0.0.5
     formats like RAF and MRW.
   - BUG: testsuite didn't return a fail if a test failed, causing make check
     to succeed even if test failed.
+  - NEW: testsuite now support doing checksum on data.
   - NEW: support for Minolta MRW from Dimage 5, Dimage 7x, A1, A2, 5D
     and 7D.
-  - NEW: API or_rawdata_get_cfa_patter() to fetch the CFA pattern.
+  - NEW: API or_rawdata_get_cfa_pattern() to fetch the CFA pattern.
 
 libopenraw 0.0.4
 

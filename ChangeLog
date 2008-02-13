@@ -1,3 +1,9 @@
+2008-02-13  Hubert Figuiere  <hfiguiere@novell.com>
+
+	* testsuite/testsuite.{h,cpp}, testsuite/testsuitehandler.cpp
+	testsuite/testsuitetags.txt: Add support for doing a Md5
+	on the output. Currently it is a CRC.
+
 2008-02-12  Hubert Figuiere  <hfiguiere@novell.com>
 
 	* lib/ifd.h: CfaCompoment consts.
