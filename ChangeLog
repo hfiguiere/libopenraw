@@ -1,5 +1,9 @@
 2008-02-13  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* lib/unpack.{cpp,h}, lib/mrwfile.cpp: rename to take byte order 
+	into account. Store the values as uint16_t. 
+	* test/testunpack.cpp: fix the test for the above changes.
+
 	* testsuite/testsuite.{h,cpp}, testsuite/testsuitehandler.cpp
 	testsuite/testsuitetags.txt: Add support for doing a Md5
 	on the output. Currently it is a CRC.

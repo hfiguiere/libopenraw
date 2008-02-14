@@ -27,18 +27,15 @@ using boost::unit_test::test_suite;
 void test_unpack()
 {
 	const uint8_t packed[] = {0x12, 0x34, 0x56, 0x78, 0x90, 0xAB };
-	uint8_t unpacked[8];
+	uint16_t unpacked[4];
 
-	size_t s = OpenRaw::Internals::unpack_12to16(unpacked, 8, packed, 6);
+	size_t s = OpenRaw::Internals::unpack_be12to16((uint8_t*)unpacked, 8, 
+												   packed, 6);
 	BOOST_CHECK_EQUAL(s, 8);
-	BOOST_CHECK_EQUAL(unpacked[0], 0x01);
-	BOOST_CHECK_EQUAL(unpacked[1], 0x23);
-	BOOST_CHECK_EQUAL(unpacked[2], 0x04);
-	BOOST_CHECK_EQUAL(unpacked[3], 0x56);
-	BOOST_CHECK_EQUAL(unpacked[4], 0x07);
-	BOOST_CHECK_EQUAL(unpacked[5], 0x89);
-	BOOST_CHECK_EQUAL(unpacked[6], 0x00);
-	BOOST_CHECK_EQUAL(unpacked[7], 0xAB);
+	BOOST_CHECK_EQUAL(unpacked[0], 0x0123);
+	BOOST_CHECK_EQUAL(unpacked[1], 0x0456);
+	BOOST_CHECK_EQUAL(unpacked[2], 0x0789);
+	BOOST_CHECK_EQUAL(unpacked[3], 0x00AB);
 }
 
 

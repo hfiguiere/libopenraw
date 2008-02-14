@@ -197,8 +197,8 @@ namespace OpenRaw {
 					offset += got;
 					Trace(DEBUG2) << "got " << got << "\n";
 					if(got) {
-						size_t out = unpack_12to16(outdata, outleft, 
-												   block.get(), got);
+						size_t out = unpack_be12to16(outdata, outleft, 
+													 block.get(), got);
 						outdata += out;
 						outleft -= out;
 						Trace(DEBUG2) << "unpacked " << out

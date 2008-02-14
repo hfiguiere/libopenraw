@@ -27,33 +27,39 @@ namespace OpenRaw {	namespace Internals {
 
 	using namespace Debug;
 
-	size_t unpack_12to16(uint8_t *dest, size_t outsize, 
+	/** source is in BE byte order 
+	 * the output is always 16-bits values in native (host) byte order.
+	 */
+	size_t unpack_be12to16(uint8_t *dest, size_t outsize, 
 						 const uint8_t *src, size_t insize) 
 	{
 		size_t inleft = insize;
 		size_t outleft = outsize;
+		uint16_t short_dest;
 		do {
 			if(inleft && outleft) {
-				*dest = (*src & 0xf0) >> 4;
-				outleft--; dest++;
+				short_dest = ((*src & 0xf0) >> 4) << 8;
+				outleft--;
 				if(outleft) {
-					*dest = (*src & 0x0f) << 4;
+					short_dest |= (*src & 0x0f) << 4;
 					inleft--; src++;
 				}
 			}
 			if(inleft && outleft) {
-				*dest |= (*src & 0xf0) >> 4;
-				outleft--; dest++;
-				*dest = (*src & 0x0f);
+				short_dest |= (*src & 0xf0) >> 4;
+				*(uint16_t*)dest = short_dest;
+				outleft--; dest+=2;
+				short_dest = (*src & 0x0f) << 8;
 				if(outleft) {
 					inleft--; src++;
-					outleft--; dest++;		
+					outleft--;
 				}
 			}
 			if(inleft && outleft) {
-				*dest = *src;
+				short_dest |= *src;
 				inleft--; src++;
-				outleft--; dest++;
+				*(uint16_t*)dest = short_dest;				
+				outleft--; dest+=2;
 			}
 		} while(inleft && outleft);
 		if(inleft) {

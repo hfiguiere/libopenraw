@@ -28,7 +28,7 @@
 
 namespace OpenRaw {	namespace Internals {
 
-	size_t unpack_12to16(uint8_t *dest, size_t outsize, 
+	size_t unpack_be12to16(uint8_t *dest, size_t outsize, 
 						 const uint8_t *src, size_t insize);
 
 } }
