@@ -31,7 +31,7 @@ void test_unpack()
 
 	size_t s = OpenRaw::Internals::unpack_be12to16((uint8_t*)unpacked, 8, 
 												   packed, 6);
-	BOOST_CHECK_EQUAL(s, 8);
+	BOOST_CHECK_EQUAL(s, (size_t)8);
 	BOOST_CHECK_EQUAL(unpacked[0], 0x0123);
 	BOOST_CHECK_EQUAL(unpacked[1], 0x0456);
 	BOOST_CHECK_EQUAL(unpacked[2], 0x0789);
