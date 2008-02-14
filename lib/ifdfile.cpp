@@ -87,8 +87,7 @@ namespace OpenRaw {
 			std::vector<IFDDir::Ref>::iterator iter; 
 			
 			Trace(DEBUG1) << "num of dirs " << dirs.size() << "\n";
-			int c = 0;
-			for(iter = dirs.begin(); iter != dirs.end(); ++iter, ++c)
+			for(iter = dirs.begin(); iter != dirs.end(); ++iter)
 			{
 				IFDDir::Ref & dir = *iter;
 				dir->load();
@@ -96,6 +95,22 @@ namespace OpenRaw {
 				if (ret == OR_ERROR_NONE)
 				{
 					Trace(DEBUG1) << "Found " << list.back() << " pixels\n";
+				}
+				std::vector<IFDDir::Ref> subdirs;
+				if(dir->getSubIFDs(subdirs)) {
+					Trace(DEBUG1) << "Iterating subdirs\n";
+					std::vector<IFDDir::Ref>::iterator iter2; 
+					for(iter2 = subdirs.begin(); iter2 != subdirs.end(); 
+						++iter2)
+					{
+						IFDDir::Ref & dir2 = *iter2;
+						dir2->load();
+						ret = _locateThumbnail(dir2, list);
+						if (ret == OR_ERROR_NONE)
+						{
+							Trace(DEBUG1) << "Found " << list.back() << " pixels\n";
+						}
+					}
 				}
 			}
 			if (list.size() <= 0) {
@@ -134,9 +149,12 @@ namespace OpenRaw {
 					got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
 					got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
 
+					uint16_t compression = 0;
+					got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
+					
 					uint32_t offset = 0;
 					got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-					if (!got_it) {
+					if (!got_it || (compression == 7)) {
 						got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
 																			 offset);
  						Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
@@ -151,6 +169,8 @@ namespace OpenRaw {
 								}
 								else {
 									_type = OR_DATA_TYPE_NONE;
+									Trace(WARNING) << "Couldn't get JPEG "
+										"dimensions.\n";
 								}
 							}
 						}
@@ -167,6 +187,10 @@ namespace OpenRaw {
 						list.push_back(dim);
 						ret = OR_ERROR_NONE;
 					}
+				}
+				else if (photom_int == 6) {
+					Trace(WARNING) << "Unsupported YCbCr photometric "
+						"interpretation.\n";
 				}
 			}
 

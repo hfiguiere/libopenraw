@@ -57,10 +57,10 @@
     <source>http://ufraw.sourceforge.net/dsc_0113.nef</source>
     <results>
       <rawType>NEF</rawType>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>8RGB</thumbFormats>
-      <thumbDataSizes>57600</thumbDataSizes>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3008</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 578350</thumbDataSizes>
       <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>4823649</rawDataSize>
       <rawDataDimensions>3040 2014</rawDataDimensions>
@@ -74,10 +74,10 @@
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/NIKON-COOLPIX5700.NEF</source>
     <results>
       <rawType>NEF</rawType>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>8RGB</thumbFormats>
-      <thumbDataSizes>57600</thumbDataSizes>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3008</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 697471</thumbDataSizes>
       <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>4829337</rawDataSize>
       <rawDataDimensions>3040 2014</rawDataDimensions>

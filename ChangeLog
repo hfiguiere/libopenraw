@@ -1,3 +1,9 @@
+2008-02-14  Hubert Figuiere  <hfiguiere@novell.com>
+
+	* lib/ifdfile.cpp (IFDFile::_enumThumbnailSizes): scan the 
+	subIFDs for previews. Check for compression in case the
+	there is a StripOffset for a JPEG preview.
+
 2008-02-13  Hubert Figuiere  <hfiguiere@novell.com>
 
 	* lib/erffile.cpp: remove the "compression" hack.
