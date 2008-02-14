@@ -81,63 +81,65 @@ using OpenRaw::Thumbnail;
 		return false;											\
 	}
 
-static bool equalCfaPattern(const std::string & result, RawData::CfaPattern t)
-{
-	bool equal = false;
-	switch(t) {
-	case OR_CFA_PATTERN_NONE:
-		equal = (result == "NONE");
-		break;
-	case OR_CFA_PATTERN_NON_RGB22:
-		equal = (result == "NON_RGB22");
-		break;
-	case OR_CFA_PATTERN_RGGB:
-		equal = (result == "RGGB");
-		break;
-	case OR_CFA_PATTERN_GBRG:
-		equal = (result == "GBRG");
-		break;
-	case OR_CFA_PATTERN_BGGR:
-		equal = (result == "BGGR");
-		break;
-	case OR_CFA_PATTERN_GRBG:
-		equal = (result == "GRBG");
-		break;
-	default:
-		break;
+namespace {
+	bool equalCfaPattern(const std::string & result, RawData::CfaPattern t)
+	{
+		bool equal = false;
+		switch(t) {
+		case OR_CFA_PATTERN_NONE:
+			equal = (result == "NONE");
+			break;
+		case OR_CFA_PATTERN_NON_RGB22:
+			equal = (result == "NON_RGB22");
+			break;
+		case OR_CFA_PATTERN_RGGB:
+			equal = (result == "RGGB");
+			break;
+		case OR_CFA_PATTERN_GBRG:
+			equal = (result == "GBRG");
+			break;
+		case OR_CFA_PATTERN_BGGR:
+			equal = (result == "BGGR");
+			break;
+		case OR_CFA_PATTERN_GRBG:
+			equal = (result == "GRBG");
+			break;
+		default:
+			break;
+		}
+		return equal;
 	}
-	return equal;
-}
+	
 
-
-static bool equalDataType(const std::string & result, BitmapData::DataType t)
-{
-	bool equal = false;
-	switch(t) {
-	case OR_DATA_TYPE_PIXMAP_8RGB:
-		equal = (result == "8RGB");
-		break;
-	case OR_DATA_TYPE_JPEG:
-		equal = (result == "JPEG");
-		break;
-	case OR_DATA_TYPE_TIFF:
-		equal = (result == "TIFF");
-		break;
-	case OR_DATA_TYPE_PNG:
-		equal = (result == "PNG");
-		break;
-	case OR_DATA_TYPE_CFA:
-		equal = (result == "CFA");
-		break;
-	case OR_DATA_TYPE_COMPRESSED_CFA:
-		equal = (result == "COMP_CFA");
-		break;
-	default:
-		break;
+	bool equalDataType(const std::string & result, BitmapData::DataType t)
+	{
+		bool equal = false;
+		switch(t) {
+		case OR_DATA_TYPE_PIXMAP_8RGB:
+			equal = (result == "8RGB");
+			break;
+		case OR_DATA_TYPE_JPEG:
+			equal = (result == "JPEG");
+			break;
+		case OR_DATA_TYPE_TIFF:
+			equal = (result == "TIFF");
+			break;
+		case OR_DATA_TYPE_PNG:
+			equal = (result == "PNG");
+			break;
+		case OR_DATA_TYPE_CFA:
+			equal = (result == "CFA");
+			break;
+		case OR_DATA_TYPE_COMPRESSED_CFA:
+			equal = (result == "COMP_CFA");
+			break;
+		default:
+			break;
+		}
+		return equal;
 	}
-	return equal;
-}
 
+}
 
 Test::Test()
 	: m_rawfile(NULL),
