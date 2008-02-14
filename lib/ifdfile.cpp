@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <numeric>
 #include <boost/scoped_ptr.hpp>
+#include <boost/scoped_array.hpp>
 
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
@@ -35,6 +36,7 @@
 #include "ifdfilecontainer.h"
 #include "jfifcontainer.h"
 #include "metavalue.h"
+#include "unpack.h"
 
 using namespace Debug;
 using boost::scoped_ptr;
@@ -342,6 +344,7 @@ namespace OpenRaw {
 		{
 			::or_error ret = OR_ERROR_NONE;
 			
+			uint16_t bpc = 0;
 			uint32_t offset = 0;
 			uint32_t byte_length = 0;
 			bool got_it;
@@ -349,10 +352,21 @@ namespace OpenRaw {
 			x = 0;
 			y = 0;
 
+			got_it = dir->getValue(IFD::EXIF_TAG_BITS_PER_SAMPLE, bpc);
+			if(!got_it) {
+				Trace(ERROR) << "unable to guess Bits per sample\n";
+			}
+
 			got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
 			if(got_it) {
-				got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
-				if(!got_it) {
+				IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
+				if(e) {
+					std::vector<uint32_t> counts;
+					e->getArray(counts);
+					Trace(DEBUG1) << "counting tiles\n";
+					byte_length = std::accumulate(counts.begin(), counts.end(), 0);
+				}
+				else {
 					Trace(DEBUG1) << "byte len not found\n";
 					return OR_ERROR_NOT_FOUND;
 				}
@@ -380,6 +394,7 @@ namespace OpenRaw {
 				if(e) {
 					std::vector<uint32_t> counts;
 					e->getArray(counts);
+					Trace(DEBUG1) << "counting tiles\n";
 					byte_length = std::accumulate(counts.begin(), counts.end(), 0);
 				}
 				else {
@@ -398,16 +413,64 @@ namespace OpenRaw {
 				return OR_ERROR_NOT_FOUND;
 			}
 
+			uint32_t compression = 0;
+			got_it = dir->getIntegerValue(IFD::EXIF_TAG_COMPRESSION, compression);
+			if(!got_it)
+			{
+				Trace(DEBUG1) << "Compression type not found\n";
+			}
+			BitmapData::DataType data_type = OR_DATA_TYPE_NONE;
+
+			switch(compression) 
+			{
+			case IFD::COMPRESS_NONE:
+			case IFD::COMPRESS_NIKON:
+				data_type = OR_DATA_TYPE_CFA;
+				break;
+			default:
+				data_type = OR_DATA_TYPE_COMPRESSED_CFA;
+				break;
+			}
+			
 			RawData::CfaPattern cfa_pattern = _getCfaPattern(dir);
 
-			void *p = data.allocData(byte_length);
-			size_t real_size = m_container->fetchData(p, offset, 
-													  byte_length);
-			if (real_size < byte_length) {
-				Trace(WARNING) << "Size mismatch for data: ignoring.\n";
+			if((bpc == 16) || (data_type == OR_DATA_TYPE_COMPRESSED_CFA)) {
+				void *p = data.allocData(byte_length);
+				size_t real_size = m_container->fetchData(p, offset, 
+														  byte_length);
+				if (real_size < byte_length) {
+					Trace(WARNING) << "Size mismatch for data: ignoring.\n";
+				}
+			}
+			else if(bpc == 12) {
+				size_t fetched = 0;
+				const off_t blocksize = 128*1024 + 1; // must be a multiple of 3
+				boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
+				size_t outleft = x * y * 2;
+				uint8_t * outdata = (uint8_t*)data.allocData(outleft);
+				size_t got;
+				do {
+					Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
+					got = m_container->fetchData (block.get(), 
+												  offset, blocksize);
+					fetched += got;
+					offset += got;
+					Trace(DEBUG2) << "got " << got << "\n";
+					if(got) {
+						size_t out = unpack_be12to16(outdata, outleft, 
+													 block.get(), got);
+						outdata += out;
+						outleft -= out;
+						Trace(DEBUG2) << "unpacked " << out
+									  << " bytes from " << got << "\n";
+					}
+				} while((got != 0) && (fetched < byte_length));
+			}
+			else {
+				Trace(ERROR) << "Unsupported bpc " << bpc << "\n";
 			}
 			data.setCfaPattern(cfa_pattern);
-			data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+			data.setDataType(data_type);
 			data.setDimensions(x, y);
 			
 			return ret;

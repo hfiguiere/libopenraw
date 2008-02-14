@@ -1,5 +1,10 @@
 2008-02-13  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* lib/erffile.cpp: remove the "compression" hack.
+	* lib/ifdfile.cpp, lib/ifd.h: better detect compression
+	and fix the 12 bits unpacking.
+	* testsuite/testsuite.xml: update test suite.
+	
 	* lib/mrwfile.cpp: Change the buffer size to make sure
 	it is a multiple of 3. This should fix the decoding problem.
 

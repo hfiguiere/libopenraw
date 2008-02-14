@@ -66,6 +66,11 @@ namespace OpenRaw {
 				CFA_WHITE = 6
 			} CfaComponent;
 
+			typedef enum {
+				COMPRESS_NONE = 1,
+				COMPRESS_JPEG = 6,
+				COMPRESS_NIKON = 32769
+			} TiffCompress;
 		}
 	}
 }

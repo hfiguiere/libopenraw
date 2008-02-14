@@ -84,14 +84,17 @@ Canon CRW                Y Y Y Y Y
  G2                      T T T   T
  G5                      T T T   T
  Pro1                    T T T   T
- A610                    N N N
+
+Canon CRW CHSDK          N N N N N
+(unofficial firmware)
+ A610                    N N N N N
 
 Nikon NEF                Y Y N Y Y
- D100                    T T   X T
- D70                     T T   T T
- Cooolpix 5700           T T   T T
- D2H                     T T   T T
- D1                      T B   X T
+ D100                    T T N X T
+ D70                     T T N T T
+ Cooolpix 5700           T T N T T
+ D2H                     T T N T T
+ D1                      T T X X T
  D200
  D300
  D40
@@ -115,11 +118,11 @@ Olympus ORF              Y Y N Y N
 
 Adobe DNG                Y Y N Y Y
  Leica DMR               T T X T T
- Leica M8                T T X T T
+ Leica M8                T B X T T
  Adobe DNG converter     T T B T T
- K10D                    T B X T T
- Samsung GX-10           T B X T T
- Samsung Pro815          T B X T T
+ K10D                    T T X T T
+ Samsung GX-10           T T X T T
+ Samsung Pro815          T T X T T
 
 Sony ARW                 Y N N Y N
  A-100                   T B   T

@@ -2,7 +2,7 @@
   <test>
     <name>CR2-test 20D</name>
     <file>/home/hub/samples/cr2/20D/img_0620.cr2</file>
-    <source></source>
+    <source>http://libopenraw.freedesktop.org/www/samples/cr2/img_0620.cr2</source>
     <results>
       <rawType>CR2</rawType>
       <thumbNum>3</thumbNum>
@@ -13,7 +13,26 @@
       <rawDataSize>16973120</rawDataSize>
       <rawDataDimensions>3596 2360</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMd5>29</rawMd5>
       <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>CRW-test 300D</name>
+    <file>/home/hub/samples/crw/300D/crw_1852.crw</file>
+    <source>http://launchpadlibrarian.net/4704665/CRW_1852.CRW</source>
+    <results>
+      <rawType>CRW</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>2048</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>1359526</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>13036672</rawDataSize>
+      <rawDataDimensions>3152 2068</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMd5>94</rawMd5>
+      <metaOrientation>0</metaOrientation>
     </results>
   </test>
   <test>
@@ -76,10 +95,11 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
-      <rawDataType>COMP_CFA</rawDataType>
-      <rawDataSize>60360</rawDataSize>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>5327776</rawDataSize>
       <rawDataDimensions>2012 1324</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMd5>207</rawMd5>
       <metaOrientation>0</metaOrientation>            
     </results>
   </test>
@@ -101,15 +121,16 @@
   </test>
   <test>
     <name>ERF-test R-D1</name>
-    <file>/home/hub/samples/erf/Epson_RD1/_EPS1021.ERF</file>
+    <file>/home/hub/samples/erf/Epson_RD1/_eps8447.erf</file>
+    <source>http://libopenraw.freedesktop.org/www/samples/erf/_eps8447.erf</source>
     <results>
       <rawType>ERF</rawType>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
-      <rawDataType>COMP_CFA</rawDataType>
-      <rawDataSize>9844736</rawDataSize>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>1</metaOrientation>
@@ -118,6 +139,7 @@
   <test>
     <name>PEF-test K10D</name>
     <file>/home/hub/samples/pef/K10D/k10d.pef</file>
+    <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/VERTICAL/k10d.pef</source>
     <results>
       <rawType>PEF</rawType>
       <thumbNum>2</thumbNum>
@@ -134,6 +156,7 @@
   <test>
     <name>DNG-test K10D</name>
     <file>/home/hub/samples/dng/K10D/k10d.dng</file>
+    <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/VERTICAL/k10d.dng</source>
     <results>
       <rawType>DNG</rawType>
       <thumbNum>1</thumbNum>
@@ -141,9 +164,10 @@
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
       <rawDataType>CFA</rawDataType>
-      <rawDataSize>15492096</rawDataSize>
+      <rawDataSize>20656128</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMd5>113</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -162,6 +186,7 @@
       <rawDataDimensions>3884 2592</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>1</metaOrientation>
+      <rawMd5>129</rawMd5>
     </results>
   </test>
   <test>
@@ -173,7 +198,7 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>10614</thumbDataSizes>
-      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataType>CFA</rawDataType>
       <rawDataSize>13461504</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
       <rawCfaPattern>NONE</rawCfaPattern>
@@ -182,7 +207,8 @@
   </test>
   <test>
     <name>MRW-test Dimage5</name>
-    <file>/home/hub/samples/mrw/Dimage5/test.mrw</file>
+    <file>/home/hub/samples/mrw/Dimage5/dimage5.mrw</file>
+    <source>http://libopenraw.freedesktop.org/www/samples/mrw/dimage5.mrw</source>
     <results>
       <rawType>MRW</rawType>
       <thumbNum>1</thumbNum>
@@ -193,6 +219,7 @@
       <rawDataSize>6348928</rawDataSize>
       <rawDataDimensions>2056 1544</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMd5>251</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>    
   </test>
@@ -210,6 +237,7 @@
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMd5>214</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>    
   </test>
@@ -227,6 +255,7 @@
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMd5>168</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>    
   </test>

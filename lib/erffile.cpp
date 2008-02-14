@@ -60,21 +60,6 @@ namespace OpenRaw {
 			m_cfaIfd = _locateCfaIfd();
 			if(m_cfaIfd) {
 				err = _getRawDataFromDir(data, m_cfaIfd);
-				if(err == OR_ERROR_NONE) {
-					uint16_t compression = 0;
-					m_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
-					switch(compression) {
-					case 1:
-						data.setDataType(OR_DATA_TYPE_CFA);
-						break;
-					case 32769:
-						// TODO decompress. see nikon_load_raw() in dcraw
-						Trace(DEBUG1) << "Epson compressed\n";
-						break;
-					default:
-						break;
-					}
-				}
 			}
 			else {
 				err = OR_ERROR_NOT_FOUND;
