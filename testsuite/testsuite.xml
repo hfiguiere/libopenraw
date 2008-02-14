@@ -129,8 +129,8 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
-      <rawDataType>CFA</rawDataType>
-      <rawDataSize>12305920</rawDataSize>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>9844736</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>1</metaOrientation>
