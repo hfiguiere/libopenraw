@@ -2,6 +2,7 @@
  * libopenraw - neffile.h
  *
  * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,6 +43,10 @@ namespace OpenRaw {
 			NEFFile(const char* _filename);
 			virtual ~NEFFile();
 
+			/** hack because some (lot?) D100 do set as compressed even though 
+			 *  it is not
+			 */
+			static bool isCompressed(RawContainer & container, uint32_t offset);
 		private:
 
 			NEFFile(const NEFFile&);

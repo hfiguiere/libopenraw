@@ -2,6 +2,7 @@
  * libopenraw - neffile.cpp
  *
  * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -51,6 +52,25 @@ namespace OpenRaw {
 
 		NEFFile::~NEFFile()
 		{
+		}
+
+		bool NEFFile::isCompressed(RawContainer & container, uint32_t offset)
+		{
+			int i;
+			uint8_t buf[256];
+			size_t real_size = container.fetchData(buf, offset, 
+												   256);
+			if(real_size != 256) {
+				return true;
+			}
+			for(i = 15; i < 256; i+= 16) {
+				if(buf[i]) {
+					Trace(DEBUG1) << "isCompressed: true\n";
+					return true;
+				}
+			}
+			Trace(DEBUG1) << "isCompressed: false\n";
+			return false;
 		}
 
 		::or_error NEFFile::_getRawData(RawData & data, uint32_t /*options*/)

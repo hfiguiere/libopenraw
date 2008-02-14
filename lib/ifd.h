@@ -69,7 +69,8 @@ namespace OpenRaw {
 			typedef enum {
 				COMPRESS_NONE = 1,
 				COMPRESS_JPEG = 6,
-				COMPRESS_NIKON = 32769
+				COMPRESS_NIKON_PACK = 32769,
+				COMPRESS_NIKON_QUANTIZED = 34713
 			} TiffCompress;
 		}
 	}

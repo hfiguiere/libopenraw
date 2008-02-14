@@ -1,5 +1,10 @@
 2008-02-14  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* lib/ifdfile.cpp, lib/ifd.h, lib/neffile.{cpp,h}: Detect
+	D100 files marked wrongly as compressed. Declare the other
+	Nikon compression scheme (the one using the quantization 
+	table).
+
 	* lib/ifdfile.cpp (IFDFile::_enumThumbnailSizes): scan the 
 	subIFDs for previews. Check for compression in case the
 	there is a StripOffset for a JPEG preview.

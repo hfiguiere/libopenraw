@@ -35,6 +35,7 @@
 #include "ifdfile.h"
 #include "ifdfilecontainer.h"
 #include "jfifcontainer.h"
+#include "neffile.h" // I wonder if this is smart as it break the abstraction.
 #include "metavalue.h"
 #include "unpack.h"
 
@@ -448,13 +449,25 @@ namespace OpenRaw {
 			switch(compression) 
 			{
 			case IFD::COMPRESS_NONE:
-			case IFD::COMPRESS_NIKON:
 				data_type = OR_DATA_TYPE_CFA;
 				break;
+			case IFD::COMPRESS_NIKON_PACK:
+				data_type = OR_DATA_TYPE_COMPRESSED_CFA;
+				break;
+			case IFD::COMPRESS_NIKON_QUANTIZED:
+				// must check whether it is really compressed
+				// only for D100
+				if( !NEFFile::isCompressed(*m_container, offset) ) {
+					compression = IFD::COMPRESS_NIKON_PACK;
+					data_type = OR_DATA_TYPE_COMPRESSED_CFA;
+					break;
+				}
 			default:
 				data_type = OR_DATA_TYPE_COMPRESSED_CFA;
 				break;
 			}
+
+			Trace(DEBUG1) << "RAW Compression is " << compression << "\n";
 			
 			RawData::CfaPattern cfa_pattern = _getCfaPattern(dir);
 
@@ -474,19 +487,15 @@ namespace OpenRaw {
 				uint8_t * outdata = (uint8_t*)data.allocData(outleft);
 				size_t got;
 				do {
-					Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
 					got = m_container->fetchData (block.get(), 
 												  offset, blocksize);
 					fetched += got;
 					offset += got;
-					Trace(DEBUG2) << "got " << got << "\n";
 					if(got) {
 						size_t out = unpack_be12to16(outdata, outleft, 
 													 block.get(), got);
 						outdata += out;
 						outleft -= out;
-						Trace(DEBUG2) << "unpacked " << out
-									  << " bytes from " << got << "\n";
 					}
 				} while((got != 0) && (fetched < byte_length));
 			}
