@@ -117,7 +117,7 @@ Adobe DNG                Y Y N Y Y
  Leica DMR               T T X T T
  Leica M8                T T X T T
  Adobe DNG converter     T T B T T
- K10D                    T T X T T
+ K10D                    T B X T T
  Samsung GX-10           T B X T T
  Samsung Pro815          T B X T T
 
@@ -135,13 +135,13 @@ Epson ERF                Y Y N Y Y
  Epson RD1               T T   T T
 
 Minolta MRW              Y Y B N Y
- A1                      T T B X T
- A2                      T T B X T
+ A1                      T T T X T
+ A2                      T T T X T
  Dimage 5                T T X X T
  Dimage 7i               T T X X T
  Dimage 7Hi              T T X X T
- Maxxum 5D               T T B N T
- Maxxum 7D               T T B N T
+ Maxxum 5D               T T T N T
+ Maxxum 7D               T T T N T
  A200                    
 
 Sony SRF                 N N N N

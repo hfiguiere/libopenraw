@@ -1,5 +1,8 @@
 2008-02-13  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* lib/mrwfile.cpp: Change the buffer size to make sure
+	it is a multiple of 3. This should fix the decoding problem.
+
 	* lib/unpack.{cpp,h}, lib/mrwfile.cpp: rename to take byte order 
 	into account. Store the values as uint16_t. 
 	* test/testunpack.cpp: fix the test for the above changes.
