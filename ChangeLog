@@ -1,5 +1,10 @@
 2008-02-15  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* lib/unpack.{h,cpp}, test/testunpack.cpp, lib/mrwfile.cpp,
+	lib/ifdfile.cpp: unpack is now a class to store an 
+	internal state and deal with some variety of "pack" like
+	Nikons.
+	
 	* lib/rawcontainer.cpp, lib/ifddir.cpp: Remove excessive 
 	debugging.
 

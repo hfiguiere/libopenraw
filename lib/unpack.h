@@ -26,10 +26,26 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include <boost/noncopyable.hpp>
+
 namespace OpenRaw {	namespace Internals {
 
-	size_t unpack_be12to16(uint8_t *dest, size_t outsize, 
-						 const uint8_t *src, size_t insize);
+	/** Unpack class. Because we need to maintain a state */
+	class Unpack
+		: public boost::noncopyable
+	{
+	public:
+		Unpack(uint32_t w, uint32_t h, uint32_t t);
+
+		size_t row_advance();
+		size_t unpack_be12to16(uint8_t *dest, size_t outsize, 
+							   const uint8_t *src, size_t insize);
+	private:
+		uint32_t m_w;
+		uint32_t m_h;
+		uint32_t m_col, m_row;
+		uint32_t m_type;
+	};
 
 } }
 

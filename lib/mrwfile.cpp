@@ -189,6 +189,7 @@ namespace OpenRaw {
 				uint8_t * outdata = (uint8_t*)data.data();
 				size_t outleft = finaldatalen;
 				size_t got;
+				Unpack unpack(x, y, IFD::COMPRESS_NONE);
 				do {
 					Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
 					got = m_container->fetchData (block.get(), 
@@ -197,8 +198,8 @@ namespace OpenRaw {
 					offset += got;
 					Trace(DEBUG2) << "got " << got << "\n";
 					if(got) {
-						size_t out = unpack_be12to16(outdata, outleft, 
-													 block.get(), got);
+						size_t out = unpack.unpack_be12to16(outdata, outleft, 
+															block.get(), got);
 						outdata += out;
 						outleft -= out;
 						Trace(DEBUG2) << "unpacked " << out

@@ -29,8 +29,10 @@ void test_unpack()
 	const uint8_t packed[] = {0x12, 0x34, 0x56, 0x78, 0x90, 0xAB };
 	uint16_t unpacked[4];
 
-	size_t s = OpenRaw::Internals::unpack_be12to16((uint8_t*)unpacked, 8, 
-												   packed, 6);
+	OpenRaw::Internals::Unpack unpack(10, 10, 1);
+
+	size_t s = unpack.unpack_be12to16((uint8_t*)unpacked, 8, 
+									  packed, 6);
 	BOOST_CHECK_EQUAL(s, (size_t)8);
 	BOOST_CHECK_EQUAL(unpacked[0], 0x0123);
 	BOOST_CHECK_EQUAL(unpacked[1], 0x0456);

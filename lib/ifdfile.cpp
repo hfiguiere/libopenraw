@@ -486,13 +486,14 @@ namespace OpenRaw {
 				size_t outleft = x * y * 2;
 				uint8_t * outdata = (uint8_t*)data.allocData(outleft);
 				size_t got;
+				Unpack unpack(x, y, compression);
 				do {
 					got = m_container->fetchData (block.get(), 
 												  offset, blocksize);
 					fetched += got;
 					offset += got;
 					if(got) {
-						size_t out = unpack_be12to16(outdata, outleft, 
+						size_t out = unpack.unpack_be12to16(outdata, outleft, 
 													 block.get(), got);
 						outdata += out;
 						outleft -= out;
