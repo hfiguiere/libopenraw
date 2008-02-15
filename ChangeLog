@@ -1,5 +1,11 @@
 2008-02-15  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* lib/unpack.{cpp,h}, lib/mrwfile.cp: compute the adequate 
+	block size.
+	* lib/ifdfile.cpp: fix the Nikon unpack. Add hack for
+	Nikon D100.
+	* testsuite/testsuite.xml: update test for D100 and R-D1.
+
 	* lib/unpack.{h,cpp}, test/testunpack.cpp, lib/mrwfile.cpp,
 	lib/ifdfile.cpp: unpack is now a class to store an 
 	internal state and deal with some variety of "pack" like

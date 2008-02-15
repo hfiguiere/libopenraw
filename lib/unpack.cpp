@@ -35,6 +35,18 @@ namespace OpenRaw {	namespace Internals {
 	{
 	}
 
+	size_t Unpack::block_size()
+	{
+		size_t bs;
+		if(m_type == IFD::COMPRESS_NIKON_PACK) {
+			bs = (m_w / 2 * 3) + (m_w / 10);
+		}
+		else {
+			bs = m_w / 2 * 3;
+		}
+		return bs;
+	}
+
 
 	size_t Unpack::row_advance()
 	{ 

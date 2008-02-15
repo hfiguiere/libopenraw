@@ -452,14 +452,19 @@ namespace OpenRaw {
 				data_type = OR_DATA_TYPE_CFA;
 				break;
 			case IFD::COMPRESS_NIKON_PACK:
-				data_type = OR_DATA_TYPE_COMPRESSED_CFA;
+				data_type = OR_DATA_TYPE_CFA;
 				break;
 			case IFD::COMPRESS_NIKON_QUANTIZED:
 				// must check whether it is really compressed
 				// only for D100
 				if( !NEFFile::isCompressed(*m_container, offset) ) {
 					compression = IFD::COMPRESS_NIKON_PACK;
-					data_type = OR_DATA_TYPE_COMPRESSED_CFA;
+					data_type = OR_DATA_TYPE_CFA;
+					// this is a hack. we should check if 
+					// we have a D100 instead, but that case is already
+					// a D100 corner case. WILL BREAK on compressed files.
+					// according to dcraw we must increase the size by 6.
+					x += 6;
 					break;
 				}
 			default:
@@ -481,12 +486,16 @@ namespace OpenRaw {
 			}
 			else if(bpc == 12) {
 				size_t fetched = 0;
-				const off_t blocksize = 128*1024 + 1; // must be a multiple of 3
+				Unpack unpack(x, y, compression);
+				const size_t blocksize = unpack.block_size();
+				Trace(DEBUG1) << "Block size = " << blocksize << "\n";
+				Trace(DEBUG1) << "dimensions (x, y) " << x << ", "
+							  << y << "\n";
 				boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
 				size_t outleft = x * y * 2;
 				uint8_t * outdata = (uint8_t*)data.allocData(outleft);
 				size_t got;
-				Unpack unpack(x, y, compression);
+				Trace(DEBUG1) << "offset of RAW data = " << offset << "\n";
 				do {
 					got = m_container->fetchData (block.get(), 
 												  offset, blocksize);

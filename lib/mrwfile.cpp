@@ -184,12 +184,12 @@ namespace OpenRaw {
 				fetched = m_container->fetchData (p, offset, datalen);
 			}
 			else {
-				const off_t blocksize = 128*1024 + 1; // need a multiple of 3
+				Unpack unpack(x, y, IFD::COMPRESS_NONE);
+				size_t blocksize = unpack.block_size();
 				boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
 				uint8_t * outdata = (uint8_t*)data.data();
 				size_t outleft = finaldatalen;
 				size_t got;
-				Unpack unpack(x, y, IFD::COMPRESS_NONE);
 				do {
 					Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
 					got = m_container->fetchData (block.get(), 

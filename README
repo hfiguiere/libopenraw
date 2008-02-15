@@ -89,11 +89,11 @@ Canon CRW CHSDK          N N N N N
 (unofficial firmware)
  A610                    N N N N N
 
-Nikon NEF                Y Y N Y Y
+Nikon NEF                Y Y Y Y Y
  Cooolpix 5700           T T N T T
  D1                      T T X X T
  D1X                     T T X X T
- D100                    T T N X T
+ D100                    T T T X T
  D2H                     T T N T T
  D2X                     T T X T T
  D200
@@ -136,8 +136,8 @@ Pentax PEF               Y Y N Y N
  K10D                    T T N T
  K100D                   T T N
 
-Epson ERF                Y Y N Y Y
- Epson RD1               T T N T T
+Epson ERF                Y Y Y Y Y
+ Epson RD1               T T T T T
 
 Minolta MRW              Y Y B N Y
  A1                      T T T X T
