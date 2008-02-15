@@ -76,7 +76,7 @@ Canon CR2                Y Y Y Y Y
  5D                      T T T
  1DMarkII                T T T
 
-Canon CRW                Y Y Y Y Y
+Canon CRW                Y Y Y N Y
  300D                    T T T   T
  10D                     T T T   T
  D60                     T T T   T
@@ -127,8 +127,8 @@ Adobe DNG                Y Y N Y Y
  Samsung Pro815          T T X T T
 
 Sony ARW                 Y N N Y N
- A-100                   T B   T
- A-700
+ A-100                   T N   T
+ A-700                   T     T
 
 Pentax PEF               Y Y N Y N
  *-ist D                 T T X
@@ -137,7 +137,7 @@ Pentax PEF               Y Y N Y N
  K100D                   T T N
 
 Epson ERF                Y Y N Y Y
- Epson RD1               T T   T T
+ Epson RD1               T T N T T
 
 Minolta MRW              Y Y B N Y
  A1                      T T T X T

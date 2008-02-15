@@ -58,11 +58,7 @@ namespace OpenRaw {
 			if (s != 1) {
 				return false;
 			}
-			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-			Trace(DEBUG1) << "read8 " << (int)buf	<< "\n";
 			v = buf;
-			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
-			Trace(DEBUG1) << "value = " << v << "\n";
 			return true;
 		}
 
@@ -73,11 +69,7 @@ namespace OpenRaw {
 			if (s != 1) {
 				return false;
 			}
-			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-			Trace(DEBUG1) << "read8 " << (int)buf	<< "\n";
 			v = buf;
-			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
-			Trace(DEBUG1) << "value = " << v << "\n";
 			return true;
 		}
 
@@ -95,17 +87,12 @@ namespace OpenRaw {
 			if (s != 2) {
 				return false;
 			}
-			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-			Trace(DEBUG1) << "read16 " << (int)buf[0] << " " << (int)buf [1] 
-								<< "\n";
 			if (m_endian == ENDIAN_LITTLE) {
 				v = EL16(buf);
 			}
 			else {
 				v = BE16(buf);
 			}
-			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
-			Trace(DEBUG1) << "value = " << v << "\n";
 			return true;
 		}
 
@@ -126,20 +113,12 @@ namespace OpenRaw {
 				return false;
 			}
 
-			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-			Trace(DEBUG1) << "read32 " << (int)buf[0] << " " << (int)buf [1] 
-								<< " " << (int)buf [2] << " " << (int)buf[3] 
-								<< "\n";
-
 			if (m_endian == ENDIAN_LITTLE) {
 				v = EL32(buf);
 			}
 			else {
 				v = BE32(buf);
 			}
-
-			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
-			Trace(DEBUG1) << "value = " << v << "\n";
 
 			return true;
 		}
@@ -159,17 +138,12 @@ namespace OpenRaw {
 			if (s != 2) {
 				return false;
 			}
-			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-			Trace(DEBUG1) << "readu16 " << (int)buf[0] << " " << (int)buf [1] 
-								<< "\n";
 			if (m_endian == ENDIAN_LITTLE) {
 				v = EL16(buf);
 			}
 			else {
 				v = BE16(buf);
 			}
-			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
-			Trace(DEBUG1) << "value = " << v << "\n";
 			return true;
 		}
 
@@ -189,20 +163,12 @@ namespace OpenRaw {
 				return false;
 			}
 
-			std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-			Trace(DEBUG1) << "readu32 " << (int)buf[0] << " " << (int)buf [1] 
-								<< " " << (int)buf [2] << " " << (int)buf[3] 
-								<< "\n";
-
 			if (m_endian == ENDIAN_LITTLE) {
 				v = EL32(buf);
 			}
 			else {
  				v = BE32(buf);
 			}
-
-			std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
-			Trace(DEBUG1) << "value = " << v << "\n";
 
 			return true;
 		}

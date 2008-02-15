@@ -1,3 +1,8 @@
+2008-02-15  Hubert Figuiere  <hfiguiere@novell.com>
+
+	* lib/rawcontainer.cpp, lib/ifddir.cpp: Remove excessive 
+	debugging.
+
 2008-02-14  Hubert Figuiere  <hfiguiere@novell.com>
 
 	* lib/ifdfile.cpp, lib/ifd.h, lib/neffile.{cpp,h}: Detect

@@ -69,8 +69,6 @@ namespace OpenRaw {
 			file->seek(m_offset, SEEK_SET);
 			m_container.readInt16(file, numEntries);
 
-			Trace(DEBUG1) << "num =" << numEntries << "\n";
-
 			for(int16_t i = 0; i < numEntries; i++) {
 				uint16_t id;
 				int16_t type;
@@ -81,8 +79,7 @@ namespace OpenRaw {
 				m_container.readInt32(file, count);
 				file->read(&data, 4);
 				IFDEntry::Ref entry(new IFDEntry(id, type, 
-																				 count, data, m_container));
-				Trace(DEBUG1) << "adding elem for " << id << "\n";
+												 count, data, m_container));
 				m_entries[id] = entry;
 			}
 
