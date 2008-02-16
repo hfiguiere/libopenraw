@@ -1,5 +1,7 @@
 2008-02-16  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdfile.cpp: refactor the unpack for 8 bits data.
+
 	* testsuite/testsuite.xml: Added Leica M8 to the test.
 
 2008-02-15  Hubert Figuiere  <hfiguiere@novell.com>

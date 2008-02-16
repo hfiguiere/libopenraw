@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -485,10 +485,10 @@ namespace OpenRaw {
 				}
 			}
 			// TODO refactor the two cases below.
-			else if(bpc == 12) {
+			else if((bpc == 12) || (bpc == 8)) {
 				size_t fetched = 0;
 				Unpack unpack(x, y, compression);
-				const size_t blocksize = unpack.block_size();
+				const size_t blocksize = (bpc == 8 ? x : unpack.block_size());
 				Trace(DEBUG1) << "Block size = " << blocksize << "\n";
 				Trace(DEBUG1) << "dimensions (x, y) " << x << ", "
 							  << y << "\n";
@@ -503,28 +503,20 @@ namespace OpenRaw {
 					fetched += got;
 					offset += got;
 					if(got) {
-						size_t out = unpack.unpack_be12to16(outdata, outleft, 
-													 block.get(), got);
-						outdata += out;
-						outleft -= out;
-					}
-				} while((got != 0) && (fetched < byte_length));
-			}
-			else if(bpc == 8) {
-				size_t fetched = 0;
-				boost::scoped_array<uint8_t> block(new uint8_t[x]);
-				size_t outleft = x * y * 2;
-				uint16_t * outdata = (uint16_t*)data.allocData(outleft);
-				size_t got;
-				do {
-					got = m_container->fetchData (block.get(), 
-												  offset, x);
-					fetched += got;
-					offset += got;
-					if(got) {
-						std::copy(block.get(), block.get()+got,
-								  outdata);
-						outdata += got;
+						if(bpc == 12) {
+							size_t out = unpack.unpack_be12to16(outdata, 
+																outleft, 
+																block.get(), 
+																got);
+							outdata += out;
+							outleft -= out;
+						}
+						else {
+							// outdata point to uint16_t
+							std::copy(block.get(), block.get()+got,
+									  (uint16_t*)outdata);
+							outdata += (got << 1);
+						}
 					}
 				} while((got != 0) && (fetched < byte_length));
 			}
