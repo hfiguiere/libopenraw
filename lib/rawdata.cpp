@@ -29,6 +29,7 @@ namespace OpenRaw {
 	public:
 		RawData *self;
 		CfaPattern cfa_pattern;
+		uint32_t compression;
 		uint8_t *pos;
 		size_t offset;
 		size_t row_offset;
@@ -40,6 +41,7 @@ namespace OpenRaw {
 
 		Private(RawData *_self)
 			:	self(_self), cfa_pattern(OR_CFA_PATTERN_NONE),
+				compression(0),
 				pos(NULL), offset(0),
 				row_offset(0),
 				slice(0), sliceWidth(0),
@@ -136,6 +138,15 @@ namespace OpenRaw {
 		return d->cfa_pattern;
 	}
 
+	void RawData::setCompression(uint32_t t)
+	{
+		d->compression = t;
+	}
+
+	uint32_t RawData::compression()
+	{
+		return d->compression;
+	}
 
 #if 0
 	RawData &RawData::append(uint8_t c)

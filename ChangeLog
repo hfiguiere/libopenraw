@@ -1,5 +1,10 @@
 2008-02-16  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdfile.cpp, lib/rawdata.cpp, 
+	include/libopenraw++/rawdata.h: setCompression() / 
+	compression().
+	* tools/ordiag.cpp: dump the compression if applicable.
+	
 	* lib/ifdfile.cpp: refactor the unpack for 8 bits data.
 
 	* testsuite/testsuite.xml: Added Leica M8 to the test.

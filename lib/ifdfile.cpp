@@ -525,6 +525,8 @@ namespace OpenRaw {
 			}
 			data.setCfaPattern(cfa_pattern);
 			data.setDataType(data_type);
+			data.setCompression(data_type == OR_DATA_TYPE_COMPRESSED_CFA 
+								? compression : 1);
 			data.setDimensions(x, y);
 			
 			return ret;

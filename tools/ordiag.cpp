@@ -186,8 +186,14 @@ public:
 			::or_error err = rf->getRawData(rd, 0);
 			if (err == OR_ERROR_NONE) {
 				m_out << "\tRAW data\n";
-				m_out << boost::format("\t\tType: %1%\n")
+				m_out << boost::format("\t\tType: %1%")
 					% dataTypeToString(rd.dataType());
+				if(rd.dataType() == OR_DATA_TYPE_COMPRESSED_CFA)  {
+					m_out << boost::format(" (compression = %1%)\n") % rd.compression();
+				}
+				else {
+					m_out << "\n";
+				}
 				m_out << boost::format("\t\tByte size: %1%\n")
 					% rd.size();
 				m_out << boost::format("\t\tDimensions: x = %1% y = %2%\n")

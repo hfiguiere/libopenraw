@@ -48,6 +48,8 @@ namespace OpenRaw {
 		virtual void setDimensions(uint32_t x, uint32_t y);
 		void setCfaPattern(CfaPattern t);
 		CfaPattern cfaPattern();
+		uint32_t compression();
+		void setCompression(uint32_t c);
 
 		void setSlices(const std::vector<uint16_t> & slices);
 
