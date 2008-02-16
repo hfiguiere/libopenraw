@@ -192,6 +192,24 @@
     </results>
   </test>
   <test>
+    <name>DNG-test Leica M8</name>
+    <file>/home/hub/samples/dng/Leica_M8/RAW_LEICA_M8.DNG</file>
+    <source>http://www.rawsamples.ch/raws/leica/m8/RAW_LEICA_M8.DNG</source>
+    <results>
+      <rawType>DNG</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>320</thumbSizes>
+      <thumbFormats>8RGB</thumbFormats>
+      <thumbDataSizes>65280</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>20681920</rawDataSize>
+      <rawDataDimensions>3920 2638</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <metaOrientation>1</metaOrientation>
+      <rawMd5>233</rawMd5>
+    </results>
+  </test>
+  <test>
     <name>ORF-test E300</name>
     <file>/home/hub/samples/orf/Olympus_E300/P7080133.ORF</file>
     <results>
