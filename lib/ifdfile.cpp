@@ -484,6 +484,7 @@ namespace OpenRaw {
 					Trace(WARNING) << "Size mismatch for data: ignoring.\n";
 				}
 			}
+			// TODO refactor the two cases below.
 			else if(bpc == 12) {
 				size_t fetched = 0;
 				Unpack unpack(x, y, compression);
@@ -506,6 +507,24 @@ namespace OpenRaw {
 													 block.get(), got);
 						outdata += out;
 						outleft -= out;
+					}
+				} while((got != 0) && (fetched < byte_length));
+			}
+			else if(bpc == 8) {
+				size_t fetched = 0;
+				boost::scoped_array<uint8_t> block(new uint8_t[x]);
+				size_t outleft = x * y * 2;
+				uint16_t * outdata = (uint16_t*)data.allocData(outleft);
+				size_t got;
+				do {
+					got = m_container->fetchData (block.get(), 
+												  offset, x);
+					fetched += got;
+					offset += got;
+					if(got) {
+						std::copy(block.get(), block.get()+got,
+								  outdata);
+						outdata += got;
 					}
 				} while((got != 0) && (fetched < byte_length));
 			}

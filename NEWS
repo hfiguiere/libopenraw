@@ -10,6 +10,10 @@ libopenraw 0.0.5
   - NEW: support for Minolta MRW from Dimage 5, Dimage 7x, A1, A2, 5D
     and 7D.
   - NEW: API or_rawdata_get_cfa_pattern() to fetch the CFA pattern.
+  - NEW: Decompress/unpack RAW data from DNG uncompressed: Leica DMR,
+    Leica M8, Samsung GX-10 and Pro815, K10D, Ricoh GR-2)
+  - NEW: Decompress/unpack NEF RAW data from D1, D1X, D100, D2X.
+  - NEW: Unpack RAW data from Epson ERF R-D1 files.
 
 libopenraw 0.0.4
 

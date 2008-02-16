@@ -1,5 +1,7 @@
 2008-02-15  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* lib/ifdfile.cpp: support 8-bits RAW data. (M8 support)
+
 	* lib/unpack.{cpp,h}, lib/mrwfile.cp: compute the adequate 
 	block size.
 	* lib/ifdfile.cpp: fix the Nikon unpack. Add hack for
