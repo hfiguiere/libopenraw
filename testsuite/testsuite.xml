@@ -156,6 +156,24 @@
     </results>
   </test>
   <test>
+    <name>PEF-test *-ist D</name>
+    <file>/home/hub/samples/pef/star-ist-D/PENTAX-ISD.PEF</file>
+    <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/PENTAX-ISD.PEF</source>
+    <results>
+      <rawType>PEF</rawType>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3008</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>5308 1343392</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>12305920</rawDataSize>
+      <rawDataDimensions>3040 2024</rawDataDimensions>
+      <rawCfaPattern>NONE</rawCfaPattern>
+      <rawMd5>63</rawMd5>
+      <metaOrientation>0</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>DNG-test K10D</name>
     <file>/home/hub/samples/dng/K10D/k10d.dng</file>
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/VERTICAL/k10d.dng</source>

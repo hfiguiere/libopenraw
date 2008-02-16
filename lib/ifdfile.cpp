@@ -476,6 +476,11 @@ namespace OpenRaw {
 			
 			RawData::CfaPattern cfa_pattern = _getCfaPattern(dir);
 
+			if((bpc == 12) && (compression == 1) 
+			   && (byte_length == (x * y * 2))) 
+			{
+				bpc = 16;
+			}
 			if((bpc == 16) || (data_type == OR_DATA_TYPE_COMPRESSED_CFA)) {
 				void *p = data.allocData(byte_length);
 				size_t real_size = m_container->fetchData(p, offset, 
@@ -484,7 +489,6 @@ namespace OpenRaw {
 					Trace(WARNING) << "Size mismatch for data: ignoring.\n";
 				}
 			}
-			// TODO refactor the two cases below.
 			else if((bpc == 12) || (bpc == 8)) {
 				size_t fetched = 0;
 				Unpack unpack(x, y, compression);

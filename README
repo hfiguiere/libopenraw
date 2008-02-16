@@ -108,12 +108,13 @@ Nikon NEF                Y Y Y Y Y
 Olympus ORF              Y Y N Y N
  E-1                     T T 
  E-10                    B B
- E-300                   T T   T 
+ E-3                     T T
+ E-300                   T T B T 
  E-330                   T T
- E-400                   T B
- E-410                   B T
- E-500                   T T 
- E-510                   B T
+ E-400                   T B   T
+ E-410                   B T   T
+ E-500                   T T   T
+ E-510                   B T   T
  SP-350
  SP-510                  B B
  SP-550                  B B
@@ -132,7 +133,7 @@ Sony ARW                 Y N N Y N
  A-700                   T     T
 
 Pentax PEF               Y Y N Y N
- *-ist D                 T B X
+ *-ist D                 T T X X
  *-ist DL                T T N
  K10D                    T T N T
  K100D                   T T N

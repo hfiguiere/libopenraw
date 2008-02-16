@@ -51,7 +51,7 @@ namespace OpenRaw {	namespace Internals {
 	size_t Unpack::row_advance()
 	{ 
 		size_t skip_input = 0;
-		if((m_type >= IFD::COMPRESS_NIKON_PACK) && ((m_col % 10) == 9)) {
+		if((m_type == IFD::COMPRESS_NIKON_PACK) && ((m_col % 10) == 9)) {
 			// skip one byte.
 			skip_input = 1;
 		}

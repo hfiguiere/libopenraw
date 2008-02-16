@@ -1,8 +1,14 @@
 2008-02-16  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdfile.cpp: fix regression with PEF files: they
+	advertise 12-bits but are 16-bits unpacked.
+	* testsuite/testsuite.xml: add PEF *-ist D to the testsuite.
+	* lib/unpack.cpp: the Nikon unpacking only for Nikon unpack.
+	
 	* lib/ifdfile.cpp, lib/rawdata.cpp, 
 	include/libopenraw++/rawdata.h: setCompression() / 
 	compression().
+
 	* tools/ordiag.cpp: dump the compression if applicable.
 	
 	* lib/ifdfile.cpp: refactor the unpack for 8 bits data.
