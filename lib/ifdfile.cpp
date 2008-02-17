@@ -289,13 +289,11 @@ namespace OpenRaw {
 
 
 		namespace {
-		/** convert the CFA Pattern as stored in the entry */
-		RawData::CfaPattern _convertCfaPattern(const IFDEntry::Ref & e)
+
+		RawData::CfaPattern 
+		_convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
 		{
-			std::vector<uint8_t> cfaPattern;
-			RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
-			
-			e->getArray(cfaPattern);
+			RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
 			if(cfaPattern.size() != 4) {
 				Trace(WARNING) << "Unsupported bayer pattern\n";
 			}
@@ -307,7 +305,9 @@ namespace OpenRaw {
 				case IFD::CFA_RED:
 					switch(cfaPattern[1]) {
 					case IFD::CFA_GREEN:
-						if((cfaPattern[2] == IFD::CFA_GREEN) && (cfaPattern[3] == IFD::CFA_BLUE)) {
+						if((cfaPattern[2] == IFD::CFA_GREEN) 
+						   && (cfaPattern[3] == IFD::CFA_BLUE)) 
+						{
 							cfa_pattern = OR_CFA_PATTERN_RGGB;
 						}
 						break;
@@ -316,12 +316,16 @@ namespace OpenRaw {
 				case IFD::CFA_GREEN:
 					switch(cfaPattern[1]) {
 					case IFD::CFA_RED:
-						if((cfaPattern[2] == 2) && (cfaPattern[3] == IFD::CFA_GREEN)) {
+						if((cfaPattern[2] == 2) 
+						   && (cfaPattern[3] == IFD::CFA_GREEN)) 
+						{
 							cfa_pattern = OR_CFA_PATTERN_GRBG;
 						}
 						break;
 					case 2:
-						if((cfaPattern[2] == IFD::CFA_RED) && (cfaPattern[3] == IFD::CFA_GREEN)) {
+						if((cfaPattern[2] == IFD::CFA_RED) 
+						   && (cfaPattern[3] == IFD::CFA_GREEN)) 
+						{
 							cfa_pattern = OR_CFA_PATTERN_GBRG;
 						}
 						break;
@@ -330,7 +334,9 @@ namespace OpenRaw {
 				case IFD::CFA_BLUE:
 					switch(cfaPattern[1]) {
 					case IFD::CFA_GREEN:
-						if((cfaPattern[2] == IFD::CFA_GREEN) && (cfaPattern[3] == IFD::CFA_RED)) {
+						if((cfaPattern[2] == IFD::CFA_GREEN) 
+						   && (cfaPattern[3] == IFD::CFA_RED)) 
+						{
 							cfa_pattern = OR_CFA_PATTERN_BGGR;
 						}
 						break;
@@ -342,6 +348,43 @@ namespace OpenRaw {
 			return cfa_pattern;
 		}
 
+		RawData::CfaPattern _convertNewCfaPattern(const IFDEntry::Ref & e)
+		{
+			RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
+			if(!e || (e->count() < 4)) {
+				return cfa_pattern;
+			}
+
+			uint16_t hdim = IFDTypeTrait<uint16_t>::get(*e, 0, true);
+			uint16_t vdim = IFDTypeTrait<uint16_t>::get(*e, 1, true);
+			if(hdim != 2 && vdim != 2) {
+				cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
+			}
+			else {
+				std::vector<uint8_t> cfaPattern;
+				cfaPattern.push_back(IFDTypeTrait<uint8_t>::get(*e, 4, true));
+				cfaPattern.push_back(IFDTypeTrait<uint8_t>::get(*e, 5, true));
+				cfaPattern.push_back(IFDTypeTrait<uint8_t>::get(*e, 6, true));
+				cfaPattern.push_back(IFDTypeTrait<uint8_t>::get(*e, 7, true));
+				cfa_pattern = _convertArrayToCfaPattern(cfaPattern);
+			}
+			return cfa_pattern;
+		}
+
+
+		/** convert the CFA Pattern as stored in the entry */
+		RawData::CfaPattern _convertCfaPattern(const IFDEntry::Ref & e)
+		{
+			std::vector<uint8_t> cfaPattern;
+			RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
+			
+			e->getArray(cfaPattern);
+			if(!cfaPattern.empty()) {
+				cfa_pattern = _convertArrayToCfaPattern(cfaPattern);
+			}
+			return cfa_pattern;
+		}
+
 		/** get the CFA Pattern out of the directory
 		 * @param dir the directory
 		 * @return the cfa_pattern value. %OR_CFA_PATTERN_NONE mean that
@@ -349,11 +392,18 @@ namespace OpenRaw {
 		 */
 		static RawData::CfaPattern _getCfaPattern(const IFDDir::Ref & dir)
 		{
+			Trace(DEBUG1) << __FUNCTION__ << "\n";
 			RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
 			try {
 				IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
 				if(e) {
 					cfa_pattern = _convertCfaPattern(e);
+				}
+				else {
+					e = dir->getEntry(IFD::EXIF_TAG_NEW_CFA_PATTERN);
+					if(e)  {
+						cfa_pattern = _convertNewCfaPattern(e);
+					}
 				}
 			}
 			catch(...)
@@ -475,6 +525,14 @@ namespace OpenRaw {
 			Trace(DEBUG1) << "RAW Compression is " << compression << "\n";
 			
 			RawData::CfaPattern cfa_pattern = _getCfaPattern(dir);
+			if(cfa_pattern == OR_CFA_PATTERN_NONE) {
+				// some file have it in the exif IFD instead.
+				if(!m_exifIfd) {
+					m_exifIfd = _locateExifIfd();
+				}
+				cfa_pattern = _getCfaPattern(m_exifIfd);
+			}
+
 
 			if((bpc == 12) && (compression == 1) 
 			   && (byte_length == (x * y * 2))) 

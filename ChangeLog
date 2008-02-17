@@ -1,3 +1,7 @@
+2008-02-17  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ifdfile.cpp: Handle new-style CFA Pattern tag.
+
 2008-02-16  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ifdfile.cpp: fix regression with PEF files: they

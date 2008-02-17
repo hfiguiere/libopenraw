@@ -105,11 +105,11 @@ Nikon NEF                Y Y Y Y Y
  D70s                    T T N T T
  D80
 
-Olympus ORF              Y Y N Y N
+Olympus ORF              Y Y N Y Y
  E-1                     T T 
  E-10                    B B
  E-3                     T T
- E-300                   T T B T 
+ E-300                   T T B T T
  E-330                   T T
  E-400                   T B   T
  E-410                   B T   T
@@ -132,10 +132,10 @@ Sony ARW                 Y N N Y N
  A-100                   T N   T
  A-700                   T     T
 
-Pentax PEF               Y Y N Y N
- *-ist D                 T T X X
+Pentax PEF               Y Y N Y Y
+ *-ist D                 T T X X T
  *-ist DL                T T N
- K10D                    T T N T
+ K10D                    T T N T T
  K100D                   T T N
 
 Epson ERF                Y Y Y Y Y
