@@ -107,8 +107,7 @@ namespace OpenRaw {
 		 */
 		virtual ::or_error _getRawData(RawData & data, uint32_t options) = 0;
 
-		virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) 
-			{ return NULL; } // TODO make that pure virtual
+		virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 	private:
 		static Type identify(const char*_filename);
 

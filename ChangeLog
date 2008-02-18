@@ -1,5 +1,12 @@
 2008-02-17  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ciffcontainer.{cpp.h}: refactor CIFF container
+	to support metadata.
+	* lib/crwfile.{cpp,h}, testsuite/testsuite.xml:
+	get orientation meta data for CRW.
+	* include/libopenraw++/rawfile.h: getMetaValue() is pure
+	virtual.
+
 	* lib/ifdfile.cpp: Handle new-style CFA Pattern tag.
 
 2008-02-16  Hubert Figuiere  <hub@figuiere.net>

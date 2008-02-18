@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainer.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -51,7 +51,7 @@ namespace OpenRaw {
 				return ret;
 			}
 
-			int32_t ImageSpec::exifOrientation()
+			int32_t ImageSpec::exifOrientation() const
 			{
 				int32_t orientation = 0;
 				switch(rotationAngle) {
@@ -180,8 +180,9 @@ namespace OpenRaw {
 		
 		CIFFContainer::CIFFContainer(IO::Stream *_file)
 			: RawContainer(_file, 0),
-				m_hdr(),
-				m_heap((CIFF::Heap*)NULL)
+			  m_hdr(),
+			  m_heap((CIFF::Heap*)NULL),
+			  m_hasImageSpec(false)
 		{
 			m_endian = _readHeader();
 		}
@@ -230,5 +231,67 @@ namespace OpenRaw {
 			return _endian;
 		}
 
+		CIFF::Heap::Ref CIFFContainer::getImageProps()
+		{
+			if(!m_imageprops) {
+				if(!m_heap) {
+					return CIFF::Heap::Ref();
+				}
+				
+				const CIFF::RecordEntry::List & records = m_heap->records();
+				CIFF::RecordEntry::List::const_iterator iter;
+				
+				// locate the properties
+				iter = std::find_if(records.begin(), records.end(), boost::bind(
+										&CIFF::RecordEntry::isA, _1, 
+										static_cast<uint16_t>(CIFF::TAG_IMAGEPROPS)));
+				if (iter == records.end()) {
+					Trace(ERROR) << "Couldn't find the image properties.\n";
+					return CIFF::Heap::Ref();
+				}
+				
+				m_imageprops = CIFF::Heap::Ref(new CIFF::Heap(iter->offset + m_heap->offset(), iter->length, this));
+			}
+			return m_imageprops;
+		}
+		
+		const CIFF::ImageSpec * CIFFContainer::getImageSpec()
+		{
+			if(!m_hasImageSpec) {
+				CIFF::Heap::Ref props = getImageProps();
+
+				const CIFF::RecordEntry::List & propsRecs = props->records();
+				CIFF::RecordEntry::List::const_iterator iter;
+				iter = std::find_if(propsRecs.begin(), propsRecs.end(), 
+									boost::bind(
+										&CIFF::RecordEntry::isA, _1, 
+										static_cast<uint16_t>(CIFF::TAG_IMAGEINFO)));
+				if (iter == propsRecs.end()) {
+					Trace(ERROR) << "Couldn't find the image info.\n";
+					return NULL;
+				}
+				m_imagespec.readFrom(iter->offset + props->offset(), this);
+			}
+			return &m_imagespec;
+		}
+
+
+		const CIFF::RecordEntry * CIFFContainer::getRawDataRecord() const
+		{
+			if(!m_heap) {
+				return NULL;
+			}
+			const CIFF::RecordEntry::List & records = m_heap->records();
+			CIFF::RecordEntry::List::const_iterator iter;
+			// locate the RAW data
+			iter = std::find_if(records.begin(), records.end(), boost::bind(
+									&CIFF::RecordEntry::isA, _1, 
+									static_cast<uint16_t>(CIFF::TAG_RAWIMAGEDATA)));
+			
+			if (iter != records.end()) {
+				return &(*iter);
+			}
+			return NULL;
+		}
 	}
 }

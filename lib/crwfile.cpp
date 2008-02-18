@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -35,6 +35,7 @@
 #include "ciffcontainer.h"
 #include "jfifcontainer.h"
 #include "crwdecompressor.h"
+#include "metavalue.h"
 
 #include "rawfilefactory.h"
 
@@ -132,42 +133,21 @@ namespace OpenRaw {
 		::or_error CRWFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error err = OR_ERROR_NOT_FOUND;
-			Heap::Ref heap = m_container->heap();
-			if(!heap) {
-				// this is not a CIFF file.
-				return err;
-			}
+			Heap::Ref props = m_container->getImageProps();
 
-			const RecordEntry::List & records = heap->records();
-			RecordEntry::List::const_iterator iter;
-
-			// locate the properties
-			iter = std::find_if(records.begin(), records.end(), boost::bind(
-														&RecordEntry::isA, _1, 
-														static_cast<uint16_t>(TAG_IMAGEPROPS)));
-			if (iter == records.end()) {
-				Trace(ERROR) << "Couldn't find the image properties.\n";
-				return err;
-			}
-			
-			Heap props(iter->offset + heap->offset(), iter->length, m_container);
-			const RecordEntry::List & propsRecs = props.records();
-			iter = std::find_if(propsRecs.begin(), propsRecs.end(), boost::bind(
-														&RecordEntry::isA, _1, 
-														static_cast<uint16_t>(TAG_IMAGEINFO)));
-			if (iter == propsRecs.end()) {
-				Trace(ERROR) << "Couldn't find the image info.\n";
-				return err;
-			}
-			ImageSpec img_spec;
-			img_spec.readFrom(iter->offset + props.offset(), m_container);
+			const ImageSpec * img_spec = m_container->getImageSpec();
 			uint32_t x, y;
-			int32_t orientation;
-			x = img_spec.imageWidth;
-			y = img_spec.imageHeight;
-			orientation = img_spec.exifOrientation();
+			x = y = 0;
+			int32_t orientation = 0;
+			if(img_spec) {
+				x = img_spec->imageWidth;
+				y = img_spec->imageHeight;
+				orientation = img_spec->exifOrientation();
+			}
 
 			// locate decoder table
+			const CIFF::RecordEntry::List & propsRecs = props->records();
+			CIFF::RecordEntry::List::const_iterator iter;
 			iter = std::find_if(propsRecs.begin(), propsRecs.end(), boost::bind(
 														&RecordEntry::isA, _1, 
 														static_cast<uint16_t>(TAG_EXIFINFORMATION)));
@@ -176,13 +156,13 @@ namespace OpenRaw {
 				return err;
 			}
 
-			Heap exifProps(iter->offset + props.offset(), iter->length, m_container);
+			Heap exifProps(iter->offset + props->offset(), iter->length, m_container);
 
 			const RecordEntry::List & exifPropsRecs = exifProps.records();
 			iter = std::find_if(exifPropsRecs.begin(), exifPropsRecs.end(), 
-													boost::bind(
-														&RecordEntry::isA, _1, 
-														static_cast<uint16_t>(TAG_DECODERTABLE)));
+								boost::bind(
+									&RecordEntry::isA, _1, 
+									static_cast<uint16_t>(TAG_DECODERTABLE)));
 			if (iter == exifPropsRecs.end()) {
 				Trace(ERROR) << "Couldn't find the decoder table.\n";
 				return err;
@@ -217,16 +197,13 @@ namespace OpenRaw {
 			}
 
 
-			// locate the RAW data
-			iter = std::find_if(records.begin(), records.end(), boost::bind(
-														&RecordEntry::isA, _1, 
-														static_cast<uint16_t>(TAG_RAWIMAGEDATA)));
-
-			if (iter != records.end()) {
-				Trace(DEBUG2) << "RAW @" << heap->offset() + (*iter).offset << "\n";
-				size_t byte_size = (*iter).length;
+			const CIFF::RecordEntry *entry = m_container->getRawDataRecord();
+			if (entry) {
+				CIFF::Heap::Ref heap = m_container->heap();
+				Trace(DEBUG2) << "RAW @" << heap->offset() + entry->offset << "\n";
+				size_t byte_size = entry->length;
 				void *buf = data.allocData(byte_size);
-				size_t real_size = (*iter).fetchData(heap.get(), buf, byte_size);
+				size_t real_size = entry->fetchData(heap.get(), buf, byte_size);
 				if (real_size != byte_size) {
 					Trace(WARNING) << "wrong size\n";
 				}
@@ -258,5 +235,29 @@ namespace OpenRaw {
 			return err;
 		}
 
+		MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
+		{
+			MetaValue * val = NULL;
+
+			switch(META_INDEX_MASKOUT(meta_index)) {
+			case META_NS_TIFF:
+			{
+				const ImageSpec * img_spec = m_container->getImageSpec();
+				if(img_spec) {
+					val = new MetaValue(boost::any(
+											static_cast<int32_t>(
+												img_spec->exifOrientation())));
+				}
+				break;
+			}
+			case META_NS_EXIF:
+				break;
+			default:
+				Trace(ERROR) << "Unknown Meta Namespace\n";
+				break;
+			}
+
+			return val;
+		}
 	}
 }

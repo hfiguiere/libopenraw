@@ -112,13 +112,21 @@ namespace OpenRaw {
 			class ImageSpec
 			{
 			public:
+				ImageSpec()
+					: imageWidth(0), imageHeight(0),
+					  pixelAspectRatio(0), rotationAngle(0),
+					  componentBitDepth(0), colorBitDepth(0),
+					  colorBW(0)
+					{
+					}
+
 				/** read the struct from container
 				 * @param offset the offset to read from, relative
 				 * to the begining of the container.
 				 * @param container the container to read from.
 				 */
 				bool readFrom(off_t offset, CIFFContainer *container);
-				int32_t exifOrientation();
+				int32_t exifOrientation() const;
 
 				uint32_t imageWidth;
 				uint32_t imageHeight;
@@ -231,9 +239,13 @@ namespace OpenRaw {
 				{
 					return m_hdr;
 				}
+			CIFF::Heap::Ref getImageProps();
+			const CIFF::RecordEntry * getRawDataRecord() const;
+			const CIFF::ImageSpec * getImageSpec();
 		private:
 			bool _loadHeap();
 			EndianType _readHeader();
+			
 
 			CIFFContainer(const CIFFContainer &);
 			CIFFContainer & operator=(const CIFFContainer &);
@@ -241,6 +253,9 @@ namespace OpenRaw {
 			friend class CIFF::HeapFileHeader;
 			CIFF::HeapFileHeader m_hdr;
 			CIFF::Heap::Ref m_heap;
+			CIFF::Heap::Ref m_imageprops;
+			bool m_hasImageSpec;
+			CIFF::ImageSpec m_imagespec;
 		};
 
 
