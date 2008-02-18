@@ -87,6 +87,20 @@ namespace OpenRaw {
 			return BE32(b);
 		}
 		
+#if defined(__APPLE_CC__)
+// Apple broken C++ needs this
+		template <>
+		inline unsigned long IFDTypeTrait<unsigned long>::EL(const uint8_t* b)
+		{
+			return EL32(b);
+		}
+
+		template <>
+		inline unsigned long IFDTypeTrait<unsigned long>::BE(const uint8_t* b)
+		{
+			return BE32(b);
+		}
+#endif
 
 		class IFDEntry
 		{

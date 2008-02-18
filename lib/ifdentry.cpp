@@ -91,7 +91,14 @@ namespace OpenRaw {
 		template <>
 		const size_t IFDTypeTrait<uint16_t>::size = 2;
 
+#if defined(__APPLE_CC__)
+// Apple broken g++ version or linker seems to choke.
 		template <>
+		const uint16_t IFDTypeTrait<unsigned long>::type = IFD::EXIF_FORMAT_LONG;
+		template <>
+		const size_t IFDTypeTrait<unsigned long>::size = 4;
+		template <>
+#endif
 		const uint16_t IFDTypeTrait<uint32_t>::type = IFD::EXIF_FORMAT_LONG;
 		template <>
 		const size_t IFDTypeTrait<uint32_t>::size = 4;

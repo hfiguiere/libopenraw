@@ -1,5 +1,8 @@
 2008-02-17  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdentry.{cpp,h}: Fix a template problem with Apple
+	broken gcc.
+
 	* testsuite/testsuite.cpp (Test::run): skip file if
 	not found. 
 	Make test more robusts to diagnostic.
