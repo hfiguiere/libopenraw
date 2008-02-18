@@ -24,6 +24,10 @@
 #include <stdio.h>
 
 #include <libxml/xmlreader.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <errno.h>
 
 #include <string>
 #include <vector>
@@ -76,7 +80,7 @@ using OpenRaw::Thumbnail;
 
 #define RETURN_FAIL(message,expected)			\
 	{											\
-		fprintf(stderr, "FAILURE: %s with '%s', expected '%s'\n",	\
+		fprintf(stderr, "FAILED: %s with '%s', expected '%s'\n",	\
 				__FUNCTION__, message, expected.c_str());		\
 		return false;											\
 	}
@@ -156,7 +160,6 @@ Test::~Test()
 
 bool Test::testRawType(const std::string & result)
 {
-	bool success = false;
 	RawFile::Type t = m_rawfile->type();
 	switch(t) {
 	case OR_RAWFILE_TYPE_CR2:
@@ -189,7 +192,7 @@ bool Test::testRawType(const std::string & result)
 	default:
 		break;
 	}
-	return success;
+	RETURN_TEST(false, result);
 }
 
 
@@ -246,7 +249,7 @@ bool Test::testThumbFormats(const std::string & result)
 		m_rawfile->getThumbnail(*thumbs_iter, t);
 		success &= equalDataType(*result_iter, t.dataType());
 	}
-	return success;
+	RETURN_TEST(success, result);
 }
 
 bool Test::testThumbDataSizes(const std::string & result)
@@ -271,7 +274,7 @@ bool Test::testThumbDataSizes(const std::string & result)
 			RETURN_FAIL("conversion failed", result);
 		}
 	}
-	return success;
+	RETURN_TEST(success, result);
 }
 
 namespace {
@@ -385,8 +388,6 @@ bool Test::testRawMd5(const std::string & result)
 		RETURN_FAIL("conversion failed", result);
 	}
 	RETURN_TEST_EQUALS(crc, expected, result);
-
-	return false;
 }
 
 
@@ -417,8 +418,18 @@ int Test::run()
 	// load rawfile
 	fprintf(stderr, "running test %s on file %s\n", m_name.c_str(),
 			m_file.c_str());
+
+	struct stat buf;
+	if(stat(m_file.c_str(), &buf) == -1) {
+		fprintf(stderr, "File not found, skipping. (%d)\n", errno);
+		return 0;
+	}
 	m_rawfile = RawFile::newRawFile(m_file.c_str());
 
+	if(m_rawfile == NULL) {
+		RETURN_FAIL("m_rawfile == NULL", std::string("not NULL"));
+	}
+	
 	std::map<int, std::string>::const_iterator iter;
 	for(iter = m_results.begin(); iter != m_results.end(); iter++) {
 		bool pass = false;

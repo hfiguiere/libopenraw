@@ -1,5 +1,9 @@
 2008-02-17  Hubert Figuiere  <hub@figuiere.net>
 
+	* testsuite/testsuite.cpp (Test::run): skip file if
+	not found. 
+	Make test more robusts to diagnostic.
+
 	* lib/ciffcontainer.{cpp.h}: refactor CIFF container
 	to support metadata.
 	* lib/crwfile.{cpp,h}, testsuite/testsuite.xml:
