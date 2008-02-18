@@ -1,5 +1,8 @@
 2008-02-17  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/mrwfile.cpp: use uint32_t for offsets in the 
+	IFDFile. (fix 64-bits)
+
 	* testsuite/testsuite.cpp (Test::run): skip file if
 	not found. 
 	Make test more robusts to diagnostic.

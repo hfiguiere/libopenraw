@@ -108,8 +108,8 @@ namespace OpenRaw {
 									   *m_container));
 			ref->load();
 			
-			size_t tnail_offset = 0;
-			size_t tnail_len = 0;
+			uint32_t tnail_offset = 0;
+			uint32_t tnail_len = 0;
 			thumb_ent = ref->getEntry(MRW::MRWTAG_THUMBNAIL);
 			if (thumb_ent) {
 				tnail_offset = thumb_ent->offset();
