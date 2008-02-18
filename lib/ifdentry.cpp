@@ -97,8 +97,8 @@ namespace OpenRaw {
 		const uint16_t IFDTypeTrait<unsigned long>::type = IFD::EXIF_FORMAT_LONG;
 		template <>
 		const size_t IFDTypeTrait<unsigned long>::size = 4;
-		template <>
 #endif
+		template <>
 		const uint16_t IFDTypeTrait<uint32_t>::type = IFD::EXIF_FORMAT_LONG;
 		template <>
 		const size_t IFDTypeTrait<uint32_t>::size = 4;
