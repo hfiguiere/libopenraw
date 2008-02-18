@@ -3,6 +3,9 @@
 	* lib/ifdentry.{cpp,h}: Fix a template problem with Apple
 	broken gcc.
 
+	* lib/mrwfile.cpp: use uint32_t for offsets in the 
+	IFDFile. (fix 64-bits)
+
 	* testsuite/testsuite.cpp (Test::run): skip file if
 	not found. 
 	Make test more robusts to diagnostic.
