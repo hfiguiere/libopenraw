@@ -126,6 +126,9 @@ namespace OpenRaw {
 				{
 					m_exif_offset_correction = corr;
 				}
+		protected:
+			/** hook to be called at the start of _locateDirs() */
+			virtual bool locateDirsPreHook();
 		private:
 			int m_error;
 			int m_exif_offset_correction;

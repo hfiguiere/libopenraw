@@ -1,3 +1,12 @@
+2008-02-19  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ifdfilecontainer.{h,cpp}: add locateDirsPreHook()
+	to allow a hook prior to locating the IFD directories.
+	* lib/mrwcontainer.{h,cpp}: make code more robust to fail 
+	more nicely.
+	* lib/mrwfile.cpp: fix a crasher when dereferencing a NULL
+	shared_ptr<>. Occur if there is a file error.
+
 2008-02-17  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ifdentry.{cpp,h}: Fix a template problem with Apple

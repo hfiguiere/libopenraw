@@ -141,10 +141,18 @@ namespace OpenRaw {
 			return nextIFD - begin;
 		}
 
+		bool IFDFileContainer::locateDirsPreHook() 
+		{ 
+			return true;
+		}
+
 
 		bool
 		IFDFileContainer::_locateDirs(void)
 		{
+			if(!locateDirsPreHook()) {
+				return false;
+			}
 			Trace(DEBUG1) << "_locateDirs()\n";
 			if (m_endian == ENDIAN_NULL) {
 				char buf[4];

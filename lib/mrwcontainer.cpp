@@ -34,21 +34,25 @@ namespace OpenRaw {
 
 			DataBlock::DataBlock(off_t start, MRWContainer * _container)
 				: m_start(start),
-				  m_container(_container)
+				  m_container(_container),
+				  m_loaded(false)
 			{
 				Trace(DEBUG2) << "> DataBlock start == " << start << "\n";
 				if (m_container->fetchData (m_name, m_start, 4) != 4) {
 					// FIXME: Handle error
 					Trace(WARNING) << "  Error reading block name " << start << "\n";
+					return;
 				}
 				if (!m_container->readInt32 (m_container->file(), m_length)) {
 					// FIXME: Handle error
 					Trace(WARNING) << "  Error reading block length " << start << "\n";
+					return;
 				}
 				Trace(DEBUG1) << "  DataBlock " << name() 
 							  << ", length " << m_length 
 							  << " at " << m_start << "\n";
 				Trace(DEBUG2) << "< DataBlock\n";
+				m_loaded = true;
 			}
 
 			int8_t DataBlock::int8_val (off_t off)
@@ -78,23 +82,56 @@ namespace OpenRaw {
 				return ret;
 			}
 			
-			
 		}
 
 		MRWContainer::MRWContainer(IO::Stream *_file, off_t offset)
 			: IFDFileContainer(_file, offset)
 		{
+
+		}
+
+
+		MRWContainer::~MRWContainer()
+		{
+		}
+
+
+		IFDFileContainer::EndianType 
+		MRWContainer::isMagicHeader(const char *p, int len)
+		{
+			if (len < 4) {
+				// we need at least 4 bytes to check
+				return ENDIAN_NULL;
+			}
+
+			if ((p[0] == 0x00) && (p[1] == 'M') && 
+				(p[2] == 'R') && (p[3] == 'M')) {
+
+				Trace(DEBUG1) << "Identified MRW file\n";
+
+				return ENDIAN_BIG;
+			}
+
+			Trace(DEBUG1) << "Unidentified MRW file\n";
+
+			return ENDIAN_NULL;
+		}
+
+		bool MRWContainer::locateDirsPreHook()
+		{
 			char version[9];
 			off_t position;
 
-			Trace(DEBUG1) << "> MRWContainer\n";
+			Trace(DEBUG1) << "> MRWContainer::locateDirsPreHook()\n";
 			m_endian = ENDIAN_BIG;
 			
 			/* MRW file always starts with an MRM datablock. */
-			mrm = MRW::DataBlock::Ref (new MRW::DataBlock (offset, this));
+			mrm = MRW::DataBlock::Ref (new MRW::DataBlock (m_offset, this));
 			if (mrm->name() != "MRM") {
-				Trace(WARNING) << "MRW file begins not with MRM block, but with unrecognized DataBlock :: name == " 
+				Trace(WARNING) << "MRW file begins not with MRM block, "
+					"but with unrecognized DataBlock :: name == " 
 							   << mrm->name() << "\n";
+				return false;
 			}
 
 			/* Subblocks are contained within the MRM block. Scan them and create
@@ -104,6 +141,9 @@ namespace OpenRaw {
 			while (position < pixelDataOffset()) {
 				MRW::DataBlock::Ref ref (new MRW::DataBlock (position, this));
 				Trace(DEBUG1) << "Loaded DataBlock :: name == " << ref->name() << "\n";
+				if(!ref || !ref->loaded()) {
+					break;
+				}
 				if (ref->name() == "PRD") {
 				    if (prd != NULL) {
 						Trace(WARNING) << "File contains duplicate DataBlock :: name == " 
@@ -142,15 +182,19 @@ namespace OpenRaw {
 			/* Check that we found all the expected data blocks. */
 			if (prd == NULL) {
 				Trace(WARNING) << "File does NOT contain expected DataBlock :: name == PRD\n";
+				return false;
 			}
 			if (ttw == NULL) {
 				Trace(WARNING) << "File does NOT contain expected DataBlock :: name == TTW\n";
+				return false;
 			}
 			if (wbg == NULL) {
 				Trace(WARNING) << "File does NOT contain expected DataBlock :: name == WBG\n";
+				return false;
 			}
 			if (rif == NULL) {
 				Trace(WARNING) << "File does NOT contain expected DataBlock :: name == RIF\n";
+				return false;
 			}
 
 			/* Extract the file version string. */
@@ -172,33 +216,8 @@ namespace OpenRaw {
 			}
 			m_file->seek (m_offset, SEEK_SET);
 			Trace(DEBUG1) << "< MRWContainer\n";
-		}
-
-
-		MRWContainer::~MRWContainer()
-		{
-		}
-
-
-		IFDFileContainer::EndianType 
-		MRWContainer::isMagicHeader(const char *p, int len)
-		{
-			if (len < 4) {
-				// we need at least 4 bytes to check
-				return ENDIAN_NULL;
-			}
-
-			if ((p[0] == 0x00) && (p[1] == 'M') && 
-				(p[2] == 'R') && (p[3] == 'M')) {
-
-				Trace(DEBUG1) << "Identified MRW file\n";
-
-				return ENDIAN_BIG;
-			}
-
-			Trace(DEBUG1) << "Unidentified MRW file\n";
-
-			return ENDIAN_NULL;
+			
+			return true;
 		}
 
 	}

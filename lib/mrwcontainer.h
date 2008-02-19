@@ -91,6 +91,10 @@ namespace OpenRaw {
 				/** Return an unsigned 16-bit quantity at offset bytes from the start of the data block.
 				 */
 				uint16_t uint16_val (off_t offset);
+				bool loaded() const
+					{
+						return m_loaded;
+					}
 
 			private:
 				/* DRM: protection from copies. */
@@ -101,6 +105,7 @@ namespace OpenRaw {
 				char m_name[4];
 				int32_t m_length;
 				MRWContainer *m_container;
+				bool m_loaded;
 			};
 
 			/* Known offsets in PRD block.
@@ -239,6 +244,8 @@ namespace OpenRaw {
 					/* The pixel data immediately follows the MRM datablock. */
 					return mrm->offset() + MRW::DataBlockHeaderLength + mrm->length();
 				}
+		protected:
+			virtual bool locateDirsPreHook();
 		private:
 			std::string m_version;
 

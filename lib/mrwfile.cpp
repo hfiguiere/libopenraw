@@ -153,6 +153,9 @@ namespace OpenRaw {
 		{ 
 			MRWContainer *mc = (MRWContainer *)m_container;
 
+			if(!mc->prd) {
+				return OR_ERROR_NOT_FOUND;
+			}
 			/* Obtain sensor dimensions from PRD block. */
 			uint16_t y = mc->prd->uint16_val (MRW::PRD_SENSOR_LENGTH);
 			uint16_t x = mc->prd->uint16_val (MRW::PRD_SENSOR_WIDTH);
