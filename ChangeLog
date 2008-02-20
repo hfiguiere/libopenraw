@@ -1,3 +1,8 @@
+2008-02-20  Hubert Figuiere  <hub@figuiere.net>
+
+	* tools/ordiag.cpp: Fix a typo in the dump of the 
+	CFA pattern.
+
 2008-02-19  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ifdfilecontainer.{h,cpp}: add locateDirsPreHook()

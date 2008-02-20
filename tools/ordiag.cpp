@@ -69,7 +69,7 @@ public:
 				return "B,G,G,R";
 				break;
 			case OR_CFA_PATTERN_GRBG:
-				return "B,R,B,G";
+				return "G,R,B,G";
 				break;
 			default:
 				break;
