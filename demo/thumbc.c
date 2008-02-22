@@ -1,7 +1,7 @@
 /*
  * libopenraw - thumbc.c
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006,2008 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,6 +46,7 @@ main(int argc, char **argv)
 								 160, &thumbnail);
 
 		if (err == OR_ERROR_NONE) {
+			const char* outfname = "thumb.raw";
 			thumbnailFormat = or_thumbnail_format(thumbnail);
 			dataSize = or_thumbnail_data_size(thumbnail);
 			or_thumbnail_dimensions(thumbnail, &x, &y);
@@ -53,19 +54,26 @@ main(int argc, char **argv)
 			switch (thumbnailFormat) {
 			case OR_DATA_TYPE_JPEG:
 				printf("Thumbnail in JPEG format, thumb size is %u, %u\n", x, y);
+				outfname = "thumb.jpg";
 				break;
 			case OR_DATA_TYPE_PIXMAP_8RGB:
 				printf("Thumbnail in 8RGB format, thumb size is %u, %u\n", x, y);
+				outfname = "thumb.ppm";
 				break;
 			default:
 				printf("Thumbnail in UNKNOWN format, thumb size is %u, %u\n", x, y);
 				break;
 			}
-			output = fopen("thumb.jpg", "wb");
+			output = fopen(outfname, "wb");
 			thumbnailData = or_thumbnail_data(thumbnail);
+			if(thumbnailFormat == OR_DATA_TYPE_PIXMAP_8RGB) {
+				fprintf(output, "P6\n");
+				fprintf(output, "%u\n%u\n", x, y);
+				fprintf(output, "%d\n", 255);
+			}
 			fwrite(thumbnailData, dataSize, 1, output);
 			fclose(output);
-			printf("output %ld bytes\n", dataSize);
+			printf("output %u bytes in '%s'\n", dataSize, outfname);
 			err = or_thumbnail_release(thumbnail);
 			if (err != OR_ERROR_NONE)
 			{

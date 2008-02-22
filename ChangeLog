@@ -1,5 +1,8 @@
 2008-02-22  Hubert Figuiere  <hub@figuiere.net>
 
+	* demo/thumbc.c (main): Output PPM files if the data
+	is 8RGB.
+
 	* lib/ciffcontainer.cpp: Make sure the heap is loaded.
 
 2008-02-20  Hubert Figuiere  <hub@figuiere.net>
