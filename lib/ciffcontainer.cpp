@@ -234,7 +234,7 @@ namespace OpenRaw {
 		CIFF::Heap::Ref CIFFContainer::getImageProps()
 		{
 			if(!m_imageprops) {
-				if(!m_heap) {
+				if(!heap()) {
 					return CIFF::Heap::Ref();
 				}
 				
