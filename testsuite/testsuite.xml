@@ -7,7 +7,7 @@
       <rawType>CR2</rawType>
       <thumbNum>3</thumbNum>
       <thumbSizes>1536 160 384</thumbSizes>
-      <thumbFormats>8RGB JPEG 8RGB</thumbFormats>
+      <thumbFormats>JPEG JPEG JPEG</thumbFormats>
       <thumbDataSizes>377981 7239 294912</thumbDataSizes>
       <rawDataType>CFA</rawDataType>
       <rawDataSize>16973120</rawDataSize>
@@ -33,6 +33,24 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMd5>94</rawMd5>
       <metaOrientation>8</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>CRW-test 10D</name>
+    <file>/home/hub/samples/crw/10D/canon-eos10.crw</file>
+    <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/CANON-EOS10.CRW</source>
+    <results>
+      <rawType>CRW</rawType>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>1536</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>233232</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>13036672</rawDataSize>
+      <rawDataDimensions>3152 2068</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMd5>33</rawMd5>
+      <metaOrientation>1</metaOrientation>
     </results>
   </test>
   <test>

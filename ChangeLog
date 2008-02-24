@@ -1,5 +1,10 @@
 2008-02-24  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdfile.cpp: Fix a bug where CR2 thumbnails are 
+	inapropriately recognized as 8RGB.
+	* testsuite/testsuite.xml: add CRW file. Fix thumbnails
+	test for CR2.
+
 	* demo/thumbc.c (main): Add -s option to allow
 	passing the request thumbnail size.
 

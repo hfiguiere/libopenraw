@@ -155,11 +155,13 @@ namespace OpenRaw {
 					
 					uint32_t offset = 0;
 					got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-					if (!got_it || (compression == 7)) {
-						got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
-																			 offset);
- 						Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
+					if (!got_it || (compression == 6) || (compression == 7)) {
+						if(!got_it) {
+							got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
+												   offset);
+						}
 						if (got_it) {
+							Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
 							_type = OR_DATA_TYPE_JPEG;
 							if (x == 0 || y == 0) {
 								scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
@@ -173,6 +175,10 @@ namespace OpenRaw {
 									Trace(WARNING) << "Couldn't get JPEG "
 										"dimensions.\n";
 								}
+							}
+							else {
+								Trace(DEBUG1) << "JPEG (supposed) dimensions x=" << x 
+											  << " y=" << y << "\n";
 							}
 						}
 					}
@@ -220,9 +226,18 @@ namespace OpenRaw {
 					got_it = desc.ifddir
 						->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
 													 byte_length);
-					got_it = desc.ifddir
-						->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
-													 offset);
+					if(got_it) {
+						got_it = desc.ifddir
+							->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
+									   offset);
+					}
+					else {
+						// some case it is STRIP_OFFSETS for JPEG
+						got_it = desc.ifddir
+							->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+						got_it = desc.ifddir
+							->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+					}
 					break;
 				case OR_DATA_TYPE_PIXMAP_8RGB:
 					got_it = desc.ifddir
