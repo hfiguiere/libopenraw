@@ -1,5 +1,7 @@
 2008-02-24  Hubert Figuiere  <hub@figuiere.net>
 
+	* configure.in: bump soversion.
+
 	* lib/ifdfile.cpp: Fix a bug where CR2 thumbnails are 
 	inapropriately recognized as 8RGB.
 	* testsuite/testsuite.xml: add CRW file. Fix thumbnails
