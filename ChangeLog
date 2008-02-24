@@ -1,5 +1,9 @@
 2008-02-24  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdfile.cpp: Fix a bug where it would try to extract 
+	the thumbnail from the CFA ifd (Canon CR2 does not indicate
+	the type).
+
 	* configure.in: bump soversion.
 
 	* lib/ifdfile.cpp: Fix a bug where CR2 thumbnails are 

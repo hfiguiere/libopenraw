@@ -135,7 +135,18 @@ namespace OpenRaw {
 
 			got_it = dir->getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype);
 			Trace(DEBUG1) << "subtype " << subtype  << "\n";
-			if (!got_it || (subtype == 1)) {
+			if(!got_it) {
+				if(!m_cfaIfd) {
+					m_cfaIfd = _locateCfaIfd();
+				}
+				if(m_cfaIfd == dir) {
+					return OR_ERROR_NOT_FOUND;
+				}
+				else {
+					subtype = 1;
+				}
+			}
+			if (subtype == 1) {
 
 				uint16_t photom_int = 0;
 				got_it = dir->getValue(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION, 
