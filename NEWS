@@ -16,6 +16,7 @@ libopenraw 0.0.5
   - NEW: Decompress/unpack NEF RAW data from D1, D1X, D100, D2X.
   - NEW: Unpack RAW data from Epson ERF R-D1 files.
   - NEW: demo/thumbc output PPM if the thumbnail is 8RGB.
+  - NEW: demo/thumbc now allow -s to pass the thumbnail size wanted.
 
 libopenraw 0.0.4
 

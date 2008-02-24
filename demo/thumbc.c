@@ -21,13 +21,33 @@
 
 
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 #include <libopenraw/libopenraw.h>
 
 int
 main(int argc, char **argv)
 {
-	char *filename = argv[1];
+	char *filename;
+	int thumb_size = 160;
+	int opt;
+
+	while ((opt = getopt(argc, argv, "s:")) != -1) {
+		switch(opt) {
+		case 's':
+			thumb_size = atoi(optarg);
+			break;
+		default:
+			break;
+		}
+	}
+
+	if(optind >= argc) {
+		fprintf(stderr, "Missing filename\n");
+		return 1;
+	}
+	filename = argv[optind];
 	ORThumbnailRef thumbnail = NULL;
 	(void)argc;
 
@@ -43,7 +63,7 @@ main(int argc, char **argv)
 		or_error err;
 
 		err = or_get_extract_thumbnail(filename, 
-								 160, &thumbnail);
+								 thumb_size, &thumbnail);
 
 		if (err == OR_ERROR_NONE) {
 			const char* outfname = "thumb.raw";
