@@ -172,25 +172,39 @@ namespace OpenRaw {
 												   offset);
 						}
 						if (got_it) {
-							Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
-							_type = OR_DATA_TYPE_JPEG;
-							if (x == 0 || y == 0) {
-								scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-								scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
-								if (jfif->getDimensions(x,y)) {
-									Trace(DEBUG1) << "JPEG dimensions x=" << x 
-																<< " y=" << y << "\n";
+							// workaround for CR2 files where 8RGB data is marked
+							// as JPEG. Check the real data size.
+							uint32_t byte_count;
+							if(x && y && dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_count)) {
+								if(byte_count >= (x * y * 3)) {
+									_type = OR_DATA_TYPE_PIXMAP_8RGB;
 								}
 								else {
-									_type = OR_DATA_TYPE_NONE;
-									Trace(WARNING) << "Couldn't get JPEG "
-										"dimensions.\n";
+									_type = OR_DATA_TYPE_JPEG;
 								}
 							}
 							else {
-								Trace(DEBUG1) << "JPEG (supposed) dimensions x=" << x 
-											  << " y=" << y << "\n";
+								_type = OR_DATA_TYPE_JPEG;
+								Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
+								if (x == 0 || y == 0) {
+									scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
+									scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+									if (jfif->getDimensions(x,y)) {
+										Trace(DEBUG1) << "JPEG dimensions x=" << x 
+													  << " y=" << y << "\n";
+									}
+									else {
+										_type = OR_DATA_TYPE_NONE;
+										Trace(WARNING) << "Couldn't get JPEG "
+											"dimensions.\n";
+									}
+								}
+								else {
+									Trace(DEBUG1) << "JPEG (supposed) dimensions x=" << x 
+												  << " y=" << y << "\n";
+								}
 							}
+
 						}
 					}
 					else {

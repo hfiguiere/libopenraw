@@ -75,7 +75,7 @@ namespace OpenRaw {
 			 */
 			virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 
-			/** locate the thumnaile in the IFD 
+			/** locate the thumnail in the IFD 
 			 * @param dir the IFDDir where to locate the thumbnail
 			 * @return the error code. OR_ERROR_NOT_FOUND if the
 			 * thumbnail are not found.
