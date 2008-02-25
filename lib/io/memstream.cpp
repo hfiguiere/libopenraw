@@ -1,7 +1,7 @@
 /*
  * libopenraw - memstream.cpp
  *
- * Copyright (C) 2007 Hubert Figuière
+ * Copyright (C) 2007-2008 Hubert Figuière
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -91,7 +91,12 @@ namespace OpenRaw {
 				Trace(DEBUG1) << "MemStream::failed\n";
 				return -1;
 			}
-			// TODO check the bounds
+
+			unsigned char * end = (unsigned char*)m_ptr + m_size;
+			if((off_t)count > (end - m_current)) {
+				count = end - m_current;
+				// TODO set EOF
+			}
 			memcpy(buf, m_current, count);
 			m_current += count;
 			return count;

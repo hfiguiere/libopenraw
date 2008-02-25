@@ -35,7 +35,7 @@ namespace OpenRaw {
 		{
 		}
 
-		uint8_t Stream::readByte() throw()
+		uint8_t Stream::readByte() throw(Internals::IOException)
 		{
 			uint8_t theByte;
 			int r = read(&theByte, 1);

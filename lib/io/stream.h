@@ -29,6 +29,8 @@
 
 #include <libopenraw/libopenraw.h>
 
+#include "exception.h"
+
 namespace OpenRaw {
 	namespace IO {
 		
@@ -73,7 +75,7 @@ namespace OpenRaw {
 					return m_fileName;
 				}
 
-			uint8_t readByte() throw();
+			uint8_t readByte() throw(Internals::IOException);
 		protected:
 			void set_error(Error error)
 				{

@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwdecompressor.h
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007-2008 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,6 +36,7 @@
 #include "debug.h"
 #include "rawcontainer.h"
 #include "io/stream.h"
+#include "exception.h"
 
 namespace OpenRaw {	namespace Internals {
 
@@ -220,11 +221,17 @@ namespace OpenRaw {	namespace Internals {
 			m_vbits -= nbits;
 		}
 		while (m_vbits < 25) {
-			c = s->readByte();
-			m_bitbuf = (m_bitbuf << 8) + c;
-			if (c == 0xff) 
-				s->readByte();	/* always extra 00 after ff */
-			m_vbits += 8;
+			try {
+				c = s->readByte();
+				m_bitbuf = (m_bitbuf << 8) + c;
+				if (c == 0xff) 
+					s->readByte();	/* always extra 00 after ff */
+				m_vbits += 8;
+			}
+			catch(const Internals::IOException &)
+			{
+				break;
+			}
 		}
 		return ret;
 	}

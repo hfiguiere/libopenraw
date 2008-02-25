@@ -1,5 +1,12 @@
 2008-02-24  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/io/memstream.cpp (MemStream::read()): check bounds 
+	of the memory buffer.
+	* lib/io/stream.{cpp,h}: declare the exceptions that readByte() 
+	throw (when reaching EOF)
+	* lib/crwdecompressor.cpp: catch getBytes() that throw an 
+	exception to prevent reading past the buffer.
+
 	* lib/ifdfile.cpp: Fix a bug where it would try to extract 
 	the thumbnail from the CFA ifd (Canon CR2 does not indicate
 	the type).

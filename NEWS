@@ -8,6 +8,7 @@ libopenraw 0.0.5
     to succeed even if test failed.
   - BUG: in the use case CIFF (CRW) parsing could crash.
   - BUG: JPEG thumbnails in CR2 where mistakenly recognized as 8RGB
+  - BUG: decompressing CRW was reading past the buffer.
   - NEW: testsuite now support doing checksum on data.
   - NEW: support for Minolta MRW from Dimage 5, Dimage 7x, A1, A2, 5D
     and 7D.
