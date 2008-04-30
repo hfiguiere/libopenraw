@@ -1,5 +1,8 @@
 2008-04-29  Hubert Figuiere  <hub@figuiere.net>
 
+	* demo/cfa.cpp, demo/ccfa.c: pgm output is big endian.
+	Reported by Alexey Khudyakov.
+
 	* */*: change license to LGPLv3+
 
 ==== 0.0.5 ====

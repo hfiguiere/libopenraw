@@ -22,6 +22,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <libopenraw/libopenraw.h>
 #include <libopenraw/debug.h>
@@ -71,7 +72,26 @@ main(int argc, char** argv)
 	else {
 		f = fopen("image.cfa", "wb");
 	}
-	fwrite(or_rawdata_data(rawdata), 1, or_rawdata_data_size(rawdata), f);
+	/* Convert data byte order to most significant byte first */
+    if(or_rawdata_bpc(rawdata) == 16) {
+		size_t size = or_rawdata_data_size(rawdata);
+		uint8_t* buf = (uint8_t*)malloc(size);
+		uint8_t* p = buf;
+        uint16_t* n = (uint16_t*)or_rawdata_data(rawdata);
+		size_t i;
+
+        for(i = 0; i < size / 2; i++) {
+            unsigned char lo = n[i] & 0xFF;
+            unsigned char hi = n[i] >> 8;
+            p[i * 2]   = hi;
+            p[i * 2 + 1] = lo;
+        }
+		fwrite(buf, 1, size, f);
+		free(buf);
+    }
+	else {
+		fwrite(or_rawdata_data(rawdata), 1, or_rawdata_data_size(rawdata), f);
+	}
 	fclose(f);
 
 	or_rawdata_release(rawdata);

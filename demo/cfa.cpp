@@ -76,7 +76,23 @@ main(int argc, char** argv)
 	else {
 		f = fopen("image.cfa", "wb");
 	}
-	fwrite(rdata.data(), 1, rdata.size(), f);
+    // Convert data byte order to most significant byte first
+    if(rdata.bpc() == 16) {
+		uint8_t* buf = (uint8_t*)malloc(rdata.size());
+		uint8_t* p = buf;
+        uint16_t* n = reinterpret_cast<uint16_t*>(rdata.data());
+        for(size_t i = 0; i < rdata.size() / 2; i++) {
+            unsigned char lo = n[i] & 0xFF;
+            unsigned char hi = n[i] >> 8;
+            p[i * 2]   = hi;
+            p[i * 2 + 1] = lo;
+        }
+		fwrite(buf, 1, rdata.size(), f);
+		free(buf);
+    }
+	else {
+		fwrite(rdata.data(), 1, rdata.size(), f);
+	}
 	fclose(f);
 	
 	return 0;

@@ -1,6 +1,7 @@
 libopenraw 0.0.6
 
   - LICENSE change to LGPLv3+
+  - BUG: cfa output should write the data in PGM as big endian.
 
 libopenraw 0.0.5
 
