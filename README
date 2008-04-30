@@ -2,7 +2,8 @@ Copyright
 =========
 
 libopenraw is Copyright (c) 2005-2008 Hubert Figuiere
-It is licensed under LGPLv2.1 or later. See file COPYING.
+It is licensed under LGPLv3 or later. See files COPYING
+and COPYING.LESSER
 
 Prerequistes to build:
 ======================
@@ -29,7 +30,7 @@ Here are the supported file formats. For details per-camera, see
 below:
 
     - Canon CR2
-    - Canon CRW (not those coming from hacked firmware like A610)
+    - Canon CRW (not those coming from CHDK firmware like A610)
     - Nikon NEF
     - Olympus ORF: E-300, E-500
     - Pentax PEF

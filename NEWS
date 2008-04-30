@@ -1,3 +1,7 @@
+libopenraw 0.0.6
+
+  - LICENSE change to LGPLv3+
+
 libopenraw 0.0.5
 
   - BUG: re-order commands in autogen.sh bug #14055

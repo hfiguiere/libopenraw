@@ -18,6 +18,18 @@
     </results>
   </test>
   <test>
+    <name>CR2-test 450D</name>
+    <file>/home/hub/samples/cr2/450D/RAW_CANON_450D.CR2</file>
+    <source></source>
+    <results>
+      <rawType>CR2</rawType>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>2256 160 539</thumbSizes>
+      <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
+      <thumbDataSizes>892728 11024 1151304</thumbDataSizes>
+    </results>
+  </test>
+  <test>
     <name>CRW-test 300D</name>
     <file>/home/hub/samples/crw/300D/crw_1852.crw</file>
     <source>http://launchpadlibrarian.net/4704665/CRW_1852.CRW</source>
