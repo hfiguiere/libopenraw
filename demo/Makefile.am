@@ -1,7 +1,7 @@
 
 
 if BUILD_GNOME_SUPPORT
-GNOME_BINARIES = gdk
+GNOME_BINARIES = gdk pixbufload
 endif
 
 noinst_PROGRAMS = thumb thumbc cfa ccfa $(GNOME_BINARIES)
@@ -27,7 +27,12 @@ ccfa_SOURCES = ccfa.c
 ccfa_LDADD = $(LIBOPENRAW_LIBS)
 ccfa_LDFLAGS = -L$(top_builddir)/lib -static
 
-gdk_SOURCE = gdk.c
+gdk_SOURCES = gdk.c
 gdk_CPPFLAGS = @LIBGDKPIXBUF_CFLAGS@
 gdk_LDADD = $(LIBOPENRAWGNOME_LIBS)
 gdk_LDFLAGS = -L$(top_builddir)/gnome -static
+
+pixbufload_SOURCES = pixbufload.c
+pixbufload_CPPFLAGS = @LIBGDKPIXBUF_CFLAGS@
+pixbufload_LDADD = $(LIBOPENRAWGNOME_LIBS)
+pixbufload_LDFLAGS = -L$(top_builddir)/gnome -static

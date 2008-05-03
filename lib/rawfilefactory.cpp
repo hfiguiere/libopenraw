@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfilefactory.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006, 2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -32,18 +32,18 @@ namespace OpenRaw {
 
 
 		RawFileFactory::RawFileFactory(RawFile::Type type, 
-																	 RawFileFactory::raw_file_creator fn,
-																	 const char *ext)
+									   const RawFileFactory::raw_file_factory_t & fn,
+									   const char *ext)
 		{
 			Trace(DEBUG1) << "registering type " 
-										<< (int)type << "\n";
+						  << (int)type << "\n";
 			registerType(type, fn, ext);
 		}
 
 
 		void RawFileFactory::registerType(RawFile::Type type, 
-																			RawFileFactory::raw_file_creator fn,
-																			const char *ext)
+										  const RawFileFactory::raw_file_factory_t & fn,
+										  const char *ext)
 		{
 			if (fn == NULL)
 			{

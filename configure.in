@@ -125,7 +125,10 @@ if test x$enable_gnome = xyes ; then
    if test x$HAVE_LIBGLIB = xyes ; then
       PKG_CHECK_MODULES(LIBGDKPIXBUF, gdk-pixbuf-2.0 >= $LIBGDKPIXBUF_REQUIRED,
                      [AC_DEFINE(HAVE_LIBGDKPIXBUF, 1, [Define to 1 to enable libgdkpixbuf support])
-                      HAVE_LIBGDKPIXBUF=yes],
+		      GTK_VERSION=`$PKG_CONFIG --variable=gtk_binary_version gtk+-2.0`
+		      GDK_PIXBUF_DIR="gtk-2.0/$GTK_VERSION/loaders"
+		      AC_SUBST(GDK_PIXBUF_DIR)
+		      HAVE_LIBGDKPIXBUF=yes],
                      [HAVE_LIBGDKPIXBUF=no])
    else
       AC_MSG_WARN([glib-2.0 missing, ignore GdkPixbuf support.])

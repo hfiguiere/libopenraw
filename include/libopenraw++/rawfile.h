@@ -30,6 +30,9 @@
 
 namespace OpenRaw {
 
+	namespace IO {
+		class Stream;
+	}
 	class Thumbnail;
 	class RawData;
 	class MetaValue;
@@ -40,14 +43,23 @@ namespace OpenRaw {
 	{
 	public:
 		typedef ::or_rawfile_type Type;
-
-    /** factory method to create the proper RawFile instance.
+		
+		/** factory method to create the proper RawFile instance.
 		 * @param _filename the name of the file to load
 		 * @param _typeHint a hint on the type. Use UNKNOWN_TYPE
 		 * if you want to let the library detect it for you.
 		 */
 		static RawFile *newRawFile(const char*_filename, 
 								   Type _typeHint = OR_RAWFILE_TYPE_UNKNOWN);
+		/** factory method to create the proper RawFile instance 
+		 *  from content 
+		 * @param buffer the buffer to examine.
+		 * @param len the number of bytes in the length.
+		 * @param _typeHint a hint on the type. Use UNKNOWN_TYPE
+		 * if you want to let the library detect it for you.
+		 */
+		static RawFile *newRawFileFromMemory(const uint8_t *buffer, uint32_t len, 
+											 Type _typeHint = OR_RAWFILE_TYPE_UNKNOWN);
 
 		/** Destructor */
 		virtual ~RawFile();
@@ -81,10 +93,10 @@ namespace OpenRaw {
 	protected:
 		/** 
 		 * Construct a raw file
-		 * @param _filename the RAW file name 
+		 * @param s the stream to load from. Take ownership.
 		 * @param _type the type
 		 */
-		RawFile(const char *_filename, Type _type);
+		RawFile(IO::Stream *s, Type _type);
 		/** enumerate the thumbnail sizes. 
 		 * @param list the list to enumerate into
 		 * @return OR_ERROR_NONE if success
@@ -110,6 +122,7 @@ namespace OpenRaw {
 		virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 	private:
 		static Type identify(const char*_filename);
+		static Type identifyBuffer(const uint8_t* buff, size_t len);
 
 		RawFile(const RawFile&);
 		RawFile & operator=(const RawFile &);

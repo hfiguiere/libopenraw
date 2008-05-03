@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006, 2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -38,8 +38,8 @@ namespace OpenRaw {
 			: public IFDFile
 		{
 		public:
-			static RawFile *factory(const char* _filename);
-			CR2File(const char* _filename);
+			static RawFile *factory(IO::Stream * s);
+			CR2File(IO::Stream *s);
 			virtual ~CR2File();
 
 		protected:

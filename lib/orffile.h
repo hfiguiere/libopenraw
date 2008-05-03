@@ -39,8 +39,8 @@ namespace OpenRaw {
 			: public IFDFile
 		{
 		public:
-			static RawFile *factory(const char* _filename);
-			ORFFile(const char* _filename);
+			static RawFile *factory(IO::Stream *);
+			ORFFile(IO::Stream *);
 			virtual ~ORFFile();
 
 		protected:

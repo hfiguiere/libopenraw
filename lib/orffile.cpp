@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006, 2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,14 +35,14 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		RawFile *ORFFile::factory(const char* _filename)
+		RawFile *ORFFile::factory(IO::Stream *s)
 		{
-			return new ORFFile(_filename);
+			return new ORFFile(s);
 		}
 
 
-		ORFFile::ORFFile(const char* _filename)
-			: IFDFile(_filename, OR_RAWFILE_TYPE_ORF, false)
+		ORFFile::ORFFile(IO::Stream *s)
+			: IFDFile(s, OR_RAWFILE_TYPE_ORF, false)
 		{
 			 m_container = new ORFContainer(m_io, 0);
 		}

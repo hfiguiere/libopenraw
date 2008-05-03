@@ -48,14 +48,14 @@ namespace OpenRaw {
 
 		using namespace CIFF;
 
-		RawFile *CRWFile::factory(const char* _filename)
+		RawFile *CRWFile::factory(IO::Stream *s)
 		{
-			return new CRWFile(_filename);
+			return new CRWFile(s);
 		}
 
-		CRWFile::CRWFile(const char* _filename)
-			: RawFile(_filename, OR_RAWFILE_TYPE_CRW),
-				m_io(new IO::File(_filename)),
+		CRWFile::CRWFile(IO::Stream *s)
+			: RawFile(s, OR_RAWFILE_TYPE_CRW),
+				m_io(s),
 				m_container(new CIFFContainer(m_io)),
 				m_x(0), m_y(0)
 		{

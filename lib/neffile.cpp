@@ -1,7 +1,7 @@
 /*
  * libopenraw - neffile.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -39,12 +39,12 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		RawFile *NEFFile::factory(const char* _filename)
+		RawFile *NEFFile::factory(IO::Stream* _filename)
 		{
 			return new NEFFile(_filename);
 		}
 
-		NEFFile::NEFFile(const char* _filename)
+		NEFFile::NEFFile(IO::Stream* _filename)
 			: TiffEpFile(_filename, OR_RAWFILE_TYPE_NEF)
 		{
 		}

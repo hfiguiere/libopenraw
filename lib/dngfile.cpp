@@ -42,14 +42,14 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		RawFile *DNGFile::factory(const char* _filename)
+		RawFile *DNGFile::factory(IO::Stream *s)
 		{
-			return new DNGFile(_filename);
+			return new DNGFile(s);
 		}
 
 
-		DNGFile::DNGFile(const char* _filename)
-			: TiffEpFile(_filename, OR_RAWFILE_TYPE_DNG)
+		DNGFile::DNGFile(IO::Stream *s)
+			: TiffEpFile(s, OR_RAWFILE_TYPE_DNG)
 		{
 
 		}

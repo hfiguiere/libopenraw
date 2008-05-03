@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -64,7 +64,7 @@ namespace OpenRaw {
 		{
 
 		protected:
-			IFDFile(const char *_filename, Type _type, 
+			IFDFile(IO::Stream * s, Type _type, 
 					bool instantiateContainer = true);
 			virtual ~IFDFile();
 

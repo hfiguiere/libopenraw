@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -34,6 +34,8 @@
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/thumbnail.h>
 
+#include "io/file.h"
+#include "io/memstream.h"
 #include "cr2file.h"
 #include "neffile.h"
 #include "orffile.h"
@@ -58,41 +60,40 @@ namespace OpenRaw {
 	void init(void)
 	{
  		static RawFileFactory fctcr2(OR_RAWFILE_TYPE_CR2, 
-									 &Internals::CR2File::factory,
+									 boost::bind(&Internals::CR2File::factory, _1),
 									 "cr2");
 		static RawFileFactory fctnef(OR_RAWFILE_TYPE_NEF, 
-									 &Internals::NEFFile::factory,
+									 boost::bind(&Internals::NEFFile::factory, _1),
 									 "nef");
 		static RawFileFactory fctarw(OR_RAWFILE_TYPE_ARW, 
-									 &Internals::ARWFile::factory,
+									 boost::bind(&Internals::ARWFile::factory, _1),
 									 "arw");
 		static RawFileFactory fctorf(OR_RAWFILE_TYPE_ORF, 
-									 &Internals::ORFFile::factory,
+									 boost::bind(&Internals::ORFFile::factory, _1),
 									 "orf");
 		static RawFileFactory fctdng(OR_RAWFILE_TYPE_DNG, 
-									 &Internals::DNGFile::factory,
+									 boost::bind(&Internals::DNGFile::factory, _1),
 									 "dng");
 		static RawFileFactory fctpef(OR_RAWFILE_TYPE_PEF, 
-									 &Internals::PEFFile::factory,
+									 boost::bind(&Internals::PEFFile::factory, _1),
 									 "pef");
 		static RawFileFactory fctcrw(OR_RAWFILE_TYPE_CRW,
-									 &Internals::CRWFile::factory,
+									 boost::bind(&Internals::CRWFile::factory, _1),
 									 "crw");
 		static RawFileFactory fcterf(OR_RAWFILE_TYPE_ERF,
-									 &Internals::ERFFile::factory,
+									 boost::bind(&Internals::ERFFile::factory, _1),
 									 "erf");
 		static RawFileFactory fctmrw(OR_RAWFILE_TYPE_MRW,
-									 &Internals::MRWFile::factory,
+									 boost::bind(&Internals::MRWFile::factory, _1),
 									 "mrw");
 	}	
 
 	class RawFile::Private 
 	{
 	public:
-		Private(std::string f, Type t)
-			: m_filename(f),
-				m_type(t),
-				m_sizes()
+		Private(Type t)
+			: m_type(t),
+			  m_sizes()
 			{
 			}
 		~Private()
@@ -106,8 +107,6 @@ namespace OpenRaw {
 					}
 				}
 			}
-		/** the name of the file */
-		std::string m_filename;
 		/** the real type of the raw file */
 		Type m_type;
 		/** list of thumbnail sizes */
@@ -138,7 +137,32 @@ namespace OpenRaw {
 			Trace(WARNING) << "factory is NULL\n";
 			return NULL;
 		}
-		return (*(iter->second))(_filename);
+		IO::Stream *f = new IO::File(_filename);
+		return iter->second(f);
+	}
+
+	RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer, uint32_t len, 
+										   RawFile::Type _typeHint)
+	{
+		init();
+		Type type;
+		if (_typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
+			type = identifyBuffer(buffer, len);
+		}
+		else {
+			type = _typeHint;
+		}
+		RawFileFactory::Table::iterator iter = RawFileFactory::table().find(type);
+		if (iter == RawFileFactory::table().end()) {
+			Trace(WARNING) << "factory not found\n";
+			return NULL;
+		}
+		if (iter->second == NULL) {
+			Trace(WARNING) << "factory is NULL\n";
+			return NULL;
+		}
+		IO::Stream *f = new IO::MemStream((void*)buffer, len);
+		return iter->second(f);
 	}
 
 
@@ -165,9 +189,34 @@ namespace OpenRaw {
 		return iter->second;
 	}
 
+	RawFile::Type RawFile::identifyBuffer(const uint8_t* buff, size_t len)
+	{
+		if(len <= 4) {
+			return OR_RAWFILE_TYPE_UNKNOWN;
+		}
+		if(memcmp(buff, "\0MRM", 4) == 0) {
+			printf("MRW\n");
+			return OR_RAWFILE_TYPE_MRW;
+		}
+		if(memcmp(buff, "II\x1a\0\0\0HEAPCCDR", 14) == 0) {
+			printf("CRW\n");
+			return OR_RAWFILE_TYPE_CRW;
+		}
+		if(memcmp(buff, "IIRO", 4) == 0) {
+			printf("ORG\n");
+			return OR_RAWFILE_TYPE_ORF;
+		}
+		if((memcmp(buff, "II\x2a\0", 4) == 0) 
+		   || (memcmp(buff, "MM\0\x2a", 4) == 0)) {
+			// TIFF based format
+			printf("TIFF based: FAKE to cr2\n");
+			return OR_RAWFILE_TYPE_CR2;
+		}
+		return OR_RAWFILE_TYPE_UNKNOWN;
+	}
 
-	RawFile::RawFile(const char * _filename, RawFile::Type _type)
-		: d(new Private(_filename, _type))
+	RawFile::RawFile(IO::Stream *, RawFile::Type _type)
+		: d(new Private(_type))
 	{
 		
 	}

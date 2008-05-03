@@ -47,11 +47,11 @@ namespace OpenRaw {
 	namespace Internals {
 
 
-		IFDFile::IFDFile(const char *_filename, Type _type, 
+		IFDFile::IFDFile(IO::Stream *s, Type _type, 
 						 bool instantiateContainer)
-			: RawFile(_filename, _type),
+			: RawFile(s, _type),
 				m_thumbLocations(),
-				m_io(new IO::File(_filename)),
+				m_io(s),
 				m_container(NULL)
 		{
 			if(instantiateContainer) {

@@ -38,13 +38,13 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		RawFile *ERFFile::factory(const char* _filename)
+		RawFile *ERFFile::factory(IO::Stream *s)
 		{
-			return new ERFFile(_filename);
+			return new ERFFile(s);
 		}
 
-		ERFFile::ERFFile(const char* _filename)
-			: TiffEpFile(_filename, OR_RAWFILE_TYPE_ERF)
+		ERFFile::ERFFile(IO::Stream *s)
+			: TiffEpFile(s, OR_RAWFILE_TYPE_ERF)
 		{
 		}
 

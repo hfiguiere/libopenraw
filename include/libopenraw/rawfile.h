@@ -36,6 +36,9 @@ typedef struct _RawFile *ORRawFileRef;
 ORRawFileRef
 or_rawfile_new(const char* filename, or_rawfile_type type);
 
+ORRawFileRef
+or_rawfile_new_from_memory(const uint8_t *buffer, uint32_t len, or_rawfile_type type);
+
 or_error
 or_rawfile_release(ORRawFileRef rawfile);
 

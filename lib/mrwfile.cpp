@@ -41,13 +41,13 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		RawFile *MRWFile::factory(const char* _filename)
+		RawFile *MRWFile::factory(IO::Stream *_f)
 		{
-			return new MRWFile(_filename);
+			return new MRWFile(_f);
 		}
 
-		MRWFile::MRWFile(const char* _filename)
-			: IFDFile(_filename, OR_RAWFILE_TYPE_MRW, false)
+		MRWFile::MRWFile(IO::Stream* _f)
+			: IFDFile(_f, OR_RAWFILE_TYPE_MRW, false)
 		{
 			m_container = new MRWContainer (m_io, 0);
 		}

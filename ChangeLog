@@ -1,3 +1,11 @@
+2008-05-03  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/*, gnome/demosaic.cpp, demo/pixbufload.c:
+	Implement the GtkPixbuf loader with a basic demosaic.
+	The colors still are wrong.
+	* include/libopenraw/rawfile.h, include/libopenraw++/rawfile.h,
+	lib/rawfile.cpp: Allow loading a Raw file from a memory buffer.
+
 2008-04-29  Hubert Figuiere  <hub@figuiere.net>
 
 	* demo/cfa.cpp, demo/ccfa.c: pgm output is big endian.

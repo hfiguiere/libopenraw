@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -38,13 +38,13 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		RawFile *PEFFile::factory(const char* _filename)
+		RawFile *PEFFile::factory(IO::Stream *s)
 		{
-			return new PEFFile(_filename);
+			return new PEFFile(s);
 		}
 
-		PEFFile::PEFFile(const char* _filename)
-			: IFDFile(_filename, OR_RAWFILE_TYPE_PEF)
+		PEFFile::PEFFile(IO::Stream *s)
+			: IFDFile(s, OR_RAWFILE_TYPE_PEF)
 		{
 		}
 

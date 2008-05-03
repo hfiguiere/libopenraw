@@ -36,7 +36,7 @@ namespace OpenRaw {
 		{
 
 		protected:
-			TiffEpFile(const char *_filename, Type _type);
+			TiffEpFile(IO::Stream *s, Type _type);
 
 			virtual IFDDir::Ref  _locateCfaIfd();
 			virtual IFDDir::Ref  _locateMainIfd();

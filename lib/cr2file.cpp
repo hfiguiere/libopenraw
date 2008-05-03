@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -41,13 +41,13 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		RawFile *CR2File::factory(const char* _filename)
+		RawFile *CR2File::factory(IO::Stream * s)
 		{
-			return new CR2File(_filename);
+			return new CR2File(s);
 		}
 
-		CR2File::CR2File(const char* _filename)
-			: IFDFile(_filename, OR_RAWFILE_TYPE_CR2)
+		CR2File::CR2File(IO::Stream * s)
+			: IFDFile(s, OR_RAWFILE_TYPE_CR2)
 		{
 
 		}

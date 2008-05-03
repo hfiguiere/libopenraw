@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfilefactory.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006, 2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,6 +26,7 @@
 
 #include <string>
 #include <map>
+#include <boost/function.hpp>
 
 #include <libopenraw++/rawfile.h>
 
@@ -37,12 +38,12 @@ namespace OpenRaw {
 		class RawFileFactory
 		{
 		public:
-			typedef RawFile * (*raw_file_creator)(const char *);
+			typedef boost::function<RawFile *(IO::Stream *)> raw_file_factory_t;
 			/** the factory type for raw files
 			 * key is the extension. file is factory method
 			 */
 			typedef 
-			std::map<RawFile::Type, raw_file_creator> Table;
+			std::map<RawFile::Type, raw_file_factory_t> Table;
 			typedef
 			std::map<std::string, RawFile::Type> Extensions;
 			
@@ -53,16 +54,18 @@ namespace OpenRaw {
 			 * @note it is safe to call this method with the same
 			 * fn and type to register a different extension
 			 */
-			RawFileFactory(RawFile::Type type, raw_file_creator fn, 
-										 const char * ext);
+			RawFileFactory(RawFile::Type type, 
+						   const raw_file_factory_t & fn, 
+						   const char * ext);
 
 			/** access the table. Ensure that it has been constructed. */
 			static Table & table();
 			/** access the extensions table. Ensure that it has been constructed. */
 			static Extensions & extensions();
 
-			static void registerType(RawFile::Type type, raw_file_creator fn,
-															 const char * ext);
+			static void registerType(RawFile::Type type, 
+									 const raw_file_factory_t & fn,
+									 const char * ext);
 			static void unRegisterType(RawFile::Type type);
 		};
 

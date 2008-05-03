@@ -2,6 +2,11 @@ libopenraw 0.0.6
 
   - LICENSE change to LGPLv3+
   - BUG: cfa output should write the data in PGM as big endian.
+  - NEW: API or_rawfile_new_from_memory() to load a Raw file from
+    a memory buffer.
+  - NEW: GtkPixbuf loader.
+  - TODO: fix detection by content.
+  - TODO: apply the coefficients.
 
 libopenraw 0.0.5
 

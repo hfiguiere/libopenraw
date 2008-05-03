@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2008 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -37,8 +37,8 @@ namespace OpenRaw {
 			: public IFDFile
 		{
 		public:
-			static RawFile *factory(const char* _filename);
-			MRWFile(const char* _filename);
+			static RawFile *factory(IO::Stream* _filename);
+			MRWFile(IO::Stream* _filename);
 			virtual ~MRWFile();
 
 		protected:

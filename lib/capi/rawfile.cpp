@@ -43,6 +43,15 @@ or_rawfile_new(const char* filename, or_rawfile_type type)
 	RawFile * rawfile = RawFile::newRawFile(filename, type);
 	return reinterpret_cast<ORRawFileRef>(rawfile);
 }
+
+ORRawFileRef
+or_rawfile_new_from_memory(const uint8_t *buffer, uint32_t len, or_rawfile_type type)
+{
+	CHECK_PTR(buffer, NULL);
+	RawFile * rawfile = RawFile::newRawFileFromMemory(buffer, len, type);
+	return reinterpret_cast<ORRawFileRef>(rawfile);
+}
+
 	
 or_error
 or_rawfile_release(ORRawFileRef rawfile)

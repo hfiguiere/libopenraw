@@ -43,8 +43,8 @@ namespace OpenRaw {
 			: public OpenRaw::RawFile
 		{
 		public:
-			static RawFile *factory(const char* _filename);
-			CRWFile(const char* _filename);
+			static RawFile *factory(IO::Stream *);
+			CRWFile(IO::Stream *);
 			virtual ~CRWFile();
 
 		protected:
@@ -60,7 +60,7 @@ namespace OpenRaw {
 			CRWFile(const CRWFile&);
 			CRWFile & operator=(const CRWFile&);
 
-			IO::File *m_io; /**< the IO handle */
+			IO::Stream *m_io; /**< the IO handle */
 			CIFFContainer *m_container; /**< the real container */
 			uint32_t m_x;
 			uint32_t m_y;

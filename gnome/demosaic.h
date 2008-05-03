@@ -1,7 +1,7 @@
 /*
- * libopenraw - dngfile.h
+ * libopenraw - demosaic.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,42 +18,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __OPENRAW_DEMOSAIC_H__
+#define __OPENRAW_DEMOSAIC_H__
 
+#include <stdint.h>
+#include <libopenraw/consts.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#ifndef __DNGFILE_H_
-#define __DNGFILE_H_
+void
+demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
+		  or_cfa_pattern pattern, uint8_t *dst);
 
-#include "tiffepfile.h"
-
-namespace OpenRaw {
-
-	class Thumbnail;
-
-	namespace Internals {
-		class IOFile;
-		class IFDFileContainer;
-
-		class DNGFile
-			: public TiffEpFile
-		{
-		public:
-			static RawFile *factory(IO::Stream *);
-
-			DNGFile(IO::Stream *);
-			virtual ~DNGFile();
-
-		protected:
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-
-		private:
-
-			DNGFile(const DNGFile&);
-			DNGFile & operator=(const DNGFile&);
-
-		};
-	}
-
+#ifdef __cplusplus
 }
+#endif
+
 
 #endif
