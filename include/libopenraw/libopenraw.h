@@ -32,7 +32,7 @@
 #include <libopenraw/rawdata.h>
 #include <libopenraw/rawfile.h>
 #include <libopenraw/debug.h>
-
+#include <libopenraw/demosaic.h>
 
 #ifdef __cplusplus
 extern "C" {

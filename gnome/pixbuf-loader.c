@@ -29,7 +29,6 @@
 #include <gdk-pixbuf/gdk-pixbuf-io.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "demosaic.h"
 
 G_MODULE_EXPORT void fill_vtable (GdkPixbufModule *module);
 G_MODULE_EXPORT void fill_info (GdkPixbufFormat *info);
@@ -100,7 +99,7 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
 	if(raw_file) {
 		or_error err;
 		ORRawDataRef rawdata = or_rawdata_new();
-		int32_t orientation = or_rawfile_get_orientation(raw_file);
+/*		int32_t orientation = or_rawfile_get_orientation(raw_file);*/
 
 		err = or_rawfile_get_rawdata(raw_file, rawdata, 0);
 		if(err == OR_ERROR_NONE) {
@@ -114,7 +113,7 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
 			dst = (uint8_t*)malloc(sizeof(uint8_t) * 3 * x * y);
 			src = (uint16_t*)or_rawdata_data(rawdata);
 			/* check the size of the data*/
-			demosaic(src , x, y, pattern, dst);
+			or_demosaic(src , x, y, pattern, dst);
 			pixbuf = gdk_pixbuf_new_from_data(dst, GDK_COLORSPACE_RGB,
 											  FALSE, 8, x, y, 
 											  (x - 2) * 3, 

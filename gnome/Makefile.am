@@ -26,11 +26,11 @@ libopenrawgnome_la_LIBADD = ../lib/libopenraw.la \
 	$(LIBGLIB_LIBS)                      \
 	$(LIBGDKPIXBUF_LIBS)
 
-libopenrawgnome_la_SOURCES = gdkpixbuf.c demosaic.cpp 
+libopenrawgnome_la_SOURCES = gdkpixbuf.c
 
 
 libopenraw_pixbuf_la_LDFLAGS = -no-undefined -module -avoid-version
 libopenraw_pixbuf_la_LIBADD = ../lib/libopenraw.la \
 	$(LIBGLIB_LIBS)                      \
 	$(LIBGDKPIXBUF_LIBS)
-libopenraw_pixbuf_la_SOURCES = pixbuf-loader.c demosaic.cpp
+libopenraw_pixbuf_la_SOURCES = pixbuf-loader.c

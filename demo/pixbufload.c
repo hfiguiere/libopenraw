@@ -63,7 +63,7 @@ main(int argc, char **argv)
 				dst = (uint8_t*)malloc(sizeof(uint8_t) * 3 * x * y);
 				src = (uint16_t*)or_rawdata_data(rawdata);
 				/* check the size of the data*/
-				demosaic(src , x, y, pattern, dst);
+				or_demosaic(src , x, y, pattern, dst);
 				pixbuf = gdk_pixbuf_new_from_data(dst, GDK_COLORSPACE_RGB,
 												  FALSE, 8, x , y , 
 												  ( x - 2 )* 3, 

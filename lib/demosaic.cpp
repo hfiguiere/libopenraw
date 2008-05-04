@@ -27,7 +27,7 @@
 
 #include <algorithm>
 
-#include "demosaic.h"
+#include <libopenraw/demosaic.h>
 
 /* Returns the median of four floats. We define the median as the average of
  * the central two elements.
@@ -76,8 +76,8 @@ extern "C" {
  * of dst_extent.
  */
 void
-demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-		  or_cfa_pattern pattern, uint8_t *dst)
+or_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
+			 or_cfa_pattern pattern, uint8_t *dst)
 {
 	uint32_t x,y;
 	uint32_t offset, doffset;

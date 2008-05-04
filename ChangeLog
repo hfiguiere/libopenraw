@@ -1,5 +1,10 @@
 2008-05-03  Hubert Figuiere  <hub@figuiere.net>
 
+	* include/libopenraw/libopenraw.h, lib/Makefile.am,
+	lib/demosaic.cpp, include/libopenraw/demosaic.h,
+	include/libopenraw/Makefile.am, gnome/pixbuf-loader.c,
+	gnome/Makefile.am: demosaic is now part of the API. 
+
 	* lib/*, gnome/demosaic.cpp, demo/pixbufload.c:
 	Implement the GtkPixbuf loader with a basic demosaic.
 	The colors still are wrong.

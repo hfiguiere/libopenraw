@@ -76,4 +76,5 @@ libopenraw_la_SOURCES = \
 	ljpegdecompressor.cpp \
 	crwdecompressor.cpp \
 	metavalue.cpp \
-	unpack.cpp
+	unpack.cpp \
+	demosaic.cpp
