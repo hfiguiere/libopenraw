@@ -86,7 +86,7 @@ Canon CRW                Y Y Y Y Y
  G5                      T T T   T
  Pro1                    T T T   T
 
-Canon CRW CHSDK          N N N N N
+Canon CRW CHDK           N N N N N
 (unofficial firmware)
  A610                    N N N N N
 
@@ -124,7 +124,7 @@ Adobe DNG                Y Y N Y Y
  Leica DMR               T T X T T
  Leica M8                T T X T T
  Adobe DNG converter     T T B T T
- K10D                    T T X T T
+ Pentax K10D             T T X T T
  Samsung GX-10           T T X T T
  Samsung Pro815          T T X T T
  Ricoh GR-2              T T X T T

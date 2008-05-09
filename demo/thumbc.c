@@ -32,6 +32,7 @@ main(int argc, char **argv)
 	char *filename;
 	int thumb_size = 160;
 	int opt;
+	ORThumbnailRef thumbnail = NULL;
 
 	while ((opt = getopt(argc, argv, "s:")) != -1) {
 		switch(opt) {
@@ -48,7 +49,6 @@ main(int argc, char **argv)
 		return 1;
 	}
 	filename = argv[optind];
-	ORThumbnailRef thumbnail = NULL;
 	(void)argc;
 
 	or_debug_set_level(DEBUG2);
