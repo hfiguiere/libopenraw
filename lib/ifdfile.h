@@ -64,6 +64,11 @@ namespace OpenRaw {
 		{
 
 		protected:
+			struct camera_ids_t {
+				const char * model;
+				const uint32_t type_id;
+			};
+
 			IFDFile(IO::Stream * s, Type _type, 
 					bool instantiateContainer = true);
 			virtual ~IFDFile();
@@ -98,6 +103,9 @@ namespace OpenRaw {
 			virtual IFDDir::Ref  _locateMainIfd() = 0;
 			virtual IFDDir::Ref  _locateExifIfd();
 
+			TypeId _typeIdFromModel(const std::string & model);
+			virtual void _identifyId();
+
 			virtual MetaValue *_getMetaValue(int32_t meta_index);
 
 			IFDDir::Ref       m_cfaIfd;  /**< the IFD for the CFA */
@@ -106,7 +114,7 @@ namespace OpenRaw {
 										  * the CFA
 										  */
 			IFDDir::Ref       m_exifIfd; /**< the Exif IFD */
-
+			const camera_ids_t *m_cam_ids;
 		private:
 
 			IFDFile(const IFDFile&);

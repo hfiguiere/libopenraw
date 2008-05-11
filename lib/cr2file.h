@@ -46,15 +46,14 @@ namespace OpenRaw {
 			virtual IFDDir::Ref  _locateCfaIfd();
 			virtual IFDDir::Ref  _locateMainIfd();
 
-			virtual void _identifyId();
-
 		private:
 			
 			Cr2File(const Cr2File&);
 			Cr2File & operator=(const Cr2File&);
 
-			static TypeId _typeIdFromModel(const std::string & model);
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
+			
+			static const IFDFile::camera_ids_t s_def[];
 		};
 
 	}

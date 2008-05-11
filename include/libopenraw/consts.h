@@ -197,7 +197,7 @@ extern "C" {
 	/** Epson type IDs */
 	enum {
 		OR_TYPEID_EPSON_UNKNOWN = 0,
-		OR_TYPEID_EPSON_R1D
+		OR_TYPEID_EPSON_RD1
 	};
 
 	/** Minolta type IDs */

@@ -35,41 +35,7 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		RawFile *ORFFile::factory(IO::Stream *s)
-		{
-			return new ORFFile(s);
-		}
-
-
-		ORFFile::ORFFile(IO::Stream *s)
-			: IFDFile(s, OR_RAWFILE_TYPE_ORF, false)
-		{
-			 m_container = new ORFContainer(m_io, 0);
-		}
-		
-		ORFFile::~ORFFile()
-		{
-		}
-
-		IFDDir::Ref  ORFFile::_locateCfaIfd()
-		{
-			// in PEF the CFA IFD is the main IFD
-			if(!m_mainIfd) {
-				m_mainIfd = _locateMainIfd();
-			}
-			return m_mainIfd;
-		}
-
-
-		IFDDir::Ref  ORFFile::_locateMainIfd()
-		{
-			return m_container->setDirectory(0);
-		}
-
-		static const struct camera_definition_t {
-			const char * model;
-			const uint32_t type_id;
-		} s_def[] = {
+		const struct IFDFile::camera_ids_t ORFFile::s_def[] = {
 			{ "E-1             ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
 													   OR_TYPEID_OLYMPUS_E1) },
 			{ "E-10        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
@@ -92,31 +58,40 @@ namespace OpenRaw {
 			{ 0, 0 }
 		};
 
-		
-		RawFile::TypeId ORFFile::_typeIdFromModel(const std::string & model)
+		RawFile *ORFFile::factory(IO::Stream *s)
 		{
-			// TODO optimise this as we can predict
-			const struct camera_definition_t * p = s_def;
-			while(p->model) {
-				if(model == p->model) {
-					break;
-				}
-				p++;
-			}
-			return p->type_id;
+			return new ORFFile(s);
 		}
 
-		void ORFFile::_identifyId()
+
+		ORFFile::ORFFile(IO::Stream *s)
+			: IFDFile(s, OR_RAWFILE_TYPE_ORF, false)
 		{
+			m_cam_ids = s_def;
+			m_container = new ORFContainer(m_io, 0);
+		}
+		
+		ORFFile::~ORFFile()
+		{
+		}
+
+		IFDDir::Ref  ORFFile::_locateCfaIfd()
+		{
+			// in PEF the CFA IFD is the main IFD
 			if(!m_mainIfd) {
 				m_mainIfd = _locateMainIfd();
 			}
-			std::string model;
-			if(m_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
-				_setTypeId(_typeIdFromModel(model));
-			}
+			return m_mainIfd;
 		}
 
+
+		IFDDir::Ref  ORFFile::_locateMainIfd()
+		{
+			return m_container->setDirectory(0);
+		}
+
+
+		
 		::or_error ORFFile::_getRawData(RawData & data, uint32_t /*options*/)
 		{
 			if(!m_cfaIfd) {

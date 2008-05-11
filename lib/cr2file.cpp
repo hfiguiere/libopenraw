@@ -40,31 +40,7 @@ using namespace Debug;
 namespace OpenRaw {
 
 	namespace Internals {
-
-		RawFile *Cr2File::factory(IO::Stream * s)
-		{
-			return new Cr2File(s);
-		}
-
-		Cr2File::Cr2File(IO::Stream * s)
-			: IFDFile(s, OR_RAWFILE_TYPE_CR2)
-		{
-		}
-
-		Cr2File::~Cr2File()
-		{
-		}
-
-
-		IFDDir::Ref  Cr2File::_locateCfaIfd()
-		{
-			return m_container->setDirectory(3);
-		}
-
-		static const struct camera_definition_t {
-			const char * model;
-			const uint32_t type_id;
-		} s_def[] = {
+		const IFDFile::camera_ids_t Cr2File::s_def[] = {
 			{ "Canon EOS-1D Mark II", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
 														  OR_TYPEID_CANON_1DMKII) },
 			{ "Canon EOS-1D Mark III", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
@@ -96,35 +72,27 @@ namespace OpenRaw {
 			{ 0, 0 }
 		};
 
-		RawFile::TypeId Cr2File::_typeIdFromModel(const std::string & model)
+		RawFile *Cr2File::factory(IO::Stream * s)
 		{
-			// TODO optimise this as we can predict
-			const struct camera_definition_t * p = s_def;
-
-//			p = std::find_if(s_def, s_def + (sizeof s_def / sizeof *s_def), 
-//							 boost::bind(std::equal_to<std::string>(), 
-//										 boost::ref(model),
-//										 boost::bind(&camera_definition_t::model, _1)
-//										 ));
-			while(p->model) {
-				if(model == p->model) {
-					break;
-				}
-				p++;
-			}
-			return p->type_id;
+			return new Cr2File(s);
 		}
 
-		void Cr2File::_identifyId()
+		Cr2File::Cr2File(IO::Stream * s)
+			: IFDFile(s, OR_RAWFILE_TYPE_CR2)
 		{
-			if(!m_mainIfd) {
-				m_mainIfd = _locateMainIfd();
-			}
-			std::string model;
-			if(m_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
-				_setTypeId(_typeIdFromModel(model));
-			}
+			m_cam_ids = s_def;
 		}
+
+		Cr2File::~Cr2File()
+		{
+		}
+
+
+		IFDDir::Ref  Cr2File::_locateCfaIfd()
+		{
+			return m_container->setDirectory(3);
+		}
+
 
 		IFDDir::Ref  Cr2File::_locateMainIfd()
 		{

@@ -1,5 +1,8 @@
 2008-05-11  Hubert Figuiere  <hub@figuiere.net>
 
+	* include/libopenraw/consts.h: fix a typo
+	* lib/*: refactor the identify code.
+
 	* gnome/pixbuf-loader.c (fill_info): Add a more
 	extensive "magic" for CR2 files.
 	See also http://bugzilla.gnome.org/show_bug.cgi?id=532644

@@ -38,6 +38,13 @@ namespace OpenRaw {
 
 	namespace Internals {
 
+		const IFDFile::camera_ids_t ERFFile::s_def[] = {
+			{ "R-D1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
+										   OR_TYPEID_EPSON_RD1) },
+			{ 0, 0 }
+		};
+
+
 		RawFile *ERFFile::factory(IO::Stream *s)
 		{
 			return new ERFFile(s);
@@ -46,28 +53,12 @@ namespace OpenRaw {
 		ERFFile::ERFFile(IO::Stream *s)
 			: TiffEpFile(s, OR_RAWFILE_TYPE_ERF)
 		{
+			m_cam_ids = s_def;
 		}
 
 
 		ERFFile::~ERFFile()
 		{
-		}
-
-		void ERFFile::_identifyId()
-		{
-			if(!m_mainIfd) {
-				m_mainIfd = _locateMainIfd();
-			}
-			TypeId type_id = OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
-												 OR_TYPEID_EPSON_UNKNOWN);
-			std::string model;
-			if(m_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
-				if(model == "R-D1s") {
-					type_id = OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
-												  OR_TYPEID_EPSON_R1D);
-				}
-			}
-			_setTypeId(type_id);
 		}
 
 		::or_error ERFFile::_getRawData(RawData & data, uint32_t /*options*/)

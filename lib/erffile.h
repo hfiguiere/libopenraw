@@ -45,13 +45,12 @@ namespace OpenRaw {
 		protected:
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 
-			virtual void _identifyId();
-
 		private:
 
 			ERFFile(const ERFFile&);
 			ERFFile & operator=(const ERFFile &);
 
+			static const IFDFile::camera_ids_t s_def[];
 		};
 	}
 

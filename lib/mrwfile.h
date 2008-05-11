@@ -55,6 +55,8 @@ namespace OpenRaw {
 
 			MRWFile(const MRWFile&);
 			MRWFile & operator=(const MRWFile&);
+
+			static const struct IFDFile::camera_ids_t s_def[];
 		};
 	}
 

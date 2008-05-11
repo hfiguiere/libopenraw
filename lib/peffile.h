@@ -46,8 +46,6 @@ namespace OpenRaw {
 			virtual IFDDir::Ref  _locateCfaIfd();
 			virtual IFDDir::Ref  _locateMainIfd();
 
-			virtual void _identifyId();
-
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 
 		private:
@@ -55,6 +53,7 @@ namespace OpenRaw {
 			PEFFile(const PEFFile&);
 			PEFFile & operator=(const PEFFile &);
 
+			static const IFDFile::camera_ids_t s_def[];
 		};
 	}
 

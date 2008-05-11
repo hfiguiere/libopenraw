@@ -50,9 +50,10 @@ namespace OpenRaw {
 		IFDFile::IFDFile(IO::Stream *s, Type _type, 
 						 bool instantiateContainer)
 			: RawFile(s, _type),
-				m_thumbLocations(),
-				m_io(s),
-				m_container(NULL)
+			  m_thumbLocations(),
+			  m_io(s),
+			  m_container(NULL),
+			  m_cam_ids(NULL)
 		{
 			if(instantiateContainer) {
 				m_container = new IFDFileContainer(m_io, 0);
@@ -77,6 +78,35 @@ namespace OpenRaw {
 			}
 			return m_mainIfd->getExifIFD();
 		}
+
+
+		RawFile::TypeId IFDFile::_typeIdFromModel(const std::string & model)
+		{
+			const struct camera_ids_t * p = m_cam_ids;
+			if(!p) {
+				return 0;
+			}
+			while(p->model) {
+				if(model == p->model) {
+					break;
+				}
+				p++;
+			}
+			return p->type_id;
+		}
+
+
+		void IFDFile::_identifyId()
+		{
+			if(!m_mainIfd) {
+				m_mainIfd = _locateMainIfd();
+			}
+			std::string model;
+			if(m_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
+				_setTypeId(_typeIdFromModel(model));
+			}
+		}
+
 
 
 		::or_error IFDFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
