@@ -45,6 +45,8 @@ namespace OpenRaw {
 			virtual IFDDir::Ref  _locateCfaIfd();
 			virtual IFDDir::Ref  _locateMainIfd();
 
+			virtual void _identifyId();
+			
 			virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);

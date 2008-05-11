@@ -82,6 +82,20 @@ namespace OpenRaw {
 				return ret;
 			}
 			
+			std::string DataBlock::string_val(off_t off)
+			{
+				char buf[9];
+				size_t s;
+				MRWContainer *mc = m_container;
+				s = mc->fetchData(buf, m_start + DataBlockHeaderLength + off, 8);
+				if(s == 8) {
+					buf[8] = 0;
+				}
+				else {
+					*buf = 0;
+				}
+				return buf;
+			}
 		}
 
 		MRWContainer::MRWContainer(IO::Stream *_file, off_t offset)

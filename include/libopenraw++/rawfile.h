@@ -43,7 +43,8 @@ namespace OpenRaw {
 	{
 	public:
 		typedef ::or_rawfile_type Type;
-		
+		typedef ::or_rawfile_typeid TypeId;
+
 		/** factory method to create the proper RawFile instance.
 		 * @param _filename the name of the file to load
 		 * @param _typeHint a hint on the type. Use UNKNOWN_TYPE
@@ -65,6 +66,11 @@ namespace OpenRaw {
 		virtual ~RawFile();
 		/** Accessor for the type */
 		Type type() const;
+
+		/** The RAW file type ID. Identify it if needed. 
+		 *  @todo figure how to make this const.
+		 */
+		TypeId typeId();
 
 		// standard api, like get thumbnail
 		// and get exif.
@@ -97,6 +103,10 @@ namespace OpenRaw {
 		 * @param _type the type
 		 */
 		RawFile(IO::Stream *s, Type _type);
+
+		/** Set the file type id */
+		void _setTypeId(TypeId _type_id);
+
 		/** enumerate the thumbnail sizes. 
 		 * @param list the list to enumerate into
 		 * @return OR_ERROR_NONE if success
@@ -120,9 +130,13 @@ namespace OpenRaw {
 		virtual ::or_error _getRawData(RawData & data, uint32_t options) = 0;
 
 		virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
+
+		virtual void _identifyId() {} // = 0;
+
 	private:
 		static Type identify(const char*_filename);
 		static Type identifyBuffer(const uint8_t* buff, size_t len);
+
 
 		RawFile(const RawFile&);
 		RawFile & operator=(const RawFile &);

@@ -23,6 +23,7 @@
 #define __LIBOPENRAW_RAWFILE_H_
 
 #include <libopenraw/types.h>
+#include <libopenraw/consts.h>
 #include <libopenraw/rawdata.h>
 #include <libopenraw/thumbnails.h>
 #include <libopenraw/metadata.h>
@@ -44,6 +45,10 @@ or_rawfile_release(ORRawFileRef rawfile);
 
 or_rawfile_type
 or_rawfile_get_type(ORRawFileRef rawfile);
+
+/** return the typeid to identify the exact file type */
+or_rawfile_typeid
+or_rawfile_get_typeid(ORRawFileRef rawfile);
 
 or_error
 or_rawfile_get_thumbnail(ORRawFileRef rawfile, uint32_t preferred_size,

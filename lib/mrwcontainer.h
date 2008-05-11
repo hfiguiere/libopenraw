@@ -91,6 +91,9 @@ namespace OpenRaw {
 				/** Return an unsigned 16-bit quantity at offset bytes from the start of the data block.
 				 */
 				uint16_t uint16_val (off_t offset);
+
+				std::string string_val(off_t offset);
+
 				bool loaded() const
 					{
 						return m_loaded;

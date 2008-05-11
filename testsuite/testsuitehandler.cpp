@@ -54,6 +54,7 @@ xml::ContextPtr TestContext::startElement(int32_t element)
 		m_results = true;
 		break;
 	case XML_rawType:
+	case XML_rawTypeId:
 	case XML_thumbNum:
 	case XML_thumbSizes:
 	case XML_thumbFormats:

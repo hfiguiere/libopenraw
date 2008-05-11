@@ -45,6 +45,8 @@ namespace OpenRaw {
 		protected:
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 
+			virtual void _identifyId();
+
 		private:
 
 			ERFFile(const ERFFile&);

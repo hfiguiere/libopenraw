@@ -54,6 +54,7 @@ public:
 private:
 
 	bool testRawType(const std::string & result);
+	bool testRawTypeId(const std::string & result);
 	bool testThumbNum(const std::string & result);
 	bool testThumbSizes(const std::string & result);
 	bool testThumbFormats(const std::string & result);

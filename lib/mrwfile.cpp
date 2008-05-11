@@ -70,7 +70,53 @@ namespace OpenRaw {
 		{
 			return m_container->setDirectory(0);
 		}
-		
+
+		static const struct camera_definition_t {
+			const char * version;
+			const uint32_t type_id;
+		} s_def[] = {
+			{ "21860002", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA,
+											  OR_TYPEID_MINOLTA_MAXXUM_5D) },
+			{ "21810002", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA,
+											  OR_TYPEID_MINOLTA_MAXXUM_7D) },
+			{ "27730001", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA,
+											  OR_TYPEID_MINOLTA_DIMAGE5) },
+			{ "27660001", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA,
+											  OR_TYPEID_MINOLTA_DIMAGE7) },
+			{ "27790001", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA,
+											  OR_TYPEID_MINOLTA_DIMAGE7I) },
+			{ "27780001", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA,
+											  OR_TYPEID_MINOLTA_DIMAGE7HI) },
+			{ "27820001", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA,
+											  OR_TYPEID_MINOLTA_A1) },
+			{ "27200001", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA,
+											  OR_TYPEID_MINOLTA_A2) },
+			{ "27470002", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA,
+											  OR_TYPEID_MINOLTA_A200) },
+			{ 0, 0 }
+		};
+
+		void MRWFile::_identifyId()
+		{
+			MRWContainer *mc = (MRWContainer *)m_container;
+			if(!m_mainIfd) {
+				m_mainIfd = _locateMainIfd();
+			}
+
+			if(mc->prd) {
+				std::string version = mc->prd->string_val(MRW::PRD_VERSION);
+				const struct camera_definition_t * p = s_def;
+				while(p->version) {
+					if(version == p->version) {
+						break;
+					}
+					p++;
+				}
+				_setTypeId(p->type_id);
+			}
+		}
+
+	
 		/* This code only knows about Dimage 5/7, in which the thumbnail position is special. */
 		::or_error MRWFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 		{

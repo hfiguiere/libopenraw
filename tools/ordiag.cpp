@@ -226,6 +226,7 @@ public:
 			else {
 				m_out << boost::format("\tType = %1% (%2%)\n") % rf->type() 
 															 % typeToString(rf->type());
+				m_out << boost::format("\tType ID = %1%\n") % rf->typeId();
 				dumpPreviews(rf);
 				dumpRawData(rf);
 				dumpMetaData(rf);

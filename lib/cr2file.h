@@ -34,22 +34,26 @@ namespace OpenRaw {
 	
 	namespace Internals {
 		
-		class CR2File
+		class Cr2File
 			: public IFDFile
 		{
 		public:
 			static RawFile *factory(IO::Stream * s);
-			CR2File(IO::Stream *s);
-			virtual ~CR2File();
+			Cr2File(IO::Stream *s);
+			virtual ~Cr2File();
 
 		protected:
 			virtual IFDDir::Ref  _locateCfaIfd();
 			virtual IFDDir::Ref  _locateMainIfd();
+
+			virtual void _identifyId();
+
 		private:
 			
-			CR2File(const CR2File&);
-			CR2File & operator=(const CR2File&);
+			Cr2File(const Cr2File&);
+			Cr2File & operator=(const Cr2File&);
 
+			static TypeId _typeIdFromModel(const std::string & model);
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 		};
 

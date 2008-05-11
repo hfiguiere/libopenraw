@@ -89,6 +89,147 @@ extern "C" {
 
 	} or_options;
 
+
+
+	/** this is the type ID, a combination of vendor model 
+	 *  It maps a specific camera. Only for the NATIVE file format.
+	 */
+	typedef uint32_t or_rawfile_typeid;
+
+	/** make a %or_rawfile_typeid with a vendor and camera. */
+    #define OR_MAKE_FILE_TYPEID(vendor,camera) ((vendor << 16) | (camera & 0xffff))
+	/** get the vendor from the %or_rawfile_typeid */
+    #define OR_GET_FILE_TYPEID_VENDOR(ftypeid) ((ftypeid & 0xffff0000) >> 16)
+	/** get the camera from the %or_rawfile_typeid */
+    #define OR_GET_FILE_TYPEID_CAMERA(ftypeid) (ftypeid & 0xffff)
+
+	/** The vendor ID: the high order 16-bits of the %or_rawfile_typeid
+	 */
+	enum {
+		OR_TYPEID_VENDOR_NONE = 0,
+		OR_TYPEID_VENDOR_CANON = 1,
+		OR_TYPEID_VENDOR_NIKON = 2,
+		OR_TYPEID_VENDOR_LEICA = 3,
+		OR_TYPEID_VENDOR_PENTAX = 4,
+		OR_TYPEID_VENDOR_EPSON = 5,
+		OR_TYPEID_VENDOR_MINOLTA = 6,
+		OR_TYPEID_VENDOR_OLYMPUS = 7,
+		OR_TYPEID_VENDOR_SONY = 8,
+		OR_TYPEID_VENDOR_SAMSUNG = 9,
+		OR_TYPEID_VENDOR_RICOH = 10,
+		OR_TYPEID_VENDOR_PANASONIC = 11,
+		OR_TYPEID_VENDOR_MAMIYA = 12,
+		/* not really a camera vendor. For the converter. */
+		OR_TYPEID_VENDOR_ADOBE = 13
+	};
+
+	enum {
+		OR_TYPEID_UNKNOWN = 0
+	};
+
+	/** Canon type IDs */
+	enum {
+		OR_TYPEID_CANON_UNKNOWN = 0,
+		OR_TYPEID_CANON_20D,
+		OR_TYPEID_CANON_30D,
+		OR_TYPEID_CANON_40D,
+		OR_TYPEID_CANON_350D,
+		OR_TYPEID_CANON_400D,
+		OR_TYPEID_CANON_450D,
+		OR_TYPEID_CANON_5D,
+		OR_TYPEID_CANON_1D,
+		OR_TYPEID_CANON_1DMKII,
+		OR_TYPEID_CANON_1DMKIII,
+		OR_TYPEID_CANON_1DS,
+		OR_TYPEID_CANON_1DSMKII,
+		OR_TYPEID_CANON_1DSMKIII,
+		OR_TYPEID_CANON_300D,
+		OR_TYPEID_CANON_D30,
+		OR_TYPEID_CANON_D60,
+		OR_TYPEID_CANON_10D,
+		OR_TYPEID_CANON_PRO1,
+		OR_TYPEID_CANON_G1,
+		OR_TYPEID_CANON_G2,
+		OR_TYPEID_CANON_G5,
+		OR_TYPEID_CANON_G9,
+		OR_TYPEID_CANON_A610,
+		OR_TYPEID_CANON_20DA
+	};
+
+
+	/** Nikon type IDs */
+	enum {
+		OR_TYPEID_NIKON_UNKNOWN = 0,
+		OR_TYPEID_NIKON_COOLPIX_5700 = 1,
+		OR_TYPEID_NIKON_D1 = 2,
+		OR_TYPEID_NIKON_D1X = 3,
+		OR_TYPEID_NIKON_D100 = 4,
+		OR_TYPEID_NIKON_D2H = 5,
+		OR_TYPEID_NIKON_D2X = 6,
+		OR_TYPEID_NIKON_D200 = 7,
+		OR_TYPEID_NIKON_D300 = 8,
+		OR_TYPEID_NIKON_D40 = 9,
+		OR_TYPEID_NIKON_D40X = 10,
+		OR_TYPEID_NIKON_D50 = 11,
+		OR_TYPEID_NIKON_D70 = 12,
+		OR_TYPEID_NIKON_D70S = 13,
+		OR_TYPEID_NIKON_D80 = 14
+	};
+
+	/** Leica type IDs */
+	enum {
+		OR_TYPEID_LEICA_UNKNOWN = 0,
+		OR_TYPEID_LEICA_DMR = 1,
+		OR_TYPEID_LEICA_M8 = 2
+	};
+
+	/** Pentax type IDs */
+	enum {
+		OR_TYPEID_PENTAX_UNKNOWN = 0,
+		OR_TYPEID_PENTAX_K10D_PEF = 1,
+		OR_TYPEID_PENTAX_K10D_DNG = 2,
+		OR_TYPEID_PENTAX_IST_D = 3,
+		OR_TYPEID_PENTAX_IST_DL = 4,
+		OR_TYPEID_PENTAX_K100D = 5
+	};
+
+	/** Epson type IDs */
+	enum {
+		OR_TYPEID_EPSON_UNKNOWN = 0,
+		OR_TYPEID_EPSON_R1D
+	};
+
+	/** Minolta type IDs */
+	enum {
+		OR_TYPEID_MINOLTA_UNKNOWN = 0,
+		OR_TYPEID_MINOLTA_A1,
+		OR_TYPEID_MINOLTA_A2,
+		OR_TYPEID_MINOLTA_DIMAGE5,
+		OR_TYPEID_MINOLTA_DIMAGE7,
+		OR_TYPEID_MINOLTA_DIMAGE7I,
+		OR_TYPEID_MINOLTA_DIMAGE7HI,
+		OR_TYPEID_MINOLTA_MAXXUM_5D,
+		OR_TYPEID_MINOLTA_MAXXUM_7D,
+		OR_TYPEID_MINOLTA_A200
+	};
+
+	enum {
+		OR_TYPEID_OLYMPUS_UNKNOWN = 0,
+		OR_TYPEID_OLYMPUS_E1,
+		OR_TYPEID_OLYMPUS_E10,
+		OR_TYPEID_OLYMPUS_E3,
+		OR_TYPEID_OLYMPUS_E300,
+		OR_TYPEID_OLYMPUS_E330,
+		OR_TYPEID_OLYMPUS_E400,
+		OR_TYPEID_OLYMPUS_E410,
+		OR_TYPEID_OLYMPUS_E500,
+		OR_TYPEID_OLYMPUS_E510,
+		OR_TYPEID_OLYMPUS_SP350,
+		OR_TYPEID_OLYMPUS_SP510,
+		OR_TYPEID_OLYMPUS_SP550
+	};
+
+
 #ifdef __cplusplus
 }
 #endif

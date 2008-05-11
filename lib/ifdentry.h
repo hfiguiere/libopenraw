@@ -86,6 +86,18 @@ namespace OpenRaw {
 		{
 			return BE32(b);
 		}
+
+		template <>
+		inline std::string IFDTypeTrait<std::string>::EL(const uint8_t* b)
+		{
+			return std::string((const char*)b);
+		}
+
+		template <>
+		inline std::string IFDTypeTrait<std::string>::BE(const uint8_t* b)
+		{
+			return std::string((const char*)b);
+		}
 		
 #if defined(__APPLE_CC__)
 // Apple broken C++ needs this

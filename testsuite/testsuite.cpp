@@ -195,6 +195,11 @@ bool Test::testRawType(const std::string & result)
 	RETURN_TEST(false, result);
 }
 
+bool Test::testRawTypeId(const std::string & result)
+{
+	RETURN_TEST(m_rawfile->typeId() == boost::lexical_cast<uint32_t>(result), result);
+}
+
 
 bool Test::testThumbNum(const std::string & result)
 {
@@ -437,6 +442,9 @@ int Test::run()
 		{
 		case XML_rawType:
 			pass = testRawType(iter->second);
+			break;
+		case XML_rawTypeId:
+			pass = testRawTypeId(iter->second);
 			break;
 		case XML_thumbNum:
 			pass = testThumbNum(iter->second);

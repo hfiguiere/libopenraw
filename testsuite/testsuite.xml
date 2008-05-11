@@ -5,6 +5,7 @@
     <source>http://libopenraw.freedesktop.org/www/samples/cr2/img_0620.cr2</source>
     <results>
       <rawType>CR2</rawType>
+      <rawTypeId>65537</rawTypeId>
       <thumbNum>3</thumbNum>
       <thumbSizes>1536 160 384</thumbSizes>
       <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
@@ -23,6 +24,7 @@
     <source></source>
     <results>
       <rawType>CR2</rawType>
+      <rawTypeId>65542</rawTypeId>
       <thumbNum>3</thumbNum>
       <thumbSizes>2256 160 539</thumbSizes>
       <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
@@ -156,6 +158,7 @@
     <source>http://libopenraw.freedesktop.org/www/samples/erf/_eps8447.erf</source>
     <results>
       <rawType>ERF</rawType>
+      <rawTypeId>327680</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -262,6 +265,7 @@
     <file>/home/hub/samples/orf/Olympus_E300/P7080133.ORF</file>
     <results>
       <rawType>ORF</rawType>
+      <rawTypeId>458756</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -279,6 +283,7 @@
     <source>http://libopenraw.freedesktop.org/www/samples/mrw/dimage5.mrw</source>
     <results>
       <rawType>MRW</rawType>
+      <rawTypeId>393219</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>640</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -297,6 +302,7 @@
     <source>http://www.rawsamples.ch/raws/minolta/7i/RAW_MINOLTA_DIMAGE_7I.MRW</source>
     <results>
       <rawType>MRW</rawType>
+      <rawTypeId>393221</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>640</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -315,6 +321,7 @@
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/MINOLTA-DIMAGE7HI.MRW</source>
     <results>
       <rawType>MRW</rawType>
+      <rawTypeId>393222</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>640</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>

@@ -60,7 +60,7 @@ namespace OpenRaw {
 	void init(void)
 	{
  		static RawFileFactory fctcr2(OR_RAWFILE_TYPE_CR2, 
-									 boost::bind(&Internals::CR2File::factory, _1),
+									 boost::bind(&Internals::Cr2File::factory, _1),
 									 "cr2");
 		static RawFileFactory fctnef(OR_RAWFILE_TYPE_NEF, 
 									 boost::bind(&Internals::NEFFile::factory, _1),
@@ -93,6 +93,7 @@ namespace OpenRaw {
 	public:
 		Private(Type t)
 			: m_type(t),
+			  m_type_id(OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NONE, OR_TYPEID_UNKNOWN)),
 			  m_sizes()
 			{
 			}
@@ -109,6 +110,8 @@ namespace OpenRaw {
 			}
 		/** the real type of the raw file */
 		Type m_type;
+		/** the raw file type id */
+		TypeId m_type_id;
 		/** list of thumbnail sizes */
 		std::vector<uint32_t> m_sizes;
 		std::map<int32_t, MetaValue*> m_metadata;
@@ -231,6 +234,19 @@ namespace OpenRaw {
 	RawFile::Type RawFile::type() const
 	{
 		return d->m_type;
+	}
+
+	RawFile::TypeId RawFile::typeId()
+	{
+		if(d->m_type_id == 0) {
+			_identifyId();
+		}
+		return d->m_type_id;
+	}
+
+	void RawFile::_setTypeId(RawFile::TypeId _type_id)
+	{
+		d->m_type_id = _type_id;
 	}
 
 	const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)

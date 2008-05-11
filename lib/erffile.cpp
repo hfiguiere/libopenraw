@@ -53,6 +53,22 @@ namespace OpenRaw {
 		{
 		}
 
+		void ERFFile::_identifyId()
+		{
+			if(!m_mainIfd) {
+				m_mainIfd = _locateMainIfd();
+			}
+			TypeId type_id = OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
+												 OR_TYPEID_EPSON_UNKNOWN);
+			std::string model;
+			if(m_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
+				if(model == "R-D1s") {
+					type_id = OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
+												  OR_TYPEID_EPSON_R1D);
+				}
+			}
+			_setTypeId(type_id);
+		}
 
 		::or_error ERFFile::_getRawData(RawData & data, uint32_t /*options*/)
 		{

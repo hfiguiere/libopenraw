@@ -41,33 +41,97 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		RawFile *CR2File::factory(IO::Stream * s)
+		RawFile *Cr2File::factory(IO::Stream * s)
 		{
-			return new CR2File(s);
+			return new Cr2File(s);
 		}
 
-		CR2File::CR2File(IO::Stream * s)
+		Cr2File::Cr2File(IO::Stream * s)
 			: IFDFile(s, OR_RAWFILE_TYPE_CR2)
 		{
-
 		}
 
-		CR2File::~CR2File()
+		Cr2File::~Cr2File()
 		{
 		}
 
 
-		IFDDir::Ref  CR2File::_locateCfaIfd()
+		IFDDir::Ref  Cr2File::_locateCfaIfd()
 		{
 			return m_container->setDirectory(3);
 		}
 
-		IFDDir::Ref  CR2File::_locateMainIfd()
+		static const struct camera_definition_t {
+			const char * model;
+			const uint32_t type_id;
+		} s_def[] = {
+			{ "Canon EOS-1D Mark II", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+														  OR_TYPEID_CANON_1DMKII) },
+			{ "Canon EOS-1D Mark III", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+														   OR_TYPEID_CANON_1DMKIII) },
+			{ "Canon EOS-1Ds Mark II", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+														   OR_TYPEID_CANON_1DSMKII) },
+			{ "Canon EOS-1Ds Mark III", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+															OR_TYPEID_CANON_1DSMKIII) },
+			{ "Canon EOS 20D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+													OR_TYPEID_CANON_20D) },
+			{ "Canon EOS 20D" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+													OR_TYPEID_CANON_20D) },
+			{ "Canon EOS 20Da", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+													OR_TYPEID_CANON_20DA) },
+			{ "Canon EOS 30D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+												   OR_TYPEID_CANON_30D) },
+			{ "Canon EOS 350D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+													OR_TYPEID_CANON_350D) },
+			{ "Canon EOS 40D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+												   OR_TYPEID_CANON_40D) },
+			{ "Canon EOS 400D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+												  OR_TYPEID_CANON_400D) },
+			{ "Canon EOS 450D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+												  OR_TYPEID_CANON_450D) },
+			{ "Canon EOS 5D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+												  OR_TYPEID_CANON_5D) },
+			{ "Canon PowerShot G9", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
+														OR_TYPEID_CANON_G9) },
+			{ 0, 0 }
+		};
+
+		RawFile::TypeId Cr2File::_typeIdFromModel(const std::string & model)
+		{
+			// TODO optimise this as we can predict
+			const struct camera_definition_t * p = s_def;
+
+//			p = std::find_if(s_def, s_def + (sizeof s_def / sizeof *s_def), 
+//							 boost::bind(std::equal_to<std::string>(), 
+//										 boost::ref(model),
+//										 boost::bind(&camera_definition_t::model, _1)
+//										 ));
+			while(p->model) {
+				if(model == p->model) {
+					break;
+				}
+				p++;
+			}
+			return p->type_id;
+		}
+
+		void Cr2File::_identifyId()
+		{
+			if(!m_mainIfd) {
+				m_mainIfd = _locateMainIfd();
+			}
+			std::string model;
+			if(m_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
+				_setTypeId(_typeIdFromModel(model));
+			}
+		}
+
+		IFDDir::Ref  Cr2File::_locateMainIfd()
 		{
 			return m_container->setDirectory(0);
 		}
 
-		::or_error CR2File::_getRawData(RawData & data, uint32_t options)
+		::or_error Cr2File::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
 			if(!m_cfaIfd) {

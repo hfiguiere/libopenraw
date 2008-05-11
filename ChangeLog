@@ -1,3 +1,11 @@
+2008-05-10  Hubert Figuiere  <hub@figuiere.net>
+
+	* include/libopenraw/consts.h, include/libopenraw/rawfile.h,
+	include/libopenraw++/rawfile.h: new API to get the type ID.
+	* tools/ordiag.cpp: dump the type id.
+	* testsuite/*: add a type id test.
+	* lib/*: return the type id for CR2, MRW, ERF and ORF.
+
 2008-05-03  Hubert Figuiere  <hub@figuiere.net>
 
 	* include/libopenraw/libopenraw.h, lib/Makefile.am,

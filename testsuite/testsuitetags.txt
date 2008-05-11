@@ -5,6 +5,7 @@ file
 source
 results
 rawType
+rawTypeId
 thumbNum
 thumbSizes
 thumbFormats
