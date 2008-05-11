@@ -156,6 +156,7 @@ fill_info (GdkPixbufFormat *info)
 {
 	static GdkPixbufModulePattern signature[] = {
 		{ "MM \x2a", "  z ", 80 }, /* TIFF */
+		{ "II\x2a \x10   CR\x02 ", "   z zzz   z", 100 }, /* CR2 */
 		{ "II\x2a ", "   z", 80 }, /* TIFF */
 		{ "IIRO", "    ", 100 },   /* ORF */
 		{ " MRM", "z   ", 100 },   /* MRW */

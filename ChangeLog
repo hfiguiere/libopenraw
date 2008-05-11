@@ -1,5 +1,9 @@
 2008-05-11  Hubert Figuiere  <hub@figuiere.net>
 
+	* gnome/pixbuf-loader.c (fill_info): Add a more
+	extensive "magic" for CR2 files.
+	See also http://bugzilla.gnome.org/show_bug.cgi?id=532644
+
 	* lib/peffile.{h,cpp}: return the type ID for PEF
 
 2008-05-10  Hubert Figuiere  <hub@figuiere.net>

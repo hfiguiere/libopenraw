@@ -212,6 +212,11 @@ namespace OpenRaw {
 		if((memcmp(buff, "II\x2a\0", 4) == 0) 
 		   || (memcmp(buff, "MM\0\x2a", 4) == 0)) {
 			// TIFF based format
+			if(len >=12 ) {
+				if(memcmp(buff + 8, "CR\x2", 3) == 0) {
+					return OR_RAWFILE_TYPE_CR2;					
+				}
+			}
 			printf("TIFF based: FAKE to cr2\n");
 			return OR_RAWFILE_TYPE_CR2;
 		}
