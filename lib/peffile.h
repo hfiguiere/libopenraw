@@ -45,7 +45,9 @@ namespace OpenRaw {
 		protected:
 			virtual IFDDir::Ref  _locateCfaIfd();
 			virtual IFDDir::Ref  _locateMainIfd();
-		protected:
+
+			virtual void _identifyId();
+
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 
 		private:

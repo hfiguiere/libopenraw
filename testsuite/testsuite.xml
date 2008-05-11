@@ -177,6 +177,7 @@
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/VERTICAL/k10d.pef</source>
     <results>
       <rawType>PEF</rawType>
+      <rawTypeId>262145</rawTypeId>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3872</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -194,6 +195,7 @@
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/PENTAX-ISD.PEF</source>
     <results>
       <rawType>PEF</rawType>
+      <rawTypeId>262147</rawTypeId>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>

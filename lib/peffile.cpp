@@ -68,6 +68,42 @@ namespace OpenRaw {
 			return m_container->setDirectory(0);
 		}
 
+		static const struct camera_definition_t {
+			const char * model;
+			const uint32_t type_id;
+		} s_def[] = {
+			{ "PENTAX *ist D      ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 
+														 OR_TYPEID_PENTAX_IST_D) },
+			{ "PENTAX *ist DL     ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 
+														 OR_TYPEID_PENTAX_IST_DL) },
+			{ "PENTAX K10D        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 
+														 OR_TYPEID_PENTAX_K10D_PEF) },
+			{ "PENTAX K100D       ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 
+														 OR_TYPEID_PENTAX_K100D_PEF) },
+			{ "PENTAX K100D Super ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 
+														 OR_TYPEID_PENTAX_K100D_PEF) },
+			{ 0, 0 }
+		};
+
+		void PEFFile::_identifyId()
+		{
+			if(!m_mainIfd) {
+				m_mainIfd = _locateMainIfd();
+			}
+			std::string model;
+			if(m_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
+				const struct camera_definition_t * p = s_def;
+				while(p->model) {
+					if(model == p->model) {
+						break;
+					}
+					p++;
+				}
+				
+				_setTypeId(p->type_id);
+			}
+		}
+
 		::or_error PEFFile::_getRawData(RawData & data, uint32_t /*options*/)
 		{
 			::or_error err;
