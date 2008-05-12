@@ -51,6 +51,7 @@ namespace OpenRaw {
 			DNGFile(const DNGFile&);
 			DNGFile & operator=(const DNGFile&);
 
+			static const IFDFile::camera_ids_t s_def[];
 		};
 	}
 

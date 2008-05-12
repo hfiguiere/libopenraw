@@ -41,6 +41,22 @@ namespace OpenRaw {
 
 
 	namespace Internals {
+		const IFDFile::camera_ids_t DNGFile::s_def[] = {
+			{ "PENTAX K10D        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
+														 OR_TYPEID_PENTAX_K10D_DNG) },
+			{ "R9 - Digital Back DMR", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+														   OR_TYPEID_LEICA_DMR) },
+			{ "M8 Digital Camera", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+													   OR_TYPEID_LEICA_M8) },
+			{ "GR DIGITAL 2   ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
+													 OR_TYPEID_RICOH_GR2) },
+			{ "SAMSUNG GX10       ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG,
+														 OR_TYPEID_SAMSUNG_GX10) },
+			{ "Pro 815    ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG, 
+												 OR_TYPEID_SAMSUNG_PRO815) },
+			{ 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE, 
+									 OR_TYPEID_ADOBE_DNG_GENERIC) }
+		};
 
 		RawFile *DNGFile::factory(IO::Stream *s)
 		{
@@ -51,7 +67,7 @@ namespace OpenRaw {
 		DNGFile::DNGFile(IO::Stream *s)
 			: TiffEpFile(s, OR_RAWFILE_TYPE_DNG)
 		{
-
+			m_cam_ids = s_def;
 		}
 
 		DNGFile::~DNGFile()

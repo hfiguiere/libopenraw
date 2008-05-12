@@ -219,6 +219,7 @@
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/VERTICAL/k10d.dng</source>
     <results>
       <rawType>DNG</rawType>
+      <rawTypeId>262146</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -237,6 +238,7 @@
     <source></source>
     <results>
       <rawType>DNG</rawType>
+      <rawTypeId>196609</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>310</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -255,6 +257,7 @@
     <source>http://www.rawsamples.ch/raws/leica/m8/RAW_LEICA_M8.DNG</source>
     <results>
       <rawType>DNG</rawType>
+      <rawTypeId>196610</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>320</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>

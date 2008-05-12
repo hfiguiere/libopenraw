@@ -127,6 +127,11 @@ extern "C" {
 		OR_TYPEID_UNKNOWN = 0
 	};
 
+	enum {
+		OR_TYPEID_ADOBE_UNKNOWN = 0,
+		OR_TYPEID_ADOBE_DNG_GENERIC
+	};
+
 	/** Canon type IDs */
 	enum {
 		OR_TYPEID_CANON_UNKNOWN = 0,
@@ -231,6 +236,17 @@ extern "C" {
 		OR_TYPEID_OLYMPUS_SP550
 	};
 
+	enum {
+		OR_TYPEID_SAMSUNG_UNKNOWN = 0,
+		OR_TYPEID_SAMSUNG_GX10,
+		OR_TYPEID_SAMSUNG_PRO815
+	};
+
+
+	enum {
+		OR_TYPEID_RICOH_UNKNOWN = 0,
+		OR_TYPEID_RICOH_GR2
+	};
 
 #ifdef __cplusplus
 }
