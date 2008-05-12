@@ -72,6 +72,7 @@
     <file>/home/hub/samples/nef/D100/dsc_0007.nef</file>
     <results>
       <rawType>NEF</rawType>
+      <rawTypeId>131076</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -90,6 +91,7 @@
     <source>http://ufraw.sourceforge.net/dsc_0113.nef</source>
     <results>
       <rawType>NEF</rawType>
+      <rawTypeId>131085</rawTypeId>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
@@ -107,6 +109,7 @@
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/NIKON-COOLPIX5700.NEF</source>
     <results>
       <rawType>NEF</rawType>
+      <rawTypeId>131085</rawTypeId>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
@@ -124,6 +127,7 @@
     <source>http://www.steves-digicams.com/nikond1/samples/DSC_0489.nef</source>
     <results>
       <rawType>NEF</rawType>
+      <rawTypeId>131074</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -141,6 +145,7 @@
     <file>/home/hub/samples/nef/D2H/ca-on-anime_north-2007-05-cf05-0100.nef</file>
     <results>
       <rawType>NEF</rawType>
+      <rawTypeId>131077</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -158,7 +163,7 @@
     <source>http://libopenraw.freedesktop.org/www/samples/erf/_eps8447.erf</source>
     <results>
       <rawType>ERF</rawType>
-      <rawTypeId>327680</rawTypeId>
+      <rawTypeId>327681</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>

@@ -38,6 +38,37 @@ namespace OpenRaw {
 
 
 	namespace Internals {
+		const IFDFile::camera_ids_t NEFFile::s_def[] = {
+			{ "NIKON D1 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D1) },
+			{ "NIKON D100 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D100) },
+			{ "NIKON D1X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D1X) },
+			{ "NIKON D200", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+												OR_TYPEID_NIKON_D200) },
+			{ "NIKON D2H", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D2H ) },
+			{ "NIKON D2X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D2X ) },
+			{ "NIKON D3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											  OR_TYPEID_NIKON_D3) },
+			{ "NIKON D300", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+												OR_TYPEID_NIKON_D300) },
+			{ "NIKON D40", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D40) },
+			{ "NIKON D40X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D40X) },
+			{ "NIKON D50", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D50) },
+			{ "NIKON D70", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D70) },
+			{ "NIKON D70s", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D70S) },
+			{ "NIKON D80", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_D80) },
+			{ 0, 0 }
+		};
 
 		RawFile *NEFFile::factory(IO::Stream* _filename)
 		{
@@ -47,6 +78,7 @@ namespace OpenRaw {
 		NEFFile::NEFFile(IO::Stream* _filename)
 			: TiffEpFile(_filename, OR_RAWFILE_TYPE_NEF)
 		{
+			m_cam_ids = s_def;
 		}
 
 

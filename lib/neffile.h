@@ -53,6 +53,7 @@ namespace OpenRaw {
 			NEFFile & operator=(const NEFFile &);
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
+			static const IFDFile::camera_ids_t s_def[];
 		};
 	}
 

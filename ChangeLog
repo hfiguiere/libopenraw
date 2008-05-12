@@ -1,5 +1,8 @@
 2008-05-11  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/neffile.{cpp,h}, include/libopenraw/consts.h, 
+	testsuite/testsuite.xml: support type id for NEF
+
 	* include/libopenraw/consts.h: fix a typo
 	* lib/*: refactor the identify code.
 

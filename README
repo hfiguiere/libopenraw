@@ -92,21 +92,20 @@ Canon CRW CHDK           N N N N N N
 (unofficial firmware)
  A610                    N N N N N N
 
-Nikon NEF                Y Y Y Y Y N
- Cooolpix 5700           T T N T T
- D1                      T T X X T
- D1X                     T T X X T
- D100                    T T T X T
- D2H                     T T N T T
- D2X                     T T X T T
- D200
- D300
- D40                     T T N T T
- D40X                    T T N T T
- D50
- D70                     T T N T T
- D70s                    T T N T T
- D80
+Nikon NEF                Y Y Y Y Y Y
+ D1                      T T X X T T
+ D1X                     T T X X T T
+ D100                    T T T X T T
+ D2H                     T T N T T T
+ D2X                     T T X T T T
+ D200                              T
+ D300                              T
+ D40                     T T N T T T
+ D40X                    T T N T T T
+ D50                               T
+ D70                     T T N T T T
+ D70s                    T T N T T T
+ D80                               T
 
 Olympus ORF              Y Y N Y Y Y
  E-1                     T T       T
