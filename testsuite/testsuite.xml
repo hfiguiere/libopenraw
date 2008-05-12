@@ -350,6 +350,7 @@
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/VERTICAL/DSC00028.ARW</source>
     <results>
       <rawType>ARW</rawType>
+      <rawTypeId>524289</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>3872</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>

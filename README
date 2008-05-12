@@ -130,9 +130,10 @@ Adobe DNG                Y Y N Y Y Y
  Samsung Pro815          T T X T T T
  Ricoh GR-2              T T X T T T
 
-Sony ARW                 Y N N Y N N
- A-100                   T N   T
- A-700                   T     T
+Sony ARW                 Y N N Y N Y
+ A-100                   T N   T   T
+ A-200                             T
+ A-700                   T     T   T
 
 Pentax PEF               Y Y N Y Y Y
  *-ist D                 T T X X T T

@@ -35,6 +35,17 @@ namespace OpenRaw {
 
 	namespace Internals {
 
+		const IFDFile::camera_ids_t ARWFile::s_def[] = {
+			{ "DSLR-A100", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+											   OR_TYPEID_SONY_A100) },
+			{ "DSLR-A200", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+											   OR_TYPEID_SONY_A200) },
+			{ "DSLR-A700", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+											   OR_TYPEID_SONY_A700) },
+			{ 0, 0 }
+		};
+
+
 		RawFile *ARWFile::factory(IO::Stream * s)
 		{
 			return new ARWFile(s);
@@ -43,7 +54,7 @@ namespace OpenRaw {
 		ARWFile::ARWFile(IO::Stream *s)
 			: IFDFile(s, OR_RAWFILE_TYPE_ARW)
 		{
-
+			m_cam_ids = s_def;
 		}
 
 		ARWFile::~ARWFile()

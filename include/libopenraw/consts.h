@@ -248,6 +248,13 @@ extern "C" {
 		OR_TYPEID_RICOH_GR2
 	};
 
+	enum {
+		OR_TYPEID_SONY_UNKNOWN = 0,
+		OR_TYPEID_SONY_A100,
+		OR_TYPEID_SONY_A200,
+		OR_TYPEID_SONY_A700
+	};
+
 #ifdef __cplusplus
 }
 #endif

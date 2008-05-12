@@ -52,6 +52,8 @@ namespace OpenRaw {
 
 			ARWFile(const ARWFile&);
 			ARWFile & operator=(const ARWFile&);
+
+			static const IFDFile::camera_ids_t s_def[];
 		};
 	}
 
