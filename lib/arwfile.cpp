@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006,2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -54,7 +54,7 @@ namespace OpenRaw {
 		ARWFile::ARWFile(IO::Stream *s)
 			: IFDFile(s, OR_RAWFILE_TYPE_ARW)
 		{
-			m_cam_ids = s_def;
+			_setIdMap(s_def);
 		}
 
 		ARWFile::~ARWFile()

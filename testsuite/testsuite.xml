@@ -37,6 +37,7 @@
     <source>http://launchpadlibrarian.net/4704665/CRW_1852.CRW</source>
     <results>
       <rawType>CRW</rawType>
+      <rawTypeId>65550</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>2048</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -55,6 +56,7 @@
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/CANON-EOS10.CRW</source>
     <results>
       <rawType>CRW</rawType>
+      <rawTypeId>65553</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>1536</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>

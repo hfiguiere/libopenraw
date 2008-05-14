@@ -97,6 +97,10 @@ namespace OpenRaw {
 
 		const MetaValue *getMetaValue(int32_t meta_index);
 	protected:
+		struct camera_ids_t {
+			const char * model;
+			const uint32_t type_id;
+		};
 		/** 
 		 * Construct a raw file
 		 * @param s the stream to load from. Take ownership.
@@ -131,8 +135,9 @@ namespace OpenRaw {
 
 		virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 
-		virtual void _identifyId() {} // = 0;
-
+		TypeId _typeIdFromModel(const std::string & model);
+		void _setIdMap(const camera_ids_t *map);
+		virtual void _identifyId() = 0;
 	private:
 		static Type identify(const char*_filename);
 		static Type identifyBuffer(const uint8_t* buff, size_t len);

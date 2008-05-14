@@ -260,6 +260,8 @@ namespace OpenRaw {
 			if(!m_hasImageSpec) {
 				CIFF::Heap::Ref props = getImageProps();
 
+				if(!props)
+					return NULL;
 				const CIFF::RecordEntry::List & propsRecs = props->records();
 				CIFF::RecordEntry::List::const_iterator iter;
 				iter = std::find_if(propsRecs.begin(), propsRecs.end(), 
@@ -271,10 +273,34 @@ namespace OpenRaw {
 					return NULL;
 				}
 				m_imagespec.readFrom(iter->offset + props->offset(), this);
+				m_hasImageSpec = true;
 			}
 			return &m_imagespec;
 		}
 
+
+		const CIFF::Heap::Ref CIFFContainer::getCameraProps()
+		{
+			if(!m_cameraprops) {
+				CIFF::Heap::Ref props = getImageProps();
+
+				if(!props)
+					return CIFF::Heap::Ref();
+				const CIFF::RecordEntry::List & propsRecs = props->records();
+				CIFF::RecordEntry::List::const_iterator iter;
+				iter = std::find_if(propsRecs.begin(), propsRecs.end(), 
+									boost::bind(
+										&CIFF::RecordEntry::isA, _1, 
+										static_cast<uint16_t>(CIFF::TAG_CAMERAOBJECT)));
+				if (iter == propsRecs.end()) {
+					Trace(ERROR) << "Couldn't find the camera props.\n";
+					return CIFF::Heap::Ref();
+				}
+				m_cameraprops = CIFF::Heap::Ref(new CIFF::Heap(iter->offset + props->offset(),
+															   iter->length, this));
+			}
+			return m_cameraprops;
+		}
 
 		const CIFF::RecordEntry * CIFFContainer::getRawDataRecord() const
 		{

@@ -56,6 +56,8 @@ namespace OpenRaw {
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 			virtual MetaValue *_getMetaValue(int32_t meta_index);
+
+			virtual void _identifyId();
 		private:
 			CRWFile(const CRWFile&);
 			CRWFile & operator=(const CRWFile&);
@@ -64,6 +66,8 @@ namespace OpenRaw {
 			CIFFContainer *m_container; /**< the real container */
 			uint32_t m_x;
 			uint32_t m_y;
+
+			static const RawFile::camera_ids_t s_def[];
 		};
 	}
 

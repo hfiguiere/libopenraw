@@ -71,7 +71,7 @@ namespace OpenRaw {
 		MRWFile::MRWFile(IO::Stream* _f)
 			: IFDFile(_f, OR_RAWFILE_TYPE_MRW, false)
 		{
-			m_cam_ids = s_def;
+			_setIdMap(s_def);
 			m_container = new MRWContainer (m_io, 0);
 		}
 

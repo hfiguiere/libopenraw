@@ -78,7 +78,7 @@ namespace OpenRaw {
 		NEFFile::NEFFile(IO::Stream* _filename)
 			: TiffEpFile(_filename, OR_RAWFILE_TYPE_NEF)
 		{
-			m_cam_ids = s_def;
+			_setIdMap(s_def);
 		}
 
 

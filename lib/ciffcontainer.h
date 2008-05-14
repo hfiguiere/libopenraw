@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainer.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006,2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -137,6 +137,7 @@ namespace OpenRaw {
 				uint32_t colorBW;
 			};
 
+
 			class RecordEntry 
 			{
 			public:
@@ -242,6 +243,7 @@ namespace OpenRaw {
 			CIFF::Heap::Ref getImageProps();
 			const CIFF::RecordEntry * getRawDataRecord() const;
 			const CIFF::ImageSpec * getImageSpec();
+			const CIFF::Heap::Ref getCameraProps();
 		private:
 			bool _loadHeap();
 			EndianType _readHeader();
@@ -256,6 +258,7 @@ namespace OpenRaw {
 			CIFF::Heap::Ref m_imageprops;
 			bool m_hasImageSpec;
 			CIFF::ImageSpec m_imagespec;
+			CIFF::Heap::Ref m_cameraprops;
 		};
 
 

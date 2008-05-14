@@ -60,7 +60,7 @@ namespace OpenRaw {
 		PEFFile::PEFFile(IO::Stream *s)
 			: IFDFile(s, OR_RAWFILE_TYPE_PEF)
 		{
-			m_cam_ids = s_def;
+			_setIdMap(s_def);
 		}
 
 

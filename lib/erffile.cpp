@@ -53,7 +53,7 @@ namespace OpenRaw {
 		ERFFile::ERFFile(IO::Stream *s)
 			: TiffEpFile(s, OR_RAWFILE_TYPE_ERF)
 		{
-			m_cam_ids = s_def;
+			_setIdMap(s_def);
 		}
 
 

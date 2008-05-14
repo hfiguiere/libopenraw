@@ -1,3 +1,15 @@
+2008-05-13  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/crwfile.{cpp,h}, include/libopenraw/consts.h,
+	lib/ciffcontainer.{cpp,h}, testsuite/testsuite.xml: 
+	support type id for CRW.
+	* lib/metavalue.{cpp,h}: support string properties.
+	* lib/arwfile.cpp, lib/cr2file.cpp, lib/dngfile.cpp,
+	lib/erffile.cpp, lib/ifdfile.{cpp,h}, lib/mrwfile.cpp,
+	lib/neffile.cpp, lib/orffile.cpp, lib/peffile.cpp, 
+	lib/rawfile.cpp, include/libopenraw++/rawfile.h: 
+	refactor the camera ids one more.
+
 2008-05-11  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/arwfile.{cpp,h}, include/libopenraw/consts.h,

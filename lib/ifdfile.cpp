@@ -52,8 +52,7 @@ namespace OpenRaw {
 			: RawFile(s, _type),
 			  m_thumbLocations(),
 			  m_io(s),
-			  m_container(NULL),
-			  m_cam_ids(NULL)
+			  m_container(NULL)
 		{
 			if(instantiateContainer) {
 				m_container = new IFDFileContainer(m_io, 0);
@@ -77,22 +76,6 @@ namespace OpenRaw {
 				return IFDDir::Ref();
 			}
 			return m_mainIfd->getExifIFD();
-		}
-
-
-		RawFile::TypeId IFDFile::_typeIdFromModel(const std::string & model)
-		{
-			const struct camera_ids_t * p = m_cam_ids;
-			if(!p) {
-				return 0;
-			}
-			while(p->model) {
-				if(model == p->model) {
-					break;
-				}
-				p++;
-			}
-			return p->type_id;
 		}
 
 
