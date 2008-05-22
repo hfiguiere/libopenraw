@@ -19,7 +19,7 @@
  */
 
 
-
+#include <stdlib.h>
 #include <iostream>
 #include <libopenraw/libopenraw.h>
 #include <libopenraw/debug.h>

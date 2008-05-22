@@ -1,3 +1,7 @@
+2008-05-22  Hubert Figuiere  <hub@figuiere.net>
+
+	* demo/cfa.cpp: #include <stdlib.h> as it is required.
+
 2008-05-11  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/arwfile.{cpp,h}, include/libopenraw/consts.h,
