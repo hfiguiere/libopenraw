@@ -2,6 +2,7 @@ libopenraw 0.0.6
 
   - LICENSE change to LGPLv3+
   - BUG: cfa output should write the data in PGM as big endian.
+  - BUG: missing include in demo/cfa.cpp breaking on gcc 4.3
   - NEW: API or_rawfile_new_from_memory() to load a Raw file from
     a memory buffer.
   - NEW: API or_rawfile_get_typeid() and the associated consts.
