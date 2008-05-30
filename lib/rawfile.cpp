@@ -94,7 +94,8 @@ namespace OpenRaw {
 		Private(Type t)
 			: m_type(t),
 			  m_type_id(OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NONE, OR_TYPEID_UNKNOWN)),
-			  m_sizes()
+			  m_sizes(),
+			  m_cam_ids(NULL)
 			{
 			}
 		~Private()
@@ -115,6 +116,7 @@ namespace OpenRaw {
 		/** list of thumbnail sizes */
 		std::vector<uint32_t> m_sizes;
 		std::map<int32_t, MetaValue*> m_metadata;
+		const camera_ids_t *m_cam_ids;
 	};
 
 
@@ -358,6 +360,26 @@ namespace OpenRaw {
 		return val;
 	}
 
+
+	RawFile::TypeId RawFile::_typeIdFromModel(const std::string & model)
+	{
+		const struct camera_ids_t * p = d->m_cam_ids;
+		if(!p) {
+			return 0;
+		}
+		while(p->model) {
+			if(model == p->model) {
+				break;
+			}
+			p++;
+		}
+		return p->type_id;
+	}
+
+	void RawFile::_setIdMap(const camera_ids_t *map)
+	{
+		d->m_cam_ids = map;
+	}
 }
 
 

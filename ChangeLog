@@ -1,6 +1,42 @@
+2008-05-30  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/ifdfile.cpp: fix a compiler warning. Return invalid
+	format if the YCbCr photometric interpretation is found
+	until it is supported.
+
+	* include/libopenraw/consts.h: new error code: invalid
+	format.
+
+	* testsuite/testsuite.xml:
+	* lib/ifdfile.cpp: set the max value following the bpc. 
+	Fix the support for NEF, ERF and uncompressed DNG.
+	Also return a OR_ERROR_INVALID_FORMAT error if the "bpc" 
+	is not supported.
+
+	* include/libopenraw++/rawdata.h,
+	include/libopenraw/rawdata.h, include/libopenraw/rawfile.h:
+	lib/capi/rawdata.cpp, lib/ljpegdecompressor.cpp,
+	lib/mrwfile.cpp, lib/rawdata.cpp, testsuite/testsuite.cpp,
+	testsuite/testsuite.h, testsuite/testsuitehandler.cpp,
+	testsuite/testsuitetags.txt, tools/ordiag.cpp:
+	Initial support for min and max values for the CFA to 
+	be able to "scale" the colors. Support CR2 and MRW.
+
 2008-05-22  Hubert Figuiere  <hub@figuiere.net>
 
 	* demo/cfa.cpp: #include <stdlib.h> as it is required.
+
+2008-05-13  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/crwfile.{cpp,h}, include/libopenraw/consts.h,
+	lib/ciffcontainer.{cpp,h}, testsuite/testsuite.xml: 
+	support type id for CRW.
+	* lib/metavalue.{cpp,h}: support string properties.
+	* lib/arwfile.cpp, lib/cr2file.cpp, lib/dngfile.cpp,
+	lib/erffile.cpp, lib/ifdfile.{cpp,h}, lib/mrwfile.cpp,
+	lib/neffile.cpp, lib/orffile.cpp, lib/peffile.cpp, 
+	lib/rawfile.cpp, include/libopenraw++/rawfile.h: 
+	refactor the camera ids one more.
 
 2008-05-11  Hubert Figuiere  <hub@figuiere.net>
 

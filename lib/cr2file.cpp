@@ -49,8 +49,6 @@ namespace OpenRaw {
 														   OR_TYPEID_CANON_1DSMKII) },
 			{ "Canon EOS-1Ds Mark III", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
 															OR_TYPEID_CANON_1DSMKIII) },
-			{ "Canon EOS 20D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-													OR_TYPEID_CANON_20D) },
 			{ "Canon EOS 20D" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
 													OR_TYPEID_CANON_20D) },
 			{ "Canon EOS 20Da", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
@@ -80,7 +78,7 @@ namespace OpenRaw {
 		Cr2File::Cr2File(IO::Stream * s)
 			: IFDFile(s, OR_RAWFILE_TYPE_CR2)
 		{
-			m_cam_ids = s_def;
+			_setIdMap(s_def);
 		}
 
 		Cr2File::~Cr2File()

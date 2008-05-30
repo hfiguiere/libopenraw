@@ -373,6 +373,45 @@ bool Test::testRawCfaPattern(const std::string & result)
 	RETURN_TEST(equalCfaPattern(result, m_rawdata->cfaPattern()), result);
 }
 
+bool Test::testRawMinValue(const std::string & result)
+{
+	if(m_rawdata == NULL) {
+		m_rawdata = loadRawData(m_rawfile);
+		if(m_rawdata == NULL) {
+			RETURN_FAIL("failed to get rawData", result);
+		}
+	}
+    uint16_t expected;
+    try {
+        expected = boost::lexical_cast<uint16_t>(result);
+    }
+    catch(...)
+    {
+		RETURN_FAIL("conversion failed", result);
+    }
+    RETURN_TEST(m_rawdata->min() == expected, result);
+}
+
+
+bool Test::testRawMaxValue(const std::string & result)
+{
+	if(m_rawdata == NULL) {
+		m_rawdata = loadRawData(m_rawfile);
+		if(m_rawdata == NULL) {
+			RETURN_FAIL("failed to get rawData", result);
+		}
+	}
+    uint16_t expected;
+    try {
+        expected = boost::lexical_cast<uint16_t>(result);
+    }
+    catch(...)
+    {
+		RETURN_FAIL("conversion failed", result);
+    }
+    RETURN_TEST(m_rawdata->max() == expected, result);
+}
+
 bool Test::testRawMd5(const std::string & result)
 {
 	if(m_rawdata == NULL) {
@@ -470,6 +509,12 @@ int Test::run()
 		case XML_rawCfaPattern:
 			pass = testRawCfaPattern(iter->second);
 			break;
+        case XML_rawMinValue:
+            pass = testRawMinValue(iter->second);
+            break;
+        case XML_rawMaxValue:
+            pass = testRawMaxValue(iter->second);
+            break;
 		case XML_rawMd5:
 			pass = testRawMd5(iter->second);
 			break;

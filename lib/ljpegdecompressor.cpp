@@ -1550,24 +1550,25 @@ namespace OpenRaw {
 				bitmap->setDataType(OR_DATA_TYPE_CFA);
 				// bpc is a multiple of 8
 				uint32_t bpc = dcInfo.dataPrecision;
-				if(bpc % 8) {
-					bpc = ((bpc / 8) + 1) * 8;
-				}
+//				if(bpc % 8) {
+//					bpc = ((bpc / 8) + 1) * 8;
+//				}
 				bitmap->setBpc(bpc);
+				bitmap->setMax((1 << bpc) - 1);
 				/*uint16_t *dataPtr = (uint16_t*)*/
 				bitmap->allocData(dcInfo.imageWidth
-													* sizeof(uint16_t) 
-													* dcInfo.imageHeight
-													* dcInfo.numComponents);
+								  * sizeof(uint16_t) 
+								  * dcInfo.imageHeight
+								  * dcInfo.numComponents);
 				
 				Trace(DEBUG1) << "dc width = " << dcInfo.imageWidth
-											<< " dc height = " << dcInfo.imageHeight
-											<< "\n";
+							  << " dc height = " << dcInfo.imageHeight
+							  << "\n";
 				/* currently if the CFA is not sliced, it's this is half what it is */ 
 				uint32_t width = (isSliced() ? dcInfo.imageWidth * m_slices.size()
-													: dcInfo.imageWidth * dcInfo.numComponents);
+								  : dcInfo.imageWidth * dcInfo.numComponents);
 				bitmap->setDimensions(width, 
-															dcInfo.imageHeight);
+									  dcInfo.imageHeight);
 				bitmap->setSlices(m_slices);
 				DecoderStructInit(&dcInfo);
 				HuffDecoderInit(&dcInfo);

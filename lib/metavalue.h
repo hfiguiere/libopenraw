@@ -34,7 +34,13 @@ namespace OpenRaw {
 		MetaValue(const boost::any &v);
 		int32_t getInteger() const
 			throw(Internals::BadTypeException);
+		std::string getString() const
+			throw(Internals::BadTypeException);
+
 	private:
+		template<typename T> T get() const
+			throw(Internals::BadTypeException);
+
 		boost::any m_value;
 	};
 

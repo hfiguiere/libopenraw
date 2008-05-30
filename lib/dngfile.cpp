@@ -67,7 +67,7 @@ namespace OpenRaw {
 		DNGFile::DNGFile(IO::Stream *s)
 			: TiffEpFile(s, OR_RAWFILE_TYPE_DNG)
 		{
-			m_cam_ids = s_def;
+			_setIdMap(s_def);
 		}
 
 		DNGFile::~DNGFile()

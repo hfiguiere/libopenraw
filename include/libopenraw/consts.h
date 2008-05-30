@@ -2,6 +2,7 @@
  * libopenraw - consts.h
  *
  * Copyright (C) 2005-2008 Hubert Figuiere
+ * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -42,6 +43,7 @@ extern "C" {
 		OR_ERROR_CLOSED_STREAM = 4,/**< stream closed */
 		OR_ERROR_NOT_FOUND = 5,    /**< requested "object" not found */
 		OR_ERROR_INVALID_PARAM = 6,
+		OR_ERROR_INVALID_FORMAT = 7, /**< invalid format */
 		OR_ERROR_UNKNOWN = 42,
 		OR_ERROR_LAST_ 
 	} or_error;
@@ -155,7 +157,10 @@ extern "C" {
 		OR_TYPEID_CANON_PRO1,
 		OR_TYPEID_CANON_G1,
 		OR_TYPEID_CANON_G2,
+		OR_TYPEID_CANON_G3,
 		OR_TYPEID_CANON_G5,
+		OR_TYPEID_CANON_G6,
+		OR_TYPEID_CANON_G7,
 		OR_TYPEID_CANON_G9,
 		OR_TYPEID_CANON_A610,
 		OR_TYPEID_CANON_20DA

@@ -20,6 +20,7 @@
  */
 
 #include <algorithm>
+#include <utility>
 #include <boost/bind.hpp>
 #include <boost/scoped_ptr.hpp>
 
@@ -48,6 +49,32 @@ namespace OpenRaw {
 
 		using namespace CIFF;
 
+		const RawFile::camera_ids_t CRWFile::s_def[] = {
+			{ "Canon EOS D30" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+													OR_TYPEID_CANON_D30) },
+			{ "Canon EOS D60" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+													OR_TYPEID_CANON_D60) },
+			{ "Canon EOS 10D" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+													OR_TYPEID_CANON_10D) },
+			{ "Canon EOS 300D DIGITAL", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+													OR_TYPEID_CANON_300D) },
+			{ "Canon PowerShot G1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+														OR_TYPEID_CANON_G1) },
+			{ "Canon PowerShot G2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+														OR_TYPEID_CANON_G2) },
+			{ "Canon PowerShot G3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+														OR_TYPEID_CANON_G3) },
+			{ "Canon PowerShot G5", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+														OR_TYPEID_CANON_G5) },
+			{ "Canon PowerShot G6", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+														OR_TYPEID_CANON_G6) },
+			{ "Canon PowerShot G7", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+														OR_TYPEID_CANON_G7) },
+			{ "Canon PowerShot Pro1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+														  OR_TYPEID_CANON_PRO1) },
+			{ 0, 0 }
+		};
+
 		RawFile *CRWFile::factory(IO::Stream *s)
 		{
 			return new CRWFile(s);
@@ -59,7 +86,7 @@ namespace OpenRaw {
 				m_container(new CIFFContainer(m_io)),
 				m_x(0), m_y(0)
 		{
-
+			_setIdMap(s_def);
 		}
 
 		CRWFile::~CRWFile()
@@ -135,6 +162,9 @@ namespace OpenRaw {
 			::or_error err = OR_ERROR_NOT_FOUND;
 			Heap::Ref props = m_container->getImageProps();
 
+			if(!props) {
+				return OR_ERROR_NOT_FOUND;
+			}
 			const ImageSpec * img_spec = m_container->getImageSpec();
 			uint32_t x, y;
 			x = y = 0;
@@ -242,11 +272,53 @@ namespace OpenRaw {
 			switch(META_INDEX_MASKOUT(meta_index)) {
 			case META_NS_TIFF:
 			{
-				const ImageSpec * img_spec = m_container->getImageSpec();
-				if(img_spec) {
-					val = new MetaValue(boost::any(
-											static_cast<int32_t>(
-												img_spec->exifOrientation())));
+				switch(META_NS_MASKOUT(meta_index)) {
+				case EXIF_TAG_ORIENTATION:
+				{
+					const ImageSpec * img_spec = m_container->getImageSpec();
+					if(img_spec) {
+						val = new MetaValue(boost::any(
+												static_cast<int32_t>(
+													img_spec->exifOrientation())));
+					}
+					break;
+				}
+				case EXIF_TAG_MODEL:
+				{
+					CIFF::Heap::Ref heap = m_container->getCameraProps();
+					if(heap) {
+						const CIFF::RecordEntry::List & propsRecs = heap->records();
+						CIFF::RecordEntry::List::const_iterator iter;
+						iter = std::find_if(propsRecs.begin(), propsRecs.end(), 
+											boost::bind(
+												&CIFF::RecordEntry::isA, _1, 
+												static_cast<uint16_t>(CIFF::TAG_RAWMAKEMODEL)));
+						if (iter == propsRecs.end()) {
+							Trace(ERROR) << "Couldn't find the image info.\n";
+						}
+						else {
+							char buf[256];
+							size_t sz = iter->length;
+							if(sz > 256) {
+								sz = 256;
+							}
+							size_t sz2;
+							std::string model;
+							sz2 = iter->fetchData(heap.get(), (void*)buf, sz);
+							char *p = buf;
+							while(*p) {
+								p++;
+							}
+							p++;
+							model = p;
+							val = new MetaValue(boost::any(model));
+							Trace(DEBUG1) << "Model " << model << "\n";
+						}
+					}
+
+
+					break;
+				}
 				}
 				break;
 			}
@@ -259,5 +331,22 @@ namespace OpenRaw {
 
 			return val;
 		}
+
+		void CRWFile::_identifyId()
+		{
+			MetaValue * v = _getMetaValue(META_NS_TIFF | EXIF_TAG_MODEL);
+			if(v) {
+				std::string model;
+				try {
+					model = v->getString();
+					_setTypeId(_typeIdFromModel(model));
+				}
+				catch(...)
+				{
+				}
+				delete v;
+			}
+		}
+
 	}
 }

@@ -81,7 +81,7 @@ extern "C" {
 
 	void
 	or_rawdata_dimensions(ORRawDataRef rawdata, 
-												uint32_t *x, uint32_t *y)
+						  uint32_t *x, uint32_t *y)
 	{
 		RawData* t = reinterpret_cast<RawData *>(rawdata);
 		if (x != NULL) {
@@ -102,6 +102,19 @@ extern "C" {
 	or_rawdata_get_cfa_pattern(ORRawDataRef rawdata)
 	{
 		return reinterpret_cast<RawData *>(rawdata)->cfaPattern();
+	}
+
+	or_error
+	or_rawdata_get_minmax(ORRawDataRef rawdata, uint16_t *min, uint16_t *max)
+	{
+		RawData* t = reinterpret_cast<RawData *>(rawdata);
+		if(min) {
+			*min = t->min();
+		}
+		if(max) {
+			*max = t->max();
+		}
+		return OR_ERROR_NONE;
 	}
 
 }

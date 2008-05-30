@@ -67,7 +67,7 @@ namespace OpenRaw {
 		ORFFile::ORFFile(IO::Stream *s)
 			: IFDFile(s, OR_RAWFILE_TYPE_ORF, false)
 		{
-			m_cam_ids = s_def;
+			_setIdMap(s_def);
 			m_container = new ORFContainer(m_io, 0);
 		}
 		

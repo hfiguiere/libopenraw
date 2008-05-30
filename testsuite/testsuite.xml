@@ -14,6 +14,8 @@
       <rawDataSize>16973120</rawDataSize>
       <rawDataDimensions>3596 2360</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
       <rawMd5>29</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -37,6 +39,7 @@
     <source>http://launchpadlibrarian.net/4704665/CRW_1852.CRW</source>
     <results>
       <rawType>CRW</rawType>
+      <rawTypeId>65550</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>2048</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -55,6 +58,7 @@
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/CANON-EOS10.CRW</source>
     <results>
       <rawType>CRW</rawType>
+      <rawTypeId>65553</rawTypeId>
       <thumbNum>1</thumbNum>
       <thumbSizes>1536</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -81,6 +85,8 @@
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
       <rawCfaPattern>GRBG</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
       <rawMd5>26</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>
@@ -136,6 +142,8 @@
       <rawDataSize>5327776</rawDataSize>
       <rawDataDimensions>2012 1324</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
       <rawMd5>207</rawMd5>
       <metaOrientation>0</metaOrientation>            
     </results>
@@ -172,6 +180,8 @@
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
       <rawMd5>2</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -228,6 +238,8 @@
       <rawDataSize>20656128</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
       <rawMd5>113</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
@@ -247,6 +259,8 @@
       <rawDataSize>20134656</rawDataSize>
       <rawDataDimensions>3884 2592</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>65535</rawMaxValue>
       <metaOrientation>1</metaOrientation>
       <rawMd5>129</rawMd5>
     </results>
@@ -266,6 +280,8 @@
       <rawDataSize>20681920</rawDataSize>
       <rawDataDimensions>3920 2638</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>255</rawMaxValue>
       <metaOrientation>1</metaOrientation>
       <rawMd5>233</rawMd5>
     </results>
@@ -302,6 +318,8 @@
       <rawDataSize>6348928</rawDataSize>
       <rawDataDimensions>2056 1544</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>3965</rawMaxValue>
       <rawMd5>251</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>    
@@ -321,6 +339,8 @@
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>3965</rawMaxValue>
       <rawMd5>214</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>    
@@ -340,6 +360,8 @@
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>3965</rawMaxValue>
       <rawMd5>168</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>    

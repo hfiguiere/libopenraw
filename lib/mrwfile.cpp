@@ -71,7 +71,7 @@ namespace OpenRaw {
 		MRWFile::MRWFile(IO::Stream* _f)
 			: IFDFile(_f, OR_RAWFILE_TYPE_MRW, false)
 		{
-			m_cam_ids = s_def;
+			_setIdMap(s_def);
 			m_container = new MRWContainer (m_io, 0);
 		}
 
@@ -197,7 +197,8 @@ namespace OpenRaw {
 			/* Obtain sensor dimensions from PRD block. */
 			uint16_t y = mc->prd->uint16_val (MRW::PRD_SENSOR_LENGTH);
 			uint16_t x = mc->prd->uint16_val (MRW::PRD_SENSOR_WIDTH);
-			
+			uint8_t bpc =  mc->prd->uint8_val (MRW::PRD_PIXEL_SIZE);
+
 			bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE) == 0x59);
 			/* Allocate space for and retrieve pixel data.
 			 * Currently only for cameras that don't compress pixel data.
@@ -216,6 +217,9 @@ namespace OpenRaw {
 			else {
 				data.setDataType (OR_DATA_TYPE_CFA);
 			}
+			data.setBpc(bpc);
+			// this seems to be the hardcoded value.
+			data.setMax(0xf7d);
 			Trace(DEBUG1) << "datalen = " << datalen <<
 				" final datalen = " << finaldatalen << "\n";
 			void *p = data.allocData(finaldatalen);
