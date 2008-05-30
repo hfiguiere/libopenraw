@@ -2,6 +2,7 @@
  * libopenraw - consts.h
  *
  * Copyright (C) 2005-2008 Hubert Figuiere
+ * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -42,6 +43,7 @@ extern "C" {
 		OR_ERROR_CLOSED_STREAM = 4,/**< stream closed */
 		OR_ERROR_NOT_FOUND = 5,    /**< requested "object" not found */
 		OR_ERROR_INVALID_PARAM = 6,
+		OR_ERROR_INVALID_FORMAT = 7, /**< invalid format */
 		OR_ERROR_UNKNOWN = 42,
 		OR_ERROR_LAST_ 
 	} or_error;

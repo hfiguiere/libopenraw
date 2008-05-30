@@ -1,5 +1,14 @@
 2008-05-30  Hubert Figuiere  <hub@figuiere.net>
 
+	* include/libopenraw/consts.h: new error code: invalid
+	format.
+
+	* testsuite/testsuite.xml:
+	* lib/ifdfile.cpp: set the max value following the bpc. 
+	Fix the support for NEF, ERF and uncompressed DNG.
+	Also return a OR_ERROR_INVALID_FORMAT error if the "bpc" 
+	is not supported.
+
 	* include/libopenraw++/rawdata.h,
 	include/libopenraw/rawdata.h, include/libopenraw/rawfile.h:
 	lib/capi/rawdata.cpp, lib/ljpegdecompressor.cpp,

@@ -637,11 +637,15 @@ namespace OpenRaw {
 			}
 			else {
 				Trace(ERROR) << "Unsupported bpc " << bpc << "\n";
+				return OR_ERROR_INVALID_FORMAT;						
 			}
 			data.setCfaPattern(cfa_pattern);
 			data.setDataType(data_type);
 			data.setCompression(data_type == OR_DATA_TYPE_COMPRESSED_CFA 
 								? compression : 1);
+			if((data_type == OR_DATA_TYPE_CFA) && (data.max() == 0)) {
+				data.setMax((1 << bpc) - 1);
+			}
 			data.setDimensions(x, y);
 			
 			return ret;
@@ -649,3 +653,13 @@ namespace OpenRaw {
 
 	}
 }
+
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:99
+  End:
+*/
