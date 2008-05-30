@@ -187,7 +187,7 @@ namespace OpenRaw {
 						if (got_it) {
 							// workaround for CR2 files where 8RGB data is marked
 							// as JPEG. Check the real data size.
-							uint32_t byte_count;
+							uint32_t byte_count = 0;
 							if(x && y && dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_count)) {
 								if(byte_count >= (x * y * 3)) {
 									_type = OR_DATA_TYPE_PIXMAP_8RGB;
@@ -236,6 +236,7 @@ namespace OpenRaw {
 				else if (photom_int == 6) {
 					Trace(WARNING) << "Unsupported YCbCr photometric "
 						"interpretation.\n";
+					ret = OR_ERROR_INVALID_FORMAT;
 				}
 			}
 
@@ -590,6 +591,8 @@ namespace OpenRaw {
 			if((bpc == 12) && (compression == 1) 
 			   && (byte_length == (x * y * 2))) 
 			{
+				Trace(DEBUG1) << "setting bpc from " << bpc 
+							  << " to 16\n";
 				bpc = 16;
 			}
 			if((bpc == 16) || (data_type == OR_DATA_TYPE_COMPRESSED_CFA)) {

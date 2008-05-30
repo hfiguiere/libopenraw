@@ -1,5 +1,9 @@
 2008-05-30  Hubert Figuiere  <hub@figuiere.net>
 
+	* lib/ifdfile.cpp: fix a compiler warning. Return invalid
+	format if the YCbCr photometric interpretation is found
+	until it is supported.
+
 	* include/libopenraw/consts.h: new error code: invalid
 	format.
 
