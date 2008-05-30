@@ -22,6 +22,10 @@
 	Initial support for min and max values for the CFA to 
 	be able to "scale" the colors. Support CR2 and MRW.
 
+2008-05-22  Hubert Figuiere  <hub@figuiere.net>
+
+	* demo/cfa.cpp: #include <stdlib.h> as it is required.
+
 2008-05-13  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/crwfile.{cpp,h}, include/libopenraw/consts.h,
