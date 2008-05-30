@@ -14,6 +14,8 @@
       <rawDataSize>16973120</rawDataSize>
       <rawDataDimensions>3596 2360</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
       <rawMd5>29</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -304,6 +306,8 @@
       <rawDataSize>6348928</rawDataSize>
       <rawDataDimensions>2056 1544</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>3965</rawMaxValue>
       <rawMd5>251</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>    
@@ -323,6 +327,8 @@
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>3965</rawMaxValue>
       <rawMd5>214</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>    
@@ -342,6 +348,8 @@
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>3965</rawMaxValue>
       <rawMd5>168</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>    

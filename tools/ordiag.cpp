@@ -200,6 +200,10 @@ public:
 					% rd.x() % rd.y();
 				m_out << boost::format("\t\tBayer Type: %1%\n")
 					% cfaPatternToString(rd.cfaPattern());
+				m_out << boost::format("\t\tBits per channel: %1%\n")
+					% rd.bpc();
+				m_out << boost::format("\t\tValues: min = %1% max = %2%\n")
+					% rd.min() % rd.max();
 			}
 			else {
 				m_out << boost::format("\tNo Raw Data found! (error = %1%)\n")

@@ -1,3 +1,14 @@
+2008-05-30  Hubert Figuiere  <hub@figuiere.net>
+
+	* include/libopenraw++/rawdata.h,
+	include/libopenraw/rawdata.h, include/libopenraw/rawfile.h:
+	lib/capi/rawdata.cpp, lib/ljpegdecompressor.cpp,
+	lib/mrwfile.cpp, lib/rawdata.cpp, testsuite/testsuite.cpp,
+	testsuite/testsuite.h, testsuite/testsuitehandler.cpp,
+	testsuite/testsuitetags.txt, tools/ordiag.cpp:
+	Initial support for min and max values for the CFA to 
+	be able to "scale" the colors. Support CR2 and MRW.
+
 2008-05-13  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/crwfile.{cpp,h}, include/libopenraw/consts.h,

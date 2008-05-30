@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.h
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007-2008 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,11 +35,17 @@ namespace OpenRaw {
 	{
 	public:
 		typedef or_cfa_pattern CfaPattern;
-		static RawData * getAndExtractRawData(const char* filename, uint32_t options,
-																	 or_error & err);
+		static RawData * getAndExtractRawData(const char* filename, 
+											  uint32_t options,
+											  or_error & err);
 
 		RawData();
 		virtual ~RawData();
+
+		uint16_t min();
+		uint16_t max();
+		void setMin(uint16_t _m);
+		void setMax(uint16_t _m);		
 
 		/** swap the two objects data. */
 		void swap(RawData & with);

@@ -28,6 +28,7 @@ namespace OpenRaw {
 	class RawData::Private {
 	public:
 		RawData *self;
+		uint16_t min, max;
 		CfaPattern cfa_pattern;
 		uint32_t compression;
 		uint8_t *pos;
@@ -40,7 +41,9 @@ namespace OpenRaw {
 		std::vector<uint16_t> slices;
 
 		Private(RawData *_self)
-			:	self(_self), cfa_pattern(OR_CFA_PATTERN_NONE),
+			:	self(_self), 
+				min(0), max(0),
+				cfa_pattern(OR_CFA_PATTERN_NONE),
 				compression(0),
 				pos(NULL), offset(0),
 				row_offset(0),
@@ -90,6 +93,25 @@ namespace OpenRaw {
 		delete d;
 	}
 
+	uint16_t RawData::min()
+	{
+		return d->min;
+	}
+
+	uint16_t RawData::max()
+	{
+		return d->max;
+	}
+
+	void RawData::setMin(uint16_t m)
+	{
+		d->min = m;
+	}
+
+	void RawData::setMax(uint16_t m)
+	{
+		d->max = m;
+	}
 
 	void RawData::swap(RawData & with)
 	{
@@ -162,7 +184,7 @@ namespace OpenRaw {
 	RawData &RawData::append(uint16_t c)
 	{
 		assert(d->pos);
-//		assert(d->offset < d->data_size);
+		assert(d->offset < size());
 		*(d->pos) = c & 0xff;
 		*(d->pos + 1) = (c >> 8) & 0xff; 
 		d->advance(sizeof(c));

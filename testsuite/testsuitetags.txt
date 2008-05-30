@@ -14,6 +14,8 @@ rawDataType
 rawDataSize
 rawDataDimensions
 rawCfaPattern
+rawMinValue
+rawMaxValue
 rawMd5
 rawDecompressedMd5
 metaOrientation
