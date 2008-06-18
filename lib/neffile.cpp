@@ -1,3 +1,5 @@
+/* -*- tab-width:4; c-basic-offset:4 -*- */
+
 /*
  * libopenraw - neffile.cpp
  *
@@ -21,6 +23,7 @@
 
 
 #include <iostream>
+#include <vector>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 
@@ -30,6 +33,9 @@
 #include "ifddir.h"
 #include "ifdentry.h"
 #include "io/file.h"
+#include "huffman.h"
+#include "nefdiffiterator.h"
+#include "nefcfaiterator.h"
 #include "neffile.h"
 
 using namespace Debug;
@@ -105,7 +111,137 @@ namespace OpenRaw {
 			return false;
 		}
 
-		::or_error NEFFile::_getRawData(RawData & data, uint32_t /*options*/)
+		::or_error NEFFile::_decompressNikonQuantized(RawData & data)
+		{
+			NEFCompressionInfo c;
+			int t = _getCompressionCurve(data, c);
+			if (!t) {
+				return OR_ERROR_NOT_FOUND;
+			}
+			const uint32_t rows = data.y();
+			const uint32_t raw_columns = data.x();
+
+			//FXME: not always true
+			const uint32_t columns = raw_columns - 1;
+
+			NefDiffIterator
+				diffs(c.huffman, data.data());
+			NefCfaIterator iter(diffs, rows, raw_columns, c.vpred);
+
+			RawData newData;
+			uint16_t *p = (uint16_t *) newData.allocData(rows * columns * 2);
+			newData.setDimensions(columns, rows);
+			newData.setDataType(OR_DATA_TYPE_CFA);
+			newData.setBpc(16);
+
+			for (unsigned int i = 0; i < rows; i++) {
+				for (unsigned int j = 0; j < raw_columns; j++) {
+					uint16_t t = iter.get();
+					if (j < columns) {
+						unsigned shift = 16 - data.bpc();
+						p[i * columns + j] =  c.curve[t & 0x3fff] << shift;
+					}
+				}
+			}
+
+			data.swap(newData);
+			return OR_ERROR_NONE;
+		}
+
+		::or_error NEFFile::_decompressIfNeeded(RawData & data,
+												uint32_t options)
+		{
+			uint32_t compression = data.compression();
+			if((options & OR_OPTIONS_DONT_DECOMPRESS) ||
+			   compression == IFD::COMPRESS_NONE) {
+				return OR_ERROR_NONE;
+			} else if(compression == IFD::COMPRESS_NIKON_QUANTIZED) {
+				return _decompressNikonQuantized(data);
+			} else {
+				return OR_ERROR_INVALID_FORMAT;
+			}
+		}
+
+		int NEFFile::_getCompressionCurve(RawData & data,  NEFFile::NEFCompressionInfo& c)
+		{
+			if(!m_exifIfd) {
+				m_exifIfd = _locateExifIfd();
+			}
+			if(!m_exifIfd) {
+				return 0;
+			}
+
+			IFDEntry::Ref maker_ent =
+				m_exifIfd->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
+			if(!maker_ent) {
+				return 0;
+			}
+
+			uint32_t off = maker_ent->offset();
+			uint32_t base = off + 10;
+
+			IFDDir::Ref ref(new IFDDir(base + 8, *m_container));
+			ref->load();
+			IFDEntry::Ref curveEntry = ref->getEntry(0x0096);
+			if(!curveEntry) {
+				return 0;
+			}
+
+			size_t pos = base + curveEntry->offset();
+
+			IO::Stream *file = m_container->file();
+			file->seek(pos, SEEK_SET);
+
+			int16_t aux;
+
+			uint16_t header;
+			bool read = m_container->readInt16(file, aux);
+			header = aux;
+			if(!read) {
+				return 0;
+			}
+
+			if (header == 0x4410) {
+				c.huffman = NefDiffIterator::Lossy12Bit;
+				data.setBpc(12);
+			} else if (header == 0x4630) {
+				c.huffman = NefDiffIterator::LossLess14Bit;
+				data.setBpc(14);
+			} else {
+				return 0;
+			}
+
+			for (int i = 0; i < 2; ++i) {
+				for (int j = 0; j < 2; ++j) {
+					read = m_container->readInt16(file, aux);
+					if(!read) {
+						return 0;
+					}
+					c.vpred[i][j] = aux;
+				}
+			}
+
+			if (header == 0x4410) {
+				size_t nelems;
+				read = m_container->readInt16(file, aux);
+				nelems = aux;
+
+				for (size_t i = 0; i < nelems; ++i) {
+					read = m_container->readInt16(file, aux);
+					if (!read)
+						return 0;
+					c.curve.push_back(aux);
+				}
+			} else if (header == 0x4630) {
+				for (size_t i = 0; i <= 0x3fff; ++i) {
+					c.curve.push_back(i);
+				}
+			}
+
+			return 1;
+		}
+
+		::or_error NEFFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
 			m_cfaIfd = _locateCfaIfd();
@@ -113,6 +249,9 @@ namespace OpenRaw {
 
 			if(m_cfaIfd) {
 				ret = _getRawDataFromDir(data, m_cfaIfd);
+				if (ret != OR_ERROR_NONE)
+					return ret;
+				ret = _decompressIfNeeded(data, options);
 			}
 			else {
 				ret = OR_ERROR_NOT_FOUND;

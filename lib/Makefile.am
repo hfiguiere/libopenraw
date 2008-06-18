@@ -48,6 +48,10 @@ libopenraw_la_LIBADD = io/libio.la capi/libopenrawc.la -ljpeg
 
 libopenraw_la_SOURCES = \
 	debug.cpp \
+	bititerator.cpp \
+	huffman.cpp \
+	nefdiffiterator.cpp \
+	nefcfaiterator.cpp \
 	rawfile.cpp \
 	ifdfile.cpp \
 	tiffepfile.cpp \

@@ -19,13 +19,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #ifndef __NEFFILE_H_
 #define __NEFFILE_H_
 
 #include "tiffepfile.h"
+#include "huffman.h"
+#include <vector>
 
 namespace OpenRaw {
 
@@ -47,6 +46,13 @@ namespace OpenRaw {
 			 *  it is not
 			 */
 			static bool isCompressed(RawContainer & container, uint32_t offset);
+
+			class NEFCompressionInfo {
+			public:
+			  uint16_t vpred[2][2];
+			  std::vector<uint16_t> curve;
+			  const HuffmanNode* huffman;
+			};
 		private:
 
 			NEFFile(const NEFFile&);
@@ -54,6 +60,9 @@ namespace OpenRaw {
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 			static const IFDFile::camera_ids_t s_def[];
+			int _getCompressionCurve(RawData&, NEFCompressionInfo&);
+			::or_error _decompressNikonQuantized(RawData&);
+			::or_error _decompressIfNeeded(RawData&, uint32_t);
 		};
 	}
 
