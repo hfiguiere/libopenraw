@@ -102,8 +102,8 @@
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
       <thumbDataSizes>57600 578350</thumbDataSizes>
-      <rawDataType>COMP_CFA</rawDataType>
-      <rawDataSize>4823649</rawDataSize>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3040 2014</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <metaOrientation>8</metaOrientation>
@@ -120,8 +120,8 @@
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
       <thumbDataSizes>57600 697471</thumbDataSizes>
-      <rawDataType>COMP_CFA</rawDataType>
-      <rawDataSize>4829337</rawDataSize>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3040 2014</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <metaOrientation>1</metaOrientation>      
@@ -158,8 +158,8 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
-      <rawDataType>COMP_CFA</rawDataType>
-      <rawDataSize>3216375</rawDataSize>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>8223520</rawDataSize>
       <rawDataDimensions>2496 1648</rawDataDimensions>
       <rawCfaPattern>GBRG</rawCfaPattern>
       <metaOrientation>1</metaOrientation>            

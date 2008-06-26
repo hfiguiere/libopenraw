@@ -1,3 +1,27 @@
+2008-06-26  Hubert Figuiere  <hub@figuiere.net>
+
+	* AUTHORS, README: update
+
+	* lib/neffile.cpp: set the correct bpc and cfaPattern for
+	compressed NEF files.
+
+	* testsuite/testsuite.xml: Updated testsuite for NEF.
+
+2008-06-24  Rafael Espíndola <rafael.espindola@gmail.com>
+
+	* lib/Makefile.am
+	* lib/bititerator.cpp
+	* lib/bititerator.h
+	* lib/huffman.cpp
+	* lib/huffman.h
+	* lib/nefcfaiterator.cpp
+	* lib/nefcfaiterator.h
+	* lib/nefdiffiterator.cpp
+	* lib/nefdiffiterator.h
+	* lib/neffile.cpp
+	* lib/neffile.h:
+	NEF decompression support.
+
 2008-05-30  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/ifdfile.cpp: fix a compiler warning. Return invalid

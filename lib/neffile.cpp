@@ -114,14 +114,13 @@ namespace OpenRaw {
 		::or_error NEFFile::_decompressNikonQuantized(RawData & data)
 		{
 			NEFCompressionInfo c;
-			int t = _getCompressionCurve(data, c);
-			if (!t) {
+			if (!_getCompressionCurve(data, c)) {
 				return OR_ERROR_NOT_FOUND;
 			}
 			const uint32_t rows = data.y();
 			const uint32_t raw_columns = data.x();
 
-			//FXME: not always true
+			//FIXME: not always true
 			const uint32_t columns = raw_columns - 1;
 
 			NefDiffIterator
@@ -132,8 +131,9 @@ namespace OpenRaw {
 			uint16_t *p = (uint16_t *) newData.allocData(rows * columns * 2);
 			newData.setDimensions(columns, rows);
 			newData.setDataType(OR_DATA_TYPE_CFA);
-			newData.setBpc(16);
-
+			newData.setBpc(data.bpc());
+			newData.setCfaPattern(data.cfaPattern());
+	   
 			for (unsigned int i = 0; i < rows; i++) {
 				for (unsigned int j = 0; j < raw_columns; j++) {
 					uint16_t t = iter.get();
@@ -249,8 +249,9 @@ namespace OpenRaw {
 
 			if(m_cfaIfd) {
 				ret = _getRawDataFromDir(data, m_cfaIfd);
-				if (ret != OR_ERROR_NONE)
+				if (ret != OR_ERROR_NONE) {
 					return ret;
+				}
 				ret = _decompressIfNeeded(data, options);
 			}
 			else {
