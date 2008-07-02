@@ -588,7 +588,7 @@ namespace OpenRaw {
 			}
 
 
-			if((bpc == 12) && (compression == 1) 
+			if((bpc == 12 || bpc == 14) && (compression == 1) 
 			   && (byte_length == (x * y * 2))) 
 			{
 				Trace(DEBUG1) << "setting bpc from " << bpc 

@@ -1,3 +1,7 @@
+2008-07-02  Rafael Espíndola <rafael.espindola@gmail.com>
+
+	* lib/ifdfile.cpp: add NEF 14-bits support
+
 2008-06-26  Hubert Figuiere  <hub@figuiere.net>
 
 	* AUTHORS, README: update
