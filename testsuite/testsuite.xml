@@ -74,6 +74,7 @@
   <test>
     <name>NEF-test D100</name>
     <file>/home/hub/samples/nef/D100/dsc_0007.nef</file>
+    <source>http://libopenraw.freedesktop.org/www/samples/nef/D100/dsc_0007.nef</source>
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131076</rawTypeId>

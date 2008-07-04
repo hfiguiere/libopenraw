@@ -1,3 +1,7 @@
+2008-07-04  Hubert Figuiere  <hub@figuiere.net>
+
+	* testsuite/testsuite.xml: add source for D100 sample file.
+
 2008-07-02  Rafael Espíndola <rafael.espindola@gmail.com>
 
 	* lib/ifdfile.cpp: add NEF 14-bits support
