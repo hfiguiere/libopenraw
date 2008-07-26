@@ -35,16 +35,12 @@ namespace OpenRaw {	namespace Internals {
 		: public boost::noncopyable
 	{
 	public:
-		Unpack(uint32_t w, uint32_t h, uint32_t t);
+		Unpack(uint32_t w, uint32_t t);
 
 		size_t block_size();
-		size_t row_advance();
-		size_t unpack_be12to16(uint8_t *dest, size_t outsize, 
-							   const uint8_t *src, size_t insize);
+		size_t unpack_be12to16(uint8_t *dest, const uint8_t *src, size_t size);
 	private:
 		uint32_t m_w;
-		uint32_t m_h;
-		uint32_t m_col, m_row;
 		uint32_t m_type;
 	};
 

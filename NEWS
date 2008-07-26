@@ -9,6 +9,7 @@ libopenraw 0.0.6
   - NEW: API or_demosaic() for low-level acces to demosaic.
   - NEW: API or_rawdata_get_minmax()
   - NEW: GtkPixbuf loader.
+  - NEW: Decompressed NEF files.
   - TODO: fix detection by content.
   - TODO: apply the coefficients.
 

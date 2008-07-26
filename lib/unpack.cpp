@@ -1,3 +1,4 @@
+/* -*- tab-width:4; indent-tabs-mode:'t c-file-style:"stroustrup" -*- */
 /*
  * libopenraw - unpack.cpp
  *
@@ -20,6 +21,7 @@
  */
 
 
+#include <assert.h>
 #include "unpack.h"
 #include "debug.h"
 #include "ifd.h"
@@ -28,13 +30,12 @@ namespace OpenRaw {	namespace Internals {
 
 	using namespace Debug;
 
-	Unpack::Unpack(uint32_t w, uint32_t h, uint32_t t)
-		: m_w(w), m_h(h),
-		  m_col(0), m_row(0),
-		  m_type(t)
+	Unpack::Unpack(uint32_t w, uint32_t t)
+		: m_w(w), m_type(t)
 	{
 	}
 
+	/* Return the size of an image row. */
 	size_t Unpack::block_size()
 	{
 		size_t bs;
@@ -48,75 +49,48 @@ namespace OpenRaw {	namespace Internals {
 	}
 
 
-	size_t Unpack::row_advance()
-	{ 
-		size_t skip_input = 0;
-		if((m_type == IFD::COMPRESS_NIKON_PACK) && ((m_col % 10) == 9)) {
-			// skip one byte.
-			skip_input = 1;
-		}
-		m_col++; 
-		if(m_col == m_w) {
-			m_col = 0;
-			m_row++;
-		}
-		return skip_input;
-	}
-
-
-	/** source is in BE byte order 
+	/** source is in BE byte order
 	 * the output is always 16-bits values in native (host) byte order.
+	 * the source must correspond to an image row.
 	 */
-	size_t Unpack::unpack_be12to16(uint8_t *dest, size_t outsize, 
-								   const uint8_t *src, size_t insize) 
+	size_t Unpack::unpack_be12to16(uint8_t *dest, const uint8_t *src,
+								   size_t size)
 	{
-		size_t skip;
-		size_t inleft = insize;
-		size_t outleft = outsize;
-		uint16_t short_dest;
-		if(inleft<= 0) {
-			return 0;
+		uint16_t *dest16 = reinterpret_cast<uint16_t *>(dest);
+		size_t pad = (m_type == IFD::COMPRESS_NIKON_PACK) ? 1 : 0;
+		size_t n = size / (15 + pad);
+		size_t rest = size % (15 + pad);
+		size_t ret = n * 20 + rest / 3 * 4;
+
+		/* The inner loop advances 10 columns, which corresponds to 15 input
+		   bytes, 20 output bytes and, in a Nikon pack, one padding byte.*/
+		if (pad) {
+			assert (size % 16 == 0);
 		}
-		do {
-			if(inleft && outleft) {
-				short_dest = ((*src & 0xf0) >> 4) << 8;
-				outleft--;
-				if(outleft) {
-					short_dest |= (*src & 0x0f) << 4;
-					inleft--; src++;
-				}
+		assert (rest % 3 == 0);
+
+		for (size_t i = 0; i < n + 1; i++) {
+			size_t m = i == n ? rest / 3 : 5;
+			for(size_t j = 0; j < m; j++) {
+				/* Read 3 bytes */
+				uint32_t t = *src++;
+				t <<= 8;
+				t |= *src++;
+				t <<= 8;
+				t |= *src++;
+
+				/* Write two 16 bit values. */
+				*dest16 = (t & (0xfff << 12)) >> 12;
+				dest16++;
+
+				*dest16 = t & 0xfff;
+				dest16++;
 			}
-			if(inleft && outleft) {
-				short_dest |= (*src & 0xf0) >> 4;
-				*(uint16_t*)dest = short_dest;
-				outleft--; dest+=2;
-				skip = row_advance();
-				if(skip) {
-					src += skip;
-					inleft -= skip;
-				}
-			}
-			if(inleft && outleft) {
-				short_dest = (*src & 0x0f) << 8;
-				inleft--; src++;
-				outleft--;
-			}
-			if(inleft && outleft) {
-				short_dest |= *src;
-				*(uint16_t*)dest = short_dest;				
-				inleft--; src++;
-				outleft--; dest+=2;
-				skip = row_advance();
-				if(skip) {
-					src += skip;
-					inleft -= skip;
-				}
-			}
-		} while(inleft && outleft);
-		if(inleft) {
-			Trace(WARNING) << "Left " << inleft << " bytes at the end.\n";
+
+			src += pad;
 		}
-		return outsize - outleft;
+
+		return ret;
 	}
 
 } }

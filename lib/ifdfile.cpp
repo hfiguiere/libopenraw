@@ -605,14 +605,13 @@ namespace OpenRaw {
 			}
 			else if((bpc == 12) || (bpc == 8)) {
 				size_t fetched = 0;
-				Unpack unpack(x, y, compression);
+				Unpack unpack(x, compression);
 				const size_t blocksize = (bpc == 8 ? x : unpack.block_size());
 				Trace(DEBUG1) << "Block size = " << blocksize << "\n";
 				Trace(DEBUG1) << "dimensions (x, y) " << x << ", "
 							  << y << "\n";
 				boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
-				size_t outleft = x * y * 2;
-				uint8_t * outdata = (uint8_t*)data.allocData(outleft);
+				uint8_t * outdata = (uint8_t*)data.allocData(x * y * 2);
 				size_t got;
 				Trace(DEBUG1) << "offset of RAW data = " << offset << "\n";
 				do {
@@ -623,11 +622,9 @@ namespace OpenRaw {
 					if(got) {
 						if(bpc == 12) {
 							size_t out = unpack.unpack_be12to16(outdata, 
-																outleft, 
 																block.get(), 
 																got);
 							outdata += out;
-							outleft -= out;
 						}
 						else {
 							// outdata point to uint16_t

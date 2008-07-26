@@ -1,3 +1,11 @@
+2008-07-27  Rafael Espíndola <rafael.espindola@gmail.com>
+
+	* lib/ifdfile.cpp:
+	* lib/mrwfile.cpp:
+	* lib/unpack.cpp:
+	* lib/unpack.h:
+	* test/testunpack.cpp: Refactor unpack.
+	
 2008-07-26  Hubert Figuiere  <hub@figuiere.net>
 
 	* lib/demosaic.cpp: Fix the patterns. RGGB and BGGR seems 
