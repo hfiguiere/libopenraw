@@ -1,0 +1,16 @@
+Prerequistes
+============
+
+All the prerequisites required to install libopenraw also apply to the Python
+bindings (see ../README).
+
+The following are also required:
+
+    - libboost-python-dev (apt-get install libboost-python-dev)
+    - python > 2.1
+
+Installing
+==========
+
+Installation should be as easy as:
+% sudo python setup.py install
