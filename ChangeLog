@@ -1,3 +1,8 @@
+2008-07-26  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/demosaic.cpp: Fix the patterns. RGGB and BGGR seems 
+	to be the right one now.
+
 2008-07-04  Hubert Figuiere  <hub@figuiere.net>
 
 	* testsuite/testsuite.xml: add source for D100 sample file.

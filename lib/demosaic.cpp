@@ -89,13 +89,13 @@ or_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
 	case OR_CFA_PATTERN_GRBG:
 		npattern = 0;
 		break;
-	case OR_CFA_PATTERN_RGGB:
+	case OR_CFA_PATTERN_BGGR:
 		npattern = 1;
 		break;
-	case OR_CFA_PATTERN_BGGR:
+	case OR_CFA_PATTERN_GBRG:
 		npattern = 2;
 		break;
-	case OR_CFA_PATTERN_GBRG:
+	case OR_CFA_PATTERN_RGGB:
 		npattern = 3;
 		break;
 	default:
