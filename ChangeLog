@@ -1,3 +1,7 @@
+2008-07-27  Brian Quinlan <brian@sweetapp.com>
+
+	* python/: Python bindings.
+
 2008-07-27  Rafael Espíndola <rafael.espindola@gmail.com>
 
 	* lib/ifdfile.cpp:

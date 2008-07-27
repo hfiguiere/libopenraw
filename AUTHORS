@@ -2,7 +2,7 @@ Main author:       Hubert Figuiere <hub AT figuiere DOT net>
 
 MRW support:       Bradley Broom
 NEF decompression: Rafael Espíndola
-
+Python bindings:   Brian Quinlan
 
 Sponsors:
 Novell sponsored time to work on libopenraw as part of their ITO programme 

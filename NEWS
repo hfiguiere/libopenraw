@@ -10,6 +10,7 @@ libopenraw 0.0.6
   - NEW: API or_rawdata_get_minmax()
   - NEW: GtkPixbuf loader.
   - NEW: Decompressed NEF files.
+  - NEW: Python bindings.
   - TODO: fix detection by content.
   - TODO: apply the coefficients.
 
