@@ -33,6 +33,7 @@
 #include <vector>
 #include <stack>
 #include <numeric>
+#include <iostream>
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
@@ -542,6 +543,25 @@ int Test::run()
 }
 
 
+void Test::merge(const Test::Ptr & t)
+{
+    // skip m_name
+    if(!t->m_file.empty()) {
+        m_file = t->m_file;
+    }
+    if(!t->m_source.empty()) {
+        m_source = t->m_source;
+    }
+    // the results for t invariably replace the
+    // existing on in this.
+    std::map<int, std::string>::iterator iter;
+    for(iter = t->m_results.begin(); 
+        iter != t->m_results.end(); ++iter) {
+        m_results[iter->first] = iter->second;
+    }
+}
+
+
 TestSuite::TestSuite()
 {
 }
@@ -549,7 +569,16 @@ TestSuite::TestSuite()
 
 void TestSuite::add_test(const Test::Ptr & t)
 {
-	m_tests.push_back(t);
+    std::map<std::string, Test::Ptr>::iterator iter 
+        = m_tests.find(t->name());
+    if(iter == m_tests.end()) {
+        std::cout << "added test\n";
+        m_tests.insert(make_pair(t->name(), t));
+    }
+    else {
+        std::cout << "merged test\n";        
+        iter->second->merge(t);
+    }
 }
 
 
@@ -564,12 +593,22 @@ int TestSuite::load_tests(const char * testsuite_file)
 	return !has_data;
 }
 
+int TestSuite::load_overrides(const std::string & overrides_file)
+{
+	xml::HandlerPtr handler(new TestSuiteHandler(overrides_file, this));
+	
+	handler->process();
+
+	return 0;
+}
+
+
 int TestSuite::run_all()
 {
 	int failures = 0;
-	std::vector<Test::Ptr>::iterator iter(m_tests.begin());
+	std::map<std::string, Test::Ptr>::iterator iter(m_tests.begin());
 	for( ; iter != m_tests.end(); ++iter) {
-		failures += (*iter)->run();
+		failures += iter->second->run();
 	}
 	return failures;
 }
@@ -588,6 +627,7 @@ int main(int /*argc*/, char ** argv)
 
 	TestSuite testsuite;
 	testsuite.load_tests(testsuite_file.c_str());
+    testsuite.load_overrides(testsuite_file + ".overrides");
 	return testsuite.run_all();
 }
 

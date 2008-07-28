@@ -51,6 +51,9 @@ public:
 		{ return m_results; }
 	/** return 0 the test ran perfectly */
 	int run();
+
+    /** a test in another test, only taking new values */
+    void merge(const Test::Ptr & t);
 private:
 
 	bool testRawType(const std::string & result);
@@ -73,6 +76,7 @@ private:
 	std::string m_file;
 	std::string m_source;
 	std::map<int, std::string> m_results;
+    // runtime data
 	OpenRaw::RawFile *m_rawfile;
 	OpenRaw::RawData * m_rawdata;
 	int m_total, m_success, m_failure;
@@ -84,13 +88,14 @@ public:
 	TestSuite();
 	
 	int load_tests(const char * testsuite_file);
+    int load_overrides(const std::string & overrides_file);
 	/** return 0 if all test ran perfectly */
 	int run_all();
 	/** add a test. own the test */
 	void add_test(const Test::Ptr & t);
 private:
 
-	std::vector<Test::Ptr> m_tests;
+	std::map<std::string, Test::Ptr> m_tests;
 };
 
 

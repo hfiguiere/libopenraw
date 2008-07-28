@@ -22,13 +22,16 @@
 
 
 
+#include <iostream>
 
 #include "testsuitehandler.h"
 #include "testsuite.h"
 #include "testsuitetags.h"
 
-TestContext::TestContext(const xml::HandlerPtr & handler, Test::Ptr test)
+TestContext::TestContext(const xml::HandlerPtr & handler,  TestSuite * ts,
+                         Test::Ptr test)
 	: xml::Context(handler),
+      m_ts(ts),
 	  m_test(test),
 	  m_results(false)
 {
@@ -91,6 +94,10 @@ void TestContext::endElement(int32_t element)
 {
 	switch(element)
 	{
+    case XML_test:
+		m_ts->add_test(m_test);
+        m_test.reset();
+        break;
 	case XML_results:
 		m_results = false;
 		break;
@@ -119,9 +126,8 @@ xml::ContextPtr TestSuiteHandler::startElement(int32_t element)
 		break;
 	case XML_test:
 	{
-		Test::Ptr newtest(new Test());
-		m_ts->add_test(newtest);
-		ctxt.reset(new TestContext(m_handler, newtest));
+		m_newtest = Test::Ptr(new Test());
+		ctxt.reset(new TestContext(m_handler, m_ts, m_newtest));
 		break;
 	}
 	default: 
@@ -134,3 +140,11 @@ xml::ContextPtr TestSuiteHandler::startElement(int32_t element)
 	return ctxt;
 }
 
+void TestSuiteHandler::endElement(int32_t element)
+{
+    switch(element)
+    {
+    default:
+        break;
+    }
+}

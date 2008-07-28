@@ -11,6 +11,7 @@ libopenraw 0.0.6
   - NEW: GtkPixbuf loader.
   - NEW: Decompressed NEF files.
   - NEW: Python bindings.
+  - NEW: testsuite can be overridden with an override file.
   - TODO: fix detection by content.
   - TODO: apply the coefficients.
 

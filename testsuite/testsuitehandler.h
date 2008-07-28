@@ -30,11 +30,13 @@ class TestContext
 	: public xml::Context
 {
 public:
-	TestContext(const xml::HandlerPtr & handler, Test::Ptr test);
+	TestContext(const xml::HandlerPtr & handler, TestSuite * ts,
+                Test::Ptr test);
 
 	xml::ContextPtr startElement(int32_t element);
 	void endElement(int32_t element);
 private:
+	TestSuite * m_ts;
 	Test::Ptr m_test;
 	bool m_results;
 };
@@ -47,8 +49,10 @@ public:
 	TestSuiteHandler(const std::string & filename, TestSuite * ts);
 
 	virtual xml::ContextPtr startElement(int32_t element);
+    virtual void endElement(int32_t element);
 private:
 	TestSuite * m_ts;
+    Test::Ptr   m_newtest;
 };
 
 #endif

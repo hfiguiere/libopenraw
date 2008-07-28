@@ -1,3 +1,9 @@
+2008-07-28  Hubert Figuiere  <hub@figuiere.net>
+
+	* testsuite/testsuite.{cpp,h}:
+	* testsuite/testsuitehandler.{cpp,h}:
+	Implement support for overrides.
+
 2008-07-27  Brian Quinlan <brian@sweetapp.com>
 
 	* python/: Python bindings.
