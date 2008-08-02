@@ -7,7 +7,7 @@ OPENRAW_LIB = $(top_builddir)/lib/libopenraw.la
 INCLUDES = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/lib \
-	@LIBXML_CFLAGS@
+	@LIBXML_CFLAGS@ @CURL_CFLAGS@
 
 noinst_PROGRAMS = testsuite
 noinst_HEADERS = testsuitetags.h
@@ -25,7 +25,7 @@ testsuite_SOURCES =  testsuitetags.cpp testsuite.h \
 	testsuite.cpp testsuitehandler.h testsuitehandler.cpp \
 	xmlhandler.cpp xmlhandler.h
 testsuite_LDFLAGS = -static
-testsuite_LDADD = $(OPENRAW_LIB) @LIBXML_LIBS@
+testsuite_LDADD = $(OPENRAW_LIB) @LIBXML_LIBS@ @CURL_LIBS@
 
 $(srcdir)/testsuitetags.cpp: testsuitetags.pl testsuitetags.txt
 	$(srcdir)/testsuitetags.pl -cpp < $(srcdir)/testsuitetags.txt > $@

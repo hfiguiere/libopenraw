@@ -2,7 +2,7 @@
   <test>
     <name>CR2-test 20D</name>
     <file>/home/hub/samples/cr2/20D/img_0620.cr2</file>
-    <source>http://libopenraw.freedesktop.org/www/samples/cr2/img_0620.cr2</source>
+    <source>http://libopenraw.freedesktop.org/samples/cr2/img_0620.cr2</source>
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65537</rawTypeId>
@@ -74,7 +74,7 @@
   <test>
     <name>NEF-test D100</name>
     <file>/home/hub/samples/nef/D100/dsc_0007.nef</file>
-    <source>http://libopenraw.freedesktop.org/www/samples/nef/D100/dsc_0007.nef</source>
+    <source>http://libopenraw.freedesktop.org/samples/nef/D100/dsc_0007.nef</source>
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131076</rawTypeId>
@@ -95,7 +95,6 @@
   <test>
     <name>NEF-test D70</name>
     <file>/home/hub/samples/nef/D70/dsc_0113.nef</file>
-    <source>http://ufraw.sourceforge.net/dsc_0113.nef</source>
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131085</rawTypeId>
@@ -169,7 +168,7 @@
   <test>
     <name>ERF-test R-D1</name>
     <file>/home/hub/samples/erf/Epson_RD1/_eps8447.erf</file>
-    <source>http://libopenraw.freedesktop.org/www/samples/erf/_eps8447.erf</source>
+    <source>http://libopenraw.freedesktop.org/samples/erf/_eps8447.erf</source>
     <results>
       <rawType>ERF</rawType>
       <rawTypeId>327681</rawTypeId>
@@ -307,7 +306,7 @@
   <test>
     <name>MRW-test Dimage5</name>
     <file>/home/hub/samples/mrw/Dimage5/dimage5.mrw</file>
-    <source>http://libopenraw.freedesktop.org/www/samples/mrw/dimage5.mrw</source>
+    <source>http://libopenraw.freedesktop.org/samples/mrw/dimage5.mrw</source>
     <results>
       <rawType>MRW</rawType>
       <rawTypeId>393219</rawTypeId>

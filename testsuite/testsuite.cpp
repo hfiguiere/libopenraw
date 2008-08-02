@@ -22,18 +22,21 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
-#include <libxml/xmlreader.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
 
-#include <string>
-#include <vector>
-#include <stack>
-#include <numeric>
+#include <libxml/xmlreader.h>
+#include <libxml/tree.h>
+#include <libxml/xmlsave.h>
+
 #include <iostream>
+#include <numeric>
+#include <stack>
+#include <string>
+#include <utility>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
@@ -572,11 +575,9 @@ void TestSuite::add_test(const Test::Ptr & t)
     std::map<std::string, Test::Ptr>::iterator iter 
         = m_tests.find(t->name());
     if(iter == m_tests.end()) {
-        std::cout << "added test\n";
         m_tests.insert(make_pair(t->name(), t));
     }
     else {
-        std::cout << "merged test\n";        
         iter->second->merge(t);
     }
 }
@@ -602,6 +603,167 @@ int TestSuite::load_overrides(const std::string & overrides_file)
 	return 0;
 }
 
+namespace {
+
+void set_file_override(xmlNode *test, const std::string & path)
+{
+    xmlNode * childrens = test->children;
+    while(childrens) {
+        if(strcmp((const char*)(childrens->name), "file") == 0) {
+            xmlNodeSetContent(childrens, (const xmlChar*)path.c_str());
+            return;
+        }
+        childrens = childrens->next;
+    }
+    xmlNewTextChild(test, NULL, (const xmlChar*)"file",
+                    (const xmlChar*)path.c_str());
+}
+
+std::string download(const std::string & source, CURL* handle,
+                     const std::string & download_dir)
+{
+    std::string dest;
+    FILE *fp = NULL;
+
+    const char * s = source.c_str();
+    const char * n = strrchr(s, '/');
+    if(n) {
+        n++;
+        dest = download_dir + '/' + n;
+    }
+
+    if(!dest.empty()) {
+
+        struct stat f_stat;
+
+        if(stat(dest.c_str(), &f_stat) == -1) {
+            
+            std::cout << "Downloading " << source
+                      << " to " << dest << std::endl;
+            
+            fp = fopen(dest.c_str(), "wb");
+            
+            curl_easy_setopt(handle, CURLOPT_WRITEDATA, fp);
+            curl_easy_setopt(handle, CURLOPT_URL, source.c_str());
+            curl_easy_perform(handle);
+            
+            std::cout << " DONE\n";
+            
+            fclose(fp);
+        }
+        else {
+            std::cout << dest << " exists." << std::endl;
+        }
+    }
+    return dest;
+}
+
+}
+
+
+void TestSuite::walk_tests(xmlNode * testsuite, CURL* handle,
+                           const std::string & download_dir)
+{
+    std::map<std::string, xmlNode *> overrides;
+    xmlNode *test = testsuite->children;
+
+    while(test) {
+        if((test->type == XML_ELEMENT_NODE) 
+           && (strcmp((const char*)(test->name), "test") == 0)) {
+            xmlNode * childrens = test->children;
+            while(childrens) {
+                if(strcmp((const char*)(childrens->name), "name") == 0) {
+                    overrides.insert(std::make_pair((const char*)(childrens->name),
+                                                    test));
+                }
+                childrens = childrens->next;
+            }
+        }
+        test = test->next;
+    }
+    
+    std::map<std::string, Test::Ptr>::const_iterator iter(m_tests.begin());
+    for( ; iter != m_tests.end(); iter++) {
+        std::string n = iter->first;
+        std::string dest = download(iter->second->source(), handle, 
+                                    download_dir);
+
+        if(!dest.empty()) {
+            xmlNode * test2 = NULL;
+            std::map<std::string, xmlNode *>::iterator iter2 
+                = overrides.find(n);
+            if (iter2 != overrides.end()) {
+                test2 = iter2->second;
+            }
+            else {
+                test2 = xmlNewNode(NULL, (const xmlChar*)"test");
+                xmlAddChild(testsuite, test2);
+                xmlNode *name_node = xmlNewTextChild(test2, NULL, 
+                                                     (const xmlChar*)"name", 
+                                                     (const xmlChar*)n.c_str());
+                xmlAddChild(test2, name_node);
+            }
+            set_file_override(test2, dest);
+        }
+    }
+}
+
+namespace {
+
+int curl_write_function(void *buffer, size_t size, size_t nmemb, void *stream)
+{
+    FILE *fp = (FILE *) stream;
+
+    if (fwrite(buffer, size, nmemb, fp) < size * nmemb) {
+
+    }
+    else {
+        std::cout << ".";
+    }
+
+    return (int) (size * nmemb);
+}
+
+}
+
+
+int TestSuite::bootstrap(const std::string & overrides_file,
+                         const std::string & download_dir)
+{
+    xmlDocPtr doc;
+    CURL *handle;
+
+    handle = curl_easy_init();
+    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curl_write_function);    
+
+    doc = xmlReadFile(overrides_file.c_str(), NULL, 0);
+    xmlNode *root_element;
+    if (doc) {
+        root_element = xmlDocGetRootElement(doc);
+    }
+    else {
+        doc = xmlNewDoc((const xmlChar *)"1.0");
+        root_element = xmlNewDocNode(doc, 
+                                     NULL, (xmlChar*)"testsuite", NULL);
+        xmlDocSetRootElement(doc, root_element);
+    }
+
+
+    if(root_element->type == XML_ELEMENT_NODE) {
+        if(strcmp((const char*)(root_element->name), "testsuite") == 0) {
+            walk_tests(root_element, handle, download_dir);
+        }
+    }
+
+    xmlIndentTreeOutput = 1;
+    xmlKeepBlanksDefault(1);
+    xmlSaveFormatFile(overrides_file.c_str(), doc, XML_SAVE_FORMAT);
+    xmlFreeDoc(doc);
+    curl_easy_cleanup(handle);
+
+    return 0;
+}
+
 
 int TestSuite::run_all()
 {
@@ -613,22 +775,63 @@ int TestSuite::run_all()
 	return failures;
 }
 
-int main(int /*argc*/, char ** argv)
+int main(int argc, char ** argv)
 {
+    bool bootstrap = false;
+    std::string download_dir;
 	const char * srcdir = getenv("srcdir");
 	if(srcdir == NULL) {
 		srcdir = "./";
 	}
+
+    int opt;
+    while ((opt = getopt(argc, argv, "bd:")) != -1) {
+        switch(opt) {
+        case 'b':
+            bootstrap = true;
+            break;
+        case 'd':
+            if(optarg[0] != '/') {
+                char * dir = get_current_dir_name();
+                download_dir = dir;
+                download_dir += '/';
+                download_dir += optarg;
+                free(dir);
+            }
+            else {
+                download_dir = optarg;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
 	std::string testsuite_file = srcdir;
 	testsuite_file += "/";
-	testsuite_file += (argv[1] ? argv[1] : "testsuite.xml");
+	testsuite_file += (argv[optind] ? argv[optind] : "testsuite.xml");
 
 	or_debug_set_level(ERROR);
 
 	TestSuite testsuite;
 	testsuite.load_tests(testsuite_file.c_str());
-    testsuite.load_overrides(testsuite_file + ".overrides");
-	return testsuite.run_all();
+    std::string override_file = testsuite_file + ".overrides";
+    if(!bootstrap) {
+        testsuite.load_overrides(override_file);
+        return testsuite.run_all();
+    }
+    else {
+        testsuite.bootstrap(override_file, download_dir);
+    }
+    return 0;
 }
 
-
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

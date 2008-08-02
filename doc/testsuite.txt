@@ -1,0 +1,28 @@
+libopenraw testsuite
+
+
+Introduction
+------------
+
+The testsuite is designed to run a predetermined set of files
+through a non regression testsuite.
+
+Problems
+--------
+
+Files are huge so it is not convenient to put them in the distribution.
+Some files have unknown licensing.
+
+Solution
+--------
+
+Download the files from the internet.
+
+To boostrap the testsuite.
+
+srcdir=<path to testsuite.xml>  ./testsuite -b -d <target_dir>
+
+
+Controlling the testsuite
+-------------------------
+

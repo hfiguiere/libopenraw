@@ -22,6 +22,8 @@
 #ifndef _TEST_TESTSUITE_H_
 #define _TEST_TESTSUITE_H_
 
+#include <curl/curl.h>
+
 #include <vector>
 #include <string>
 #include <map>
@@ -89,11 +91,15 @@ public:
 	
 	int load_tests(const char * testsuite_file);
     int load_overrides(const std::string & overrides_file);
+    int bootstrap(const std::string & overrides_file,
+                  const std::string & download_dir);
 	/** return 0 if all test ran perfectly */
 	int run_all();
 	/** add a test. own the test */
 	void add_test(const Test::Ptr & t);
 private:
+    void walk_tests(xmlNode * test, CURL* handle,
+                    const std::string & download_dir);
 
 	std::map<std::string, Test::Ptr> m_tests;
 };
@@ -101,3 +107,12 @@ private:
 
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

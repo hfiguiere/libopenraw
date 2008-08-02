@@ -102,6 +102,8 @@ AC_CHECK_HEADER(jpeglib.h, ,
 dnl PKG_CHECK_MODULES(EXEMPI, exempi-2.0 >= $EXEMPI_REQUIRED)
 PKG_CHECK_MODULES(LIBXML, libxml-2.0 >= 2.5.0)
 
+PKG_CHECK_MODULES(CURL, libcurl)
+
 #
 dnl do we want GNOME ?
 #
