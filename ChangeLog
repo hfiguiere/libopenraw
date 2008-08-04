@@ -1,5 +1,8 @@
 2008-08-04  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* testsuite/testsuite.xml: New D70 sample than can
+	be bootstrapped.
+
 	* lib/Makefile.am (libopenraw_la_SOURCES): Missing
 	.h files needed for the dist.
 

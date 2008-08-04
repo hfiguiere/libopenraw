@@ -117,6 +117,27 @@
     </results>
   </test>
   <test>
+    <name>NEF-test D70 vertical</name>
+    <file>/home/hub/samples/fromdikigam/VERTICAL/DSC_2162.NEF</file>
+    <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/VERTICAL/DSC_2162.NEF</source>
+    <results>
+      <rawType>NEF</rawType>
+      <rawTypeId>131085</rawTypeId>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3008</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 820445</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>12241092</rawDataSize>
+      <rawDataDimensions>3039 2014</rawDataDimensions>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>87</rawMd5>
+      <metaOrientation>8</metaOrientation>      
+    </results>
+  </test>
+  <test>
     <name>NEF-test Coolpix5700</name>
     <file>/home/hub/samples/nef/Coolpix5700/NIKON-COOLPIX5700.NEF</file>
     <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/NIKON-COOLPIX5700.NEF</source>
