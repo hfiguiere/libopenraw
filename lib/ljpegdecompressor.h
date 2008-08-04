@@ -57,8 +57,16 @@ public:
      * @todo use a shared_ptr here, or something
      */
     virtual RawData *decompress(RawData *in = NULL);
-    void setSlices(const std::vector<uint16_t> & slices, 
-                   std::vector<uint16_t>::size_type idx = 0);
+    /** Set the "slices"
+     * @param slices the vector containing the Canon-style slices.
+     *
+     * the format of the slices vector is as follow
+     * N col1 col2
+     * N is the number of repeat for col1. The total 
+     * number of slices is always N+1
+     * This is for Canon CR2.
+     */
+    void setSlices(const std::vector<uint16_t> & slices);
     bool isSliced() const
         { 
             return m_slices.size() > 1; 

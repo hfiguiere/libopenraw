@@ -166,8 +166,10 @@ namespace OpenRaw {
 					s->open(); // TODO check success
 					boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
 					LJpegDecompressor decomp(s.get(), jfif.get());
+                    // in fact on Canon CR2 files slices either do not exists
+                    // or is 3.
 					if(slices.size() > 1) {
-						decomp.setSlices(slices, 1); 
+						decomp.setSlices(slices); 
 					}
 					RawData *dData = decomp.decompress();
 					if (dData != NULL) {

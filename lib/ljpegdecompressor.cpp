@@ -107,11 +107,14 @@ LJpegDecompressor::~LJpegDecompressor()
 }
 		
 
-void LJpegDecompressor::setSlices(const std::vector<uint16_t> & slices, 
-                                  std::vector<uint16_t>::size_type idx)
+void LJpegDecompressor::setSlices(const std::vector<uint16_t> & slices)
 {
-    m_slices.resize(slices.size() - idx);
-    std::copy(slices.begin() + idx, slices.end(), m_slices.begin());
+    uint16_t n = slices[0];
+    m_slices.resize(n + 1);
+    for(uint16_t i = 0; i < n; i++) {
+        m_slices[i] = slices[1];
+    }
+    m_slices[n] = slices[2];
 }
 		
 
@@ -1548,11 +1551,8 @@ RawData *LJpegDecompressor::decompress(RawData *bitmap)
         }
         m_output = bitmap;
         bitmap->setDataType(OR_DATA_TYPE_CFA);
-        // bpc is a multiple of 8
         uint32_t bpc = dcInfo.dataPrecision;
-//				if(bpc % 8) {
-//					bpc = ((bpc / 8) + 1) * 8;
-//				}
+
         bitmap->setBpc(bpc);
         bitmap->setMax((1 << bpc) - 1);
         /*uint16_t *dataPtr = (uint16_t*)*/
@@ -1564,9 +1564,11 @@ RawData *LJpegDecompressor::decompress(RawData *bitmap)
         Trace(DEBUG1) << "dc width = " << dcInfo.imageWidth
                       << " dc height = " << dcInfo.imageHeight
                       << "\n";
-        /* currently if the CFA is not sliced, it's this is half what it is */ 
-        uint32_t width = (isSliced() ? dcInfo.imageWidth * m_slices.size()
-                          : dcInfo.imageWidth * dcInfo.numComponents);
+        /* consistently the real width is the JPEG width * numComponent
+         * at least with all the Canon.
+         * @todo check that this is valid with DNG too.
+         */ 
+        uint32_t width = dcInfo.imageWidth * dcInfo.numComponents;
         bitmap->setDimensions(width, 
                               dcInfo.imageHeight);
         bitmap->setSlices(m_slices);

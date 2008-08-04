@@ -34,11 +34,11 @@ namespace OpenRaw {
 		uint8_t *pos;
 		size_t offset;
 		size_t row_offset;
-		uint8_t slice;
-		uint32_t sliceWidth;
-		uint32_t sliceOffset;
+		uint8_t slice; /**< the slice index */
+		uint32_t sliceWidth; /**< the width of the current slice */
+		uint32_t sliceOffset;/**< the offset */
 
-		std::vector<uint16_t> slices;
+		std::vector<uint16_t> slices; /** all the slice width. */
 
 		Private(RawData *_self)
 			:	self(_self), 

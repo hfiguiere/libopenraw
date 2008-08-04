@@ -23,7 +23,7 @@
   <test>
     <name>CR2-test 450D</name>
     <file>/home/hub/samples/cr2/450D/RAW_CANON_450D.CR2</file>
-    <source></source>
+    <source>http://www.rawsamples.ch/raws/canon/450d/RAW_CANON_450D.CR2</source>
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65542</rawTypeId>
@@ -31,6 +31,14 @@
       <thumbSizes>2256 160 539</thumbSizes>
       <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
       <thumbDataSizes>892728 11024 1151304</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>24802624</rawDataSize>
+      <rawDataDimensions>4312 2876</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>16383</rawMaxValue>
+      <rawMd5>191</rawMd5>
+      <metaOrientation>1</metaOrientation>
     </results>
   </test>
   <test>

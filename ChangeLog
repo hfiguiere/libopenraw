@@ -1,5 +1,11 @@
 2008-08-04  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* lib/cr2file.cpp: 
+	* lib/ljpegdecompressor.{h,cpp}:
+	* testsuite/testsuite.xml:
+	Better handling of CR2 slices. Fix crasher with 450D 
+	RAW files.
+
 	* testsuite/testsuite.xml: New D70 sample than can
 	be bootstrapped.
 
