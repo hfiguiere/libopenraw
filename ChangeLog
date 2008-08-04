@@ -1,5 +1,8 @@
 2008-08-04  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* lib/Makefile.am (libopenraw_la_SOURCES): Missing
+	.h files needed for the dist.
+
 	* lib/neffile.cpp:
 	* lib/crwdecompressor.cpp:
 	Set the max value properly.
