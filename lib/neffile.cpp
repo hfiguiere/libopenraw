@@ -131,7 +131,9 @@ namespace OpenRaw {
 			uint16_t *p = (uint16_t *) newData.allocData(rows * columns * 2);
 			newData.setDimensions(columns, rows);
 			newData.setDataType(OR_DATA_TYPE_CFA);
-			newData.setBpc(data.bpc());
+            uint16_t bpc = data.bpc();
+			newData.setBpc(bpc);
+            newData.setMax((1 << bpc) - 1);
 			newData.setCfaPattern(data.cfaPattern());
 	   
 			for (unsigned int i = 0; i < rows; i++) {

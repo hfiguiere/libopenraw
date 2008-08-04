@@ -1,3 +1,12 @@
+2008-08-04  Hubert Figuiere  <hfiguiere@novell.com>
+
+	* lib/neffile.cpp:
+	* lib/crwdecompressor.cpp:
+	Set the max value properly.
+	* testsuite/testsuite.xml:
+	Update the testsuite to work with the new features:
+	Nikon decompression and "max" value for CRW.
+
 2008-08-02  Hubert Figuiere  <hub@figuiere.net>
 
 	* testsuite/testsuite.{cpp,h}:

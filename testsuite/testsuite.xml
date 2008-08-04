@@ -48,6 +48,8 @@
       <rawDataSize>13036672</rawDataSize>
       <rawDataDimensions>3152 2068</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>1023</rawMaxValue>
       <rawMd5>94</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
@@ -67,6 +69,8 @@
       <rawDataSize>13036672</rawDataSize>
       <rawDataDimensions>3152 2068</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>1023</rawMaxValue>
       <rawMd5>33</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -104,8 +108,11 @@
       <thumbDataSizes>57600 578350</thumbDataSizes>
       <rawDataType>CFA</rawDataType>
       <rawDataSize>12241092</rawDataSize>
-      <rawDataDimensions>3040 2014</rawDataDimensions>
+      <rawDataDimensions>3039 2014</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>109</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -122,8 +129,11 @@
       <thumbDataSizes>57600 697471</thumbDataSizes>
       <rawDataType>CFA</rawDataType>
       <rawDataSize>12241092</rawDataSize>
-      <rawDataDimensions>3040 2014</rawDataDimensions>
+      <rawDataDimensions>3039 2014</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>246</rawMd5>
       <metaOrientation>1</metaOrientation>      
     </results>
   </test>
@@ -160,8 +170,11 @@
       <thumbDataSizes>57600</thumbDataSizes>
       <rawDataType>CFA</rawDataType>
       <rawDataSize>8223520</rawDataSize>
-      <rawDataDimensions>2496 1648</rawDataDimensions>
+      <rawDataDimensions>2495 1648</rawDataDimensions>
       <rawCfaPattern>GBRG</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>52</rawMd5>
       <metaOrientation>1</metaOrientation>            
     </results>
   </test>
