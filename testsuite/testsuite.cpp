@@ -637,7 +637,7 @@ std::string download(const std::string & source, CURL* handle,
         struct stat f_stat;
 
         if(stat(dest.c_str(), &f_stat) == -1) {
-            
+            CURLcode error;
             std::cout << "Downloading " << source
                       << " to " << dest << std::endl;
             
@@ -645,11 +645,17 @@ std::string download(const std::string & source, CURL* handle,
             
             curl_easy_setopt(handle, CURLOPT_WRITEDATA, fp);
             curl_easy_setopt(handle, CURLOPT_URL, source.c_str());
-            curl_easy_perform(handle);
-            
-            std::cout << " DONE\n";
-            
+            error = curl_easy_perform(handle);
             fclose(fp);
+
+            if(!error) {
+                std::cout << " DONE\n";
+            }
+            else {
+                std::cout << " CURL Error " << error << std::endl;
+                unlink(dest.c_str());
+                dest = "";
+            }
         }
         else {
             std::cout << dest << " exists." << std::endl;
@@ -714,14 +720,16 @@ int curl_write_function(void *buffer, size_t size, size_t nmemb, void *stream)
 {
     FILE *fp = (FILE *) stream;
 
-    if (fwrite(buffer, size, nmemb, fp) < size * nmemb) {
+    size_t w;
+    w = fwrite(buffer, size, nmemb, fp);
+    if (w < size * nmemb) {
 
     }
     else {
         std::cout << ".";
     }
 
-    return (int) (size * nmemb);
+    return (int) w;
 }
 
 }
@@ -755,8 +763,6 @@ int TestSuite::bootstrap(const std::string & overrides_file,
         }
     }
 
-    xmlIndentTreeOutput = 1;
-    xmlKeepBlanksDefault(1);
     xmlSaveFormatFile(overrides_file.c_str(), doc, XML_SAVE_FORMAT);
     xmlFreeDoc(doc);
     curl_easy_cleanup(handle);

@@ -1,5 +1,8 @@
 2008-08-04  Hubert Figuiere  <hfiguiere@novell.com>
 
+	* testsuite/testsuite.cpp (download): 
+	unlink() the file if not downloaded.
+
 	* lib/cr2file.cpp: 
 	* lib/ljpegdecompressor.{h,cpp}:
 	* testsuite/testsuite.xml:
