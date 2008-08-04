@@ -66,73 +66,73 @@
 
 namespace OpenRaw {
 
-	using namespace Debug;
+using namespace Debug;
 
-	namespace Internals {
-
-
-		static void SkipVariable(IO::Stream *s);
-		static uint16_t Get2bytes (IO::Stream * s);
-		static int32_t  NextMarker(IO::Stream * );
-		static void GetSoi(DecompressInfo *dcPtr);
-		static void GetApp0(IO::Stream *);
-
-		LJpegDecompressor::LJpegDecompressor(IO::Stream *stream,
-																				 RawContainer *container)
-			: Decompressor(stream, container),
-				m_slices(),
-				m_mcuROW1(NULL), m_mcuROW2(NULL),
-				m_buf1(NULL), m_buf2(NULL),
-				m_bitsLeft(0),
-				m_getBuffer(0),
-				m_output(0)
-		{
-		}
+namespace Internals {
 
 
-		LJpegDecompressor::~LJpegDecompressor()
-		{
-			if(m_mcuROW1) {
-				free(m_mcuROW1);
-			}
-			if(m_mcuROW2) {
-				free(m_mcuROW2);
-			}
-			if(m_buf1) {
-				free(m_buf1);
-			}
-			if(m_buf2) {
-				free(m_buf2);
-			}
-		}
+static void SkipVariable(IO::Stream *s);
+static uint16_t Get2bytes (IO::Stream * s);
+static int32_t  NextMarker(IO::Stream * );
+static void GetSoi(DecompressInfo *dcPtr);
+static void GetApp0(IO::Stream *);
+
+LJpegDecompressor::LJpegDecompressor(IO::Stream *stream,
+                                     RawContainer *container)
+    : Decompressor(stream, container),
+      m_slices(),
+      m_mcuROW1(NULL), m_mcuROW2(NULL),
+      m_buf1(NULL), m_buf2(NULL),
+      m_bitsLeft(0),
+      m_getBuffer(0),
+      m_output(0)
+{
+}
+
+
+LJpegDecompressor::~LJpegDecompressor()
+{
+    if(m_mcuROW1) {
+        free(m_mcuROW1);
+    }
+    if(m_mcuROW2) {
+        free(m_mcuROW2);
+    }
+    if(m_buf1) {
+        free(m_buf1);
+    }
+    if(m_buf2) {
+        free(m_buf2);
+    }
+}
 		
 
-		void LJpegDecompressor::setSlices(const std::vector<uint16_t> & slices, 
-																			std::vector<uint16_t>::size_type idx)
-		{
-			m_slices.resize(slices.size() - idx);
-			std::copy(slices.begin() + idx, slices.end(), m_slices.begin());
-		}
+void LJpegDecompressor::setSlices(const std::vector<uint16_t> & slices, 
+                                  std::vector<uint16_t>::size_type idx)
+{
+    m_slices.resize(slices.size() - idx);
+    std::copy(slices.begin() + idx, slices.end(), m_slices.begin());
+}
 		
 
 
 		
-		static uint32_t bitMask[] = {  0xffffffff, 0x7fffffff, 
-																			 0x3fffffff, 0x1fffffff,
-																			 0x0fffffff, 0x07ffffff, 
-																			 0x03ffffff, 0x01ffffff,
-																			 0x00ffffff, 0x007fffff, 
-																			 0x003fffff, 0x001fffff,
-																			 0x000fffff, 0x0007ffff, 
-																			 0x0003ffff, 0x0001ffff,
-																			 0x0000ffff, 0x00007fff, 
-																			 0x00003fff, 0x00001fff,
-																			 0x00000fff, 0x000007ff, 
-																			 0x000003ff, 0x000001ff,
-																			 0x000000ff, 0x0000007f, 
-																			 0x0000003f, 0x0000001f,
-																			 0x0000000f, 0x00000007, 
-																			 0x00000003, 0x00000001};
+static uint32_t bitMask[] = {  0xffffffff, 0x7fffffff, 
+                               0x3fffffff, 0x1fffffff,
+                               0x0fffffff, 0x07ffffff, 
+                               0x03ffffff, 0x01ffffff,
+                               0x00ffffff, 0x007fffff, 
+                               0x003fffff, 0x001fffff,
+                               0x000fffff, 0x0007ffff, 
+                               0x0003ffff, 0x0001ffff,
+                               0x0000ffff, 0x00007fff, 
+                               0x00003fff, 0x00001fff,
+                               0x00000fff, 0x000007ff, 
+                               0x000003ff, 0x000001ff,
+                               0x000000ff, 0x0000007f, 
+                               0x0000003f, 0x0000001f,
+                               0x0000000f, 0x00000007, 
+                               0x00000003, 0x00000001};
 
 
 /*
@@ -152,104 +152,104 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		FixHuffTbl (HuffmanTable *htbl)
-		{
-			int32_t p, i, l, lastp, si;
-			char huffsize[257];
-			uint16_t huffcode[257];
-			uint16_t code;
-			int32_t size;
-			int32_t value, ll, ul;
+void
+FixHuffTbl (HuffmanTable *htbl)
+{
+    int32_t p, i, l, lastp, si;
+    char huffsize[257];
+    uint16_t huffcode[257];
+    uint16_t code;
+    int32_t size;
+    int32_t value, ll, ul;
 			
-			/*
-			 * Figure C.1: make table of Huffman code length for each symbol
-			 * Note that this is in code-length order.
-			 */
-			p = 0;
-			for (l = 1; l <= 16; l++) {
+    /*
+     * Figure C.1: make table of Huffman code length for each symbol
+     * Note that this is in code-length order.
+     */
+    p = 0;
+    for (l = 1; l <= 16; l++) {
         for (i = 1; i <= (int)htbl->bits[l]; i++)
-					huffsize[p++] = (char)l;
-			}
-			huffsize[p] = 0;
-			lastp = p;
+            huffsize[p++] = (char)l;
+    }
+    huffsize[p] = 0;
+    lastp = p;
 			
 			
-			/*
-			 * Figure C.2: generate the codes themselves
-			 * Note that this is in code-length order.
-			 */
-			code = 0;
-			si = huffsize[0];
-			p = 0;
-			while (huffsize[p]) {
+    /*
+     * Figure C.2: generate the codes themselves
+     * Note that this is in code-length order.
+     */
+    code = 0;
+    si = huffsize[0];
+    p = 0;
+    while (huffsize[p]) {
         while (((int)huffsize[p]) == si) {
-					huffcode[p++] = code;
-					code++;
+            huffcode[p++] = code;
+            code++;
         }
         code <<= 1;
         si++;
-			}
+    }
 			
-			/*
-			 * Figure C.3: generate encoding tables
-			 * These are code and size indexed by symbol value
-			 * Set any codeless symbols to have code length 0; this allows
-			 * EmitBits to detect any attempt to emit such symbols.
-			 */
-			memset(htbl->ehufsi, 0, sizeof(htbl->ehufsi));
+    /*
+     * Figure C.3: generate encoding tables
+     * These are code and size indexed by symbol value
+     * Set any codeless symbols to have code length 0; this allows
+     * EmitBits to detect any attempt to emit such symbols.
+     */
+    memset(htbl->ehufsi, 0, sizeof(htbl->ehufsi));
 			
-			for (p = 0; p < lastp; p++) {
+    for (p = 0; p < lastp; p++) {
         htbl->ehufco[htbl->huffval[p]] = huffcode[p];
         htbl->ehufsi[htbl->huffval[p]] = huffsize[p];
-			}
+    }
 			
-			/*
-			 * Figure F.15: generate decoding tables
-			 */
-			p = 0;
-			for (l = 1; l <= 16; l++) {
+    /*
+     * Figure F.15: generate decoding tables
+     */
+    p = 0;
+    for (l = 1; l <= 16; l++) {
         if (htbl->bits[l]) {
-					htbl->valptr[l] = p;
-					htbl->mincode[l] = huffcode[p];
-					p += htbl->bits[l];
-					htbl->maxcode[l] = huffcode[p - 1];
+            htbl->valptr[l] = p;
+            htbl->mincode[l] = huffcode[p];
+            p += htbl->bits[l];
+            htbl->maxcode[l] = huffcode[p - 1];
         } else {
-					htbl->maxcode[l] = -1;
+            htbl->maxcode[l] = -1;
         }
-			}
+    }
 			
-			/*
-			 * We put in this value to ensure HuffDecode terminates.
-			 */
-			htbl->maxcode[17] = 0xFFFFFL;
+    /*
+     * We put in this value to ensure HuffDecode terminates.
+     */
+    htbl->maxcode[17] = 0xFFFFFL;
 			
-			/*
-			 * Build the numbits, value lookup tables.
-			 * These table allow us to gather 8 bits from the bits stream,
-			 * and immediately lookup the size and value of the huffman codes.
-			 * If size is zero, it means that more than 8 bits are in the huffman
-			 * code (this happens about 3-4% of the time).
-			 */
-			bzero (htbl->numbits, sizeof(htbl->numbits));
-			for (p=0; p<lastp; p++) {
+    /*
+     * Build the numbits, value lookup tables.
+     * These table allow us to gather 8 bits from the bits stream,
+     * and immediately lookup the size and value of the huffman codes.
+     * If size is zero, it means that more than 8 bits are in the huffman
+     * code (this happens about 3-4% of the time).
+     */
+    bzero (htbl->numbits, sizeof(htbl->numbits));
+    for (p=0; p<lastp; p++) {
         size = huffsize[p];
         if (size <= 8) {
-					value = htbl->huffval[p];
-					code = huffcode[p];
-					ll = code << (8-size);
-					if (size < 8) {
-						ul = ll | bitMask[24+size];
-					} else {
-						ul = ll;
-					}
-					for (i=ll; i<=ul; i++) {
-						htbl->numbits[i] = size;
-						htbl->value[i] = value;
-					}
+            value = htbl->huffval[p];
+            code = huffcode[p];
+            ll = code << (8-size);
+            if (size < 8) {
+                ul = ll | bitMask[24+size];
+            } else {
+                ul = ll;
+            }
+            for (i=ll; i<=ul; i++) {
+                htbl->numbits[i] = size;
+                htbl->value[i] = value;
+            }
         }
-			}
-		}
+    }
+}
 
 
 #define RST0    0xD0	/* RST0 marker code */
@@ -260,10 +260,10 @@ namespace OpenRaw {
  * The following variables keep track of the input buffer
  * for the JPEG data, which is read by ReadJpegData.
  */
-		uint8_t inputBuffer[JPEG_BUF_SIZE]; /* Input buffer for JPEG data */
-		int numInputBytes;		/* The total number of bytes in inputBuffer */
-		int maxInputBytes;		/* Size of inputBuffer */
-		int inputBufferOffset;		/* Offset of current byte */
+uint8_t inputBuffer[JPEG_BUF_SIZE]; /* Input buffer for JPEG data */
+int numInputBytes;		/* The total number of bytes in inputBuffer */
+int maxInputBytes;		/* Size of inputBuffer */
+int inputBufferOffset;		/* Offset of current byte */
 #endif
 
 
@@ -290,11 +290,11 @@ namespace OpenRaw {
 /*
  * bmask[n] is mask for n rightmost bits
  */
-		static int32_t bmask[] = {0x0000,
-													0x0001, 0x0003, 0x0007, 0x000F,
-													0x001F, 0x003F, 0x007F, 0x00FF,
-													0x01FF, 0x03FF, 0x07FF, 0x0FFF,
-													0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF};
+static int32_t bmask[] = {0x0000,
+                          0x0001, 0x0003, 0x0007, 0x000F,
+                          0x001F, 0x003F, 0x007F, 0x00FF,
+                          0x01FF, 0x03FF, 0x07FF, 0x0FFF,
+                          0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF};
 		
 
 /*
@@ -320,64 +320,64 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::DecoderStructInit (DecompressInfo *dcPtr)
-			throw(DecodingException)
-		{
-			int16_t ci,i;
-			JpegComponentInfo *compPtr;
-			int32_t mcuSize;
+void
+LJpegDecompressor::DecoderStructInit (DecompressInfo *dcPtr)
+    throw(DecodingException)
+{
+    int16_t ci,i;
+    JpegComponentInfo *compPtr;
+    int32_t mcuSize;
 
-			/*
-			 * Check sampling factor validity.
-			 */
-			for (ci = 0; ci < dcPtr->numComponents; ci++) {
-				compPtr = &dcPtr->compInfo[ci];
-				if ((compPtr->hSampFactor != 1) || (compPtr->vSampFactor != 1)) {
-					throw DecodingException("Error: Downsampling is not supported.\n");
-				}
-			}
+    /*
+     * Check sampling factor validity.
+     */
+    for (ci = 0; ci < dcPtr->numComponents; ci++) {
+        compPtr = &dcPtr->compInfo[ci];
+        if ((compPtr->hSampFactor != 1) || (compPtr->vSampFactor != 1)) {
+            throw DecodingException("Error: Downsampling is not supported.\n");
+        }
+    }
 
-			/*
-			 * Prepare array describing MCU composition
-			 */
-			if (dcPtr->compsInScan == 1) {
-				dcPtr->MCUmembership[0] = 0;
-			} else {
-				if (dcPtr->compsInScan > 4) {
-					throw DecodingException("Too many components for interleaved scan");
-				}
+    /*
+     * Prepare array describing MCU composition
+     */
+    if (dcPtr->compsInScan == 1) {
+        dcPtr->MCUmembership[0] = 0;
+    } else {
+        if (dcPtr->compsInScan > 4) {
+            throw DecodingException("Too many components for interleaved scan");
+        }
 
-				for (ci = 0; ci < dcPtr->compsInScan; ci++) {
-					dcPtr->MCUmembership[ci] = ci;
-				}
-			}
+        for (ci = 0; ci < dcPtr->compsInScan; ci++) {
+            dcPtr->MCUmembership[ci] = ci;
+        }
+    }
 
-			/*
-			 * Initialize mucROW1 and mcuROW2 which buffer two rows of
-			 * pixels for predictor calculation.
-			 */
+    /*
+     * Initialize mucROW1 and mcuROW2 which buffer two rows of
+     * pixels for predictor calculation.
+     */
 
-			if ((m_mcuROW1 = (MCU *)malloc(dcPtr->imageWidth*sizeof(MCU)))==NULL) {
-				throw DecodingException("Not enough memory for mcuROW1\n");
-			}
-			if ((m_mcuROW2 = (MCU *)malloc(dcPtr->imageWidth*sizeof(MCU)))==NULL) {
-				throw DecodingException("Not enough memory for mcuROW2\n");
-			}
+    if ((m_mcuROW1 = (MCU *)malloc(dcPtr->imageWidth*sizeof(MCU)))==NULL) {
+        throw DecodingException("Not enough memory for mcuROW1\n");
+    }
+    if ((m_mcuROW2 = (MCU *)malloc(dcPtr->imageWidth*sizeof(MCU)))==NULL) {
+        throw DecodingException("Not enough memory for mcuROW2\n");
+    }
 
-			mcuSize=dcPtr->compsInScan * sizeof(ComponentType);
-			if ((m_buf1 = (char *)malloc(dcPtr->imageWidth*mcuSize))==NULL) {
-				throw DecodingException("Not enough memory for buf1\n");
-			}
-			if ((m_buf2 = (char *)malloc(dcPtr->imageWidth*mcuSize))==NULL) {
-				throw DecodingException("Not enough memory for buf2\n");
-			}
+    mcuSize=dcPtr->compsInScan * sizeof(ComponentType);
+    if ((m_buf1 = (char *)malloc(dcPtr->imageWidth*mcuSize))==NULL) {
+        throw DecodingException("Not enough memory for buf1\n");
+    }
+    if ((m_buf2 = (char *)malloc(dcPtr->imageWidth*mcuSize))==NULL) {
+        throw DecodingException("Not enough memory for buf2\n");
+    }
 
-			for (i=0;i<dcPtr->imageWidth;i++) {
+    for (i=0;i<dcPtr->imageWidth;i++) {
         m_mcuROW1[i]=(MCU)(m_buf1+i*mcuSize);
         m_mcuROW2[i]=(MCU)(m_buf2+i*mcuSize);
-			}
-		}
+    }
+}
 
 
 /*
@@ -396,143 +396,143 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::fillBitBuffer (IO::Stream * s,uint16_t nbits)
-		{
-			uint8_t c, c2;
+void
+LJpegDecompressor::fillBitBuffer (IO::Stream * s,uint16_t nbits)
+{
+    uint8_t c, c2;
 			
-			while (m_bitsLeft < MIN_GET_BITS) {
-				c = s->readByte();
+    while (m_bitsLeft < MIN_GET_BITS) {
+        c = s->readByte();
 				
-				/*
-				 * If it's 0xFF, check and discard stuffed zero byte
-				 */
-				if (c == 0xFF) {
-					c2 = s->readByte();
+        /*
+         * If it's 0xFF, check and discard stuffed zero byte
+         */
+        if (c == 0xFF) {
+            c2 = s->readByte();
 					
-					if (c2 != 0) {
+            if (c2 != 0) {
 						
-						/*
-						 * Oops, it's actually a marker indicating end of
-						 * compressed data.  Better put it back for use later.
-						 */
-						s->seek(-2, SEEK_CUR);
+                /*
+                 * Oops, it's actually a marker indicating end of
+                 * compressed data.  Better put it back for use later.
+                 */
+                s->seek(-2, SEEK_CUR);
 						
-						/*
-						 * There should be enough bits still left in the data
-						 * segment; if so, just break out of the while loop.
-						 */
-						if (m_bitsLeft >= nbits)
-							break;
+                /*
+                 * There should be enough bits still left in the data
+                 * segment; if so, just break out of the while loop.
+                 */
+                if (m_bitsLeft >= nbits)
+                    break;
 						
-						/*
-						 * Uh-oh.  Corrupted data: stuff zeroes into the data
-						 * stream, since this sometimes occurs when we are on the
-						 * last show_bits(8) during decoding of the Huffman
-						 * segment.
-						 */
-						c = 0;
-					}
-				}
-				/*
-				 * OK, load c into getBuffer
-				 */
-				m_getBuffer = (m_getBuffer << 8) | c;
-				m_bitsLeft += 8;
-			}
-		}
+                /*
+                 * Uh-oh.  Corrupted data: stuff zeroes into the data
+                 * stream, since this sometimes occurs when we are on the
+                 * last show_bits(8) during decoding of the Huffman
+                 * segment.
+                 */
+                c = 0;
+            }
+        }
+        /*
+         * OK, load c into getBuffer
+         */
+        m_getBuffer = (m_getBuffer << 8) | c;
+        m_bitsLeft += 8;
+    }
+}
 
 
 
-		inline int32_t LJpegDecompressor::QuickPredict(int32_t col, int16_t curComp,
-																									 MCU *curRowBuf, 
-																									 MCU *prevRowBuf,
-																									 int32_t psv)
-		{
-			int32_t left,upper,diag,leftcol;
-			int32_t predictor;
+inline int32_t LJpegDecompressor::QuickPredict(int32_t col, int16_t curComp,
+                                               MCU *curRowBuf, 
+                                               MCU *prevRowBuf,
+                                               int32_t psv)
+{
+    int32_t left,upper,diag,leftcol;
+    int32_t predictor;
 
-			leftcol=col-1;
-			upper=prevRowBuf[col][curComp];
-			left=curRowBuf[leftcol][curComp];
-			diag=prevRowBuf[leftcol][curComp];
+    leftcol=col-1;
+    upper=prevRowBuf[col][curComp];
+    left=curRowBuf[leftcol][curComp];
+    diag=prevRowBuf[leftcol][curComp];
 	
-			/*
-			 * All predictor are calculated according to psv.
-			 */
-			switch (psv) {
-			case 0:
-				predictor = 0;
-				break;
-			case 1:
-				predictor = left;
-				break;
-			case 2:
-				predictor = upper;
-				break;
-			case 3:
-				predictor = diag;
-				break;
-			case 4:
-				predictor = left+upper-diag;
-				break;
-			case 5:
-				predictor = left+((upper-diag)>>1);
-				break;
-			case 6:
-				predictor = upper+((left-diag)>>1);
-				break;
-			case 7:
-				predictor = (left+upper)>>1;
-				break;
-			default:
-				Trace(WARNING) << "Warning: Undefined PSV\n";
-				predictor = 0;
-			}
-			return predictor;
-		}
+    /*
+     * All predictor are calculated according to psv.
+     */
+    switch (psv) {
+    case 0:
+        predictor = 0;
+        break;
+    case 1:
+        predictor = left;
+        break;
+    case 2:
+        predictor = upper;
+        break;
+    case 3:
+        predictor = diag;
+        break;
+    case 4:
+        predictor = left+upper-diag;
+        break;
+    case 5:
+        predictor = left+((upper-diag)>>1);
+        break;
+    case 6:
+        predictor = upper+((left-diag)>>1);
+        break;
+    case 7:
+        predictor = (left+upper)>>1;
+        break;
+    default:
+        Trace(WARNING) << "Warning: Undefined PSV\n";
+        predictor = 0;
+    }
+    return predictor;
+}
 
-		inline
-		int32_t LJpegDecompressor::show_bits8(IO::Stream * s) 
-		{
-			if (m_bitsLeft < 8) {
-				fillBitBuffer(s, 8);
-			}
-			return (m_getBuffer >> (m_bitsLeft-8)) & 0xff;	
-		}
+inline
+int32_t LJpegDecompressor::show_bits8(IO::Stream * s) 
+{
+    if (m_bitsLeft < 8) {
+        fillBitBuffer(s, 8);
+    }
+    return (m_getBuffer >> (m_bitsLeft-8)) & 0xff;	
+}
 		
-		inline
-		void LJpegDecompressor::flush_bits(uint16_t nbits) 
-		{
-			m_bitsLeft -= (nbits);
-		}
+inline
+void LJpegDecompressor::flush_bits(uint16_t nbits) 
+{
+    m_bitsLeft -= (nbits);
+}
 		
 		
-		inline
-		int32_t LJpegDecompressor::get_bits(uint16_t nbits) 
-		{
-			if (m_bitsLeft < nbits) 
-				fillBitBuffer(m_stream, nbits);
-			return ((m_getBuffer >> (m_bitsLeft -= (nbits)))) & bmask[nbits];
-		}
+inline
+int32_t LJpegDecompressor::get_bits(uint16_t nbits) 
+{
+    if (m_bitsLeft < nbits) 
+        fillBitBuffer(m_stream, nbits);
+    return ((m_getBuffer >> (m_bitsLeft -= (nbits)))) & bmask[nbits];
+}
 		
-		inline
-		int32_t LJpegDecompressor::get_bit() 
-		{
-			if (!m_bitsLeft) 
-				fillBitBuffer(m_stream, 1);
-			return (m_getBuffer >> (--m_bitsLeft)) & 1;
-		}
+inline
+int32_t LJpegDecompressor::get_bit() 
+{
+    if (!m_bitsLeft) 
+        fillBitBuffer(m_stream, 1);
+    return (m_getBuffer >> (--m_bitsLeft)) & 1;
+}
 
 
-		inline 
-		int32_t LJpegDecompressor::readBits(IO::Stream * s, uint16_t nbits)
-		{
-			if (m_bitsLeft < nbits) {
-				fillBitBuffer(s, nbits);
-			}
-			return ((m_getBuffer >> (m_bitsLeft -= (nbits)))) & bmask[nbits];
-		}
+inline 
+int32_t LJpegDecompressor::readBits(IO::Stream * s, uint16_t nbits)
+{
+    if (m_bitsLeft < nbits) {
+        fillBitBuffer(s, nbits);
+    }
+    return ((m_getBuffer >> (m_bitsLeft -= (nbits)))) & bmask[nbits];
+}
 
 
 
@@ -551,39 +551,39 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		inline void 
-		LJpegDecompressor::PmPutRow(MCU* RowBuf, int32_t numComp, int32_t numCol, int32_t Pt)
-		{ 
-			// TODO this might be wrong in 8 bits...
-			// original code was using putc which *i think* was a problem for
-			// 16bpp
-			int32_t col;
-			uint16_t v;
+inline void 
+LJpegDecompressor::PmPutRow(MCU* RowBuf, int32_t numComp, int32_t numCol, int32_t Pt)
+{ 
+    // TODO this might be wrong in 8 bits...
+    // original code was using putc which *i think* was a problem for
+    // 16bpp
+    int32_t col;
+    uint16_t v;
 							
-			if (numComp==1) { /*pgm*/				
-				for (col = 0; col < numCol; col++) {	
-					v=RowBuf[col][0]<<Pt;
-					m_output->append(v);
-				}
-			} else if (numComp==2) { /*pgm*/				
-				for (col = 0; col < numCol; col++) {	
-					v=RowBuf[col][0]<<Pt;
-					m_output->append(v);
-					v=RowBuf[col][1]<<Pt;
-					m_output->append(v);
-				}
-			} else { /*ppm*/
-				for (col = 0; col < numCol; col++) {
-					v=RowBuf[col][0]<<Pt;
-					m_output->append(v);
-					v=RowBuf[col][1]<<Pt;
-					m_output->append(v);
-					v=RowBuf[col][2]<<Pt;
-					m_output->append(v);
-				}
-			}
+    if (numComp==1) { /*pgm*/				
+        for (col = 0; col < numCol; col++) {	
+            v=RowBuf[col][0]<<Pt;
+            m_output->append(v);
+        }
+    } else if (numComp==2) { /*pgm*/				
+        for (col = 0; col < numCol; col++) {	
+            v=RowBuf[col][0]<<Pt;
+            m_output->append(v);
+            v=RowBuf[col][1]<<Pt;
+            m_output->append(v);
+        }
+    } else { /*ppm*/
+        for (col = 0; col < numCol; col++) {
+            v=RowBuf[col][0]<<Pt;
+            m_output->append(v);
+            v=RowBuf[col][1]<<Pt;
+            m_output->append(v);
+            v=RowBuf[col][2]<<Pt;
+            m_output->append(v);
+        }
+    }
 //			m_output->nextRow();
-		}
+}
 
 /*
  *--------------------------------------------------------------
@@ -601,45 +601,45 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		inline int32_t 
-		LJpegDecompressor::HuffDecode(HuffmanTable *htbl)
-		{
-			int32_t rv;
-			int32_t l, temp;
-			int32_t code;
+inline int32_t 
+LJpegDecompressor::HuffDecode(HuffmanTable *htbl)
+{
+    int32_t rv;
+    int32_t l, temp;
+    int32_t code;
 	
-			/*
-			 * If the huffman code is less than 8 bits, we can use the fast
-			 * table lookup to get its value.  It's more than 8 bits about
-			 * 3-4% of the time.
-			 */
-			code = show_bits8(m_stream);
-			if (htbl->numbits[code]) {
-				flush_bits(htbl->numbits[code]);
-				rv=htbl->value[code];
-			}  else {
-				flush_bits(8);
-				l = 8;
-				while (code > htbl->maxcode[l]) {
-					temp = get_bit();
-					code = (code << 1) | temp;
-					l++;
-				}
+    /*
+     * If the huffman code is less than 8 bits, we can use the fast
+     * table lookup to get its value.  It's more than 8 bits about
+     * 3-4% of the time.
+     */
+    code = show_bits8(m_stream);
+    if (htbl->numbits[code]) {
+        flush_bits(htbl->numbits[code]);
+        rv=htbl->value[code];
+    }  else {
+        flush_bits(8);
+        l = 8;
+        while (code > htbl->maxcode[l]) {
+            temp = get_bit();
+            code = (code << 1) | temp;
+            l++;
+        }
 		
-				/*
-				 * With garbage input we may reach the sentinel value l = 17.
-				 */
+        /*
+         * With garbage input we may reach the sentinel value l = 17.
+         */
 		
-				if (l > 16) {
-					//Trace(WARNING) << "Corrupt JPEG data: bad Huffman code " << l << "\n";
-					rv = 0;		/* fake a zero as the safest result */
-				} else {
-					rv = htbl->huffval[htbl->valptr[l] +
-														 ((int)(code - htbl->mincode[l]))];
-				}
-			}
-			return rv;
-		}
+        if (l > 16) {
+            //Trace(WARNING) << "Corrupt JPEG data: bad Huffman code " << l << "\n";
+            rv = 0;		/* fake a zero as the safest result */
+        } else {
+            rv = htbl->huffval[htbl->valptr[l] +
+                               ((int)(code - htbl->mincode[l]))];
+        }
+    }
+    return rv;
+}
 
 /*
  *--------------------------------------------------------------
@@ -656,24 +656,24 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		static int32_t extendTest[16] =	/* entry n is 2**(n-1) */
-		{0, 0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0080,
-		 0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000};
+static int32_t extendTest[16] =	/* entry n is 2**(n-1) */
+{0, 0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0080,
+ 0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000};
 
-		static int32_t extendOffset[16] =	/* entry n is (-1 << n) + 1 */
-		{0, ((-1) << 1) + 1, ((-1) << 2) + 1, ((-1) << 3) + 1, ((-1) << 4) + 1,
-		 ((-1) << 5) + 1, ((-1) << 6) + 1, ((-1) << 7) + 1, ((-1) << 8) + 1,
-		 ((-1) << 9) + 1, ((-1) << 10) + 1, ((-1) << 11) + 1, ((-1) << 12) + 1,
-		 ((-1) << 13) + 1, ((-1) << 14) + 1, ((-1) << 15) + 1};
+static int32_t extendOffset[16] =	/* entry n is (-1 << n) + 1 */
+{0, ((-1) << 1) + 1, ((-1) << 2) + 1, ((-1) << 3) + 1, ((-1) << 4) + 1,
+ ((-1) << 5) + 1, ((-1) << 6) + 1, ((-1) << 7) + 1, ((-1) << 8) + 1,
+ ((-1) << 9) + 1, ((-1) << 10) + 1, ((-1) << 11) + 1, ((-1) << 12) + 1,
+ ((-1) << 13) + 1, ((-1) << 14) + 1, ((-1) << 15) + 1};
 
 		
-		inline
-		void HuffExtend(int32_t & x, int32_t s) 
-		{
-			if ((x) < extendTest[s]) {
-				(x) += extendOffset[s];
-			}
-		}
+inline
+void HuffExtend(int32_t & x, int32_t s) 
+{
+    if ((x) < extendTest[s]) {
+        (x) += extendOffset[s];
+    }
+}
 
 /*
  *--------------------------------------------------------------
@@ -691,42 +691,42 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::HuffDecoderInit (DecompressInfo *dcPtr)
-			throw(DecodingException)
-		{
-			int16_t ci;
-			JpegComponentInfo *compptr;
+void
+LJpegDecompressor::HuffDecoderInit (DecompressInfo *dcPtr)
+    throw(DecodingException)
+{
+    int16_t ci;
+    JpegComponentInfo *compptr;
 
-			/*
-			 * Initialize static variables
-			 */
-			m_bitsLeft = 0;
+    /*
+     * Initialize static variables
+     */
+    m_bitsLeft = 0;
 
-			for (ci = 0; ci < dcPtr->compsInScan; ci++) {
-				compptr = dcPtr->curCompInfo[ci];
-				/*
-				 * Make sure requested tables are present
-				 */
-				if (dcPtr->dcHuffTblPtrs[compptr->dcTblNo] == NULL) { 
-					throw DecodingException("Error: Use of undefined Huffman table\n");
-				}
+    for (ci = 0; ci < dcPtr->compsInScan; ci++) {
+        compptr = dcPtr->curCompInfo[ci];
+        /*
+         * Make sure requested tables are present
+         */
+        if (dcPtr->dcHuffTblPtrs[compptr->dcTblNo] == NULL) { 
+            throw DecodingException("Error: Use of undefined Huffman table\n");
+        }
 
-				/*
-				 * Compute derived values for Huffman tables.
-				 * We may do this more than once for same table, but it's not a
-				 * big deal
-				 */
-				FixHuffTbl (dcPtr->dcHuffTblPtrs[compptr->dcTblNo]);
-			}
+        /*
+         * Compute derived values for Huffman tables.
+         * We may do this more than once for same table, but it's not a
+         * big deal
+         */
+        FixHuffTbl (dcPtr->dcHuffTblPtrs[compptr->dcTblNo]);
+    }
 
-			/*
-			 * Initialize restart stuff
-			 */
-			dcPtr->restartInRows = (dcPtr->restartInterval)/(dcPtr->imageWidth);
-			dcPtr->restartRowsToGo = dcPtr->restartInRows;
-			dcPtr->nextRestartNum = 0;
-		}
+    /*
+     * Initialize restart stuff
+     */
+    dcPtr->restartInRows = (dcPtr->restartInterval)/(dcPtr->imageWidth);
+    dcPtr->restartRowsToGo = dcPtr->restartInRows;
+    dcPtr->nextRestartNum = 0;
+}
 
 /*
  *--------------------------------------------------------------
@@ -743,50 +743,50 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::ProcessRestart (DecompressInfo *dcPtr)
-			throw(DecodingException)
-		{
-			int32_t c, nbytes;
+void
+LJpegDecompressor::ProcessRestart (DecompressInfo *dcPtr)
+    throw(DecodingException)
+{
+    int32_t c, nbytes;
 
-			/*
-			 * Throw away any unused bits remaining in bit buffer
-			 */
-			nbytes = m_bitsLeft / 8;
-			m_bitsLeft = 0;
+    /*
+     * Throw away any unused bits remaining in bit buffer
+     */
+    nbytes = m_bitsLeft / 8;
+    m_bitsLeft = 0;
 
-			/*
-			 * Scan for next JPEG marker
-			 */
-			do {
-				do {			/* skip any non-FF bytes */
-					nbytes++;
-					c = m_stream->readByte();
-				} while (c != 0xFF);
-				do {			/* skip any duplicate FFs */
-					/*
-					 * we don't increment nbytes here since extra FFs are legal
-					 */
-					c = m_stream->readByte();
-				} while (c == 0xFF);
-			} while (c == 0);		/* repeat if it was a stuffed FF/00 */
+    /*
+     * Scan for next JPEG marker
+     */
+    do {
+        do {			/* skip any non-FF bytes */
+            nbytes++;
+            c = m_stream->readByte();
+        } while (c != 0xFF);
+        do {			/* skip any duplicate FFs */
+            /*
+             * we don't increment nbytes here since extra FFs are legal
+             */
+            c = m_stream->readByte();
+        } while (c == 0xFF);
+    } while (c == 0);		/* repeat if it was a stuffed FF/00 */
 
-			if (c != (RST0 + dcPtr->nextRestartNum)) {
+    if (c != (RST0 + dcPtr->nextRestartNum)) {
 
-				/*
-				 * Uh-oh, the restart markers have been messed up too.
-				 * Just bail out.
-				 */
-				throw DecodingException("Error: Corrupt JPEG data. "
-																"Aborting decoding...\n");
-			}
+        /*
+         * Uh-oh, the restart markers have been messed up too.
+         * Just bail out.
+         */
+        throw DecodingException("Error: Corrupt JPEG data. "
+                                "Aborting decoding...\n");
+    }
 
-			/*
-			 * Update restart state
-			 */
-			dcPtr->restartRowsToGo = dcPtr->restartInRows;
-			dcPtr->nextRestartNum = (dcPtr->nextRestartNum + 1) & 7;
-		}
+    /*
+     * Update restart state
+     */
+    dcPtr->restartRowsToGo = dcPtr->restartInRows;
+    dcPtr->nextRestartNum = (dcPtr->nextRestartNum + 1) & 7;
+}
 
 /*
  *--------------------------------------------------------------
@@ -806,24 +806,24 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void LJpegDecompressor::DecodeFirstRow(DecompressInfo *dcPtr,
-																					 MCU *curRowBuf)
-		{
-			uint16_t curComp,ci;
-			int32_t s,col,compsInScan,numCOL;
-			JpegComponentInfo *compptr;
-			int32_t Pr,Pt,d;
-			HuffmanTable *dctbl;
+void LJpegDecompressor::DecodeFirstRow(DecompressInfo *dcPtr,
+                                       MCU *curRowBuf)
+{
+    uint16_t curComp,ci;
+    int32_t s,col,compsInScan,numCOL;
+    JpegComponentInfo *compptr;
+    int32_t Pr,Pt,d;
+    HuffmanTable *dctbl;
 
-			Pr=dcPtr->dataPrecision;
-			Pt=dcPtr->Pt;
-			compsInScan=dcPtr->compsInScan;
-			numCOL=dcPtr->imageWidth;
+    Pr=dcPtr->dataPrecision;
+    Pt=dcPtr->Pt;
+    compsInScan=dcPtr->compsInScan;
+    numCOL=dcPtr->imageWidth;
 
-			/*
-			 * the start of the scan or at the beginning of restart interval.
-			 */
-			for (curComp = 0; curComp < compsInScan; curComp++) {
+    /*
+     * the start of the scan or at the beginning of restart interval.
+     */
+    for (curComp = 0; curComp < compsInScan; curComp++) {
         ci = dcPtr->MCUmembership[curComp];
         compptr = dcPtr->curCompInfo[ci];
         dctbl = dcPtr->dcHuffTblPtrs[compptr->dcTblNo];
@@ -833,49 +833,49 @@ namespace OpenRaw {
          */
         s = HuffDecode (dctbl);
         if (s) {
-					d = get_bits(s);
-					HuffExtend(d,s);
-				} else {
-					d = 0;
+            d = get_bits(s);
+            HuffExtend(d,s);
+        } else {
+            d = 0;
         }
 
         /* 
          * Add the predictor to the difference.
          */
         curRowBuf[0][curComp]=d+(1<<(Pr-Pt-1));
-			}
+    }
 
-			/*
-			 * the rest of the first row
-			 */
-			for (col=1; col<numCOL; col++) {
+    /*
+     * the rest of the first row
+     */
+    for (col=1; col<numCOL; col++) {
         for (curComp = 0; curComp < compsInScan; curComp++) {
-					ci = dcPtr->MCUmembership[curComp];
-					compptr = dcPtr->curCompInfo[ci];
-					dctbl = dcPtr->dcHuffTblPtrs[compptr->dcTblNo];
+            ci = dcPtr->MCUmembership[curComp];
+            compptr = dcPtr->curCompInfo[ci];
+            dctbl = dcPtr->dcHuffTblPtrs[compptr->dcTblNo];
 
-					/*
-					 * Section F.2.2.1: decode the difference
-					 */
-					s = HuffDecode (dctbl);
-					if (s) {
-						d = get_bits(s);
-						HuffExtend(d,s);
-					} else {
-						d = 0;
-					}
+            /*
+             * Section F.2.2.1: decode the difference
+             */
+            s = HuffDecode (dctbl);
+            if (s) {
+                d = get_bits(s);
+                HuffExtend(d,s);
+            } else {
+                d = 0;
+            }
 
-					/* 
-					 * Add the predictor to the difference.
-					 */
-					curRowBuf[col][curComp]=d+curRowBuf[col-1][curComp];
+            /* 
+             * Add the predictor to the difference.
+             */
+            curRowBuf[col][curComp]=d+curRowBuf[col-1][curComp];
         }
-			}
+    }
 
-			if (dcPtr->restartInRows) {
-				(dcPtr->restartRowsToGo)--;
-			}
-		}
+    if (dcPtr->restartInRows) {
+        (dcPtr->restartRowsToGo)--;
+    }
+}
 
 /*
  *--------------------------------------------------------------
@@ -894,75 +894,75 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::DecodeImage(DecompressInfo *dcPtr)
-		{
-			int32_t s,d,col,row;
-			int16_t curComp, ci;
-			HuffmanTable *dctbl;
-			JpegComponentInfo *compptr;
-			int32_t predictor;
-			int32_t numCOL,numROW,compsInScan;
-			MCU *prevRowBuf,*curRowBuf;
-			int32_t imagewidth,Pt,psv;
+void
+LJpegDecompressor::DecodeImage(DecompressInfo *dcPtr)
+{
+    int32_t s,d,col,row;
+    int16_t curComp, ci;
+    HuffmanTable *dctbl;
+    JpegComponentInfo *compptr;
+    int32_t predictor;
+    int32_t numCOL,numROW,compsInScan;
+    MCU *prevRowBuf,*curRowBuf;
+    int32_t imagewidth,Pt,psv;
 
-			numCOL=imagewidth=dcPtr->imageWidth;
-			numROW=dcPtr->imageHeight;
-			compsInScan=dcPtr->compsInScan;
-			Pt=dcPtr->Pt;
-			psv=dcPtr->Ss;
-			prevRowBuf=m_mcuROW2;
-			curRowBuf=m_mcuROW1;
+    numCOL=imagewidth=dcPtr->imageWidth;
+    numROW=dcPtr->imageHeight;
+    compsInScan=dcPtr->compsInScan;
+    Pt=dcPtr->Pt;
+    psv=dcPtr->Ss;
+    prevRowBuf=m_mcuROW2;
+    curRowBuf=m_mcuROW1;
 
-			/*
-			 * Decode the first row of image. Output the row and
-			 * turn this row into a previous row for later predictor
-			 * calculation.
-			 */  
-			DecodeFirstRow(dcPtr,curRowBuf);
-			PmPutRow(curRowBuf,compsInScan,numCOL,Pt);
-			std::swap(prevRowBuf,curRowBuf);
+    /*
+     * Decode the first row of image. Output the row and
+     * turn this row into a previous row for later predictor
+     * calculation.
+     */  
+    DecodeFirstRow(dcPtr,curRowBuf);
+    PmPutRow(curRowBuf,compsInScan,numCOL,Pt);
+    std::swap(prevRowBuf,curRowBuf);
 
-			for (row=1; row<numROW; row++) {
+    for (row=1; row<numROW; row++) {
 
         /*
          * Account for restart interval, process restart marker if needed.
          */
         if (dcPtr->restartInRows) {
-					if (dcPtr->restartRowsToGo == 0) {
-						ProcessRestart (dcPtr);
+            if (dcPtr->restartRowsToGo == 0) {
+                ProcessRestart (dcPtr);
             
-						/*
-						 * Reset predictors at restart.
-						 */
-						DecodeFirstRow(dcPtr,curRowBuf);
-						PmPutRow(curRowBuf,compsInScan,numCOL,Pt);
-						std::swap(prevRowBuf,curRowBuf);
-						continue;
-					}
-					dcPtr->restartRowsToGo--;
+                /*
+                 * Reset predictors at restart.
+                 */
+                DecodeFirstRow(dcPtr,curRowBuf);
+                PmPutRow(curRowBuf,compsInScan,numCOL,Pt);
+                std::swap(prevRowBuf,curRowBuf);
+                continue;
+            }
+            dcPtr->restartRowsToGo--;
         }
 
         /*
          * The upper neighbors are predictors for the first column.
          */
         for (curComp = 0; curComp < compsInScan; curComp++) {
-					ci = dcPtr->MCUmembership[curComp];
-					compptr = dcPtr->curCompInfo[ci];
-					dctbl = dcPtr->dcHuffTblPtrs[compptr->dcTblNo];
+            ci = dcPtr->MCUmembership[curComp];
+            compptr = dcPtr->curCompInfo[ci];
+            dctbl = dcPtr->dcHuffTblPtrs[compptr->dcTblNo];
 
-					/*
-					 * Section F.2.2.1: decode the difference
-					 */
-					s = HuffDecode (dctbl);
-					if (s) {
-						d = get_bits(s);
-						HuffExtend(d,s);
-					} else {
-						d = 0;
-					}
+            /*
+             * Section F.2.2.1: decode the difference
+             */
+            s = HuffDecode (dctbl);
+            if (s) {
+                d = get_bits(s);
+                HuffExtend(d,s);
+            } else {
+                d = 0;
+            }
 
-					curRowBuf[0][curComp]=d+prevRowBuf[0][curComp];
+            curRowBuf[0][curComp]=d+prevRowBuf[0][curComp];
         }
 
         /*
@@ -970,31 +970,31 @@ namespace OpenRaw {
          * calculations are base on PSV. 
          */
         for (col=1; col<numCOL; col++) {
-					for (curComp = 0; curComp < compsInScan; curComp++) {
-						ci = dcPtr->MCUmembership[curComp];
-						compptr = dcPtr->curCompInfo[ci];
-						dctbl = dcPtr->dcHuffTblPtrs[compptr->dcTblNo];
+            for (curComp = 0; curComp < compsInScan; curComp++) {
+                ci = dcPtr->MCUmembership[curComp];
+                compptr = dcPtr->curCompInfo[ci];
+                dctbl = dcPtr->dcHuffTblPtrs[compptr->dcTblNo];
 
-						/*
-						 * Section F.2.2.1: decode the difference
-						 */
-						s = HuffDecode (dctbl);
-						if (s) {
-							d = get_bits(s);
-							HuffExtend(d,s);
-						} else {
-							d = 0;
-						}
-						predictor = QuickPredict(col,curComp,curRowBuf,prevRowBuf,
-																		 psv);
+                /*
+                 * Section F.2.2.1: decode the difference
+                 */
+                s = HuffDecode (dctbl);
+                if (s) {
+                    d = get_bits(s);
+                    HuffExtend(d,s);
+                } else {
+                    d = 0;
+                }
+                predictor = QuickPredict(col,curComp,curRowBuf,prevRowBuf,
+                                         psv);
 
-						curRowBuf[col][curComp]=d+predictor;
-					}
+                curRowBuf[col][curComp]=d+predictor;
+            }
         }
-				PmPutRow(curRowBuf,compsInScan,numCOL,Pt);
-				std::swap(prevRowBuf,curRowBuf);
-			}
-		}
+        PmPutRow(curRowBuf,compsInScan,numCOL,Pt);
+        std::swap(prevRowBuf,curRowBuf);
+    }
+}
 
 
 
@@ -1015,14 +1015,14 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		static inline uint16_t
-		Get2bytes (IO::Stream * s)
-		{
-			uint16_t a;
+static inline uint16_t
+Get2bytes (IO::Stream * s)
+{
+    uint16_t a;
 
-			a = s->readByte();
-			return (a << 8) | s->readByte();
-		}
+    a = s->readByte();
+    return (a << 8) | s->readByte();
+}
 
 /*
  *--------------------------------------------------------------
@@ -1040,14 +1040,14 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		static inline void SkipVariable(IO::Stream * s)
-		{
-			int32_t length;
+static inline void SkipVariable(IO::Stream * s)
+{
+    int32_t length;
 
-			length = Get2bytes(s) - 2;
+    length = Get2bytes(s) - 2;
 
-			s->seek(length, SEEK_CUR);
-		}
+    s->seek(length, SEEK_CUR);
+}
 
 /*
  *--------------------------------------------------------------
@@ -1065,48 +1065,48 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::GetDht (DecompressInfo *dcPtr)
-			throw(DecodingException)
-		{
-			int32_t length;
-			int32_t i, index, count;
+void
+LJpegDecompressor::GetDht (DecompressInfo *dcPtr)
+    throw(DecodingException)
+{
+    int32_t length;
+    int32_t i, index, count;
 
-			length = Get2bytes(m_stream) - 2;
+    length = Get2bytes(m_stream) - 2;
 
-			while (length) {
-				index = m_stream->readByte();
+    while (length) {
+        index = m_stream->readByte();
 
-				if (index < 0 || index >= 4) {
-					throw DecodingException(str(boost::format("Bogus DHT index %1%")
-																										% index));
-				}
+        if (index < 0 || index >= 4) {
+            throw DecodingException(str(boost::format("Bogus DHT index %1%")
+                                        % index));
+        }
 
-				HuffmanTable *& htblptr = dcPtr->dcHuffTblPtrs[index];
-				if (htblptr == NULL) {
-					htblptr = (HuffmanTable *) malloc(sizeof (HuffmanTable));
-					if (htblptr==NULL) {
-						throw DecodingException("Can't malloc HuffmanTable");
-					}
-				}
+        HuffmanTable *& htblptr = dcPtr->dcHuffTblPtrs[index];
+        if (htblptr == NULL) {
+            htblptr = (HuffmanTable *) malloc(sizeof (HuffmanTable));
+            if (htblptr==NULL) {
+                throw DecodingException("Can't malloc HuffmanTable");
+            }
+        }
 
-				htblptr->bits[0] = 0;
-				count = 0;
-				for (i = 1; i <= 16; i++) {
-					htblptr->bits[i] = m_stream->readByte();
-					count += htblptr->bits[i];
-				}
+        htblptr->bits[0] = 0;
+        count = 0;
+        for (i = 1; i <= 16; i++) {
+            htblptr->bits[i] = m_stream->readByte();
+            count += htblptr->bits[i];
+        }
 
-				if (count > 256) {
-					throw DecodingException("Bogus DHT counts");
-				}
+        if (count > 256) {
+            throw DecodingException("Bogus DHT counts");
+        }
 
-				for (i = 0; i < count; i++)
-					htblptr->huffval[i] = m_stream->readByte();
+        for (i = 0; i < count; i++)
+            htblptr->huffval[i] = m_stream->readByte();
 
-				length -= 1 + 16 + count;
-			}
-		}
+        length -= 1 + 16 + count;
+    }
+}
 
 /*
  *--------------------------------------------------------------
@@ -1124,16 +1124,16 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::GetDri(DecompressInfo *dcPtr)
-			throw(DecodingException)
-		{
-			if (Get2bytes(m_stream) != 4) {
-				throw DecodingException("Bogus length in DRI");
-			}
+void
+LJpegDecompressor::GetDri(DecompressInfo *dcPtr)
+    throw(DecodingException)
+{
+    if (Get2bytes(m_stream) != 4) {
+        throw DecodingException("Bogus length in DRI");
+    }
 
-			dcPtr->restartInterval = Get2bytes(m_stream);
-		}
+    dcPtr->restartInterval = Get2bytes(m_stream);
+}
 
 /*
  *--------------------------------------------------------------
@@ -1150,13 +1150,13 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		static void	GetApp0(IO::Stream *s)
-		{
-			int32_t length;
+static void	GetApp0(IO::Stream *s)
+{
+    int32_t length;
 
-			length = Get2bytes(s) - 2;
-			s->seek(length, SEEK_CUR);
-		}
+    length = Get2bytes(s) - 2;
+    s->seek(length, SEEK_CUR);
+}
 
 /*
  *--------------------------------------------------------------
@@ -1175,54 +1175,54 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::GetSof(DecompressInfo *dcPtr) throw(DecodingException)
-		{
-			int32_t length;
-			int16_t ci;
-			int32_t c;
-			JpegComponentInfo *compptr;
+void
+LJpegDecompressor::GetSof(DecompressInfo *dcPtr) throw(DecodingException)
+{
+    int32_t length;
+    int16_t ci;
+    int32_t c;
+    JpegComponentInfo *compptr;
 
-			length = Get2bytes(m_stream);
+    length = Get2bytes(m_stream);
 
-			dcPtr->dataPrecision = m_stream->readByte();
-			dcPtr->imageHeight = Get2bytes(m_stream);
-			dcPtr->imageWidth = Get2bytes(m_stream);
-			dcPtr->numComponents = m_stream->readByte();
+    dcPtr->dataPrecision = m_stream->readByte();
+    dcPtr->imageHeight = Get2bytes(m_stream);
+    dcPtr->imageWidth = Get2bytes(m_stream);
+    dcPtr->numComponents = m_stream->readByte();
 
-			/*
-			 * We don't support files in which the image height is initially
-			 * specified as 0 and is later redefined by DNL.  As long as we
-			 * have to check that, might as well have a general sanity check.
-			 */
-			if ((dcPtr->imageHeight <= 0 ) ||
-					(dcPtr->imageWidth <= 0) || 
-					(dcPtr->numComponents <= 0)) {
-				throw DecodingException("Empty JPEG image (DNL not supported)");
-			}
+    /*
+     * We don't support files in which the image height is initially
+     * specified as 0 and is later redefined by DNL.  As long as we
+     * have to check that, might as well have a general sanity check.
+     */
+    if ((dcPtr->imageHeight <= 0 ) ||
+        (dcPtr->imageWidth <= 0) || 
+        (dcPtr->numComponents <= 0)) {
+        throw DecodingException("Empty JPEG image (DNL not supported)");
+    }
 
-			if ((dcPtr->dataPrecision<MinPrecisionBits) ||
-					(dcPtr->dataPrecision>MaxPrecisionBits)) {
-				throw DecodingException("Unsupported JPEG data precision");
-			}
+    if ((dcPtr->dataPrecision<MinPrecisionBits) ||
+        (dcPtr->dataPrecision>MaxPrecisionBits)) {
+        throw DecodingException("Unsupported JPEG data precision");
+    }
 
-			if (length != (dcPtr->numComponents * 3 + 8)) {
-				throw DecodingException("Bogus SOF length");
-			}
+    if (length != (dcPtr->numComponents * 3 + 8)) {
+        throw DecodingException("Bogus SOF length");
+    }
 
-			dcPtr->compInfo = (JpegComponentInfo *) malloc
-				(dcPtr->numComponents * sizeof (JpegComponentInfo));
+    dcPtr->compInfo = (JpegComponentInfo *) malloc
+        (dcPtr->numComponents * sizeof (JpegComponentInfo));
 
-			for (ci = 0; ci < dcPtr->numComponents; ci++) {
-				compptr = &dcPtr->compInfo[ci];
-				compptr->componentIndex = ci;
-				compptr->componentId = m_stream->readByte();
-				c = m_stream->readByte();
-				compptr->hSampFactor = (int16_t)((c >> 4) & 15);
-				compptr->vSampFactor = (int16_t)((c) & 15);
+    for (ci = 0; ci < dcPtr->numComponents; ci++) {
+        compptr = &dcPtr->compInfo[ci];
+        compptr->componentIndex = ci;
+        compptr->componentId = m_stream->readByte();
+        c = m_stream->readByte();
+        compptr->hSampFactor = (int16_t)((c >> 4) & 15);
+        compptr->vSampFactor = (int16_t)((c) & 15);
         (void) m_stream->readByte();   /* skip Tq */
-			}
-		}
+    }
+}
 
 /*
  *--------------------------------------------------------------
@@ -1240,56 +1240,56 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::GetSos (DecompressInfo *dcPtr)
-			throw(DecodingException)
-		{
-			int32_t length;
-			int32_t i;
-			uint16_t n, ci, c, cc;
-			JpegComponentInfo *compptr;
+void
+LJpegDecompressor::GetSos (DecompressInfo *dcPtr)
+    throw(DecodingException)
+{
+    int32_t length;
+    int32_t i;
+    uint16_t n, ci, c, cc;
+    JpegComponentInfo *compptr;
 
-			length = Get2bytes (m_stream);
+    length = Get2bytes (m_stream);
 
-			/* 
-			 * Get the number of image components.
-			 */
-			n = m_stream->readByte();
-			dcPtr->compsInScan = n;
-			length -= 3;
+    /* 
+     * Get the number of image components.
+     */
+    n = m_stream->readByte();
+    dcPtr->compsInScan = n;
+    length -= 3;
 
-			if (length != (n * 2 + 3) || n < 1 || n > 4) {
-				throw DecodingException("Bogus SOS length");
-			}
+    if (length != (n * 2 + 3) || n < 1 || n > 4) {
+        throw DecodingException("Bogus SOS length");
+    }
 
 
-			for (i = 0; i < n; i++) {
-				cc = m_stream->readByte();
-				c = m_stream->readByte();
-				length -= 2;
+    for (i = 0; i < n; i++) {
+        cc = m_stream->readByte();
+        c = m_stream->readByte();
+        length -= 2;
 
-				for (ci = 0; ci < dcPtr->numComponents; ci++)
-					if (cc == dcPtr->compInfo[ci].componentId) {
-						break;
-					}
+        for (ci = 0; ci < dcPtr->numComponents; ci++)
+            if (cc == dcPtr->compInfo[ci].componentId) {
+                break;
+            }
 
-				if (ci >= dcPtr->numComponents) {
-					throw DecodingException("Invalid component number in SOS");
-				}
+        if (ci >= dcPtr->numComponents) {
+            throw DecodingException("Invalid component number in SOS");
+        }
 
-				compptr = &dcPtr->compInfo[ci];
-				dcPtr->curCompInfo[i] = compptr;
-				compptr->dcTblNo = (c >> 4) & 15;
-			}
+        compptr = &dcPtr->compInfo[ci];
+        dcPtr->curCompInfo[i] = compptr;
+        compptr->dcTblNo = (c >> 4) & 15;
+    }
 
-			/*
-			 * Get the PSV, skip Se, and get the point transform parameter.
-			 */
-			dcPtr->Ss = m_stream->readByte(); 
-			(void)m_stream->readByte();
-			c = m_stream->readByte(); 
-			dcPtr->Pt = c & 0x0F;
-		}
+    /*
+     * Get the PSV, skip Se, and get the point transform parameter.
+     */
+    dcPtr->Ss = m_stream->readByte(); 
+    (void)m_stream->readByte();
+    c = m_stream->readByte(); 
+    dcPtr->Pt = c & 0x0F;
+}
 
 /*
  *--------------------------------------------------------------
@@ -1307,15 +1307,15 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		static inline void
-		GetSoi (DecompressInfo *dcPtr)
-		{
+static inline void
+GetSoi (DecompressInfo *dcPtr)
+{
 
-			/*
-			 * Reset all parameters that are defined to be reset by SOI
-			 */
-			dcPtr->restartInterval = 0;
-		}
+    /*
+     * Reset all parameters that are defined to be reset by SOI
+     */
+    dcPtr->restartInterval = 0;
+}
 
 /*
  *--------------------------------------------------------------
@@ -1333,29 +1333,29 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		static int32_t
-		NextMarker(IO::Stream *s)
-		{
-			int32_t c;
+static int32_t
+NextMarker(IO::Stream *s)
+{
+    int32_t c;
 
-			do {
-				/*
-				 * skip any non-FF bytes
-				 */
-				do {
-					c = s->readByte();
-				} while (c != 0xFF);
-				/*
-				 * skip any duplicate FFs without incrementing nbytes, since
-				 * extra FFs are legal
-				 */
-				do {
-					c = s->readByte();
-				} while (c == 0xFF);
-			} while (c == 0);		/* repeat if it was a stuffed FF/00 */
+    do {
+        /*
+         * skip any non-FF bytes
+         */
+        do {
+            c = s->readByte();
+        } while (c != 0xFF);
+        /*
+         * skip any duplicate FFs without incrementing nbytes, since
+         * extra FFs are legal
+         */
+        do {
+            c = s->readByte();
+        } while (c == 0xFF);
+    } while (c == 0);		/* repeat if it was a stuffed FF/00 */
 
-			return c;
-		}
+    return c;
+}
 
 /*
  *--------------------------------------------------------------
@@ -1373,70 +1373,70 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		LJpegDecompressor::JpegMarker
-		LJpegDecompressor::ProcessTables (DecompressInfo *dcPtr)
-		{
-			int c;
+LJpegDecompressor::JpegMarker
+LJpegDecompressor::ProcessTables (DecompressInfo *dcPtr)
+{
+    int c;
 
-			while (1) {
-				c = NextMarker (m_stream);
+    while (1) {
+        c = NextMarker (m_stream);
 
-				switch (c) {
-				case M_SOF0:
-				case M_SOF1:
-				case M_SOF2:
-				case M_SOF3:
-				case M_SOF5:
-				case M_SOF6:
-				case M_SOF7:
-				case M_JPG:
-				case M_SOF9:
-				case M_SOF10:
-				case M_SOF11:
-				case M_SOF13:
-				case M_SOF14:
-				case M_SOF15:
-				case M_SOI:
-				case M_EOI:
-				case M_SOS:
-					return ((JpegMarker)c);
+        switch (c) {
+        case M_SOF0:
+        case M_SOF1:
+        case M_SOF2:
+        case M_SOF3:
+        case M_SOF5:
+        case M_SOF6:
+        case M_SOF7:
+        case M_JPG:
+        case M_SOF9:
+        case M_SOF10:
+        case M_SOF11:
+        case M_SOF13:
+        case M_SOF14:
+        case M_SOF15:
+        case M_SOI:
+        case M_EOI:
+        case M_SOS:
+            return ((JpegMarker)c);
 
-				case M_DHT:
-					GetDht (dcPtr);
-					break;
+        case M_DHT:
+            GetDht (dcPtr);
+            break;
 
-				case M_DQT:
-					Trace(WARNING) << "Not a lossless JPEG file.\n";
-					break;
+        case M_DQT:
+            Trace(WARNING) << "Not a lossless JPEG file.\n";
+            break;
 
-				case M_DRI:
-					GetDri (dcPtr);
-					break;
+        case M_DRI:
+            GetDri (dcPtr);
+            break;
 
-				case M_APP0:
-					GetApp0(m_stream);
-					break;
+        case M_APP0:
+            GetApp0(m_stream);
+            break;
 
-				case M_RST0:		/* these are all parameterless */
-				case M_RST1:
-				case M_RST2:
-				case M_RST3:
-				case M_RST4:
-				case M_RST5:
-				case M_RST6:
-				case M_RST7:
-				case M_TEM:
-					Trace(WARNING) << str(boost::format("Warning: unexpected "
-																							"marker 0x%1%") % c);
-					break;
+        case M_RST0:		/* these are all parameterless */
+        case M_RST1:
+        case M_RST2:
+        case M_RST3:
+        case M_RST4:
+        case M_RST5:
+        case M_RST6:
+        case M_RST7:
+        case M_TEM:
+            Trace(WARNING) << str(boost::format("Warning: unexpected "
+                                                "marker 0x%1%") % c);
+            break;
 
-				default:		/* must be DNL, DHP, EXP, APPn, JPGn, COM,
-										 * or RESn */
-					SkipVariable (m_stream);
-					break;
-				}
-			}
-		}
+        default:		/* must be DNL, DHP, EXP, APPn, JPGn, COM,
+                         * or RESn */
+            SkipVariable (m_stream);
+            break;
+        }
+    }
+}
 
 /*
  *--------------------------------------------------------------
@@ -1454,44 +1454,44 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		void
-		LJpegDecompressor::ReadFileHeader (DecompressInfo *dcPtr)
-			throw(DecodingException)
-		{
-			int c, c2;
+void
+LJpegDecompressor::ReadFileHeader (DecompressInfo *dcPtr)
+    throw(DecodingException)
+{
+    int c, c2;
 			
-			/*
-			 * Demand an SOI marker at the start of the file --- otherwise it's
-			 * probably not a JPEG file at all.
-			 */
-			c = m_stream->readByte();
-			c2 = m_stream->readByte();
-			if ((c != 0xFF) || (c2 != M_SOI)) {
-				throw DecodingException(str(boost::format("Not a JPEG file. "
-																									"marker is %1% %2%\n")
-																		% c % c2));
-			}
+    /*
+     * Demand an SOI marker at the start of the file --- otherwise it's
+     * probably not a JPEG file at all.
+     */
+    c = m_stream->readByte();
+    c2 = m_stream->readByte();
+    if ((c != 0xFF) || (c2 != M_SOI)) {
+        throw DecodingException(str(boost::format("Not a JPEG file. "
+                                                  "marker is %1% %2%\n")
+                                    % c % c2));
+    }
 			
-			GetSoi (dcPtr);		/* OK, process SOI */
+    GetSoi (dcPtr);		/* OK, process SOI */
 			
-			/*
-			 * Process markers until SOF
-			 */
-			c = ProcessTables (dcPtr);
+    /*
+     * Process markers until SOF
+     */
+    c = ProcessTables (dcPtr);
 			
-			switch (c) {
-			case M_SOF0:
-			case M_SOF1:
-			case M_SOF3:
-				GetSof(dcPtr);
-				break;
+    switch (c) {
+    case M_SOF0:
+    case M_SOF1:
+    case M_SOF3:
+        GetSof(dcPtr);
+        break;
 				
-			default:
-				Trace(WARNING) << str(boost::format("Unsupported SOF marker "
-																						"type 0x%1%\n") % c);
-				break;
-			}
-		}
+    default:
+        Trace(WARNING) << str(boost::format("Unsupported SOF marker "
+                                            "type 0x%1%\n") % c);
+        break;
+    }
+}
 			
 /*
  *--------------------------------------------------------------
@@ -1508,80 +1508,90 @@ namespace OpenRaw {
  *
  *--------------------------------------------------------------
  */
-		int32_t
-		LJpegDecompressor::ReadScanHeader (DecompressInfo *dcPtr)
-		{
-			int c;
+int32_t
+LJpegDecompressor::ReadScanHeader (DecompressInfo *dcPtr)
+{
+    int c;
 
-			/*
-			 * Process markers until SOS or EOI
-			 */
-			c = ProcessTables (dcPtr);
+    /*
+     * Process markers until SOS or EOI
+     */
+    c = ProcessTables (dcPtr);
 
-			switch (c) {
-			case M_SOS:
-				GetSos (dcPtr);
-				return 1;
+    switch (c) {
+    case M_SOS:
+        GetSos (dcPtr);
+        return 1;
 
-			case M_EOI:
-				return 0;
+    case M_EOI:
+        return 0;
 
-			default:
-				Trace(WARNING) << str(boost::format("Unexpected marker "
-																						"0x%1%\n") % c);
-				break;
-			}
-			return 0;
-		}
+    default:
+        Trace(WARNING) << str(boost::format("Unexpected marker "
+                                            "0x%1%\n") % c);
+        break;
+    }
+    return 0;
+}
 
 
-		RawData *LJpegDecompressor::decompress(RawData *bitmap)
-		{
-			DecompressInfo dcInfo;
-			try {
-				ReadFileHeader(&dcInfo); 
-				ReadScanHeader (&dcInfo);
+RawData *LJpegDecompressor::decompress(RawData *bitmap)
+{
+    DecompressInfo dcInfo;
+    try {
+        ReadFileHeader(&dcInfo); 
+        ReadScanHeader (&dcInfo);
 
-				if(bitmap == NULL)
-				{
-					bitmap = new RawData();
-				}
-				m_output = bitmap;
-				bitmap->setDataType(OR_DATA_TYPE_CFA);
-				// bpc is a multiple of 8
-				uint32_t bpc = dcInfo.dataPrecision;
+        if(bitmap == NULL)
+        {
+            bitmap = new RawData();
+        }
+        m_output = bitmap;
+        bitmap->setDataType(OR_DATA_TYPE_CFA);
+        // bpc is a multiple of 8
+        uint32_t bpc = dcInfo.dataPrecision;
 //				if(bpc % 8) {
 //					bpc = ((bpc / 8) + 1) * 8;
 //				}
-				bitmap->setBpc(bpc);
-				bitmap->setMax((1 << bpc) - 1);
-				/*uint16_t *dataPtr = (uint16_t*)*/
-				bitmap->allocData(dcInfo.imageWidth
-								  * sizeof(uint16_t) 
-								  * dcInfo.imageHeight
-								  * dcInfo.numComponents);
+        bitmap->setBpc(bpc);
+        bitmap->setMax((1 << bpc) - 1);
+        /*uint16_t *dataPtr = (uint16_t*)*/
+        bitmap->allocData(dcInfo.imageWidth
+                          * sizeof(uint16_t) 
+                          * dcInfo.imageHeight
+                          * dcInfo.numComponents);
 				
-				Trace(DEBUG1) << "dc width = " << dcInfo.imageWidth
-							  << " dc height = " << dcInfo.imageHeight
-							  << "\n";
-				/* currently if the CFA is not sliced, it's this is half what it is */ 
-				uint32_t width = (isSliced() ? dcInfo.imageWidth * m_slices.size()
-								  : dcInfo.imageWidth * dcInfo.numComponents);
-				bitmap->setDimensions(width, 
-									  dcInfo.imageHeight);
-				bitmap->setSlices(m_slices);
-				DecoderStructInit(&dcInfo);
-				HuffDecoderInit(&dcInfo);
-				DecodeImage(&dcInfo);
-				// TODO handle the error properly
-			}
-			catch(...)
-			{
-				Trace(ERROR) << "Decompression error\n";
-			}
-			m_output = NULL;
-			return bitmap;
-		}
-
-	}
+        Trace(DEBUG1) << "dc width = " << dcInfo.imageWidth
+                      << " dc height = " << dcInfo.imageHeight
+                      << "\n";
+        /* currently if the CFA is not sliced, it's this is half what it is */ 
+        uint32_t width = (isSliced() ? dcInfo.imageWidth * m_slices.size()
+                          : dcInfo.imageWidth * dcInfo.numComponents);
+        bitmap->setDimensions(width, 
+                              dcInfo.imageHeight);
+        bitmap->setSlices(m_slices);
+        DecoderStructInit(&dcInfo);
+        HuffDecoderInit(&dcInfo);
+        DecodeImage(&dcInfo);
+        // TODO handle the error properly
+    }
+    catch(...)
+    {
+        Trace(ERROR) << "Decompression error\n";
+    }
+    m_output = NULL;
+    return bitmap;
 }
+
+}
+}
+
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
