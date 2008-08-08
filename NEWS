@@ -10,6 +10,7 @@ libopenraw 0.0.6
   - NEW: API or_rawfile_get_typeid() and the associated consts.
   - NEW: API or_demosaic() for low-level acces to demosaic.
   - NEW: API or_rawdata_get_minmax()
+  - NEW: API or_get_file_extensions()
   - NEW: GtkPixbuf loader.
   - NEW: Decompress NEF files.
   - NEW: Python bindings.

@@ -4,12 +4,16 @@ if BUILD_GNOME_SUPPORT
 GNOME_BINARIES = gdk pixbufload
 endif
 
-noinst_PROGRAMS = thumb thumbc cfa ccfa $(GNOME_BINARIES)
+noinst_PROGRAMS = extensions thumb thumbc cfa ccfa $(GNOME_BINARIES)
 
 INCLUDES = -I$(top_srcdir)/include  -I$(top_srcdir)/gnome/include
 LIBOPENRAW_LIBS = ../lib/libopenraw.la -lstdc++ -ljpeg
 LIBOPENRAWGNOME_LIBS = ../gnome/libopenrawgnome.la -lstdc++ -ljpeg \
 	@LIBGDKPIXBUF_LIBS@
+
+extensions_LDADD = $(LIBOPENRAW_LIBS)
+extensions_LDFLAGS = -L$(top_builddir)/lib -static
+extensions_SOURCES = extensions.c
 
 thumbc_LDADD = $(LIBOPENRAW_LIBS)
 thumbc_LDFLAGS = -L$(top_builddir)/lib -static

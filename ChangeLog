@@ -1,3 +1,17 @@
+2008-08-07  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/capi/rawfile.cpp:
+	* include/libopenraw/rawfile.h:
+	New or_get_file_extensions() API
+	* include/libopenraw++/rawfile.h: 
+	* lib/rawfile.cpp:
+	New RawFile::fileExtensions() method.
+	* lib/rawfilefactory.{cpp,h}: New 
+	RawFileFactory::fileExtensions() method.
+	* demo/Makefile.am:
+	* demo/extensions.cpp:
+	Extensions demo/test.
+
 2008-08-04  Hubert Figuiere  <hfiguiere@novell.com>
 
 	* testsuite/testsuite.cpp (download): 

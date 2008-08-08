@@ -45,6 +45,14 @@ namespace OpenRaw {
 		typedef ::or_rawfile_type Type;
 		typedef ::or_rawfile_typeid TypeId;
 
+
+        /** return a NULL terminated list of file extensions 
+         * that the library handle. This is purely informational.
+         * @return a pointer the list, NULL terminated. The pointer is
+         * owned by the library.
+         */
+        static const char **fileExtensions();
+
 		/** factory method to create the proper RawFile instance.
 		 * @param _filename the name of the file to load
 		 * @param _typeHint a hint on the type. Use UNKNOWN_TYPE
@@ -155,5 +163,13 @@ namespace OpenRaw {
 
 }
 
-
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
 #endif

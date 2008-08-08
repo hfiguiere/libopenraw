@@ -120,6 +120,13 @@ namespace OpenRaw {
 	};
 
 
+    const char **RawFile::fileExtensions()
+    {
+        init();
+
+        return RawFileFactory::fileExtensions();
+    }
+
 
 	RawFile *RawFile::newRawFile(const char*_filename, RawFile::Type _typeHint)
 	{
@@ -380,6 +387,16 @@ namespace OpenRaw {
 	{
 		d->m_cam_ids = map;
 	}
+
 }
 
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
 

@@ -36,6 +36,11 @@ extern "C" {
 #define CHECK_PTR(p,r) \
 	if(p == NULL) { return r; }
 
+const char **or_get_file_extensions()
+{
+    return RawFile::fileExtensions();
+}
+
 ORRawFileRef
 or_rawfile_new(const char* filename, or_rawfile_type type)
 {

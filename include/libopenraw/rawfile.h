@@ -34,6 +34,13 @@ extern "C" {
 
 typedef struct _RawFile *ORRawFileRef;
 
+/** return a NULL terminated list of extensions.
+ * that the library supposedly handle.
+ * @return a NULL terminated list. Belongs to the library.
+ */
+const char **
+or_get_file_extensions();
+
 ORRawFileRef
 or_rawfile_new(const char* filename, or_rawfile_type type);
 

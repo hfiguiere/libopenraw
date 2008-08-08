@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+
 #include <iostream>
 #include <cassert>
 
@@ -67,6 +69,34 @@ namespace OpenRaw {
 			table().erase(iter);
 		}
 
+const char **RawFileFactory::fileExtensions()
+{
+    static const char **_fileExtensions = NULL;
+    if(!_fileExtensions) {
+        Extensions & ext = extensions();
+        size_t s = ext.size();
+        _fileExtensions = (const char**)malloc(s + 1);
+        _fileExtensions[s] = NULL;
+        const char **current = _fileExtensions;
+        Extensions::const_iterator iter(ext.begin());
+        for ( ; iter != ext.end(); ++iter) {
+            *current = iter->first.c_str();
+            current++;
+        }
+    }
+
+    return _fileExtensions;
+}
+
 	}
 }
 
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
