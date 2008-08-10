@@ -1,5 +1,5 @@
 
-TESTS = fileio ljpegtest testunpack
+TESTS = fileio ljpegtest testunpack extensions
 TESTS_ENVIRONMENT =
 
 OPENRAW_LIB = $(top_builddir)/lib/libopenraw.la
@@ -8,13 +8,17 @@ INCLUDES = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/lib
 
-check_PROGRAMS = fileio ciffcontainertest ljpegtest testunpack
+check_PROGRAMS = fileio ciffcontainertest ljpegtest testunpack\
+	extensions
 
 EXTRA_DIST = ljpegtest1.jpg
 
 fileio_LDFLAGS = -L$(top_builddir)/lib/io
 fileio_LDADD = -lio
 fileio_SOURCES = fileio.t.c
+
+extensions_SOURCES = extensions.cpp
+extensions_LDFLAGS = -static $(OPENRAW_LIB)
 
 ciffcontainertest_SOURCES = ciffcontainertest.cpp
 ciffcontainertest_LDADD = $(OPENRAW_LIB)
