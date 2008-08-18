@@ -1,5 +1,7 @@
 2008-08-18  Hubert Figuiere  <hub@figuiere.net>
 
+	* configure.in: call AC_PROG_CXX
+
 	* demo/Makefile.am (extensions_SOURCES): fix
 	build in demo.
 
