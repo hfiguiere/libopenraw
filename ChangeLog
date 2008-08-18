@@ -1,3 +1,8 @@
+2008-08-18  Hubert Figuiere  <hub@figuiere.net>
+
+	* demo/Makefile.am (extensions_SOURCES): fix
+	build in demo.
+
 2008-08-09  Hubert Figuiere  <hub@figuiere.net>
 
 	* test/Makefile.am:

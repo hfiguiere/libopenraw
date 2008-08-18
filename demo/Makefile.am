@@ -13,7 +13,7 @@ LIBOPENRAWGNOME_LIBS = ../gnome/libopenrawgnome.la -lstdc++ -ljpeg \
 
 extensions_LDADD = $(LIBOPENRAW_LIBS)
 extensions_LDFLAGS = -L$(top_builddir)/lib -static
-extensions_SOURCES = extensions.c
+extensions_SOURCES = extensions.cpp
 
 thumbc_LDADD = $(LIBOPENRAW_LIBS)
 thumbc_LDFLAGS = -L$(top_builddir)/lib -static
