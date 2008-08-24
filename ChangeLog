@@ -1,3 +1,9 @@
+2008-08-24  Hubert Figuiere  <hub@figuiere.net>
+
+	* testsuite/testsuite.{h,cpp}: 
+	* configure.in:
+	CURL is optional for the testsuite.
+
 2008-08-18  Hubert Figuiere  <hub@figuiere.net>
 
 	* configure.in: call AC_PROG_CXX

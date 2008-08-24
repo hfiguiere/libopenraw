@@ -22,7 +22,13 @@
 #ifndef _TEST_TESTSUITE_H_
 #define _TEST_TESTSUITE_H_
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#if HAVE_CURL
 #include <curl/curl.h>
+#endif
 
 #include <vector>
 #include <string>
@@ -98,9 +104,10 @@ public:
 	/** add a test. own the test */
 	void add_test(const Test::Ptr & t);
 private:
+#if HAVE_CURL
     void walk_tests(xmlNode * test, CURL* handle,
                     const std::string & download_dir);
-
+#endif
 	std::map<std::string, Test::Ptr> m_tests;
 };
 

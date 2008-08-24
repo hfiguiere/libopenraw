@@ -20,6 +20,10 @@
  */
 
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -619,6 +623,8 @@ void set_file_override(xmlNode *test, const std::string & path)
                     (const xmlChar*)path.c_str());
 }
 
+
+#if HAVE_CURL
 std::string download(const std::string & source, CURL* handle,
                      const std::string & download_dir)
 {
@@ -663,10 +669,12 @@ std::string download(const std::string & source, CURL* handle,
     }
     return dest;
 }
+#endif
 
 }
 
 
+#if HAVE_CURL
 void TestSuite::walk_tests(xmlNode * testsuite, CURL* handle,
                            const std::string & download_dir)
 {
@@ -713,9 +721,12 @@ void TestSuite::walk_tests(xmlNode * testsuite, CURL* handle,
         }
     }
 }
+#endif
+
 
 namespace {
 
+#if HAVE_CURL
 int curl_write_function(void *buffer, size_t size, size_t nmemb, void *stream)
 {
     FILE *fp = (FILE *) stream;
@@ -731,10 +742,12 @@ int curl_write_function(void *buffer, size_t size, size_t nmemb, void *stream)
 
     return (int) w;
 }
+#endif 
 
 }
 
 
+#if HAVE_CURL
 int TestSuite::bootstrap(const std::string & overrides_file,
                          const std::string & download_dir)
 {
@@ -766,9 +779,15 @@ int TestSuite::bootstrap(const std::string & overrides_file,
     xmlSaveFormatFile(overrides_file.c_str(), doc, XML_SAVE_FORMAT);
     xmlFreeDoc(doc);
     curl_easy_cleanup(handle);
-
     return 0;
 }
+#else
+int TestSuite::bootstrap(const std::string & overrides_file,
+                         const std::string & download_dir)
+{
+    return 1;
+}
+#endif
 
 
 int TestSuite::run_all()
@@ -794,7 +813,13 @@ int main(int argc, char ** argv)
     while ((opt = getopt(argc, argv, "bd:")) != -1) {
         switch(opt) {
         case 'b':
+#if HAVE_CURL
             bootstrap = true;
+#else
+            fprintf(stderr, "Bootstraping is disabled. Please rebuild "
+                    "with CURL support. Quitting.\n");
+            return 1;
+#endif
             break;
         case 'd':
             if(optarg[0] != '/') {
