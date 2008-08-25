@@ -24,46 +24,46 @@
 #include "ifdfilecontainer.h"
 
 namespace OpenRaw {
-	namespace Internals {
+namespace Internals {
 
-		TiffEpFile::TiffEpFile(IO::Stream * s, Type _type)
-			: IFDFile(s, _type)
-		{
-		}
+TiffEpFile::TiffEpFile(IO::Stream * s, Type _type)
+    : IFDFile(s, _type)
+{
+}
 
 
-		IFDDir::Ref  TiffEpFile::_locateCfaIfd()
-		{
-			if(!m_mainIfd) {
-				m_mainIfd = _locateMainIfd();
-			}
+IFDDir::Ref  TiffEpFile::_locateCfaIfd()
+{
+    if(!m_mainIfd) {
+        m_mainIfd = _locateMainIfd();
+    }
 
-			std::vector<IFDDir::Ref> subdirs;
-			if (!m_mainIfd || !m_mainIfd->getSubIFDs(subdirs)) {
-				// error
-				return IFDDir::Ref();
-			}
-			IFDDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
-													   subdirs.end(),
-													   IFDDir::isPrimary());
-			if (i != subdirs.end()) {
-				return *i;
-			}
-			return IFDDir::Ref();
-		}
+    std::vector<IFDDir::Ref> subdirs;
+    if (!m_mainIfd || !m_mainIfd->getSubIFDs(subdirs)) {
+        // error
+        return IFDDir::Ref();
+    }
+    IFDDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
+                                               subdirs.end(),
+                                               IFDDir::isPrimary());
+    if (i != subdirs.end()) {
+        return *i;
+    }
+    return IFDDir::Ref();
+}
 
-		IFDDir::Ref  TiffEpFile::_locateMainIfd()
-		{
-			return m_container->setDirectory(0);
-		}
+IFDDir::Ref  TiffEpFile::_locateMainIfd()
+{
+    return m_container->setDirectory(0);
+}
 	    
-	    /** TIFF EP files don't have RAW */
-	    ::or_error TiffEpFile::_getRawData(RawData & data, uint32_t options)
-	    {
-		return OR_ERROR_NOT_FOUND;
-	    }
+/** TIFF EP files don't have RAW */
+::or_error TiffEpFile::_getRawData(RawData & data, uint32_t options)
+{
+    return OR_ERROR_NOT_FOUND;
+}
 
-	}
+}
 }
 /*
   Local Variables:

@@ -90,70 +90,70 @@ void init(void)
                                  "mrw");
 }
 
-	class RawFile::Private 
-	{
-	public:
-		Private(Type t)
-			: m_type(t),
-			  m_type_id(OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NONE, OR_TYPEID_UNKNOWN)),
-			  m_sizes(),
-			  m_cam_ids(NULL)
-			{
-			}
-		~Private()
-			{
-				std::map<int32_t, MetaValue*>::iterator iter;
-				for(iter = m_metadata.begin();
-					iter != m_metadata.end(); ++iter)
-				{
-					if(iter->second) {
-						delete iter->second;
-					}
-				}
-			}
-		/** the real type of the raw file */
-		Type m_type;
-		/** the raw file type id */
-		TypeId m_type_id;
-		/** list of thumbnail sizes */
-		std::vector<uint32_t> m_sizes;
-		std::map<int32_t, MetaValue*> m_metadata;
-		const camera_ids_t *m_cam_ids;
-	};
+class RawFile::Private 
+{
+public:
+    Private(Type t)
+        : m_type(t),
+          m_type_id(OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NONE, OR_TYPEID_UNKNOWN)),
+          m_sizes(),
+          m_cam_ids(NULL)
+        {
+        }
+    ~Private()
+        {
+            std::map<int32_t, MetaValue*>::iterator iter;
+            for(iter = m_metadata.begin();
+                iter != m_metadata.end(); ++iter)
+            {
+                if(iter->second) {
+                    delete iter->second;
+                }
+            }
+        }
+    /** the real type of the raw file */
+    Type m_type;
+    /** the raw file type id */
+    TypeId m_type_id;
+    /** list of thumbnail sizes */
+    std::vector<uint32_t> m_sizes;
+    std::map<int32_t, MetaValue*> m_metadata;
+    const camera_ids_t *m_cam_ids;
+};
 
 
-    const char **RawFile::fileExtensions()
-    {
-        init();
+const char **RawFile::fileExtensions()
+{
+    init();
 
-        return RawFileFactory::fileExtensions();
+    return RawFileFactory::fileExtensions();
+}
+
+
+RawFile *RawFile::newRawFile(const char*_filename, RawFile::Type _typeHint)
+{
+    init();
+
+    Type type;
+    if (_typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
+        type = identify(_filename);
     }
-
-
-	RawFile *RawFile::newRawFile(const char*_filename, RawFile::Type _typeHint)
-	{
-		init();
-
-		Type type;
-		if (_typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
-			type = identify(_filename);
-		}
-		else {
-			type = _typeHint;
-		}
-		Trace(DEBUG1) << "factory size " << RawFileFactory::table().size() << "\n";
-		RawFileFactory::Table::iterator iter = RawFileFactory::table().find(type);
-		if (iter == RawFileFactory::table().end()) {
-			Trace(WARNING) << "factory not found\n";
-			return NULL;
-		}
-		if (iter->second == NULL) {
-			Trace(WARNING) << "factory is NULL\n";
-			return NULL;
-		}
-		IO::Stream *f = new IO::File(_filename);
-		return iter->second(f);
-	}
+    else {
+        type = _typeHint;
+    }
+    Trace(DEBUG1) << "factory size " << RawFileFactory::table().size() << "\n";
+    RawFileFactory::Table::iterator iter = RawFileFactory::table().find(type);
+    if (iter == RawFileFactory::table().end()) {
+        Trace(WARNING) << "factory not found\n";
+        return NULL;
+    }
+    if (iter->second == NULL) {
+        Trace(WARNING) << "factory is NULL\n";
+        return NULL;
+    }
+    IO::Stream *f = new IO::File(_filename);
+    return iter->second(f);
+}
 
 RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer, 
                                        uint32_t len, 
@@ -185,31 +185,31 @@ RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer,
 }
 
 
-	RawFile::Type RawFile::identify(const char*_filename)
-	{
-		const char *e = ::strrchr(_filename, '.');
-		if (e == NULL) {
-			Trace(DEBUG1) << "Extension not found\n";
-			return OR_RAWFILE_TYPE_UNKNOWN;
-		}
-		std::string extension(e + 1);
-		if (extension.length() > 3) {
- 			return OR_RAWFILE_TYPE_UNKNOWN;
-		}
+RawFile::Type RawFile::identify(const char*_filename)
+{
+    const char *e = ::strrchr(_filename, '.');
+    if (e == NULL) {
+        Trace(DEBUG1) << "Extension not found\n";
+        return OR_RAWFILE_TYPE_UNKNOWN;
+    }
+    std::string extension(e + 1);
+    if (extension.length() > 3) {
+        return OR_RAWFILE_TYPE_UNKNOWN;
+    }
 
-		boost::to_lower(extension);
+    boost::to_lower(extension);
 
-		RawFileFactory::Extensions & extensions = RawFileFactory::extensions();
-		RawFileFactory::Extensions::iterator iter = extensions.find(extension);
-		if (iter == extensions.end())
-		{
-			return OR_RAWFILE_TYPE_UNKNOWN;
-		}
-		return iter->second;
-	}
+    RawFileFactory::Extensions & extensions = RawFileFactory::extensions();
+    RawFileFactory::Extensions::iterator iter = extensions.find(extension);
+    if (iter == extensions.end())
+    {
+        return OR_RAWFILE_TYPE_UNKNOWN;
+    }
+    return iter->second;
+}
 
 ::or_error RawFile::identifyBuffer(const uint8_t* buff, size_t len,
-                                 RawFile::Type &_type)
+                                   RawFile::Type &_type)
 {
     _type = OR_RAWFILE_TYPE_UNKNOWN;
     if(len <= 4) {
@@ -267,168 +267,167 @@ RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer,
                     _type = OR_RAWFILE_TYPE_CR2;
                 }
             }
-//            _type = OR_RAWFILE_TYPE_UNKNOWN;
         }
                         
     }
     return OR_ERROR_NONE;
 }
 
-	RawFile::RawFile(IO::Stream *, RawFile::Type _type)
-		: d(new Private(_type))
-	{
+RawFile::RawFile(IO::Stream *, RawFile::Type _type)
+    : d(new Private(_type))
+{
 		
-	}
+}
 
 
-	RawFile::~RawFile()
-	{
-		delete d;
-	}
+RawFile::~RawFile()
+{
+    delete d;
+}
 
 
-	RawFile::Type RawFile::type() const
-	{
-		return d->m_type;
-	}
+RawFile::Type RawFile::type() const
+{
+    return d->m_type;
+}
 
-	RawFile::TypeId RawFile::typeId()
-	{
-		if(d->m_type_id == 0) {
-			_identifyId();
-		}
-		return d->m_type_id;
-	}
+RawFile::TypeId RawFile::typeId()
+{
+    if(d->m_type_id == 0) {
+        _identifyId();
+    }
+    return d->m_type_id;
+}
 
-	void RawFile::_setTypeId(RawFile::TypeId _type_id)
-	{
-		d->m_type_id = _type_id;
-	}
+void RawFile::_setTypeId(RawFile::TypeId _type_id)
+{
+    d->m_type_id = _type_id;
+}
 
-	const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
-	{
-		if (d->m_sizes.size() == 0) {
-			Trace(DEBUG1) << "_enumThumbnailSizes init\n";
-			bool ret = _enumThumbnailSizes(d->m_sizes);
-			if (!ret) {
-				Trace(DEBUG1) << "_enumThumbnailSizes failed\n";
-			}
-		}
-		return d->m_sizes;
-	}
-
-
-	::or_error RawFile::getThumbnail(uint32_t tsize, Thumbnail & thumbnail)
-	{
-		::or_error ret = OR_ERROR_NOT_FOUND;
-		uint32_t smallest_bigger = 0xffffffff;
-		uint32_t biggest_smaller = 0;
-		uint32_t found_size = 0;
-
-		Trace(DEBUG1) << "requested size " << tsize << "\n";
-
-		const std::vector<uint32_t> & sizes(listThumbnailSizes());
-
-		std::vector<uint32_t>::const_iterator iter;
-
-		for (iter = sizes.begin(); iter != sizes.end(); ++iter) {
-			Trace(DEBUG1) << "current iter is " << *iter << "\n";
-			if (*iter < tsize) {
-				if (*iter > biggest_smaller) {
-					biggest_smaller = *iter;
-				}
-			}
-			else if(*iter > tsize) {
-				if(*iter < smallest_bigger) {
-					smallest_bigger = *iter;
-				}
-			}
-			else { // *iter == tsize
-				found_size = tsize;
-				break;
-			}
-		}
-
-		if (found_size == 0) {
-			found_size = (smallest_bigger != 0xffffffff ? 
-                                      smallest_bigger : biggest_smaller);
-		}
-
-		if (found_size != 0) {
-			Trace(DEBUG1) << "size " << found_size << " found\n";
-			ret = _getThumbnail(found_size, thumbnail);
-		}
-		else {
-			// no size found, let's fail gracefuly
-			Trace(DEBUG1) << "no size found\n";
- 			ret = OR_ERROR_NOT_FOUND;
-		}
-
-		return ret;
-	}
+const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
+{
+    if (d->m_sizes.size() == 0) {
+        Trace(DEBUG1) << "_enumThumbnailSizes init\n";
+        bool ret = _enumThumbnailSizes(d->m_sizes);
+        if (!ret) {
+            Trace(DEBUG1) << "_enumThumbnailSizes failed\n";
+        }
+    }
+    return d->m_sizes;
+}
 
 
-	::or_error RawFile::getRawData(RawData & rawdata, uint32_t options)
-	{
-		Trace(DEBUG1) << "getRawData()\n";
-		::or_error ret = _getRawData(rawdata, options);
-		return ret;
-	}	
+::or_error RawFile::getThumbnail(uint32_t tsize, Thumbnail & thumbnail)
+{
+    ::or_error ret = OR_ERROR_NOT_FOUND;
+    uint32_t smallest_bigger = 0xffffffff;
+    uint32_t biggest_smaller = 0;
+    uint32_t found_size = 0;
+
+    Trace(DEBUG1) << "requested size " << tsize << "\n";
+
+    const std::vector<uint32_t> & sizes(listThumbnailSizes());
+
+    std::vector<uint32_t>::const_iterator iter;
+
+    for (iter = sizes.begin(); iter != sizes.end(); ++iter) {
+        Trace(DEBUG1) << "current iter is " << *iter << "\n";
+        if (*iter < tsize) {
+            if (*iter > biggest_smaller) {
+                biggest_smaller = *iter;
+            }
+        }
+        else if(*iter > tsize) {
+            if(*iter < smallest_bigger) {
+                smallest_bigger = *iter;
+            }
+        }
+        else { // *iter == tsize
+            found_size = tsize;
+            break;
+        }
+    }
+
+    if (found_size == 0) {
+        found_size = (smallest_bigger != 0xffffffff ? 
+                      smallest_bigger : biggest_smaller);
+    }
+
+    if (found_size != 0) {
+        Trace(DEBUG1) << "size " << found_size << " found\n";
+        ret = _getThumbnail(found_size, thumbnail);
+    }
+    else {
+        // no size found, let's fail gracefuly
+        Trace(DEBUG1) << "no size found\n";
+        ret = OR_ERROR_NOT_FOUND;
+    }
+
+    return ret;
+}
 
 
-	int32_t RawFile::getOrientation()
-	{
-		int32_t idx = 0;
-		const MetaValue * value = getMetaValue(META_NS_TIFF 
-                                                       | EXIF_TAG_ORIENTATION);
-		if(value == NULL) {
-			return 0;
-		}
-		try {
-			idx = value->getInteger();
-		}
-		catch(const Internals::BadTypeException & e)	{
-			Trace(DEBUG1) << "wrong type - " << e.what() << "\n";
-		}
-		return idx;
-	}
+::or_error RawFile::getRawData(RawData & rawdata, uint32_t options)
+{
+    Trace(DEBUG1) << "getRawData()\n";
+    ::or_error ret = _getRawData(rawdata, options);
+    return ret;
+}	
+
+
+int32_t RawFile::getOrientation()
+{
+    int32_t idx = 0;
+    const MetaValue * value = getMetaValue(META_NS_TIFF 
+                                           | EXIF_TAG_ORIENTATION);
+    if(value == NULL) {
+        return 0;
+    }
+    try {
+        idx = value->getInteger();
+    }
+    catch(const Internals::BadTypeException & e)	{
+        Trace(DEBUG1) << "wrong type - " << e.what() << "\n";
+    }
+    return idx;
+}
 	
-	const MetaValue *RawFile::getMetaValue(int32_t meta_index)
-	{
-		MetaValue *val = NULL;
-		std::map<int32_t, MetaValue*>::iterator iter = d->m_metadata.find(meta_index);
-		if(iter == d->m_metadata.end()) {
-			val = _getMetaValue(meta_index);
-			if(val != NULL) {
-				d->m_metadata[meta_index] = val;
-			}
-		}
-		else {
-			val = iter->second;
-		}
-		return val;
-	}
+const MetaValue *RawFile::getMetaValue(int32_t meta_index)
+{
+    MetaValue *val = NULL;
+    std::map<int32_t, MetaValue*>::iterator iter = d->m_metadata.find(meta_index);
+    if(iter == d->m_metadata.end()) {
+        val = _getMetaValue(meta_index);
+        if(val != NULL) {
+            d->m_metadata[meta_index] = val;
+        }
+    }
+    else {
+        val = iter->second;
+    }
+    return val;
+}
 
 
-	RawFile::TypeId RawFile::_typeIdFromModel(const std::string & model)
-	{
-		const struct camera_ids_t * p = d->m_cam_ids;
-		if(!p) {
-			return 0;
-		}
-		while(p->model) {
-			if(model == p->model) {
-				break;
-			}
-			p++;
-		}
-		return p->type_id;
-	}
+RawFile::TypeId RawFile::_typeIdFromModel(const std::string & model)
+{
+    const struct camera_ids_t * p = d->m_cam_ids;
+    if(!p) {
+        return 0;
+    }
+    while(p->model) {
+        if(model == p->model) {
+            break;
+        }
+        p++;
+    }
+    return p->type_id;
+}
 
-	void RawFile::_setIdMap(const camera_ids_t *map)
-	{
-		d->m_cam_ids = map;
-	}
+void RawFile::_setIdMap(const camera_ids_t *map)
+{
+    d->m_cam_ids = map;
+}
 
 }
 

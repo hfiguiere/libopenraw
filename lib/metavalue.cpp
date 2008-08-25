@@ -2,6 +2,7 @@
  * libopenraw - metavalue.cpp
  *
  * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -27,10 +28,10 @@ using namespace Debug;
 
 namespace OpenRaw {
 
-	MetaValue::MetaValue(const MetaValue & r)
-		: m_value(r.m_value)
-	{
-	}
+MetaValue::MetaValue(const MetaValue & r)
+    : m_value(r.m_value)
+{
+}
 
 MetaValue::MetaValue(const value_t &v)
     : m_value(v)
@@ -78,33 +79,33 @@ MetaValue::MetaValue(const Internals::IFDEntry::Ref & e)
     }
 }
 
-	template<typename T>
-	inline	T MetaValue::get() const
-		throw(Internals::BadTypeException)
-	{
-		T v;
-                assert(!m_value.empty());
-		try {
-			v = boost::get<T>(m_value);
-		}
-		catch(...) { //const boost::bad_any_cast &) {
-			throw Internals::BadTypeException();
-		}
-		return v;
-	}
+template<typename T>
+inline	T MetaValue::get() const
+    throw(Internals::BadTypeException)
+{
+    T v;
+    assert(!m_value.empty());
+    try {
+        v = boost::get<T>(m_value);
+    }
+    catch(...) { //const boost::bad_any_cast &) {
+        throw Internals::BadTypeException();
+    }
+    return v;
+}
 
 
-	uint32_t MetaValue::getInteger() const
-		throw(Internals::BadTypeException)
-	{
-		return get<uint32_t>();
-	}
+uint32_t MetaValue::getInteger() const
+    throw(Internals::BadTypeException)
+{
+    return get<uint32_t>();
+}
 
-	std::string MetaValue::getString() const
-		throw(Internals::BadTypeException)
-	{
-		return get<std::string>();
-	}
+std::string MetaValue::getString() const
+    throw(Internals::BadTypeException)
+{
+    return get<std::string>();
+}
 
 }
 /*
