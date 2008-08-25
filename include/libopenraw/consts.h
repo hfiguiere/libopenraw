@@ -61,7 +61,8 @@ extern "C" {
 		OR_RAWFILE_TYPE_DNG, /**< Adobe DNG */
 		OR_RAWFILE_TYPE_ORF, /**< Olympus ORF */
 		OR_RAWFILE_TYPE_PEF, /**< Pentax PEF */
-		OR_RAWFILE_TYPE_ERF  /**< Epson ERF */
+		OR_RAWFILE_TYPE_ERF, /**< Epson ERF */
+		OR_RAWFILE_TYPE_TIFF /**< Generic TIFF */
 	} or_rawfile_type;
 
 	typedef enum {

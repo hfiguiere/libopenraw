@@ -309,37 +309,36 @@ namespace OpenRaw {
 		}
 
 
-		MetaValue *IFDFile::_getMetaValue(int32_t meta_index)
-		{
-			MetaValue * val = NULL;
-			IFDDir::Ref ifd;
-			if(META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
-				if(!m_mainIfd) {
-					m_mainIfd = _locateMainIfd();
-				}
-				ifd = m_mainIfd;
-			}
-			else if(META_INDEX_MASKOUT(meta_index) == META_NS_EXIF) {
-				if(!m_exifIfd) {
-					m_exifIfd = _locateExifIfd();
-				}
-				ifd = m_exifIfd;
-			}
-			else {
-				Trace(ERROR) << "Unknown Meta Namespace\n";
-			}
-			if(ifd) {
-				Trace(DEBUG1) << "Meta value for " 
-							  << META_NS_MASKOUT(meta_index) << "\n";
-				uint16_t n = 0;
-				bool got_it = ifd->getValue(META_NS_MASKOUT(meta_index), n);
-				if(got_it){
-					Trace(DEBUG1) << "found value\n";
-					val = new MetaValue(boost::any(static_cast<int32_t>(n)));
-				}				
-			}
-			return val;
-		}
+        MetaValue *IFDFile::_getMetaValue(int32_t meta_index)
+        {
+            MetaValue * val = NULL;
+            IFDDir::Ref ifd;
+            if(META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
+                if(!m_mainIfd) {
+                    m_mainIfd = _locateMainIfd();
+                }
+                ifd = m_mainIfd;
+            }
+            else if(META_INDEX_MASKOUT(meta_index) == META_NS_EXIF) {
+                if(!m_exifIfd) {
+                    m_exifIfd = _locateExifIfd();
+                }
+                ifd = m_exifIfd;
+            }
+            else {
+                Trace(ERROR) << "Unknown Meta Namespace\n";
+            }
+            if(ifd) {
+                Trace(DEBUG1) << "Meta value for " 
+                              << META_NS_MASKOUT(meta_index) << "\n";
+
+                IFDEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
+                if(e) {
+                    val = new MetaValue(e);
+                }
+            }
+            return val;
+        }
 
 
 		namespace {
@@ -660,6 +659,6 @@ namespace OpenRaw {
   c-file-style:"stroustrup"
   c-file-offsets:((innamespace . 0))
   indent-tabs-mode:nil
-  fill-column:99
+  fill-column:80
   End:
 */

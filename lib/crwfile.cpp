@@ -277,9 +277,8 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
         {
             const ImageSpec * img_spec = m_container->getImageSpec();
             if(img_spec) {
-                val = new MetaValue(boost::any(
-                                        static_cast<int32_t>(
-                                            img_spec->exifOrientation())));
+                val = new MetaValue(static_cast<uint32_t>(
+                                            img_spec->exifOrientation()));
             }
             break;
         }
@@ -311,7 +310,7 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
                     }
                     p++;
                     model = p;
-                    val = new MetaValue(boost::any(model));
+                    val = new MetaValue(model);
                     Trace(DEBUG1) << "Model " << model << "\n";
                 }
             }

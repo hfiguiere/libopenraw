@@ -22,6 +22,7 @@
 #ifndef _OPENRAW_INTERNALS_IFDENTRY_H
 #define _OPENRAW_INTERNALS_IFDENTRY_H
 
+#include <vector>
 #include <boost/shared_ptr.hpp>
 #include <libopenraw/types.h>
 
@@ -247,6 +248,15 @@ namespace OpenRaw {
 }
 
 
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
 #endif
 
 

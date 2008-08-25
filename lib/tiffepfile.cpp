@@ -56,6 +56,21 @@ namespace OpenRaw {
 		{
 			return m_container->setDirectory(0);
 		}
+	    
+	    /** TIFF EP files don't have RAW */
+	    ::or_error TiffEpFile::_getRawData(RawData & data, uint32_t options)
+	    {
+		return OR_ERROR_NOT_FOUND;
+	    }
 
 	}
 }
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

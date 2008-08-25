@@ -19,8 +19,11 @@
  */
 
 
+#include "debug.h"
 #include "exception.h"
 #include "metavalue.h"
+
+using namespace Debug;
 
 namespace OpenRaw {
 
@@ -29,31 +32,72 @@ namespace OpenRaw {
 	{
 	}
 
-	MetaValue::MetaValue(const boost::any &v)
-		: m_value(v)
-	{
-	}
+MetaValue::MetaValue(const value_t &v)
+    : m_value(v)
+{
+}
 
+namespace {
+
+template <class T>
+MetaValue::value_t convert(const Internals::IFDEntry::Ref & e)
+{
+    T v;
+    v = Internals::IFDTypeTrait<T>::get(*e, 0, false);
+    return MetaValue::value_t(v);
+}
+
+}
+
+MetaValue::MetaValue(const Internals::IFDEntry::Ref & e)
+{
+    switch(e->type()) {
+    case Internals::IFD::EXIF_FORMAT_BYTE:
+    {
+        m_value = convert<uint8_t>(e);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_ASCII:
+    {
+        m_value = convert<std::string>(e);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_SHORT:
+    {
+        m_value = convert<uint16_t>(e);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_LONG:
+    {
+        m_value = convert<uint32_t>(e);
+        break;
+    }
+    default:
+        Trace(DEBUG1) << "unhandled type " << e->type() << "\n";
+        break;
+    }
+}
 
 	template<typename T>
 	inline	T MetaValue::get() const
 		throw(Internals::BadTypeException)
 	{
 		T v;
+                assert(!m_value.empty());
 		try {
-			v = boost::any_cast<T>(m_value);
+			v = boost::get<T>(m_value);
 		}
-		catch(const boost::bad_any_cast &) {
+		catch(...) { //const boost::bad_any_cast &) {
 			throw Internals::BadTypeException();
 		}
 		return v;
 	}
 
 
-	int32_t MetaValue::getInteger() const
+	uint32_t MetaValue::getInteger() const
 		throw(Internals::BadTypeException)
 	{
-		return get<int32_t>();
+		return get<uint32_t>();
 	}
 
 	std::string MetaValue::getString() const
@@ -63,3 +107,12 @@ namespace OpenRaw {
 	}
 
 }
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

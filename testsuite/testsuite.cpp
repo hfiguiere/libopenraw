@@ -42,6 +42,8 @@
 #include <utility>
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/scoped_array.hpp>
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -52,6 +54,7 @@
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/bitmapdata.h>
+#include "io/file.h"
 
 #include "xmlhandler.h"
 #include "testsuite.h"
@@ -169,6 +172,33 @@ Test::~Test()
 bool Test::testRawType(const std::string & result)
 {
 	RawFile::Type t = m_rawfile->type();
+
+        // test the detection by content....
+        RawFile::Type t2;
+        OpenRaw::IO::File f(m_file.c_str());
+        ::or_error err = f.open();
+        if(err != OR_ERROR_NONE) {
+            RETURN_FAIL("failed to open", 
+                        boost::lexical_cast<std::string>(err));
+        }
+        off_t len = f.filesize();
+        boost::scoped_array<uint8_t> buff(new uint8_t[len]);
+        int res = f.read(buff.get(), len);
+        if(res == len) {
+            boost::scoped_ptr<RawFile> r2(RawFile::newRawFileFromMemory(buff.get(), len));
+            if(!r2) {
+                RETURN_FAIL("failed to load from memory", std::string());
+            }
+            t2 = r2->type();
+            if(t2 != t) {
+                RETURN_FAIL("type mismatch", result);
+            }
+        }
+        else {
+            RETURN_FAIL("failed to load into buffer", 
+                        boost::lexical_cast<std::string>(res));
+        }
+
 	switch(t) {
 	case OR_RAWFILE_TYPE_CR2:
 		RETURN_TEST(result == "CR2", result);

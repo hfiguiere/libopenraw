@@ -1,3 +1,21 @@
+2008-08-25  Hubert Figuiere  <hfiguiere@novell.com>
+
+	* include/libopenraw++/rawfile.h:
+	* include/libopenraw/consts.h:
+	* include/libopenraw/exif.h:
+	* lib/crwfile.cpp:
+	* lib/ifdentry.h:
+	* lib/ifdfile.cpp:
+	* lib/metavalue.{h,cpp}:
+	* lib/rawfile.cpp:
+	* lib/tiffepfile.{h,cpp}:
+	* testsuite/testsuite.cpp:
+	* configure.in
+	Fix content detection. 
+	Add to the testsuite for consistency.
+	MetaValue use a boost::variant instead of boost::any.
+	TiffEpFile can now be instanciated.
+
 2008-08-24  Hubert Figuiere  <hub@figuiere.net>
 
 	* testsuite/testsuite.{h,cpp}: 

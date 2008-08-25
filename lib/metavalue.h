@@ -2,6 +2,7 @@
  * libopenraw - metavalue.h
  *
  * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,28 +23,49 @@
 #ifndef _OPENRAW_METAVALUE_H
 #define _OPENRAW_METAVALUE_H
 
-#include <boost/any.hpp>
+#include <boost/variant.hpp>
 #include <libopenraw/types.h>
+
+#include "ifdentry.h"
 
 namespace OpenRaw {
 	
-	class MetaValue
-	{
-	public:
-		MetaValue(const MetaValue &);
-		MetaValue(const boost::any &v);
-		int32_t getInteger() const
-			throw(Internals::BadTypeException);
-		std::string getString() const
-			throw(Internals::BadTypeException);
+class MetaValue
+{
+public:
+    typedef boost::variant<std::string, uint32_t> value_t;
 
-	private:
-		template<typename T> T get() const
-			throw(Internals::BadTypeException);
+    MetaValue(const MetaValue &);
+    template <class T> MetaValue(const T &v)
+        : m_value(v)
+        {
+        }
+    explicit MetaValue(const value_t &v);
+    explicit MetaValue(const Internals::IFDEntry::Ref & e);
 
-		boost::any m_value;
-	};
+    uint32_t getInteger() const
+        throw(Internals::BadTypeException);
+    std::string getString() const
+        throw(Internals::BadTypeException);
+    
+private:
+    template<typename T> T get() const
+        throw(Internals::BadTypeException);
+
+    value_t m_value;
+};
+
 
 }
+
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
 
 #endif

@@ -146,6 +146,10 @@ typedef	enum {
 	EXIF_TAG_IMAGE_UNIQUE_ID		= 0xa420,
 	EXIF_TAG_GAMMA = 0xa500,
 	EXIF_TAG_UNKNOWN_C4A5 = 0xc4a5,
+	/* DNG tags */
+	TIFF_TAG_DNG_VERSION                     = 0xc612,
+
+	/* CR2 tags */
 	EXIF_TAG_CR2_SLICE = 0xc640    /**< Exif tag for CR2 RAW "slices" */
 } ExifTag;
 

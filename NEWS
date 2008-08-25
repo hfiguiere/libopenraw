@@ -17,7 +17,6 @@ libopenraw 0.0.6
   - NEW: testsuite can be overridden with an override file.
   - NEW: testsuite can be bootstrapped to download its files off 
     the internet.
-  - TODO: fix detection by content.
   - TODO: apply the coefficients.
 
 libopenraw 0.0.5
