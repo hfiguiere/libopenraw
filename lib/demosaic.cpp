@@ -35,35 +35,35 @@
 static inline float
 m4 (float a, float b, float c, float d)
 {
-	float t;
+    float t;
 	
-	/* Sort ab */
-	if (a > b)
+    /* Sort ab */
+    if (a > b)
     {
-		t = b;
-		b = a;
-		a = t;
+        t = b;
+        b = a;
+        a = t;
     }
-	/* Sort abc */
-	if (b > c)
+    /* Sort abc */
+    if (b > c)
     {
-		t = c;
-		c = b;
-		if (a > t)
+        t = c;
+        c = b;
+        if (a > t)
         {
-			b = a;
-			a = t;
+            b = a;
+            a = t;
         }
-		else
-			b = t;
+        else
+            b = t;
     }
-	/* Return average of central two elements. */
-	if (d >= c) /* Sorted order would be abcd */
-		return (b + c) / 2.0;
-	else if (d >= a) /* Sorted order would be either abdc or adbc */
-		return (b + d) / 2.0;
-	else /* Sorted order would be dabc */
-		return (a + b) / 2.0;
+    /* Return average of central two elements. */
+    if (d >= c) /* Sorted order would be abcd */
+        return (b + c) / 2.0;
+    else if (d >= a) /* Sorted order would be either abdc or adbc */
+        return (b + d) / 2.0;
+    else /* Sorted order would be dabc */
+        return (a + b) / 2.0;
 }
 
 /* Defines to make the row/col offsets below obvious. */
@@ -75,10 +75,10 @@ extern "C" {
 /* We expect src_extent to have a one pixel border around all four sides
  * of dst_extent.
  */
-void
-or_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-			 or_cfa_pattern pattern, uint8_t *dst)
-{
+    void
+    or_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
+                 or_cfa_pattern pattern, uint8_t *dst)
+    {
 	uint32_t x,y;
 	uint32_t offset, doffset;
 	float *src_buf;
@@ -87,19 +87,19 @@ or_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
 	int npattern = 0;
 	switch(pattern) {
 	case OR_CFA_PATTERN_GRBG:
-		npattern = 0;
-		break;
+            npattern = 0;
+            break;
 	case OR_CFA_PATTERN_BGGR:
-		npattern = 1;
-		break;
+            npattern = 1;
+            break;
 	case OR_CFA_PATTERN_GBRG:
-		npattern = 2;
-		break;
+            npattern = 2;
+            break;
 	case OR_CFA_PATTERN_RGGB:
-		npattern = 3;
-		break;
+            npattern = 3;
+            break;
 	default:
-		break;
+            break;
 	}
 	
 	src_buf = (float*)calloc(src_x * src_y, sizeof(float));
@@ -111,67 +111,78 @@ or_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
 	doffset = 0;
 	for(y = 1 ; y < src_y - 1; y++)
 	{
-		for (x = 1 ; x < src_x - 1; x++)
-		{
-			float red=0.0;
-			float green=0.0;
-			float blue=0.0;
+            for (x = 1 ; x < src_x - 1; x++)
+            {
+                float red=0.0;
+                float green=0.0;
+                float blue=0.0;
 			
-			if ((y + npattern%2)%2==0) {
-				if ((x+npattern/2)%2==1) {
-					/* GRG
-					 * BGB
-					 * GRG
-					 */
-					blue =(src_buf[offset-COL]+src_buf[offset+COL])/2.0;
-					green=src_buf[offset];
-					red  =(src_buf[offset-ROW]+src_buf[offset+ROW])/2.0;
-				}
-				else {
-					/* RGR
-					 * GBG
-					 * RGR
-					 */
-					blue =src_buf[offset];
-					green=m4(src_buf[offset-ROW], src_buf[offset-COL],
-							 src_buf[offset+COL], src_buf[offset+ROW]);
-					red  =m4(src_buf[offset-ROW-COL], src_buf[offset-ROW+COL],
-							 src_buf[offset+ROW-COL], src_buf[offset+ROW+COL]);
-				}
-			}
-			else {
-				if ((x+npattern/2)%2==1) {
-					/* BGB
-					 * GRG
-					 * BGB
-					 */
-					blue =m4(src_buf[offset-ROW-COL], src_buf[offset-ROW+COL],
-							 src_buf[offset+ROW-COL], src_buf[offset+ROW+COL]);
-					green=m4(src_buf[offset-ROW], src_buf[offset-COL],
-							 src_buf[offset+COL], src_buf[offset+ROW]);
-					red  =src_buf[offset];
-				}
-				else {
-					/* GBG
-					 * RGR
-					 * GBG
-					 */
-					blue =(src_buf[offset-ROW]+src_buf[offset+ROW])/2.0;
-					green=src_buf[offset];
-					red  =(src_buf[offset-COL]+src_buf[offset+COL])/2.0;
-				}
-			}
+                if ((y + npattern%2)%2==0) {
+                    if ((x+npattern/2)%2==1) {
+                        /* GRG
+                         * BGB
+                         * GRG
+                         */
+                        blue =(src_buf[offset-COL]+src_buf[offset+COL])/2.0;
+                        green=src_buf[offset];
+                        red  =(src_buf[offset-ROW]+src_buf[offset+ROW])/2.0;
+                    }
+                    else {
+                        /* RGR
+                         * GBG
+                         * RGR
+                         */
+                        blue =src_buf[offset];
+                        green=m4(src_buf[offset-ROW], src_buf[offset-COL],
+                                 src_buf[offset+COL], src_buf[offset+ROW]);
+                        red  =m4(src_buf[offset-ROW-COL], src_buf[offset-ROW+COL],
+                                 src_buf[offset+ROW-COL], src_buf[offset+ROW+COL]);
+                    }
+                }
+                else {
+                    if ((x+npattern/2)%2==1) {
+                        /* BGB
+                         * GRG
+                         * BGB
+                         */
+                        blue =m4(src_buf[offset-ROW-COL], src_buf[offset-ROW+COL],
+                                 src_buf[offset+ROW-COL], src_buf[offset+ROW+COL]);
+                        green=m4(src_buf[offset-ROW], src_buf[offset-COL],
+                                 src_buf[offset+COL], src_buf[offset+ROW]);
+                        red  =src_buf[offset];
+                    }
+                    else {
+                        /* GBG
+                         * RGR
+                         * GBG
+                         */
+                        blue =(src_buf[offset-ROW]+src_buf[offset+ROW])/2.0;
+                        green=src_buf[offset];
+                        red  =(src_buf[offset-COL]+src_buf[offset+COL])/2.0;
+                    }
+                }
 			
-			dst_buf [doffset*3+0] = red / 16.0;
-			dst_buf [doffset*3+1] = green / 16.0;
-			dst_buf [doffset*3+2] = blue / 16.0;
+                dst_buf [doffset*3+0] = red / 16.0;
+                dst_buf [doffset*3+1] = green / 16.0;
+                dst_buf [doffset*3+2] = blue / 16.0;
 			
-			offset++;
-			doffset++;
-		}
-		offset+=2;
-	 }
+                offset++;
+                doffset++;
+            }
+            offset+=2;
+        }
 	std::copy(dst_buf, dst_buf + (src_x * src_y * 3), dst);		
-}
+    }
 
 }
+
+
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
