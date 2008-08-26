@@ -35,173 +35,183 @@ G_MODULE_EXPORT void fill_info (GdkPixbufFormat *info);
 
 static void pixbuf_free(guchar * data, gpointer u)
 {
-        (void)u;
-        free(data);
+    (void)u;
+    free(data);
 }
 
 #if 0
 static GdkPixbuf * 
 gdk_pixbuf__or_image_load(FILE *f, GError **error)
 {
-	(void)f;
-	(void)error;
-	return NULL;
+    (void)f;
+    (void)error;
+    return NULL;
 }
 #endif
 
 
 typedef struct {
-	GdkPixbufModuleSizeFunc     size_func;
-	GdkPixbufModulePreparedFunc prepared_func;
-	GdkPixbufModuleUpdatedFunc  updated_func;
-	gpointer                    user_data;
-	GByteArray                 *data;
+    GdkPixbufModuleSizeFunc     size_func;
+    GdkPixbufModulePreparedFunc prepared_func;
+    GdkPixbufModuleUpdatedFunc  updated_func;
+    gpointer                    user_data;
+    GByteArray                 *data;
 } OrContext;
 
 static gpointer
 gdk_pixbuf__or_image_begin_load (GdkPixbufModuleSizeFunc size_func,
-								 GdkPixbufModulePreparedFunc prepared_func,
-								 GdkPixbufModuleUpdatedFunc  updated_func,
-								 gpointer user_data,
-								 GError **error)
+                                 GdkPixbufModulePreparedFunc prepared_func,
+                                 GdkPixbufModuleUpdatedFunc  updated_func,
+                                 gpointer user_data,
+                                 GError **error)
 {
-	OrContext *context = (OrContext*)calloc(1, sizeof(OrContext));
+    OrContext *context = (OrContext*)calloc(1, sizeof(OrContext));
 
-	(void)error;
+    (void)error;
 
-	context->size_func = size_func;
-	context->prepared_func = prepared_func;
-	context->updated_func = updated_func;
-	context->user_data = user_data;
-	context->data = g_byte_array_new();
+    context->size_func = size_func;
+    context->prepared_func = prepared_func;
+    context->updated_func = updated_func;
+    context->user_data = user_data;
+    context->data = g_byte_array_new();
 
-	return (gpointer)context;
+    return (gpointer)context;
 }
 
 static gboolean
 gdk_pixbuf__or_image_load_increment (gpointer data,
-									 const guchar *buf, guint size,
-									 GError **error)
+                                     const guchar *buf, guint size,
+                                     GError **error)
 {
-	OrContext *context = (OrContext*)data;
-	(void)error;
-	g_byte_array_append (context->data, buf, size);
-	return TRUE;
+    OrContext *context = (OrContext*)data;
+    (void)error;
+    g_byte_array_append (context->data, buf, size);
+    return TRUE;
 }
 
 static gboolean
 gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
 {
-	OrContext *context = (OrContext*)data;
-	gboolean result = FALSE;
+    OrContext *context = (OrContext*)data;
+    gboolean result = FALSE;
 	
-	GdkPixbuf *pixbuf = NULL;
-	ORRawFileRef raw_file = NULL;
-	(void)error;
+    GdkPixbuf *pixbuf = NULL;
+    ORRawFileRef raw_file = NULL;
+    (void)error;
 
-	raw_file = or_rawfile_new_from_memory(context->data->data, context->data->len,
-							   OR_DATA_TYPE_NONE);
+    raw_file = or_rawfile_new_from_memory(context->data->data, context->data->len,
+                                          OR_DATA_TYPE_NONE);
 	
-	if(raw_file) {
-		or_error err;
-		ORRawDataRef rawdata = or_rawdata_new();
+    if(raw_file) {
+        or_error err;
+        ORRawDataRef rawdata = or_rawdata_new();
 /*		int32_t orientation = or_rawfile_get_orientation(raw_file);*/
 
-		err = or_rawfile_get_rawdata(raw_file, rawdata, 0);
-		if(err == OR_ERROR_NONE) {
-			or_cfa_pattern pattern;
-			uint32_t x,y;
-			uint16_t *src;
-			uint8_t *dst;
-			pattern = or_rawdata_get_cfa_pattern(rawdata);
-			x = y = 0;
-			or_rawdata_dimensions(rawdata, &x, &y);
-			dst = (uint8_t*)malloc(sizeof(uint8_t) * 3 * x * y);
-			src = (uint16_t*)or_rawdata_data(rawdata);
-			/* check the size of the data*/
-			or_demosaic(src , x, y, pattern, dst);
-			pixbuf = gdk_pixbuf_new_from_data(dst, GDK_COLORSPACE_RGB,
-											  FALSE, 8, x, y, 
-											  (x - 2) * 3, 
-											  pixbuf_free, NULL);
-		}
-		or_rawdata_release(rawdata);
-		or_rawfile_release(raw_file);
+        err = or_rawfile_get_rawdata(raw_file, rawdata, 0);
+        if(err == OR_ERROR_NONE) {
+            or_cfa_pattern pattern;
+            uint32_t x,y;
+            uint16_t *src;
+            uint8_t *dst;
+            pattern = or_rawdata_get_cfa_pattern(rawdata);
+            x = y = 0;
+            or_rawdata_dimensions(rawdata, &x, &y);
+            dst = (uint8_t*)malloc(sizeof(uint8_t) * 3 * x * y);
+            src = (uint16_t*)or_rawdata_data(rawdata);
+            /* check the size of the data*/
+            or_demosaic(src , x, y, pattern, dst);
+            pixbuf = gdk_pixbuf_new_from_data(dst, GDK_COLORSPACE_RGB,
+                                              FALSE, 8, x, y, 
+                                              (x - 2) * 3, 
+                                              pixbuf_free, NULL);
+        }
+        or_rawdata_release(rawdata);
+        or_rawfile_release(raw_file);
 
-		if (context->prepared_func != NULL) {
-			(*context->prepared_func) (pixbuf, NULL, context->user_data);
-		}
-		if (context->updated_func != NULL) {
-			(*context->updated_func) (pixbuf, 0, 0,
-									   gdk_pixbuf_get_width(pixbuf),
-									   gdk_pixbuf_get_height(pixbuf),
-									   context->user_data);
-		}
-		result = TRUE;
-	}
+        if (context->prepared_func != NULL) {
+            (*context->prepared_func) (pixbuf, NULL, context->user_data);
+        }
+        if (context->updated_func != NULL) {
+            (*context->updated_func) (pixbuf, 0, 0,
+                                      gdk_pixbuf_get_width(pixbuf),
+                                      gdk_pixbuf_get_height(pixbuf),
+                                      context->user_data);
+        }
+        result = TRUE;
+    }
 
 
-	g_byte_array_free(context->data, TRUE);
-	free(context);
-	return result;
+    g_byte_array_free(context->data, TRUE);
+    free(context);
+    return result;
 }
 
 void
 fill_vtable (GdkPixbufModule *module)
 {
-  module->begin_load     = gdk_pixbuf__or_image_begin_load;
-  module->stop_load      = gdk_pixbuf__or_image_stop_load;
-  module->load_increment = gdk_pixbuf__or_image_load_increment;
+    module->begin_load     = gdk_pixbuf__or_image_begin_load;
+    module->stop_load      = gdk_pixbuf__or_image_stop_load;
+    module->load_increment = gdk_pixbuf__or_image_load_increment;
 
-  module->load           = NULL; /*gdk_pixbuf__or_image_load;*/
+    module->load           = NULL; /*gdk_pixbuf__or_image_load;*/
 }
 
 
 void
 fill_info (GdkPixbufFormat *info)
 {
-	static GdkPixbufModulePattern signature[] = {
-		{ "MM \x2a", "  z ", 80 }, /* TIFF */
-		{ "II\x2a \x10   CR\x02 ", "   z zzz   z", 100 }, /* CR2 */
-		{ "II\x2a ", "   z", 80 }, /* TIFF */
-		{ "IIRO", "    ", 100 },   /* ORF */
-		{ " MRM", "z   ", 100 },   /* MRW */
-		{ "II\x1a   HEAPCCDR", "   zzz        ", 100 }, /* CRW */
-		{ NULL, NULL, 0 }
-	};
+    static GdkPixbufModulePattern signature[] = {
+        { "MM \x2a", "  z ", 80 }, /* TIFF */
+        { "II\x2a \x10   CR\x02 ", "   z zzz   z", 100 }, /* CR2 */
+        { "II\x2a ", "   z", 80 }, /* TIFF */
+        { "IIRO", "    ", 100 },   /* ORF */
+        { " MRM", "z   ", 100 },   /* MRW */
+        { "II\x1a   HEAPCCDR", "   zzz        ", 100 }, /* CRW */
+        { NULL, NULL, 0 }
+    };
 	
-	static gchar *mime_types[] = {
-		"image/x-adobe-dng",
-		"image/x-canon-cr2",
-		"image/x-canon-crw",
-		"image/x-nikon-nef",
-		"image/x-olympus-orf",
-		"image/x-pentax-pef",
-		"image/x-sony-arw",
-		"image/x-epson-erf",
-		"image/x-minolta-mrw",
-		NULL
-	};
+    static gchar *mime_types[] = {
+        "image/x-adobe-dng",
+        "image/x-canon-cr2",
+        "image/x-canon-crw",
+        "image/x-nikon-nef",
+        "image/x-olympus-orf",
+        "image/x-pentax-pef",
+        "image/x-sony-arw",
+        "image/x-epson-erf",
+        "image/x-minolta-mrw",
+        NULL
+    };
 	
-	static gchar *extensions[] = {
-		"dng",
-		"cr2",
-		"crw",
-		"nef",
-		"orf",
-		"pef",
-		"arw",
-		"erf",
-		"mrw",
-		NULL
-	};
+    static gchar *extensions[] = {
+        "dng",
+        "cr2",
+        "crw",
+        "nef",
+        "orf",
+        "pef",
+        "arw",
+        "erf",
+        "mrw",
+        NULL
+    };
 	
-	info->name        = "Digital camera RAW";
-	info->signature   = signature;
-	info->description = "Digital camera RAW images loader.";
-	info->mime_types  = mime_types;
-	info->extensions  = extensions;
-	info->flags       = 0;
-	info->license     = "LGPL";
+    info->name        = "Digital camera RAW";
+    info->signature   = signature;
+    info->description = "Digital camera RAW images loader.";
+    info->mime_types  = mime_types;
+    info->extensions  = extensions;
+    info->flags       = 0;
+    info->license     = "LGPL";
 }
 
+
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
