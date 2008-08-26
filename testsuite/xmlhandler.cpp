@@ -40,7 +40,7 @@ namespace xml {
 	{
 	}
 
-	ContextPtr Context::startElement(const int32_t element)
+    ContextPtr Context::startElement(const int32_t /*element*/)
 	{
 		return shared_from_this();
 	}

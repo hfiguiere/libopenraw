@@ -58,7 +58,7 @@ IFDDir::Ref  TiffEpFile::_locateMainIfd()
 }
 	    
 /** TIFF EP files don't have RAW */
-::or_error TiffEpFile::_getRawData(RawData & data, uint32_t options)
+::or_error TiffEpFile::_getRawData(RawData & /*data*/, uint32_t /*options*/)
 {
     return OR_ERROR_NOT_FOUND;
 }

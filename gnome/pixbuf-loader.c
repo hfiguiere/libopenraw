@@ -66,6 +66,9 @@ gdk_pixbuf__or_image_begin_load (GdkPixbufModuleSizeFunc size_func,
 								 GError **error)
 {
 	OrContext *context = (OrContext*)calloc(1, sizeof(OrContext));
+
+	(void)error;
+
 	context->size_func = size_func;
 	context->prepared_func = prepared_func;
 	context->updated_func = updated_func;
@@ -81,6 +84,7 @@ gdk_pixbuf__or_image_load_increment (gpointer data,
 									 GError **error)
 {
 	OrContext *context = (OrContext*)data;
+	(void)error;
 	g_byte_array_append (context->data, buf, size);
 	return TRUE;
 }
@@ -90,9 +94,11 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
 {
 	OrContext *context = (OrContext*)data;
 	gboolean result = FALSE;
-
+	
 	GdkPixbuf *pixbuf = NULL;
 	ORRawFileRef raw_file = NULL;
+	(void)error;
+
 	raw_file = or_rawfile_new_from_memory(context->data->data, context->data->len,
 							   OR_DATA_TYPE_NONE);
 	

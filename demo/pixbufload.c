@@ -49,7 +49,7 @@ main(int argc, char **argv)
 		if(raw_file) {
 			or_error err;
 			ORRawDataRef rawdata = or_rawdata_new();
-			int32_t orientation = or_rawfile_get_orientation(raw_file);
+/*			int32_t orientation = or_rawfile_get_orientation(raw_file);*/
 			
 			err = or_rawfile_get_rawdata(raw_file, rawdata, 0);
 			if(err == OR_ERROR_NONE) {
