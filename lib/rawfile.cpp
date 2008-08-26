@@ -34,6 +34,7 @@
 
 #include <libopenraw/metadata.h>
 #include <libopenraw++/rawfile.h>
+#include <libopenraw++/rawdata.h>
 #include <libopenraw++/thumbnail.h>
 
 #include "io/file.h"
@@ -49,6 +50,7 @@
 #include "mrwfile.h"
 #include "metavalue.h"
 #include "exception.h"
+#include "demosaic.h"
 
 #include "rawfilefactory.h"
 
@@ -373,6 +375,35 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
     ::or_error ret = _getRawData(rawdata, options);
     return ret;
 }	
+
+::or_error RawFile::getRenderedImage(BitmapData & bitmapdata, uint32_t options)
+{
+    RawData rawdata;
+    ::or_error ret = getRawData(rawdata, options);
+    if(ret == OR_ERROR_NONE) {
+        uint32_t x,y;
+        or_cfa_pattern pattern;
+        uint16_t *src;
+        pattern = rawdata.cfaPattern();
+        x = rawdata.x();
+        y = rawdata.y();
+        bitmapdata.setDimensions(x,y);
+        bitmapdata.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
+        uint8_t *dst = (uint8_t *)bitmapdata.allocData(sizeof(uint8_t) * 3 * x * y);
+        /*
+        rawdata.linearize();
+        rawdata.subtractBlack();
+        rawdata.rescale();
+        rawdata.clip();
+        */
+        src = (uint16_t*)rawdata.data();
+
+        /* figure out how the demosaic can be plugged for a different 
+         * algorithm */
+        bimedian_demosaic(src, x, y, pattern, dst);
+    }
+    return ret;
+}
 
 
 int32_t RawFile::getOrientation()

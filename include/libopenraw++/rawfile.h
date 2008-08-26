@@ -35,6 +35,7 @@ class Stream;
 }
 class Thumbnail;
 class RawData;
+class BitmapData;
 class MetaValue;
 
 void init();
@@ -100,7 +101,15 @@ public:
      */
     ::or_error getRawData(RawData & rawdata, uint32_t options);
 
+    /** Get the rendered image
+     * @param bitmapdata the BitmapData to put the image into
+     * @param options the option bits. Pass 0 for now.
+     * @return the error code
+     */
+    ::or_error getRenderedImage(BitmapData & bitmapdata, uint32_t options);    
 
+    /** Get the orientation of the image, using Exif enums.
+     */
     int32_t getOrientation();
 
     const MetaValue *getMetaValue(int32_t meta_index);

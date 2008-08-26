@@ -28,10 +28,12 @@
 extern "C" {
 #endif
 
-/** low level demosaic */
+#if 0
+/** low level demosaic. Use only if you know what you are doing */
 void
 or_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-			 or_cfa_pattern pattern, uint8_t *dst);
+	     or_cfa_pattern pattern, uint8_t *dst);
+#endif
 
 #ifdef __cplusplus
 }

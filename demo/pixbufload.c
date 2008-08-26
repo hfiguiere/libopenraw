@@ -28,8 +28,9 @@
 
 static void pixbuf_free(guchar * data, gpointer u)
 {
-        (void)u;
-        free(data);
+    ORBitmapDataRef b = (ORBitmapDataRef)u;
+    (void)data;
+    or_bitmapdata_release(b);
 }
 
 int
@@ -47,30 +48,20 @@ main(int argc, char **argv)
 		ORRawFileRef raw_file = or_rawfile_new(filename, OR_DATA_TYPE_NONE);
 		
 		if(raw_file) {
-			or_error err;
-			ORRawDataRef rawdata = or_rawdata_new();
-/*			int32_t orientation = or_rawfile_get_orientation(raw_file);*/
-			
-			err = or_rawfile_get_rawdata(raw_file, rawdata, 0);
-			if(err == OR_ERROR_NONE) {
-				or_cfa_pattern pattern;
-				uint32_t x,y;
-				uint16_t *src;
-				uint8_t *dst;
-				pattern = or_rawdata_get_cfa_pattern(rawdata);
-				x = y = 0;
-				or_rawdata_dimensions(rawdata, &x, &y);
-				dst = (uint8_t*)malloc(sizeof(uint8_t) * 3 * x * y);
-				src = (uint16_t*)or_rawdata_data(rawdata);
-				/* check the size of the data*/
-				or_demosaic(src , x, y, pattern, dst);
-				pixbuf = gdk_pixbuf_new_from_data(dst, GDK_COLORSPACE_RGB,
-												  FALSE, 8, x , y , 
-												  ( x - 2 )* 3, 
-												  pixbuf_free, NULL);
-			}
-			or_rawdata_release(rawdata);
-			or_rawfile_release(raw_file);
+		    or_error err;
+		    ORBitmapDataRef bitmapdata = or_bitmapdata_new();
+		    err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
+		    if(err == OR_ERROR_NONE) {
+			uint32_t x,y;
+			x = y = 0;
+			or_bitmapdata_dimensions(bitmapdata, &x, &y);
+			pixbuf = gdk_pixbuf_new_from_data(or_bitmapdata_data(bitmapdata), 
+							  GDK_COLORSPACE_RGB,
+							  FALSE, 8, x , y , 
+							  ( x - 2 )* 3, 
+							  pixbuf_free, bitmapdata);
+		    }
+		    or_rawfile_release(raw_file);
 		}
 		
 		

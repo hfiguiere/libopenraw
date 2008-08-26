@@ -1,7 +1,7 @@
 /*
- * libopenraw - libopenraw.h
+ * libopenraw - bitmapdata.h
  *
- * Copyright (C) 2005-2008 Hubert Figuiere
+ * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -17,32 +17,53 @@
  * License along with this library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-/**
- * @brief the libopenraw public API header
- * @author Hubert Figuiere <hub@figuiere.net>
- */
 
-#ifndef __LIBOPENRAW_H__
-#define __LIBOPENRAW_H__
+
+#ifndef __LIBOPENRAW_BITMAPDATA_H_
+#define __LIBOPENRAW_BITMAPDATA_H_
 
 #include <libopenraw/types.h>
-#include <libopenraw/consts.h>
-#include <libopenraw/io.h>
-#include <libopenraw/thumbnails.h>
-#include <libopenraw/rawdata.h>
-#include <libopenraw/bitmapdata.h>
-#include <libopenraw/rawfile.h>
-#include <libopenraw/debug.h>
-#include <libopenraw/demosaic.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+typedef struct _BitmapData *ORBitmapDataRef;
 
+	
+ORBitmapDataRef
+or_bitmapdata_new(void);
+
+or_error
+or_bitmapdata_release(ORBitmapDataRef bitmapdata);
+
+or_data_type 
+or_bitmapdata_format(ORBitmapDataRef bitmapdata);
+
+void *
+or_bitmapdata_data(ORBitmapDataRef bitmapdata);
+
+size_t
+or_bitmapdata_data_size(ORBitmapDataRef bitmapdata);
+
+void
+or_bitmapdata_dimensions(ORBitmapDataRef bitmapdata, 
+			  uint32_t *x, uint32_t *y);
+
+uint32_t
+or_bitmapdata_bpc(ORBitmapDataRef bitmapdata);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

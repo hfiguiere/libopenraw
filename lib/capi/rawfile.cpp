@@ -25,9 +25,11 @@
 
 
 #include <libopenraw++/rawfile.h>
+#include <libopenraw++/bitmapdata.h>
 
 using OpenRaw::RawFile;
 using OpenRaw::RawData;
+using OpenRaw::BitmapData;
 using OpenRaw::Thumbnail;
 
 extern "C" {
@@ -91,6 +93,15 @@ or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata,
 	RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
 	CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
 	return prawfile->getRawData(*reinterpret_cast<RawData*>(rawdata), options);
+}
+
+or_error
+or_rawfile_get_rendered_image(ORRawFileRef rawfile, ORBitmapDataRef bitmapdata,
+			      uint32_t options)
+{
+	RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
+	CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
+	return prawfile->getRenderedImage(*reinterpret_cast<BitmapData*>(bitmapdata), options);
 }
 
 int32_t

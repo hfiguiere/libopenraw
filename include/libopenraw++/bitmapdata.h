@@ -56,7 +56,7 @@ namespace OpenRaw {
 		/** set bit per channel */
 		void setBpc(uint32_t _bpc);
 
-		/** set the pixel dimensions of the thumbnail */
+		/** set the pixel dimensions of the bitmap */
 		virtual void setDimensions(uint32_t x, uint32_t y);
 
 	private:

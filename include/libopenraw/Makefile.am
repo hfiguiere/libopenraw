@@ -7,4 +7,5 @@ libopenraw_HEADERS = libopenraw.h \
 	consts.h debug.h \
 	thumbnails.h rawdata.h \
 	rawfile.h exif.h metadata.h \
-	demosaic.h
+	demosaic.h bitmapdata.h \
+	$(NULL)

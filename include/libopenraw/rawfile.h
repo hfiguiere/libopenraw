@@ -27,6 +27,7 @@
 #include <libopenraw/rawdata.h>
 #include <libopenraw/thumbnails.h>
 #include <libopenraw/metadata.h>
+#include <libopenraw/bitmapdata.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,6 +66,15 @@ or_error
 or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata, 
 						   uint32_t options);
 
+/** Get the rendered image from the raw data 
+ * @param rawdata the preallocated bitmap data.
+ * @param options option for rendering. Pass 0 for now.
+ */
+or_error
+or_rawfile_get_rendered_image(ORRawFileRef rawfile, ORBitmapDataRef rawdata,
+			      uint32_t options);
+
+
 /** Get the orientation, This is a convenience method.
  * @param rawfile the RAW file object.
  * @return the orienation using EXIF semantics. If
@@ -96,3 +106,12 @@ or_rawfile_get_xmp(ORRawFileRef rawfile);
 #endif
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

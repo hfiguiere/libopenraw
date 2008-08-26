@@ -85,4 +85,5 @@ libopenraw_la_SOURCES = \
 	crwdecompressor.cpp \
 	metavalue.cpp \
 	unpack.cpp \
-	demosaic.cpp
+	bimedian_demosaic.cpp demosaic.h \
+	$(NULL)

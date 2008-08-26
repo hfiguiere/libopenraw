@@ -1,3 +1,28 @@
+2008-08-26  Hubert Figuiere  <hfiguiere@novell.com>
+
+	* demo/pixbufload.c:
+	* gnome/pixbuf-loader.c:
+	* include/libopenraw++/bitmapdata.h:
+	* include/libopenraw++/rawfile.h
+	* include/libopenraw/Makefile.am:
+	* include/libopenraw/bitmapdata.h:
+	* include/libopenraw/demosaic.h:
+	* include/libopenraw/libopenraw.h:
+	* include/libopenraw/rawfile.h:
+	* lib/Makefile.am:
+	* lib/bimedian_demosaic.cpp:
+	* lib/capi/Makefile.am:
+	* lib/capi/bitmapdata.cpp:
+	* lib/capi/rawfile.cpp:
+	* lib/demosaic.h:
+	* lib/rawfile.cpp: 
+	Reorganize demosaic support.
+	Remove or_demosaic from the public API.
+	Add API for "rendering" to RawFile and the corresponding
+	C API.
+	Expose BitmapData as a result.
+	Fix the demo and GNOME support to use that new API.
+
 2008-08-25  Hubert Figuiere  <hfiguiere@novell.com>
 
 	* include/libopenraw++/rawfile.h:
