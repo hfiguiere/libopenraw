@@ -11,9 +11,10 @@ Prerequistes to build:
 
     - a C++ compiler (tested on gcc 3.3 and up)
     - libboost 1.33.1 (Boost.Bind, Boost.Smart_pointer, 
-      Boost.String, Boost.Any, Boost.Test
+      Boost.String, Boost.Test, Boost.Variant)
     - libjpeg
     - libxml > 2.5.0 (for the test suite)
+    - libcurl (option for the test suite bootstrap)
 
 If building from the git tree you also need:
 
@@ -188,10 +189,6 @@ There is a test suite driven by an XML file. It require you to provide
 your own RAW files and configure it.  testsuite/testsuite.xml is an
 example of valid XML configuration file that works on my local
 machine.
-
-TODO: most of these files have been downloaded off the
-internet. Enhance the testsuite to allow downloading the files off the
-internet prior to running.
 
 TODO2: provide a better description of the test file.
 

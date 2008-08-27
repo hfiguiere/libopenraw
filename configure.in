@@ -187,5 +187,6 @@ demo/Makefile
 echo "
 Options:
 
-  Gnome support:     ${HAVE_GNOME}
+  Gnome support:        ${HAVE_GNOME}
+  Testsuite booststrap: ${HAVE_CURL}
 "
