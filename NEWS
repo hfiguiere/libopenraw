@@ -2,7 +2,8 @@ libopenraw 0.0.6
 
   - LICENSE change to LGPLv3+
   - BUG: cfa output should write the data in PGM as big endian.
-  - BUG: missing include in demo/cfa.cpp breaking on gcc 4.3
+  - BUG: added missing includes breaking on gcc 4.3 and other platforms.
+    (Closes bug #18243).
   - BUG: better handling of Canon CR2 "slices" to fix crasher
     with Canon 450D/Digital Rebel XSi files (and possibly others).
   - NEW: API or_rawfile_new_from_memory() to load a Raw file from
