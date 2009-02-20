@@ -18,6 +18,7 @@ config.sub
 config.log
 config.status
 config.h.in
+config.h
 configure
 autogen.err
 missing
@@ -25,11 +26,16 @@ ltmain.sh
 libtool
 install-sh
 depcomp
+shave
+shave-libtool
 *.pc
 demo/ccfa
 demo/cfa
 demo/gdk
+demo/extensions
+demo/pixbufload
 lib/io/teststream
 test/ljpegtest
 testsuite/testsuitetags.h
 testsuite/testsuitetags.cpp
+testsuite/testsuite

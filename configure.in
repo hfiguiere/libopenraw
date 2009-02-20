@@ -4,6 +4,7 @@ dnl written by Hubert Figuiere
 AC_PREREQ(2.50)
 AC_INIT(include/libopenraw/libopenraw.h)
 AM_CONFIG_HEADER(config.h)
+AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE(libopenraw, 0.0.6)
 AM_MAINTAINER_MODE
 
@@ -107,7 +108,7 @@ PKG_CHECK_MODULES(LIBXML, libxml-2.0 >= 2.5.0)
 PKG_CHECK_MODULES(CURL, libcurl,
 			[AC_DEFINE(HAVE_CURL, 1, [Define to 1 to enable CURL support for testsuite])
 			HAVE_CURL=yes],
-			[HAVE_CURL=bo])
+			[HAVE_CURL=no])
 
 #
 dnl do we want GNOME ?
@@ -160,9 +161,12 @@ CXXFLAGS="$CXXFLAGS -ansi -pedantic -g -Wall -Wshadow"
 CFLAGS="$CFLAGS -pedantic -g -Wall"
 
 
+SHAVE_INIT
 
 AC_OUTPUT([
 Makefile
+shave
+shave-libtool
 include/Makefile
 include/libopenraw/Makefile
 include/libopenraw++/Makefile
