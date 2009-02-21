@@ -34,10 +34,10 @@ dnl ---------------------------------------------------------------------------
 dnl version 0.0.3 is 3 2 0
 dnl version 0.0.4 is 4 3 0
 dnl version 0.0.5 is 5 4 0 
-dnl version 0.0.6 is
+dnl version 0.0.6 is 6 5 0
 AC_SUBST([LIBOPENRAW_REVISION], [0])
-AC_SUBST([LIBOPENRAW_AGE],      [4])
-AC_SUBST([LIBOPENRAW_CURRENT],  [5])
+AC_SUBST([LIBOPENRAW_AGE],      [5])
+AC_SUBST([LIBOPENRAW_CURRENT],  [6])
 AC_SUBST([LIBOPENRAW_CURRENT_MIN],
          [`expr $LIBOPENRAW_CURRENT - $LIBOPENRAW_AGE`])
 AC_SUBST([LIBOPENRAW_VERSION_INFO],
