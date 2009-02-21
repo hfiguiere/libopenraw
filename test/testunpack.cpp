@@ -1,6 +1,7 @@
 /* -*- tab-width:4; indent-tabs-mode:'t c-file-style:"stroustrup" -*- */
 /*
  * Copyright (C) 2008 Novell, Inc.
+ * Copyright (C) 2009 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,15 +19,13 @@
  */
 
 
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/minimal.hpp>
 
 #include "unpack.h"
 #include "ifd.h"
 
-using boost::unit_test::test_suite;
 
-
-void test_unpack()
+int test_unpack()
 {
 	const uint8_t packed[32] = {0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF,
 								0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0x00,
@@ -39,22 +38,23 @@ void test_unpack()
 
 	size_t s = unpack.unpack_be12to16((uint8_t*)unpacked, packed,
 									  sizeof(packed));
-	BOOST_CHECK_EQUAL(s, size_t(sizeof(unpacked)));
+	BOOST_CHECK(s = size_t(sizeof(unpacked)));
 	for (size_t i = 0; i < 2; ++i) {
-		BOOST_CHECK_EQUAL(unpacked[10 * i + 0], 0x0123);
-		BOOST_CHECK_EQUAL(unpacked[10 * i + 1], 0x0456);
-		BOOST_CHECK_EQUAL(unpacked[10 * i + 2], 0x0789);
-		BOOST_CHECK_EQUAL(unpacked[10 * i + 3], 0x00AB);
-		BOOST_CHECK_EQUAL(unpacked[10 * i + 4], 0x0CDE);
-		BOOST_CHECK_EQUAL(unpacked[10 * i + 5], 0x0F12);
-		BOOST_CHECK_EQUAL(unpacked[10 * i + 6], 0x0345);
-		BOOST_CHECK_EQUAL(unpacked[10 * i + 7], 0x0678);
-		BOOST_CHECK_EQUAL(unpacked[10 * i + 8], 0x090A);
-		BOOST_CHECK_EQUAL(unpacked[10 * i + 9], 0x0BCD);
+		BOOST_CHECK(unpacked[10 * i + 0] == 0x0123);
+		BOOST_CHECK(unpacked[10 * i + 1] == 0x0456);
+		BOOST_CHECK(unpacked[10 * i + 2] == 0x0789);
+		BOOST_CHECK(unpacked[10 * i + 3] == 0x00AB);
+		BOOST_CHECK(unpacked[10 * i + 4] == 0x0CDE);
+		BOOST_CHECK(unpacked[10 * i + 5] == 0x0F12);
+		BOOST_CHECK(unpacked[10 * i + 6] == 0x0345);
+		BOOST_CHECK(unpacked[10 * i + 7] == 0x0678);
+		BOOST_CHECK(unpacked[10 * i + 8] == 0x090A);
+		BOOST_CHECK(unpacked[10 * i + 9] == 0x0BCD);
 	}
+	return 0;
 }
 
-void test_unpack2()
+int test_unpack2()
 {
 	const uint8_t packed[3] = {0x12, 0x34, 0x56};
 	uint16_t unpacked[2];
@@ -64,18 +64,15 @@ void test_unpack2()
 
 	size_t s = unpack.unpack_be12to16((uint8_t*)unpacked, packed,
 									  sizeof(packed));
-	BOOST_CHECK_EQUAL(s, size_t(sizeof(unpacked)));
-	BOOST_CHECK_EQUAL(unpacked[0], 0x0123);
-	BOOST_CHECK_EQUAL(unpacked[1], 0x0456);
+	BOOST_CHECK(s == size_t(sizeof(unpacked)));
+	BOOST_CHECK(unpacked[0] == 0x0123);
+	BOOST_CHECK(unpacked[1] == 0x0456);
+	return 0;
 }
 
-test_suite*
-init_unit_test_suite( int /*argc*/, char ** /*argv*/ ) 
+int test_main( int /*argc*/, char * /*argv*/[] ) 
 {
-	test_suite* test = BOOST_TEST_SUITE("test unpack");
-	
-	test->add(BOOST_TEST_CASE(&test_unpack));
-	test->add(BOOST_TEST_CASE(&test_unpack2));
-
-	return test;
+	test_unpack();
+	test_unpack2();
+	return 0;
 }

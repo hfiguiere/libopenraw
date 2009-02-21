@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007, 2009 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,7 +20,7 @@
 
 #include <string>
 
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/minimal.hpp>
 #include <boost/crc.hpp>      // for boost::crc_basic, boost::crc_optimal
 
 #include <libopenraw++/rawdata.h>
@@ -31,7 +31,6 @@
 #include "ljpegdecompressor.h"
 #include "ljpegdecompressor_priv.h"
 
-using boost::unit_test::test_suite;
 using OpenRaw::RawData;
 using OpenRaw::IO::File;
 
@@ -39,34 +38,8 @@ std::string g_testfile;
 
 using namespace OpenRaw::Internals;
 
-void test_ljpeg()
+int test_main(int argc, char *argv[])
 {
-	RawData *decompData;
-	File *s = new File(g_testfile.c_str());
-	RawContainer *container = new JFIFContainer(s, 0);
-
-	LJpegDecompressor decompressor(s, container);
-
-	decompData = decompressor.decompress();
-
-	boost::crc_optimal<8, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
-	const uint8_t * data = static_cast<uint8_t *>(decompData->data());
-	size_t data_len = decompData->size();
-	crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
-	BOOST_CHECK_EQUAL(crc_ccitt2(), 0x49);
-
-	delete decompData;
-	delete container;
-	delete s;
-}
-
-
-
-test_suite*
-init_unit_test_suite( int argc, char * argv[] ) 
-{
-	test_suite* test = BOOST_TEST_SUITE("test ljpeg");
-	
 	if (argc == 1) {
 		// no argument, lets run like we are in "check"
 		const char * srcdir = getenv("srcdir");
@@ -79,7 +52,25 @@ init_unit_test_suite( int argc, char * argv[] )
 		g_testfile = argv[1];
 	}
 	
-	test->add(BOOST_TEST_CASE(&test_ljpeg));
 
-	return test;
+	RawData *decompData;
+	File *s = new File(g_testfile.c_str());
+	RawContainer *container = new JFIFContainer(s, 0);
+
+	LJpegDecompressor decompressor(s, container);
+
+	decompData = decompressor.decompress();
+
+	boost::crc_optimal<8, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
+	const uint8_t * data = static_cast<uint8_t *>(decompData->data());
+	size_t data_len = decompData->size();
+	crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
+	BOOST_CHECK(crc_ccitt2() == 0x49);
+
+	delete decompData;
+	delete container;
+	delete s;
+
+	return 0;
 }
+
