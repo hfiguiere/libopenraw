@@ -36,6 +36,9 @@ demo/extensions
 demo/pixbufload
 lib/io/teststream
 test/ljpegtest
+test/extensions
+test/testunpack
+testsuite/test_xmlhandler
 testsuite/testsuitetags.h
 testsuite/testsuitetags.cpp
 testsuite/testsuite
