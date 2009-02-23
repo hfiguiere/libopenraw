@@ -7,6 +7,9 @@
 	* testsuite/testsuite.cpp
 	Remove some warnings with more strict compile options.
 
+	* configure.in
+	Bump the version to 0.0.7
+	
 === 0.0.6 ===
 
 2009-02-21  Hubert Figuiere  <hub@figuiere.net>

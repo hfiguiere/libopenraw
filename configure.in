@@ -5,7 +5,7 @@ AC_PREREQ(2.50)
 AC_INIT(include/libopenraw/libopenraw.h)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE(libopenraw, 0.0.6)
+AM_INIT_AUTOMAKE(libopenraw, 0.0.7)
 AM_MAINTAINER_MODE
 
 
@@ -35,6 +35,7 @@ dnl version 0.0.3 is 3 2 0
 dnl version 0.0.4 is 4 3 0
 dnl version 0.0.5 is 5 4 0 
 dnl version 0.0.6 is 6 5 0
+dnl version 0.0.7 
 AC_SUBST([LIBOPENRAW_REVISION], [0])
 AC_SUBST([LIBOPENRAW_AGE],      [5])
 AC_SUBST([LIBOPENRAW_CURRENT],  [6])

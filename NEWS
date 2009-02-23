@@ -1,3 +1,7 @@
+libopenraw 0.0.7
+
+  - BUG: fix some warnings in the test and demo programs.
+
 libopenraw 0.0.6
 
   - LICENSE change to LGPLv3+
