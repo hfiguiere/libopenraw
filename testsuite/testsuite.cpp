@@ -1,7 +1,7 @@
 /*
  * libopenraw - testsuite.cpp
  *
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008-2009 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -812,8 +812,8 @@ int TestSuite::bootstrap(const std::string & overrides_file,
     return 0;
 }
 #else
-int TestSuite::bootstrap(const std::string & overrides_file,
-                         const std::string & download_dir)
+int TestSuite::bootstrap(const std::string & /*overrides_file*/,
+                         const std::string & /*download_dir*/)
 {
     return 1;
 }

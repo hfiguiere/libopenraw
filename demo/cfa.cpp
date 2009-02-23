@@ -1,7 +1,7 @@
 /*
  * libopenraw - cfa.cpp
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007, 2009 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -54,6 +54,7 @@ main(int argc, char** argv)
 	OpenRaw::init();
 	or_debug_set_level(DEBUG2);
 	FILE * f;
+	size_t written_size;
 
 	scoped_ptr<OpenRaw::RawFile> raw_file(OpenRaw::RawFile::newRawFile(argv[optind]));
 
@@ -87,12 +88,15 @@ main(int argc, char** argv)
             p[i * 2]   = hi;
             p[i * 2 + 1] = lo;
         }
-		fwrite(buf, 1, rdata.size(), f);
+		written_size = fwrite(buf, 1, rdata.size(), f);
 		free(buf);
     }
 	else {
-		fwrite(rdata.data(), 1, rdata.size(), f);
+		written_size = fwrite(rdata.data(), 1, rdata.size(), f);
 	}
+		if (written_size != rdata.size()) {
+			printf("short write\n");
+		}
 	fclose(f);
 	
 	return 0;

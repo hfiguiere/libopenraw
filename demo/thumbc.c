@@ -58,6 +58,7 @@ main(int argc, char **argv)
 		void *thumbnailData;
 		or_data_type thumbnailFormat;
 		size_t dataSize;
+		size_t writtenSize;
 		FILE *output;
 		uint32_t x, y;
 		or_error err;
@@ -91,7 +92,10 @@ main(int argc, char **argv)
 				fprintf(output, "%u\n%u\n", x, y);
 				fprintf(output, "%d\n", 255);
 			}
-			fwrite(thumbnailData, dataSize, 1, output);
+			writtenSize = fwrite(thumbnailData, dataSize, 1, output);
+			if(writtenSize != dataSize) {
+				printf("short write\n");
+			}
 			fclose(output);
 			printf("output %u bytes in '%s'\n", dataSize, outfname);
 			err = or_thumbnail_release(thumbnail);

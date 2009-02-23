@@ -1,7 +1,7 @@
 /*
  * libopenraw - thumbcpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006, 2009 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -65,11 +65,15 @@ main(int argc, char** argv)
 		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
 																	  160, err));
 		if (thumb != NULL) {
+			size_t s;
 			std::cerr << "thumb data size =" << thumb->size() << std::endl;
 			std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
 			
 			f = fopen("thumb.jpg", "wb");
-			fwrite(thumb->data(), 1, thumb->size(), f);
+			s = fwrite(thumb->data(), 1, thumb->size(), f);
+			if(s != thumb->size()) {
+				std::cerr << "short write of " << s << " bytes\n";
+			}
 			fclose(f);
 		}
 		else {
@@ -82,11 +86,15 @@ main(int argc, char** argv)
 																	  640, err));
 		
 		if (thumb != NULL) {
+			size_t s;
 			std::cerr << "thumb data size =" << thumb->size() << std::endl;
 			std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
 			
 			f = fopen("thumbl.jpg", "wb");
-			fwrite(thumb->data(), 1, thumb->size(), f);
+			s = fwrite(thumb->data(), 1, thumb->size(), f);
+			if(s != thumb->size()) {
+				std::cerr << "short write of " << s << " bytes\n";
+			}
 			fclose(f);
 		}
 		else {
@@ -98,11 +106,15 @@ main(int argc, char** argv)
 		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
 																	  2048, err));
 		if (thumb != NULL) {
+			size_t s;
 			std::cerr << "preview data size =" << thumb->size() << std::endl;
 			std::cerr << "preview data type =" << thumb->dataType() << std::endl;
 			
 			f = fopen("preview.jpg", "wb");
-			fwrite(thumb->data(), 1, thumb->size(), f);
+			s = fwrite(thumb->data(), 1, thumb->size(), f);
+			if(s != thumb->size()) {
+				std::cerr << "short write of " << s << " bytes\n";
+			}
 			fclose(f);
 		}
 		else {

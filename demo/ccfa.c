@@ -38,6 +38,7 @@ main(int argc, char** argv)
 	uint32_t options;
 	FILE *f;
 	int keepCompressed = 0;
+	size_t written_size;
 
 	if (argc < 2) {
 		fprintf(stderr, "missing parameter\n");
@@ -86,11 +87,18 @@ main(int argc, char** argv)
             p[i * 2]   = hi;
             p[i * 2 + 1] = lo;
         }
-		fwrite(buf, 1, size, f);
+		written_size = fwrite(buf, 1, size, f);
 		free(buf);
+		if(written_size != size) {
+			printf("short read\n");
+		}
     }
 	else {
-		fwrite(or_rawdata_data(rawdata), 1, or_rawdata_data_size(rawdata), f);
+		size_t size = or_rawdata_data_size(rawdata);
+		written_size = fwrite(or_rawdata_data(rawdata), 1, size, f);
+		if(written_size != size) {
+			printf("short read\n");
+		}
 	}
 	fclose(f);
 

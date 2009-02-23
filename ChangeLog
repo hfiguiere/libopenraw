@@ -1,3 +1,14 @@
+2009-02-23  Hubert Figuiere  <hub@figuiere.net>
+
+	* demo/ccfa.c
+	* demo/cfa.cpp
+	* demo/thumb.cpp
+	* demo/thumbc.c
+	* testsuite/testsuite.cpp
+	Remove some warnings with more strict compile options.
+
+=== 0.0.6 ===
+
 2009-02-21  Hubert Figuiere  <hub@figuiere.net>
 
 	* test/testunpack.cpp: 
