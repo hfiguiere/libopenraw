@@ -1,5 +1,7 @@
 2009-04-28  Hubert Figuiere  <hub@figuiere.net>
 
+	* configure.in: Set the sorevision.
+
 	* lib/bimedian_demosaic.cpp (bimedian_demosaic): 
 	Fix a huge memory leak. Closes #21435
 
