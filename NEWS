@@ -1,6 +1,9 @@
 libopenraw 0.0.7
 
-  - BUG: fix some warnings in the test and demo programs.
+Bug fixes:
+
+  - fix some warnings in the test and demo programs.
+  - fix a huge memory leak (Closes #21435) (Priit Laes)
 
 libopenraw 0.0.6
 

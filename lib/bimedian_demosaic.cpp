@@ -20,7 +20,7 @@
  * Copyright 2008 Bradley Broom <bmbroom@gmail.com>
  *
  * In libopenraw:
- * Copyright 2008 Hubert Figuiere <hub@figuiere.net>
+ * Copyright 2008-2009 Hubert Figuiere <hub@figuiere.net>
  * Copyright 2008 Novell Inc.
  */
 
@@ -177,6 +177,8 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
         offset+=2;
     }
     std::copy(dst_buf, dst_buf + (src_x * src_y * 3), dst);		
+    free(src_buf);
+    free(dst_buf);
 }
 
 

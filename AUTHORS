@@ -7,3 +7,17 @@ Python bindings:   Brian Quinlan
 Sponsors:
 Novell sponsored time to work on libopenraw as part of their ITO programme 
 (and HackWeek in February 2008)
+
+This library contains portions with the following copyright:
+ljpegdecompressor.cpp:
+ * Copyright (C) 1991, 1992, Thomas G. Lane.
+ * Part of the Independent JPEG Group's software.
+ * See the file Copyright for more details.
+ *
+ * Copyright (c) 1993 Brian C. Smith, The Regents of the University
+ * of California
+ * All rights reserved.
+ * 
+ * Copyright (c) 1994 Kongji Huang and Brian C. Smith.
+ * Cornell University
+ * All rights reserved.

@@ -1,3 +1,8 @@
+2009-04-28  Hubert Figuiere  <hub@figuiere.net>
+
+	* lib/bimedian_demosaic.cpp (bimedian_demosaic): 
+	Fix a huge memory leak. Closes #21435
+
 2009-02-23  Hubert Figuiere  <hub@figuiere.net>
 
 	* demo/ccfa.c
