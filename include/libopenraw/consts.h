@@ -1,7 +1,7 @@
 /*
  * libopenraw - consts.h
  *
- * Copyright (C) 2005-2008 Hubert Figuiere
+ * Copyright (C) 2005-2009 Hubert Figuiere
  * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -26,6 +26,7 @@
 #ifndef __LIBOPENRAW_CONSTS_H__
 #define __LIBOPENRAW_CONSTS_H__
 
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {

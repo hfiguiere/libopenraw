@@ -1,5 +1,9 @@
 libopenraw 0.0.8
 
+Bug fixes:
+
+  - includes missing for gcc 4.4
+
 libopenraw 0.0.7
 
 Bug fixes:

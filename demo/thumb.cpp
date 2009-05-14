@@ -19,6 +19,7 @@
  */
 
 
+#include <stdio.h>
 
 #include <iostream>
 #include <libopenraw/libopenraw.h>

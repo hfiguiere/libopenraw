@@ -1,3 +1,13 @@
+2009-05-13  Hubert Figuiere  <hub@figuiere.net>
+
+	* include/libopenraw/consts.h: 
+	* demo/cfa.cpp:
+	* demo/thumb.cpp:
+	Missing includes for gcc 4.4
+
+	* demo/Makefile.am:
+	Some autoconf magic fixing.
+
 === 0.0.7 ===
 	
 2009-04-28  Hubert Figuiere  <hub@figuiere.net>

@@ -6,7 +6,9 @@ endif
 
 noinst_PROGRAMS = extensions thumb thumbc cfa ccfa $(GNOME_BINARIES)
 
-INCLUDES = -I$(top_srcdir)/include  -I$(top_srcdir)/gnome/include
+INCLUDES = -I$(top_srcdir)/include  -I$(top_srcdir)/gnome/include \
+	@LIBGDKPIXBUF_CFLAGS@
+
 LIBOPENRAW_LIBS = ../lib/libopenraw.la -lstdc++ -ljpeg
 LIBOPENRAWGNOME_LIBS = ../gnome/libopenrawgnome.la -lstdc++ -ljpeg \
 	@LIBGDKPIXBUF_LIBS@
@@ -32,11 +34,9 @@ ccfa_LDADD = $(LIBOPENRAW_LIBS)
 ccfa_LDFLAGS = -L$(top_builddir)/lib -static
 
 gdk_SOURCES = gdk.c
-gdk_CPPFLAGS = @LIBGDKPIXBUF_CFLAGS@
 gdk_LDADD = $(LIBOPENRAWGNOME_LIBS)
 gdk_LDFLAGS = -L$(top_builddir)/gnome -static
 
 pixbufload_SOURCES = pixbufload.c
-pixbufload_CPPFLAGS = @LIBGDKPIXBUF_CFLAGS@
 pixbufload_LDADD = $(LIBOPENRAWGNOME_LIBS)
 pixbufload_LDFLAGS = -L$(top_builddir)/gnome -static
