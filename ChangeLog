@@ -1,5 +1,9 @@
 2009-05-15  Hubert Figuiere  <hub@figuiere.net>
 
+	Bump to 0.0.8
+	
+	* configure.in
+
 	Fix crash in the factory extension list code.
 	
 	* lib/rawfilefactory.cpp

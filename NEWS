@@ -3,6 +3,7 @@ libopenraw 0.0.8
 Bug fixes:
 
   - includes missing for gcc 4.4
+  - Fix crash in or_get_file_extensions()
 
 libopenraw 0.0.7
 
