@@ -75,8 +75,7 @@ const char **RawFileFactory::fileExtensions()
     if(!_fileExtensions) {
         Extensions & ext = extensions();
         size_t s = ext.size();
-        _fileExtensions = (const char**)malloc(s + 1);
-        _fileExtensions[s] = NULL;
+        _fileExtensions = (const char**)calloc((s + 1), sizeof(char*));
         const char **current = _fileExtensions;
         Extensions::const_iterator iter(ext.begin());
         for ( ; iter != ext.end(); ++iter) {
