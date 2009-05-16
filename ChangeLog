@@ -1,3 +1,11 @@
+2009-05-16  Hubert Figuiere  <hub@figuiere.net>
+
+	make dist to generate a bz2 archive.
+	
+	* configure.in
+
+=== 0.0.8 ===
+
 2009-05-15  Hubert Figuiere  <hub@figuiere.net>
 
 	Bump to 0.0.8

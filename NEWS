@@ -1,3 +1,10 @@
+libopenraw 0.0.9
+
+New features:
+
+  - make dist make a bzip2 archive too (build only).
+    
+
 libopenraw 0.0.8
 
 Bug fixes:
