@@ -112,6 +112,7 @@ PKG_CHECK_MODULES(CURL, libcurl,
 			[AC_DEFINE(HAVE_CURL, 1, [Define to 1 to enable CURL support for testsuite])
 			HAVE_CURL=yes],
 			[HAVE_CURL=no])
+AC_CHECK_FUNCS_ONCE(get_current_dir_name)
 
 #
 dnl do we want GNOME ?

@@ -853,7 +853,12 @@ int main(int argc, char ** argv)
             break;
         case 'd':
             if(optarg[0] != '/') {
+#ifdef HAVE_GET_CURRENT_DIR_NAME
                 char * dir = get_current_dir_name();
+#else
+                char * dir = (char *) malloc(PATH_MAX * sizeof(char));
+                getcwd(dir, PATH_MAX);
+#endif
                 download_dir = dir;
                 download_dir += '/';
                 download_dir += optarg;

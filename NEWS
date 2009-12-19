@@ -4,7 +4,10 @@ New features:
 
   - make dist make a bzip2 archive too (build only).
     
+Bug fixes:
 
+  - Check for get_current_dir_name() (Closes #24088)
+  
 libopenraw 0.0.8
 
 Bug fixes:
