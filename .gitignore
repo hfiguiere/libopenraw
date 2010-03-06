@@ -34,6 +34,7 @@ demo/cfa
 demo/gdk
 demo/extensions
 demo/pixbufload
+demo/ppmload
 lib/io/teststream
 test/ljpegtest
 test/extensions
