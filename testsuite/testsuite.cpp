@@ -26,6 +26,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -655,10 +656,10 @@ void set_file_override(xmlNode *test, const std::string & path)
 
 
 #if HAVE_CURL
-std::string download(const std::string & source, CURL* handle,
-                     const std::string & download_dir)
+int download(const std::string & source, CURL* handle,
+                     const std::string & download_dir, std::string & dest)
 {
-    std::string dest;
+    dest = "";
     FILE *fp = NULL;
 
     const char * s = source.c_str();
@@ -679,6 +680,11 @@ std::string download(const std::string & source, CURL* handle,
             
             fp = fopen(dest.c_str(), "wb");
             
+            if(fp == NULL) {
+                std::cout << " File Error " << strerror(errno) << std::endl;
+                dest = "";
+                return -1;
+            }
             curl_easy_setopt(handle, CURLOPT_WRITEDATA, fp);
             curl_easy_setopt(handle, CURLOPT_URL, source.c_str());
             error = curl_easy_perform(handle);
@@ -691,13 +697,14 @@ std::string download(const std::string & source, CURL* handle,
                 std::cout << " CURL Error " << error << std::endl;
                 unlink(dest.c_str());
                 dest = "";
+                return -1;
             }
         }
         else {
             std::cout << dest << " exists." << std::endl;
         }
     }
-    return dest;
+    return 0;
 }
 #endif
 
@@ -729,10 +736,10 @@ void TestSuite::walk_tests(xmlNode * testsuite, CURL* handle,
     std::map<std::string, Test::Ptr>::const_iterator iter(m_tests.begin());
     for( ; iter != m_tests.end(); iter++) {
         std::string n = iter->first;
-        std::string dest = download(iter->second->source(), handle, 
-                                    download_dir);
+        std::string dest;
+        int ret = download(iter->second->source(), handle, download_dir, dest);
 
-        if(!dest.empty()) {
+        if(ret == 0 && !dest.empty()) {
             xmlNode * test2 = NULL;
             std::map<std::string, xmlNode *>::iterator iter2 
                 = overrides.find(n);
