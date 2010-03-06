@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.cpp
  *
- * Copyright (C) 2006, 2008 Hubert Figuiere
+ * Copyright (C) 2006, 2008, 2010 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -77,7 +77,7 @@ namespace OpenRaw {
 
 		IFDDir::Ref  ORFFile::_locateCfaIfd()
 		{
-			// in PEF the CFA IFD is the main IFD
+			// in ORF the CFA IFD is the main IFD
 			if(!m_mainIfd) {
 				m_mainIfd = _locateMainIfd();
 			}
@@ -92,12 +92,37 @@ namespace OpenRaw {
 
 
 		
-		::or_error ORFFile::_getRawData(RawData & data, uint32_t /*options*/)
+		::or_error ORFFile::_getRawData(RawData & data, uint32_t options)
 		{
+			::or_error err;
 			if(!m_cfaIfd) {
 				m_cfaIfd = _locateCfaIfd();
 			}
-			return _getRawDataFromDir(data, m_cfaIfd);
+			err = _getRawDataFromDir(data, m_cfaIfd);
+			if(err == OR_ERROR_NONE) {
+				// ORF files seems to be marked as uncompressed even if they are.
+				uint32_t x = data.x();
+				uint32_t y = data.y();
+				uint16_t compression = 0;
+				if(data.size() < x * y * 2) {
+                    compression = 65535;
+                    data.setCompression(65535);
+					data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+				}
+                else {
+                    compression = data.compression();
+                }
+                switch(compression) {
+                case 65535:
+                    if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
+                        // TODO decompress
+                    }
+					break;
+				default:
+					break;
+				}
+			}
+			return err;
 		}
 
 	}

@@ -346,6 +346,42 @@
     </results>
   </test>
   <test>
+    <name>ORF-test E330</name>
+    <file>/home/hub/samples/300mm_f5.6.ORF</file>
+    <source>http://raw.fotosite.pl/download-Olympus_E-330_Sigma_135-400_f4.5-5.6/300mm_f5.6.ORF</source>
+    <results>
+      <rawType>ORF</rawType>
+      <rawTypeId>458757</rawTypeId>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>11074</thumbDataSizes>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>12857600</rawDataSize>
+      <rawDataDimensions>3280 2450</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>65535</rawMaxValue>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+  	<name>ORF-test E-410</name>
+  	<file>/home/hub/samples/p1013308.orf</file>
+  	<results>
+      <rawType>ORF</rawType>
+      <rawTypeId>458759</rawTypeId>
+      <thumbNum>0</thumbNum>
+      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataSize>8131436</rawDataSize>
+      <rawDataDimensions>3720 2800</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>65535</rawMaxValue>
+      <metaOrientation>1</metaOrientation>
+  	</results>
+  </test>
+  <test>
     <name>MRW-test Dimage5</name>
     <file>/home/hub/samples/mrw/Dimage5/dimage5.mrw</file>
     <source>http://libopenraw.freedesktop.org/samples/mrw/dimage5.mrw</source>

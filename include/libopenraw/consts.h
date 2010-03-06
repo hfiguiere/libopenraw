@@ -1,8 +1,8 @@
 /*
  * libopenraw - consts.h
  *
- * Copyright (C) 2005-2009 Hubert Figuiere
  * Copyright (c) 2008 Novell, Inc.
+ * Copyright (C) 2005-2010 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -204,7 +204,8 @@ extern "C" {
 		OR_TYPEID_PENTAX_IST_D,
 		OR_TYPEID_PENTAX_IST_DL,
 		OR_TYPEID_PENTAX_K100D_PEF,
-		OR_TYPEID_PENTAX_K100D_SUPER_PEF
+		OR_TYPEID_PENTAX_K100D_SUPER_PEF,
+		OR_TYPEID_PENTAX_K20D_PEF
 	};
 
 	/** Epson type IDs */

@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.cpp
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2010 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -48,6 +48,8 @@ namespace OpenRaw {
 														 OR_TYPEID_PENTAX_K100D_PEF) },
 			{ "PENTAX K100D Super ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 
 														 OR_TYPEID_PENTAX_K100D_PEF) },
+			{ "PENTAX K20D        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 
+														 OR_TYPEID_PENTAX_K20D_PEF) },
 			{ 0, 0 }
 		};
 
@@ -83,7 +85,7 @@ namespace OpenRaw {
 			return m_container->setDirectory(0);
 		}
 
-		::or_error PEFFile::_getRawData(RawData & data, uint32_t /*options*/)
+		::or_error PEFFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error err;
 			if(!m_cfaIfd) {
@@ -91,14 +93,12 @@ namespace OpenRaw {
 			}
 			err = _getRawDataFromDir(data, m_cfaIfd);
 			if(err == OR_ERROR_NONE) {
-				uint16_t compression = 0;
-				m_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
-				switch(compression) {
-				case 1:
-					data.setDataType(OR_DATA_TYPE_CFA);
-					break;
-				case 65535:
-					// TODO decompress
+                uint16_t compression = data.compression();
+                switch(compression) {
+                case 65535:
+                    if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
+                        // TODO decompress
+                    }
 					break;
 				default:
 					break;

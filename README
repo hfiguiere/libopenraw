@@ -114,9 +114,9 @@ Olympus ORF              Y Y N Y Y Y
  E-10                    B B       T
  E-3                     T T       T
  E-300                   T T B T T T
- E-330                   T T       T
+ E-330                   T T N     T
  E-400                   T B   T   T
- E-410                   B T   T   T
+ E-410                   B T N T   T
  E-500                   T T   T   T
  E-510                   B T   T   T
  SP-350
@@ -143,6 +143,7 @@ Pentax PEF               Y Y N Y Y Y
  K10D                    T T N T T T
  K100D                             T
  K100D Super             T T N     T
+ K20D                    T T N T   
 
 Epson ERF                Y Y Y Y Y Y
  Epson RD1               T T T T T T
