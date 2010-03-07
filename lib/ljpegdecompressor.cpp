@@ -140,6 +140,8 @@ static uint32_t bitMask[] = {  0xffffffff, 0x7fffffff,
                                0x0000000f, 0x00000007, 
                                0x00000003, 0x00000001};
 
+void FixHuffTbl (HuffmanTable *htbl);
+
 
 /*
  *--------------------------------------------------------------

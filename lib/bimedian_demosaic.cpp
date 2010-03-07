@@ -30,6 +30,9 @@
 
 #include <libopenraw/demosaic.h>
 
+void bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
+				        or_cfa_pattern pattern, uint8_t *dst);
+
 /*
 extern "C" void or_demosaic(uint16_t*, uint32_t, uint32_t, or_cfa_pattern, uint8_t*)
 {
