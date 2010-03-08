@@ -338,7 +338,7 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>10614</thumbDataSizes>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>COMP_CFA</rawDataType>
       <rawDataSize>13461504</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
