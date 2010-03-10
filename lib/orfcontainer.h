@@ -1,7 +1,7 @@
 /*
  * libopenraw - orfcontainer.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006, 2010 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,31 +25,35 @@
 #include "ifdfilecontainer.h"
 
 namespace OpenRaw {
-	namespace Internals {
+namespace Internals {
 
-		class IOFile;
+static const char ORF_SUBTYPE_16BPP = 'O';
+static const char ORF_SUBTYPE_12BPP = 'S';
 
-		class ORFContainer
-			: public IFDFileContainer
-		{
-		public:
-			ORFContainer(IO::Stream *file, off_t offset);
-			/** destructor */
-			virtual ~ORFContainer();
+class IOFile;
 
-			/**
-				 Check the ORF magic header.
-			 */
-			virtual IFDFileContainer::EndianType 
-			isMagicHeader(const char *p, int len);
+class OrfContainer
+	: public IFDFileContainer
+{
+public:
+	OrfContainer(IO::Stream *file, off_t offset);
+	/** destructor */
+	virtual ~OrfContainer();
 
-		private:
-			/* avoid these being called. */
-			ORFContainer(const ORFContainer &);
-			ORFContainer & operator=(const ORFContainer &);
-		};
+	/**
+		 Check the ORF magic header.
+	 */
+	virtual IFDFileContainer::EndianType 
+	isMagicHeader(const char *p, int len);
 
-	}
+private:
+	char subtype_;
+	/* avoid these being called. */
+	OrfContainer(const OrfContainer &);
+	OrfContainer & operator=(const OrfContainer &);
+};
+
+}
 }
 
 

@@ -84,6 +84,10 @@ void IFDFile::_identifyId()
     if(!m_mainIfd) {
         m_mainIfd = _locateMainIfd();
     }
+    if(!m_mainIfd) {
+        Trace(ERROR) << "Main IFD not found to identify the file.\n";
+        return;
+    }
     std::string model;
     if(m_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
         _setTypeId(_typeIdFromModel(model));
@@ -480,6 +484,10 @@ static RawData::CfaPattern _getCfaPattern(const IFDDir::Ref & dir)
     x = 0;
     y = 0;
 
+    if(!dir) {
+        Trace(ERROR) << "dir is NULL\n";
+        return OR_ERROR_NOT_FOUND;
+    }
     got_it = dir->getValue(IFD::EXIF_TAG_BITS_PER_SAMPLE, bpc);
     if(!got_it) {
         Trace(ERROR) << "unable to guess Bits per sample\n";

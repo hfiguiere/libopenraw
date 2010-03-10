@@ -73,7 +73,7 @@ void init(void)
                                  boost::bind(&Internals::ARWFile::factory, _1),
                                  "arw");
     static RawFileFactory fctorf(OR_RAWFILE_TYPE_ORF, 
-                                 boost::bind(&Internals::ORFFile::factory, _1),
+                                 boost::bind(&Internals::OrfFile::factory, _1),
                                  "orf");
     static RawFileFactory fctdng(OR_RAWFILE_TYPE_DNG, 
                                  boost::bind(&Internals::DNGFile::factory, _1),

@@ -32,13 +32,12 @@
 using namespace Debug;
 
 namespace OpenRaw {
+namespace Internals {
 
-	namespace Internals {
-
-		const struct IFDFile::camera_ids_t ORFFile::s_def[] = {
+		const struct IFDFile::camera_ids_t OrfFile::s_def[] = {
 			{ "E-1             ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
 													   OR_TYPEID_OLYMPUS_E1) },
-			{ "E-10        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
+			{ "E-10        "    , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
 												  OR_TYPEID_OLYMPUS_E10) },
 			{ "E-3             ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
 													  OR_TYPEID_OLYMPUS_E3) },
@@ -54,28 +53,39 @@ namespace OpenRaw {
 													  OR_TYPEID_OLYMPUS_E500) },
 			{ "E-510           ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
 													  OR_TYPEID_OLYMPUS_E510) },
-			
+			{ "SP350"           , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
+													  OR_TYPEID_OLYMPUS_SP350) },
+			{ "SP500UZ"         , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
+													  OR_TYPEID_OLYMPUS_SP500) },
+			{ "SP510UZ"         , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
+													  OR_TYPEID_OLYMPUS_SP510) },
+			{ "SP550UZ                ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
+													  OR_TYPEID_OLYMPUS_SP550) },
+		    { "E-P1            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
+													  OR_TYPEID_OLYMPUS_EP1) },
+		    { "E-620           ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
+													  OR_TYPEID_OLYMPUS_E620) },
 			{ 0, 0 }
 		};
 
-		RawFile *ORFFile::factory(IO::Stream *s)
+		RawFile *OrfFile::factory(IO::Stream *s)
 		{
-			return new ORFFile(s);
+			return new OrfFile(s);
 		}
 
 
-		ORFFile::ORFFile(IO::Stream *s)
+		OrfFile::OrfFile(IO::Stream *s)
 			: IFDFile(s, OR_RAWFILE_TYPE_ORF, false)
 		{
 			_setIdMap(s_def);
-			m_container = new ORFContainer(m_io, 0);
+			m_container = new OrfContainer(m_io, 0);
 		}
 		
-		ORFFile::~ORFFile()
+		OrfFile::~OrfFile()
 		{
 		}
 
-		IFDDir::Ref  ORFFile::_locateCfaIfd()
+		IFDDir::Ref  OrfFile::_locateCfaIfd()
 		{
 			// in ORF the CFA IFD is the main IFD
 			if(!m_mainIfd) {
@@ -85,14 +95,14 @@ namespace OpenRaw {
 		}
 
 
-		IFDDir::Ref  ORFFile::_locateMainIfd()
+		IFDDir::Ref  OrfFile::_locateMainIfd()
 		{
 			return m_container->setDirectory(0);
 		}
 
 
 		
-		::or_error ORFFile::_getRawData(RawData & data, uint32_t options)
+		::or_error OrfFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error err;
 			if(!m_cfaIfd) {
@@ -125,6 +135,6 @@ namespace OpenRaw {
 			return err;
 		}
 
-	}
+}
 }
 

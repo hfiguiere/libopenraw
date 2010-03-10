@@ -1,7 +1,7 @@
 /*
  * libopenraw - orfcontainer.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006, 2010 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -27,40 +27,50 @@ using namespace Debug;
 
 namespace OpenRaw {
 
-	namespace Internals {
+namespace Internals {
 
 
-		ORFContainer::ORFContainer(IO::Stream *_file, off_t offset)
-			: IFDFileContainer(_file, offset)
-		{
-		}
+OrfContainer::OrfContainer(IO::Stream *_file, off_t offset)
+	: IFDFileContainer(_file, offset)
+	, subtype_(0)
+{
+}
 
 
-		ORFContainer::~ORFContainer()
-		{
-		}
+OrfContainer::~OrfContainer()
+{
+}
 
 
-		IFDFileContainer::EndianType 
-		ORFContainer::isMagicHeader(const char *p, int len)
-		{
-			if (len < 4){
-				// we need at least 4 bytes to check
-				return ENDIAN_NULL;
-			}
-			if ((p[0] == 0x49) && (p[1] == 0x49)
-					&& (p[2] == 0x52) && (p[3] == 0x4f)) {
-
-				Trace(DEBUG1) << "Identified ORF file\n";
-
-				return ENDIAN_LITTLE;
-			}
-
-			Trace(DEBUG1) << "Unidentified ORF file\n";
-
-			return ENDIAN_NULL;
-		}
-
+IFDFileContainer::EndianType 
+OrfContainer::isMagicHeader(const char *p, int len)
+{			
+	if (len < 4){
+		// we need at least 4 bytes to check
+		return ENDIAN_NULL;
 	}
+	if ((p[0] == 'I') && (p[1] == 'I')) {
+		if((p[2] == 'R') && ((p[3] == 'O') || (p[3] == 'S'))) {
+
+			Trace(DEBUG1) << "Identified EL ORF file. Subtype = " << p[3] << "\n";
+			subtype_ = p[3];	
+			return ENDIAN_LITTLE;
+		}
+	}
+	else if((p[0] == 'M') && (p[1] == 'M')) {
+		if((p[3] == 'R') && ((p[2] == 'O') || (p[2] == 'S'))) {
+
+			Trace(DEBUG1) << "Identified BE ORF file. Subtype = " << p[2] << "\n";
+			subtype_ = p[2];
+			return ENDIAN_BIG;
+		}
+	}
+
+	Trace(ERROR) << "Unidentified ORF file\n";
+
+	return ENDIAN_NULL;
+}
+
+}
 }
 

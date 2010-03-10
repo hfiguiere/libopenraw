@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.h
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2010 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -33,15 +33,13 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		class ORFContainer;
-
-		class ORFFile
+		class OrfFile
 			: public IFDFile
 		{
 		public:
 			static RawFile *factory(IO::Stream *);
-			ORFFile(IO::Stream *);
-			virtual ~ORFFile();
+			OrfFile(IO::Stream *);
+			virtual ~OrfFile();
 
 		protected:
 			virtual IFDDir::Ref  _locateCfaIfd();
@@ -51,8 +49,8 @@ namespace OpenRaw {
 		private:
 			static RawFile::TypeId _typeIdFromModel(const std::string & model);
 
-			ORFFile(const ORFFile&);
-			ORFFile & operator=(const ORFFile &);
+			OrfFile(const OrfFile&);
+			OrfFile & operator=(const OrfFile &);
 
 			static const IFDFile::camera_ids_t s_def[];
 		};

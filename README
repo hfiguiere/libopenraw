@@ -111,7 +111,7 @@ Nikon NEF                Y Y Y Y Y Y
 
 Olympus ORF              Y Y N Y Y Y
  E-1                     T T       T
- E-10                    B B       T
+ E-10                    T B       T
  E-3                     T T       T
  E-300                   T T B T T T
  E-330                   T T N     T
@@ -119,9 +119,12 @@ Olympus ORF              Y Y N Y Y Y
  E-410                   B T N T   T
  E-500                   T T   T   T
  E-510                   B T   T   T
- SP-350
- SP-510                  B B
- SP-550                  B B
+ E-620                   B   N     T
+ SP-350                  B B X T T T
+ SP-500                  B B X T T T
+ SP-510                  B B X T T T
+ SP-550                  B B X T T T
+ E-P1                    B   N     T
 
 Adobe DNG                Y Y N Y Y Y
  Leica DMR               T T X T T T
