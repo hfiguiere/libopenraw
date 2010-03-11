@@ -60,12 +60,11 @@
 
 #include <libopenraw++/rawdata.h>
 #include "io/memstream.h"
-#include "debug.h"
+#include "trace.h"
 #include "rawcontainer.h"
 #include "jfifcontainer.h"
 #include "ljpegdecompressor.h"
 #include "ljpegdecompressor_priv.h"
-#include "debug.h"
 
 namespace OpenRaw {
 

@@ -31,7 +31,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "rawcontainer.h"
-#include "debug.h"
+#include "trace.h"
 
 namespace OpenRaw {
 	namespace Internals {

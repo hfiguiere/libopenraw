@@ -24,7 +24,7 @@
 
 
 #include <libopenraw/debug.h>
-#include "debug.h"
+#include "trace.h"
 
 #ifdef __cplusplus
 extern "C" {

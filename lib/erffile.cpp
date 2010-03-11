@@ -23,7 +23,7 @@
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 
-#include "debug.h"
+#include "trace.h"
 #include "ifd.h"
 #include "ifdfilecontainer.h"
 #include "ifddir.h"

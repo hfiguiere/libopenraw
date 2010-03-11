@@ -26,7 +26,7 @@
 
 #include <boost/scoped_ptr.hpp>
 
-#include "debug.h"
+#include "trace.h"
 #include "io/file.h"
 #include "io/memstream.h"
 #include "ifdfilecontainer.h"

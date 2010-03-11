@@ -25,7 +25,7 @@
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 
-#include "debug.h"
+#include "trace.h"
 #include "io/file.h"
 #include "io/memstream.h"
 #include "ifdfilecontainer.h"

@@ -33,7 +33,7 @@
 #include <libopenraw++/rawdata.h>
 
 #include "crwdecompressor.h"
-#include "debug.h"
+#include "trace.h"
 #include "rawcontainer.h"
 #include "io/stream.h"
 #include "exception.h"

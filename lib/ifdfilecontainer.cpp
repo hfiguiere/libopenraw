@@ -25,7 +25,7 @@
 #include <vector>
 #include <iostream>
 
-#include "debug.h"
+#include "trace.h"
 
 #include "ifdfilecontainer.h"
 #include "io/file.h"

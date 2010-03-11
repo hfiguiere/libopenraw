@@ -22,7 +22,7 @@
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/thumbnail.h>
 
-#include "debug.h"
+#include "trace.h"
 #include "io/file.h"
 #include "ifdfilecontainer.h"
 #include "ifd.h"

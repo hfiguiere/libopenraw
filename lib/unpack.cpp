@@ -23,7 +23,7 @@
 
 #include <assert.h>
 #include "unpack.h"
-#include "debug.h"
+#include "trace.h"
 #include "ifd.h"
 
 namespace OpenRaw {	namespace Internals {

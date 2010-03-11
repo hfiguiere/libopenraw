@@ -20,7 +20,7 @@
  */
 
 
-#include "debug.h"
+#include "trace.h"
 #include "exception.h"
 #include "metavalue.h"
 

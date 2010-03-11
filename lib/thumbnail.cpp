@@ -22,7 +22,7 @@
 #include <cstring>
 #include <iostream>
 
-#include "debug.h"
+#include "trace.h"
 
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/rawfile.h>

@@ -24,7 +24,7 @@
 #include <libopenraw/libopenraw.h>
 
 #include "memstream.h"
-#include "debug.h"
+#include "trace.h"
 
 using namespace Debug;
 

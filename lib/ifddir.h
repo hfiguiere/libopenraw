@@ -27,7 +27,7 @@
 #include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
 #include "ifdentry.h"
-#include "debug.h"
+#include "trace.h"
 
 namespace OpenRaw {
 	namespace Internals {

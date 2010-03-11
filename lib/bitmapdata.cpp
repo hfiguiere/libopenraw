@@ -23,7 +23,7 @@
 #include <iostream>
 #include <assert.h>
 
-#include "debug.h"
+#include "trace.h"
 
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/rawfile.h>

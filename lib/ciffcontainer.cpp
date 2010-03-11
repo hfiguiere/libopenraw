@@ -26,7 +26,7 @@
 
 #include "io/file.h"
 #include "ciffcontainer.h"
-#include "debug.h"
+#include "trace.h"
 
 using namespace Debug;
 

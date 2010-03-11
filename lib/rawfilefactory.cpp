@@ -24,7 +24,7 @@
 #include <cassert>
 
 #include "rawfilefactory.h"
-#include "debug.h"
+#include "trace.h"
 
 using namespace Debug;
 

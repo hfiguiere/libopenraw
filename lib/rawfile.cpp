@@ -30,7 +30,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/checked_delete.hpp>
 
-#include "debug.h"
+#include "trace.h"
 
 #include <libopenraw/metadata.h>
 #include <libopenraw++/rawfile.h>

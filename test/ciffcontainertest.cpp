@@ -21,7 +21,7 @@
 
 #include <iostream>
 
-#include "debug.h"
+#include "trace.h"
 #include "ciffcontainer.h"
 #include "io/file.h"
 

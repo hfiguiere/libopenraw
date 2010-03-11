@@ -1,7 +1,7 @@
 /*
- * libopenraw - debug.cpp
+ * libopenraw - trace.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2007, 2010 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,7 +21,7 @@
 
 #include <iostream>
 
-#include "debug.h"
+#include "trace.h"
 
 
 

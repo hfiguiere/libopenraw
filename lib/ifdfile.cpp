@@ -27,7 +27,7 @@
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 
-#include "debug.h"
+#include "trace.h"
 #include "io/stream.h"
 #include "io/streamclone.h"
 #include "io/file.h"

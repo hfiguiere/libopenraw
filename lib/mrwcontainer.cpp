@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "debug.h"
+#include "trace.h"
 #include "mrwcontainer.h"
 #include "io/file.h"
 

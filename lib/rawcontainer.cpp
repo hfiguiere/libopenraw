@@ -22,7 +22,7 @@
 
 #include <libopenraw/types.h>
 
-#include "debug.h"
+#include "trace.h"
 #include "endianutils.h"
 #include "io/file.h"
 #include "rawcontainer.h"

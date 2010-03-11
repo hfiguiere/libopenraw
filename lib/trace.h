@@ -1,5 +1,5 @@
 /*
- * libopenraw - debug.h
+ * libopenraw - trace.h
  *
  * Copyright (C) 2006-2007 Hubert Figuiere
  *

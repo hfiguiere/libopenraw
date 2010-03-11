@@ -21,7 +21,7 @@
 
 #include <libopenraw/types.h>
 
-#include "debug.h"
+#include "trace.h"
 #include "exception.h"
 #include "ifd.h"
 #include "io/stream.h"

@@ -35,7 +35,7 @@ namespace JPEG {
 #include <string.h>
 #include <libopenraw++/bitmapdata.h>
 #include "io/stream.h"
-#include "debug.h"
+#include "trace.h"
 #include "jfifcontainer.h"
 
 namespace OpenRaw {
