@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2010 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -65,8 +65,12 @@ namespace OpenRaw {
 												  OR_TYPEID_CANON_450D) },
 			{ "Canon EOS 5D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
 												  OR_TYPEID_CANON_5D) },
+			{ "Canon EOS 7D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+												  OR_TYPEID_CANON_7D) },
 			{ "Canon PowerShot G9", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
 														OR_TYPEID_CANON_G9) },
+			{ "Canon PowerShot G11", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
+														OR_TYPEID_CANON_G11) },
 			{ 0, 0 }
 		};
 
