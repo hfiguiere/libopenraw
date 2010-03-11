@@ -142,12 +142,15 @@ Olympus ORF              Y Y N Y Y Y
 Adobe DNG                Y Y N Y Y Y
  Leica DMR               T T X T T T
  Leica M8                T T X T T T
+ Leice X1                N T T T T T
  Adobe DNG converter     T T B T T T
  Pentax K10D             T T X T T T
  Samsung GX-10           T T X T T T
  Samsung Pro815          T T X T T T
  Ricoh GR-2              T T X T T T
-
+ Ricoh GRX               T T X T T T
+ Ricoh GX100
+ 
 Sony ARW                 Y N N Y N Y
  A-100                   T N   T   T
  A-200                             T

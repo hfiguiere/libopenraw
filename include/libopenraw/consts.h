@@ -200,7 +200,9 @@ extern "C" {
 	enum {
 		OR_TYPEID_LEICA_UNKNOWN = 0,
 		OR_TYPEID_LEICA_DMR = 1,
-		OR_TYPEID_LEICA_M8 = 2
+		OR_TYPEID_LEICA_M8 = 2,
+		OR_TYPEID_LEICA_X1 = 3,
+		_OR_TYPEID_LEICA_LAST
 	};
 
 	/** Pentax type IDs */
@@ -263,7 +265,9 @@ extern "C" {
 
 	enum {
 		OR_TYPEID_RICOH_UNKNOWN = 0,
-		OR_TYPEID_RICOH_GR2
+		OR_TYPEID_RICOH_GR2 = 1,
+		OR_TYPEID_RICOH_GXR = 2,
+		_OR_TYPEID_RICOH_LAST
 	};
 
 	enum {
