@@ -139,10 +139,10 @@ Olympus ORF              Y Y N Y Y Y
  SP-550                  B B X T T T
  E-P1                    B   N     T
 
-Adobe DNG                Y Y N Y Y Y
+Adobe DNG                Y Y B Y Y Y
  Leica DMR               T T X T T T
  Leica M8                T T X T T T
- Leice X1                N T T T T T
+ Leica X1                T T T T T T
  Adobe DNG converter     T T B T T T
  Pentax K10D             T T X T T T
  Samsung GX-10           T T X T T T

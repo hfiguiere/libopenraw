@@ -42,6 +42,48 @@
     </results>
   </test>
   <test>
+    <name>CR2-test 7D</name>
+    <file>/home/hub/samples/cr2/7D/canon7d_iso100.CR2</file>
+    <source compress="zip">http://movies.dpreview.com.s3.amazonaws.com/canoneos7d/studio_iso100.zip</source>
+    <results>
+      <rawType>CR2</rawType>
+      <rawTypeId>65564</rawTypeId>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>5184 160 670</thumbSizes>
+      <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
+      <thumbDataSizes>2263285 17704 1736640</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>37691520</rawDataSize>
+      <rawDataDimensions>5360 3516</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>16383</rawMaxValue>
+      <rawMd5>69</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>CR2-test G11</name>
+    <file>/home/hub/samples/cr2/g11/canong11_studio_ISO80.CR2</file>
+    <source compress="zip">http://movies.dpreview.com.s3.amazonaws.com/canong11/studio_ISO80.zip</source>
+    <results>
+      <rawType>CR2</rawType>
+      <rawTypeId>65565</rawTypeId>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>1600 160 456</thumbSizes>
+      <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
+      <thumbDataSizes>632111 7297 935712</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>20846592</rawDataSize>
+      <rawDataDimensions>3744 2784</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>68</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>CRW-test 300D</name>
     <file>/home/hub/samples/crw/300D/crw_1852.crw</file>
     <source>http://launchpadlibrarian.net/4704665/CRW_1852.CRW</source>
@@ -272,10 +314,10 @@
     <results>
       <rawType>DNG</rawType>
       <rawTypeId>262146</rawTypeId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>8RGB</thumbFormats>
-      <thumbDataSizes>57600</thumbDataSizes>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3872</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 1265761</thumbDataSizes>
       <rawDataType>CFA</rawDataType>
       <rawDataSize>20656128</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>

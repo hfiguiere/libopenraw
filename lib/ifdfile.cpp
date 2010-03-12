@@ -172,75 +172,77 @@ void IFDFile::_identifyId()
         if (got_it) {
             Trace(DEBUG1) << "photometric int " << photom_int  << "\n";
         }
-        // photometric interpretation is RGB
-        if (!got_it || (photom_int == 2)) {
+        // photometric interpretation is RGB by default
+        else {
+            photom_int = 2;
+            Trace(DEBUG1) << "assume photometric int is RGB\n";
+        }
 
-            got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
-            got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
+        got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
+        got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
 
-            uint16_t compression = 0;
-            got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
-					
-            uint32_t offset = 0;
-            got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-            if (!got_it || (compression == 6) || (compression == 7)) {
-                if(!got_it) {
-                    got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
-                                           offset);
-                }
-                if (got_it) {
-                    // workaround for CR2 files where 8RGB data is marked
-                    // as JPEG. Check the real data size.
-                    uint32_t byte_count = 0;
-                    if(x && y && dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_count)) {
-                        if(byte_count >= (x * y * 3)) {
-                            _type = OR_DATA_TYPE_PIXMAP_8RGB;
-                        }
-                        else {
-                            _type = OR_DATA_TYPE_JPEG;
-                        }
+        uint16_t compression = 0;
+        got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
+                
+        uint32_t offset = 0;
+        got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+        if (!got_it || (compression == 6) || (compression == 7)) {
+            if(!got_it) {
+                got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
+                                       offset);
+            }
+            if (got_it) {
+                // workaround for CR2 files where 8RGB data is marked
+                // as JPEG. Check the real data size.
+                uint32_t byte_count = 0;
+                if(x && y && dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_count)) {
+                    if(byte_count >= (x * y * 3)) {
+                        _type = OR_DATA_TYPE_PIXMAP_8RGB;
                     }
                     else {
                         _type = OR_DATA_TYPE_JPEG;
-                        Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
-                        if (x == 0 || y == 0) {
-                            scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-                            scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
-                            if (jfif->getDimensions(x,y)) {
-                                Trace(DEBUG1) << "JPEG dimensions x=" << x 
-                                              << " y=" << y << "\n";
-                            }
-                            else {
-                                _type = OR_DATA_TYPE_NONE;
-                                Trace(WARNING) << "Couldn't get JPEG "
-                                    "dimensions.\n";
-                            }
-                        }
-                        else {
-                            Trace(DEBUG1) << "JPEG (supposed) dimensions x=" << x 
+                    }
+                }
+                else {
+                    _type = OR_DATA_TYPE_JPEG;
+                    Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
+                    if (x == 0 || y == 0) {
+                        scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
+                        scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+                        if (jfif->getDimensions(x,y)) {
+                            Trace(DEBUG1) << "JPEG dimensions x=" << x 
                                           << " y=" << y << "\n";
                         }
+                        else {
+                            _type = OR_DATA_TYPE_NONE;
+                            Trace(WARNING) << "Couldn't get JPEG "
+                                "dimensions.\n";
+                        }
                     }
+                    else {
+                        Trace(DEBUG1) << "JPEG (supposed) dimensions x=" << x 
+                                      << " y=" << y << "\n";
+                    }
+                }
 
-                }
-            }
-            else {
-                Trace(DEBUG1) << "found strip offsets\n";
-                if (x != 0 && y != 0) {
-                    _type = OR_DATA_TYPE_PIXMAP_8RGB;
-                }
-            }
-            if(_type != OR_DATA_TYPE_NONE) {
-                uint32_t dim = std::max(x, y);
-                m_thumbLocations[dim] = IFDThumbDesc(x, y, _type, dir);
-                list.push_back(dim);
-                ret = OR_ERROR_NONE;
             }
         }
         else if (photom_int == 6) {
             Trace(WARNING) << "Unsupported YCbCr photometric "
-                "interpretation.\n";
+                "interpretation in non JPEG.\n";
             ret = OR_ERROR_INVALID_FORMAT;
+        }
+        else {
+            Trace(DEBUG1) << "found strip offsets\n";
+            if (x != 0 && y != 0) {
+                _type = OR_DATA_TYPE_PIXMAP_8RGB;
+            }
+        }
+        if(_type != OR_DATA_TYPE_NONE) {
+            uint32_t dim = std::max(x, y);
+            m_thumbLocations[dim] = IFDThumbDesc(x, y, _type, dir);
+            list.push_back(dim);
+            ret = OR_ERROR_NONE;
         }
     }
 
