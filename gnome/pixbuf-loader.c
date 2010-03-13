@@ -114,7 +114,7 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
             pixbuf = gdk_pixbuf_new_from_data(or_bitmapdata_data(bitmapdata), 
                                               GDK_COLORSPACE_RGB,
                                               FALSE, 8, x, y, 
-                                              (x - 2) * 3, 
+                                              x * 3, 
                                               pixbuf_free, bitmapdata);
         }
         or_rawfile_release(raw_file);

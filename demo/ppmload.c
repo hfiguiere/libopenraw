@@ -54,7 +54,7 @@ main(int argc, char **argv)
                 printf(" --- dimensions x = %d, y = %d\n", x, y);
                 f = fopen("image.ppm", "wb");
                 fprintf(f, "P6\n");
-                fprintf(f, "%d %d\n", x - 2, y);
+                fprintf(f, "%d %d\n", x, y);
                 fprintf(f, "255\n");
                 
                 size = or_bitmapdata_data_size(bitmapdata);

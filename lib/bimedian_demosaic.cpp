@@ -1,5 +1,5 @@
 /* 
- * libopenraw - demoisaic.cpp
+ * libopenraw - demosaic.cpp
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,14 +30,8 @@
 
 #include <libopenraw/demosaic.h>
 
-void bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-				        or_cfa_pattern pattern, uint8_t *dst);
+#include "bimedian_demosaic.h"
 
-/*
-extern "C" void or_demosaic(uint16_t*, uint32_t, uint32_t, or_cfa_pattern, uint8_t*)
-{
-}
-*/
 
 /* Returns the median of four floats. We define the median as the average of
  * the central two elements.
@@ -85,7 +79,7 @@ m4 (float a, float b, float c, float d)
  */
 void
 bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-             or_cfa_pattern pattern, uint8_t *dst)
+             or_cfa_pattern pattern, uint8_t *dst, uint32_t &out_x, uint32_t &out_y)
 {
     uint32_t x,y;
     uint32_t offset, doffset;
@@ -110,6 +104,7 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
         break;
     }
 	
+	out_x = out_y = 0;
     src_buf = (float*)calloc(src_x * src_y, sizeof(float));
     dst_buf = (float*)calloc(src_x * src_y * 3, sizeof(float));
 
@@ -179,7 +174,9 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
         }
         offset+=2;
     }
-    std::copy(dst_buf, dst_buf + (src_x * src_y * 3), dst);		
+	out_x = src_x - 2;
+	out_y = src_y - 2;
+    std::copy(dst_buf, dst_buf + (out_x * out_y * 3), dst);		
     free(src_buf);
     free(dst_buf);
 }

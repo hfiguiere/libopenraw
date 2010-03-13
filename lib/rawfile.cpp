@@ -50,7 +50,7 @@
 #include "mrwfile.h"
 #include "metavalue.h"
 #include "exception.h"
-#include "demosaic.h"
+#include "bimedian_demosaic.h"
 
 #include "rawfilefactory.h"
 
@@ -386,13 +386,12 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
             Trace(DEBUG1) << "wrong data type\n";
             return OR_ERROR_INVALID_FORMAT;
         }
-        uint32_t x,y;
+        uint32_t x,y, out_x, out_y;
         or_cfa_pattern pattern;
         uint16_t *src;
         pattern = rawdata.cfaPattern();
         x = rawdata.x();
         y = rawdata.y();
-        bitmapdata.setDimensions(x,y);
         bitmapdata.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
         uint8_t *dst = (uint8_t *)bitmapdata.allocData(sizeof(uint8_t) * 3 * x * y);
         /*
@@ -405,7 +404,8 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
 
         /* figure out how the demosaic can be plugged for a different 
          * algorithm */
-        bimedian_demosaic(src, x, y, pattern, dst);
+        bimedian_demosaic(src, x, y, pattern, dst, out_x, out_y);
+        bitmapdata.setDimensions(out_x, out_y);
     }
     return ret;
 }
