@@ -5,14 +5,31 @@ New features:
   - make dist make a bzip2 archive too (build only).
   - New demo ppmload to create a ppm out of the demosaicized image.
   - Support (partially) PEF from Pentax K20D.
-    
+  - Support for Olympus ORF big-endian files and "RS" (12-bits). 
+    Added E-10, E-P1, E-620, SP350, SP500, SP510 and SP550.
+  - Support for Canon G11, 7D, 1DMarkIV, 5DMarkII and 500D.
+  - Support for Nikon D3000.
+  - Support for Sony A-550.
+  - Support for Leica X1 DNG.
+  - Support for Ricoh GRX DNG.
+  
 Bug fixes:
 
+  - API: or_rawfile_get_rendered_image() returns a ORBitmapDataRef with
+    the correct dimensions.
+    + corrected the Gdk support for above change.
   - Check for get_current_dir_name() (Closes #24088)
   - Don't crash when the files can't be written in the testsuite bootstrap.
   - Detect that ORF file are compressed if they are. (Closes #26618)
   - Skip compressed CFA when rendering the image. (Closes #25464)
+  - Accept YCbCr when the compression is JPEG. The K10D DNG should now have 
+    the large size preview.
   
+Internal changes:
+
+  - Rename debug.{h,cpp} to trace.{h,cpp}
+  - Fixed the case on several class names.
+
 libopenraw 0.0.8
 
 Bug fixes:
