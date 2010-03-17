@@ -75,6 +75,8 @@ namespace OpenRaw {
 												  OR_TYPEID_CANON_7D) },
 			{ "Canon PowerShot G9", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
 														OR_TYPEID_CANON_G9) },
+			{ "Canon PowerShot G10", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
+														OR_TYPEID_CANON_G11) },
 			{ "Canon PowerShot G11", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
 														OR_TYPEID_CANON_G11) },
 			{ 0, 0 }
