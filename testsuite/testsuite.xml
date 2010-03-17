@@ -64,7 +64,7 @@
   </test>
   <test>
     <name>CR2-test G11</name>
-    <file>/home/hub/samples/cr2/g11/canong11_studio_ISO80.CR2</file>
+    <file>/home/hub/samples/cr2/G11/canong11_studio_ISO80.CR2</file>
     <source compress="zip">http://movies.dpreview.com.s3.amazonaws.com/canong11/studio_ISO80.zip</source>
     <results>
       <rawType>CR2</rawType>
