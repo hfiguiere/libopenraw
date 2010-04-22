@@ -7,8 +7,8 @@
    Copyright 2005 by Dave Coffin, dcoffin a cybercom o net
    Free for all uses.
 
-   $Revision: 1.1 $
-   $Date: 2005/06/27 14:07:24 $
+   $Revision$
+   $Date$
  */
 
 #include <stdio.h>

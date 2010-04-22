@@ -2,8 +2,8 @@
    Simple reference decompresser for Canon digital cameras.
    Outputs raw 16-bit CCD data, no header, native byte order.
 
-   $Revision: 1.1 $
-   $Date: 2005/06/27 14:07:24 $
+   $Revision: 1.12 $
+   $Date: 2004/08/06 00:08:01 $
 */
 
 #include <stdio.h>

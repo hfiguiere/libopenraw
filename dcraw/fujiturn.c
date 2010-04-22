@@ -7,8 +7,8 @@
 
    dcraw -c -j dscf0000.raf | fujiturn | pnmscale 0.70710678 > dscf0000.ppm
 
-   $Revision: 1.1 $
-   $Date: 2005/06/27 14:07:24 $
+   $Revision: 1.6 $
+   $Date: 2005/04/29 16:35:42 $
 
  */
 
