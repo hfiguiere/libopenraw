@@ -6,6 +6,8 @@ Makefile.in
 *.la
 .libs
 .deps
+.AppleDouble
+:2e_*
 CMakeCache.txt
 CMakeFiles
 *.cmake
