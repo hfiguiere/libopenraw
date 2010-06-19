@@ -564,31 +564,16 @@ LJpegDecompressor::PmPutRow(MCU* RowBuf, int32_t numComp, int32_t numCol, int32_
     // TODO this might be wrong in 8 bits...
     // original code was using putc which *i think* was a problem for
     // 16bpp
+	int32_t comp;
     int32_t col;
     uint16_t v;
 							
-    if (numComp==1) { /*pgm*/				
-        for (col = 0; col < numCol; col++) {	
-            v=RowBuf[col][0]<<Pt;
+	for (col = 0; col < numCol; col++) {	
+		for (comp = 0; comp < numComp; comp++) {
+            v = RowBuf[col][comp]<<Pt;
             m_output->append(v);
         }
-    } else if (numComp==2) { /*pgm*/				
-        for (col = 0; col < numCol; col++) {	
-            v=RowBuf[col][0]<<Pt;
-            m_output->append(v);
-            v=RowBuf[col][1]<<Pt;
-            m_output->append(v);
-        }
-    } else { /*ppm*/
-        for (col = 0; col < numCol; col++) {
-            v=RowBuf[col][0]<<Pt;
-            m_output->append(v);
-            v=RowBuf[col][1]<<Pt;
-            m_output->append(v);
-            v=RowBuf[col][2]<<Pt;
-            m_output->append(v);
-        }
-    }
+	}
 //			m_output->nextRow();
 }
 
@@ -1573,8 +1558,7 @@ RawData *LJpegDecompressor::decompress(RawData *bitmap)
          * @todo check that this is valid with DNG too.
          */ 
         uint32_t width = dcInfo.imageWidth * dcInfo.numComponents;
-        bitmap->setDimensions(width, 
-                              dcInfo.imageHeight);
+        bitmap->setDimensions(width, dcInfo.imageHeight);
         bitmap->setSlices(m_slices);
         DecoderStructInit(&dcInfo);
         HuffDecoderInit(&dcInfo);
