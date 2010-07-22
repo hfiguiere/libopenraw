@@ -24,6 +24,7 @@ Bug fixes:
   - Skip compressed CFA when rendering the image. (Closes #25464)
   - Accept YCbCr when the compression is JPEG. The K10D DNG should now have 
     the large size preview.
+  - Install the GdkPixbuf in the right place. (Closes #29208) (Vincent Untz)
   
 Internal changes:
 
