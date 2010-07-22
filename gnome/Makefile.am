@@ -16,7 +16,7 @@ pkgconfig_DATA = $(PKG_CONFIG_FILES)
 
 lib_LTLIBRARIES = $(GNOME_TARGETS)
 
-loaderdir = $(libdir)/$(GDK_PIXBUF_DIR)
+loaderdir = $(GDK_PIXBUF_DIR)
 loader_LTLIBRARIES = $(GDK_PIXBUF_PLUGIN)
 
 libopenrawgnome_la_LDFLAGS = \
