@@ -25,6 +25,12 @@
 #ifndef __LIBOPENRAW_H__
 #define __LIBOPENRAW_H__
 
+#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+#define OR_DEPRECATED  __attribute__((__deprecated__))
+#else
+#define OR_DEPRECATED
+#endif /* __GNUC__ */
+
 #include <libopenraw/types.h>
 #include <libopenraw/consts.h>
 #include <libopenraw/io.h>
