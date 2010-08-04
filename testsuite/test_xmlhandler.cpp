@@ -82,6 +82,7 @@ public:
 int test_main( int, char *[] )             // note the name!
 {
 	std::string dir;
+	std::string filename;
 	const char * pdir = getenv("srcdir");
 	if(pdir == NULL) {
 		dir = ".";
@@ -90,7 +91,9 @@ int test_main( int, char *[] )             // note the name!
 		dir = pdir;
 	}
 
-	xml::HandlerPtr handler(new TestHandler(dir + "/test.xml"));
+	filename = dir;
+	filename += "/test.xml";
+	xml::HandlerPtr handler(new TestHandler(filename));
 	BOOST_CHECK(handler->process());
 	BOOST_CHECK(boost::static_pointer_cast<TestHandler>(handler)->rootFound);
 	BOOST_CHECK(boost::static_pointer_cast<TestHandler>(handler)->foo == "foo");
