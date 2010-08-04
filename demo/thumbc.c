@@ -97,7 +97,7 @@ main(int argc, char **argv)
 				printf("short write\n");
 			}
 			fclose(output);
-			printf("output %u bytes in '%s'\n", dataSize, outfname);
+			printf("output %ld bytes in '%s'\n", dataSize, outfname);
 			err = or_thumbnail_release(thumbnail);
 			if (err != OR_ERROR_NONE)
 			{

@@ -58,7 +58,7 @@ main(int argc, char** argv)
 	err = or_get_extract_rawdata(argv[optind], options,
 															 &rawdata);
 
-	printf("data size = %d\n", or_rawdata_data_size(rawdata));
+	printf("data size = %ld\n", or_rawdata_data_size(rawdata));
 	printf("data type = %d\n", or_rawdata_format(rawdata));
 
 	if(or_rawdata_format(rawdata) == OR_DATA_TYPE_CFA) {
