@@ -111,8 +111,8 @@ namespace Internals {
 			err = _getRawDataFromDir(data, m_cfaIfd);
 			if(err == OR_ERROR_NONE) {
 				// ORF files seems to be marked as uncompressed even if they are.
-				uint32_t x = data.x();
-				uint32_t y = data.y();
+				uint32_t x = data.width();
+				uint32_t y = data.height();
 				uint16_t compression = 0;
 				if(data.size() < x * y * 2) {
                     compression = 65535;

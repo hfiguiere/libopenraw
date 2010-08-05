@@ -253,8 +253,8 @@ CRWFile::~CRWFile()
             decomp.setDecoderTable(decoderTable);
             RawData *dData = decomp.decompress();
             if (dData != NULL) {
-                Trace(DEBUG1) << "Out size is " << dData->x() 
-                              << "x" << dData->y() << "\n";
+                Trace(DEBUG1) << "Out size is " << dData->width() 
+                              << "x" << dData->height() << "\n";
                 dData->setCfaPattern(data.cfaPattern());
                 data.swap(*dData);
                 delete dData;

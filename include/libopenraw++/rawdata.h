@@ -43,6 +43,7 @@ public:
     RawData();
     virtual ~RawData();
 
+	// deprecate rename black level and white level resp.
     uint16_t min();
     uint16_t max();
     void setMin(uint16_t _m);

@@ -13,6 +13,7 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>16973120</rawDataSize>
       <rawDataDimensions>3596 2360</rawDataDimensions>
+      <rawDataRoi>84 19 3503 2335</rawDataRoi>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
@@ -34,6 +35,7 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>24802624</rawDataSize>
       <rawDataDimensions>4312 2876</rawDataDimensions>
+      <rawDataRoi>32 23 4271 2847</rawDataRoi>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>16383</rawMaxValue>
@@ -55,10 +57,11 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>37691520</rawDataSize>
       <rawDataDimensions>5360 3516</rawDataDimensions>
+      <rawDataRoi>168 56 5183 3455</rawDataRoi>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>16383</rawMaxValue>
-      <rawMd5>69</rawMd5>
+      <rawMd5>89</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -76,6 +79,7 @@
       <rawDataType>CFA</rawDataType>
       <rawDataSize>20846592</rawDataSize>
       <rawDataDimensions>3744 2784</rawDataDimensions>
+      <rawDataRoi>24 28 3647 2735</rawDataRoi>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>

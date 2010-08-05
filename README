@@ -70,30 +70,32 @@ Support table:
                          | | /  Orientation Tag
                          | | | /  Bayer Type
                          | | | | /  Type ID
-                         | | | | | / 
-                         | | | | | |
-Canon CR2                Y Y Y Y Y Y
- 20D                     T T T T T T
- 30D                     T T T     T
- 350D                    T T T     T
- 40D                     T T T
+                         | | | | | /  ROI
+                         | | | | | | /
+                         | | | | | | |
+Canon CR2                Y Y Y Y Y Y Y
+ 20D                     T T T T T T T
+ 30D                     T T T T T T T
+ 350D                    T T T T T   T
+ 40D                     T T T T T T T
  50D
- 400D                    T T T     T
- 450D                    T T T T T T
- 500D                    T T T   T T
+ 400D                    T T T       T
+ 450D                    T T T T T T T
+ 500D                    T T T   T T T
  550D
  1000D
- 5D                      T T T     T
- 5DMarkII                T T T T   T
- 7D                      T T T     T
- 1DMarkII                T T T     T
+ 5D                      T T T     T T
+ 5DMarkII                T T T T   T T
+ 7D                      T T T     T T
+ 1DMarkII                T T T     T T
  1DMarkIII
- 1DMarkIV                T T T T T T
- G9
- G11                     T T T     T
+ 1DMarkIV                T T T T T T T
+ G9                                T T
+ G10                               T T
+ G11                     T T T     T T
  SX1 IS
 
-Canon CRW                Y Y Y Y Y Y
+Canon CRW                Y Y Y Y Y Y N
  300D                    T T T T T T
  10D                     T T T   T T
  D60                     T T T   T T
@@ -102,11 +104,11 @@ Canon CRW                Y Y Y Y Y Y
  G5                      T T T   T T
  Pro1                    T T T   T T
 
-Canon CRW CHDK           N N N N N N
+Canon CRW CHDK           N N N N N N N
 (unofficial firmware)
- A610                    N N N N N N
+ A610                    N N N N N N N
 
-Nikon NEF                Y Y Y Y Y Y
+Nikon NEF                Y Y Y Y Y Y N
  D1                      T T X X T T
  D1X                     T T X X T T
  D100                    T T T X T T
@@ -122,7 +124,7 @@ Nikon NEF                Y Y Y Y Y Y
  D70s                    T T Y T T T
  D80                               T
 
-Olympus ORF              Y Y N Y Y Y
+Olympus ORF              Y Y N Y Y Y N
  E-1                     T T       T
  E-10                    T B       T
  E-3                     T T       T
@@ -139,7 +141,7 @@ Olympus ORF              Y Y N Y Y Y
  SP-550                  B B X T T T
  E-P1                    B   N     T
 
-Adobe DNG                Y Y B Y Y Y
+Adobe DNG                Y Y B Y Y Y N
  Leica DMR               T T X T T T
  Leica M8                T T X T T T
  Leica X1                T T T T T T
@@ -151,13 +153,13 @@ Adobe DNG                Y Y B Y Y Y
  Ricoh GRX               T T X T T T
  Ricoh GX100
  
-Sony ARW                 Y N N Y N Y
+Sony ARW                 Y N N Y N Y N
  A-100                   T N   T   T
  A-200                             T
  A-550                   T         T
  A-700                   T     T   T
 
-Pentax PEF               Y Y N Y Y Y
+Pentax PEF               Y Y N Y Y Y N
  *-ist D                 T T X X T T
  *-ist DL                T T N     T
  K10D                    T T N T T T
@@ -165,10 +167,10 @@ Pentax PEF               Y Y N Y Y Y
  K100D Super             T T N     T
  K20D                    T T N T   T
 
-Epson ERF                Y Y Y Y Y Y
+Epson ERF                Y Y Y Y Y Y N
  Epson RD1               T T T T T T
 
-Minolta MRW              Y Y B N Y Y
+Minolta MRW              Y Y B N Y Y N
  A1                      T T T X T 
  A2                      T T T X T 
  Dimage 5                T T X X T T
@@ -178,16 +180,16 @@ Minolta MRW              Y Y B N Y Y
  Maxxum 7D               T T T N T
  A200                    
 
-Sony SRF                 N N N N N N
+Sony SRF                 N N N N N N N
 
-Sony SR2                 N N N N N N
+Sony SR2                 N N N N N N N
  Sony R1
 
-Kodak DCR                N N N N N N
+Kodak DCR                N N N N N N N
 
-Kodak KDC                N N N N N N
+Kodak KDC                N N N N N N N
 
-FujiFilm RAF             N N N N N N
+FujiFilm RAF             N N N N N N N
  Finepix S3Pro
  Finepix S6500Fd
 

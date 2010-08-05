@@ -83,15 +83,14 @@ extern "C" {
 	}
 
 	void
-	or_thumbnail_dimensions(ORThumbnailRef thumb, 
-													uint32_t *x, uint32_t *y)
+	or_thumbnail_dimensions(ORThumbnailRef thumb, uint32_t *width, uint32_t *height)
 	{
 		Thumbnail* t = reinterpret_cast<Thumbnail *>(thumb);
-		if (x != NULL) {
-			*x = t->x();
+		if (width != NULL) {
+			*width = t->width();
 		}
-		if (y != NULL) {
-			*y = t->y();
+		if (height != NULL) {
+			*height = t->height();
 		}
 	}
 

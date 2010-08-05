@@ -136,7 +136,7 @@ namespace OpenRaw {
 			}
 			// get the "slicing", tag 0xc640 (3 SHORT)
 			std::vector<uint16_t> slices;
-			IFDEntry::Ref e = m_cfaIfd->getEntry(IFD::EXIF_TAG_CR2_SLICE);
+			IFDEntry::Ref e = m_cfaIfd->getEntry(IFD::CR2_TAG_SLICE);
 			if (e) {
 				e->getArray(slices);
 				Trace(DEBUG1) << "Found slice entry " << slices << "\n";
@@ -166,11 +166,15 @@ namespace OpenRaw {
 				if (real_size < byte_length) {
 					Trace(WARNING) << "Size mismatch for data: ignoring.\n";
 				}
+				// they are not all RGGB.
+				// but I don't seem to see where this is encoded.
+				// 
 				data.setCfaPattern(OR_CFA_PATTERN_RGGB);
 				data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
 				data.setDimensions(x, y);
-				Trace(DEBUG1) << "In size is " << data.x() 
-							  << "x" << data.y() << "\n";
+
+				Trace(DEBUG1) << "In size is " << data.width() 
+							  << "x" << data.height() << "\n";
 				// decompress if we need
 				if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
 					boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
@@ -185,13 +189,26 @@ namespace OpenRaw {
 					}
 					RawData *dData = decomp.decompress();
 					if (dData != NULL) {
-						Trace(DEBUG1) << "Out size is " << dData->x() 
-													<< "x" << dData->y() << "\n";
+						Trace(DEBUG1) << "Out size is " << dData->width() 
+													<< "x" << dData->height() << "\n";
 						// must re-set the cfaPattern
 						dData->setCfaPattern(data.cfaPattern());
 						data.swap(*dData);
 						delete dData;
 					}
+				}
+				
+				// get the sensor info
+				std::vector<uint16_t> sensorInfo;
+				if(!m_makerNoteIfd) {
+					m_makerNoteIfd = _locateMakerNoteIfd();
+				}
+				e = m_makerNoteIfd->getEntry(IFD::MNOTE_CANON_SENSORINFO);
+				if(e) {
+					e->getArray(sensorInfo);
+					uint32_t w = sensorInfo[7] - sensorInfo[5];
+					uint32_t h = sensorInfo[8] - sensorInfo[6];
+					data.setRoi(sensorInfo[5], sensorInfo[6], w, h);
 				}
 			}
 			else {

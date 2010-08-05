@@ -13,6 +13,7 @@ thumbDataSizes
 rawDataType
 rawDataSize
 rawDataDimensions
+rawDataRoi
 rawCfaPattern
 rawMinValue
 rawMaxValue

@@ -84,6 +84,7 @@ namespace xml {
 		}
 		tag_map_t::const_iterator iter = m_tag_map.find(tag);
 		if(iter == m_tag_map.end()) {
+			fprintf(stderr, "Tag %s is unknown\n", tag);
 			return 0;
 		}
 		return iter->second;

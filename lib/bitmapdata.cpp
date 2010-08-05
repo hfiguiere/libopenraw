@@ -41,19 +41,25 @@ namespace OpenRaw {
 		size_t data_size;
 		/** type of thumbnail data */
 		DataType data_type;
-		/** x dimension in pixels of thumbnail data */
-		uint32_t x;
-		/** y dimension in pixels of thumbnail data */
-		uint32_t y;
+		/** width dimension in pixels of image data */
+		uint32_t width;
+		/** height dimension in pixels of image data */
+		uint32_t height;
 		/** bpc bit per channel. 0 is not a valid value */
 		uint32_t bpc;
+		/** region of interest */
+		uint32_t roi_x;
+		uint32_t roi_y;
+		uint32_t roi_w;
+		uint32_t roi_h;
 
 
 		Private()
 			: data(NULL),
 				data_size(0),
 				data_type(OR_DATA_TYPE_NONE),
-				x(0), y(0), bpc(0)
+				width(0), height(0), bpc(0)
+				, roi_x(0), roi_y(0), roi_w(0), roi_h(0)
 			{
 			}
 		
@@ -131,30 +137,71 @@ namespace OpenRaw {
 
 	uint32_t BitmapData::x() const
 	{
-		return d->x;
+		return d->width;
+	}
+
+	uint32_t BitmapData::width() const
+	{
+		return d->width;
 	}
 
 	uint32_t BitmapData::y() const
 	{
-		return d->y;
+		return d->height;
 	}
 
+	uint32_t BitmapData::height() const
+	{
+		return d->height;
+	}
+	
 	uint32_t BitmapData::bpc() const
 	{
 		return d->bpc;
-	}
-
-
-	void BitmapData::setDimensions(uint32_t _x, uint32_t _y)
-	{
-		d->x = _x;
-		d->y = _y;
 	}
 
 	void BitmapData::setBpc(uint32_t _bpc)
 	{
 		d->bpc = _bpc;
 	}
+	
+	void BitmapData::setDimensions(uint32_t _width, uint32_t _height)
+	{
+		d->width = _width;
+		d->height = _height;
+		if(d->roi_w == 0) {
+			d->roi_w = _width;
+		}
+		if(d->roi_h == 0) {
+			d->roi_h = _height;
+		}
+	}
 
+	uint32_t BitmapData::roi_x() const
+	{
+		return d->roi_x;
+	}
+	
+	uint32_t BitmapData::roi_y() const
+	{
+		return d->roi_y;
+	}
+	
+	uint32_t BitmapData::roi_width() const
+	{
+		return d->roi_w;
+	}
+	
+	uint32_t BitmapData::roi_height() const
+	{
+		return d->roi_h;
+	}
 
+	void BitmapData::setRoi(uint32_t _x, uint32_t _y, uint32_t w, uint32_t h)
+	{
+		d->roi_x = _x;
+		d->roi_y = _y;
+		d->roi_w = w;
+		d->roi_h = h;
+	}
 }

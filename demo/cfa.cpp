@@ -72,7 +72,7 @@ main(int argc, char** argv)
 	if(rdata.dataType() == OR_DATA_TYPE_CFA) {
 		f = fopen("image.pgm", "wb");
 		fprintf(f, "P5\n");
-		fprintf(f, "%d %d\n", rdata.x(), rdata.y());
+		fprintf(f, "%d %d\n", rdata.width(), rdata.height());
 		fprintf(f, "%d\n", (1 << rdata.bpc()) - 1);
 	}
 	else {

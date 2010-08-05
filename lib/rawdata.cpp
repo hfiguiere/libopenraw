@@ -147,7 +147,7 @@ void RawData::setSlices(const std::vector<uint16_t> & slices)
         d->sliceWidth = slices[0];
     }
     else {
-        d->sliceWidth = x();
+        d->sliceWidth = width();
     }
 }
 
@@ -201,10 +201,10 @@ void RawData::nextRow()
 
 void RawData::Private::nextRow()
 {
-    uint32_t w = self->x() * 2;
+    uint32_t w = self->width() * 2;
     uint32_t row = offset / w;
     row++;
-    if(row == self->y()) 
+    if(row == self->height()) 
     {
         // on the last
         nextSlice();

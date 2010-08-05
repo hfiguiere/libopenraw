@@ -119,8 +119,8 @@ namespace OpenRaw {
 			if (!_getCompressionCurve(data, c)) {
 				return OR_ERROR_NOT_FOUND;
 			}
-			const uint32_t rows = data.y();
-			const uint32_t raw_columns = data.x();
+			const uint32_t rows = data.height();
+			const uint32_t raw_columns = data.width();
 
 			//FIXME: not always true
 			const uint32_t columns = raw_columns - 1;

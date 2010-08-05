@@ -397,9 +397,37 @@ bool Test::testRawDataDimensions(const std::string & result)
     {
         RETURN_FAIL("conversion failed", result);
     }
-    RETURN_TEST(x == m_rawdata->x() && y == m_rawdata->y(), result)
-        }
+    RETURN_TEST(x == m_rawdata->width() && y == m_rawdata->height(), result)
+}
 
+bool Test::testRawDataRoi(const std::string & result)
+{
+    if(m_rawdata == NULL) {
+        m_rawdata = loadRawData(m_rawfile);
+        if(m_rawdata == NULL) {
+            RETURN_FAIL("failed to get rawData", result);
+        }
+    }
+    std::vector< std::string > v;
+    boost::split(v, result, boost::is_any_of(" "));
+    if(v.size() != 4) {
+        RETURN_FAIL("mismatch number of elements from expected result", result);
+    }
+    uint32_t x, y, w, h;
+    try {
+        x = boost::lexical_cast<uint32_t>(v[0]);
+        y = boost::lexical_cast<uint32_t>(v[1]);
+        w = boost::lexical_cast<uint32_t>(v[2]);
+        h = boost::lexical_cast<uint32_t>(v[3]);
+    }
+    catch(...)
+    {
+        RETURN_FAIL("conversion failed", result);
+    }
+    RETURN_TEST(x == m_rawdata->roi_x() && y == m_rawdata->roi_y() 
+    	&& w == m_rawdata->roi_width() && h == m_rawdata->roi_height(), 
+    	result)
+}
 
 bool Test::testRawCfaPattern(const std::string & result)
 {
@@ -544,6 +572,9 @@ int Test::run()
             break;
         case XML_rawDataDimensions:
             pass = testRawDataDimensions(iter->second);
+            break;
+        case XML_rawDataRoi:
+            pass = testRawDataRoi(iter->second);
             break;
         case XML_rawCfaPattern:
             pass = testRawCfaPattern(iter->second);

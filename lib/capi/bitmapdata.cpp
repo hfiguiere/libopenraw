@@ -75,10 +75,10 @@ or_bitmapdata_dimensions(ORBitmapDataRef bitmapdata,
 {
 	BitmapData* t = reinterpret_cast<BitmapData *>(bitmapdata);
 	if (x != NULL) {
-		*x = t->x();
+		*x = t->width();
 	}
 	if (y != NULL) {
-		*y = t->y();
+		*y = t->height();
 	}
 }
 

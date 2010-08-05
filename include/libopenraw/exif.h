@@ -148,9 +148,17 @@ typedef	enum {
 	EXIF_TAG_UNKNOWN_C4A5 = 0xc4a5,
 	/* DNG tags */
 	TIFF_TAG_DNG_VERSION                     = 0xc612,
-
+	
 	/* CR2 tags */
-	EXIF_TAG_CR2_SLICE = 0xc640    /**< Exif tag for CR2 RAW "slices" */
+	CR2_TAG_c5d9 = 0xc5d9,
+	CR2_TAG_SLICE = 0xc640,    /**< Exif tag for CR2 RAW "slices" */
+	CR2_TAG_SRAW_TYPE = 0xc6c5,
+	CR2_TAG_c6d6 = 0xc6d6,
+	
+	/* Canon MakerNote tags */
+	MNOTE_CANON_SENSORINFO = 0x00e0,
+	
+	_EXIF_TAG_LAST
 } ExifTag;
 
 

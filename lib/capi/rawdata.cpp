@@ -81,16 +81,36 @@ extern "C" {
 
 	void
 	or_rawdata_dimensions(ORRawDataRef rawdata, 
-						  uint32_t *x, uint32_t *y)
+						  uint32_t *width, uint32_t *height)
+	{
+		RawData* t = reinterpret_cast<RawData *>(rawdata);
+		if (width != NULL) {
+			*width = t->width();
+		}
+		if (height != NULL) {
+			*height = t->height();
+		}
+	}
+	
+	void
+	or_rawdata_get_roi(ORRawDataRef rawdata, 
+				   uint32_t *x, uint32_t *y,
+				   uint32_t *width, uint32_t *height)
 	{
 		RawData* t = reinterpret_cast<RawData *>(rawdata);
 		if (x != NULL) {
-			*x = t->x();
+			*x = t->roi_x();
 		}
 		if (y != NULL) {
-			*y = t->y();
+			*y = t->roi_y();
 		}
-	}
+		if (width != NULL) {
+			*width = t->roi_width();
+		}
+		if (height != NULL) {
+			*height = t->roi_height();
+		}
+	}	
 
 	uint32_t
 	or_rawdata_bpc(ORRawDataRef rawdata)

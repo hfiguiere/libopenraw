@@ -172,8 +172,8 @@ public:
 				else {
 					m_out << boost::format("\t\t\tFormat %1%\n") 
 						% dataTypeToString(thumb.dataType());
-					m_out << boost::format("\t\t\tDimensions: x = %1% y = %2%\n")
-						% thumb.x() % thumb.y();
+					m_out << boost::format("\t\t\tDimensions: width = %1% height = %2%\n")
+						% thumb.width() % thumb.height();
 					m_out << boost::format("\t\t\tByte size: %1%\n") 
 						% thumb.size();
 				}
@@ -196,8 +196,10 @@ public:
 				}
 				m_out << boost::format("\t\tByte size: %1%\n")
 					% rd.size();
-				m_out << boost::format("\t\tDimensions: x = %1% y = %2%\n")
-					% rd.x() % rd.y();
+				m_out << boost::format("\t\tDimensions: width = %1% height = %2%\n")
+					% rd.width() % rd.height();
+				m_out << boost::format("\t\tROI: %1% %2% %3% %4%\n")
+					% rd.roi_x() % rd.roi_y() % rd.roi_width() % rd.roi_height();
 				m_out << boost::format("\t\tBayer Type: %1%\n")
 					% cfaPatternToString(rd.cfaPattern());
 				m_out << boost::format("\t\tBits per channel: %1%\n")

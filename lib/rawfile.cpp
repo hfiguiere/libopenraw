@@ -390,8 +390,8 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
         or_cfa_pattern pattern;
         uint16_t *src;
         pattern = rawdata.cfaPattern();
-        x = rawdata.x();
-        y = rawdata.y();
+        x = rawdata.width();
+        y = rawdata.height();
         bitmapdata.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
         uint8_t *dst = (uint8_t *)bitmapdata.allocData(sizeof(uint8_t) * 3 * x * y);
         /*
