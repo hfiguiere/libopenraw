@@ -118,6 +118,11 @@ namespace OpenRaw {
 			 * @return Ref to the new IFDDir if found
 			 */
 			Ref getExifIFD();
+			
+			/** get the MakerNote IFD.
+			 * @return Ref to the new IFDDir if found
+			 */
+			Ref getMakerNoteIFD();
 		private:
 			off_t m_offset;
 			IFDFileContainer & m_container;

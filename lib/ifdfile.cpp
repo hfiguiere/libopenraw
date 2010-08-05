@@ -78,6 +78,16 @@ IFDDir::Ref  IFDFile::_locateExifIfd()
     return m_mainIfd->getExifIFD();
 }
 
+IFDDir::Ref  IFDFile::_locateMakerNoteIfd()
+{
+	if(!m_makerNoteIfd) {
+		if(!m_exifIfd) {
+			m_exifIfd = _locateExifIfd();
+		}
+		m_makerNoteIfd = m_exifIfd->getMakerNoteIFD();
+	}
+	return m_makerNoteIfd;
+}
 
 void IFDFile::_identifyId()
 {

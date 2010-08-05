@@ -97,6 +97,7 @@ namespace OpenRaw {
 			virtual IFDDir::Ref  _locateCfaIfd() = 0;
 			virtual IFDDir::Ref  _locateMainIfd() = 0;
 			virtual IFDDir::Ref  _locateExifIfd();
+			virtual IFDDir::Ref  _locateMakerNoteIfd();
 
 			virtual void _identifyId();
 
@@ -108,6 +109,7 @@ namespace OpenRaw {
 										  * the CFA
 										  */
 			IFDDir::Ref       m_exifIfd; /**< the Exif IFD */
+			IFDDir::Ref       m_makerNoteIfd; /**< the MakerNote IFD */
 		private:
 
 			IFDFile(const IFDFile&);

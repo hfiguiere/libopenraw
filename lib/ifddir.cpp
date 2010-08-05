@@ -195,7 +195,7 @@ namespace OpenRaw {
 			return success;
 		}
 
-		/** The SubIFD is locate at offset found in the field
+		/** The SubIFD is located at offset found in the field
 		 * EXIF_TAG_SUB_IFDS
 		 */
 		IFDDir::Ref IFDDir::getExifIFD()
@@ -218,6 +218,25 @@ namespace OpenRaw {
 			return Ref(static_cast<IFDDir*>(NULL));
 		}
 
+		IFDDir::Ref IFDDir::getMakerNoteIFD()
+		{
+			uint32_t val_offset = 0;
+			IFDEntry::Ref e = getEntry(IFD::EXIF_TAG_MAKER_NOTE);
+			if (e) {
+				val_offset = e->offset();
+				Trace(DEBUG1) << "MakerNote IFD offset (uncorrected) = " << val_offset 
+				<< "\n";
+				val_offset += m_container.exifOffsetCorrection();
+				Trace(DEBUG1) << "MakerNote IFD offset = " << val_offset << "\n";
+				Ref ref(new IFDDir(val_offset, m_container));
+				ref->load();
+				return ref;
+			}
+			else {
+				Trace(DEBUG1) << "MakerNote IFD offset not found.\n";				
+			}
+			return Ref(static_cast<IFDDir*>(NULL));
+		}
 	}
 }
 
