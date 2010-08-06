@@ -76,12 +76,12 @@ Support table:
 Canon CR2                Y Y Y Y Y Y Y
  20D                     T T T T T T T
  30D                     T T T T T T T
- 350D                    T T T T T   T
+ 350D                    T T T T T T T
  40D                     T T T T T T T
  50D
- 400D                    T T T       T
+ 400D                    T T T T T T T
  450D                    T T T T T T T
- 500D                    T T T   T T T
+ 500D                    T T T T T T T
  550D
  1000D
  5D                      T T T     T T

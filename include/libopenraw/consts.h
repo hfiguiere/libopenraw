@@ -124,7 +124,8 @@ extern "C" {
 		OR_TYPEID_VENDOR_PANASONIC = 11,
 		OR_TYPEID_VENDOR_MAMIYA = 12,
 		/* not really a camera vendor. For the converter. */
-		OR_TYPEID_VENDOR_ADOBE = 13
+		OR_TYPEID_VENDOR_ADOBE = 13,
+		_OR_TYPEID_VENDOR_LAST
 	};
 
 	enum {
@@ -133,7 +134,8 @@ extern "C" {
 
 	enum {
 		OR_TYPEID_ADOBE_UNKNOWN = 0,
-		OR_TYPEID_ADOBE_DNG_GENERIC
+		OR_TYPEID_ADOBE_DNG_GENERIC = 1,
+		_OR_TYPEID_ADOBE_LAST
 	};
 
 	/** Canon type IDs */
