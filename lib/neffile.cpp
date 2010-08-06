@@ -168,15 +168,13 @@ namespace OpenRaw {
 
 		int NEFFile::_getCompressionCurve(RawData & data,  NEFFile::NEFCompressionInfo& c)
 		{
-			if(!m_exifIfd) {
-				m_exifIfd = _locateExifIfd();
-			}
-			if(!m_exifIfd) {
+			const IFDDir::Ref & _exifIfd = exifIfd();
+			if(!_exifIfd) {
 				return 0;
 			}
 
 			IFDEntry::Ref maker_ent =
-				m_exifIfd->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
+				_exifIfd->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
 			if(!maker_ent) {
 				return 0;
 			}
@@ -248,11 +246,11 @@ namespace OpenRaw {
 		::or_error NEFFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
-			m_cfaIfd = _locateCfaIfd();
+			const IFDDir::Ref & _cfaIfd = cfaIfd();
 			Trace(DEBUG1) << "_getRawData()\n";
 
-			if(m_cfaIfd) {
-				ret = _getRawDataFromDir(data, m_cfaIfd);
+			if(_cfaIfd) {
+				ret = _getRawDataFromDir(data, _cfaIfd);
 				if (ret != OR_ERROR_NONE) {
 					return ret;
 				}

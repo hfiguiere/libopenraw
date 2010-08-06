@@ -81,18 +81,16 @@ namespace OpenRaw {
 		::or_error DNGFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
-			if(!m_cfaIfd) {
-				m_cfaIfd = _locateCfaIfd();
-			}
+			const IFDDir::Ref & _cfaIfd = cfaIfd();
 
 			Trace(DEBUG1) << "_getRawData()\n";
 
-			if (m_cfaIfd) {
-				ret = _getRawDataFromDir(data, m_cfaIfd);
+			if (_cfaIfd) {
+				ret = _getRawDataFromDir(data, _cfaIfd);
 				
 				if(ret == OR_ERROR_NONE) {
 					uint16_t compression = 0;
-					if (m_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression) &&
+					if (_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression) &&
 						compression == 7) {
 						// if the option is not set, decompress
 						if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {

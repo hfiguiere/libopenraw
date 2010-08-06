@@ -87,7 +87,7 @@ namespace OpenRaw {
 			 * @param dir the IFD
 			 * @return the error code.
 			 */
-			::or_error _getRawDataFromDir(RawData & data, IFDDir::Ref & dir);
+			::or_error _getRawDataFromDir(RawData & data, const IFDDir::Ref & dir);
 
 			typedef std::map<uint32_t, IFDThumbDesc> ThumbLocations;
 			ThumbLocations    m_thumbLocations;
@@ -103,6 +103,12 @@ namespace OpenRaw {
 
 			virtual MetaValue *_getMetaValue(int32_t meta_index);
 
+			/** access the corresponding IFD. Will locate them if needed */
+			const IFDDir::Ref & cfaIfd();
+			const IFDDir::Ref & mainIfd();
+			const IFDDir::Ref & exifIfd();
+			const IFDDir::Ref & makerNoteIfd();			
+		private:
 			IFDDir::Ref       m_cfaIfd;  /**< the IFD for the CFA */
 			IFDDir::Ref       m_mainIfd; /**< the IFD for the main image 
 										  * does not necessarily reference 
@@ -110,8 +116,7 @@ namespace OpenRaw {
 										  */
 			IFDDir::Ref       m_exifIfd; /**< the Exif IFD */
 			IFDDir::Ref       m_makerNoteIfd; /**< the MakerNote IFD */
-		private:
-
+			
 			IFDFile(const IFDFile&);
 			IFDFile & operator=(const IFDFile &);
 

@@ -64,9 +64,9 @@ namespace OpenRaw {
 		::or_error ERFFile::_getRawData(RawData & data, uint32_t /*options*/)
 		{
 			::or_error err;
-			m_cfaIfd = _locateCfaIfd();
-			if(m_cfaIfd) {
-				err = _getRawDataFromDir(data, m_cfaIfd);
+			const IFDDir::Ref & _cfaIfd = cfaIfd();
+			if(_cfaIfd) {
+				err = _getRawDataFromDir(data, _cfaIfd);
 			}
 			else {
 				err = OR_ERROR_NOT_FOUND;

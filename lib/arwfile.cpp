@@ -66,10 +66,7 @@ namespace OpenRaw {
 		IFDDir::Ref  ARWFile::_locateCfaIfd()
 		{
 			// in ARW the CFA IFD is the main IFD
-			if(!m_mainIfd) {
-				m_mainIfd = _locateMainIfd();
-			}
-			return m_mainIfd;
+			return mainIfd();
 		}
 
 

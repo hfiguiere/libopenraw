@@ -69,37 +69,33 @@ IFDFile::~IFDFile()
 // IFD based raw files
 IFDDir::Ref  IFDFile::_locateExifIfd()
 {
-    m_mainIfd = _locateMainIfd();
-    if (!m_mainIfd) {
+	const IFDDir::Ref & _mainIfd = mainIfd();
+    if (!_mainIfd) {
         Trace(ERROR) << "IFDFile::_locateExifIfd() "
             "main IFD not found\n";
         return IFDDir::Ref();
     }
-    return m_mainIfd->getExifIFD();
+    return _mainIfd->getExifIFD();
 }
 
 IFDDir::Ref  IFDFile::_locateMakerNoteIfd()
 {
-	if(!m_makerNoteIfd) {
-		if(!m_exifIfd) {
-			m_exifIfd = _locateExifIfd();
-		}
-		m_makerNoteIfd = m_exifIfd->getMakerNoteIFD();
+	const IFDDir::Ref & _exifIfd = exifIfd();
+	if(_exifIfd) {
+		return _exifIfd->getMakerNoteIFD();
 	}
-	return m_makerNoteIfd;
+	return IFDDir::Ref();
 }
 
 void IFDFile::_identifyId()
 {
-    if(!m_mainIfd) {
-        m_mainIfd = _locateMainIfd();
-    }
-    if(!m_mainIfd) {
+	const IFDDir::Ref & _mainIfd = mainIfd();
+    if(!_mainIfd) {
         Trace(ERROR) << "Main IFD not found to identify the file.\n";
         return;
     }
     std::string model;
-    if(m_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
+    if(_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
         _setTypeId(_typeIdFromModel(model));
     }
 }
@@ -330,16 +326,10 @@ MetaValue *IFDFile::_getMetaValue(int32_t meta_index)
     MetaValue * val = NULL;
     IFDDir::Ref ifd;
     if(META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
-        if(!m_mainIfd) {
-            m_mainIfd = _locateMainIfd();
-        }
-        ifd = m_mainIfd;
+        ifd = mainIfd();
     }
     else if(META_INDEX_MASKOUT(meta_index) == META_NS_EXIF) {
-        if(!m_exifIfd) {
-            m_exifIfd = _locateExifIfd();
-        }
-        ifd = m_exifIfd;
+        ifd = exifIfd();
     }
     else {
         Trace(ERROR) << "Unknown Meta Namespace\n";
@@ -356,6 +346,41 @@ MetaValue *IFDFile::_getMetaValue(int32_t meta_index)
     return val;
 }
 
+const IFDDir::Ref & IFDFile::cfaIfd()
+{
+	if(!m_cfaIfd) {
+		m_cfaIfd = _locateCfaIfd();
+	}
+	return m_cfaIfd;
+}
+	
+
+const IFDDir::Ref & IFDFile::mainIfd()
+{
+	if(!m_mainIfd) {
+		m_mainIfd = _locateMainIfd();
+	}
+	return m_mainIfd;
+}
+
+
+const IFDDir::Ref & IFDFile::exifIfd()
+{
+	if(!m_exifIfd) {
+		m_exifIfd = _locateExifIfd();
+	}
+	return m_exifIfd;
+}
+
+
+const IFDDir::Ref & IFDFile::makerNoteIfd()
+{
+	if(!m_makerNoteIfd) {
+		m_makerNoteIfd = _locateMakerNoteIfd();
+	}
+	return m_makerNoteIfd;
+}
+	
 
 namespace {
 
@@ -484,7 +509,7 @@ static RawData::CfaPattern _getCfaPattern(const IFDDir::Ref & dir)
 
 } // end anon namespace
 
-::or_error IFDFile::_getRawDataFromDir(RawData & data, IFDDir::Ref & dir)
+::or_error IFDFile::_getRawDataFromDir(RawData & data, const IFDDir::Ref & dir)
 {
     ::or_error ret = OR_ERROR_NONE;
 			

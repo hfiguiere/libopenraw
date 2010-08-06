@@ -118,10 +118,8 @@ namespace OpenRaw {
 		::or_error Cr2File::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
-			if(!m_cfaIfd) {
-				m_cfaIfd = _locateCfaIfd();
-			}
-			if(!m_cfaIfd) {
+			const IFDDir::Ref & _cfaIfd = cfaIfd();
+			if(!_cfaIfd) {
 				Trace(DEBUG1) << "cfa IFD not found\n";
 				return OR_ERROR_NOT_FOUND;
 			}
@@ -130,37 +128,35 @@ namespace OpenRaw {
 			uint32_t offset = 0;
 			uint32_t byte_length = 0;
 			bool got_it;
-			got_it = m_cfaIfd->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+			got_it = _cfaIfd->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
 			if(!got_it) {
 				Trace(DEBUG1) << "offset not found\n";
 				return OR_ERROR_NOT_FOUND;
 			}
-			got_it = m_cfaIfd->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+			got_it = _cfaIfd->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
 			if(!got_it) {
 				Trace(DEBUG1) << "byte len not found\n";
 				return OR_ERROR_NOT_FOUND;
 			}
 			// get the "slicing", tag 0xc640 (3 SHORT)
 			std::vector<uint16_t> slices;
-			IFDEntry::Ref e = m_cfaIfd->getEntry(IFD::CR2_TAG_SLICE);
+			IFDEntry::Ref e = _cfaIfd->getEntry(IFD::CR2_TAG_SLICE);
 			if (e) {
 				e->getArray(slices);
 				Trace(DEBUG1) << "Found slice entry " << slices << "\n";
 			}
 
-			if(!m_exifIfd) {
-				m_exifIfd = _locateExifIfd();
-			}
-			if (m_exifIfd) {
+			const IFDDir::Ref & _exifIfd = exifIfd();
+			if (_exifIfd) {
 				uint16_t x, y;
 				x = 0;
 				y = 0;
-				got_it = m_exifIfd->getValue(IFD::EXIF_TAG_PIXEL_X_DIMENSION, x);
+				got_it = _exifIfd->getValue(IFD::EXIF_TAG_PIXEL_X_DIMENSION, x);
 				if(!got_it) {
 					Trace(DEBUG1) << "X not found\n";
 					return OR_ERROR_NOT_FOUND;
 				}
-				got_it = m_exifIfd->getValue(IFD::EXIF_TAG_PIXEL_Y_DIMENSION, y);
+				got_it = _exifIfd->getValue(IFD::EXIF_TAG_PIXEL_Y_DIMENSION, y);
 				if(!got_it) {
 					Trace(DEBUG1) << "Y not found\n";
 					return OR_ERROR_NOT_FOUND;
@@ -206,10 +202,8 @@ namespace OpenRaw {
 				
 				// get the sensor info
 				std::vector<uint16_t> sensorInfo;
-				if(!m_makerNoteIfd) {
-					m_makerNoteIfd = _locateMakerNoteIfd();
-				}
-				e = m_makerNoteIfd->getEntry(IFD::MNOTE_CANON_SENSORINFO);
+				const IFDDir::Ref & _makerNoteIfd = makerNoteIfd();
+				e = _makerNoteIfd->getEntry(IFD::MNOTE_CANON_SENSORINFO);
 				if(e) {
 					e->getArray(sensorInfo);
 					uint32_t w = sensorInfo[7] - sensorInfo[5];

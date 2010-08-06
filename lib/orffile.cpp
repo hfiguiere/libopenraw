@@ -88,10 +88,7 @@ namespace Internals {
 		IFDDir::Ref  OrfFile::_locateCfaIfd()
 		{
 			// in ORF the CFA IFD is the main IFD
-			if(!m_mainIfd) {
-				m_mainIfd = _locateMainIfd();
-			}
-			return m_mainIfd;
+			return mainIfd();
 		}
 
 
@@ -105,10 +102,8 @@ namespace Internals {
 		::or_error OrfFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error err;
-			if(!m_cfaIfd) {
-				m_cfaIfd = _locateCfaIfd();
-			}
-			err = _getRawDataFromDir(data, m_cfaIfd);
+			const IFDDir::Ref & _cfaIfd = cfaIfd();
+			err = _getRawDataFromDir(data, _cfaIfd);
 			if(err == OR_ERROR_NONE) {
 				// ORF files seems to be marked as uncompressed even if they are.
 				uint32_t x = data.width();

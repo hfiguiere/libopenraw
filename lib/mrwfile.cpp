@@ -82,10 +82,7 @@ namespace OpenRaw {
 		IFDDir::Ref  MRWFile::_locateCfaIfd()
 		{
 			// in MRW the CFA IFD is the main IFD
-			if(!m_mainIfd) {
-				m_mainIfd = _locateMainIfd();
-			}
-			return m_mainIfd;
+			return mainIfd();
 		}
 
 
@@ -98,9 +95,7 @@ namespace OpenRaw {
 		void MRWFile::_identifyId()
 		{
 			MRWContainer *mc = (MRWContainer *)m_container;
-			if(!m_mainIfd) {
-				m_mainIfd = _locateMainIfd();
-			}
+//			const IFDDir::Ref & _mainIfd = mainIfd();
 
 			if(mc->prd) {
 				std::string version = mc->prd->string_val(MRW::PRD_VERSION);

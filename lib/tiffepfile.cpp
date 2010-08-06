@@ -34,12 +34,10 @@ TiffEpFile::TiffEpFile(IO::Stream * s, Type _type)
 
 IFDDir::Ref  TiffEpFile::_locateCfaIfd()
 {
-    if(!m_mainIfd) {
-        m_mainIfd = _locateMainIfd();
-    }
+	const IFDDir::Ref & _mainIfd = mainIfd();
 
     std::vector<IFDDir::Ref> subdirs;
-    if (!m_mainIfd || !m_mainIfd->getSubIFDs(subdirs)) {
+    if (!_mainIfd || !_mainIfd->getSubIFDs(subdirs)) {
         // error
         return IFDDir::Ref();
     }
