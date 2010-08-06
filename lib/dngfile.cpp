@@ -41,7 +41,7 @@ namespace OpenRaw {
 
 
 	namespace Internals {
-		const IFDFile::camera_ids_t DNGFile::s_def[] = {
+		const IfdFile::camera_ids_t DNGFile::s_def[] = {
 			{ "PENTAX K10D        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
 														 OR_TYPEID_PENTAX_K10D_DNG) },
 			{ "R9 - Digital Back DMR",   OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
@@ -81,7 +81,7 @@ namespace OpenRaw {
 		::or_error DNGFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
-			const IFDDir::Ref & _cfaIfd = cfaIfd();
+			const IfdDir::Ref & _cfaIfd = cfaIfd();
 
 			Trace(DEBUG1) << "_getRawData()\n";
 

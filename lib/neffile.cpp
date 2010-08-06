@@ -44,7 +44,7 @@ namespace OpenRaw {
 
 
 	namespace Internals {
-		const IFDFile::camera_ids_t NEFFile::s_def[] = {
+		const IfdFile::camera_ids_t NEFFile::s_def[] = {
 			{ "NIKON D1 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
 											   OR_TYPEID_NIKON_D1) },
 			{ "NIKON D100 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
@@ -168,12 +168,12 @@ namespace OpenRaw {
 
 		int NEFFile::_getCompressionCurve(RawData & data,  NEFFile::NEFCompressionInfo& c)
 		{
-			const IFDDir::Ref & _exifIfd = exifIfd();
+			const IfdDir::Ref & _exifIfd = exifIfd();
 			if(!_exifIfd) {
 				return 0;
 			}
 
-			IFDEntry::Ref maker_ent =
+			IfdEntry::Ref maker_ent =
 				_exifIfd->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
 			if(!maker_ent) {
 				return 0;
@@ -182,9 +182,9 @@ namespace OpenRaw {
 			uint32_t off = maker_ent->offset();
 			uint32_t base = off + 10;
 
-			IFDDir::Ref ref(new IFDDir(base + 8, *m_container));
+			IfdDir::Ref ref(new IfdDir(base + 8, *m_container));
 			ref->load();
-			IFDEntry::Ref curveEntry = ref->getEntry(0x0096);
+			IfdEntry::Ref curveEntry = ref->getEntry(0x0096);
 			if(!curveEntry) {
 				return 0;
 			}
@@ -246,7 +246,7 @@ namespace OpenRaw {
 		::or_error NEFFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
-			const IFDDir::Ref & _cfaIfd = cfaIfd();
+			const IfdDir::Ref & _cfaIfd = cfaIfd();
 			Trace(DEBUG1) << "_getRawData()\n";
 
 			if(_cfaIfd) {

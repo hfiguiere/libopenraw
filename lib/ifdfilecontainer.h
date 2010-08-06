@@ -42,7 +42,7 @@ namespace OpenRaw {
 	namespace Internals {
 		
 
-		class IFDFileContainer
+		class IfdFileContainer
 			: public RawContainer
 		{
 		public:
@@ -51,9 +51,9 @@ namespace OpenRaw {
 					@param file the file handle
 					@param offset the offset from the start of the file
 			*/
-			IFDFileContainer(IO::Stream *file, off_t offset);
+			IfdFileContainer(IO::Stream *file, off_t offset);
 			/** destructor */
-			virtual ~IFDFileContainer();
+			virtual ~IfdFileContainer();
 
 			/** 
 					due to the way Exif works, we have to set specific index
@@ -83,7 +83,7 @@ namespace OpenRaw {
 				 IFD index values that are < -1
 				 @return NULL if no error, or return the reference to the current directory
 			*/
-			IFDDir::Ref setDirectory(int dir);
+			IfdDir::Ref setDirectory(int dir);
 			/**
 				 Count the number of image file directories, not including
 				 EXIF, GPS and INTEROP.
@@ -93,7 +93,7 @@ namespace OpenRaw {
 			/** Get the directories, loading them if necessary
 			 * @return the directories
 			 */
-			std::vector<IFDDir::Ref> & directories();
+			std::vector<IfdDir::Ref> & directories();
 
 			/**
 				 Get the number of the current directory
@@ -133,8 +133,8 @@ namespace OpenRaw {
 			int m_error;
 			int m_exif_offset_correction;
 
-			IFDDir::Ref m_current_dir;
-			std::vector<IFDDir::Ref> m_dirs;
+			IfdDir::Ref m_current_dir;
+			std::vector<IfdDir::Ref> m_dirs;
 
 			bool _locateDirs();
 		};

@@ -34,7 +34,7 @@ namespace OpenRaw {
 	namespace Internals {
 
 		class MRWFile
-			: public IFDFile
+			: public IfdFile
 		{
 		public:
 			static RawFile *factory(IO::Stream* _filename);
@@ -42,8 +42,8 @@ namespace OpenRaw {
 			virtual ~MRWFile();
 
 		protected:
-			virtual IFDDir::Ref  _locateCfaIfd();
-			virtual IFDDir::Ref  _locateMainIfd();
+			virtual IfdDir::Ref  _locateCfaIfd();
+			virtual IfdDir::Ref  _locateMainIfd();
 
 			virtual void _identifyId();
 			
@@ -56,7 +56,7 @@ namespace OpenRaw {
 			MRWFile(const MRWFile&);
 			MRWFile & operator=(const MRWFile&);
 
-			static const struct IFDFile::camera_ids_t s_def[];
+			static const struct IfdFile::camera_ids_t s_def[];
 		};
 	}
 

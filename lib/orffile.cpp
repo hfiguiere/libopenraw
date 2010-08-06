@@ -34,7 +34,7 @@ using namespace Debug;
 namespace OpenRaw {
 namespace Internals {
 
-		const struct IFDFile::camera_ids_t OrfFile::s_def[] = {
+		const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
 			{ "E-1             ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
 													   OR_TYPEID_OLYMPUS_E1) },
 			{ "E-10        "    , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
@@ -75,7 +75,7 @@ namespace Internals {
 
 
 		OrfFile::OrfFile(IO::Stream *s)
-			: IFDFile(s, OR_RAWFILE_TYPE_ORF, false)
+			: IfdFile(s, OR_RAWFILE_TYPE_ORF, false)
 		{
 			_setIdMap(s_def);
 			m_container = new OrfContainer(m_io, 0);
@@ -85,14 +85,14 @@ namespace Internals {
 		{
 		}
 
-		IFDDir::Ref  OrfFile::_locateCfaIfd()
+		IfdDir::Ref  OrfFile::_locateCfaIfd()
 		{
 			// in ORF the CFA IFD is the main IFD
 			return mainIfd();
 		}
 
 
-		IFDDir::Ref  OrfFile::_locateMainIfd()
+		IfdDir::Ref  OrfFile::_locateMainIfd()
 		{
 			return m_container->setDirectory(0);
 		}
@@ -102,7 +102,7 @@ namespace Internals {
 		::or_error OrfFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error err;
-			const IFDDir::Ref & _cfaIfd = cfaIfd();
+			const IfdDir::Ref & _cfaIfd = cfaIfd();
 			err = _getRawDataFromDir(data, _cfaIfd);
 			if(err == OR_ERROR_NONE) {
 				// ORF files seems to be marked as uncompressed even if they are.

@@ -30,107 +30,107 @@
 #include "trace.h"
 
 namespace OpenRaw {
-	namespace Internals {
-		
-		class IFDFileContainer;
+namespace Internals {
 
-		class IFDDir
+class IfdFileContainer;
+
+class IfdDir
+{
+public:
+	typedef boost::shared_ptr<IfdDir> Ref;
+	typedef std::vector<Ref> RefVec;
+	struct isPrimary
+	{
+		bool operator()(const Ref &dir);
+	};
+	struct isThumbnail
+	{
+		bool operator()(const Ref &dir);
+	};
+
+	IfdDir(off_t _offset, IfdFileContainer & _container);
+	virtual ~IfdDir();
+	
+/** return the offset */
+	off_t offset() const
 		{
-		public:
-			typedef boost::shared_ptr<IFDDir> Ref;
-			typedef std::vector<Ref> RefVec;
-			struct isPrimary
-			{
-				bool operator()(const Ref &dir);
-			};
-			struct isThumbnail
-			{
-				bool operator()(const Ref &dir);
-			};
+			return m_offset;
+		}
 
-			IFDDir(off_t _offset, IFDFileContainer & _container);
-			virtual ~IFDDir();
-			
-      /** return the offset */
-			off_t offset() const
-				{
-					return m_offset;
+	/** load the directory to memory */
+	bool load();
+	/** return the number of entries*/
+	int numTags()
+		{
+			return m_entries.size();
+		}
+	IfdEntry::Ref getEntry(uint16_t id) const ;
+	
+	/** Get a T value from an entry
+	 * @param id the IFD field id
+	 * @retval v the long value
+	 * @return true if success
+	 */
+	template <typename T>
+	bool getValue(uint16_t id, T &v) const
+		{
+			bool success = false;
+			IfdEntry::Ref e = getEntry(id);
+			if (e != NULL) {
+				try {
+					v = IfdTypeTrait<T>::get(*e);
+					success = true;
 				}
-
-			/** load the directory to memory */
-			bool load();
-			/** return the number of entries*/
-			int numTags()
-				{
-					return m_entries.size();
+				catch(const std::exception & ex) {
+					Debug::Trace(ERROR) << "Exception raised " << ex.what() 
+											 << " fetch value for " << id << "\n";
 				}
-			IFDEntry::Ref getEntry(uint16_t id) const ;
-			
-			/** Get a T value from an entry
-			 * @param id the IFD field id
-			 * @retval v the long value
-			 * @return true if success
-			 */
-			template <typename T>
-			bool getValue(uint16_t id, T &v) const
-				{
-					bool success = false;
-					IFDEntry::Ref e = getEntry(id);
-					if (e != NULL) {
-						try {
-							v = IFDTypeTrait<T>::get(*e);
-							success = true;
-						}
-						catch(const std::exception & ex) {
-							Debug::Trace(ERROR) << "Exception raised " << ex.what() 
-													 << " fetch value for " << id << "\n";
-						}
-					}
-					return success;
-				}
+			}
+			return success;
+		}
 
-			/** Get an loosely typed integer value from an entry.
-			 * This method is  preferred over getLongValue() 
-			 * or getShortValue() unless you really want the strong 
-			 * typing that IFD structure provide
-			 * @param id the IFD field id
-			 * @retval v the long value
-			 * @return true if success
-			 */
-			bool getIntegerValue(uint16_t id, uint32_t &v);
+	/** Get an loosely typed integer value from an entry.
+	 * This method is  preferred over getLongValue() 
+	 * or getShortValue() unless you really want the strong 
+	 * typing that IFD structure provide
+	 * @param id the IFD field id
+	 * @retval v the long value
+	 * @return true if success
+	 */
+	bool getIntegerValue(uint16_t id, uint32_t &v);
 
-			/** get the offset of the next IFD 
-			 * in absolute
-			 */
-			off_t nextIFD();
+	/** get the offset of the next IFD 
+	 * in absolute
+	 */
+	off_t nextIFD();
 
-			/** get the SubIFD at index idx.
-			 * @return Ref to the new IFDDir if found
-			 */
-			Ref getSubIFD(uint32_t idx = 0) const;
-			/** get all SubIFDs 
-			 * @retval ifds the list of IFDs Ref	
-			 * @return true if found / success
-			 */
-			bool getSubIFDs(std::vector<IFDDir::Ref> & ifds);
+	/** get the SubIFD at index idx.
+	 * @return Ref to the new IfdDir if found
+	 */
+	Ref getSubIFD(uint32_t idx = 0) const;
+	/** get all SubIFDs 
+	 * @retval ifds the list of IFDs Ref	
+	 * @return true if found / success
+	 */
+	bool getSubIFDs(std::vector<IfdDir::Ref> & ifds);
 
-			/** get the Exif IFD.
-			 * @return Ref to the new IFDDir if found
-			 */
-			Ref getExifIFD();
-			
-			/** get the MakerNote IFD.
-			 * @return Ref to the new IFDDir if found
-			 */
-			Ref getMakerNoteIFD();
-		private:
-			off_t m_offset;
-			IFDFileContainer & m_container;
-			std::map<uint16_t, IFDEntry::Ref> m_entries;
-		};
+	/** get the Exif IFD.
+	 * @return Ref to the new IfdDir if found
+	 */
+	Ref getExifIFD();
+	
+	/** get the MakerNote IFD.
+	 * @return Ref to the new IfdDir if found
+	 */
+	Ref getMakerNoteIFD();
+private:
+	off_t m_offset;
+	IfdFileContainer & m_container;
+	std::map<uint16_t, IfdEntry::Ref> m_entries;
+};
 
 
-	}
+}
 }
 
 

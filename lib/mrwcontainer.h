@@ -219,7 +219,7 @@ namespace OpenRaw {
 		/** A container for a Minolta Raw object.
 		 */
 		class MRWContainer
-			: public IFDFileContainer
+			: public IfdFileContainer
 		{
 		public:
 			MRWContainer(IO::Stream *file, off_t offset = 0);
@@ -229,7 +229,7 @@ namespace OpenRaw {
 			/**
 				 Check the MRW magic header.
 			 */
-			virtual IFDFileContainer::EndianType 
+			virtual IfdFileContainer::EndianType 
 			isMagicHeader(const char *p, int len);
 
 			/* Known datablocks within an MRW file.

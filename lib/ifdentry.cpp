@@ -30,82 +30,82 @@
 #include "ifd.h"
 
 namespace OpenRaw {
-	namespace Internals {
+namespace Internals {
 
 
-		IFDEntry::IFDEntry(uint16_t _id, int16_t _type, 
-											 int32_t _count, uint32_t _data,
-											 IFDFileContainer &_container)
-			: m_id(_id), m_type(_type),				
-			  m_count(_count), m_data(_data), 
-			  m_loaded(false), m_dataptr(NULL), 
-			  m_container(_container)
-		{
+IfdEntry::IfdEntry(uint16_t _id, int16_t _type, 
+									 int32_t _count, uint32_t _data,
+									 IfdFileContainer &_container)
+	: m_id(_id), m_type(_type),				
+	  m_count(_count), m_data(_data), 
+	  m_loaded(false), m_dataptr(NULL), 
+	  m_container(_container)
+{
+}
+
+
+IfdEntry::~IfdEntry()
+{
+	if (m_dataptr) {
+		free(m_dataptr);
+	}
+}
+
+RawContainer::EndianType IfdEntry::endian() const
+{
+	return m_container.endian();
+}
+
+
+bool IfdEntry::loadData(size_t unit_size)
+{
+	bool success = false;
+	size_t data_size = unit_size * m_count;
+	if (data_size <= 4) {
+		m_dataptr = NULL;
+		success = true;
+	}
+	else {
+		off_t _offset;
+		if (endian() == RawContainer::ENDIAN_LITTLE) {
+			_offset = IfdTypeTrait<uint32_t>::EL((uint8_t*)&m_data);
 		}
-
-
-		IFDEntry::~IFDEntry()
-		{
-			if (m_dataptr) {
-				free(m_dataptr);
-			}
+		else {
+			_offset = IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data);
 		}
+		m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
+		success = (m_container.fetchData(m_dataptr, 
+										 _offset, 
+										 data_size) == data_size);
+	}
+	return success;
+}
 
-		RawContainer::EndianType IFDEntry::endian() const
-		{
-			return m_container.endian();
-		}
+template <>
+const uint16_t IfdTypeTrait<uint8_t>::type = IFD::EXIF_FORMAT_BYTE;
+template <>
+const size_t IfdTypeTrait<uint8_t>::size = 1;
 
-
-		bool IFDEntry::loadData(size_t unit_size)
-		{
-			bool success = false;
-			size_t data_size = unit_size * m_count;
-			if (data_size <= 4) {
-				m_dataptr = NULL;
-				success = true;
-			}
-			else {
-				off_t _offset;
-				if (endian() == RawContainer::ENDIAN_LITTLE) {
-					_offset = IFDTypeTrait<uint32_t>::EL((uint8_t*)&m_data);
-				}
-				else {
-					_offset = IFDTypeTrait<uint32_t>::BE((uint8_t*)&m_data);
-				}
-				m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
-				success = (m_container.fetchData(m_dataptr, 
-												 _offset, 
-												 data_size) == data_size);
-			}
-			return success;
-		}
-
-		template <>
-		const uint16_t IFDTypeTrait<uint8_t>::type = IFD::EXIF_FORMAT_BYTE;
-		template <>
-		const size_t IFDTypeTrait<uint8_t>::size = 1;
-
-		template <>
-		const uint16_t IFDTypeTrait<uint16_t>::type = IFD::EXIF_FORMAT_SHORT;
-		template <>
-		const size_t IFDTypeTrait<uint16_t>::size = 2;
+template <>
+const uint16_t IfdTypeTrait<uint16_t>::type = IFD::EXIF_FORMAT_SHORT;
+template <>
+const size_t IfdTypeTrait<uint16_t>::size = 2;
 
 #if defined(__APPLE_CC__)
 // Apple broken g++ version or linker seems to choke.
-		template <>
-		const uint16_t IFDTypeTrait<unsigned long>::type = IFD::EXIF_FORMAT_LONG;
-		template <>
-		const size_t IFDTypeTrait<unsigned long>::size = 4;
+template <>
+const uint16_t IfdTypeTrait<unsigned long>::type = IFD::EXIF_FORMAT_LONG;
+template <>
+const size_t IfdTypeTrait<unsigned long>::size = 4;
 #endif
-		template <>
-		const uint16_t IFDTypeTrait<uint32_t>::type = IFD::EXIF_FORMAT_LONG;
-		template <>
-		const size_t IFDTypeTrait<uint32_t>::size = 4;
+template <>
+const uint16_t IfdTypeTrait<uint32_t>::type = IFD::EXIF_FORMAT_LONG;
+template <>
+const size_t IfdTypeTrait<uint32_t>::size = 4;
 
-		template <>
-		const uint16_t IFDTypeTrait<std::string>::type = IFD::EXIF_FORMAT_ASCII;
-		template <>
-		const size_t IFDTypeTrait<std::string>::size = 1;
-	}
+template <>
+const uint16_t IfdTypeTrait<std::string>::type = IFD::EXIF_FORMAT_ASCII;
+template <>
+const size_t IfdTypeTrait<std::string>::size = 1;
+}
 }

@@ -33,15 +33,15 @@ namespace Internals {
 /** This is for TIFF EP conformant files. This include DNG, NEF, 
  *  ERF */
 class TiffEpFile
-    : public IFDFile
+    : public IfdFile
 {
 public:
     TiffEpFile(IO::Stream *s, Type _type);
 
 protected:
 
-    virtual IFDDir::Ref  _locateCfaIfd();
-    virtual IFDDir::Ref  _locateMainIfd();
+    virtual IfdDir::Ref  _locateCfaIfd();
+    virtual IfdDir::Ref  _locateMainIfd();
 
     virtual ::or_error _getRawData(RawData & data, uint32_t options);
 };

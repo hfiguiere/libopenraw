@@ -31,7 +31,7 @@ namespace Internals {
 
 
 OrfContainer::OrfContainer(IO::Stream *_file, off_t offset)
-	: IFDFileContainer(_file, offset)
+	: IfdFileContainer(_file, offset)
 	, subtype_(0)
 {
 }
@@ -42,7 +42,7 @@ OrfContainer::~OrfContainer()
 }
 
 
-IFDFileContainer::EndianType 
+IfdFileContainer::EndianType 
 OrfContainer::isMagicHeader(const char *p, int len)
 {			
 	if (len < 4){

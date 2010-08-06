@@ -41,16 +41,16 @@ MetaValue::MetaValue(const value_t &v)
 namespace {
 
 template <class T>
-MetaValue::value_t convert(const Internals::IFDEntry::Ref & e)
+MetaValue::value_t convert(const Internals::IfdEntry::Ref & e)
 {
     T v;
-    v = Internals::IFDTypeTrait<T>::get(*e, 0, false);
+    v = Internals::IfdTypeTrait<T>::get(*e, 0, false);
     return MetaValue::value_t(v);
 }
 
 }
 
-MetaValue::MetaValue(const Internals::IFDEntry::Ref & e)
+MetaValue::MetaValue(const Internals::IfdEntry::Ref & e)
 {
     switch(e->type()) {
     case Internals::IFD::EXIF_FORMAT_BYTE:

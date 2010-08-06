@@ -33,7 +33,7 @@ static const char ORF_SUBTYPE_12BPP = 'S';
 class IOFile;
 
 class OrfContainer
-	: public IFDFileContainer
+	: public IfdFileContainer
 {
 public:
 	OrfContainer(IO::Stream *file, off_t offset);
@@ -43,7 +43,7 @@ public:
 	/**
 		 Check the ORF magic header.
 	 */
-	virtual IFDFileContainer::EndianType 
+	virtual IfdFileContainer::EndianType 
 	isMagicHeader(const char *p, int len);
 
 private:

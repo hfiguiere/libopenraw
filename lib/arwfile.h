@@ -32,10 +32,10 @@ namespace OpenRaw {
 
 	namespace Internals {
 		class IOFile;
-		class IFDFileContainer;
+		class IfdFileContainer;
 
 		class ARWFile
-			: public IFDFile
+			: public IfdFile
 		{
 		public:
 			static RawFile *factory(IO::Stream* s);
@@ -43,8 +43,8 @@ namespace OpenRaw {
 			virtual ~ARWFile();
 
 		protected:
-			virtual IFDDir::Ref  _locateCfaIfd();
-			virtual IFDDir::Ref  _locateMainIfd();
+			virtual IfdDir::Ref  _locateCfaIfd();
+			virtual IfdDir::Ref  _locateMainIfd();
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 
@@ -53,7 +53,7 @@ namespace OpenRaw {
 			ARWFile(const ARWFile&);
 			ARWFile & operator=(const ARWFile&);
 
-			static const IFDFile::camera_ids_t s_def[];
+			static const IfdFile::camera_ids_t s_def[];
 		};
 	}
 

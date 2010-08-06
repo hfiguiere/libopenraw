@@ -27,30 +27,30 @@ namespace OpenRaw {
 namespace Internals {
 
 TiffEpFile::TiffEpFile(IO::Stream * s, Type _type)
-    : IFDFile(s, _type)
+    : IfdFile(s, _type)
 {
 }
 
 
-IFDDir::Ref  TiffEpFile::_locateCfaIfd()
+IfdDir::Ref  TiffEpFile::_locateCfaIfd()
 {
-	const IFDDir::Ref & _mainIfd = mainIfd();
+	const IfdDir::Ref & _mainIfd = mainIfd();
 
-    std::vector<IFDDir::Ref> subdirs;
+    std::vector<IfdDir::Ref> subdirs;
     if (!_mainIfd || !_mainIfd->getSubIFDs(subdirs)) {
         // error
-        return IFDDir::Ref();
+        return IfdDir::Ref();
     }
-    IFDDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
+    IfdDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
                                                subdirs.end(),
-                                               IFDDir::isPrimary());
+                                               IfdDir::isPrimary());
     if (i != subdirs.end()) {
         return *i;
     }
-    return IFDDir::Ref();
+    return IfdDir::Ref();
 }
 
-IFDDir::Ref  TiffEpFile::_locateMainIfd()
+IfdDir::Ref  TiffEpFile::_locateMainIfd()
 {
     return m_container->setDirectory(0);
 }

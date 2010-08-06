@@ -50,7 +50,7 @@ namespace OpenRaw {
 			ERFFile(const ERFFile&);
 			ERFFile & operator=(const ERFFile &);
 
-			static const IFDFile::camera_ids_t s_def[];
+			static const IfdFile::camera_ids_t s_def[];
 		};
 	}
 

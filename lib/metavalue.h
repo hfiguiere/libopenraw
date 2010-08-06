@@ -41,7 +41,7 @@ public:
         {
         }
     explicit MetaValue(const value_t &v);
-    explicit MetaValue(const Internals::IFDEntry::Ref & e);
+    explicit MetaValue(const Internals::IfdEntry::Ref & e);
 
     uint32_t getInteger() const
         throw(Internals::BadTypeException);

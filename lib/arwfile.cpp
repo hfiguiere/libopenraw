@@ -35,7 +35,7 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		const IFDFile::camera_ids_t ARWFile::s_def[] = {
+		const IfdFile::camera_ids_t ARWFile::s_def[] = {
 			{ "DSLR-A100", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
 											   OR_TYPEID_SONY_A100) },
 			{ "DSLR-A200", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
@@ -54,7 +54,7 @@ namespace OpenRaw {
 		}
 
 		ARWFile::ARWFile(IO::Stream *s)
-			: IFDFile(s, OR_RAWFILE_TYPE_ARW)
+			: IfdFile(s, OR_RAWFILE_TYPE_ARW)
 		{
 			_setIdMap(s_def);
 		}
@@ -63,14 +63,14 @@ namespace OpenRaw {
 		{
 		}
 
-		IFDDir::Ref  ARWFile::_locateCfaIfd()
+		IfdDir::Ref  ARWFile::_locateCfaIfd()
 		{
 			// in ARW the CFA IFD is the main IFD
 			return mainIfd();
 		}
 
 
-		IFDDir::Ref  ARWFile::_locateMainIfd()
+		IfdDir::Ref  ARWFile::_locateMainIfd()
 		{
 			return m_container->setDirectory(0);
 		}

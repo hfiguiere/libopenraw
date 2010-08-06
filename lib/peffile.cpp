@@ -37,7 +37,7 @@ namespace OpenRaw {
 
 
 	namespace Internals {
-		const struct IFDFile::camera_ids_t PEFFile::s_def[] = {
+		const struct IfdFile::camera_ids_t PEFFile::s_def[] = {
 			{ "PENTAX *ist D      ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 
 														 OR_TYPEID_PENTAX_IST_D) },
 			{ "PENTAX *ist DL     ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 
@@ -60,7 +60,7 @@ namespace OpenRaw {
 		}
 
 		PEFFile::PEFFile(IO::Stream *s)
-			: IFDFile(s, OR_RAWFILE_TYPE_PEF)
+			: IfdFile(s, OR_RAWFILE_TYPE_PEF)
 		{
 			_setIdMap(s_def);
 		}
@@ -70,14 +70,14 @@ namespace OpenRaw {
 		{
 		}
 
-		IFDDir::Ref  PEFFile::_locateCfaIfd()
+		IfdDir::Ref  PEFFile::_locateCfaIfd()
 		{
 			// in PEF the CFA IFD is the main IFD
 			return mainIfd();
 		}
 
 
-		IFDDir::Ref  PEFFile::_locateMainIfd()
+		IfdDir::Ref  PEFFile::_locateMainIfd()
 		{
 			return m_container->setDirectory(0);
 		}
@@ -85,7 +85,7 @@ namespace OpenRaw {
 		::or_error PEFFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error err;
-			const IFDDir::Ref & _cfaIfd = cfaIfd();
+			const IfdDir::Ref & _cfaIfd = cfaIfd();
 			err = _getRawDataFromDir(data, _cfaIfd);
 			if(err == OR_ERROR_NONE) {
                 uint16_t compression = data.compression();

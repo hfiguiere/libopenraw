@@ -38,7 +38,7 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		const IFDFile::camera_ids_t ERFFile::s_def[] = {
+		const IfdFile::camera_ids_t ERFFile::s_def[] = {
 			{ "R-D1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
 										   OR_TYPEID_EPSON_RD1) },
 			{ 0, 0 }
@@ -64,7 +64,7 @@ namespace OpenRaw {
 		::or_error ERFFile::_getRawData(RawData & data, uint32_t /*options*/)
 		{
 			::or_error err;
-			const IFDDir::Ref & _cfaIfd = cfaIfd();
+			const IfdDir::Ref & _cfaIfd = cfaIfd();
 			if(_cfaIfd) {
 				err = _getRawDataFromDir(data, _cfaIfd);
 			}

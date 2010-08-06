@@ -99,7 +99,7 @@ namespace OpenRaw {
 		}
 
 		MRWContainer::MRWContainer(IO::Stream *_file, off_t offset)
-			: IFDFileContainer(_file, offset)
+			: IfdFileContainer(_file, offset)
 		{
 
 		}
@@ -110,7 +110,7 @@ namespace OpenRaw {
 		}
 
 
-		IFDFileContainer::EndianType 
+		IfdFileContainer::EndianType 
 		MRWContainer::isMagicHeader(const char *p, int len)
 		{
 			if (len < 4) {

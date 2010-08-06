@@ -31,99 +31,99 @@
 #include "ifddir.h"
 
 namespace OpenRaw {
-	namespace IO {
-		class Stream;
-		class File;
-	}
+namespace IO {
+	class Stream;
+	class File;
+}
 
-	namespace Internals {
-		class IFFileContainer;
+namespace Internals {
+class IfdFileContainer;
 
-		/** describe the location of a thumbnail in an IFD file */
-		struct IFDThumbDesc
+/** describe the location of a thumbnail in an IFD file */
+struct IfdThumbDesc
+{
+	IfdThumbDesc(uint32_t _x, uint32_t _y, ::or_data_type _type,
+							 const IfdDir::Ref & _ifddir)
+		: x(_x), y(_y), type(_type), ifddir(_ifddir)
 		{
-			IFDThumbDesc(uint32_t _x, uint32_t _y, ::or_data_type _type,
-									 const IFDDir::Ref & _ifddir)
-				: x(_x), y(_y), type(_type), ifddir(_ifddir)
-				{
-				}
-			IFDThumbDesc()
-				: x(0), y(0), type(OR_DATA_TYPE_NONE), ifddir((IFDDir*)NULL)
-				{
-				}
-			uint32_t x;    /**< x size. Can be 0 */
-			uint32_t y;    /**< y size. Can be 0 */
-			::or_data_type type; /**< the data type format */
-			IFDDir::Ref ifddir; /**< the IFD directory */
-		};
-
-
-		/** @brief generic IFD based raw file. */
-		class IFDFile
-			: public OpenRaw::RawFile
+		}
+	IfdThumbDesc()
+		: x(0), y(0), type(OR_DATA_TYPE_NONE), ifddir()
 		{
+		}
+	uint32_t x;    /**< x size. Can be 0 */
+	uint32_t y;    /**< y size. Can be 0 */
+	::or_data_type type; /**< the data type format */
+	IfdDir::Ref ifddir; /**< the IFD directory */
+};
 
-		protected:
-			IFDFile(IO::Stream * s, Type _type, 
-					bool instantiateContainer = true);
-			virtual ~IFDFile();
 
-			/** list the thumbnails in the IFD
-			 * @retval list the list of thumbnails
-			 * @return the error code. OR_ERROR_NOT_FOUND if no
-			 * thumbnail are found. 
-			 */
-			virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
+/** @brief generic IFD based raw file. */
+class IfdFile
+	: public OpenRaw::RawFile
+{
 
-			/** locate the thumnail in the IFD 
-			 * @param dir the IFDDir where to locate the thumbnail
-			 * @return the error code. OR_ERROR_NOT_FOUND if the
-			 * thumbnail are not found.
-			 */
-			virtual ::or_error _locateThumbnail(const IFDDir::Ref & dir,
-												std::vector<uint32_t> &list);
-			/** load the compressed rawdata from a standard location in an IFD
-			 * @param data the data storage
-			 * @param dir the IFD
-			 * @return the error code.
-			 */
-			::or_error _getRawDataFromDir(RawData & data, const IFDDir::Ref & dir);
+protected:
+	IfdFile(IO::Stream * s, Type _type, 
+			bool instantiateContainer = true);
+	virtual ~IfdFile();
 
-			typedef std::map<uint32_t, IFDThumbDesc> ThumbLocations;
-			ThumbLocations    m_thumbLocations;
-			IO::Stream       *m_io; /**< the IO handle */
-			IFDFileContainer *m_container; /**< the real container */
+	/** list the thumbnails in the IFD
+	 * @retval list the list of thumbnails
+	 * @return the error code. OR_ERROR_NOT_FOUND if no
+	 * thumbnail are found. 
+	 */
+	virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 
-			virtual IFDDir::Ref  _locateCfaIfd() = 0;
-			virtual IFDDir::Ref  _locateMainIfd() = 0;
-			virtual IFDDir::Ref  _locateExifIfd();
-			virtual IFDDir::Ref  _locateMakerNoteIfd();
+	/** locate the thumnail in the IFD 
+	 * @param dir the IfdDir where to locate the thumbnail
+	 * @return the error code. OR_ERROR_NOT_FOUND if the
+	 * thumbnail are not found.
+	 */
+	virtual ::or_error _locateThumbnail(const IfdDir::Ref & dir,
+										std::vector<uint32_t> &list);
+	/** load the compressed rawdata from a standard location in an IFD
+	 * @param data the data storage
+	 * @param dir the IFD
+	 * @return the error code.
+	 */
+	::or_error _getRawDataFromDir(RawData & data, const IfdDir::Ref & dir);
 
-			virtual void _identifyId();
+	typedef std::map<uint32_t, IfdThumbDesc> ThumbLocations;
+	ThumbLocations    m_thumbLocations;
+	IO::Stream       *m_io; /**< the IO handle */
+	IfdFileContainer *m_container; /**< the real container */
 
-			virtual MetaValue *_getMetaValue(int32_t meta_index);
+	virtual IfdDir::Ref  _locateCfaIfd() = 0;
+	virtual IfdDir::Ref  _locateMainIfd() = 0;
+	virtual IfdDir::Ref  _locateExifIfd();
+	virtual IfdDir::Ref  _locateMakerNoteIfd();
 
-			/** access the corresponding IFD. Will locate them if needed */
-			const IFDDir::Ref & cfaIfd();
-			const IFDDir::Ref & mainIfd();
-			const IFDDir::Ref & exifIfd();
-			const IFDDir::Ref & makerNoteIfd();			
-		private:
-			IFDDir::Ref       m_cfaIfd;  /**< the IFD for the CFA */
-			IFDDir::Ref       m_mainIfd; /**< the IFD for the main image 
-										  * does not necessarily reference 
-										  * the CFA
-										  */
-			IFDDir::Ref       m_exifIfd; /**< the Exif IFD */
-			IFDDir::Ref       m_makerNoteIfd; /**< the MakerNote IFD */
-			
-			IFDFile(const IFDFile&);
-			IFDFile & operator=(const IFDFile &);
+	virtual void _identifyId();
 
-			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
-		};
+	virtual MetaValue *_getMetaValue(int32_t meta_index);
 
-	}
+	/** access the corresponding IFD. Will locate them if needed */
+	const IfdDir::Ref & cfaIfd();
+	const IfdDir::Ref & mainIfd();
+	const IfdDir::Ref & exifIfd();
+	const IfdDir::Ref & makerNoteIfd();			
+private:
+	IfdDir::Ref       m_cfaIfd;  /**< the IFD for the CFA */
+	IfdDir::Ref       m_mainIfd; /**< the IFD for the main image 
+								  * does not necessarily reference 
+								  * the CFA
+								  */
+	IfdDir::Ref       m_exifIfd; /**< the Exif IFD */
+	IfdDir::Ref       m_makerNoteIfd; /**< the MakerNote IFD */
+	
+	IfdFile(const IfdFile&);
+	IfdFile & operator=(const IfdFile &);
+
+	virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+};
+
+}
 }
 
 

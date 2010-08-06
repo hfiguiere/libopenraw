@@ -37,7 +37,7 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		IFDFileContainer::IFDFileContainer(IO::Stream *_file, off_t offset)
+		IfdFileContainer::IfdFileContainer(IO::Stream *_file, off_t offset)
 			: RawContainer(_file, offset), 
 			  m_error(0),
 			  m_exif_offset_correction(0),
@@ -46,14 +46,14 @@ namespace OpenRaw {
 		{
 		}
 	
-		IFDFileContainer::~IFDFileContainer()
+		IfdFileContainer::~IfdFileContainer()
 		{
 			m_dirs.clear();
 		}
 
 
-		IFDFileContainer::EndianType 
-		IFDFileContainer::isMagicHeader(const char *p, int len)
+		IfdFileContainer::EndianType 
+		IfdFileContainer::isMagicHeader(const char *p, int len)
 		{
 			if (len < 4){
 				// we need at least 4 bytes to check
@@ -71,7 +71,7 @@ namespace OpenRaw {
 		}
 
 
-		int IFDFileContainer::countDirectories(void)
+		int IfdFileContainer::countDirectories(void)
 		{
 			if (m_dirs.size() == 0) {
 				// FIXME check result
@@ -83,8 +83,8 @@ namespace OpenRaw {
 			return m_dirs.size();
 		}
 
-		std::vector<IFDDir::Ref> & 
-		IFDFileContainer::directories()
+		std::vector<IfdDir::Ref> & 
+		IfdFileContainer::directories()
 		{
 			if (m_dirs.size() == 0) {
 				countDirectories();
@@ -92,24 +92,24 @@ namespace OpenRaw {
 			return m_dirs;
 		}
 
-		IFDDir::Ref
-		IFDFileContainer::setDirectory(int dir)
+		IfdDir::Ref
+		IfdFileContainer::setDirectory(int dir)
 		{
 			if (dir < 0) {
 				// FIXME set error
-				return IFDDir::Ref((IFDDir*)NULL);
+				return IfdDir::Ref();
 			}
 			// FIXME handle negative values
 			int n = countDirectories();
 			if (n <= 0) {
 				// FIXME set error
-				return IFDDir::Ref((IFDDir*)NULL);
+				return IfdDir::Ref();
 			}
 			// dir is signed here because we can pass negative 
 			// value for specific Exif IFDs.
 			if (dir > (int)m_dirs.size()) {
 				// FIXME set error
-				return IFDDir::Ref((IFDDir*)NULL);
+				return IfdDir::Ref();
 			}
 			m_current_dir = m_dirs[dir];
 			m_current_dir->load();
@@ -118,7 +118,7 @@ namespace OpenRaw {
 
 
 		size_t 
-		IFDFileContainer::getDirectoryDataSize()
+		IfdFileContainer::getDirectoryDataSize()
 		{
 			// TODO move to IFDirectory
 			Trace(DEBUG1) << "getDirectoryDataSize()" << "\n";
@@ -141,14 +141,14 @@ namespace OpenRaw {
 			return nextIFD - begin;
 		}
 
-		bool IFDFileContainer::locateDirsPreHook() 
+		bool IfdFileContainer::locateDirsPreHook() 
 		{ 
 			return true;
 		}
 
 
 		bool
-		IFDFileContainer::_locateDirs(void)
+		IfdFileContainer::_locateDirs(void)
 		{
 			if(!locateDirsPreHook()) {
 				return false;
@@ -175,7 +175,7 @@ namespace OpenRaw {
 
 					// we assume the offset is relative to the begining of
 					// the IFD.
-					IFDDir::Ref dir(new IFDDir(m_offset + offset,*this));
+					IfdDir::Ref dir(new IfdDir(m_offset + offset,*this));
 					m_dirs.push_back(dir);
 
 //					std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);

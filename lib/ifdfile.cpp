@@ -47,7 +47,7 @@ namespace OpenRaw {
 namespace Internals {
 
 
-IFDFile::IFDFile(IO::Stream *s, Type _type, 
+IfdFile::IfdFile(IO::Stream *s, Type _type, 
                  bool instantiateContainer)
     : RawFile(s, _type),
       m_thumbLocations(),
@@ -55,11 +55,11 @@ IFDFile::IFDFile(IO::Stream *s, Type _type,
       m_container(NULL)
 {
     if(instantiateContainer) {
-        m_container = new IFDFileContainer(m_io, 0);
+        m_container = new IfdFileContainer(m_io, 0);
     }
 }
 
-IFDFile::~IFDFile()
+IfdFile::~IfdFile()
 {
     delete m_container;
     delete m_io;
@@ -67,29 +67,29 @@ IFDFile::~IFDFile()
 
 // this one seems to be pretty much the same for all the
 // IFD based raw files
-IFDDir::Ref  IFDFile::_locateExifIfd()
+IfdDir::Ref  IfdFile::_locateExifIfd()
 {
-	const IFDDir::Ref & _mainIfd = mainIfd();
+	const IfdDir::Ref & _mainIfd = mainIfd();
     if (!_mainIfd) {
-        Trace(ERROR) << "IFDFile::_locateExifIfd() "
+        Trace(ERROR) << "IfdFile::_locateExifIfd() "
             "main IFD not found\n";
-        return IFDDir::Ref();
+        return IfdDir::Ref();
     }
     return _mainIfd->getExifIFD();
 }
 
-IFDDir::Ref  IFDFile::_locateMakerNoteIfd()
+IfdDir::Ref  IfdFile::_locateMakerNoteIfd()
 {
-	const IFDDir::Ref & _exifIfd = exifIfd();
+	const IfdDir::Ref & _exifIfd = exifIfd();
 	if(_exifIfd) {
 		return _exifIfd->getMakerNoteIFD();
 	}
-	return IFDDir::Ref();
+	return IfdDir::Ref();
 }
 
-void IFDFile::_identifyId()
+void IfdFile::_identifyId()
 {
-	const IFDDir::Ref & _mainIfd = mainIfd();
+	const IfdDir::Ref & _mainIfd = mainIfd();
     if(!_mainIfd) {
         Trace(ERROR) << "Main IFD not found to identify the file.\n";
         return;
@@ -102,32 +102,32 @@ void IFDFile::_identifyId()
 
 
 
-::or_error IFDFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
+::or_error IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
     ::or_error err = OR_ERROR_NONE;
 
     Trace(DEBUG1) << "_enumThumbnailSizes()\n";
-    std::vector<IFDDir::Ref> & dirs = m_container->directories();
-    std::vector<IFDDir::Ref>::iterator iter; 
+    std::vector<IfdDir::Ref> & dirs = m_container->directories();
+    std::vector<IfdDir::Ref>::iterator iter; 
 			
     Trace(DEBUG1) << "num of dirs " << dirs.size() << "\n";
     for(iter = dirs.begin(); iter != dirs.end(); ++iter)
     {
-        IFDDir::Ref & dir = *iter;
+        IfdDir::Ref & dir = *iter;
         dir->load();
         or_error ret = _locateThumbnail(dir, list);
         if (ret == OR_ERROR_NONE)
         {
             Trace(DEBUG1) << "Found " << list.back() << " pixels\n";
         }
-        std::vector<IFDDir::Ref> subdirs;
+        std::vector<IfdDir::Ref> subdirs;
         if(dir->getSubIFDs(subdirs)) {
             Trace(DEBUG1) << "Iterating subdirs\n";
-            std::vector<IFDDir::Ref>::iterator iter2; 
+            std::vector<IfdDir::Ref>::iterator iter2; 
             for(iter2 = subdirs.begin(); iter2 != subdirs.end(); 
                 ++iter2)
             {
-                IFDDir::Ref & dir2 = *iter2;
+                IfdDir::Ref & dir2 = *iter2;
                 dir2->load();
                 ret = _locateThumbnail(dir2, list);
                 if (ret == OR_ERROR_NONE)
@@ -144,7 +144,7 @@ void IFDFile::_identifyId()
 }
 
 
-::or_error IFDFile::_locateThumbnail(const IFDDir::Ref & dir,
+::or_error IfdFile::_locateThumbnail(const IfdDir::Ref & dir,
                                      std::vector<uint32_t> &list)
 {
     ::or_error ret = OR_ERROR_NOT_FOUND;
@@ -246,7 +246,7 @@ void IFDFile::_identifyId()
         }
         if(_type != OR_DATA_TYPE_NONE) {
             uint32_t dim = std::max(x, y);
-            m_thumbLocations[dim] = IFDThumbDesc(x, y, _type, dir);
+            m_thumbLocations[dim] = IfdThumbDesc(x, y, _type, dir);
             list.push_back(dim);
             ret = OR_ERROR_NONE;
         }
@@ -256,7 +256,7 @@ void IFDFile::_identifyId()
 }
 
 
-::or_error IFDFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
+::or_error IfdFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
 {
     ::or_error ret = OR_ERROR_NOT_FOUND;
     ThumbLocations::iterator iter = m_thumbLocations.find(size);
@@ -264,7 +264,7 @@ void IFDFile::_identifyId()
     {
         bool got_it;
 
-        IFDThumbDesc & desc = iter->second;
+        const IfdThumbDesc & desc = iter->second;
         thumbnail.setDataType(desc.type);
         uint32_t byte_length= 0; /**< of the buffer */
         uint32_t offset = 0;
@@ -321,10 +321,10 @@ void IFDFile::_identifyId()
 }
 
 
-MetaValue *IFDFile::_getMetaValue(int32_t meta_index)
+MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
 {
     MetaValue * val = NULL;
-    IFDDir::Ref ifd;
+    IfdDir::Ref ifd;
     if(META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
         ifd = mainIfd();
     }
@@ -338,7 +338,7 @@ MetaValue *IFDFile::_getMetaValue(int32_t meta_index)
         Trace(DEBUG1) << "Meta value for " 
                       << META_NS_MASKOUT(meta_index) << "\n";
 
-        IFDEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
+        IfdEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
         if(e) {
             val = new MetaValue(e);
         }
@@ -346,7 +346,7 @@ MetaValue *IFDFile::_getMetaValue(int32_t meta_index)
     return val;
 }
 
-const IFDDir::Ref & IFDFile::cfaIfd()
+const IfdDir::Ref & IfdFile::cfaIfd()
 {
 	if(!m_cfaIfd) {
 		m_cfaIfd = _locateCfaIfd();
@@ -355,7 +355,7 @@ const IFDDir::Ref & IFDFile::cfaIfd()
 }
 	
 
-const IFDDir::Ref & IFDFile::mainIfd()
+const IfdDir::Ref & IfdFile::mainIfd()
 {
 	if(!m_mainIfd) {
 		m_mainIfd = _locateMainIfd();
@@ -364,7 +364,7 @@ const IFDDir::Ref & IFDFile::mainIfd()
 }
 
 
-const IFDDir::Ref & IFDFile::exifIfd()
+const IfdDir::Ref & IfdFile::exifIfd()
 {
 	if(!m_exifIfd) {
 		m_exifIfd = _locateExifIfd();
@@ -373,7 +373,7 @@ const IFDDir::Ref & IFDFile::exifIfd()
 }
 
 
-const IFDDir::Ref & IFDFile::makerNoteIfd()
+const IfdDir::Ref & IfdFile::makerNoteIfd()
 {
 	if(!m_makerNoteIfd) {
 		m_makerNoteIfd = _locateMakerNoteIfd();
@@ -442,24 +442,24 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
     return cfa_pattern;
 }
 
-RawData::CfaPattern _convertNewCfaPattern(const IFDEntry::Ref & e)
+RawData::CfaPattern _convertNewCfaPattern(const IfdEntry::Ref & e)
 {
     RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
     if(!e || (e->count() < 4)) {
         return cfa_pattern;
     }
 
-    uint16_t hdim = IFDTypeTrait<uint16_t>::get(*e, 0, true);
-    uint16_t vdim = IFDTypeTrait<uint16_t>::get(*e, 1, true);
+    uint16_t hdim = IfdTypeTrait<uint16_t>::get(*e, 0, true);
+    uint16_t vdim = IfdTypeTrait<uint16_t>::get(*e, 1, true);
     if(hdim != 2 && vdim != 2) {
         cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
     }
     else {
         std::vector<uint8_t> cfaPattern;
-        cfaPattern.push_back(IFDTypeTrait<uint8_t>::get(*e, 4, true));
-        cfaPattern.push_back(IFDTypeTrait<uint8_t>::get(*e, 5, true));
-        cfaPattern.push_back(IFDTypeTrait<uint8_t>::get(*e, 6, true));
-        cfaPattern.push_back(IFDTypeTrait<uint8_t>::get(*e, 7, true));
+        cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 4, true));
+        cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 5, true));
+        cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 6, true));
+        cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 7, true));
         cfa_pattern = _convertArrayToCfaPattern(cfaPattern);
     }
     return cfa_pattern;
@@ -467,7 +467,7 @@ RawData::CfaPattern _convertNewCfaPattern(const IFDEntry::Ref & e)
 
 
 /** convert the CFA Pattern as stored in the entry */
-RawData::CfaPattern _convertCfaPattern(const IFDEntry::Ref & e)
+RawData::CfaPattern _convertCfaPattern(const IfdEntry::Ref & e)
 {
     std::vector<uint8_t> cfaPattern;
     RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
@@ -484,12 +484,12 @@ RawData::CfaPattern _convertCfaPattern(const IFDEntry::Ref & e)
  * @return the cfa_pattern value. %OR_CFA_PATTERN_NONE mean that
  * nothing has been found.
  */
-static RawData::CfaPattern _getCfaPattern(const IFDDir::Ref & dir)
+static RawData::CfaPattern _getCfaPattern(const IfdDir::Ref & dir)
 {
     Trace(DEBUG1) << __FUNCTION__ << "\n";
     RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
     try {
-        IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
+        IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
         if(e) {
             cfa_pattern = _convertCfaPattern(e);
         }
@@ -509,7 +509,7 @@ static RawData::CfaPattern _getCfaPattern(const IFDDir::Ref & dir)
 
 } // end anon namespace
 
-::or_error IFDFile::_getRawDataFromDir(RawData & data, const IFDDir::Ref & dir)
+::or_error IfdFile::_getRawDataFromDir(RawData & data, const IfdDir::Ref & dir)
 {
     ::or_error ret = OR_ERROR_NONE;
 			
@@ -532,7 +532,7 @@ static RawData::CfaPattern _getCfaPattern(const IFDDir::Ref & dir)
 
     got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
     if(got_it) {
-        IFDEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
+        IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
         if(e) {
             std::vector<uint32_t> counts;
             e->getArray(counts);
@@ -547,7 +547,7 @@ static RawData::CfaPattern _getCfaPattern(const IFDDir::Ref & dir)
     else {
         // the tile are individual JPEGS....
         // TODO extract all of them.
-        IFDEntry::Ref e = dir->getEntry(IFD::TIFF_TAG_TILE_OFFSETS);
+        IfdEntry::Ref e = dir->getEntry(IFD::TIFF_TAG_TILE_OFFSETS);
         if(e) {
             std::vector<uint32_t> offsets;
             e->getArray(offsets);
