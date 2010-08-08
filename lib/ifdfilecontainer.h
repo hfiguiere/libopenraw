@@ -118,10 +118,16 @@ namespace OpenRaw {
 					return m_error;
 				}
 
+			/**
+				Return the Exif offset from the container begining. By 
+				default it is 0, but some format like MRW needs a different one.
+				This is an adjustement for the offset in the Exif IFD tag.
+			 */
 			int exifOffsetCorrection() const
 				{
 					return m_exif_offset_correction;
 				}
+			/** Set the exif offset if needed. */
 			void setExifOffsetCorrection(int corr)
 				{
 					m_exif_offset_correction = corr;

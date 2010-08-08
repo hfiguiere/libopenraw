@@ -34,6 +34,7 @@
 #include "ifdentry.h"
 #include "io/file.h"
 #include "huffman.h"
+#include "makernotedir.h"
 #include "nefdiffiterator.h"
 #include "nefcfaiterator.h"
 #include "neffile.h"
@@ -44,7 +45,7 @@ namespace OpenRaw {
 
 
 	namespace Internals {
-		const IfdFile::camera_ids_t NEFFile::s_def[] = {
+		const IfdFile::camera_ids_t NefFile::s_def[] = {
 			{ "NIKON D1 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
 											   OR_TYPEID_NIKON_D1) },
 			{ "NIKON D100 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
@@ -78,23 +79,23 @@ namespace OpenRaw {
 			{ 0, 0 }
 		};
 
-		RawFile *NEFFile::factory(IO::Stream* _filename)
+		RawFile *NefFile::factory(IO::Stream* _filename)
 		{
-			return new NEFFile(_filename);
+			return new NefFile(_filename);
 		}
 
-		NEFFile::NEFFile(IO::Stream* _filename)
+		NefFile::NefFile(IO::Stream* _filename)
 			: TiffEpFile(_filename, OR_RAWFILE_TYPE_NEF)
 		{
 			_setIdMap(s_def);
 		}
 
 
-		NEFFile::~NEFFile()
+		NefFile::~NefFile()
 		{
 		}
 
-		bool NEFFile::isCompressed(RawContainer & container, uint32_t offset)
+		bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
 		{
 			int i;
 			uint8_t buf[256];
@@ -113,7 +114,28 @@ namespace OpenRaw {
 			return false;
 		}
 
-		::or_error NEFFile::_decompressNikonQuantized(RawData & data)
+		MakerNoteDir::Ref NefFile::_locateMakerNoteIfd()
+		{
+			const IfdDir::Ref & _exifIfd = exifIfd();
+			if(!_exifIfd) {
+				return MakerNoteDir::Ref();
+			}
+			
+			IfdEntry::Ref maker_ent =
+			_exifIfd->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
+			if(!maker_ent) {
+				return MakerNoteDir::Ref();
+			}
+			
+			uint32_t off = maker_ent->offset();
+			uint32_t base = off + 10;
+			
+			MakerNoteDir::Ref ref(new MakerNoteDir(base + 8, *m_container, base));
+			ref->load();
+			return ref;
+		}
+
+		::or_error NefFile::_decompressNikonQuantized(RawData & data)
 		{
 			NEFCompressionInfo c;
 			if (!_getCompressionCurve(data, c)) {
@@ -152,7 +174,7 @@ namespace OpenRaw {
 			return OR_ERROR_NONE;
 		}
 
-		::or_error NEFFile::_decompressIfNeeded(RawData & data,
+		::or_error NefFile::_decompressIfNeeded(RawData & data,
 												uint32_t options)
 		{
 			uint32_t compression = data.compression();
@@ -165,31 +187,19 @@ namespace OpenRaw {
 				return OR_ERROR_INVALID_FORMAT;
 			}
 		}
-
-		int NEFFile::_getCompressionCurve(RawData & data,  NEFFile::NEFCompressionInfo& c)
+		
+		int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 		{
-			const IfdDir::Ref & _exifIfd = exifIfd();
-			if(!_exifIfd) {
+			MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
+			if(!_makerNoteIfd) {
 				return 0;
 			}
-
-			IfdEntry::Ref maker_ent =
-				_exifIfd->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
-			if(!maker_ent) {
-				return 0;
-			}
-
-			uint32_t off = maker_ent->offset();
-			uint32_t base = off + 10;
-
-			IfdDir::Ref ref(new IfdDir(base + 8, *m_container));
-			ref->load();
-			IfdEntry::Ref curveEntry = ref->getEntry(0x0096);
+			IfdEntry::Ref curveEntry = _makerNoteIfd->getEntry(IFD::MNOTE_NIKON_NEFDECODETABE2);
 			if(!curveEntry) {
 				return 0;
 			}
 
-			size_t pos = base + curveEntry->offset();
+			size_t pos = _makerNoteIfd->getMnoteOffset() + curveEntry->offset();
 
 			IO::Stream *file = m_container->file();
 			file->seek(pos, SEEK_SET);
@@ -243,7 +253,7 @@ namespace OpenRaw {
 			return 1;
 		}
 
-		::or_error NEFFile::_getRawData(RawData & data, uint32_t options)
+		::or_error NefFile::_getRawData(RawData & data, uint32_t options)
 		{
 			::or_error ret = OR_ERROR_NONE;
 			const IfdDir::Ref & _cfaIfd = cfaIfd();

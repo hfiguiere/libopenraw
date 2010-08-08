@@ -158,6 +158,9 @@ typedef	enum {
 	/* Canon MakerNote tags */
 	MNOTE_CANON_SENSORINFO = 0x00e0,
 	
+	/* Nikon MakerNote tags */
+	MNOTE_NIKON_NEFDECODETABE2 = 0x96,
+	
 	_EXIF_TAG_LAST
 } ExifTag;
 

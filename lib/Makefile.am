@@ -75,6 +75,7 @@ libopenraw_la_SOURCES = \
 	or_debug.c \
 	ifdfilecontainer.cpp \
 	ifddir.cpp ifdentry.cpp \
+	makernotedir.h makernotedir.cpp \
 	rawcontainer.cpp \
 	orfcontainer.cpp \
 	mrwcontainer.cpp \

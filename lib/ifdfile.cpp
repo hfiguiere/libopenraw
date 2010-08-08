@@ -78,13 +78,14 @@ IfdDir::Ref  IfdFile::_locateExifIfd()
     return _mainIfd->getExifIFD();
 }
 
-IfdDir::Ref  IfdFile::_locateMakerNoteIfd()
+MakerNoteDir::Ref  IfdFile::_locateMakerNoteIfd()
 {
 	const IfdDir::Ref & _exifIfd = exifIfd();
 	if(_exifIfd) {
-		return _exifIfd->getMakerNoteIFD();
+		// to not have a recursive declaration, getMakerNoteIFD() return an IfdDir.
+		return boost::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIFD());
 	}
-	return IfdDir::Ref();
+	return MakerNoteDir::Ref();
 }
 
 void IfdFile::_identifyId()
@@ -373,7 +374,7 @@ const IfdDir::Ref & IfdFile::exifIfd()
 }
 
 
-const IfdDir::Ref & IfdFile::makerNoteIfd()
+const MakerNoteDir::Ref & IfdFile::makerNoteIfd()
 {
 	if(!m_makerNoteIfd) {
 		m_makerNoteIfd = _locateMakerNoteIfd();
@@ -605,7 +606,7 @@ static RawData::CfaPattern _getCfaPattern(const IfdDir::Ref & dir)
     case IFD::COMPRESS_NIKON_QUANTIZED:
         // must check whether it is really compressed
         // only for D100
-        if( !NEFFile::isCompressed(*m_container, offset) ) {
+        if( !NefFile::isCompressed(*m_container, offset) ) {
             compression = IFD::COMPRESS_NIKON_PACK;
             data_type = OR_DATA_TYPE_CFA;
             // this is a hack. we should check if 

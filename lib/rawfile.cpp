@@ -67,7 +67,7 @@ void init(void)
                                  boost::bind(&Internals::Cr2File::factory, _1),
                                  "cr2");
     static RawFileFactory fctnef(OR_RAWFILE_TYPE_NEF, 
-                                 boost::bind(&Internals::NEFFile::factory, _1),
+                                 boost::bind(&Internals::NefFile::factory, _1),
                                  "nef");
     static RawFileFactory fctarw(OR_RAWFILE_TYPE_ARW, 
                                  boost::bind(&Internals::ARWFile::factory, _1),

@@ -51,7 +51,7 @@ public:
 	IfdDir(off_t _offset, IfdFileContainer & _container);
 	virtual ~IfdDir();
 	
-/** return the offset */
+	/** return the offset */
 	off_t offset() const
 		{
 			return m_offset;
@@ -120,7 +120,7 @@ public:
 	Ref getExifIFD();
 	
 	/** get the MakerNote IFD.
-	 * @return Ref to the new IfdDir if found
+	 * @return Ref to the new MakerNoteDir if found
 	 */
 	Ref getMakerNoteIFD();
 private:

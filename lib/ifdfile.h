@@ -29,6 +29,7 @@
 #include <libopenraw++/rawfile.h>
 
 #include "ifddir.h"
+#include "makernotedir.h"
 
 namespace OpenRaw {
 namespace IO {
@@ -97,7 +98,7 @@ protected:
 	virtual IfdDir::Ref  _locateCfaIfd() = 0;
 	virtual IfdDir::Ref  _locateMainIfd() = 0;
 	virtual IfdDir::Ref  _locateExifIfd();
-	virtual IfdDir::Ref  _locateMakerNoteIfd();
+	virtual MakerNoteDir::Ref  _locateMakerNoteIfd();
 
 	virtual void _identifyId();
 
@@ -107,7 +108,7 @@ protected:
 	const IfdDir::Ref & cfaIfd();
 	const IfdDir::Ref & mainIfd();
 	const IfdDir::Ref & exifIfd();
-	const IfdDir::Ref & makerNoteIfd();			
+	const MakerNoteDir::Ref & makerNoteIfd();			
 private:
 	IfdDir::Ref       m_cfaIfd;  /**< the IFD for the CFA */
 	IfdDir::Ref       m_mainIfd; /**< the IFD for the main image 
@@ -115,7 +116,7 @@ private:
 								  * the CFA
 								  */
 	IfdDir::Ref       m_exifIfd; /**< the Exif IFD */
-	IfdDir::Ref       m_makerNoteIfd; /**< the MakerNote IFD */
+	MakerNoteDir::Ref m_makerNoteIfd; /**< the MakerNote IFD */
 	
 	IfdFile(const IfdFile&);
 	IfdFile & operator=(const IfdFile &);

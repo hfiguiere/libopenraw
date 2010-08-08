@@ -27,6 +27,7 @@
 #include "io/stream.h"
 #include "ifdfilecontainer.h"
 #include "ifddir.h"
+#include "makernotedir.h"
 
 using namespace Debug;
 
@@ -228,14 +229,14 @@ IfdDir::Ref IfdDir::getMakerNoteIFD()
 		<< "\n";
 		val_offset += m_container.exifOffsetCorrection();
 		Trace(DEBUG1) << "MakerNote IFD offset = " << val_offset << "\n";
-		Ref ref(new IfdDir(val_offset, m_container));
+		MakerNoteDir::Ref ref(new MakerNoteDir(val_offset, m_container, val_offset));
 		ref->load();
 		return ref;
 	}
 	else {
 		Trace(DEBUG1) << "MakerNote IFD offset not found.\n";				
 	}
-	return Ref();
+	return MakerNoteDir::Ref();
 }
 
 }
