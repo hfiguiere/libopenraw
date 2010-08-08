@@ -95,9 +95,12 @@ IfdDir::Ref  MRWFile::_locateMainIfd()
 void MRWFile::_identifyId()
 {
 	MRWContainer *mc = (MRWContainer *)m_container;
-//			const IfdDir::Ref & _mainIfd = mainIfd();
+	
+	// it is important that the main IFD be loaded.
+	// this ensures it.
+	const IfdDir::Ref & _mainIfd = mainIfd();
 
-	if(mc->prd) {
+	if(_mainIfd && mc->prd) {
 		std::string version = mc->prd->string_val(MRW::PRD_VERSION);
 		_setTypeId(_typeIdFromModel(version));
 	}
