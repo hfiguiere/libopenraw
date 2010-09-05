@@ -138,6 +138,12 @@ if test x$enable_gnome = xyes ; then
       PKG_CHECK_MODULES(LIBGDKPIXBUF, gdk-pixbuf-2.0 >= $LIBGDKPIXBUF_REQUIRED,
                      [AC_DEFINE(HAVE_LIBGDKPIXBUF, 1, [Define to 1 to enable libgdkpixbuf support])
 		      GDK_PIXBUF_DIR=`$PKG_CONFIG --variable=gdk_pixbuf_moduledir gdk-pixbuf-2.0`
+			dnl This is because the variable is only defined on recent gdk-pixbuf. 
+			dnl Revert to the old method otherwise. (https://bugs.freedesktop.org/show_bug.cgi?id=30013)
+			if test -z "$GDK_PIXBUF_DIR" ; then
+				GTK_VERSION=`$PKG_CONFIG --variable=gtk_binary_version gtk+-2.0`
+				GDK_PIXBUF_DIR="$libdir/gtk-2.0/$GTK_VERSION/loaders"
+			fi
 		      AC_SUBST(GDK_PIXBUF_DIR)
 		      HAVE_LIBGDKPIXBUF=yes],
                      [HAVE_LIBGDKPIXBUF=no])
