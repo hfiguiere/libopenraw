@@ -8,6 +8,7 @@ New features:
   - Support for Olympus ORF big-endian files and "RS" (12-bits). 
     Added E-10, E-P1, E-620, SP350, SP500, SP510 and SP550.
   - Support for Canon G10, G11, 7D, 1DMarkIV, 5DMarkII and 500D.
+  - Support for Canon 50D (Closes #30846).
   - Support for Nikon D3000.
   - Support for Sony A-550.
   - Support for Leica X1 DNG.
