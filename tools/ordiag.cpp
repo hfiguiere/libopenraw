@@ -232,7 +232,10 @@ public:
 			else {
 				m_out << boost::format("\tType = %1% (%2%)\n") % rf->type() 
 															 % typeToString(rf->type());
-				m_out << boost::format("\tType ID = %1%\n") % rf->typeId();
+				std::string typeId = str(boost::format("%1%, %2%") 
+							% OR_GET_FILE_TYPEID_VENDOR(rf->typeId())
+							% OR_GET_FILE_TYPEID_CAMERA(rf->typeId()));
+				m_out << boost::format("\tType ID = %1%\n") % typeId;
 				dumpPreviews(rf);
 				dumpRawData(rf);
 				dumpMetaData(rf);
