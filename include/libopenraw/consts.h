@@ -63,7 +63,9 @@ extern "C" {
 		OR_RAWFILE_TYPE_ORF, /**< Olympus ORF */
 		OR_RAWFILE_TYPE_PEF, /**< Pentax PEF */
 		OR_RAWFILE_TYPE_ERF, /**< Epson ERF */
-		OR_RAWFILE_TYPE_TIFF /**< Generic TIFF */
+		OR_RAWFILE_TYPE_TIFF,/**< Generic TIFF */
+		OR_RAWFILE_TYPE_NRW, /**< Nikon NRW */
+		_OR_RAWFILE_TYPE_LAST
 	} or_rawfile_type;
 
 	typedef enum {
@@ -200,6 +202,7 @@ extern "C" {
 		OR_TYPEID_NIKON_D70S,
 		OR_TYPEID_NIKON_D80,
 		OR_TYPEID_NIKON_D3000,
+		OR_TYPEID_NIKON_COOLPIX_P6000,
 		_OR_TYPEID_NIKON_LAST
 	};
 

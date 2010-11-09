@@ -76,6 +76,8 @@ namespace OpenRaw {
 											   OR_TYPEID_NIKON_D70S) },
 			{ "NIKON D80", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
 											   OR_TYPEID_NIKON_D80) },
+			{ "COOLPIX P6000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_COOLPIX_P6000) },
 			{ 0, 0 }
 		};
 
