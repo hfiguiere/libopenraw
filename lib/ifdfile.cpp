@@ -656,7 +656,8 @@ static RawData::CfaPattern _getCfaPattern(const IfdDir::Ref & dir)
         Trace(DEBUG1) << "dimensions (x, y) " << x << ", "
                       << y << "\n";
         boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
-        uint8_t * outdata = (uint8_t*)data.allocData(x * y * 2);
+		size_t outsize = x * y * 2;
+        uint8_t * outdata = (uint8_t*)data.allocData(outsize);
         size_t got;
         Trace(DEBUG1) << "offset of RAW data = " << offset << "\n";
         do {
@@ -666,10 +667,11 @@ static RawData::CfaPattern _getCfaPattern(const IfdDir::Ref & dir)
             offset += got;
             if(got) {
                 if(bpc == 12) {
-                    size_t out = unpack.unpack_be12to16(outdata, 
+                    size_t out = unpack.unpack_be12to16(outdata, outsize,
                                                         block.get(), 
                                                         got);
                     outdata += out;
+					outsize -= out;
                 }
                 else {
                     // outdata point to uint16_t

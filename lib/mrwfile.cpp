@@ -231,6 +231,7 @@ void MRWFile::_identifyId()
 		size_t blocksize = unpack.block_size();
 		boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
 		uint8_t * outdata = (uint8_t*)data.data();
+		size_t outsize = finaldatalen;
 		size_t got;
 		do {
 			Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
@@ -240,9 +241,10 @@ void MRWFile::_identifyId()
 			offset += got;
 			Trace(DEBUG2) << "got " << got << "\n";
 			if(got) {
-				size_t out = unpack.unpack_be12to16(outdata,
+				size_t out = unpack.unpack_be12to16(outdata, outsize,
 													block.get(), got);
 				outdata += out;
+				outsize -= out;
 				Trace(DEBUG2) << "unpacked " << out
 							  << " bytes from " << got << "\n";
 			}

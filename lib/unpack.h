@@ -38,7 +38,7 @@ namespace OpenRaw {	namespace Internals {
 		Unpack(uint32_t w, uint32_t t);
 
 		size_t block_size();
-		size_t unpack_be12to16(uint8_t *dest, const uint8_t *src, size_t size);
+		size_t unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *src, size_t size);
 	private:
 		uint32_t m_w;
 		uint32_t m_type;

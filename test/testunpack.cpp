@@ -36,7 +36,7 @@ int test_unpack()
 	OpenRaw::Internals::Unpack
 		unpack(32, OpenRaw::Internals::IFD::COMPRESS_NIKON_PACK);
 
-	size_t s = unpack.unpack_be12to16((uint8_t*)unpacked, packed,
+	size_t s = unpack.unpack_be12to16((uint8_t*)unpacked, 40, packed,
 									  sizeof(packed));
 	BOOST_CHECK(s = size_t(sizeof(unpacked)));
 	for (size_t i = 0; i < 2; ++i) {
@@ -62,7 +62,7 @@ int test_unpack2()
 	OpenRaw::Internals::Unpack unpack(32,
 									  OpenRaw::Internals::IFD::COMPRESS_NONE);
 
-	size_t s = unpack.unpack_be12to16((uint8_t*)unpacked, packed,
+	size_t s = unpack.unpack_be12to16((uint8_t*)unpacked, 4, packed,
 									  sizeof(packed));
 	BOOST_CHECK(s == size_t(sizeof(unpacked)));
 	BOOST_CHECK(unpacked[0] == 0x0123);

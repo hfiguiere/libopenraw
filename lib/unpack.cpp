@@ -53,7 +53,7 @@ namespace OpenRaw {	namespace Internals {
 	 * the output is always 16-bits values in native (host) byte order.
 	 * the source must correspond to an image row.
 	 */
-	size_t Unpack::unpack_be12to16(uint8_t *dest, const uint8_t *src,
+	size_t Unpack::unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *src,
 								   size_t size)
 	{
 		uint16_t *dest16 = reinterpret_cast<uint16_t *>(dest);
@@ -68,9 +68,13 @@ namespace OpenRaw {	namespace Internals {
 			assert (size % 16 == 0);
 		}
 		assert (rest % 3 == 0);
-
+		
 		for (size_t i = 0; i < n + 1; i++) {
 			size_t m = i == n ? rest / 3 : 5;
+			if((reinterpret_cast<uint8_t *>(dest16) - dest) + (m * 4) >  destsize) {
+//				fprintf(stderr, "overflow !\n");
+				break;
+			}
 			for(size_t j = 0; j < m; j++) {
 				/* Read 3 bytes */
 				uint32_t t = *src++;
