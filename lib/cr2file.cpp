@@ -90,6 +90,8 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
 												OR_TYPEID_CANON_G11) },
 	{ "Canon PowerShot G11", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
 												OR_TYPEID_CANON_G11) },
+	{ "Canon PowerShot S90", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
+												OR_TYPEID_CANON_S90) },
 	{ 0, 0 }
 };
 
