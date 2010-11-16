@@ -187,6 +187,7 @@ void MRWFile::_identifyId()
 
 ::or_error MRWFile::_getRawData(RawData & data, uint32_t options) 
 { 
+	or_error ret = OR_ERROR_NONE;
 	MRWContainer *mc = (MRWContainer *)m_container;
 
 	if(!mc->prd) {
@@ -241,12 +242,17 @@ void MRWFile::_identifyId()
 			offset += got;
 			Trace(DEBUG2) << "got " << got << "\n";
 			if(got) {
-				size_t out = unpack.unpack_be12to16(outdata, outsize,
-													block.get(), got);
+				size_t out;
+                                or_error err = unpack.unpack_be12to16(outdata, outsize,
+									block.get(), got, out);
 				outdata += out;
 				outsize -= out;
 				Trace(DEBUG2) << "unpacked " << out
 							  << " bytes from " << got << "\n";
+                                if(err != OR_ERROR_NONE) {
+                                    ret = err;
+                                    break;
+                                }
 			}
 		} while((got != 0) && (fetched < datalen));
 	}
@@ -270,7 +276,7 @@ void MRWFile::_identifyId()
 	data.setCfaPattern(cfa_pattern);
 	data.setDimensions (x, y);
 
-	return OR_ERROR_NONE; 
+	return ret; 
 }
 
 }

@@ -667,11 +667,16 @@ static RawData::CfaPattern _getCfaPattern(const IfdDir::Ref & dir)
             offset += got;
             if(got) {
                 if(bpc == 12) {
-                    size_t out = unpack.unpack_be12to16(outdata, outsize,
+                    size_t out;
+                    or_error err = unpack.unpack_be12to16(outdata, outsize,
                                                         block.get(), 
-                                                        got);
+                                                        got, out);
                     outdata += out;
-					outsize -= out;
+                    outsize -= out;
+                    if(err != OR_ERROR_NONE) {
+                        ret = err;
+                        break;
+                    }
                 }
                 else {
                     // outdata point to uint16_t

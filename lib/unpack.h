@@ -27,6 +27,7 @@
 #include <stddef.h>
 
 #include <boost/noncopyable.hpp>
+#include <libopenraw/consts.h>
 
 namespace OpenRaw {	namespace Internals {
 
@@ -38,7 +39,7 @@ namespace OpenRaw {	namespace Internals {
 		Unpack(uint32_t w, uint32_t t);
 
 		size_t block_size();
-		size_t unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *src, size_t size);
+		or_error unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & outsize);
 	private:
 		uint32_t m_w;
 		uint32_t m_type;

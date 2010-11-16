@@ -45,6 +45,7 @@ extern "C" {
 		OR_ERROR_NOT_FOUND = 5,    /**< requested "object" not found */
 		OR_ERROR_INVALID_PARAM = 6,
 		OR_ERROR_INVALID_FORMAT = 7, /**< invalid format */
+		OR_ERROR_DECOMPRESSION = 8,  /**< decompression error */
 		OR_ERROR_UNKNOWN = 42,
 		OR_ERROR_LAST_ 
 	} or_error;

@@ -22,6 +22,7 @@
 
 
 #include <assert.h>
+#include "libopenraw/consts.h"
 #include "unpack.h"
 #include "trace.h"
 #include "ifd.h"
@@ -53,9 +54,10 @@ namespace OpenRaw {	namespace Internals {
 	 * the output is always 16-bits values in native (host) byte order.
 	 * the source must correspond to an image row.
 	 */
-	size_t Unpack::unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *src,
-								   size_t size)
+	or_error Unpack::unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *src,
+								   size_t size, size_t & out)
 	{
+		or_error err = OR_ERROR_NONE;
 		uint16_t *dest16 = reinterpret_cast<uint16_t *>(dest);
 		size_t pad = (m_type == IFD::COMPRESS_NIKON_PACK) ? 1 : 0;
 		size_t n = size / (15 + pad);
@@ -72,6 +74,7 @@ namespace OpenRaw {	namespace Internals {
 		for (size_t i = 0; i < n + 1; i++) {
 			size_t m = i == n ? rest / 3 : 5;
 			if((reinterpret_cast<uint8_t *>(dest16) - dest) + (m * 4) >  destsize) {
+				err = OR_ERROR_DECOMPRESSION;
 //				fprintf(stderr, "overflow !\n");
 				break;
 			}
@@ -94,7 +97,8 @@ namespace OpenRaw {	namespace Internals {
 			src += pad;
 		}
 
-		return ret;
+		out = ret;
+		return err;
 	}
 
 } }
