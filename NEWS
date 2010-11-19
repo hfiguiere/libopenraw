@@ -6,13 +6,15 @@ New features:
   - New demo ppmload to create a ppm out of the demosaicized image.
   - Support (partially) PEF from Pentax K20D.
   - Support for Olympus ORF big-endian files and "RS" (12-bits). 
-    Added E-10, E-P1, E-620, SP350, SP500, SP510 and SP550.
-  - Support for Canon G10, G11, 7D, 1DMarkIV, 5DMarkII and 500D.
+    Added E-10, E-P1, E-PL1, E-P2, E-620, SP350, SP500, SP510 and SP550.
+  - Support for Canon G10, G11, G12, 7D, 1DMarkIV, 5DMarkII, 500D, 60D, PowerShot S90
   - Support for Canon 50D (Closes #30846).
   - Support for Nikon D3000.
   - Support for Sony A-550.
   - Support for Leica X1 DNG.
   - Support for Ricoh GRX DNG.
+  - Support for Nikon NRW: P6000 and P7000 (partial).
+  - Nicer display of the type ID in ordiag.
   
 Bug fixes:
 
@@ -26,6 +28,7 @@ Bug fixes:
   - Accept YCbCr when the compression is JPEG. The K10D DNG should now have 
     the large size preview.
   - Install the GdkPixbuf in the right place. (Closes #29208) (Vincent Untz)
+  - Fixed overflow in the unpack_be12to16() and report errors.
   
 Internal changes:
 

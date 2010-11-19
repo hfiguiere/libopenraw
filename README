@@ -63,6 +63,7 @@ Support table:
   B  Known to be Broken. (Needs to be fixed. I have a sample but further
      work is required.)
   X  Not needed.
+  #  Sample file needed.
 
                           ThNail
                          /  CFA compressed (as is)
@@ -74,19 +75,19 @@ Support table:
                          | | | | | | /
                          | | | | | | |
 Canon CR2                Y Y Y Y Y Y Y
+ 1000D                   T T T T T T T
  20D                     T T T T T T T
  30D                     T T T T T T T
  350D                    T T T T T T T
  40D                     T T T T T T T
- 50D
  400D                    T T T T T T T
  450D                    T T T T T T T
  50D                     T T T T T T T
  500D                    T T T T T T T
- 550D
- 1000D
+ 550D                    T T T T T T T
  5D                      T T T     T T
  5DMarkII                T T T T   T T
+ 60D                     T T T T T T T
  7D                      T T T     T T
  1DMarkII                T T T     T T
  1DMarkIII
@@ -94,7 +95,9 @@ Canon CR2                Y Y Y Y Y Y Y
  G9                                T T
  G10                               T T
  G11                     T T T     T T
- SX1 IS
+ G12                     T T T T T T T
+ SX1 IS                  # # # # # # #
+ S90                     T T T T T T T
 
 Canon CRW                Y Y Y Y Y Y N
  300D                    T T T T T T
@@ -125,6 +128,10 @@ Nikon NEF                Y Y Y Y Y Y N
  D70s                    T T Y T T T
  D80                               T
 
+Nikon NRW                Y         Y
+ P6000                   T         T
+ P7000                   T         T
+
 Olympus ORF              Y Y N Y Y Y N
  E-1                     T T       T
  E-10                    T B       T
@@ -141,6 +148,8 @@ Olympus ORF              Y Y N Y Y Y N
  SP-510                  B B X T T T
  SP-550                  B B X T T T
  E-P1                    B   N     T
+ E-P2                    B   N     T
+ E-PL1                   B   N     T
 
 Adobe DNG                Y Y B Y Y Y N
  Leica DMR               T T X T T T
@@ -164,7 +173,7 @@ Pentax PEF               Y Y N Y Y Y N
  *-ist D                 T T X X T T
  *-ist DL                T T N     T
  K10D                    T T N T T T
- K100D                             T
+ K100D                   # # # # # T #
  K100D Super             T T N     T
  K20D                    T T N T   T
 
@@ -202,9 +211,15 @@ Panasonic RAW            N N N N N N
  Lumix FZ8
  Lumix FZ18
 
+Panasonic RW2            N N N N N N
+ GF-1
+ GH-1
+
 Mamiya MEF               N N N N N N
  Mamiya ZD
 
+Samsung SRW              N N N N N N
+ 
 
 Test suite
 ==========
