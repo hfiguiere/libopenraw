@@ -98,6 +98,7 @@ Canon CR2                Y Y Y Y Y Y Y
  G12                     T T T T T T T
  SX1 IS                  # # # # # # #
  S90                     T T T T T T T
+ S95                     T T T T T T T
 
 Canon CRW                Y Y Y Y Y Y N
  300D                    T T T T T T
@@ -150,6 +151,7 @@ Olympus ORF              Y Y N Y Y Y N
  E-P1                    B   N     T
  E-P2                    B   N     T
  E-PL1                   B   N     T
+ XZ-1                    B   N     T
 
 Adobe DNG                Y Y B Y Y Y N
  Leica DMR               T T X T T T
