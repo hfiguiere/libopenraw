@@ -148,6 +148,8 @@ typedef	enum {
 	EXIF_TAG_UNKNOWN_C4A5 = 0xc4a5,
 	/* DNG tags */
 	TIFF_TAG_DNG_VERSION                     = 0xc612,
+	DNG_TAG_DEFAULT_CROP_ORIGIN              = 0xc61f,
+	DNG_TAG_DEFAULT_CROP_SIZE                = 0xc620,
 	
 	/* CR2 tags */
 	CR2_TAG_c5d9 = 0xc5d9,

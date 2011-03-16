@@ -115,6 +115,24 @@ inline unsigned long IfdTypeTrait<unsigned long>::BE(const uint8_t* b)
 }
 #endif
 
+template <>
+inline IFD::Rational IfdTypeTrait<IFD::Rational>::EL(const uint8_t* b)
+{
+    IFD::Rational r;
+    r.num = EL32(b);
+    r.denom = EL32(b + 4);
+    return r;
+}
+
+template <>
+inline IFD::Rational IfdTypeTrait<IFD::Rational>::BE(const uint8_t* b)
+{
+    IFD::Rational r;
+    r.num = BE32(b);
+    r.denom = BE32(b + 4);
+    return r;
+}
+
 class IfdEntry
 {
 public:
@@ -178,7 +196,7 @@ public:
 				throw e;
 			}
 		}
-
+	uint32_t getIntegerArrayItem(int idx);
 
 private:
 	uint16_t m_id;

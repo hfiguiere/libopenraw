@@ -110,6 +110,25 @@ namespace OpenRaw {
 					else {
 						data.setDataType(OR_DATA_TYPE_CFA);
 					}
+					uint32_t crop_x, crop_y, crop_w, crop_h;
+					IfdEntry::Ref e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_ORIGIN);
+					if(e) {
+						crop_x = e->getIntegerArrayItem(0);
+						crop_y = e->getIntegerArrayItem(1);
+					}
+					else {
+						crop_x = crop_y = 0;
+					}
+					e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_SIZE);
+					if(e) {
+						crop_w = e->getIntegerArrayItem(0);
+						crop_h = e->getIntegerArrayItem(1);
+					}
+					else {
+						crop_w = data.width();
+						crop_h = data.height();
+					}
+					data.setRoi(crop_x, crop_y, crop_w, crop_h);
 				}
 				else {
 					Trace(ERROR) << "couldn't find raw data\n";

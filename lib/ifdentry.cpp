@@ -25,6 +25,7 @@
 #include "exception.h"
 #include "endianutils.h"
 
+#include "trace.h"
 #include "ifdfilecontainer.h"
 #include "ifdentry.h"
 #include "ifd.h"
@@ -81,6 +82,42 @@ bool IfdEntry::loadData(size_t unit_size)
 	return success;
 }
 
+uint32_t IfdEntry::getIntegerArrayItem(int idx)
+{
+    uint32_t v = 0;
+    
+    try {
+        switch(type())
+        {
+        case IFD::EXIF_FORMAT_LONG:
+            v = IfdTypeTrait<uint32_t>::get(*this, idx);
+            break;
+        case IFD::EXIF_FORMAT_SHORT:
+            v = IfdTypeTrait<uint16_t>::get(*this, idx);
+            break;
+        case IFD::EXIF_FORMAT_RATIONAL:
+        {
+            IFD::Rational r = IfdTypeTrait<IFD::Rational>::get(*this, idx);
+            if(r.denom == 0) {
+                v = 0;
+            }
+            else {
+                v = r.num / r.denom;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    catch(const std::exception & ex) {
+        Debug::Trace(ERROR) << "Exception raised " << ex.what() 
+                     << " fetch integer value for " << m_id << "\n";
+    }
+
+    return v;
+}
+
 template <>
 const uint16_t IfdTypeTrait<uint8_t>::type = IFD::EXIF_FORMAT_BYTE;
 template <>
@@ -90,6 +127,12 @@ template <>
 const uint16_t IfdTypeTrait<uint16_t>::type = IFD::EXIF_FORMAT_SHORT;
 template <>
 const size_t IfdTypeTrait<uint16_t>::size = 2;
+
+template <>
+const uint16_t IfdTypeTrait<IFD::Rational>::type = IFD::EXIF_FORMAT_RATIONAL;
+template <>
+const size_t IfdTypeTrait<IFD::Rational>::size = 8;
+
 
 #if defined(__APPLE_CC__)
 // Apple broken g++ version or linker seems to choke.

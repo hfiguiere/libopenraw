@@ -97,35 +97,16 @@ IfdEntry::Ref IfdDir::getEntry(uint16_t id) const
 	return IfdEntry::Ref();
 }
 
-
 bool IfdDir::getIntegerValue(uint16_t id, uint32_t &v)
 {
 	bool success = false;
 	IfdEntry::Ref e = getEntry(id);
 	if (e != NULL) {
-		try {
-			switch(e->type())
-			{
-			case IFD::EXIF_FORMAT_LONG:
-				v = IfdTypeTrait<uint32_t>::get(*e);
-				success = true;
-				break;
-			case IFD::EXIF_FORMAT_SHORT:
-				v = IfdTypeTrait<uint16_t>::get(*e);
-				success = true;
-				break;
-			default:
-				break;
-			}
-		}
-		catch(const std::exception & ex) {
-			Trace(ERROR) << "Exception raised " << ex.what() 
-									 << " fetch integer value for " << id << "\n";
-		}
+	    v = e->getIntegerArrayItem(0);
+	    success = true;
 	}
 	return success;
 }
-
 
 off_t IfdDir::nextIFD()
 {

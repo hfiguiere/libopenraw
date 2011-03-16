@@ -72,6 +72,11 @@ namespace OpenRaw {
 				COMPRESS_NIKON_PACK = 32769,
 				COMPRESS_NIKON_QUANTIZED = 34713
 			} TiffCompress;
+			
+			struct Rational {
+			    uint32_t num;
+			    uint32_t denom;
+			};
 		}
 	}
 }
