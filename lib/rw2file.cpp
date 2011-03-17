@@ -27,9 +27,11 @@
 #include "trace.h"
 #include "io/file.h"
 #include "io/memstream.h"
+#include "io/streamclone.h"
 #include "ifd.h"
 #include "rw2file.h"
 #include "rw2container.h"
+#include "jfifcontainer.h"
 #include "rawfilefactory.h"
 
 using namespace Debug;
@@ -51,6 +53,10 @@ const IfdFile::camera_ids_t Rw2File::s_def[] = {
 						  OR_TYPEID_PANASONIC_FZ30) },
 	{ "DMC-FZ50", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC,
 						  OR_TYPEID_PANASONIC_FZ50) },
+	{ "DMC-G1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC,
+						  OR_TYPEID_PANASONIC_G1) },
+	{ "DMC-G2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC,
+						  OR_TYPEID_PANASONIC_G2) },
 	{ "DMC-G10", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC,
 						  OR_TYPEID_PANASONIC_G10) },
 	{ "DMC-GH1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC,
@@ -95,6 +101,50 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
 {
 	return m_container->setDirectory(0);
 }
+
+::or_error Rw2File::_locateThumbnail(const IfdDir::Ref & dir,
+                                     std::vector<uint32_t> &list)
+{
+    uint32_t offset = 0;
+    uint32_t size = 0;
+    
+    offset = _getJpegThumbnailOffset(dir, size);
+    if(size == 0) {
+        return OR_ERROR_NOT_FOUND;
+    }
+    Trace(DEBUG1) << "Jpeg offset: " << offset << "\n";
+
+    uint32_t x = 0;
+    uint32_t y = 0;
+    ::or_data_type _type = OR_DATA_TYPE_JPEG;
+    boost::scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
+    boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+    if (jfif->getDimensions(x,y)) {
+        Trace(DEBUG1) << "JPEG dimensions x=" << x 
+                      << " y=" << y << "\n";
+    }
+    if(_type != OR_DATA_TYPE_NONE) {
+        uint32_t dim = std::max(x, y);
+        m_thumbLocations[dim] = IfdThumbDesc(x, y, _type, dir);
+        list.push_back(dim);
+    }
+	
+    return OR_ERROR_NONE;
+}
+
+uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & len)
+{
+    IfdEntry::Ref e = dir->getEntry(IFD::RW2_TAG_JPEG_FROM_RAW);
+	if(!e) {
+	    len = 0;
+		Trace(DEBUG1) << "JpegFromRaw not found\n";
+		return 0;
+	}
+    uint32_t offset = e->offset();
+    len = e->count();
+    return offset;
+}
+
 
 ::or_error Rw2File::_getRawData(RawData & data, uint32_t /*options*/)
 {

@@ -89,6 +89,13 @@ protected:
 	 * @return the error code.
 	 */
 	::or_error _getRawDataFromDir(RawData & data, const IfdDir::Ref & dir);
+	
+	/** Get the JPEG thumbnail offset from dir.
+	 * @param dir the IFD to get the thumbnail from
+	 * @param len the length of the JPEG stream. 0 is not valid.
+	 * @return the offset. 0 is not valid.
+	 */
+	virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & len);
 
 	typedef std::map<uint32_t, IfdThumbDesc> ThumbLocations;
 	ThumbLocations    m_thumbLocations;

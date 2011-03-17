@@ -320,8 +320,8 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
 {
     if (d->m_sizes.size() == 0) {
         Trace(DEBUG1) << "_enumThumbnailSizes init\n";
-        bool ret = _enumThumbnailSizes(d->m_sizes);
-        if (!ret) {
+        ::or_error ret = _enumThumbnailSizes(d->m_sizes);
+        if (ret != OR_ERROR_NONE) {
             Trace(DEBUG1) << "_enumThumbnailSizes failed\n";
         }
     }

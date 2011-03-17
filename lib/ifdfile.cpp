@@ -256,6 +256,20 @@ void IfdFile::_identifyId()
     return ret;
 }
 
+uint32_t IfdFile::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & byte_length)
+{
+    uint32_t offset = 0;
+    bool got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, byte_length);
+    if(got_it) {
+        got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, offset);
+    }
+    else {
+        // some case it is STRIP_OFFSETS for JPEG
+        got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+        got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+    }
+    return offset;
+}
 
 ::or_error IfdFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
 {
@@ -275,21 +289,7 @@ void IfdFile::_identifyId()
         switch(desc.type)
         {
         case OR_DATA_TYPE_JPEG:
-            got_it = desc.ifddir
-                ->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-                           byte_length);
-            if(got_it) {
-                got_it = desc.ifddir
-                    ->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
-                               offset);
-            }
-            else {
-                // some case it is STRIP_OFFSETS for JPEG
-                got_it = desc.ifddir
-                    ->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-                got_it = desc.ifddir
-                    ->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
-            }
+            offset = _getJpegThumbnailOffset(desc.ifddir, byte_length);
             break;
         case OR_DATA_TYPE_PIXMAP_8RGB:
             got_it = desc.ifddir

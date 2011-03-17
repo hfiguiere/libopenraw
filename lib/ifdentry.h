@@ -150,7 +150,7 @@ public:
 		}
 	
 	/** the count of items in the entry */
-	uint16_t count() const
+	uint32_t count() const
 		{
 			return m_count;
 		}

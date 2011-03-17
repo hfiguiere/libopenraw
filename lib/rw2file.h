@@ -51,8 +51,11 @@ private:
 	Rw2File(const Rw2File&);
 	Rw2File & operator=(const Rw2File&);
 
+	virtual ::or_error _locateThumbnail(const IfdDir::Ref & dir,
+                                     std::vector<uint32_t> &list);
+	virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & len);
 	virtual ::or_error _getRawData(RawData & data, uint32_t options);
-	
+
 	static const IfdFile::camera_ids_t s_def[];
 };
 
