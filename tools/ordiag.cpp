@@ -144,6 +144,9 @@ public:
 			case OR_RAWFILE_TYPE_ERF:
 				return "Epson ERF";
 				break;
+			case OR_RAWFILE_TYPE_RW2:
+				return "Panasonic RAW";
+				break;
 			default:
 				break;
 			}

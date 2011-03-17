@@ -21,10 +21,12 @@ noinst_HEADERS = or_debug.h \
 	crwfile.h \
 	erffile.h \
 	mrwfile.h \
+	rw2file.h \
 	ifd.h \
 	ifdfilecontainer.h \
 	ifddir.h ifdentry.h \
 	orfcontainer.h \
+	rw2container.h \
 	mrwcontainer.h \
 	ciffcontainer.h \
 	jfifcontainer.h \
@@ -69,6 +71,7 @@ libopenraw_la_SOURCES = \
 	crwfile.cpp \
 	erffile.cpp \
 	mrwfile.cpp \
+	rw2file.cpp \
 	bitmapdata.cpp \
 	thumbnail.cpp \
 	rawdata.cpp \
@@ -78,6 +81,7 @@ libopenraw_la_SOURCES = \
 	makernotedir.h makernotedir.cpp \
 	rawcontainer.cpp \
 	orfcontainer.cpp \
+	rw2container.cpp \
 	mrwcontainer.cpp \
 	ciffcontainer.cpp \
 	jfifcontainer.cpp \

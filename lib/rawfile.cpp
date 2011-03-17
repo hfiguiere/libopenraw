@@ -48,6 +48,7 @@
 #include "erffile.h"
 #include "dngfile.h"
 #include "mrwfile.h"
+#include "rw2file.h"
 #include "metavalue.h"
 #include "exception.h"
 #include "bimedian_demosaic.h"
@@ -93,6 +94,12 @@ void init(void)
     static RawFileFactory fctmrw(OR_RAWFILE_TYPE_MRW,
                                  boost::bind(&Internals::MRWFile::factory, _1),
                                  "mrw");
+    static RawFileFactory fctraw(OR_RAWFILE_TYPE_RW2,
+                                 boost::bind(&Internals::Rw2File::factory, _1),
+                                 "raw");
+    static RawFileFactory fctrw2(OR_RAWFILE_TYPE_RW2,
+                                 boost::bind(&Internals::Rw2File::factory, _1),
+                                 "rw2");
 }
 
 class RawFile::Private 
