@@ -159,16 +159,24 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 	uint32_t offset = 0;
 	uint32_t byte_length = 0;
 	bool got_it;
-	got_it = _cfaIfd->getIntegerValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-	if(!got_it) {
-		Trace(DEBUG1) << "offset not found\n";
-		return OR_ERROR_NOT_FOUND;
-	}
-	got_it = _cfaIfd->getIntegerValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
-	if(!got_it) {
-		Trace(DEBUG1) << "byte len not found\n";
-		return OR_ERROR_NOT_FOUND;
-	}
+	// RW2 file
+	got_it = _cfaIfd->getIntegerValue(IFD::RW2_TAG_STRIP_OFFSETS, offset);
+	if(got_it) {
+        byte_length = m_container->file()->filesize() - offset;
+    }
+    else {
+        // RAW file alternative.
+        got_it = _cfaIfd->getIntegerValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+        if(!got_it) {
+            Trace(DEBUG1) << "offset not found\n";
+            return OR_ERROR_NOT_FOUND;
+        }
+        got_it = _cfaIfd->getIntegerValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+        if(!got_it) {
+            Trace(DEBUG1) << "byte len not found\n";
+            return OR_ERROR_NOT_FOUND;
+        }
+    }
 
 	uint32_t x, y;
 	x = 0;
@@ -193,7 +201,7 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 	// they are not all RGGB.
 	// but I don't seem to see where this is encoded.
 	// 
-	data.setCfaPattern(OR_CFA_PATTERN_RGGB);
+	data.setCfaPattern(OR_CFA_PATTERN_BGGR);
 	data.setDataType(OR_DATA_TYPE_CFA);
 	data.setDimensions(x, y);
 
