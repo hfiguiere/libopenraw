@@ -101,7 +101,7 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
     (void)error;
 
     raw_file = or_rawfile_new_from_memory(context->data->data, context->data->len,
-                                          OR_DATA_TYPE_NONE);
+                                          OR_RAWFILE_TYPE_UNKNOWN);
 	
     if(raw_file) {
         or_error err;
@@ -111,7 +111,7 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
             uint32_t x,y;
             x = y = 0;
             or_bitmapdata_dimensions(bitmapdata, &x, &y);
-            pixbuf = gdk_pixbuf_new_from_data(or_bitmapdata_data(bitmapdata), 
+            pixbuf = gdk_pixbuf_new_from_data((guchar*)or_bitmapdata_data(bitmapdata), 
                                               GDK_COLORSPACE_RGB,
                                               FALSE, 8, x, y, 
                                               x * 3, 
