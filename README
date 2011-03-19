@@ -1,7 +1,7 @@
 Copyright
 =========
 
-libopenraw is Copyright (c) 2005-2008 Hubert Figuiere and
+libopenraw is Copyright (c) 2005-2011 Hubert Figuiere and
 other contributors. See the respective files.
 It is licensed under LGPLv3 or later. See files COPYING
 and COPYING.LESSER
@@ -34,7 +34,7 @@ below:
     - Canon CR2
     - Canon CRW (not those coming from CHDK firmware like A610)
     - Nikon NEF
-    - Olympus ORF: E-300, E-500
+    - Olympus ORF
     - Pentax PEF
     - Epson ERF
     - DNG

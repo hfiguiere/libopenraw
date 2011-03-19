@@ -21,7 +21,9 @@ New features:
   - Support for Nikon NRW: P6000 and P7000 (partial).
   - Support for Panasonic RAW and RW2.
   - Nicer display of the type ID in ordiag.
-  
+  - API: mark deprecated APIs.
+  - API: or_rawdata_get_roi() to get the region of interest from the RAW data.
+ 
 Bug fixes:
 
   - API: or_rawfile_get_rendered_image() returns a ORBitmapDataRef with
@@ -31,16 +33,22 @@ Bug fixes:
   - Don't crash when the files can't be written in the testsuite bootstrap.
   - Detect that ORF file are compressed if they are. (Closes #26618)
   - Skip compressed CFA when rendering the image. (Closes #25464)
+  - Properly decompress CFA from Canon 7D, 5DMkII, 500D, 1DMkIV (and any 
+    other whose JPEG stream have 4 components)
   - Accept YCbCr when the compression is JPEG. The K10D DNG should now have 
     the large size preview.
   - Install the GdkPixbuf in the right place. (Closes #29208) (Vincent Untz)
   - Fixed overflow in the unpack_be12to16() and report errors.
   - Fixed some compilation errors in the Gdk pixbuf loader.
+  - Fixed IDs for Canon 350D and 400D.
   
 Internal changes:
 
   - Rename debug.{h,cpp} to trace.{h,cpp}
   - Fixed the case on several class names.
+  - Fixed warnings.
+  - Support to load MakerNote IFD.
+  - Streamline the loading of IFDs.
 
 libopenraw 0.0.8
 
