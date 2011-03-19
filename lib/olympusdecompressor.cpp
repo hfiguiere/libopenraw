@@ -20,11 +20,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+
+#include <libopenraw++/rawdata.h>
 
 #include "io/stream.h"
 #include "olympusdecompressor.h"
 #include "bititerator.h"
-#include <libopenraw++/rawdata.h>
 
 
 namespace OpenRaw {
