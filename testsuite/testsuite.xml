@@ -384,8 +384,8 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>10614</thumbDataSizes>
-      <rawDataType>COMP_CFA</rawDataType>
-      <rawDataSize>13461504</rawDataSize>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>16826880</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <metaOrientation>1</metaOrientation>
@@ -393,7 +393,7 @@
   </test>
   <test>
     <name>ORF-test E330</name>
-    <file>/home/hub/samples/300mm_f5.6.ORF</file>
+    <file>/home/hub/samples/orf/Olympus_E330/300mm_f5.6.ORF</file>
     <source>http://raw.fotosite.pl/download-Olympus_E-330_Sigma_135-400_f4.5-5.6/300mm_f5.6.ORF</source>
     <results>
       <rawType>ORF</rawType>
@@ -402,8 +402,8 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>11074</thumbDataSizes>
-      <rawDataType>COMP_CFA</rawDataType>
-      <rawDataSize>12857600</rawDataSize>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>16072000</rawDataSize>
       <rawDataDimensions>3280 2450</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
@@ -413,13 +413,13 @@
   </test>
   <test>
   	<name>ORF-test E-410</name>
-  	<file>/home/hub/samples/p1013308.orf</file>
+  	<file>/home/hub/samples/orf/Olympus_E410/p1013308.orf</file>
   	<results>
       <rawType>ORF</rawType>
       <rawTypeId>458759</rawTypeId>
       <thumbNum>0</thumbNum>
-      <rawDataType>COMP_CFA</rawDataType>
-      <rawDataSize>8131436</rawDataSize>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
