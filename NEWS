@@ -2,19 +2,24 @@ libopenraw 0.0.9
 
 New features:
 
+  - Get the default crop in CR2, CRW and DNG.
   - make dist make a bzip2 archive too (build only).
   - New demo ppmload to create a ppm out of the demosaicized image.
-  - Support (partially) PEF from Pentax K20D.
+  - Support (partially) PEF from Pentax K20D, K-r, K-5, K-7, K-x (unconfirmed),
+    645D.
   - Support for Olympus ORF big-endian files and "RS" (12-bits). 
-    Added E-10, E-P1, E-PL1, E-P2, E-620, SP350, SP500, SP510, SP550, XZ-1
+    Added E-10, E-P1, E-P2, E-PL1, E-PL2, E-620, SP350, SP500, SP510, SP550, 
+    XZ-1
+    Olympus ORF decompression.
   - Support for Canon G10, G11, G12, 7D, 1DMarkIV, 5DMarkII, 500D, 60D, 
-    PowerShot S90, PowerShot S95
+    600D, PowerShot S90, PowerShot S95
   - Support for Canon 50D (Closes #30846).
-  - Support for Nikon D3000.
+  - Support for Nikon D3000, D3100, D7000
   - Support for Sony A-550.
   - Support for Leica X1 DNG.
   - Support for Ricoh GRX DNG.
   - Support for Nikon NRW: P6000 and P7000 (partial).
+  - Support for Panasonic RAW and RW2.
   - Nicer display of the type ID in ordiag.
   
 Bug fixes:
@@ -30,6 +35,7 @@ Bug fixes:
     the large size preview.
   - Install the GdkPixbuf in the right place. (Closes #29208) (Vincent Untz)
   - Fixed overflow in the unpack_be12to16() and report errors.
+  - Fixed some compilation errors in the Gdk pixbuf loader.
   
 Internal changes:
 

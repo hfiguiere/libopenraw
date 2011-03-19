@@ -40,7 +40,7 @@ below:
     - DNG
     - Sony ARW
     - Minolta MRW
-
+    - Panasonic RAW and RW2
 
 How to build:
 =============
@@ -71,7 +71,7 @@ Support table:
                          | | /  Orientation Tag
                          | | | /  Bayer Type
                          | | | | /  Type ID
-                         | | | | | /  ROI
+                         | | | | | /  Default Crop
                          | | | | | | /
                          | | | | | | |
 Canon CR2                Y Y Y Y Y Y Y
@@ -88,6 +88,7 @@ Canon CR2                Y Y Y Y Y Y Y
  5D                      T T T     T T
  5DMarkII                T T T T   T T
  60D                     T T T T T T T
+ 600D                    T T T T T T T
  7D                      T T T     T T
  1DMarkII                T T T     T T
  1DMarkIII
@@ -121,44 +122,48 @@ Nikon NEF                Y Y Y Y Y Y N
  D2X                     T T X T T T
  D200                              T
  D300                              T
- D3000                   T T T T T T
+ D3000                   T B B T T T
+ D3100                   T T T T T T
  D40                     T T Y T T T
  D40X                    T T Y T T T
  D50                               T
  D70                     T T Y T T T
  D70s                    T T Y T T T
+ D7000                   T T T T T T
  D80                               T
 
 Nikon NRW                Y         Y
  P6000                   T         T
  P7000                   T         T
 
-Olympus ORF              Y Y N Y Y Y N
- E-1                     T T       T
- E-10                    T B       T
- E-3                     T T       T
+Olympus ORF              Y Y B Y Y Y N
+ E-1                     T T T   T T
+ E-10                    T B B     T
+ E-3                     T T T   T T
  E-300                   T T B T T T
  E-330                   T T N     T
- E-400                   T B   T   T
- E-410                   B T N T   T
- E-500                   T T   T   T
- E-510                   B T   T   T
- E-620                   B   N     T
+ E-400                   T B T T T T
+ E-410                   B T T T T T
+ E-500                   T T B T   T
+ E-510                   B T T T T T
+ E-620                   B T T   T T
  SP-350                  B B X T T T
  SP-500                  B B X T T T
  SP-510                  B B X T T T
  SP-550                  B B X T T T
- E-P1                    B   N     T
- E-P2                    B   N     T
- E-PL1                   B   N     T
- XZ-1                    B   N     T
+ E-P1                    B T T   T T
+ E-P2                    B T T   T T
+ E-PL1                   B T T   T T
+ E-PL2                   B T T   T T
+ XZ-1                    B T T   T T
 
-Adobe DNG                Y Y B Y Y Y N
+Adobe DNG                Y Y B Y Y Y Y
  Leica DMR               T T X T T T
  Leica M8                T T X T T T
  Leica X1                T T T T T T
  Adobe DNG converter     T T B T T T
- Pentax K10D             T T X T T T
+ Pentax K10D             T T X T T T T
+ Pentax 645D             T T X T T T T
  Samsung GX-10           T T X T T T
  Samsung Pro815          T T X T T T
  Ricoh GR-2              T T X T T T
@@ -204,23 +209,36 @@ Kodak KDC                N N N N N N N
 FujiFilm RAF             N N N N N N N
  Finepix S3Pro
  Finepix S6500Fd
+ Finepix X-100
 
-Foveon X3F               N N N N N N
+Foveon X3F               N N N N N N N
 
-Panasonic RAW            N N N N N N
- Lumix FZ30
- Lumix FZ50
- Lumix FZ8
- Lumix FZ18
+Panasonic RAW            Y Y N Y Y Y Y
+ FZ30                    N T       T T
+ FZ50                    N T       T T
+ FZ8                     N T       T T
+ FZ18                    T T       T T
+ L1                      N T       T T
+ L10                     # # # # # # #
+ LX2                     # # # # # # #
 
-Panasonic RW2            N N N N N N
- GF-1
- GH-1
+Panasonic RW2            Y Y N Y Y Y Y
+ GF1                     T T       T T
+ GF2                     T T       T T
+ GH1                     T T       T T
+ GH2                     T T       T T
+ G1                      T T       T T
+ G2                      T T       T T
+ G10                     T T       T T
+ LX3                     T T       T T
+ LX5                     T T       T T
+ FZ28                    T T       T T
+ 
 
-Mamiya MEF               N N N N N N
+Mamiya MEF               N N N N N N N
  Mamiya ZD
 
-Samsung SRW              N N N N N N
+Samsung SRW              N N N N N N N
  
 
 Test suite
