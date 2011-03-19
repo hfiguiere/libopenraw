@@ -110,6 +110,13 @@ protected:
 	virtual void _identifyId();
 
 	virtual MetaValue *_getMetaValue(int32_t meta_index);
+	
+	/** Translate the compression type from the tiff type (16MSB) 
+	 * to the RAW specific type if needed (16MSB)
+	 * @param tiffCompression the 16 bits value from TIFF
+	 * @return the actually value. Anything >= 2^16 is specific the RAW type
+	 */
+	virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression);
 
 	/** access the corresponding IFD. Will locate them if needed */
 	const IfdDir::Ref & cfaIfd();

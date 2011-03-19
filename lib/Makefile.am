@@ -34,6 +34,7 @@ noinst_HEADERS = or_debug.h \
 	ljpegdecompressor.h \
 	ljpegdecompressor_priv.h \
 	crwdecompressor.h \
+	olympusdecompressor.h \
 	exception.h \
 	endianutils.h \
 	metavalue.h \
@@ -88,6 +89,7 @@ libopenraw_la_SOURCES = \
 	decompressor.cpp \
 	ljpegdecompressor.cpp \
 	crwdecompressor.cpp \
+	olympusdecompressor.cpp \
 	metavalue.cpp \
 	unpack.cpp \
 	bimedian_demosaic.cpp bimedian_demosaic.h \

@@ -27,6 +27,7 @@
 #include "ifddir.h"
 #include "ifdentry.h"
 #include "orfcontainer.h"
+#include "olympusdecompressor.h"
 #include "io/file.h"
 
 using namespace Debug;
@@ -118,19 +119,27 @@ namespace Internals {
 				// ORF files seems to be marked as uncompressed even if they are.
 				uint32_t x = data.width();
 				uint32_t y = data.height();
-				uint16_t compression = 0;
+				uint32_t compression = 0;
 				if(data.size() < x * y * 2) {
-                    compression = 65535;
-                    data.setCompression(65535);
+                    compression = ORF_COMPRESSION;
+                    data.setCompression(ORF_COMPRESSION);
 					data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
 				}
                 else {
                     compression = data.compression();
                 }
                 switch(compression) {
-                case 65535:
+                case ORF_COMPRESSION:
                     if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-                        // TODO decompress
+						OlympusDecompressor decomp((const uint8_t*)data.data(), m_container, x, y);
+						RawData *dData = decomp.decompress(NULL);
+						if (dData != NULL) {
+							dData->setCfaPattern(data.cfaPattern());
+							data.swap(*dData);
+							data.setDataType(OR_DATA_TYPE_CFA);
+							data.setDimensions(x, y);
+							delete dData;
+						}						
                     }
 					break;
 				default:
@@ -139,6 +148,15 @@ namespace Internals {
 			}
 			return err;
 		}
+	
+uint32_t OrfFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
+{
+	if(tiffCompression == IFD::COMPRESS_CUSTOM) {
+		return ORF_COMPRESSION;
+	}
+	return (uint32_t)tiffCompression;
+}
+
 
 }
 }

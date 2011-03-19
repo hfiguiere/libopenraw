@@ -20,6 +20,7 @@
  */
 
 #include <assert.h>
+#include <algorithm>
 #include "bititerator.h"
 
 namespace OpenRaw {
@@ -53,22 +54,35 @@ void BitIterator::load(size_t numBits)
 
 uint32_t BitIterator::get(size_t n)
 {
-	assert(n <= 25);
+	uint32_t ret = peek(n);
 
-	if (n == 0)
-		return 0;
-
-	if (n > m_bitsOnBuffer)
-		load(n - m_bitsOnBuffer);
-
-	assert(n <= m_bitsOnBuffer);
-
-	uint32_t ret = m_bitBuffer >> (32 - n);
-	m_bitsOnBuffer -= n;
-	m_bitBuffer <<= n;
+	skip(n);
 
 	return ret;
 }
 
+uint32_t BitIterator::peek(size_t n)
+{
+	assert(n <= 25);
+	
+	if (n == 0)
+		return 0;
+	
+	if (n > m_bitsOnBuffer)
+		load(n - m_bitsOnBuffer);
+	
+	assert(n <= m_bitsOnBuffer);
+	
+	return m_bitBuffer >> (32 - n);
+}
+
+void BitIterator::skip(size_t n)
+{
+	size_t num_bits = std::min(n, m_bitsOnBuffer);
+	m_bitsOnBuffer -= num_bits;
+	m_bitBuffer <<= num_bits;
+}
+
+	
 }
 }

@@ -91,7 +91,7 @@ namespace OpenRaw {
 				if(ret == OR_ERROR_NONE) {
 					uint16_t compression = 0;
 					if (_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression) &&
-						compression == 7) {
+						compression == IFD::COMPRESS_LJPEG) {
 						// if the option is not set, decompress
 						if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
 							boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),

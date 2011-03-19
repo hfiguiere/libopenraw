@@ -40,12 +40,17 @@ namespace OpenRaw {
 			static RawFile *factory(IO::Stream *);
 			OrfFile(IO::Stream *);
 			virtual ~OrfFile();
+			
+			enum {
+				ORF_COMPRESSION = 0x10000
+			};
 
 		protected:
 			virtual IfdDir::Ref  _locateCfaIfd();
 			virtual IfdDir::Ref  _locateMainIfd();
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
+			virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression);
 		private:
 			static RawFile::TypeId _typeIdFromModel(const std::string & model);
 

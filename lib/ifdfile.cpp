@@ -346,6 +346,15 @@ MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
     }
     return val;
 }
+	
+/** by default we don't translate the compression 
+ */
+uint32_t IfdFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
+{
+	return (uint32_t)tiffCompression;
+}
+
+
 
 const IfdDir::Ref & IfdFile::cfaIfd()
 {
@@ -587,14 +596,15 @@ static RawData::CfaPattern _getCfaPattern(const IfdDir::Ref & dir)
         return OR_ERROR_NOT_FOUND;
     }
 
-    uint32_t compression = 0;
-    got_it = dir->getIntegerValue(IFD::EXIF_TAG_COMPRESSION, compression);
+    uint16_t tiffCompression = 0;
+    got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, tiffCompression);
     if(!got_it)
     {
         Trace(DEBUG1) << "Compression type not found\n";
     }
     BitmapData::DataType data_type = OR_DATA_TYPE_NONE;
 
+	uint32_t compression = _translateCompressionType((IFD::TiffCompress)tiffCompression);
     switch(compression) 
     {
     case IFD::COMPRESS_NONE:

@@ -100,7 +100,7 @@ namespace OpenRaw {
 			if(err == OR_ERROR_NONE) {
                 uint16_t compression = data.compression();
                 switch(compression) {
-                case 65535:
+                case IFD::COMPRESS_CUSTOM:
                     if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
                         // TODO decompress
                     }

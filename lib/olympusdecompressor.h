@@ -1,8 +1,7 @@
-/* -*- tab-width:4; c-basic-offset:4 -*- */
 /*
- * libopenraw - bititerator.cpp
+ * libopenraw - olympusdecompressor.cpp
  *
- * Copyright (C) 2008 Rafael Avila de Espindola.
+ * Copyright (C) 2011 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,29 +18,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __BITITERATOR_H_
-#define __BITITERATOR_H_
 
-#include <stdint.h>
-#include <cstring>
+#ifndef __OPENRAW_OLYMPUSDECOMPRESSOR_H__
+#define __OPENRAW_OLYMPUSDECOMPRESSOR_H__
+
+#include "decompressor.h"
 
 namespace OpenRaw {
 namespace Internals {
 
-class BitIterator {
-	const uint8_t* m_p;
-	uint32_t m_bitBuffer;
-	size_t m_bitsOnBuffer;
-	void load(size_t numBits);
-
- public:
-	BitIterator(const void *);
-	uint32_t get(size_t);
-	uint32_t peek(size_t);
-	void skip(size_t);
+class OlympusDecompressor
+	: public Decompressor
+{
+public:
+	OlympusDecompressor(const uint8_t *buffer,
+				 RawContainer * container, uint32_t w, uint32_t h)
+	: Decompressor(NULL, container)
+	, m_buffer(buffer)
+	, m_h(h)
+	, m_w(w)
+	{
+	}
+	virtual RawData *decompress(RawData *in = NULL);
+private:
+	const uint8_t *m_buffer;
+	uint32_t m_h;
+	uint32_t m_w;
 };
 
 }
 }
-
 #endif

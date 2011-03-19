@@ -4,6 +4,9 @@ MRW support:       Bradley Broom
 NEF decompression: Rafael Espíndola
 Python bindings:   Brian Quinlan
 
+Indirect contributors:
+Klaus Post for code from RawSpeed.
+
 Sponsors:
 Novell sponsored time to work on libopenraw as part of their ITO programme 
 (and HackWeek in February 2008)
