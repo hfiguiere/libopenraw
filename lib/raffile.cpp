@@ -49,6 +49,8 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
 											 OR_TYPEID_FUJIFILM_S5600) },
 	{ "FinePix S9500  ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
 											 OR_TYPEID_FUJIFILM_S9500) },
+	{ "FinePix S6500fd", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
+											 OR_TYPEID_FUJIFILM_S6500FD) },
 	{ NULL, 0 }
 };
 
