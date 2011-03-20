@@ -22,6 +22,7 @@ noinst_HEADERS = or_debug.h \
 	erffile.h \
 	mrwfile.h \
 	rw2file.h \
+	raffile.h \
 	ifd.h \
 	ifdfilecontainer.h \
 	ifddir.h ifdentry.h \
@@ -30,6 +31,7 @@ noinst_HEADERS = or_debug.h \
 	mrwcontainer.h \
 	ciffcontainer.h \
 	jfifcontainer.h \
+	rafcontainer.h \
 	decompressor.h \
 	ljpegdecompressor.h \
 	ljpegdecompressor_priv.h \
@@ -73,6 +75,7 @@ libopenraw_la_SOURCES = \
 	erffile.cpp \
 	mrwfile.cpp \
 	rw2file.cpp \
+	raffile.cpp \
 	bitmapdata.cpp \
 	thumbnail.cpp \
 	rawdata.cpp \
@@ -83,6 +86,7 @@ libopenraw_la_SOURCES = \
 	rawcontainer.cpp \
 	orfcontainer.cpp \
 	rw2container.cpp \
+	rafcontainer.cpp \
 	mrwcontainer.cpp \
 	ciffcontainer.cpp \
 	jfifcontainer.cpp \

@@ -2,7 +2,7 @@
  * libopenraw - consts.h
  *
  * Copyright (c) 2008 Novell, Inc.
- * Copyright (C) 2005-2010 Hubert Figuiere
+ * Copyright (C) 2005-2011 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -66,7 +66,8 @@ extern "C" {
 		OR_RAWFILE_TYPE_ERF, /**< Epson ERF */
 		OR_RAWFILE_TYPE_TIFF,/**< Generic TIFF */
 		OR_RAWFILE_TYPE_NRW, /**< Nikon NRW */
-		OR_RAWFILE_TYPE_RW2, /**< Panasonic RW2 */
+		OR_RAWFILE_TYPE_RW2, /**< Panasonic RAW and RW2 */
+		OR_RAWFILE_TYPE_RAF, /**< FujiFilm RAF */
 		_OR_RAWFILE_TYPE_LAST
 	} or_rawfile_type;
 
@@ -129,6 +130,8 @@ extern "C" {
 		OR_TYPEID_VENDOR_MAMIYA = 12,
 		/* not really a camera vendor. For the converter. */
 		OR_TYPEID_VENDOR_ADOBE = 13,
+		OR_TYPEID_VENDOR_FUJIFILM = 14,
+		
 		_OR_TYPEID_VENDOR_LAST
 	};
 
@@ -329,6 +332,21 @@ extern "C" {
 		OR_TYPEID_PANASONIC_G1 = 14,
 		OR_TYPEID_PANASONIC_G2 = 15,
 		_OR_TYPEID_PANASONIC_LAST
+	};
+	
+	enum {
+		OR_TYPEID_FUJIFILM_UNKNOWN = 0,
+		OR_TYPEID_FUJIFILM_X100 = 1,
+		OR_TYPEID_FUJIFILM_F700 = 2,
+		OR_TYPEID_FUJIFILM_E900 = 3,
+		OR_TYPEID_FUJIFILM_S2PRO = 4,
+		OR_TYPEID_FUJIFILM_S3PRO = 5,
+		OR_TYPEID_FUJIFILM_S5PRO = 6,
+		OR_TYPEID_FUJIFILM_F810 = 7,
+		OR_TYPEID_FUJIFILM_S5600 = 8,
+		OR_TYPEID_FUJIFILM_S9500 = 9,
+		
+		_OR_TYPEID_FUJIFILM_LAST
 	};
 
 #ifdef __cplusplus

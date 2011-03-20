@@ -71,7 +71,7 @@ Support table:
                          | | /  Orientation Tag
                          | | | /  Bayer Type
                          | | | | /  Type ID
-                         | | | | | /  Default Crop
+                         | | | | | /  Active Area (ROI)
                          | | | | | | /
                          | | | | | | |
 Canon CR2                Y Y Y Y Y Y Y
@@ -206,10 +206,16 @@ Kodak DCR                N N N N N N N
 
 Kodak KDC                N N N N N N N
 
-FujiFilm RAF             N N N N N N N
- Finepix S3Pro
- Finepix S6500Fd
- Finepix X-100
+FujiFilm RAF             Y N N N N Y N
+ Finepix S2Pro           T         T
+ Finepix S3Pro           T         T
+ Finepix S5Pro           T         T
+ Finepix S6500Fd         #         #
+ Finepix S5600           T         T
+ Finepix S9500           T         T
+ Finepix X100            T         T
+ Finepix F700            T         T
+ Finepix E900            T         T
 
 Foveon X3F               N N N N N N N
 

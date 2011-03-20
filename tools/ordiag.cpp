@@ -1,7 +1,7 @@
 /*
  * libopenraw - ordiag.cpp
  *
- * Copyright (C) 2007-2008 Hubert Figuiere
+ * Copyright (C) 2007-2011 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -146,6 +146,9 @@ public:
 				break;
 			case OR_RAWFILE_TYPE_RW2:
 				return "Panasonic RAW";
+				break;
+			case OR_RAWFILE_TYPE_RAF:
+				return "FujiFilm RAF";
 				break;
 			default:
 				break;

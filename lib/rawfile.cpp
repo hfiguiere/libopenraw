@@ -49,6 +49,7 @@
 #include "dngfile.h"
 #include "mrwfile.h"
 #include "rw2file.h"
+#include "raffile.h"
 #include "metavalue.h"
 #include "exception.h"
 #include "bimedian_demosaic.h"
@@ -100,6 +101,9 @@ void init(void)
     static RawFileFactory fctrw2(OR_RAWFILE_TYPE_RW2,
                                  boost::bind(&Internals::Rw2File::factory, _1),
                                  "rw2");
+    static RawFileFactory fctraf(OR_RAWFILE_TYPE_RAF,
+                                 boost::bind(&Internals::RafFile::factory, _1),
+                                 "raf");
 }
 
 class RawFile::Private 

@@ -17,6 +17,4 @@ sRAW from Canon, YCbCr
 Rework the Log/Trace/Debug
 Rework the model to match DNG more closely as it would allow a more comprehensive abstraction
 
-
-Write a parser for RAF (FujiFilm)
 Write a parser for X3F
