@@ -61,7 +61,7 @@ main(int argc, char** argv)
 	printf("data size = %ld\n", or_rawdata_data_size(rawdata));
 	printf("data type = %d\n", or_rawdata_format(rawdata));
 
-	if(or_rawdata_format(rawdata) == OR_DATA_TYPE_CFA) {
+	if(!keepCompressed && or_rawdata_format(rawdata) == OR_DATA_TYPE_CFA) {
 		uint32_t x, y, bpc;
 		or_rawdata_dimensions(rawdata, &x, &y);
 		bpc = or_rawdata_bpc(rawdata);
