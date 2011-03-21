@@ -33,14 +33,15 @@ namespace Internals {
 
 class JFIFContainer;
 class IfdFileContainer;
+class RafMetaContainer;
 	
 struct RafOffsetDirectory
 {
 	// 36 bytes skipped
 	uint32_t jpegOffset;
 	uint32_t jpegLength;
-	uint32_t table1Offset;
-	uint32_t table1Length;
+	uint32_t metaOffset;
+	uint32_t metaLength;
 	uint32_t cfaOffset;
 	uint32_t cfaLength;
 };
@@ -56,6 +57,7 @@ public:
 	const std::string & getModel();
 	JFIFContainer * getJpegPreview();
 	IfdFileContainer * getCfaContainer();
+	RafMetaContainer * getMetaContainer();
 	uint32_t getJpegOffset() const
 	{
 		return m_offsetDirectory.jpegOffset;
@@ -81,6 +83,7 @@ private:
 	
 	JFIFContainer * m_jpegPreview;
 	IfdFileContainer * m_cfaContainer;
+	RafMetaContainer * m_metaContainer;
 };
 
 }

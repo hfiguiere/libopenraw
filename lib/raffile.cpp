@@ -22,9 +22,11 @@
 
 
 #include <libopenraw++/thumbnail.h>
+#include <libopenraw++/rawdata.h>
 
 #include "raffile.h"
 #include "rafcontainer.h"
+#include "rafmetacontainer.h"
 #include "jfifcontainer.h"
 
 namespace OpenRaw {
@@ -106,28 +108,46 @@ RafFile::~RafFile()
 {
 	::or_error ret = OR_ERROR_NOT_FOUND;
 
-#if 0
-	IfdFileContainer * rawContainer = m_container->getCfaContainer();
+	RafMetaContainer * meta = m_container->getMetaContainer();
+
+	RafMetaValue::Ref value = meta->getValue(RAF_TAG_SENSOR_DIMENSION);
+	uint32_t dims = value->get().getInteger();
+	uint16_t h = (dims & 0xFFFF0000) >> 16;
+	uint16_t w = (dims & 0x0000FFFF);
+
+	value = meta->getValue(RAF_TAG_RAW_INFO);
+	uint32_t rawProps = value->get().getInteger();
+	uint8_t layout = (rawProps & 0xFF000000) >> 24 >> 7; // MSBit in byte.
+	uint8_t compressed = ((rawProps & 0xFF0000) >> 16) & 8; // 8 == compressed
+	
+	printf("layout %x - compressed %x\n", layout, compressed);
 	
 	data.setDataType(OR_DATA_TYPE_CFA);
-	deta.setDimensions();
+	data.setDimensions(w,h);
 	size_t byte_size = m_container->getCfaLength();
-	void *buf = thumbnail.allocData(byte_size);
+	void *buf = data.allocData(byte_size);
 	m_container->fetchData(buf, m_container->getCfaOffset(), byte_size);	
 	ret = OR_ERROR_NONE;
-#endif
-	
+
 	return ret;
 }
 
-MetaValue *RafFile::_getMetaValue(int32_t /*meta_index*/)
+MetaValue *RafFile::_getMetaValue(int32_t meta_index)
 {
+#if 0 // TODO
+	RafMetaContainer * meta = m_container->getMetaContainer();
+	if((META_NS_MASKOUT(meta_index) > 0) && (META_NS_MASKOUT(meta_index) <= std::numeric_limits<uint16_t>::max())) {
+		RafMetaValue::Ref value = meta->getValue(static_cast<uint16_t>(META_NS_MASKOUT(meta_index)));
+		if(value) {
+			return new MetaValue(value->get());
+		}
+	}
+#endif
 	return NULL;
 }
 
 void RafFile::_identifyId()
 {
-	// get magic
 	_setTypeId(_typeIdFromModel(m_container->getModel()));
 }
 	

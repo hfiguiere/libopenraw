@@ -24,6 +24,7 @@
 #include "rafcontainer.h"
 #include "jfifcontainer.h"
 #include "ifdfilecontainer.h"
+#include "rafmetacontainer.h"
 #include "endianutils.h"
 #include "io/stream.h"
 #include "io/streamclone.h"
@@ -33,6 +34,7 @@ namespace Internals {
 	
 #define RAF_MAGIC "FUJIFILMCCD-RAW "
 #define RAF_MAGIC_LEN 16
+	
 
 RafContainer::RafContainer(IO::Stream *_file)
 	: RawContainer(_file, 0)
@@ -40,6 +42,7 @@ RafContainer::RafContainer(IO::Stream *_file)
 	, m_version(0)
 	, m_jpegPreview(NULL)
 	, m_cfaContainer(NULL)
+	, m_metaContainer(NULL)
 {
 	memset((void*)&m_offsetDirectory, 0, sizeof(m_offsetDirectory));
 }
@@ -48,6 +51,7 @@ RafContainer::~RafContainer()
 {
 	delete m_jpegPreview;
 	delete m_cfaContainer;
+	delete m_metaContainer;
 }
 
 const std::string & RafContainer::getModel()
@@ -83,6 +87,19 @@ JFIFContainer * RafContainer::getJpegPreview()
 	}
 	return m_jpegPreview;
 }
+	
+RafMetaContainer * RafContainer::getMetaContainer()
+{
+	if(!m_metaContainer) {
+		if(!m_read) {
+			_readHeader();
+		}
+		if(m_offsetDirectory.metaOffset && m_offsetDirectory.metaLength) {
+			m_metaContainer = new RafMetaContainer(new IO::StreamClone(m_file, m_offsetDirectory.metaOffset));
+		}
+	}
+	return m_metaContainer;
+}
 
 bool RafContainer::_readHeader()
 {
@@ -107,8 +124,8 @@ bool RafContainer::_readHeader()
 	m_file->seek(20, SEEK_CUR);
 	readUInt32(m_file, m_offsetDirectory.jpegOffset);
 	readUInt32(m_file, m_offsetDirectory.jpegLength);
-	readUInt32(m_file, m_offsetDirectory.table1Offset);
-	readUInt32(m_file, m_offsetDirectory.table1Length);
+	readUInt32(m_file, m_offsetDirectory.metaOffset);
+	readUInt32(m_file, m_offsetDirectory.metaLength);
 	readUInt32(m_file, m_offsetDirectory.cfaOffset);
 	readUInt32(m_file, m_offsetDirectory.cfaLength);
 	

@@ -32,6 +32,7 @@ noinst_HEADERS = or_debug.h \
 	ciffcontainer.h \
 	jfifcontainer.h \
 	rafcontainer.h \
+	rafmetacontainer.h \
 	decompressor.h \
 	ljpegdecompressor.h \
 	ljpegdecompressor_priv.h \
@@ -87,6 +88,7 @@ libopenraw_la_SOURCES = \
 	orfcontainer.cpp \
 	rw2container.cpp \
 	rafcontainer.cpp \
+	rafmetacontainer.cpp \
 	mrwcontainer.cpp \
 	ciffcontainer.cpp \
 	jfifcontainer.cpp \
