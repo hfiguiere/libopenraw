@@ -21,6 +21,7 @@
  */
 
 
+#include <boost/scoped_array.hpp>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 
@@ -28,6 +29,9 @@
 #include "rafcontainer.h"
 #include "rafmetacontainer.h"
 #include "jfifcontainer.h"
+#include "unpack.h"
+#include "trace.h"
+
 
 namespace OpenRaw {
 namespace Internals {
@@ -124,9 +128,54 @@ RafFile::~RafFile()
 	
 	data.setDataType(OR_DATA_TYPE_CFA);
 	data.setDimensions(w,h);
-	size_t byte_size = m_container->getCfaLength();
-	void *buf = data.allocData(byte_size);
-	m_container->fetchData(buf, m_container->getCfaOffset(), byte_size);	
+	// TODO get the right pattern.
+	data.setCfaPattern(OR_CFA_PATTERN_GBRG);
+	// TODO actually read the 2048.
+	// TODO make sure this work for the other file formats...
+	size_t byte_size = m_container->getCfaLength() - 2048;
+	size_t fetched = 0;
+	off_t offset = m_container->getCfaOffset() + 2048;
+	
+	bool is_compressed = (compressed == 8);
+	uint32_t finaldatalen = 2 * h * w;
+	uint32_t datalen =	(is_compressed ? byte_size : finaldatalen);
+	void *buf = data.allocData(finaldatalen);
+
+	if(is_compressed)
+	{
+		Unpack unpack(w, IFD::COMPRESS_NONE);
+		size_t blocksize = unpack.block_size();
+		boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
+		uint8_t * outdata = (uint8_t*)data.data();
+		size_t outsize = finaldatalen;
+		size_t got;
+		do {
+			Debug::Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
+			got = m_container->fetchData (block.get(), 
+										  offset, blocksize);
+			fetched += got;
+			offset += got;
+			Debug::Trace(DEBUG2) << "got " << got << "\n";
+			if(got) {
+				size_t out;
+				or_error err = unpack.unpack_be12to16(outdata, outsize,
+													  block.get(), got, out);
+				outdata += out;
+				outsize -= out;
+				Debug::Trace(DEBUG2) << "unpacked " << out
+				<< " bytes from " << got << "\n";
+				if(err != OR_ERROR_NONE) {
+					ret = err;
+					break;
+				}
+			}
+		} while((got != 0) && (fetched < datalen));
+	}
+	else
+	{
+		m_container->fetchData (buf, offset, datalen);
+	}
+
 	ret = OR_ERROR_NONE;
 
 	return ret;

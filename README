@@ -206,14 +206,14 @@ Kodak DCR                N N N N N N N
 
 Kodak KDC                N N N N N N N
 
-FujiFilm RAF             Y N N N N Y N
+FujiFilm RAF             Y Y B N N Y N
  Finepix S2Pro           T         T
  Finepix S3Pro           T         T
  Finepix S5Pro           T         T
  Finepix S6500Fd         T         T
  Finepix S5600           T         T
  Finepix S9500           T         T
- Finepix X100            T         T
+ Finepix X100            T T T     T
  Finepix F700            T         T
  Finepix E900            T         T
 
