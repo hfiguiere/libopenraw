@@ -24,6 +24,9 @@
 
 #include <libopenraw++/rawfile.h>
 
+#define RAF_MAGIC "FUJIFILMCCD-RAW "
+#define RAF_MAGIC_LEN 16
+
 namespace OpenRaw {
 namespace Internals {
 	

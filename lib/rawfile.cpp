@@ -243,6 +243,10 @@ RawFile::Type RawFile::identify(const char*_filename)
         _type = OR_RAWFILE_TYPE_ORF;
         return OR_ERROR_NONE;
     }
+    if(memcmp(buff, RAF_MAGIC, RAF_MAGIC_LEN) == 0) {
+        _type = OR_RAWFILE_TYPE_RAF;
+        return OR_ERROR_NONE;
+    }
     if((memcmp(buff, "II\x2a\0", 4) == 0) 
        || (memcmp(buff, "MM\0\x2a", 4) == 0)) {
         // TIFF based format

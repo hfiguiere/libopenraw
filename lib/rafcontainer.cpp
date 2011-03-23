@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "rafcontainer.h"
+#include "raffile.h"
 #include "jfifcontainer.h"
 #include "ifdfilecontainer.h"
 #include "rafmetacontainer.h"
@@ -31,9 +32,6 @@
 
 namespace OpenRaw {
 namespace Internals {
-	
-#define RAF_MAGIC "FUJIFILMCCD-RAW "
-#define RAF_MAGIC_LEN 16
 	
 
 RafContainer::RafContainer(IO::Stream *_file)
