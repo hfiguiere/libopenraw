@@ -228,6 +228,15 @@ bool Test::testRawType(const std::string & result)
     case OR_RAWFILE_TYPE_ERF:
         RETURN_TEST(result == "ERF", result);
         break;
+    case OR_RAWFILE_TYPE_NRW:
+        RETURN_TEST(result == "NRW", result);
+        break;
+    case OR_RAWFILE_TYPE_RW2:
+        RETURN_TEST(result == "RW2", result);
+        break;
+    case OR_RAWFILE_TYPE_RAF:
+        RETURN_TEST(result == "RAF", result);
+        break;
     default:
         break;
     }

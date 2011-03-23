@@ -504,4 +504,25 @@
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
+  <test>
+    <name>RAF-test X100</name>
+    <file>/home/hub/samples/raf/Finepix-X100/fujifilm_finepix_x100_02.raf</file>
+    <source>http://img.photographyblog.com/reviews/fujifilm_finepix_x100/sample_images/fujifilm_finepix_x100_02.raf</source>
+    <results>
+      <rawType>RAF</rawType>
+      <rawTypeId>917505</rawTypeId>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>2176</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>757744</thumbDataSizes>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>25531520</rawDataSize>
+      <rawDataDimensions>4448 2870</rawDataDimensions>
+      <rawCfaPattern>GBRG</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>0</rawMaxValue>
+      <rawMd5>28</rawMd5>
+      <metaOrientation>0</metaOrientation>
+    </results>    
+  </test>
 </testsuite>
