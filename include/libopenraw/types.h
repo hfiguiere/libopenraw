@@ -26,4 +26,8 @@
 /* C99 standard */
 #include <stdint.h>
 
+typedef struct _RawFile *ORRawFileRef;
+typedef struct _RawData *ORRawDataRef;
+typedef struct _BitmapData *ORBitmapDataRef;
+
 #endif

@@ -28,8 +28,6 @@
 extern "C" {
 #endif
 
-typedef struct _BitmapData *ORBitmapDataRef;
-
 	
 ORBitmapDataRef
 or_bitmapdata_new(void);

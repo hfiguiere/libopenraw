@@ -33,8 +33,6 @@
 extern "C" {
 #endif
 
-typedef struct _RawFile *ORRawFileRef;
-
 /** return a NULL terminated list of extensions.
  * that the library supposedly handle.
  * @return a NULL terminated list. Belongs to the library.
@@ -66,7 +64,8 @@ or_error
 or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata, 
 						   uint32_t options);
 
-/** Get the rendered image from the raw data 
+/** Get the rendered image from the raw file 
+ * @param rawfile the raw file.
  * @param rawdata the preallocated bitmap data.
  * @param options option for rendering. Pass 0 for now.
  */

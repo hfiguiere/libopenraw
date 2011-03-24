@@ -2,6 +2,8 @@ libopenraw 0.0.9
 
 New features:
 
+  - API: or_rawdata_get_rendered_image()
+  - API: or_rawdata_set_cfa_pattern()
   - Get the default crop in CR2, CRW and DNG.
   - make dist make a bzip2 archive too (build only).
   - New demo ppmload to create a ppm out of the demosaicized image.
@@ -50,6 +52,7 @@ Internal changes:
   - Fixed warnings.
   - Support to load MakerNote IFD.
   - Streamline the loading of IFDs.
+  - Move the rendering on the RawData class.
 
 libopenraw 0.0.8
 

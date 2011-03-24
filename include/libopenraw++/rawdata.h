@@ -43,6 +43,13 @@ public:
     RawData();
     virtual ~RawData();
 
+	/** Get the rendered image
+     * @param bitmapdata the BitmapData to put the image into
+     * @param options the option bits. Pass 0 for now.
+     * @return the error code
+     */
+    ::or_error getRenderedImage(BitmapData & bitmapdata, uint32_t options);    
+	
 	// deprecate rename black level and white level resp.
     uint16_t min();
     uint16_t max();

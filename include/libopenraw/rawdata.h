@@ -29,8 +29,6 @@
 extern "C" {
 #endif
 
-	typedef struct _RawData *ORRawDataRef;
-
 	/** Extract the RAW data from the raw file.
 	 * @param filename the raw file name
 	 * @param options the options to pass
@@ -72,6 +70,14 @@ extern "C" {
 	or_cfa_pattern
 	or_rawdata_get_cfa_pattern(ORRawDataRef rawdata);
 
+	/** Return the bayer type for the raw data.
+	 * @param rawdata the raw data object
+	 * @param pattern one of the constant defined in %or_cfa_pattern
+	 * @return the error code.
+	 */
+	or_error
+	or_rawdata_set_cfa_pattern(ORRawDataRef rawdata, or_cfa_pattern pattern);
+	
 	/** Return the minimum and maximum values for the raw data.
 	 * This are possible values, not actual values.
 	 * @param rawdata the raw data object
@@ -82,7 +88,15 @@ extern "C" {
 	or_error
 	or_rawdata_get_minmax(ORRawDataRef rawdata, uint16_t *min, uint16_t *max);
 
-
+	/** Get the rendered image from the raw data 
+	 * @param rawdata the raw data.
+	 * @param bitmapdata the preallocated bitmap data.
+	 * @param options option for rendering. Pass 0 for now.
+	 */
+	or_error
+	or_rawdata_get_rendered_image(ORRawDataRef rawdata, ORBitmapDataRef bitmapdata,
+								  uint32_t options);
+	
 #ifdef __cplusplus
 }
 #endif

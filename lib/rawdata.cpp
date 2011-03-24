@@ -24,6 +24,9 @@
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/rawfile.h>
 
+#include "bimedian_demosaic.h"
+#include "trace.h"
+
 namespace OpenRaw {
 
 class RawData::Private {
@@ -94,6 +97,42 @@ RawData::~RawData()
     delete d;
 }
 
+// rendering
+
+::or_error RawData::getRenderedImage(BitmapData & bitmapdata, uint32_t /*options*/)
+{
+	uint32_t _x, _y, out_x, out_y;
+	uint16_t *src;
+
+	if(dataType() != OR_DATA_TYPE_CFA) {
+		Debug::Trace(DEBUG1) << "wrong data type\n";
+		return OR_ERROR_INVALID_FORMAT;
+	}
+	or_cfa_pattern pattern;
+	pattern = cfaPattern();
+	_x = width();
+	_y = height();
+	
+	bitmapdata.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
+	uint8_t *dst = (uint8_t *)bitmapdata.allocData(sizeof(uint8_t) * 3 * _x * _y);
+	/*
+	 rawdata.linearize();
+	 rawdata.subtractBlack();
+	 rawdata.rescale();
+	 rawdata.clip();
+	 */
+	src = (uint16_t*)data();
+	
+	/* figure out how the demosaic can be plugged for a different 
+	 * algorithm */
+	bimedian_demosaic(src, _x, _y, pattern, dst, out_x, out_y);
+	bitmapdata.setDimensions(out_x, out_y);
+	
+	return OR_ERROR_NONE;
+}
+	
+// other
+	
 uint16_t RawData::min()
 {
     return d->min;

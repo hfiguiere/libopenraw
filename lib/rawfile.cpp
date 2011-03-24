@@ -52,7 +52,6 @@
 #include "raffile.h"
 #include "metavalue.h"
 #include "exception.h"
-#include "bimedian_demosaic.h"
 
 #include "rawfilefactory.h"
 
@@ -400,30 +399,7 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
     Trace(DEBUG1) << "options are " << options << "\n";
     ::or_error ret = getRawData(rawdata, options);
     if(ret == OR_ERROR_NONE) {
-        if(rawdata.dataType() != OR_DATA_TYPE_CFA) {
-            Trace(DEBUG1) << "wrong data type\n";
-            return OR_ERROR_INVALID_FORMAT;
-        }
-        uint32_t x,y, out_x, out_y;
-        or_cfa_pattern pattern;
-        uint16_t *src;
-        pattern = rawdata.cfaPattern();
-        x = rawdata.width();
-        y = rawdata.height();
-        bitmapdata.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
-        uint8_t *dst = (uint8_t *)bitmapdata.allocData(sizeof(uint8_t) * 3 * x * y);
-        /*
-        rawdata.linearize();
-        rawdata.subtractBlack();
-        rawdata.rescale();
-        rawdata.clip();
-        */
-        src = (uint16_t*)rawdata.data();
-
-        /* figure out how the demosaic can be plugged for a different 
-         * algorithm */
-        bimedian_demosaic(src, x, y, pattern, dst, out_x, out_y);
-        bitmapdata.setDimensions(out_x, out_y);
+		ret = rawdata.getRenderedImage(bitmapdata, options);
     }
     return ret;
 }
