@@ -68,7 +68,9 @@ namespace OpenRaw {
 			if (whence == SEEK_SET) {
 				offset += m_offset;
 			}
-			return m_cloned->seek(offset, whence);
+			int new_pos = m_cloned->seek(offset, whence);
+			new_pos -= m_offset;
+			return new_pos;
 		}
 
 

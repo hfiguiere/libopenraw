@@ -53,6 +53,7 @@ Internal changes:
   - Support to load MakerNote IFD.
   - Streamline the loading of IFDs.
   - Move the rendering on the RawData class.
+  - BUG: IO::StreamClone::seek() now return the proper value.
 
 libopenraw 0.0.8
 
