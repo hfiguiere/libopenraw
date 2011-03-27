@@ -39,7 +39,8 @@ namespace JPEG {
 #include <libopenraw/consts.h>
 
 #include "exception.h"
-#include "rawcontainer.h"
+#include "ifdfilecontainer.h"
+#include "ifddir.h"
 
 namespace OpenRaw {
 
@@ -67,6 +68,7 @@ namespace OpenRaw {
 			static void j_term_source(JPEG::j_decompress_ptr cinfo);
 			static void j_error_exit(JPEG::j_common_ptr cinfo);
 
+			IfdDir::Ref exifIfd();
 		private:
 		  int _loadHeader();
 
@@ -74,6 +76,7 @@ namespace OpenRaw {
 			struct JPEG::jpeg_error_mgr m_jerr;
 			jmp_buf m_jpegjmp;
 			bool m_headerLoaded;
+			IfdFileContainer* m_exif;
 		};
 
 	}

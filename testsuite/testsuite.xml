@@ -522,7 +522,7 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>
       <rawMd5>28</rawMd5>
-      <metaOrientation>0</metaOrientation>
+      <metaOrientation>1</metaOrientation>
     </results>    
   </test>
 </testsuite>

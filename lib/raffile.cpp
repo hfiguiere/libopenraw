@@ -124,7 +124,7 @@ RafFile::~RafFile()
 	uint8_t layout = (rawProps & 0xFF000000) >> 24 >> 7; // MSBit in byte.
 	uint8_t compressed = ((rawProps & 0xFF0000) >> 16) & 8; // 8 == compressed
 	
-	printf("layout %x - compressed %x\n", layout, compressed);
+	//printf("layout %x - compressed %x\n", layout, compressed);
 	
 	data.setDataType(OR_DATA_TYPE_CFA);
 	data.setDimensions(w,h);
@@ -183,15 +183,17 @@ RafFile::~RafFile()
 
 MetaValue *RafFile::_getMetaValue(int32_t meta_index)
 {
-#if 0 // TODO
-	RafMetaContainer * meta = m_container->getMetaContainer();
-	if((META_NS_MASKOUT(meta_index) > 0) && (META_NS_MASKOUT(meta_index) <= std::numeric_limits<uint16_t>::max())) {
-		RafMetaValue::Ref value = meta->getValue(static_cast<uint16_t>(META_NS_MASKOUT(meta_index)));
-		if(value) {
-			return new MetaValue(value->get());
+	if(META_INDEX_MASKOUT(meta_index) == META_NS_EXIF
+	   || META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
+		
+		JFIFContainer * jpegPreview = m_container->getJpegPreview();
+		IfdDir::Ref dir = jpegPreview->exifIfd();
+		IfdEntry::Ref e = dir->getEntry(META_NS_MASKOUT(meta_index));
+		if(e) {
+			return new MetaValue(e);
 		}
 	}
-#endif
+	
 	return NULL;
 }
 

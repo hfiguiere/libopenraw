@@ -22,7 +22,7 @@ New features:
   - Support for Ricoh GRX DNG.
   - Support for Nikon NRW: P6000 and P7000 (partial).
   - Support for Panasonic RAW and RW2.
-  - Partial support for FujiFilm RAF.
+  - Support for FujiFilm RAF.
   - Nicer display of the type ID in ordiag.
   - API: mark deprecated APIs.
   - API: or_rawdata_get_roi() to get the region of interest from the RAW data.

@@ -35,6 +35,7 @@ namespace JPEG {
 #include <string.h>
 #include <libopenraw++/bitmapdata.h>
 #include "io/stream.h"
+#include "io/streamclone.h"
 #include "trace.h"
 #include "jfifcontainer.h"
 
@@ -58,7 +59,8 @@ namespace OpenRaw {
 		JFIFContainer::JFIFContainer(IO::Stream *_file, off_t offset)
 			: RawContainer(_file, offset),
 				m_cinfo(), m_jerr(),
-				m_headerLoaded(false)
+				m_headerLoaded(false),
+				m_exif(NULL)
 		{
 			setEndian(ENDIAN_BIG);
 			/* this is a hack because jpeg_create_decompress is
@@ -94,6 +96,7 @@ namespace OpenRaw {
 		JFIFContainer::~JFIFContainer()
 		{
 			JPEG::jpeg_destroy_decompress(&m_cinfo);
+			delete m_exif;
 		}
 
 
@@ -204,6 +207,26 @@ namespace OpenRaw {
 		{
 		}
 
-
+IfdDir::Ref JFIFContainer::exifIfd()
+{
+	if(!m_exif) {
+		m_file->seek(0, SEEK_SET);
+		
+		uint16_t marker;
+		readUInt16(m_file, marker); // SOI
+		readUInt16(m_file, marker); // APP0
+		readUInt16(m_file, marker); // ignore
+		
+		char delim[7];
+		delim[6] = 0;
+		m_file->read(delim, 6);
+		if(memcmp(delim, "Exif\0\0", 6) == 0) {
+			size_t exif_offset = m_file->seek(0, SEEK_CUR);
+			m_exif = new IfdFileContainer(new IO::StreamClone(m_file, exif_offset), 0);
+		}		
 	}
+	return m_exif->setDirectory(0);
+}
+
+}
 }
