@@ -220,25 +220,28 @@ FujiFilm RAF             Y Y B N N Y N
 Foveon X3F               N N N N N N N
 
 Panasonic RAW            Y Y N Y Y Y Y
- FZ30                    N T       T T
- FZ50                    N T       T T
- FZ8                     N T       T T
- FZ18                    T T       T T
- L1                      N T       T T
- L10                     # # # # # # #
- LX2                     # # # # # # #
+ FZ30                    N T X T   T T
+ FZ50                    N T X T   T T
+ FZ8                     N T B T   T T
+ FZ18                    T T B T   T T
+ L1                      N T X T   T T
+ L10                     T T N T   T T
+ LX2                     N T X T   T T
+ Leica Digilux 2         N T X T   T T
+ Leica DLUX 3            N T X T   T T
+ Leica VLUX 1            N T X T   T T
 
 Panasonic RW2            Y Y N Y Y Y Y
- GF1                     T T       T T
+ GF1                     T T      T T
  GF2                     T T       T T
  GH1                     T T       T T
- GH2                     T T       T T
+ GH2                     T T N     T T
  G1                      T T       T T
  G2                      T T       T T
  G10                     T T       T T
- LX3                     T T       T T
- LX5                     T T       T T
- FZ28                    T T       T T
+ LX3                     T T B     T T
+ LX5                     T T B     T T
+ FZ28                    T T B     T T
  
 
 Mamiya MEF               N N N N N N N
