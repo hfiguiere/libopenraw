@@ -41,6 +41,10 @@ public:
 	static RawFile *factory(IO::Stream * s);
 	Rw2File(IO::Stream *s);
 	virtual ~Rw2File();
+	
+	enum {
+		PANA_RAW_COMPRESSION = 0x11000
+	};
 
 protected:
 	virtual IfdDir::Ref  _locateCfaIfd();

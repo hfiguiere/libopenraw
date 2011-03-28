@@ -194,17 +194,30 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 		return OR_ERROR_NOT_FOUND;
 	}
 	
+	// this is were things are complicated. The real size of the raw data
+	// is whatever is read (if compressed) 
 	void *p = data.allocData(byte_length);
 	size_t real_size = m_container->fetchData(p, offset, 
 											  byte_length);
-	if (real_size < byte_length) {
-		Trace(WARNING) << "Size mismatch for data: ignoring.\n";
+
+	if (real_size / (x * 8 / 7) == y) {
+		data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+		data.setCompression(PANA_RAW_COMPRESSION);
 	}
+	else if (real_size < byte_length) {
+		Trace(WARNING) << "Size mismatch for data: expected " << byte_length 
+			<< " got " << real_size << " ignoring.\n";
+		return OR_ERROR_NOT_FOUND;
+	}
+	else {
+		data.setDataType(OR_DATA_TYPE_CFA);
+	}
+	data.setCfaPattern(OR_CFA_PATTERN_BGGR);
+	
+	
 	// they are not all RGGB.
 	// but I don't seem to see where this is encoded.
 	// 
-	data.setCfaPattern(OR_CFA_PATTERN_BGGR);
-	data.setDataType(OR_DATA_TYPE_CFA);
 	data.setDimensions(x, y);
 
 	Trace(DEBUG1) << "In size is " << data.width() 
