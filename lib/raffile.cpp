@@ -57,6 +57,8 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
 											 OR_TYPEID_FUJIFILM_S9500) },
 	{ "FinePix S6500fd", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
 											 OR_TYPEID_FUJIFILM_S6500FD) },
+	{ "FinePix HS10 HS11", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
+											 OR_TYPEID_FUJIFILM_HS10) },
 	{ NULL, 0 }
 };
 
@@ -115,6 +117,10 @@ RafFile::~RafFile()
 	RafMetaContainer * meta = m_container->getMetaContainer();
 
 	RafMetaValue::Ref value = meta->getValue(RAF_TAG_SENSOR_DIMENSION);
+	if(!value) {
+		// use this tag if the other is missing
+		value = meta->getValue(RAF_TAG_IMG_HEIGHT_WIDTH);
+	}
 	uint32_t dims = value->get().getInteger();
 	uint16_t h = (dims & 0xFFFF0000) >> 16;
 	uint16_t w = (dims & 0x0000FFFF);
