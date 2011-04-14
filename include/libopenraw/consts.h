@@ -225,7 +225,7 @@ extern "C" {
 		OR_TYPEID_LEICA_DMR = 1,
 		OR_TYPEID_LEICA_M8 = 2,
 		OR_TYPEID_LEICA_X1 = 3,
-		// Panasonic RAW
+		/* Panasonic RAW */
 		OR_TYPEID_LEICA_DIGILUX2 = 4,
 		OR_TYPEID_LEICA_DLUX_3 = 5,
 		OR_TYPEID_LEICA_VLUX_1 = 6,
