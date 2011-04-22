@@ -18,9 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #ifndef __DNGFILE_H_
 #define __DNGFILE_H_
 
@@ -28,33 +25,42 @@
 
 namespace OpenRaw {
 
-	class Thumbnail;
+class Thumbnail;
 
-	namespace Internals {
-		class IOFile;
-		class IFDFileContainer;
+namespace Internals {
+class IOFile;
+class IFDFileContainer;
 
-		class DNGFile
-			: public TiffEpFile
-		{
-		public:
-			static RawFile *factory(IO::Stream *);
+class DngFile
+    : public TiffEpFile
+{
+public:
+    static RawFile *factory(IO::Stream *);
+    
+    DngFile(IO::Stream *);
+    virtual ~DngFile();
+    
+protected:
+    virtual ::or_error _getRawData(RawData & data, uint32_t options);
+    
+private:
+    
+    DngFile(const DngFile&);
+    DngFile & operator=(const DngFile&);
+    
+    static const IfdFile::camera_ids_t s_def[];
+};
 
-			DNGFile(IO::Stream *);
-			virtual ~DNGFile();
-
-		protected:
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-
-		private:
-
-			DNGFile(const DNGFile&);
-			DNGFile & operator=(const DNGFile&);
-
-			static const IfdFile::camera_ids_t s_def[];
-		};
-	}
-
+}
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

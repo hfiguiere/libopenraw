@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2011 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -38,107 +38,115 @@
 using namespace Debug;
 
 namespace OpenRaw {
+namespace Internals {
 
+const IfdFile::camera_ids_t DngFile::s_def[] = {
+    { "PENTAX K10D        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
+                                                 OR_TYPEID_PENTAX_K10D_DNG) },
+    { "R9 - Digital Back DMR",   OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+                                                     OR_TYPEID_LEICA_DMR) },
+    { "M8 Digital Camera",       OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+                                                     OR_TYPEID_LEICA_M8) },
+    { "LEICA X1               ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+                                                     OR_TYPEID_LEICA_X1) },			
+    { "GR DIGITAL 2   ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
+                                             OR_TYPEID_RICOH_GR2) },
+    { "GXR            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
+                                             OR_TYPEID_RICOH_GXR) },
+    { "SAMSUNG GX10       ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG,
+                                                 OR_TYPEID_SAMSUNG_GX10) },
+    { "Pro 815    ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG, 
+                                         OR_TYPEID_SAMSUNG_PRO815) },
+    { 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE, 
+                             OR_TYPEID_ADOBE_DNG_GENERIC) }
+};
 
-	namespace Internals {
-		const IfdFile::camera_ids_t DNGFile::s_def[] = {
-			{ "PENTAX K10D        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
-														 OR_TYPEID_PENTAX_K10D_DNG) },
-			{ "R9 - Digital Back DMR",   OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
-													   OR_TYPEID_LEICA_DMR) },
-			{ "M8 Digital Camera",       OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
-													   OR_TYPEID_LEICA_M8) },
-			{ "LEICA X1               ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
-													   OR_TYPEID_LEICA_X1) },			
-			{ "GR DIGITAL 2   ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
-													 OR_TYPEID_RICOH_GR2) },
-			{ "GXR            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
-													 OR_TYPEID_RICOH_GXR) },
-			{ "SAMSUNG GX10       ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG,
-														 OR_TYPEID_SAMSUNG_GX10) },
-			{ "Pro 815    ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG, 
-												 OR_TYPEID_SAMSUNG_PRO815) },
-			{ 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE, 
-									 OR_TYPEID_ADOBE_DNG_GENERIC) }
-		};
-
-		RawFile *DNGFile::factory(IO::Stream *s)
-		{
-			return new DNGFile(s);
-		}
-
-
-		DNGFile::DNGFile(IO::Stream *s)
-			: TiffEpFile(s, OR_RAWFILE_TYPE_DNG)
-		{
-			_setIdMap(s_def);
-		}
-
-		DNGFile::~DNGFile()
-		{
-		}
-
-		::or_error DNGFile::_getRawData(RawData & data, uint32_t options)
-		{
-			::or_error ret = OR_ERROR_NONE;
-			const IfdDir::Ref & _cfaIfd = cfaIfd();
-
-			Trace(DEBUG1) << "_getRawData()\n";
-
-			if (_cfaIfd) {
-				ret = _getRawDataFromDir(data, _cfaIfd);
-				
-				if(ret == OR_ERROR_NONE) {
-					uint16_t compression = 0;
-					if (_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression) &&
-						compression == IFD::COMPRESS_LJPEG) {
-						// if the option is not set, decompress
-						if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-							boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
-																			  data.size()));
-							s->open(); // TODO check success
-							boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
-							LJpegDecompressor decomp(s.get(), jfif.get());
-							RawData *dData = decomp.decompress();
-							if (dData != NULL) {
-								dData->setCfaPattern(data.cfaPattern());
-								data.swap(*dData);
-								delete dData;
-							}
-						}
-					}
-					else {
-						data.setDataType(OR_DATA_TYPE_CFA);
-					}
-					uint32_t crop_x, crop_y, crop_w, crop_h;
-					IfdEntry::Ref e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_ORIGIN);
-					if(e) {
-						crop_x = e->getIntegerArrayItem(0);
-						crop_y = e->getIntegerArrayItem(1);
-					}
-					else {
-						crop_x = crop_y = 0;
-					}
-					e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_SIZE);
-					if(e) {
-						crop_w = e->getIntegerArrayItem(0);
-						crop_h = e->getIntegerArrayItem(1);
-					}
-					else {
-						crop_w = data.width();
-						crop_h = data.height();
-					}
-					data.setRoi(crop_x, crop_y, crop_w, crop_h);
-				}
-				else {
-					Trace(ERROR) << "couldn't find raw data\n";
-				}
-			}
-			else {
-				ret = OR_ERROR_NOT_FOUND;
-			}
-			return ret;
-		}
-
-	}
+RawFile *DngFile::factory(IO::Stream *s)
+{
+    return new DngFile(s);
 }
+
+
+DngFile::DngFile(IO::Stream *s)
+    : TiffEpFile(s, OR_RAWFILE_TYPE_DNG)
+{
+    _setIdMap(s_def);
+}
+
+DngFile::~DngFile()
+{
+}
+
+::or_error DngFile::_getRawData(RawData & data, uint32_t options)
+{
+    ::or_error ret = OR_ERROR_NONE;
+    const IfdDir::Ref & _cfaIfd = cfaIfd();
+    
+    Trace(DEBUG1) << "_getRawData()\n";
+    
+    if (_cfaIfd) {
+        ret = _getRawDataFromDir(data, _cfaIfd);
+	
+        if(ret == OR_ERROR_NONE) {
+            uint16_t compression = 0;
+            if (_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression) &&
+                compression == IFD::COMPRESS_LJPEG) {
+                // if the option is not set, decompress
+                if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
+                    boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
+                                                                      data.size()));
+                    s->open(); // TODO check success
+                    boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+                    LJpegDecompressor decomp(s.get(), jfif.get());
+                    RawData *dData = decomp.decompress();
+                    if (dData != NULL) {
+                        dData->setCfaPattern(data.cfaPattern());
+                        data.swap(*dData);
+                        delete dData;
+                    }
+                }
+            }
+            else {
+                data.setDataType(OR_DATA_TYPE_CFA);
+            }
+            uint32_t crop_x, crop_y, crop_w, crop_h;
+            IfdEntry::Ref e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_ORIGIN);
+            if(e) {
+                crop_x = e->getIntegerArrayItem(0);
+                crop_y = e->getIntegerArrayItem(1);
+            }
+            else {
+                crop_x = crop_y = 0;
+            }
+            e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_SIZE);
+            if(e) {
+                crop_w = e->getIntegerArrayItem(0);
+                crop_h = e->getIntegerArrayItem(1);
+            }
+            else {
+                crop_w = data.width();
+                crop_h = data.height();
+            }
+            data.setRoi(crop_x, crop_y, crop_w, crop_h);
+        }
+        else {
+            Trace(ERROR) << "couldn't find raw data\n";
+        }
+    }
+    else {
+        ret = OR_ERROR_NOT_FOUND;
+    }
+    return ret;
+}
+
+}
+}
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

@@ -80,7 +80,7 @@ void init(void)
                                  boost::bind(&Internals::OrfFile::factory, _1),
                                  "orf");
     static RawFileFactory fctdng(OR_RAWFILE_TYPE_DNG, 
-                                 boost::bind(&Internals::DNGFile::factory, _1),
+                                 boost::bind(&Internals::DngFile::factory, _1),
                                  "dng");
     static RawFileFactory fctpef(OR_RAWFILE_TYPE_PEF, 
                                  boost::bind(&Internals::PEFFile::factory, _1),
