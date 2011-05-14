@@ -7,6 +7,8 @@ AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
+m4_ifndef([AM_SILENT_RULES], [m4_define([AM_SILENT_RULES],[])])
+AM_SILENT_RULES([yes])
 
 
 dnl ---------------------------------------------------------------------------
@@ -170,12 +172,8 @@ CXXFLAGS="$CXXFLAGS -ansi -pedantic -g -Wall -Wshadow"
 CFLAGS="$CFLAGS -pedantic -g -Wall"
 
 
-SHAVE_INIT
-
 AC_OUTPUT([
 Makefile
-shave
-shave-libtool
 include/Makefile
 include/libopenraw/Makefile
 include/libopenraw++/Makefile
