@@ -44,6 +44,7 @@ Bug fixes:
   - Fixed overflow in the unpack_be12to16() and report errors.
   - Fixed some compilation errors in the Gdk pixbuf loader.
   - Fixed IDs for Canon 350D and 400D.
+  - Pass the orientation to gdk-pixbuf in the loader. (Closes #37920)
   
 Internal changes:
 

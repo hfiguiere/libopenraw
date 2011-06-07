@@ -109,6 +109,8 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
         err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
         if(err == OR_ERROR_NONE) {
             uint32_t x,y;
+            uint32_t orientation;
+            char orientation_str[16];
             x = y = 0;
             or_bitmapdata_dimensions(bitmapdata, &x, &y);
             pixbuf = gdk_pixbuf_new_from_data((guchar*)or_bitmapdata_data(bitmapdata), 
@@ -116,6 +118,12 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
                                               FALSE, 8, x, y, 
                                               x * 3, 
                                               pixbuf_free, bitmapdata);
+            orientation = or_rawfile_get_orientation(raw_file);
+            if(orientation) {
+                g_snprintf (orientation_str, sizeof (orientation_str), "%d", orientation);
+                orientation_str[15] = 0;
+                gdk_pixbuf_set_option(pixbuf, "orientation", orientation_str);
+            }
         }
         or_rawfile_release(raw_file);
 
