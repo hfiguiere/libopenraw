@@ -68,6 +68,8 @@ namespace Internals {
 													  OR_TYPEID_OLYMPUS_EP1) },
 		    { "E-P2            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
 													  OR_TYPEID_OLYMPUS_EP2) },
+		    { "E-P3            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
+													  OR_TYPEID_OLYMPUS_EP3) },
 		    { "E-620           ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 
 													  OR_TYPEID_OLYMPUS_E620) },
 		    { "E-PL1           ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 

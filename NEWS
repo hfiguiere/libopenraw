@@ -10,7 +10,7 @@ New features:
   - Support (partially) PEF from Pentax K20D, K-r, K-5, K-7, K-x (unconfirmed),
     645D.
   - Support for Olympus ORF big-endian files and "RS" (12-bits). 
-    Added E-10, E-P1, E-P2, E-PL1, E-PL2, E-620, SP350, SP500, SP510, SP550, 
+    Added E-10, E-P1, E-P2, E-P3, E-PL1, E-PL2, E-620, SP350, SP500, SP510, SP550, 
     XZ-1
     Olympus ORF decompression.
   - Support for Canon G10, G11, G12, 7D, 1DMarkIV, 5DMarkII, 500D, 60D, 
