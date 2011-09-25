@@ -35,42 +35,51 @@ class IOFile;
 class IfdFileContainer;
 
 class NefFile
-	: public TiffEpFile
+    : public TiffEpFile
 {
 public:
-	static RawFile *factory(IO::Stream* _f);
-	NefFile(IO::Stream * _f);
-	virtual ~NefFile();
-
-	/** hack because some (lot?) D100 do set as compressed even though 
-	 *  it is not
-	 */
-	static bool isCompressed(RawContainer & container, uint32_t offset);
-
-	class NEFCompressionInfo {
-	public:
-	  uint16_t vpred[2][2];
-	  std::vector<uint16_t> curve;
-	  const HuffmanNode* huffman;
-	};
-	
+    static RawFile *factory(IO::Stream* _f);
+    NefFile(IO::Stream * _f);
+    virtual ~NefFile();
+    
+    /** hack because some (lot?) D100 do set as compressed even though 
+     *  it is not
+     */
+    static bool isCompressed(RawContainer & container, uint32_t offset);
+    
+    class NEFCompressionInfo {
+    public:
+        uint16_t vpred[2][2];
+        std::vector<uint16_t> curve;
+        const HuffmanNode* huffman;
+    };
+    
 protected:
-	
-	virtual MakerNoteDir::Ref  _locateMakerNoteIfd();
-
+    
+    virtual MakerNoteDir::Ref  _locateMakerNoteIfd();
+    
 private:
-
-	NefFile(const NefFile&);
-	NefFile & operator=(const NefFile &);
-
-	virtual ::or_error _getRawData(RawData & data, uint32_t options);
-	static const IfdFile::camera_ids_t s_def[];
-	int _getCompressionCurve(RawData&, NEFCompressionInfo&);
-	::or_error _decompressNikonQuantized(RawData&);
-	::or_error _decompressIfNeeded(RawData&, uint32_t);
+    
+    NefFile(const NefFile&);
+    NefFile & operator=(const NefFile &);
+    
+    virtual ::or_error _getRawData(RawData & data, uint32_t options);
+    static const IfdFile::camera_ids_t s_def[];
+    int _getCompressionCurve(RawData&, NEFCompressionInfo&);
+    ::or_error _decompressNikonQuantized(RawData&);
+    ::or_error _decompressIfNeeded(RawData&, uint32_t);
 };
 	
 }
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

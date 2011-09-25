@@ -45,160 +45,160 @@ namespace OpenRaw {
 
 
 namespace Internals {
-		const IfdFile::camera_ids_t NefFile::s_def[] = {
-			{ "NIKON D1 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D1) },
-			{ "NIKON D100 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D100) },
-			{ "NIKON D1X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D1X) },
-			{ "NIKON D200", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-												OR_TYPEID_NIKON_D200) },
-			{ "NIKON D2H", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D2H ) },
-			{ "NIKON D2X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D2X ) },
-			{ "NIKON D3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											  OR_TYPEID_NIKON_D3) },
-			{ "NIKON D300", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-												OR_TYPEID_NIKON_D300) },
-			{ "NIKON D3000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-												OR_TYPEID_NIKON_D3000) },
-			{ "NIKON D3100", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-												OR_TYPEID_NIKON_D3100) },
-			{ "NIKON D40", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D40) },
-			{ "NIKON D40X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D40X) },
-			{ "NIKON D50", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D50) },
-			{ "NIKON D70", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D70) },
-			{ "NIKON D70s", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D70S) },
-			{ "NIKON D7000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D7000) },
-			{ "NIKON D80", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_D80) },
-			{ "COOLPIX P6000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_COOLPIX_P6000) },
-			{ "COOLPIX P7000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_COOLPIX_P7000) },
-			{ "NIKON 1 J1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
-											   OR_TYPEID_NIKON_J1) },
-			{ 0, 0 }
-		};
+const IfdFile::camera_ids_t NefFile::s_def[] = {
+    { "NIKON D1 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                       OR_TYPEID_NIKON_D1) },
+    { "NIKON D100 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                         OR_TYPEID_NIKON_D100) },
+    { "NIKON D1X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                       OR_TYPEID_NIKON_D1X) },
+    { "NIKON D200", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                        OR_TYPEID_NIKON_D200) },
+    { "NIKON D2H", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                       OR_TYPEID_NIKON_D2H ) },
+    { "NIKON D2X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                       OR_TYPEID_NIKON_D2X ) },
+    { "NIKON D3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                      OR_TYPEID_NIKON_D3) },
+    { "NIKON D300", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                        OR_TYPEID_NIKON_D300) },
+    { "NIKON D3000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                         OR_TYPEID_NIKON_D3000) },
+    { "NIKON D3100", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                         OR_TYPEID_NIKON_D3100) },
+    { "NIKON D40", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                       OR_TYPEID_NIKON_D40) },
+    { "NIKON D40X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                        OR_TYPEID_NIKON_D40X) },
+    { "NIKON D50", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                       OR_TYPEID_NIKON_D50) },
+    { "NIKON D70", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                       OR_TYPEID_NIKON_D70) },
+    { "NIKON D70s", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                        OR_TYPEID_NIKON_D70S) },
+    { "NIKON D7000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                         OR_TYPEID_NIKON_D7000) },
+    { "NIKON D80", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                       OR_TYPEID_NIKON_D80) },
+    { "COOLPIX P6000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                           OR_TYPEID_NIKON_COOLPIX_P6000) },
+    { "COOLPIX P7000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                           OR_TYPEID_NIKON_COOLPIX_P7000) },
+    { "NIKON 1 J1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+                                        OR_TYPEID_NIKON_J1) },
+    { 0, 0 }
+};
 
-		RawFile *NefFile::factory(IO::Stream* _filename)
-		{
-			return new NefFile(_filename);
-		}
+RawFile *NefFile::factory(IO::Stream* _filename)
+{
+    return new NefFile(_filename);
+}
 
-		NefFile::NefFile(IO::Stream* _filename)
-			: TiffEpFile(_filename, OR_RAWFILE_TYPE_NEF)
-		{
-			_setIdMap(s_def);
-		}
+NefFile::NefFile(IO::Stream* _filename)
+    : TiffEpFile(_filename, OR_RAWFILE_TYPE_NEF)
+{
+    _setIdMap(s_def);
+}
 
 
-		NefFile::~NefFile()
-		{
-		}
+NefFile::~NefFile()
+{
+}
 
-		bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
-		{
-			int i;
-			uint8_t buf[256];
-			size_t real_size = container.fetchData(buf, offset, 
-												   256);
-			if(real_size != 256) {
-				return true;
-			}
-			for(i = 15; i < 256; i+= 16) {
-				if(buf[i]) {
-					Trace(DEBUG1) << "isCompressed: true\n";
-					return true;
-				}
-			}
-			Trace(DEBUG1) << "isCompressed: false\n";
-			return false;
-		}
+bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
+{
+    int i;
+    uint8_t buf[256];
+    size_t real_size = container.fetchData(buf, offset, 
+                                           256);
+    if(real_size != 256) {
+        return true;
+    }
+    for(i = 15; i < 256; i+= 16) {
+        if(buf[i]) {
+            Trace(DEBUG1) << "isCompressed: true\n";
+            return true;
+        }
+    }
+    Trace(DEBUG1) << "isCompressed: false\n";
+    return false;
+}
 
-		MakerNoteDir::Ref NefFile::_locateMakerNoteIfd()
-		{
-			const IfdDir::Ref & _exifIfd = exifIfd();
-			if(!_exifIfd) {
-				return MakerNoteDir::Ref();
-			}
-			
-			IfdEntry::Ref maker_ent =
-			_exifIfd->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
-			if(!maker_ent) {
-				return MakerNoteDir::Ref();
-			}
-			
-			uint32_t off = maker_ent->offset();
-			uint32_t base = off + 10;
-			
-			MakerNoteDir::Ref ref(new MakerNoteDir(base + 8, *m_container, base));
-			ref->load();
-			return ref;
-		}
+MakerNoteDir::Ref NefFile::_locateMakerNoteIfd()
+{
+    const IfdDir::Ref & _exifIfd = exifIfd();
+    if(!_exifIfd) {
+        return MakerNoteDir::Ref();
+    }
+	
+    IfdEntry::Ref maker_ent =
+        _exifIfd->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
+    if(!maker_ent) {
+        return MakerNoteDir::Ref();
+    }
+	
+    uint32_t off = maker_ent->offset();
+    uint32_t base = off + 10;
+	
+    MakerNoteDir::Ref ref(new MakerNoteDir(base + 8, *m_container, base));
+    ref->load();
+    return ref;
+}
 
-		::or_error NefFile::_decompressNikonQuantized(RawData & data)
-		{
-			NEFCompressionInfo c;
-			if (!_getCompressionCurve(data, c)) {
-				Trace(ERROR) << "compression curve not found\n";
-				return OR_ERROR_NOT_FOUND;
-			}
-			const uint32_t rows = data.height();
-			const uint32_t raw_columns = data.width();
+::or_error NefFile::_decompressNikonQuantized(RawData & data)
+{
+    NEFCompressionInfo c;
+    if (!_getCompressionCurve(data, c)) {
+        Trace(ERROR) << "compression curve not found\n";
+        return OR_ERROR_NOT_FOUND;
+    }
+    const uint32_t rows = data.height();
+    const uint32_t raw_columns = data.width();
+    
+    //FIXME: not always true
+    const uint32_t columns = raw_columns - 1;
+    
+    NefDiffIterator
+        diffs(c.huffman, data.data());
+    NefCfaIterator iter(diffs, rows, raw_columns, c.vpred);
+    
+    RawData newData;
+    uint16_t *p = (uint16_t *) newData.allocData(rows * columns * 2);
+    newData.setDimensions(columns, rows);
+    newData.setDataType(OR_DATA_TYPE_CFA);
+    uint16_t bpc = data.bpc();
+    newData.setBpc(bpc);
+    newData.setMax((1 << bpc) - 1);
+    newData.setCfaPattern(data.cfaPattern());
+	
+    for (unsigned int i = 0; i < rows; i++) {
+        for (unsigned int j = 0; j < raw_columns; j++) {
+            uint16_t t = iter.get();
+            if (j < columns) {
+                unsigned shift = 16 - data.bpc();
+                p[i * columns + j] =  c.curve[t & 0x3fff] << shift;
+            }
+        }
+    }
+    
+    data.swap(newData);
+    return OR_ERROR_NONE;
+}
 
-			//FIXME: not always true
-			const uint32_t columns = raw_columns - 1;
+::or_error NefFile::_decompressIfNeeded(RawData & data,
+                                        uint32_t options)
+{
+    uint32_t compression = data.compression();
+    if((options & OR_OPTIONS_DONT_DECOMPRESS) ||
+       compression == IFD::COMPRESS_NONE) {
+        return OR_ERROR_NONE;
+    } else if(compression == IFD::COMPRESS_NIKON_QUANTIZED) {
+        return _decompressNikonQuantized(data);
+    } else {
+        return OR_ERROR_INVALID_FORMAT;
+    }
+}
 
-			NefDiffIterator
-				diffs(c.huffman, data.data());
-			NefCfaIterator iter(diffs, rows, raw_columns, c.vpred);
-
-			RawData newData;
-			uint16_t *p = (uint16_t *) newData.allocData(rows * columns * 2);
-			newData.setDimensions(columns, rows);
-			newData.setDataType(OR_DATA_TYPE_CFA);
-            uint16_t bpc = data.bpc();
-			newData.setBpc(bpc);
-            newData.setMax((1 << bpc) - 1);
-			newData.setCfaPattern(data.cfaPattern());
-	   
-			for (unsigned int i = 0; i < rows; i++) {
-				for (unsigned int j = 0; j < raw_columns; j++) {
-					uint16_t t = iter.get();
-					if (j < columns) {
-						unsigned shift = 16 - data.bpc();
-						p[i * columns + j] =  c.curve[t & 0x3fff] << shift;
-					}
-				}
-			}
-
-			data.swap(newData);
-			return OR_ERROR_NONE;
-		}
-
-		::or_error NefFile::_decompressIfNeeded(RawData & data,
-												uint32_t options)
-		{
-			uint32_t compression = data.compression();
-			if((options & OR_OPTIONS_DONT_DECOMPRESS) ||
-			   compression == IFD::COMPRESS_NONE) {
-				return OR_ERROR_NONE;
-			} else if(compression == IFD::COMPRESS_NIKON_QUANTIZED) {
-				return _decompressNikonQuantized(data);
-			} else {
-				return OR_ERROR_INVALID_FORMAT;
-			}
-		}
-		
 int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 {
     MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
@@ -268,24 +268,24 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
     return 1;
 }
 
-		::or_error NefFile::_getRawData(RawData & data, uint32_t options)
-		{
-			::or_error ret = OR_ERROR_NONE;
-			const IfdDir::Ref & _cfaIfd = cfaIfd();
-			Trace(DEBUG1) << "_getRawData()\n";
-
-			if(_cfaIfd) {
-				ret = _getRawDataFromDir(data, _cfaIfd);
-				if (ret != OR_ERROR_NONE) {
-					return ret;
-				}
-				ret = _decompressIfNeeded(data, options);
-			}
-			else {
-				ret = OR_ERROR_NOT_FOUND;
-			}
-			return ret;
-		}
+::or_error NefFile::_getRawData(RawData & data, uint32_t options)
+{
+    ::or_error ret = OR_ERROR_NONE;
+    const IfdDir::Ref & _cfaIfd = cfaIfd();
+    Trace(DEBUG1) << "_getRawData()\n";
+    
+    if(_cfaIfd) {
+        ret = _getRawDataFromDir(data, _cfaIfd);
+        if (ret != OR_ERROR_NONE) {
+            return ret;
+        }
+        ret = _decompressIfNeeded(data, options);
+    }
+    else {
+        ret = OR_ERROR_NOT_FOUND;
+    }
+    return ret;
+}
 
 }
 }
