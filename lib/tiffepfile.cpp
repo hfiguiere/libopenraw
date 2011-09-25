@@ -39,6 +39,7 @@ IfdDir::Ref  TiffEpFile::_locateCfaIfd()
     std::vector<IfdDir::Ref> subdirs;
     if (!_mainIfd || !_mainIfd->getSubIFDs(subdirs)) {
         // error
+        Trace(DEBUG) << "couldn't find main ifd nor subifds\n";
         return IfdDir::Ref();
     }
     IfdDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
@@ -47,6 +48,7 @@ IfdDir::Ref  TiffEpFile::_locateCfaIfd()
     if (i != subdirs.end()) {
         return *i;
     }
+    Trace(DEBUG) << "couldn't find a primary subifd\n";
     return IfdDir::Ref();
 }
 

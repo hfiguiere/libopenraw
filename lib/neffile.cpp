@@ -44,7 +44,7 @@ using namespace Debug;
 namespace OpenRaw {
 
 
-	namespace Internals {
+namespace Internals {
 		const IfdFile::camera_ids_t NefFile::s_def[] = {
 			{ "NIKON D1 ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
 											   OR_TYPEID_NIKON_D1) },
@@ -84,6 +84,8 @@ namespace OpenRaw {
 											   OR_TYPEID_NIKON_COOLPIX_P6000) },
 			{ "COOLPIX P7000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
 											   OR_TYPEID_NIKON_COOLPIX_P7000) },
+			{ "NIKON 1 J1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+											   OR_TYPEID_NIKON_J1) },
 			{ 0, 0 }
 		};
 
@@ -147,6 +149,7 @@ namespace OpenRaw {
 		{
 			NEFCompressionInfo c;
 			if (!_getCompressionCurve(data, c)) {
+				Trace(ERROR) << "compression curve not found\n";
 				return OR_ERROR_NOT_FOUND;
 			}
 			const uint32_t rows = data.height();
@@ -196,70 +199,74 @@ namespace OpenRaw {
 			}
 		}
 		
-		int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
-		{
-			MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
-			if(!_makerNoteIfd) {
-				return 0;
-			}
-			IfdEntry::Ref curveEntry = _makerNoteIfd->getEntry(IFD::MNOTE_NIKON_NEFDECODETABE2);
-			if(!curveEntry) {
-				return 0;
-			}
-
-			size_t pos = _makerNoteIfd->getMnoteOffset() + curveEntry->offset();
-
-			IO::Stream *file = m_container->file();
-			file->seek(pos, SEEK_SET);
-
-			int16_t aux;
-
-			uint16_t header;
-			bool read = m_container->readInt16(file, aux);
-			header = aux;
-			if(!read) {
-				return 0;
-			}
-
-			if (header == 0x4410) {
-				c.huffman = NefDiffIterator::Lossy12Bit;
-				data.setBpc(12);
-			} else if (header == 0x4630) {
-				c.huffman = NefDiffIterator::LossLess14Bit;
-				data.setBpc(14);
-			} else {
-				return 0;
-			}
-
-			for (int i = 0; i < 2; ++i) {
-				for (int j = 0; j < 2; ++j) {
-					read = m_container->readInt16(file, aux);
-					if(!read) {
-						return 0;
-					}
-					c.vpred[i][j] = aux;
-				}
-			}
-
-			if (header == 0x4410) {
-				size_t nelems;
-				read = m_container->readInt16(file, aux);
-				nelems = aux;
-
-				for (size_t i = 0; i < nelems; ++i) {
-					read = m_container->readInt16(file, aux);
-					if (!read)
-						return 0;
-					c.curve.push_back(aux);
-				}
-			} else if (header == 0x4630) {
-				for (size_t i = 0; i <= 0x3fff; ++i) {
-					c.curve.push_back(i);
-				}
-			}
-
-			return 1;
-		}
+int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
+{
+    MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
+    if(!_makerNoteIfd) {
+        Trace(ERROR) << "makernote not found\n";
+        return 0;
+    }
+    IfdEntry::Ref curveEntry = _makerNoteIfd->getEntry(IFD::MNOTE_NIKON_NEFDECODETABE2);
+    if(!curveEntry) {
+        Trace(ERROR) << "decode table2 tag not found\n";
+        return 0;
+    }
+    
+    size_t pos = _makerNoteIfd->getMnoteOffset() + curveEntry->offset();
+    
+    IO::Stream *file = m_container->file();
+    file->seek(pos, SEEK_SET);
+    
+    int16_t aux;
+    
+    uint16_t header;
+    bool read = m_container->readInt16(file, aux);
+    header = aux;
+    if(!read) {
+        Trace(ERROR) << "Header not found\n";
+        return 0;
+    }
+    
+    if (header == 0x4410) {
+        c.huffman = NefDiffIterator::Lossy12Bit;
+        data.setBpc(12);
+    } else if (header == 0x4630) {
+        c.huffman = NefDiffIterator::LossLess14Bit;
+        data.setBpc(14);
+    } else {
+        Trace(ERROR) << "Wrong header, found " << header << "\n";
+        return 0;
+    }
+    
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < 2; ++j) {
+            read = m_container->readInt16(file, aux);
+            if(!read) {
+                return 0;
+            }
+            c.vpred[i][j] = aux;
+        }
+    }
+    
+    if (header == 0x4410) {
+        size_t nelems;
+        read = m_container->readInt16(file, aux);
+        nelems = aux;
+        
+        for (size_t i = 0; i < nelems; ++i) {
+            read = m_container->readInt16(file, aux);
+            if (!read)
+                return 0;
+            c.curve.push_back(aux);
+        }
+    } else if (header == 0x4630) {
+        for (size_t i = 0; i <= 0x3fff; ++i) {
+            c.curve.push_back(i);
+        }
+    }
+    
+    return 1;
+}
 
 		::or_error NefFile::_getRawData(RawData & data, uint32_t options)
 		{
@@ -280,6 +287,15 @@ namespace OpenRaw {
 			return ret;
 		}
 
-	}
+}
 }
 
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

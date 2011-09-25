@@ -16,7 +16,7 @@ New features:
   - Support for Canon G10, G11, G12, 7D, 1DMarkIV, 5DMarkII, 500D, 60D, 
     600D, 1000D, 1100D, PowerShot S90, PowerShot S95
   - Support for Canon 50D (Closes #30846).
-  - Support for Nikon D3000, D3100, D7000
+  - Support for Nikon D3000, D3100, D7000, J1
   - Support for Sony A-550.
   - Support for Leica X1 DNG.
   - Support for Ricoh GRX DNG.
