@@ -18,9 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #ifndef __ARWFILE_H_
 #define __ARWFILE_H_
 
@@ -28,35 +25,44 @@
 
 namespace OpenRaw {
 
-	class Thumbnail;
+class Thumbnail;
 
-	namespace Internals {
-		class IOFile;
-		class IfdFileContainer;
+namespace Internals {
+class IOFile;
+class IfdFileContainer;
 
-		class ARWFile
-			: public IfdFile
-		{
-		public:
-			static RawFile *factory(IO::Stream* s);
-			ARWFile(IO::Stream * s);
-			virtual ~ARWFile();
+class ARWFile
+    : public IfdFile
+{
+public:
+    static RawFile *factory(IO::Stream* s);
+    ARWFile(IO::Stream * s);
+    virtual ~ARWFile();
+    
+protected:
+    virtual IfdDir::Ref  _locateCfaIfd();
+    virtual IfdDir::Ref  _locateMainIfd();
+    
+    virtual ::or_error _getRawData(RawData & data, uint32_t options);
+    
+private:
+    
+    ARWFile(const ARWFile&);
+    ARWFile & operator=(const ARWFile&);
+    
+    static const IfdFile::camera_ids_t s_def[];
+};
 
-		protected:
-			virtual IfdDir::Ref  _locateCfaIfd();
-			virtual IfdDir::Ref  _locateMainIfd();
-
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-
-		private:
-
-			ARWFile(const ARWFile&);
-			ARWFile & operator=(const ARWFile&);
-
-			static const IfdFile::camera_ids_t s_def[];
-		};
-	}
-
+}
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
