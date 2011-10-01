@@ -40,10 +40,27 @@ const IfdFile::camera_ids_t ARWFile::s_def[] = {
                                        OR_TYPEID_SONY_A100) },
     { "DSLR-A200", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_A200) },
+    { "DSLR-A380", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_A380) },
+    { "DSLR-A390", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_A390) },
     { "DSLR-A550", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_A550) },
     { "DSLR-A700", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_A700) },
+    { "SLT-A55V", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_SLTA55) },
+    { "SLT-A77V", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_SLTA77) },
+    { "NEX-3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_NEX3) },
+    { "NEX-5", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_NEX5) },
+    { "NEX-5N", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_NEX5N) },
+    // unsure if this is the right one or because the sample I have that may come from a pre-series.
+    { "NEX-00", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_NEXC3) },
     { 0, 0 }
 };
 

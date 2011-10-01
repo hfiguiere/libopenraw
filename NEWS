@@ -17,7 +17,8 @@ New features:
     600D, 1000D, 1100D, PowerShot S90, PowerShot S95
   - Support for Canon 50D (Closes #30846).
   - Support for Nikon D3000, D3100, D7000, J1
-  - Support for Sony A-550.
+  - Support for Sony A-550, A-380, A-390, SLT-A55, SLT-A77, Nex-3, Nex-5, Nex-5N, 
+    Nex-C3.
   - Support for Leica X1 DNG.
   - Support for Ricoh GRX DNG.
   - Support for Nikon NRW: P6000 and P7000 (partial).
