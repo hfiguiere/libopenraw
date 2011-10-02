@@ -123,6 +123,10 @@ protected:
 	const IfdDir::Ref & mainIfd();
 	const IfdDir::Ref & exifIfd();
 	const MakerNoteDir::Ref & makerNoteIfd();			
+
+	virtual ::or_error _getRawData(RawData & data, uint32_t options);
+	// call to decrompress if needed from _getRawData()
+	virtual ::or_error _decompressIfNeeded(RawData&, uint32_t);
 private:
 	IfdDir::Ref       m_cfaIfd;  /**< the IFD for the CFA */
 	IfdDir::Ref       m_mainIfd; /**< the IFD for the main image 
@@ -141,5 +145,13 @@ private:
 }
 }
 
-
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
 #endif

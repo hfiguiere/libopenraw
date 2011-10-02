@@ -42,8 +42,6 @@ protected:
 
     virtual IfdDir::Ref  _locateCfaIfd();
     virtual IfdDir::Ref  _locateMainIfd();
-
-    virtual ::or_error _getRawData(RawData & data, uint32_t options);
 };
 
 }

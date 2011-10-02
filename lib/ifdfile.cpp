@@ -519,6 +519,32 @@ static RawData::CfaPattern _getCfaPattern(const IfdDir::Ref & dir)
 
 } // end anon namespace
 
+
+::or_error IfdFile::_getRawData(RawData & data, uint32_t options)
+{
+    ::or_error ret = OR_ERROR_NONE;
+    const IfdDir::Ref & _cfaIfd = cfaIfd();
+    Trace(DEBUG1) << "_getRawData()\n";
+    
+    if(_cfaIfd) {
+        ret = _getRawDataFromDir(data, _cfaIfd);
+        if (ret != OR_ERROR_NONE) {
+            return ret;
+        }
+        ret = _decompressIfNeeded(data, options);
+    }
+    else {
+        ret = OR_ERROR_NOT_FOUND;
+    }
+    return ret;
+}
+
+::or_error IfdFile::_decompressIfNeeded(RawData&, uint32_t)
+{
+    return OR_ERROR_NONE;
+}
+
+
 ::or_error IfdFile::_getRawDataFromDir(RawData & data, const IfdDir::Ref & dir)
 {
     ::or_error ret = OR_ERROR_NONE;

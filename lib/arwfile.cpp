@@ -35,7 +35,7 @@ namespace OpenRaw {
 
 namespace Internals {
 
-const IfdFile::camera_ids_t ARWFile::s_def[] = {
+const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { "DSLR-A100", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_A100) },
     { "DSLR-A200", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
@@ -65,36 +65,44 @@ const IfdFile::camera_ids_t ARWFile::s_def[] = {
 };
 
 
-RawFile *ARWFile::factory(IO::Stream * s)
+RawFile *ArwFile::factory(IO::Stream * s)
 {
-    return new ARWFile(s);
+    return new ArwFile(s);
 }
 
-ARWFile::ARWFile(IO::Stream *s)
-    : IfdFile(s, OR_RAWFILE_TYPE_ARW)
+ArwFile::ArwFile(IO::Stream *s)
+    : TiffEpFile(s, OR_RAWFILE_TYPE_ARW)
 {
     _setIdMap(s_def);
 }
 
-ARWFile::~ARWFile()
+ArwFile::~ArwFile()
 {
 }
 
-IfdDir::Ref  ARWFile::_locateCfaIfd()
+IfdDir::Ref  ArwFile::_locateCfaIfd()
 {
-    // in ARW the CFA IFD is the main IFD
+    if(!isA100())
+    {
+        return TiffEpFile::_locateCfaIfd();
+    }
     return mainIfd();
 }
 
 
-IfdDir::Ref  ARWFile::_locateMainIfd()
+IfdDir::Ref  ArwFile::_locateMainIfd()
 {
     return m_container->setDirectory(0);
 }
 
-::or_error ARWFile::_getRawData(RawData & /*data*/, uint32_t /*options*/) 
-{ 
-    return OR_ERROR_NOT_FOUND; 
+::or_error ArwFile::_getRawData(RawData & data, uint32_t options)
+{
+    if(isA100())
+    {
+        // TODO implement for A100
+        return OR_ERROR_NOT_FOUND;
+    }
+    return TiffEpFile::_getRawData(data, options);
 }
 
 }

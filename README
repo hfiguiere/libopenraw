@@ -173,19 +173,19 @@ Adobe DNG                Y Y B Y Y Y Y
  Ricoh GRX               T T X T T T
  Ricoh GX100
  
-Sony ARW                 Y N N Y N Y N
+Sony ARW                 Y Y N Y N Y N
  A-100                   T N   T   T
- A-200                             T
- A-550                   T         T
- A-700                   T     T   T
- A-380                             T
- A-390                             T
- SLT-A55                           T
- SLT-A77                           T
- Nex-3                             T
- Nex-5                             T
- Nex-5N                            T
- Nex-C3                            T
+ A-200                   # # # # # T #
+ A-550                   T T       T
+ A-700                   T T   T   T
+ A-380                   T T       T
+ A-390                   T T       T
+ SLT-A55                 T T       T
+ SLT-A77                 T T       T
+ Nex-3                   T T   T   T
+ Nex-5                   T T       T
+ Nex-5N                  T T       T
+ Nex-C3                  T T       T
 
 Pentax PEF               Y Y N Y Y Y N
  *-ist D                 T T X X T T

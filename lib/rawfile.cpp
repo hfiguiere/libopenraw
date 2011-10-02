@@ -74,7 +74,7 @@ void init(void)
                                  boost::bind(&Internals::NefFile::factory, _1),
                                  "nrw");
     static RawFileFactory fctarw(OR_RAWFILE_TYPE_ARW, 
-                                 boost::bind(&Internals::ARWFile::factory, _1),
+                                 boost::bind(&Internals::ArwFile::factory, _1),
                                  "arw");
     static RawFileFactory fctorf(OR_RAWFILE_TYPE_ORF, 
                                  boost::bind(&Internals::OrfFile::factory, _1),

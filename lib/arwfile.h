@@ -22,6 +22,7 @@
 #define __ARWFILE_H_
 
 #include "ifdfile.h"
+#include "tiffepfile.h"
 
 namespace OpenRaw {
 
@@ -31,13 +32,18 @@ namespace Internals {
 class IOFile;
 class IfdFileContainer;
 
-class ARWFile
-    : public IfdFile
+class ArwFile
+    : public TiffEpFile
 {
 public:
     static RawFile *factory(IO::Stream* s);
-    ARWFile(IO::Stream * s);
-    virtual ~ARWFile();
+    ArwFile(IO::Stream * s);
+    virtual ~ArwFile();
+
+    // this is the value for "compression" for ARW
+    enum {
+        ARW2_RAW_COMPRESSION = 32767
+    };
     
 protected:
     virtual IfdDir::Ref  _locateCfaIfd();
@@ -47,9 +53,16 @@ protected:
     
 private:
     
-    ARWFile(const ARWFile&);
-    ARWFile & operator=(const ARWFile&);
-    
+    ArwFile(const ArwFile&);
+    ArwFile & operator=(const ArwFile&);
+
+    // first version of ARW. Different from the rest.
+    bool isA100()
+        {
+            return typeId() == OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                                   OR_TYPEID_SONY_A100);
+        }
+
     static const IfdFile::camera_ids_t s_def[];
 };
 

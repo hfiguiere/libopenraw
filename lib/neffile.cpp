@@ -268,25 +268,6 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
     return 1;
 }
 
-::or_error NefFile::_getRawData(RawData & data, uint32_t options)
-{
-    ::or_error ret = OR_ERROR_NONE;
-    const IfdDir::Ref & _cfaIfd = cfaIfd();
-    Trace(DEBUG1) << "_getRawData()\n";
-    
-    if(_cfaIfd) {
-        ret = _getRawDataFromDir(data, _cfaIfd);
-        if (ret != OR_ERROR_NONE) {
-            return ret;
-        }
-        ret = _decompressIfNeeded(data, options);
-    }
-    else {
-        ret = OR_ERROR_NOT_FOUND;
-    }
-    return ret;
-}
-
 }
 }
 
