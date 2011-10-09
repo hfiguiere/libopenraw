@@ -22,6 +22,7 @@ New features:
     Nex-5N, Nex-C3.
   - Support for Leica X1 DNG.
   - Support for Ricoh GRX DNG.
+  - Added IDs for DNG: Pentax Q
   - Support for Nikon NRW: P6000 and P7000 (partial).
   - Support for Panasonic RAW and RW2.
   - Support for FujiFilm RAF.
