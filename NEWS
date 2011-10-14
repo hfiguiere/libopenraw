@@ -10,8 +10,8 @@ New features:
   - Support (partially) PEF from Pentax K20D, K-r, K-5, K-7, K-x (unconfirmed),
     645D.
   - Support for Olympus ORF big-endian files and "RS" (12-bits). 
-    Added E-10, E-P1, E-P2, E-P3, E-PL1, E-PL2, E-PL3, E-PM1, E-620, SP350, SP500, 
-    SP510, SP550, XZ-1
+    Added E-10, E-P1, E-P2, E-P3, E-PL1, E-PL2, E-PL3, E-PM1, E-620, 
+    SP350, SP500, SP510, SP550, XZ-1
     Olympus ORF decompression.
   - Support for Canon G10, G11, G12, 7D, 1DMarkIV, 5DMarkII, 500D, 60D, 
     600D, 1000D, 1100D, PowerShot S90, PowerShot S95
@@ -20,9 +20,7 @@ New features:
   - Extract compressed raw from ARW (but A-100).
   - Added support for Sony A-550, A-380, A-390, SLT-A55, SLT-A77, Nex-3, Nex-5, 
     Nex-5N, Nex-C3.
-  - Support for Leica X1 DNG.
-  - Support for Ricoh GRX DNG.
-  - Added IDs for DNG: Pentax Q
+  - Support for Leica X1 DNG, Ricoh GRX, Pentax Q, Leica M9 - DNG
   - Support for Nikon NRW: P6000 and P7000 (partial).
   - Support for Panasonic RAW and RW2.
   - Support for FujiFilm RAF.
