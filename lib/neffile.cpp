@@ -1,5 +1,4 @@
 /* -*- tab-width:4; c-basic-offset:4 -*- */
-
 /*
  * libopenraw - neffile.cpp
  *
@@ -68,24 +67,26 @@ const IfdFile::camera_ids_t NefFile::s_def[] = {
                                          OR_TYPEID_NIKON_D3100) },
     { "NIKON D40", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
                                        OR_TYPEID_NIKON_D40) },
-    { "NIKON D40X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+    { "NIKON D40X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                         OR_TYPEID_NIKON_D40X) },
-    { "NIKON D50", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+    { "NIKON D50", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                        OR_TYPEID_NIKON_D50) },
-    { "NIKON D70", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+    { "NIKON D70", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                        OR_TYPEID_NIKON_D70) },
-    { "NIKON D70s", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+    { "NIKON D70s", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                         OR_TYPEID_NIKON_D70S) },
-    { "NIKON D7000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+    { "NIKON D7000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                          OR_TYPEID_NIKON_D7000) },
-    { "NIKON D80", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+    { "NIKON D80", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                        OR_TYPEID_NIKON_D80) },
-    { "COOLPIX P6000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+    { "COOLPIX P6000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                            OR_TYPEID_NIKON_COOLPIX_P6000) },
-    { "COOLPIX P7000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+    { "COOLPIX P7000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                            OR_TYPEID_NIKON_COOLPIX_P7000) },
-    { "NIKON 1 J1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
+    { "NIKON 1 J1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                         OR_TYPEID_NIKON_J1) },
+    { "NIKON 1 V1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
+                                        OR_TYPEID_NIKON_V1) },
     { 0, 0 }
 };
 
