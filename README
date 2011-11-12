@@ -73,6 +73,7 @@ Support table:
                          | | | | | / 
                          | | | | | |
 Canon CR2                Y Y Y Y Y Y
+ 1000D			 T T T T T T
  20D                     T T T T T T
  30D                     T T T T T T
  350D                    T T T T T T
@@ -81,8 +82,8 @@ Canon CR2                Y Y Y Y Y Y
  450D                    T T T T T T
  50D                     T T T T T T
  500D                    T T T T T T
- 550D
- 1000D
+ 550D			 T T T T T T
+ 60D                     T T T T T T
  5D                      T T T     T
  5DMarkII                T T T T   T
  7D                      T T T     T
