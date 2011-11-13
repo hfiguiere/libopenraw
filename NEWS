@@ -16,9 +16,6 @@ New features:
   
 Bug fixes:
 
-  - API: or_rawfile_get_rendered_image() returns a ORBitmapDataRef with
-    the correct dimensions.
-    + corrected the Gdk support for above change.
   - Check for get_current_dir_name() (Closes #24088)
   - Don't crash when the files can't be written in the testsuite bootstrap.
   - Detect that ORF file are compressed if they are. (Closes #26618)
