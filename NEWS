@@ -1,4 +1,4 @@
-libopenraw 0.0.9
+libopenraw 0.1.0
 
 New features:
 
@@ -7,20 +7,17 @@ New features:
   - Get the default crop in CR2, CRW and DNG.
   - make dist make a bzip2 archive too (build only).
   - New demo ppmload to create a ppm out of the demosaicized image.
-  - Support (partially) PEF from Pentax K20D, K-r, K-5, K-7, K-x (unconfirmed),
+  - Support (partially) PEF from Pentax K-r, K-5, K-7, K-x (unconfirmed),
     645D.
   - Support for Olympus ORF big-endian files and "RS" (12-bits). 
-    Added E-10, E-P1, E-P2, E-P3, E-PL1, E-PL2, E-PL3, E-PM1, E-620, 
-    SP350, SP500, SP510, SP550, XZ-1
+    Added E-P2, E-P3, E-PL1, E-PL2, E-PL3, E-PM1, E-620 and XZ-1
     Olympus ORF decompression.
-  - Support for Canon G10, G11, G12, 7D, 1DMarkIV, 5DMarkII, 500D, 60D, 
-    600D, 1000D, 1100D, PowerShot S90, PowerShot S95
-  - Support for Canon 50D (Closes #30846).
-  - Support for Nikon D3000, D3100, D7000, J1
+  - Support for Canon G12, 600D, 1100D, PowerShot S90, PowerShot S95
+  - Support for Nikon D3100, D7000, J1
   - Extract compressed raw from ARW (but A-100).
-  - Added support for Sony A-550, A-380, A-390, SLT-A55, SLT-A77, Nex-3, Nex-5, 
+  - Added support for Sony A-380, A-390, SLT-A55, SLT-A77, Nex-3, Nex-5, 
     Nex-5N, Nex-C3.
-  - Support for Leica X1 DNG, Ricoh GRX, Pentax Q, Leica M9 - DNG
+  - Support for Pentax Q, Leica M9 - DNG
   - Support for Nikon NRW: P6000 and P7000 (partial).
   - Support for Panasonic RAW and RW2.
   - Support for FujiFilm RAF.
@@ -37,6 +34,34 @@ Bug fixes:
   - Don't crash when the files can't be written in the testsuite bootstrap.
   - Detect that ORF file are compressed if they are. (Closes #26618)
   - Skip compressed CFA when rendering the image. (Closes #25464)
+  - Accept YCbCr when the compression is JPEG. The K10D DNG should now have 
+    the large size preview.
+  - Install the GdkPixbuf in the right place. (Closes #29208) (Vincent Untz)
+  
+Internal changes:
+
+  - Fixed warnings.
+  - Support to load MakerNote IFD.
+  - Streamline the loading of IFDs.
+  - Move the rendering on the RawData class.
+  - BUG: IO::StreamClone::seek() now return the proper value.
+
+libopenraw 0.0.9
+
+New features:
+
+  - Support (partially) PEF from Pentax K20D.
+  - Support for Olympus ORF big-endian files and "RS" (12-bits). 
+    Added E-10, E-P1, E-620, SP350, SP500, SP510 and SP550.
+  - Support for Canon G10, G11, 7D, 1DMarkIV, 5DMarkII, 500D, 550D, 60D and 1000D.
+  - Support for Canon 50D (Closes #30846).
+  - Support for Nikon D3000.
+  - Support for Sony A-550.
+  - Support for Leica X1 DNG.
+  - Support for Ricoh GRX DNG.
+
+Bug fixes:
+
   - Properly decompress CFA from Canon 7D, 5DMkII, 500D, 1DMkIV (and any 
     other whose JPEG stream have 4 components)
   - Accept YCbCr when the compression is JPEG. The K10D DNG should now have 
@@ -46,16 +71,11 @@ Bug fixes:
   - Fixed some compilation errors in the Gdk pixbuf loader.
   - Fixed IDs for Canon 350D and 400D.
   - Pass the orientation to gdk-pixbuf in the loader. (Closes #37920)
-  
+
 Internal changes:
 
   - Rename debug.{h,cpp} to trace.{h,cpp}
   - Fixed the case on several class names.
-  - Fixed warnings.
-  - Support to load MakerNote IFD.
-  - Streamline the loading of IFDs.
-  - Move the rendering on the RawData class.
-  - BUG: IO::StreamClone::seek() now return the proper value.
 
 libopenraw 0.0.8
 
