@@ -15,8 +15,8 @@ New features:
   - Support for Canon G12, 600D, 1100D, PowerShot S90, PowerShot S95
   - Support for Nikon D3100, D7000, J1, V1
   - Extract compressed raw from ARW (but A-100).
-  - Added support for Sony A-380, A-390, SLT-A55, SLT-A77, Nex-3, Nex-5, 
-    Nex-5N, Nex-C3.
+  - Added support for Sony A-380, A-390, SLT-A55, SLT-A65, SLT-A77, 
+    Nex-3, Nex-5, Nex-5N, Nex-C3.
   - Support for Pentax Q, Leica M9 - DNG
   - Support for Nikon NRW: P6000 and P7000 (partial).
   - Support for Panasonic RAW and RW2.
