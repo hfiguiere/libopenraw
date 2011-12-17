@@ -46,6 +46,12 @@ Internal changes:
   - Move the rendering on the RawData class.
   - BUG: IO::StreamClone::seek() now return the proper value.
 
+libopenraw 0.0.10
+
+Bug fixes:
+
+  - Fixed memory leak in or_gdkpixbuf_extract_thumbnail() and friends.
+
 libopenraw 0.0.9
 
 New features:
