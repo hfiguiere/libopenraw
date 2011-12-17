@@ -1,4 +1,3 @@
-/* -*- tab-width:4; c-basic-offset:4 -*- */
 /*
  * libopenraw - raffile.h
  *
@@ -41,15 +40,15 @@ public:
 	virtual ~RafFile();
 	
 protected:
-    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
+  virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 	
-    virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
-
-    virtual ::or_error _getRawData(RawData & data, uint32_t options);
+  virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+  
+  virtual ::or_error _getRawData(RawData & data, uint32_t options);
 	
-    virtual MetaValue *_getMetaValue(int32_t /*meta_index*/);
+  virtual MetaValue *_getMetaValue(int32_t /*meta_index*/);
 	
-    virtual void _identifyId();
+  virtual void _identifyId();
 private:
 	RafFile(const RafFile&);
 	RafFile & operator=(const RafFile&);
@@ -67,3 +66,14 @@ private:
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

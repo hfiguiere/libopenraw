@@ -44,42 +44,53 @@ namespace JPEG {
 
 namespace OpenRaw {
 
-	class BitmapData;
+class BitmapData;
 
-	namespace Internals {
+namespace Internals {
 
-		class JFIFContainer
-			: public RawContainer
-		{
-		public:
-			JFIFContainer(IO::Stream *file, off_t offset);
-			/** destructor */
-			virtual ~JFIFContainer();
-
-			bool getDimensions(uint32_t &x, uint32_t &y);
-			bool getDecompressedData(BitmapData &data);
-
-			/* libjpeg callbacks j_ is the prefix for these callbacks */
-			static void j_init_source(JPEG::j_decompress_ptr cinfo);
-			static JPEG::boolean j_fill_input_buffer(JPEG::j_decompress_ptr cinfo);
-			static void j_skip_input_data(JPEG::j_decompress_ptr cinfo, 
-																		long num_bytes);
+class JFIFContainer
+  : public RawContainer
+{
+public:
+  JFIFContainer(IO::Stream *file, off_t offset);
+  /** destructor */
+  virtual ~JFIFContainer();
+    
+  bool getDimensions(uint32_t &x, uint32_t &y);
+  bool getDecompressedData(BitmapData &data);
+    
+  /* libjpeg callbacks j_ is the prefix for these callbacks */
+  static void j_init_source(JPEG::j_decompress_ptr cinfo);
+  static JPEG::boolean j_fill_input_buffer(JPEG::j_decompress_ptr cinfo);
+  static void j_skip_input_data(JPEG::j_decompress_ptr cinfo, 
+                                long num_bytes);
 //			static void j_jpeg_resync_to_restart(JPEG::j_decompress_ptr cinfo);
-			static void j_term_source(JPEG::j_decompress_ptr cinfo);
-			static void j_error_exit(JPEG::j_common_ptr cinfo);
+  static void j_term_source(JPEG::j_decompress_ptr cinfo);
+  static void j_error_exit(JPEG::j_common_ptr cinfo);
+    
+  IfdDir::Ref exifIfd();
+private:
+  int _loadHeader();
+    
+  struct JPEG::jpeg_decompress_struct m_cinfo;
+  struct JPEG::jpeg_error_mgr m_jerr;
+  jmp_buf m_jpegjmp;
+  bool m_headerLoaded;
+  IfdFileContainer* m_exif;
+};
 
-			IfdDir::Ref exifIfd();
-		private:
-		  int _loadHeader();
-
-			struct JPEG::jpeg_decompress_struct m_cinfo;
-			struct JPEG::jpeg_error_mgr m_jerr;
-			jmp_buf m_jpegjmp;
-			bool m_headerLoaded;
-			IfdFileContainer* m_exif;
-		};
-
-	}
+}
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
