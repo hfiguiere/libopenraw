@@ -59,6 +59,8 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
 											 OR_TYPEID_FUJIFILM_S6500FD) },
 	{ "FinePix HS10 HS11", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
 											 OR_TYPEID_FUJIFILM_HS10) },
+	{ "X10" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
+											OR_TYPEID_FUJIFILM_X10) },
 	{ NULL, 0 }
 };
 
