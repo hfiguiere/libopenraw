@@ -35,7 +35,9 @@ static void pixbuf_free(guchar * data, gpointer u)
 	free(data);
 }
 
-
+/**
+ * Returns a retained GdkPixbuf
+ */
 static GdkPixbuf *rotate_pixbuf(GdkPixbuf *tmp, int32_t orientation)
 {
 	GdkPixbuf *pixbuf = NULL;
@@ -46,40 +48,34 @@ static GdkPixbuf *rotate_pixbuf(GdkPixbuf *tmp, int32_t orientation)
 		break;
 	case 2:
 		pixbuf = gdk_pixbuf_flip(tmp, TRUE);
-		gdk_pixbuf_unref(tmp);
 		break;
 	case 3:
 		pixbuf = gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_UPSIDEDOWN);
-		gdk_pixbuf_unref(tmp);		
 		break;
-	case 4:
-		pixbuf = gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_UPSIDEDOWN);
-		gdk_pixbuf_unref(tmp);
-		tmp = pixbuf;
-		pixbuf = gdk_pixbuf_flip(tmp, TRUE);
-		gdk_pixbuf_unref(tmp);		
+	case 4: {
+		GdkPixbuf* rotated = gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_UPSIDEDOWN);
+		pixbuf = gdk_pixbuf_flip(rotated, TRUE);
+		g_object_unref(rotated);
 		break;
-	case 5:
-		pixbuf =  gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_CLOCKWISE);
-		gdk_pixbuf_unref(tmp);		
-		tmp = pixbuf;
-		pixbuf = gdk_pixbuf_flip(tmp, FALSE);
-		gdk_pixbuf_unref(tmp);		
+	}
+	case 5: {
+		GdkPixbuf* rotated = gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_CLOCKWISE);
+		pixbuf = gdk_pixbuf_flip(rotated, FALSE);
+		gdk_pixbuf_unref(rotated);
 		break;
+	}
 	case 6:
 		pixbuf =  gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_CLOCKWISE);
 		gdk_pixbuf_unref(tmp);		
 		break;
-	case 7:
-		pixbuf =  gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_COUNTERCLOCKWISE);
-		gdk_pixbuf_unref(tmp);		
-		tmp = pixbuf;
-		pixbuf = gdk_pixbuf_flip(tmp, FALSE);
-		gdk_pixbuf_unref(tmp);		
-		break;		
+	case 7: {
+		GdkPixbuf* rotated = gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_COUNTERCLOCKWISE);
+		pixbuf = gdk_pixbuf_flip(rotated, FALSE);
+		g_object_unref(rotated);
+		break;
+	}
 	case 8:
 		pixbuf =  gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_COUNTERCLOCKWISE);
-		gdk_pixbuf_unref(tmp);		
 		break;		
 	default:
 		break;
@@ -92,7 +88,8 @@ static GdkPixbuf *rotate_pixbuf(GdkPixbuf *tmp, int32_t orientation)
 static GdkPixbuf *_or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail, 
 										  int32_t orientation)
 {
-	GdkPixbuf *tmp = NULL;
+	GdkPixbuf* tmp = NULL;
+	GdkPixbuf* pixbuf = NULL;
 	
 	const guchar * buf;
 	or_data_type format = or_thumbnail_format(thumbnail);
@@ -112,9 +109,9 @@ static GdkPixbuf *_or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail,
 		or_thumbnail_dimensions(thumbnail, &x, &y);
 		
 		tmp = gdk_pixbuf_new_from_data(data, 
-									   GDK_COLORSPACE_RGB,
-									   FALSE, 8, x, y, x * 3, 
-									   pixbuf_free, NULL);
+					       GDK_COLORSPACE_RGB,
+					       FALSE, 8, x, y, x * 3, 
+					       pixbuf_free, NULL);
 		break;
 	}
 	case OR_DATA_TYPE_JPEG:
@@ -128,13 +125,16 @@ static GdkPixbuf *_or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail,
 			gdk_pixbuf_loader_write(loader, buf, count, NULL);
 			gdk_pixbuf_loader_close(loader, NULL);
 			tmp = gdk_pixbuf_loader_get_pixbuf(loader);
+			g_object_unref(loader);
 		}
 		break;
 	}
 	default: 
 		break;
 	}
-	return rotate_pixbuf(tmp, orientation);
+	pixbuf = rotate_pixbuf(tmp, orientation);
+	g_object_unref(tmp);
+	return pixbuf;
 }
 
 
@@ -147,8 +147,8 @@ GdkPixbuf *or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail)
 
 
 static GdkPixbuf *_or_gdkpixbuf_extract_thumbnail(const char *path, 
-												  uint32_t preferred_size, 
-												  gboolean rotate)
+						  uint32_t preferred_size, 
+						  gboolean rotate)
 {
 	ORRawFileRef rf;
 	int32_t orientation = 0;
