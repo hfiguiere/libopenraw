@@ -48,13 +48,13 @@ class BitmapData;
 
 namespace Internals {
 
-class JFIFContainer
+class JfifContainer
   : public RawContainer
 {
 public:
-  JFIFContainer(IO::Stream *file, off_t offset);
+  JfifContainer(IO::Stream *file, off_t offset);
   /** destructor */
-  virtual ~JFIFContainer();
+  virtual ~JfifContainer();
     
   bool getDimensions(uint32_t &x, uint32_t &y);
   bool getDecompressedData(BitmapData &data);

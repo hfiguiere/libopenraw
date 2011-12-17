@@ -55,7 +55,7 @@ int test_main(int argc, char *argv[])
 
 	RawData *decompData;
 	File *s = new File(g_testfile.c_str());
-	RawContainer *container = new JFIFContainer(s, 0);
+	RawContainer *container = new JfifContainer(s, 0);
 
 	LJpegDecompressor decompressor(s, container);
 

@@ -115,7 +115,7 @@ CRWFile::~CRWFile()
 				
         scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, heap->offset()
                                                           + (*iter).offset));
-        scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+        scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
 
         jfif->getDimensions(m_x, m_y);
         Trace(DEBUG1) << "JPEG dimensions x=" << m_x 

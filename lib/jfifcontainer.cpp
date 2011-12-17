@@ -51,12 +51,12 @@ namespace Internals {
 
 typedef struct {
   struct JPEG::jpeg_source_mgr pub; /**< the public libjpeg struct */
-  JFIFContainer * self;       /**< pointer to the owner */
+  JfifContainer * self;       /**< pointer to the owner */
   off_t offset;
   JPEG::JOCTET* buf;
 } jpeg_src_t;
 
-JFIFContainer::JFIFContainer(IO::Stream *_file, off_t offset)
+JfifContainer::JfifContainer(IO::Stream *_file, off_t offset)
   : RawContainer(_file, offset),
     m_cinfo(), m_jerr(),
     m_headerLoaded(false),
@@ -93,14 +93,14 @@ JFIFContainer::JFIFContainer(IO::Stream *_file, off_t offset)
      BUF_SIZE * sizeof(JPEG::JOCTET));
 }
 
-JFIFContainer::~JFIFContainer()
+JfifContainer::~JfifContainer()
 {
   JPEG::jpeg_destroy_decompress(&m_cinfo);
   delete m_exif;
 }
 
 
-bool JFIFContainer::getDimensions(uint32_t &x, uint32_t &y)
+bool JfifContainer::getDimensions(uint32_t &x, uint32_t &y)
 {
   if(!m_headerLoaded) {
     if (_loadHeader() == 0) {
@@ -114,7 +114,7 @@ bool JFIFContainer::getDimensions(uint32_t &x, uint32_t &y)
 }
 
 
-bool JFIFContainer::getDecompressedData(BitmapData &data)
+bool JfifContainer::getDecompressedData(BitmapData &data)
 {
   if(!m_headerLoaded) {
     if (_loadHeader() == 0) {
@@ -144,7 +144,7 @@ bool JFIFContainer::getDecompressedData(BitmapData &data)
 }
 
 
-int JFIFContainer::_loadHeader()
+int JfifContainer::_loadHeader()
 {
   int ret = 0;
   if (::setjmp(m_jpegjmp) == 0) {
@@ -158,23 +158,23 @@ int JFIFContainer::_loadHeader()
 }
 
 
-void JFIFContainer::j_error_exit(JPEG::j_common_ptr cinfo)
+void JfifContainer::j_error_exit(JPEG::j_common_ptr cinfo)
 {
   (*cinfo->err->output_message) (cinfo);
-  JFIFContainer *self = ((jpeg_src_t *)(((JPEG::j_decompress_ptr)cinfo)->src))->self;
+  JfifContainer *self = ((jpeg_src_t *)(((JPEG::j_decompress_ptr)cinfo)->src))->self;
   ::longjmp(self->m_jpegjmp, 1);
 }
 
-void JFIFContainer::j_init_source(JPEG::j_decompress_ptr)
+void JfifContainer::j_init_source(JPEG::j_decompress_ptr)
 {
 }
 
 
 JPEG::boolean 
-JFIFContainer::j_fill_input_buffer(JPEG::j_decompress_ptr cinfo)
+JfifContainer::j_fill_input_buffer(JPEG::j_decompress_ptr cinfo)
 {
   jpeg_src_t *src = (jpeg_src_t*)cinfo->src;
-  JFIFContainer *self = src->self;
+  JfifContainer *self = src->self;
   int n = self->file()->read(src->buf, BUF_SIZE * sizeof(*src->buf));
   if (n >= 0) {
     src->pub.next_input_byte = src->buf;
@@ -188,7 +188,7 @@ JFIFContainer::j_fill_input_buffer(JPEG::j_decompress_ptr cinfo)
 }
 
 
-void JFIFContainer::j_skip_input_data(JPEG::j_decompress_ptr cinfo, 
+void JfifContainer::j_skip_input_data(JPEG::j_decompress_ptr cinfo, 
                                       long num_bytes)
 {
   jpeg_src_t *src = (jpeg_src_t*)cinfo->src;
@@ -203,11 +203,11 @@ void JFIFContainer::j_skip_input_data(JPEG::j_decompress_ptr cinfo,
 }
 
 
-void JFIFContainer::j_term_source(JPEG::j_decompress_ptr)
+void JfifContainer::j_term_source(JPEG::j_decompress_ptr)
 {
 }
 
-IfdDir::Ref JFIFContainer::exifIfd()
+IfdDir::Ref JfifContainer::exifIfd()
 {
   if(!m_exif) {
     m_file->seek(0, SEEK_SET);

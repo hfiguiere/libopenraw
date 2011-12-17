@@ -84,7 +84,7 @@ RafFile::~RafFile()
 {
 	or_error ret = OR_ERROR_NOT_FOUND;
 	
-	JFIFContainer * jpegPreview = m_container->getJpegPreview();
+	JfifContainer * jpegPreview = m_container->getJpegPreview();
 	uint32_t x, y;
 	if(jpegPreview && jpegPreview->getDimensions(x, y)) {
 		list.push_back(std::max(x, y));
@@ -97,7 +97,7 @@ RafFile::~RafFile()
 ::or_error RafFile::_getThumbnail(uint32_t /*size*/, Thumbnail & thumbnail)
 {
 	::or_error ret = OR_ERROR_NOT_FOUND;
-	JFIFContainer * jpegPreview = m_container->getJpegPreview();
+	JfifContainer * jpegPreview = m_container->getJpegPreview();
 	uint32_t x, y;
 	if(jpegPreview && jpegPreview->getDimensions(x, y)) {
 		thumbnail.setDataType(OR_DATA_TYPE_JPEG);
@@ -192,7 +192,7 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
 	if(META_INDEX_MASKOUT(meta_index) == META_NS_EXIF
 	   || META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
 		
-		JFIFContainer * jpegPreview = m_container->getJpegPreview();
+		JfifContainer * jpegPreview = m_container->getJpegPreview();
 		IfdDir::Ref dir = jpegPreview->exifIfd();
 		IfdEntry::Ref e = dir->getEntry(META_NS_MASKOUT(meta_index));
 		if(e) {

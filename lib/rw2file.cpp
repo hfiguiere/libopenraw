@@ -129,7 +129,7 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
     uint32_t y = 0;
     ::or_data_type _type = OR_DATA_TYPE_JPEG;
     boost::scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-    boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+    boost::scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
     if (jfif->getDimensions(x,y)) {
         Trace(DEBUG1) << "JPEG dimensions x=" << x 
                       << " y=" << y << "\n";

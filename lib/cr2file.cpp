@@ -197,7 +197,7 @@ IfdDir::Ref  Cr2File::_locateMainIfd()
 			boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
 															  data.size()));
 			s->open(); // TODO check success
-			boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+			boost::scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
 			LJpegDecompressor decomp(s.get(), jfif.get());
 			// in fact on Canon CR2 files slices either do not exists
 			// or is 3.

@@ -73,14 +73,14 @@ IfdFileContainer * RafContainer::getCfaContainer()
 	return m_cfaContainer;
 }
 	
-JFIFContainer * RafContainer::getJpegPreview()
+JfifContainer * RafContainer::getJpegPreview()
 {
 	if(!m_jpegPreview) {
 		if(!m_read) {
 			_readHeader();
 		}
 		if(m_offsetDirectory.jpegOffset && m_offsetDirectory.jpegLength) {
-			m_jpegPreview = new JFIFContainer(new IO::StreamClone(m_file, m_offsetDirectory.jpegOffset), 0);
+			m_jpegPreview = new JfifContainer(new IO::StreamClone(m_file, m_offsetDirectory.jpegOffset), 0);
 		}
 	}
 	return m_jpegPreview;

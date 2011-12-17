@@ -100,7 +100,7 @@ DngFile::~DngFile()
                     boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
                                                                       data.size()));
                     s->open(); // TODO check success
-                    boost::scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+                    boost::scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
                     LJpegDecompressor decomp(s.get(), jfif.get());
                     RawData *dData = decomp.decompress();
                     if (dData != NULL) {

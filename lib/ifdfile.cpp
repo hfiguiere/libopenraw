@@ -215,7 +215,7 @@ void IfdFile::_identifyId()
                     Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
                     if (x == 0 || y == 0) {
                         scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-                        scoped_ptr<JFIFContainer> jfif(new JFIFContainer(s.get(), 0));
+                        scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
                         if (jfif->getDimensions(x,y)) {
                             Trace(DEBUG1) << "JPEG dimensions x=" << x 
                                           << " y=" << y << "\n";

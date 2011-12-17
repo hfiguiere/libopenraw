@@ -31,7 +31,7 @@ class Stream;
 	
 namespace Internals {
 
-class JFIFContainer;
+class JfifContainer;
 class IfdFileContainer;
 class RafMetaContainer;
 	
@@ -55,7 +55,7 @@ public:
 	virtual ~RafContainer();
 
 	const std::string & getModel();
-	JFIFContainer * getJpegPreview();
+	JfifContainer * getJpegPreview();
 	IfdFileContainer * getCfaContainer();
 	RafMetaContainer * getMetaContainer();
 	uint32_t getJpegOffset() const
@@ -81,7 +81,7 @@ private:
 	uint32_t m_version;
 	RafOffsetDirectory m_offsetDirectory;
 	
-	JFIFContainer * m_jpegPreview;
+	JfifContainer * m_jpegPreview;
 	IfdFileContainer * m_cfaContainer;
 	RafMetaContainer * m_metaContainer;
 };
