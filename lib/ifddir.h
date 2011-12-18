@@ -83,7 +83,7 @@ public:
 				}
 				catch(const std::exception & ex) {
 					Debug::Trace(ERROR) << "Exception raised " << ex.what() 
-											 << " fetch value for " << id << "\n";
+                              << " fetch value for " << id << "\n";
 				}
 			}
 			return success;
@@ -135,4 +135,15 @@ private:
 
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
 
