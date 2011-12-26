@@ -44,7 +44,7 @@ static GdkPixbuf *rotate_pixbuf(GdkPixbuf *tmp, int32_t orientation)
 	switch(orientation) {
 	case 0:
 	case 1:
-		pixbuf = tmp;
+		pixbuf = g_object_ref(tmp);
 		break;
 	case 2:
 		pixbuf = gdk_pixbuf_flip(tmp, TRUE);
@@ -66,7 +66,6 @@ static GdkPixbuf *rotate_pixbuf(GdkPixbuf *tmp, int32_t orientation)
 	}
 	case 6:
 		pixbuf =  gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_CLOCKWISE);
-		gdk_pixbuf_unref(tmp);		
 		break;
 	case 7: {
 		GdkPixbuf* rotated = gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_COUNTERCLOCKWISE);
