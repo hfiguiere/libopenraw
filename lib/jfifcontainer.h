@@ -58,6 +58,15 @@ public:
     
   bool getDimensions(uint32_t &x, uint32_t &y);
   bool getDecompressedData(BitmapData &data);
+
+  /** Main ifd is 0 */
+  IfdDir::Ref mainIfd();
+  /** Return ifd at index */  
+  IfdDir::Ref getIfdDirAt(int idx);
+  /** Return Exif ifd */
+  IfdDir::Ref exifIfd();
+  /** Return the ifd container */
+  IfdFileContainer* ifdContainer();
     
   /* libjpeg callbacks j_ is the prefix for these callbacks */
   static void j_init_source(JPEG::j_decompress_ptr cinfo);
@@ -68,15 +77,14 @@ public:
   static void j_term_source(JPEG::j_decompress_ptr cinfo);
   static void j_error_exit(JPEG::j_common_ptr cinfo);
     
-  IfdDir::Ref exifIfd();
 private:
   int _loadHeader();
-    
+
   struct JPEG::jpeg_decompress_struct m_cinfo;
   struct JPEG::jpeg_error_mgr m_jerr;
   jmp_buf m_jpegjmp;
   bool m_headerLoaded;
-  IfdFileContainer* m_exif;
+  IfdFileContainer* m_ifd;
 };
 
 }

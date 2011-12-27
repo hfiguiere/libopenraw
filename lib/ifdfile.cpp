@@ -274,7 +274,7 @@ uint32_t IfdFile::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & by
 ::or_error IfdFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
 {
   ::or_error ret = OR_ERROR_NOT_FOUND;
-  ThumbLocations::iterator iter = m_thumbLocations.find(size);
+  ThumbLocations::const_iterator iter = m_thumbLocations.find(size);
   if(iter != m_thumbLocations.end()) 
   {
     bool got_it;

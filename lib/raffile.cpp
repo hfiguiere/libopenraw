@@ -19,16 +19,19 @@
  */
 
 
+#include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 
+#include "rawfile_private.h"
 #include "raffile.h"
 #include "rafcontainer.h"
 #include "rafmetacontainer.h"
 #include "jfifcontainer.h"
 #include "unpack.h"
 #include "trace.h"
+#include "io/streamclone.h"
 
 
 namespace OpenRaw {
@@ -88,31 +91,97 @@ RafFile::~RafFile()
 
 ::or_error RafFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
+  if(!m_thumbLocations.empty()) {
+    for(ThumbLocations::const_iterator iter = m_thumbLocations.begin();
+        iter != m_thumbLocations.end(); ++iter) {
+      list.push_back(iter->first);
+    }
+
+    return OR_ERROR_NONE;
+  }
+
 	or_error ret = OR_ERROR_NOT_FOUND;
 	
 	JfifContainer * jpegPreview = m_container->getJpegPreview();
 	uint32_t x, y;
 	if(jpegPreview && jpegPreview->getDimensions(x, y)) {
-		list.push_back(std::max(x, y));
+    uint32_t size = std::max(x, y);
+
+		list.push_back(size);
+    m_thumbLocations.insert(
+      std::make_pair(size, ThumbDesc(x,y,
+                                     OR_DATA_TYPE_JPEG,
+                                     m_container->getJpegOffset(),
+                                     m_container->getJpegLength()
+                       )));
 		ret = OR_ERROR_NONE;
 	}
+  IfdDir::Ref dir = jpegPreview->getIfdDirAt(1);
+  if(dir) {
+    bool got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
+
+    if(got_it) {
+      got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
+    }
+
+    if(!got_it) {
+      uint32_t jpeg_offset = 0;
+      uint32_t jpeg_size = 0;
+      got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, jpeg_offset);
+
+      if(got_it) {
+        jpeg_offset += 12; // magic number. uh? I need to re-read the Exif spec.
+        got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, jpeg_size);
+      }
+
+      if(got_it) {
+        JfifContainer* thumb = 
+          new JfifContainer(new IO::StreamClone(jpegPreview->file(), 
+                                                jpeg_offset), 0);
+
+        if(thumb->getDimensions(x, y)) {
+          uint32_t size = std::max(x, y);
+
+          list.push_back(size);
+          m_thumbLocations.insert(
+            std::make_pair(size, 
+                           ThumbDesc(x,y,
+                                     OR_DATA_TYPE_JPEG,
+                                     jpeg_offset + m_container->getJpegOffset(),
+                                     jpeg_size
+                             )));
+          ret = OR_ERROR_NONE;
+        }
+        delete thumb;
+      }
+    }
+  }
 	
 	return ret;
 }
 
-::or_error RafFile::_getThumbnail(uint32_t /*size*/, Thumbnail & thumbnail)
+::or_error RafFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
 {
 	::or_error ret = OR_ERROR_NOT_FOUND;
-	JfifContainer * jpegPreview = m_container->getJpegPreview();
-	uint32_t x, y;
-	if(jpegPreview && jpegPreview->getDimensions(x, y)) {
-		thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-		thumbnail.setDimensions(x, y);
-		size_t byte_size = m_container->getJpegLength();
-		void *buf = thumbnail.allocData(byte_size);
-		m_container->fetchData(buf, m_container->getJpegOffset(), byte_size);
-		ret = OR_ERROR_NONE;
-	}
+
+  ThumbLocations::const_iterator iter = m_thumbLocations.find(size);
+
+  if(iter != m_thumbLocations.end())
+  {
+    size_t offset = iter->second.offset;
+    uint32_t x, y;
+    boost::scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
+    boost::scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+    if (jfif && jfif->getDimensions(x,y)) {
+      thumbnail.setDataType(OR_DATA_TYPE_JPEG);
+      thumbnail.setDimensions(x, y);
+      size_t byte_size = iter->second.length;
+      void *buf = thumbnail.allocData(byte_size);
+      m_container->fetchData(buf, m_container->getJpegOffset(), byte_size);
+      ret = OR_ERROR_NONE;
+    }
+  }
+
 	return ret;
 }
 
@@ -175,7 +244,7 @@ RafFile::~RafFile()
 				outdata += out;
 				outsize -= out;
 				Debug::Trace(DEBUG2) << "unpacked " << out
-				<< " bytes from " << got << "\n";
+                             << " bytes from " << got << "\n";
 				if(err != OR_ERROR_NONE) {
 					ret = err;
 					break;
@@ -199,7 +268,7 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
 	   || META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
 		
 		JfifContainer * jpegPreview = m_container->getJpegPreview();
-		IfdDir::Ref dir = jpegPreview->exifIfd();
+		IfdDir::Ref dir = jpegPreview->mainIfd();
 		IfdEntry::Ref e = dir->getEntry(META_NS_MASKOUT(meta_index));
 		if(e) {
 			return new MetaValue(e);
@@ -211,7 +280,7 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
 
 void RafFile::_identifyId()
 {
-	_setTypeId(_typeIdFromModel(m_container->getModel()));
+  _setTypeId(_typeIdFromModel(m_container->getModel()));
 }
 	
 }

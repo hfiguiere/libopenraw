@@ -62,6 +62,7 @@ libopenraw_la_SOURCES = \
 	nefdiffiterator.cpp \
 	nefcfaiterator.h \
 	nefcfaiterator.cpp \
+	rawfile_private.h \
 	rawfile.cpp \
 	ifdfile.cpp \
 	tiffepfile.cpp \

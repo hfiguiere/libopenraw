@@ -511,10 +511,10 @@
     <results>
       <rawType>RAF</rawType>
       <rawTypeId>917505</rawTypeId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>2176</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>757744</thumbDataSizes>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>2176 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>757744 8890</thumbDataSizes>
       <rawDataType>CFA</rawDataType>
       <rawDataSize>25531520</rawDataSize>
       <rawDataDimensions>4448 2870</rawDataDimensions>

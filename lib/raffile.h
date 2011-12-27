@@ -21,6 +21,8 @@
 #ifndef __OPENRAW_RAFFILE_H_
 #define __OPENRAW_RAFFILE_H_
 
+#include <map>
+
 #include <libopenraw++/rawfile.h>
 
 #define RAF_MAGIC "FUJIFILMCCD-RAW "
@@ -30,6 +32,7 @@ namespace OpenRaw {
 namespace Internals {
 	
 class RafContainer;
+class ThumbDesc;
 
 class RafFile
 	: public OpenRaw::RawFile
@@ -57,7 +60,10 @@ private:
 	RafContainer *m_container; /**< the real container */
 	uint32_t m_x;
 	uint32_t m_y;
-	
+  
+  typedef std::map<uint32_t, ThumbDesc> ThumbLocations;
+	ThumbLocations    m_thumbLocations;
+
 	static const RawFile::camera_ids_t s_def[];
 	
 };

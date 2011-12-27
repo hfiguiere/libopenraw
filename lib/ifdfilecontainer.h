@@ -127,11 +127,21 @@ public:
     {
       return m_exif_offset_correction;
     }
+
   /** Set the exif offset if needed. */
   void setExifOffsetCorrection(int corr)
     {
       m_exif_offset_correction = corr;
     }
+
+  /** locate image data in the ifd (excepted RAW)
+   * @param dir the IFD dir to locate the image data in
+   * @param t the type of the image data
+   * @return an error code
+   */
+  ::or_error locateImageData(const IfdDir::Ref& dir, uint32_t& x, uint32_t& y, 
+                              ::or_data_type& t);
+  
 protected:
   /** hook to be called at the start of _locateDirs() */
   virtual bool locateDirsPreHook();
