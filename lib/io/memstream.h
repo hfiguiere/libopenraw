@@ -25,37 +25,48 @@
 #include "io/stream.h"
 
 namespace OpenRaw {
-	namespace IO {
+namespace IO {
 		
-		class MemStream
-			: public Stream
-		{
-		public:
-			MemStream(void *ptr, size_t s);
+class MemStream
+  : public Stream
+{
+public:
+  MemStream(void *ptr, size_t s);
 
-			virtual ~MemStream()
-				{}
+  virtual ~MemStream()
+    {}
 
-			virtual or_error open();
-			virtual int close();
-			virtual int seek(off_t offset, int whence);
-			virtual int read(void *buf, size_t count);
-			virtual off_t filesize();
+  virtual or_error open();
+  virtual int close();
+  virtual int seek(off_t offset, int whence);
+  virtual int read(void *buf, size_t count);
+  virtual off_t filesize();
 
 
-		private:
-			void * m_ptr;
-			size_t m_size;
-			unsigned char * m_current;
+private:
+  void * m_ptr;
+  size_t m_size;
+  unsigned char * m_current;
 
-			/** private copy constructor to make sure it is not called */
-			MemStream(const MemStream& f);
-			/** private = operator to make sure it is never called */
-			MemStream & operator=(const MemStream&);
+  /** private copy constructor to make sure it is not called */
+  MemStream(const MemStream& f);
+  /** private = operator to make sure it is never called */
+  MemStream & operator=(const MemStream&);
 };
 
-	}
+}
 }
 
 #endif
 
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

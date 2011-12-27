@@ -32,158 +32,169 @@
 using namespace Debug;
 
 namespace OpenRaw {
-	namespace Internals {
-	
-	
-		RawContainer::RawContainer(IO::Stream *_file, off_t offset)
-			: m_file(_file),
-				m_offset(offset),
-				m_endian(ENDIAN_NULL)
-		{
-			m_file->open();
-			m_file->seek(offset, SEEK_SET);
-		}
-
-	
-		RawContainer::~RawContainer()
-		{
-			m_file->close();
-		}
+namespace Internals {
 
 
-		bool RawContainer::readInt8(IO::Stream *f, int8_t & v)
-		{
-			unsigned char buf;
-			int s = f->read(&buf, 1);
-			if (s != 1) {
-				return false;
-			}
-			v = buf;
-			return true;
-		}
-
-		bool RawContainer::readUInt8(IO::Stream *f, uint8_t & v)
-		{
-			unsigned char buf;
-			int s = f->read(&buf, 1);
-			if (s != 1) {
-				return false;
-			}
-			v = buf;
-			return true;
-		}
-
-		bool 
-		RawContainer::readInt16(IO::Stream *f, int16_t & v)
-		{
-			if (m_endian == ENDIAN_NULL) {
-
-				Trace(ERROR) << "null endian\n";
-
-				return false;
-			}
-			unsigned char buf[2];
-			int s = f->read(buf, 2);
-			if (s != 2) {
-				return false;
-			}
-			if (m_endian == ENDIAN_LITTLE) {
-				v = EL16(buf);
-			}
-			else {
-				v = BE16(buf);
-			}
-			return true;
-		}
-
-
-		bool 
-		RawContainer::readInt32(IO::Stream *f, int32_t & v)
-		{
-			if (m_endian == ENDIAN_NULL) {
-
-				Trace(ERROR) << "null endian\n";
-
-				return false;
-			}
-			unsigned char buf[4];
-			int s = f->read(buf, 4);
-			if (s != 4) {
-				Trace(ERROR) << "read " << s << " bytes\n";
-				return false;
-			}
-
-			if (m_endian == ENDIAN_LITTLE) {
-				v = EL32(buf);
-			}
-			else {
-				v = BE32(buf);
-			}
-
-			return true;
-		}
-
-
-		bool 
-		RawContainer::readUInt16(IO::Stream *f, uint16_t & v)
-		{
-			if (m_endian == ENDIAN_NULL) {
-
-				Trace(ERROR) << "null endian\n";
-
-				return false;
-			}
-			unsigned char buf[2];
-			int s = f->read(buf, 2);
-			if (s != 2) {
-				return false;
-			}
-			if (m_endian == ENDIAN_LITTLE) {
-				v = EL16(buf);
-			}
-			else {
-				v = BE16(buf);
-			}
-			return true;
-		}
-
-
-		bool 
-		RawContainer::readUInt32(IO::Stream *f, uint32_t & v)
-		{
-			if (m_endian == ENDIAN_NULL) {
-
-				Trace(ERROR) << "null endian\n";
-
-				return false;
-			}
-			unsigned char buf[4];
-			int s = f->read(buf, 4);
-			if (s != 4) {
-				return false;
-			}
-
-			if (m_endian == ENDIAN_LITTLE) {
-				v = EL32(buf);
-			}
-			else {
- 				v = BE32(buf);
-			}
-
-			return true;
-		}
-
-
-		size_t 
-		RawContainer::fetchData(void *buf, const off_t offset,
-														const size_t buf_size)
-		{
-			size_t s;
-			m_file->seek(offset, SEEK_SET);
-			s = m_file->read(buf, buf_size);
-			return s;
-		}
-
-
-	}
+RawContainer::RawContainer(IO::Stream *_file, off_t offset)
+  : m_file(_file),
+    m_offset(offset),
+    m_endian(ENDIAN_NULL)
+{
+  m_file->open();
+  m_file->seek(offset, SEEK_SET);
 }
+
+
+RawContainer::~RawContainer()
+{
+  m_file->close();
+}
+
+
+bool RawContainer::readInt8(IO::Stream *f, int8_t & v)
+{
+  unsigned char buf;
+  int s = f->read(&buf, 1);
+  if (s != 1) {
+    return false;
+  }
+  v = buf;
+  return true;
+}
+
+bool RawContainer::readUInt8(IO::Stream *f, uint8_t & v)
+{
+  unsigned char buf;
+  int s = f->read(&buf, 1);
+  if (s != 1) {
+    return false;
+  }
+  v = buf;
+  return true;
+}
+
+bool 
+RawContainer::readInt16(IO::Stream *f, int16_t & v)
+{
+  if (m_endian == ENDIAN_NULL) {
+    
+    Trace(ERROR) << "null endian\n";
+    
+    return false;
+  }
+  unsigned char buf[2];
+  int s = f->read(buf, 2);
+  if (s != 2) {
+    return false;
+  }
+  if (m_endian == ENDIAN_LITTLE) {
+    v = EL16(buf);
+  }
+  else {
+    v = BE16(buf);
+  }
+  return true;
+}
+
+
+bool 
+RawContainer::readInt32(IO::Stream *f, int32_t & v)
+{
+  if (m_endian == ENDIAN_NULL) {
+    
+    Trace(ERROR) << "null endian\n";
+    
+    return false;
+  }
+  unsigned char buf[4];
+  int s = f->read(buf, 4);
+  if (s != 4) {
+    Trace(ERROR) << "read " << s << " bytes\n";
+    return false;
+  }
+
+  if (m_endian == ENDIAN_LITTLE) {
+    v = EL32(buf);
+  }
+  else {
+    v = BE32(buf);
+  }
+
+  return true;
+}
+
+
+bool 
+RawContainer::readUInt16(IO::Stream *f, uint16_t & v)
+{
+  if (m_endian == ENDIAN_NULL) {
+
+    Trace(ERROR) << "null endian\n";
+
+    return false;
+  }
+  unsigned char buf[2];
+  int s = f->read(buf, 2);
+  if (s != 2) {
+    return false;
+  }
+  if (m_endian == ENDIAN_LITTLE) {
+    v = EL16(buf);
+  }
+  else {
+    v = BE16(buf);
+  }
+  return true;
+}
+
+
+bool 
+RawContainer::readUInt32(IO::Stream *f, uint32_t & v)
+{
+  if (m_endian == ENDIAN_NULL) {
+
+    Trace(ERROR) << "null endian\n";
+
+    return false;
+  }
+  unsigned char buf[4];
+  int s = f->read(buf, 4);
+  if (s != 4) {
+    return false;
+  }
+
+  if (m_endian == ENDIAN_LITTLE) {
+    v = EL32(buf);
+  }
+  else {
+    v = BE32(buf);
+  }
+
+  return true;
+}
+
+
+size_t 
+RawContainer::fetchData(void *buf, const off_t offset,
+                        const size_t buf_size)
+{
+  size_t s;
+  m_file->seek(offset, SEEK_SET);
+  s = m_file->read(buf, buf_size);
+  return s;
+}
+
+
+}
+}
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

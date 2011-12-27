@@ -23,29 +23,39 @@
 #include "exception.h"
 
 namespace OpenRaw {
-	namespace IO {
-		
-		Stream::Stream(const char *filename)
-			: m_fileName(filename),
-				m_error(OR_ERROR_NONE)
-		{
-		}
+namespace IO {
 
-		Stream::~Stream()
-		{
-		}
-
-		uint8_t Stream::readByte() throw(Internals::IOException)
-		{
-			uint8_t theByte;
-			int r = read(&theByte, 1);
-			if (r != 1) {
-				// TODO add the error code
-				throw Internals::IOException("Stream::readByte() failed.");
-			}
-			return theByte;
-		}
-	}
+Stream::Stream(const char *filename)
+  : m_fileName(filename),
+    m_error(OR_ERROR_NONE)
+{
 }
 
+Stream::~Stream()
+{
+}
 
+uint8_t Stream::readByte() throw(Internals::IOException)
+{
+  uint8_t theByte;
+  int r = read(&theByte, 1);
+  if (r != 1) {
+    // TODO add the error code
+    throw Internals::IOException("Stream::readByte() failed.");
+  }
+  return theByte;
+}
+
+}
+}
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

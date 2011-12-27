@@ -25,73 +25,84 @@
 
 
 namespace OpenRaw {
-	namespace IO {
+namespace IO {
 
-		StreamClone::StreamClone(Stream *clone, off_t offset)
-			: Stream(clone->get_path().c_str()),
-				m_cloned(clone), m_offset(offset)
-		{
+StreamClone::StreamClone(Stream *clone, off_t offset)
+  : Stream(clone->get_path().c_str()),
+    m_cloned(clone), m_offset(offset)
+{
 
-		}
-
-		StreamClone::~StreamClone()
-		{
-		}
-
-
-		Stream::Error StreamClone::open()
-		{
-			if (m_cloned == NULL) {
-				set_error(OR_ERROR_CLOSED_STREAM);
-				return OR_ERROR_CLOSED_STREAM;
-			}
-			m_cloned->seek(m_offset, SEEK_SET);
-			//no-op
-			//FIXME determine what is the policy for opening clone 
-			//streams
-			return OR_ERROR_NONE;
-		}
-
-		int StreamClone::close()
-		{
-			m_cloned = NULL;
-			return 0;
-		}
-
-
-		int StreamClone::seek(off_t offset, int whence)
-		{
-			if (m_cloned == NULL) {
-				set_error(OR_ERROR_CLOSED_STREAM);
-				return -1;
-			}
-			if (whence == SEEK_SET) {
-				offset += m_offset;
-			}
-			int new_pos = m_cloned->seek(offset, whence);
-			new_pos -= m_offset;
-			return new_pos;
-		}
-
-
-		int StreamClone::read(void *buf, size_t count)
-		{
-			if (m_cloned == NULL) {
-				set_error(OR_ERROR_CLOSED_STREAM);
-				return -1;
-			}
-			return m_cloned->read(buf, count);
-		}
-
-
-		off_t StreamClone::filesize()
-		{
-			if (m_cloned == NULL) {
-				set_error(OR_ERROR_CLOSED_STREAM);
-				return -1;
-			}
-			return m_cloned->filesize();
-		}
-
-	}
 }
+
+StreamClone::~StreamClone()
+{
+}
+
+
+Stream::Error StreamClone::open()
+{
+  if (m_cloned == NULL) {
+    set_error(OR_ERROR_CLOSED_STREAM);
+    return OR_ERROR_CLOSED_STREAM;
+  }
+  m_cloned->seek(m_offset, SEEK_SET);
+  //no-op
+  //FIXME determine what is the policy for opening clone 
+  //streams
+  return OR_ERROR_NONE;
+}
+
+int StreamClone::close()
+{
+  m_cloned = NULL;
+  return 0;
+}
+
+
+int StreamClone::seek(off_t offset, int whence)
+{
+  if (m_cloned == NULL) {
+    set_error(OR_ERROR_CLOSED_STREAM);
+    return -1;
+  }
+  if (whence == SEEK_SET) {
+    offset += m_offset;
+  }
+  int new_pos = m_cloned->seek(offset, whence);
+  new_pos -= m_offset;
+  return new_pos;
+}
+
+
+int StreamClone::read(void *buf, size_t count)
+{
+  if (m_cloned == NULL) {
+    set_error(OR_ERROR_CLOSED_STREAM);
+    return -1;
+  }
+  return m_cloned->read(buf, count);
+}
+
+
+off_t StreamClone::filesize()
+{
+  if (m_cloned == NULL) {
+    set_error(OR_ERROR_CLOSED_STREAM);
+    return -1;
+  }
+  return m_cloned->filesize();
+}
+
+}
+}
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

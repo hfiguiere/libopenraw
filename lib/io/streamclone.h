@@ -28,35 +28,46 @@
 #include "stream.h"
 
 namespace OpenRaw {
-	namespace IO {
+namespace IO {
 
-		/** @brief cloned stream. Allow reading from a different offset
-		 */
-		class StreamClone
-			: public Stream
-		{
-		public:
-			StreamClone(Stream *clone, off_t offset);
-			virtual ~StreamClone();
+/** @brief cloned stream. Allow reading from a different offset
+ */
+class StreamClone
+  : public Stream
+{
+public:
+  StreamClone(Stream *clone, off_t offset);
+  virtual ~StreamClone();
 			
-			virtual Error open();
-			virtual int close();
-			virtual int seek(off_t offset, int whence);
-			virtual int read(void *buf, size_t count);
-			virtual off_t filesize();
+  virtual Error open();
+  virtual int close();
+  virtual int seek(off_t offset, int whence);
+  virtual int read(void *buf, size_t count);
+  virtual off_t filesize();
 
 
-		private:
-			/** private copy constructor to make sure it is not called */
-			StreamClone(const StreamClone& f);
-			/** private = operator to make sure it is never called */
-			StreamClone & operator=(const StreamClone&);
+private:
+  /** private copy constructor to make sure it is not called */
+  StreamClone(const StreamClone& f);
+  /** private = operator to make sure it is never called */
+  StreamClone & operator=(const StreamClone&);
 
-			Stream *m_cloned;
-			off_t m_offset;
-		};
+  Stream *m_cloned;
+  off_t m_offset;
+};
 
-	}
+}
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
