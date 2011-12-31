@@ -76,6 +76,15 @@ typedef enum {
 struct Rational {
     uint32_t num;
     uint32_t denom;
+
+    operator double() const;
+};
+
+struct SRational {
+    int32_t num;
+    uint32_t denom;
+
+    operator double() const;
 };
 
 }

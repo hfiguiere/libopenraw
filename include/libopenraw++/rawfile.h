@@ -112,6 +112,19 @@ public:
      */
     int32_t getOrientation();
 
+    /**
+     * Count the color matrices.
+     * @return the number of color matrices. Usually just 1. 
+     */
+    uint32_t countColorMatrices();
+    uint32_t colorMatrixSize();
+
+    /** Get color matrix (aka the white balance coefficients)
+     * @param the index. Usually 0.
+     * @param [out] an array 9 double. BEWARE: the size must be at least 9 double
+     */
+    ::or_error getColorMatrix(uint32_t index, double* matrix);
+
     const MetaValue *getMetaValue(int32_t meta_index);
 protected:
     struct camera_ids_t {

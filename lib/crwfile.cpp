@@ -337,7 +337,7 @@ void CRWFile::_identifyId()
     if(v) {
         std::string model;
         try {
-            model = v->getString();
+            model = v->getString(0);
             _setTypeId(_typeIdFromModel(model));
         }
         catch(...)

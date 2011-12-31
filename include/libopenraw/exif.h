@@ -150,6 +150,8 @@ typedef	enum {
 	TIFF_TAG_DNG_VERSION                     = 0xc612,
 	DNG_TAG_DEFAULT_CROP_ORIGIN              = 0xc61f,
 	DNG_TAG_DEFAULT_CROP_SIZE                = 0xc620,
+	DNG_TAG_COLORMATRIX1                     = 0xc621,
+	DNG_TAG_COLORMATRIX2                     = 0xc622,
 	
 	/* CR2 tags */
 	CR2_TAG_c5d9 = 0xc5d9,

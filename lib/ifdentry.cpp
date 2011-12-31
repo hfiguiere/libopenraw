@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.cpp
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008,2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+
+#include <math.h>
 
 #include <cassert>
 #include <string>
@@ -118,6 +120,27 @@ uint32_t IfdEntry::getIntegerArrayItem(int idx)
     return v;
 }
 
+
+namespace IFD {
+
+Rational::operator double() const
+{
+	if(denom == 0) {
+		return INFINITY;
+	}
+	return (double)num / (double)denom;
+}
+
+SRational::operator double() const
+{
+	if(denom == 0) {
+		return INFINITY;
+	}
+	return (double)num / (double)denom;
+}
+
+}
+
 template <>
 const uint16_t IfdTypeTrait<uint8_t>::type = IFD::EXIF_FORMAT_BYTE;
 template <>
@@ -132,6 +155,11 @@ template <>
 const uint16_t IfdTypeTrait<IFD::Rational>::type = IFD::EXIF_FORMAT_RATIONAL;
 template <>
 const size_t IfdTypeTrait<IFD::Rational>::size = 8;
+
+template <>
+const uint16_t IfdTypeTrait<IFD::SRational>::type = IFD::EXIF_FORMAT_SRATIONAL;
+template <>
+const size_t IfdTypeTrait<IFD::SRational>::size = 8;
 
 
 #if defined(__APPLE_CC__)

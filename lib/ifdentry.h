@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.h
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008,2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -128,6 +128,24 @@ template <>
 inline IFD::Rational IfdTypeTrait<IFD::Rational>::BE(const uint8_t* b)
 {
     IFD::Rational r;
+    r.num = BE32(b);
+    r.denom = BE32(b + 4);
+    return r;
+}
+
+template <>
+inline IFD::SRational IfdTypeTrait<IFD::SRational>::EL(const uint8_t* b)
+{
+    IFD::SRational r;
+    r.num = EL32(b);
+    r.denom = EL32(b + 4);
+    return r;
+}
+
+template <>
+inline IFD::SRational IfdTypeTrait<IFD::SRational>::BE(const uint8_t* b)
+{
+    IFD::SRational r;
     r.num = BE32(b);
     r.denom = BE32(b + 4);
     return r;
@@ -261,6 +279,7 @@ T IfdTypeTrait<T>::get(IfdEntry & e, uint32_t idx, bool ignore_type)
 	}
 	return val;
 }
+
 
 }
 }

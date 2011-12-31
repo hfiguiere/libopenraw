@@ -2,7 +2,7 @@
  * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2006-2008, 2010 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2010-2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -269,7 +269,7 @@ RawFile::Type RawFile::identify(const char*_filename)
 
             const MetaValue *makev = f->getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
             if(makev){
-                std::string makes = makev->getString();
+                std::string makes = makev->getString(0);
                 if(makes == "NIKON CORPORATION") {
                     _type = OR_RAWFILE_TYPE_NEF;
                 }
@@ -414,12 +414,47 @@ int32_t RawFile::getOrientation()
         return 0;
     }
     try {
-        idx = value->getInteger();
+        idx = value->getInteger(0);
     }
     catch(const Internals::BadTypeException & e)	{
         Trace(DEBUG1) << "wrong type - " << e.what() << "\n";
     }
     return idx;
+}
+
+uint32_t RawFile::countColorMatrices()
+{
+    return 1;
+}
+uint32_t RawFile::colorMatrixSize()
+{
+    return 9;
+}
+
+::or_error RawFile::getColorMatrix(uint32_t index, double* matrix)
+{
+    int32_t meta_index = 0;
+    if(index == 0) {
+        meta_index = META_NS_TIFF | DNG_TAG_COLORMATRIX1;
+    }
+    else if(index == 1) {
+        meta_index = META_NS_TIFF | DNG_TAG_COLORMATRIX2;
+    }
+    else {
+        return OR_ERROR_NOT_FOUND;
+    }
+    const MetaValue* meta = getMetaValue(meta_index);
+
+    if(!meta) {
+        return OR_ERROR_NOT_FOUND;
+    }
+ 
+    // TODO check the count
+    for(int i = 0; i < 9; i++) {
+        matrix[i] = meta->getDouble(i);
+    }
+
+    return OR_ERROR_NONE;
 }
 	
 const MetaValue *RawFile::getMetaValue(int32_t meta_index)

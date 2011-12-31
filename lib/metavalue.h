@@ -1,7 +1,7 @@
 /*
  * libopenraw - metavalue.h
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007, 2011-2012 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -24,6 +24,7 @@
 #define _OPENRAW_METAVALUE_H
 
 #include <boost/variant.hpp>
+#include <boost/array.hpp>
 #include <libopenraw/types.h>
 
 #include "ifdentry.h"
@@ -33,26 +34,37 @@ namespace OpenRaw {
 class MetaValue
 {
 public:
-    typedef boost::variant<std::string, uint32_t> value_t;
+    typedef boost::variant<std::string, uint32_t, double> value_t;
 
     MetaValue(const MetaValue &);
     template <class T> MetaValue(const T &v)
-        : m_value(v)
+        {
+            m_values.push_back(v);
+        }
+    template <class T> MetaValue(const std::vector<T> &v)
+        : m_values(v)
         {
         }
     explicit MetaValue(const value_t &v);
+    explicit MetaValue(const std::vector<value_t> &v);
     explicit MetaValue(const Internals::IfdEntry::Ref & e);
 
-    uint32_t getInteger() const
+    int getCount() const
+        {
+            return m_values.size();
+        }
+
+    uint32_t getInteger(int idx) const
         throw(Internals::BadTypeException);
-    std::string getString() const
+    std::string getString(int idx) const
         throw(Internals::BadTypeException);
-    
+    double getDouble(int idx) const
+        throw(Internals::BadTypeException);
 private:
-    template<typename T> T get() const
+    template<typename T> T get(int idx) const
         throw(Internals::BadTypeException);
 
-    value_t m_value;
+    std::vector<value_t> m_values;
 };
 
 
