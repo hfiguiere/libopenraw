@@ -72,9 +72,10 @@ Support table:
                          | | | /  Bayer Type
                          | | | | /  Type ID
                          | | | | | /  Active Area (ROI)
-                         | | | | | | /
-                         | | | | | | |
-Canon CR2                Y Y Y Y Y Y Y
+                         | | | | | | /  Color Matrices
+                         | | | | | | | /
+                         | | | | | | | |
+Canon CR2                Y Y Y Y Y Y Y N
  1000D                   T T T T T T T
  1100D                   T T T T T T T
  20D                     T T T T T T T
@@ -88,6 +89,7 @@ Canon CR2                Y Y Y Y Y Y Y
  550D                    T T T T T T T
  5D                      T T T     T T
  5DMarkII                T T T T   T T
+ 5DMarkIII               T T T T   T T
  60D                     T T T T T T T
  600D                    T T T T T T T
  7D                      T T T     T T
@@ -98,11 +100,13 @@ Canon CR2                Y Y Y Y Y Y Y
  G10                               T T
  G11                     T T T     T T
  G12                     T T T T T T T
+ G1X
  SX1 IS                  # # # # # # #
  S90                     T T T T T T T
  S95                     T T T T T T T
+ S100
 
-Canon CRW                Y Y Y Y Y Y N
+Canon CRW                Y Y Y Y Y Y N N
  300D                    T T T T T T
  10D                     T T T   T T
  D60                     T T T   T T
@@ -111,11 +115,11 @@ Canon CRW                Y Y Y Y Y Y N
  G5                      T T T   T T
  Pro1                    T T T   T T
 
-Canon CRW CHDK           N N N N N N N
+Canon CRW CHDK           N N N N N N N N
 (unofficial firmware)
  A610                    N N N N N N N
 
-Nikon NEF                Y Y Y Y Y Y N
+Nikon NEF                Y Y Y Y Y Y N N
  D1                      T T X X T T
  D1X                     T T X X T T
  D100                    T T T X T T
@@ -125,9 +129,12 @@ Nikon NEF                Y Y Y Y Y Y N
  D300                              T
  D3000                   T B B T T T
  D3100                   T T T T T T
+ D4
  D40                     T T Y T T T
  D40X                    T T Y T T T
  D50                               T
+ D5000
+ D5100
  D70                     T T Y T T T
  D70s                    T T Y T T T
  D7000                   T T T T T T
@@ -135,11 +142,12 @@ Nikon NEF                Y Y Y Y Y Y N
  J1                      T T B Y Y T
  V1                      T T B Y Y T
 
-Nikon NRW                Y         Y
+Nikon NRW                Y         Y N N
  P6000                   T         T
  P7000                   T         T
+ P7100
 
-Olympus ORF              Y Y B Y Y Y N
+Olympus ORF              Y Y B Y Y Y N N
  E-1                     T T T   T T
  E-10                    T B B     T
  E-3                     T T T   T T
@@ -161,15 +169,20 @@ Olympus ORF              Y Y B Y Y Y N
  E-PL2                   B T T   T T
  E-PL3                   B T T   T T
  E-PM1                   B T T   T T
+ E-M5                    B       T T
  XZ-1                    B T T   T T
 
-Adobe DNG                Y Y B Y Y Y Y
+Adobe DNG                Y Y B Y Y Y Y Y
  Leica DMR               T T X T T T
  Leica M8                T T X T T T
  Leica M9                T T X T T T
  Leica X1                T T T T T T
+ Leica S2                T T B T T T
  Adobe DNG converter     T T B T T T
  Pentax K10D             T T X T T T T
+ Pentax K200D            T T   T T T T
+ Pentax K-r              T T   T T T T
+ Pentax K-x              T T   T T T T
  Pentax 645D             T T X T T T T
  Pentax Q                T T X T T T T
  Samsung GX-10           T T X T T T
@@ -178,13 +191,19 @@ Adobe DNG                Y Y B Y Y Y Y
  Ricoh GRX               T T X T T T
  Ricoh GX100
  
-Sony ARW                 Y Y N Y N Y N
+Sony ARW                 Y Y N Y N Y N N
  A-100                   T N   T   T
  A-200                   # # # # # T #
  A-550                   T T       T
+ A-580
  A-700                   T T   T   T
  A-380                   T T       T
  A-390                   T T       T
+ A-560
+ A-850
+ A-900
+ SLT-A33
+ SLT-A35
  SLT-A55                 T T       T
  SLT-A65                 T T       T
  SLT-A77                 T T       T
@@ -192,8 +211,9 @@ Sony ARW                 Y Y N Y N Y N
  Nex-5                   T T       T
  Nex-5N                  T T       T
  Nex-C3                  T T       T
+ Nex-7
 
-Pentax PEF               Y Y N Y Y Y N
+Pentax PEF               Y Y N Y Y Y N N
  *-ist D                 T T X X T T
  *-ist DL                T T N     T
  K10D                    T T N T T T
@@ -201,10 +221,10 @@ Pentax PEF               Y Y N Y Y Y N
  K100D Super             T T N     T
  K20D                    T T N T   T
 
-Epson ERF                Y Y Y Y Y Y N
+Epson ERF                Y Y Y Y Y Y N N
  Epson RD1               T T T T T T
 
-Minolta MRW              Y Y B N Y Y N
+Minolta MRW              Y Y B N Y Y N N
  A1                      T T T X T 
  A2                      T T T X T 
  Dimage 5                T T X X T T
@@ -214,16 +234,16 @@ Minolta MRW              Y Y B N Y Y N
  Maxxum 7D               T T T N T
  A200                    
 
-Sony SRF                 N N N N N N N
+Sony SRF                 N N N N N N N N
 
-Sony SR2                 N N N N N N N
+Sony SR2                 N N N N N N N N
  Sony R1
 
-Kodak DCR                N N N N N N N
+Kodak DCR                N N N N N N N N
 
-Kodak KDC                N N N N N N N
+Kodak KDC                N N N N N N N N
 
-FujiFilm RAF             Y Y B N N Y N
+FujiFilm RAF             Y Y B N N Y N N
  Finepix S2Pro           T         T
  Finepix S3Pro           T         T
  Finepix S5Pro           T         T
@@ -233,11 +253,14 @@ FujiFilm RAF             Y Y B N N Y N
  Finepix X100            T T T     T
  Finepix F700            T         T
  Finepix E900            T         T
- Finepix X10             T         T
+ X10                     T         T
+ X-Pro1                  T         T
+ X-S1                    T         T
+ Finepix S200 EXR        T         T
 
-Foveon X3F               N N N N N N N
+Foveon X3F               N N N N N N N N
 
-Panasonic RAW            Y Y N Y Y Y Y
+Panasonic RAW            Y Y N Y Y Y Y N
  FZ30                    N T X T   T T
  FZ50                    N T X T   T T
  FZ8                     N T B T   T T
@@ -249,23 +272,24 @@ Panasonic RAW            Y Y N Y Y Y Y
  Leica DLUX 3            N T X T   T T
  Leica VLUX 1            N T X T   T T
 
-Panasonic RW2            Y Y N Y Y Y Y
+Panasonic RW2            Y Y N Y Y Y Y N
  GF1                     T T      T T
  GF2                     T T       T T
  GH1                     T T       T T
  GH2                     T T N     T T
  G1                      T T       T T
  G2                      T T       T T
+ G3
  G10                     T T       T T
  LX3                     T T B     T T
  LX5                     T T B     T T
  FZ28                    T T B     T T
  
 
-Mamiya MEF               N N N N N N N
+Mamiya MEF               N N N N N N N N
  Mamiya ZD
 
-Samsung SRW              N N N N N N N
+Samsung SRW              N N N N N N N N
  
 
 Test suite

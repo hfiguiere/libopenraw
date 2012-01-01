@@ -16,5 +16,6 @@ White and black point (replace min / max, extract from Exif if needed)
 sRAW from Canon, YCbCr
 Rework the Log/Trace/Debug
 Rework the model to match DNG more closely as it would allow a more comprehensive abstraction
+Remove IfdThumbDesc and replace by ThumbDesc (more generic)
 
 Write a parser for X3F
