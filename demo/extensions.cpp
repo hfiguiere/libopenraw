@@ -38,3 +38,12 @@ int main(int /*argc*/, char ** /*argv*/)
         printf("No extensions found\n");
     }
 }
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

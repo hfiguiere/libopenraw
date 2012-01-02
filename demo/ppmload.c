@@ -28,28 +28,28 @@
 int
 main(int argc, char **argv)
 {
-	const char *filename;
-
-	if(argc < 2) {
-		return 1;
-	}
-
-	filename = argv[1];
-
-	or_debug_set_level(DEBUG2);
-
-	if(filename && *filename) {
-		ORRawFileRef raw_file = or_rawfile_new(filename, OR_RAWFILE_TYPE_UNKNOWN);
+    const char *filename;
+    
+    if(argc < 2) {
+        return 1;
+    }
+    
+    filename = argv[1];
+    
+    or_debug_set_level(DEBUG2);
+    
+    if(filename && *filename) {
+        ORRawFileRef raw_file = or_rawfile_new(filename, OR_RAWFILE_TYPE_UNKNOWN);
+	
+        if(raw_file) {
+            or_error err;
+            ORBitmapDataRef bitmapdata = or_bitmapdata_new();
+            err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
+            if(err == OR_ERROR_NONE) {
+                uint32_t x, y;
+                FILE * f;
+                size_t size, written_size;
 		
-		if(raw_file) {
-		    or_error err;
-		    ORBitmapDataRef bitmapdata = or_bitmapdata_new();
-		    err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
-		    if(err == OR_ERROR_NONE) {
-		    	uint32_t x, y;
-		    	FILE * f;
-		    	size_t size, written_size;
-		    	
                 or_bitmapdata_dimensions(bitmapdata, &x, &y);
                 printf(" --- dimensions x = %d, y = %d\n", x, y);
                 f = fopen("image.ppm", "wb");
@@ -61,17 +61,26 @@ main(int argc, char **argv)
                 printf(" --- size = %ld\n", (long)size);
                 written_size = fwrite(or_bitmapdata_data(bitmapdata), 1, size, f);
                 if(written_size != size) {
-                        printf("short read\n");
+                    printf("short read\n");
                 }
-				fclose(f);
-		    }
-			or_bitmapdata_release(bitmapdata);
-		    or_rawfile_release(raw_file);
-		}
-	}
-	else {
-		printf("No input file name\n");
-	}
-
-	return 0;
+                fclose(f);
+            }
+            or_bitmapdata_release(bitmapdata);
+            or_rawfile_release(raw_file);
+        }
+    }
+    else {
+        printf("No input file name\n");
+    }
+    
+    return 0;
 }
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

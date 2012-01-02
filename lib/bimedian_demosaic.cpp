@@ -103,8 +103,8 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
     default:
         break;
     }
-	
-	out_x = out_y = 0;
+
+    out_x = out_y = 0;
     src_buf = (float*)calloc(src_x * src_y, sizeof(float));
     dst_buf = (float*)calloc(src_x * src_y * 3, sizeof(float));
 
@@ -174,8 +174,8 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
         }
         offset+=2;
     }
-	out_x = src_x - 2;
-	out_y = src_y - 2;
+    out_x = src_x - 2;
+    out_y = src_y - 2;
     std::copy(dst_buf, dst_buf + (out_x * out_y * 3), dst);		
     free(src_buf);
     free(dst_buf);

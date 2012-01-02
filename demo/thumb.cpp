@@ -35,94 +35,103 @@ using boost::scoped_ptr;
 int
 main(int argc, char** argv)
 {
-	::or_error err = OR_ERROR_NONE;
+    ::or_error err = OR_ERROR_NONE;
 
-	if (argc < 2) {
-		std::cerr << "missing parameter" << std::endl;
-		return 1;
-	}
+    if (argc < 2) {
+        std::cerr << "missing parameter" << std::endl;
+        return 1;
+    }
 
-	OpenRaw::init();
-	or_debug_set_level(DEBUG2);
-	FILE * f;
+    OpenRaw::init();
+    or_debug_set_level(DEBUG2);
+    FILE * f;
 
-	{
-		scoped_ptr<OpenRaw::RawFile> raw_file(OpenRaw::RawFile::newRawFile(argv[1]));
-		if(!raw_file)
-		{
-			std::cout << "Unable to open raw file.\n";
-			return 1;
-		}
-		std::vector<uint32_t> list = raw_file->listThumbnailSizes();
+    {
+        scoped_ptr<OpenRaw::RawFile> raw_file(OpenRaw::RawFile::newRawFile(argv[1]));
+        if(!raw_file)
+        {
+            std::cout << "Unable to open raw file.\n";
+            return 1;
+        }
+        std::vector<uint32_t> list = raw_file->listThumbnailSizes();
 	
-		for(std::vector<uint32_t>::iterator i = list.begin();
-				i != list.end(); ++i)
-		{
-			std::cout << "found " << *i << " pixels\n";
-		}
-	}
+        for(std::vector<uint32_t>::iterator i = list.begin();
+            i != list.end(); ++i)
+        {
+            std::cout << "found " << *i << " pixels\n";
+        }
+    }
 
-	{
-		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
-																	  160, err));
-		if (thumb != NULL) {
-			size_t s;
-			std::cerr << "thumb data size =" << thumb->size() << std::endl;
-			std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
+    {
+        scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
+                                                                      160, err));
+        if (thumb != NULL) {
+            size_t s;
+            std::cerr << "thumb data size =" << thumb->size() << std::endl;
+            std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
 			
-			f = fopen("thumb.jpg", "wb");
-			s = fwrite(thumb->data(), 1, thumb->size(), f);
-			if(s != thumb->size()) {
-				std::cerr << "short write of " << s << " bytes\n";
-			}
-			fclose(f);
-		}
-		else {
-			std::cerr << "error = " << err << std::endl;
-		}
-	}
+            f = fopen("thumb.jpg", "wb");
+            s = fwrite(thumb->data(), 1, thumb->size(), f);
+            if(s != thumb->size()) {
+                std::cerr << "short write of " << s << " bytes\n";
+            }
+            fclose(f);
+        }
+        else {
+            std::cerr << "error = " << err << std::endl;
+        }
+    }
 
-	{
-		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
-																	  640, err));
+    {
+        scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
+                                                                      640, err));
 		
-		if (thumb != NULL) {
-			size_t s;
-			std::cerr << "thumb data size =" << thumb->size() << std::endl;
-			std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
+        if (thumb != NULL) {
+            size_t s;
+            std::cerr << "thumb data size =" << thumb->size() << std::endl;
+            std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
 			
-			f = fopen("thumbl.jpg", "wb");
-			s = fwrite(thumb->data(), 1, thumb->size(), f);
-			if(s != thumb->size()) {
-				std::cerr << "short write of " << s << " bytes\n";
-			}
-			fclose(f);
-		}
-		else {
-			std::cerr << "error = " << err << std::endl;
-		}
-	}
+            f = fopen("thumbl.jpg", "wb");
+            s = fwrite(thumb->data(), 1, thumb->size(), f);
+            if(s != thumb->size()) {
+                std::cerr << "short write of " << s << " bytes\n";
+            }
+            fclose(f);
+        }
+        else {
+            std::cerr << "error = " << err << std::endl;
+        }
+    }
 
-	{
-		scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
-																	  2048, err));
-		if (thumb != NULL) {
-			size_t s;
-			std::cerr << "preview data size =" << thumb->size() << std::endl;
-			std::cerr << "preview data type =" << thumb->dataType() << std::endl;
+    {
+        scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
+                                                                      2048, err));
+        if (thumb != NULL) {
+            size_t s;
+            std::cerr << "preview data size =" << thumb->size() << std::endl;
+            std::cerr << "preview data type =" << thumb->dataType() << std::endl;
 			
-			f = fopen("preview.jpg", "wb");
-			s = fwrite(thumb->data(), 1, thumb->size(), f);
-			if(s != thumb->size()) {
-				std::cerr << "short write of " << s << " bytes\n";
-			}
-			fclose(f);
-		}
-		else {
-			std::cerr << "error = " << err << std::endl;
-		}
-	}
+            f = fopen("preview.jpg", "wb");
+            s = fwrite(thumb->data(), 1, thumb->size(), f);
+            if(s != thumb->size()) {
+                std::cerr << "short write of " << s << " bytes\n";
+            }
+            fclose(f);
+        }
+        else {
+            std::cerr << "error = " << err << std::endl;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

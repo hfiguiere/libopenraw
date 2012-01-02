@@ -36,47 +36,56 @@ static void pixbuf_free(guchar * data, gpointer u)
 int
 main(int argc, char **argv)
 {
-	char *filename = argv[1];
-
-	(void)argc;
-	or_debug_set_level(DEBUG2);
-	g_type_init();
-
-	if(filename && *filename)
-	{
-		GdkPixbuf *pixbuf = NULL;
-		ORRawFileRef raw_file = or_rawfile_new(filename, OR_DATA_TYPE_NONE);
-		
-		if(raw_file) {
-		    or_error err;
-		    ORBitmapDataRef bitmapdata = or_bitmapdata_new();
-		    err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
-		    if(err == OR_ERROR_NONE) {
-			uint32_t x,y;
-			x = y = 0;
-			or_bitmapdata_dimensions(bitmapdata, &x, &y);
-			pixbuf = gdk_pixbuf_new_from_data(or_bitmapdata_data(bitmapdata), 
-							  GDK_COLORSPACE_RGB,
-							  FALSE, 8, x , y , 
-							  x * 3, 
-							  pixbuf_free, bitmapdata);
-		    }
-		    or_rawfile_release(raw_file);
-		}
-		
-		
-		if(pixbuf) {
-			gdk_pixbuf_save (pixbuf, "gdk-demosaic.jpg", "jpeg", NULL,
-							 "quality", "100", NULL);
-			gdk_pixbuf_unref(pixbuf);
-		}
-		else {
-			printf("error\n");
-		}
-	}
-	else {
-		printf("No input file name\n");
-	}
-
-	return 0;
+    char *filename = argv[1];
+    
+    (void)argc;
+    or_debug_set_level(DEBUG2);
+    g_type_init();
+    
+    if(filename && *filename)
+    {
+        GdkPixbuf *pixbuf = NULL;
+        ORRawFileRef raw_file = or_rawfile_new(filename, OR_DATA_TYPE_NONE);
+	
+        if(raw_file) {
+            or_error err;
+            ORBitmapDataRef bitmapdata = or_bitmapdata_new();
+            err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
+            if(err == OR_ERROR_NONE) {
+                uint32_t x,y;
+                x = y = 0;
+                or_bitmapdata_dimensions(bitmapdata, &x, &y);
+                pixbuf = gdk_pixbuf_new_from_data(or_bitmapdata_data(bitmapdata), 
+                                                  GDK_COLORSPACE_RGB,
+                                                  FALSE, 8, x , y , 
+                                                  x * 3, 
+                                                  pixbuf_free, bitmapdata);
+            }
+            or_rawfile_release(raw_file);
+        }
+	
+	
+        if(pixbuf) {
+            gdk_pixbuf_save (pixbuf, "gdk-demosaic.jpg", "jpeg", NULL,
+                             "quality", "100", NULL);
+            gdk_pixbuf_unref(pixbuf);
+        }
+        else {
+            printf("error\n");
+        }
+    }
+    else {
+        printf("No input file name\n");
+    }
+    
+    return 0;
 }
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
