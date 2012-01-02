@@ -57,7 +57,9 @@ main(int argc, char** argv)
     options = (keepCompressed ? OR_OPTIONS_DONT_DECOMPRESS : 0);
     err = or_get_extract_rawdata(argv[optind], options,
                                  &rawdata);
-    
+    if(err != OR_ERROR_NONE) {
+        printf("Error extracting CFA. %d\n", err);
+    }
     printf("data size = %ld\n", or_rawdata_data_size(rawdata));
     printf("data type = %d\n", or_rawdata_format(rawdata));
     
