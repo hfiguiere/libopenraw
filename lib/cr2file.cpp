@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2010 Hubert Figuiere
+ * Copyright (C) 2006-2012 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -96,10 +96,14 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
 												OR_TYPEID_CANON_G11) },
 	{ "Canon PowerShot G12", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
 												OR_TYPEID_CANON_G12) },
+	{ "Canon PowerShot G1 X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
+												OR_TYPEID_CANON_G1X) },
 	{ "Canon PowerShot S90", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
 												OR_TYPEID_CANON_S90) },
 	{ "Canon PowerShot S95", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
 												OR_TYPEID_CANON_S95) },
+	{ "Canon PowerShot S100", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
+												OR_TYPEID_CANON_S100) },
 	{ 0, 0 }
 };
 
