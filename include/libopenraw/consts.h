@@ -228,6 +228,7 @@ extern "C" {
 	/** Leica type IDs */
 	enum {
 		OR_TYPEID_LEICA_UNKNOWN = 0,
+		/* DNG */
 		OR_TYPEID_LEICA_DMR = 1,
 		OR_TYPEID_LEICA_M8 = 2,
 		OR_TYPEID_LEICA_X1 = 3,
@@ -235,7 +236,9 @@ extern "C" {
 		OR_TYPEID_LEICA_DIGILUX2 = 4,
 		OR_TYPEID_LEICA_DLUX_3 = 5,
 		OR_TYPEID_LEICA_VLUX_1 = 6,
+		/* DNG */
 		OR_TYPEID_LEICA_M9 = 7,
+		OR_TYPEID_LEICA_S2 = 8,
 		_OR_TYPEID_LEICA_LAST
 	};
 
