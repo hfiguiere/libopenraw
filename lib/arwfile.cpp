@@ -46,6 +46,8 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
                                        OR_TYPEID_SONY_A390) },
     { "DSLR-A550", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_A550) },
+    { "DSLR-A580", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_A580) },
     { "DSLR-A700", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_A700) },
     { "SLT-A55V", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
@@ -60,9 +62,12 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
                                        OR_TYPEID_SONY_NEX5) },
     { "NEX-5N", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_NEX5N) },
-    // unsure if this is the right one or because the sample I have that may come from a pre-series.
-    { "NEX-00", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+    // There are pre-production files with the type NEX-C00....
+    { "NEX-C3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_NEXC3) },
+    // like from a pre-series. Like I had at one point with the C3
+    { "MODEL-NAME", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_NEX7) },
     { 0, 0 }
 };
 
