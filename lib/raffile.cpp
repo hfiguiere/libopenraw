@@ -1,7 +1,7 @@
 /*
  * libopenraw - raffile.cpp
  *
- * Copyright (C) 2011 Hubert Figuiere
+ * Copyright (C) 2011-2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -36,29 +36,35 @@ namespace Internals {
 
 const RawFile::camera_ids_t RafFile::s_def[] = {
 	{ "FinePix X100" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											OR_TYPEID_FUJIFILM_X100) },
+                                         OR_TYPEID_FUJIFILM_X100) },
 	{ "FinePix F700  ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-										   OR_TYPEID_FUJIFILM_F700) }, 
+                                          OR_TYPEID_FUJIFILM_F700) }, 
 	{ "FinePix F810   ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											OR_TYPEID_FUJIFILM_F810) }, 
+                                           OR_TYPEID_FUJIFILM_F810) }, 
 	{ "FinePix E900   ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											 OR_TYPEID_FUJIFILM_E900) },
+                                           OR_TYPEID_FUJIFILM_E900) },
 	{ "FinePixS2Pro", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											 OR_TYPEID_FUJIFILM_S2PRO) },
+                                        OR_TYPEID_FUJIFILM_S2PRO) },
 	{ "FinePix S3Pro  ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											 OR_TYPEID_FUJIFILM_S3PRO) },
+                                           OR_TYPEID_FUJIFILM_S3PRO) },
 	{ "FinePix S5Pro  ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											 OR_TYPEID_FUJIFILM_S5PRO) },
+                                           OR_TYPEID_FUJIFILM_S5PRO) },
 	{ "FinePix S5600  ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											 OR_TYPEID_FUJIFILM_S5600) },
+                                           OR_TYPEID_FUJIFILM_S5600) },
 	{ "FinePix S9500  ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											 OR_TYPEID_FUJIFILM_S9500) },
+                                           OR_TYPEID_FUJIFILM_S9500) },
 	{ "FinePix S6500fd", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											 OR_TYPEID_FUJIFILM_S6500FD) },
+                                           OR_TYPEID_FUJIFILM_S6500FD) },
 	{ "FinePix HS10 HS11", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											 OR_TYPEID_FUJIFILM_HS10) },
-	{ "X10" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
-											OR_TYPEID_FUJIFILM_X10) },
+                                             OR_TYPEID_FUJIFILM_HS10) },
+  { "X10" ,            OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
+                                           OR_TYPEID_FUJIFILM_X10) },
+  { "X-Pro1" ,         OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
+                                           OR_TYPEID_FUJIFILM_XPRO1) },
+  { "X-S1" ,           OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
+                                           OR_TYPEID_FUJIFILM_XS1) },
+  { "FinePix S200EXR", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM,
+                                           OR_TYPEID_FUJIFILM_S200EXR) },
 	{ NULL, 0 }
 };
 

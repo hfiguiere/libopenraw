@@ -2,7 +2,7 @@
  * libopenraw - consts.h
  *
  * Copyright (c) 2008 Novell, Inc.
- * Copyright (C) 2005-2011 Hubert Figuiere
+ * Copyright (C) 2005-2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -379,6 +379,9 @@ extern "C" {
 		OR_TYPEID_FUJIFILM_S6500FD = 10,
 		OR_TYPEID_FUJIFILM_HS10 = 11,		
 		OR_TYPEID_FUJIFILM_X10 = 12,
+		OR_TYPEID_FUJIFILM_XPRO1 = 13,
+		OR_TYPEID_FUJIFILM_XS1 = 14,
+		OR_TYPEID_FUJIFILM_S200EXR = 15,
 		_OR_TYPEID_FUJIFILM_LAST
 	};
 
