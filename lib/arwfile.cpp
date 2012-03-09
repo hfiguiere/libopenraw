@@ -65,8 +65,7 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     // There are pre-production files with the type NEX-C00....
     { "NEX-C3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_NEXC3) },
-    // like from a pre-series. Like I had at one point with the C3
-    { "MODEL-NAME", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+    { "NEX-7", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_NEX7) },
     { 0, 0 }
 };
