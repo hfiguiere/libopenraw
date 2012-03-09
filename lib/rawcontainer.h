@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawcontainer.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2007,2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -68,6 +68,10 @@ public:
     {
       return m_endian;
     }
+  off_t offset() const
+    {
+      return m_offset;
+    }
   
   bool readInt8(IO::Stream *f, int8_t & v);
   bool readUInt8(IO::Stream *f, uint8_t & v);
@@ -86,7 +90,7 @@ public:
    * @param buf_size the size of the data to fetch
    * @return the size retrieved, <= buf_size likely equal
    */
-  size_t fetchData(void *buf, const off_t offset, const size_t buf_size);
+  size_t fetchData(void *buf, off_t offset, size_t buf_size);
   
 protected:
   

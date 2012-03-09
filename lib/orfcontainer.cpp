@@ -1,7 +1,7 @@
 /*
  * libopenraw - orfcontainer.cpp
  *
- * Copyright (C) 2006, 2010 Hubert Figuiere
+ * Copyright (C) 2006, 2010, 2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,8 +30,8 @@ namespace OpenRaw {
 namespace Internals {
 
 
-OrfContainer::OrfContainer(IO::Stream *_file, off_t offset)
-	: IfdFileContainer(_file, offset)
+OrfContainer::OrfContainer(IO::Stream *_file, off_t _offset)
+	: IfdFileContainer(_file, _offset)
 	, subtype_(0)
 {
 }

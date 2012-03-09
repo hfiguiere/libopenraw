@@ -1,7 +1,7 @@
 /*
  * libopenraw - jfifcontainer.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2007,2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -56,8 +56,8 @@ typedef struct {
   JPEG::JOCTET* buf;
 } jpeg_src_t;
 
-JfifContainer::JfifContainer(IO::Stream *_file, off_t offset)
-  : RawContainer(_file, offset),
+JfifContainer::JfifContainer(IO::Stream *_file, off_t _offset)
+  : RawContainer(_file, _offset),
     m_cinfo(), m_jerr(),
     m_headerLoaded(false),
     m_ifd(NULL)

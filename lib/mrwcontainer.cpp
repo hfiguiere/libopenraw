@@ -98,8 +98,8 @@ namespace OpenRaw {
 			}
 		}
 
-		MRWContainer::MRWContainer(IO::Stream *_file, off_t offset)
-			: IfdFileContainer(_file, offset)
+		MRWContainer::MRWContainer(IO::Stream *_file, off_t _offset)
+			: IfdFileContainer(_file, _offset)
 		{
 
 		}

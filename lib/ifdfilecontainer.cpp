@@ -37,8 +37,8 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		IfdFileContainer::IfdFileContainer(IO::Stream *_file, off_t offset)
-			: RawContainer(_file, offset), 
+		IfdFileContainer::IfdFileContainer(IO::Stream *_file, off_t _offset)
+			: RawContainer(_file, _offset), 
 			  m_error(0),
 			  m_exif_offset_correction(0),
 			  m_current_dir(),
@@ -122,11 +122,11 @@ namespace OpenRaw {
 		{
 			// TODO move to IFDirectory
 			Trace(DEBUG1) << "getDirectoryDataSize()" << "\n";
-			off_t offset = m_current_dir->offset();
+			off_t dir_offset = m_current_dir->offset();
 			// FIXME check error
-			Trace(DEBUG1) << "offset = " << offset 
+			Trace(DEBUG1) << "offset = " << dir_offset 
 								<< " m_numTags = " << m_current_dir->numTags() << "\n";
-			off_t begin = offset + 2 + (m_current_dir->numTags()*12);
+			off_t begin = dir_offset + 2 + (m_current_dir->numTags()*12);
 			
 			Trace(DEBUG1) << "begin = " << begin << "\n";
 
@@ -165,24 +165,24 @@ namespace OpenRaw {
 				}
 			}
 			m_file->seek(m_offset + 4, SEEK_SET);
-			int32_t offset = 0;
-			readInt32(m_file, offset);
+			int32_t dir_offset = 0;
+			readInt32(m_file, dir_offset);
 			m_dirs.clear();
 			do {
-				if (offset != 0) {
+				if (dir_offset != 0) {
 //					std::cerr.setf(std::ios_base::hex, std::ios_base::basefield);
-					Trace(DEBUG1) << "push offset =0x" << offset << "\n";
+					Trace(DEBUG1) << "push offset =0x" << dir_offset << "\n";
 
 					// we assume the offset is relative to the begining of
 					// the IFD.
-					IfdDir::Ref dir(new IfdDir(m_offset + offset,*this));
+					IfdDir::Ref dir(new IfdDir(m_offset + dir_offset,*this));
 					m_dirs.push_back(dir);
 
 //					std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);
 
-					offset = dir->nextIFD();
+					dir_offset = dir->nextIFD();
 				}
-			} while(offset != 0);
+			} while(dir_offset != 0);
 
 			Trace(DEBUG1) << "# dir found = " << m_dirs.size() << "\n";
 			return (m_dirs.size() != 0);

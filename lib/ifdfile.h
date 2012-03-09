@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.h
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008,2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,6 +28,7 @@
 #include <libopenraw/consts.h>
 #include <libopenraw++/rawfile.h>
 
+#include "rawfile_private.h"
 #include "ifddir.h"
 #include "makernotedir.h"
 
@@ -39,25 +40,7 @@ namespace IO {
 
 namespace Internals {
 class IfdFileContainer;
-
-/** describe the location of a thumbnail in an IFD file */
-struct IfdThumbDesc
-{
-	IfdThumbDesc(uint32_t _x, uint32_t _y, ::or_data_type _type,
-							 const IfdDir::Ref & _ifddir)
-		: x(_x), y(_y), type(_type), ifddir(_ifddir)
-		{
-		}
-	IfdThumbDesc()
-		: x(0), y(0), type(OR_DATA_TYPE_NONE), ifddir()
-		{
-		}
-	uint32_t x;    /**< x size. Can be 0 */
-	uint32_t y;    /**< y size. Can be 0 */
-	::or_data_type type; /**< the data type format */
-	IfdDir::Ref ifddir; /**< the IFD directory */
-};
-
+class ThumbDesc;
 
 /** @brief generic IFD based raw file. */
 class IfdFile
@@ -97,7 +80,7 @@ protected:
 	 */
 	virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & len);
 
-	typedef std::map<uint32_t, IfdThumbDesc> ThumbLocations;
+	typedef std::map<uint32_t, ThumbDesc> ThumbLocations;
 	ThumbLocations    m_thumbLocations;
 	IO::Stream       *m_io; /**< the IO handle */
 	IfdFileContainer *m_container; /**< the real container */

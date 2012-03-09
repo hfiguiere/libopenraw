@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifddir.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2007,2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -56,6 +56,10 @@ public:
 		{
 			return m_offset;
 		}
+  const IfdFileContainer& container() const
+    {
+      return m_container;
+    }
 
 	/** load the directory to memory */
 	bool load();

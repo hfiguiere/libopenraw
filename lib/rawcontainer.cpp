@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawcontainer.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2007, 2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,13 +35,13 @@ namespace OpenRaw {
 namespace Internals {
 
 
-RawContainer::RawContainer(IO::Stream *_file, off_t offset)
+RawContainer::RawContainer(IO::Stream *_file, off_t _offset)
   : m_file(_file),
-    m_offset(offset),
+    m_offset(_offset),
     m_endian(ENDIAN_NULL)
 {
   m_file->open();
-  m_file->seek(offset, SEEK_SET);
+  m_file->seek(_offset, SEEK_SET);
 }
 
 
@@ -175,11 +175,11 @@ RawContainer::readUInt32(IO::Stream *f, uint32_t & v)
 
 
 size_t 
-RawContainer::fetchData(void *buf, const off_t offset,
-                        const size_t buf_size)
+RawContainer::fetchData(void *buf, off_t _offset,
+                        size_t buf_size)
 {
   size_t s;
-  m_file->seek(offset, SEEK_SET);
+  m_file->seek(_offset, SEEK_SET);
   s = m_file->read(buf, buf_size);
   return s;
 }

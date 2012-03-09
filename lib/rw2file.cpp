@@ -144,7 +144,7 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
     }
     if(_type != OR_DATA_TYPE_NONE) {
         uint32_t dim = std::max(x, y);
-        m_thumbLocations[dim] = IfdThumbDesc(x, y, _type, dir);
+        m_thumbLocations[dim] = ThumbDesc(x, y, _type, offset, size);
         list.push_back(dim);
     }
 	
@@ -257,3 +257,14 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 
 }
 }
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

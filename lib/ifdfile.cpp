@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008,2012 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -35,6 +35,7 @@
 #include "ifdfile.h"
 #include "ifdfilecontainer.h"
 #include "jfifcontainer.h"
+#include "rawfile_private.h"
 #include "neffile.h" // I wonder if this is smart as it break the abstraction.
 #include "metavalue.h"
 #include "unpack.h"
@@ -192,17 +193,20 @@ void IfdFile::_identifyId()
     got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
                 
     uint32_t offset = 0;
+    uint32_t byte_count = 0;
+    got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_count);
     got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
     if (!got_it || (compression == 6) || (compression == 7)) {
       if(!got_it) {
+        got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, 
+                               byte_count);
         got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
                                offset);
       }
       if (got_it) {
         // workaround for CR2 files where 8RGB data is marked
         // as JPEG. Check the real data size.
-        uint32_t byte_count = 0;
-        if(x && y && dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_count)) {
+        if(x && y) {
           if(byte_count >= (x * y * 3)) {
             _type = OR_DATA_TYPE_PIXMAP_8RGB;
           }
@@ -247,7 +251,9 @@ void IfdFile::_identifyId()
     }
     if(_type != OR_DATA_TYPE_NONE) {
       uint32_t dim = std::max(x, y);
-      m_thumbLocations[dim] = IfdThumbDesc(x, y, _type, dir);
+      offset += dir->container().offset();
+      m_thumbLocations[dim] = ThumbDesc(x, y, _type, 
+                                        offset, byte_count);
       list.push_back(dim);
       ret = OR_ERROR_NONE;
     }
@@ -277,43 +283,23 @@ uint32_t IfdFile::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & by
   ThumbLocations::const_iterator iter = m_thumbLocations.find(size);
   if(iter != m_thumbLocations.end()) 
   {
-    bool got_it;
-
-    const IfdThumbDesc & desc = iter->second;
+    const ThumbDesc & desc = iter->second;
     thumbnail.setDataType(desc.type);
-    uint32_t byte_length= 0; /**< of the buffer */
-    uint32_t offset = 0;
-    uint32_t x = desc.x;
-    uint32_t y = desc.y;
+    uint32_t byte_length= desc.length; /**< of the buffer */
+    uint32_t offset = desc.offset;
 
-    switch(desc.type)
-    {
-    case OR_DATA_TYPE_JPEG:
-      offset = _getJpegThumbnailOffset(desc.ifddir, byte_length);
-      break;
-    case OR_DATA_TYPE_PIXMAP_8RGB:
-      got_it = desc.ifddir
-        ->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-      got_it = desc.ifddir
-        ->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
+    Trace(DEBUG1) << "Thumbnail at " << offset << " of " << byte_length << " bytes.\n";
 
-      got_it = desc.ifddir
-        ->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
-      got_it = desc.ifddir
-        ->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
-      break;
-    default:
-      break;
-    }
     if (byte_length != 0) {
       void *p = thumbnail.allocData(byte_length);
       size_t real_size = m_container->fetchData(p, offset, 
                                                 byte_length);
       if (real_size < byte_length) {
-        Trace(WARNING) << "Size mismatch for data: ignoring.\n";
+        Trace(WARNING) << "Size mismatch for data: got " << real_size 
+                       << " expected " << byte_length << " ignoring.\n";
       }
 
-      thumbnail.setDimensions(x, y);
+      thumbnail.setDimensions(desc.x, desc.y);
       ret = OR_ERROR_NONE;
     }
   }
