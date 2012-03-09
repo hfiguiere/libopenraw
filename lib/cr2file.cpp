@@ -86,6 +86,8 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
 										  OR_TYPEID_CANON_5D) },
 	{ "Canon EOS 5D Mark II", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
 										  OR_TYPEID_CANON_5DMKII) },
+	{ "Canon EOS 5D Mark III", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
+										  OR_TYPEID_CANON_5DMKIII) },
 	{ "Canon EOS 7D", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
 										  OR_TYPEID_CANON_7D) },
 	{ "Canon PowerShot G9", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 
