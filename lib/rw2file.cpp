@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2file.cpp
  *
- * Copyright (C) 2011 Hubert Figuiere
+ * Copyright (C) 2011-2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -65,6 +65,8 @@ const IfdFile::camera_ids_t Rw2File::s_def[] = {
 						  OR_TYPEID_PANASONIC_G1) },
 	{ "DMC-G2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC,
 						  OR_TYPEID_PANASONIC_G2) },
+	{ "DMC-G3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC,
+						  OR_TYPEID_PANASONIC_G3) },
 	{ "DMC-G10", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC,
 						  OR_TYPEID_PANASONIC_G10) },
 	{ "DMC-GH1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC,
