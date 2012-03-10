@@ -65,6 +65,8 @@ const IfdFile::camera_ids_t NefFile::s_def[] = {
                                          OR_TYPEID_NIKON_D3000) },
     { "NIKON D3100", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
                                          OR_TYPEID_NIKON_D3100) },
+    { "NIKON D4", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
+                                       OR_TYPEID_NIKON_D4) },
     { "NIKON D40", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 
                                        OR_TYPEID_NIKON_D40) },
     { "NIKON D40X", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
