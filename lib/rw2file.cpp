@@ -33,6 +33,7 @@
 #include "rw2container.h"
 #include "jfifcontainer.h"
 #include "rawfilefactory.h"
+#include "rawfile_private.h"
 
 using namespace Debug;
 
@@ -144,7 +145,7 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
     }
     if(_type != OR_DATA_TYPE_NONE) {
         uint32_t dim = std::max(x, y);
-        m_thumbLocations[dim] = ThumbDesc(x, y, _type, offset, size);
+        _addThumbnail(dim, ThumbDesc(x, y, _type, offset, size));
         list.push_back(dim);
     }
 	

@@ -45,8 +45,8 @@ public:
 protected:
   virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 	
-  virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
-  
+  virtual RawContainer* getContainer() const;
+
   virtual ::or_error _getRawData(RawData & data, uint32_t options);
 	
   virtual MetaValue *_getMetaValue(int32_t /*meta_index*/);
@@ -60,12 +60,8 @@ private:
 	RafContainer *m_container; /**< the real container */
 	uint32_t m_x;
 	uint32_t m_y;
-  
-  typedef std::map<uint32_t, ThumbDesc> ThumbLocations;
-	ThumbLocations    m_thumbLocations;
 
-	static const RawFile::camera_ids_t s_def[];
-	
+	static const RawFile::camera_ids_t s_def[];	
 };
 	
 }

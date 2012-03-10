@@ -28,7 +28,6 @@
 #include <libopenraw/consts.h>
 #include <libopenraw++/rawfile.h>
 
-#include "rawfile_private.h"
 #include "ifddir.h"
 #include "makernotedir.h"
 
@@ -80,10 +79,10 @@ protected:
 	 */
 	virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & len);
 
-	typedef std::map<uint32_t, ThumbDesc> ThumbLocations;
-	ThumbLocations    m_thumbLocations;
 	IO::Stream       *m_io; /**< the IO handle */
 	IfdFileContainer *m_container; /**< the real container */
+
+  virtual RawContainer* getContainer() const;
 
 	virtual IfdDir::Ref  _locateCfaIfd() = 0;
 	virtual IfdDir::Ref  _locateMainIfd() = 0;
@@ -121,8 +120,6 @@ private:
 	
 	IfdFile(const IfdFile&);
 	IfdFile & operator=(const IfdFile &);
-
-	virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
 };
 
 }

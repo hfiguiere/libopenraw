@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.cpp
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008,2012 Hubert Figuiere
  * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -125,6 +125,11 @@ CRWFile::~CRWFile()
     }
 
     return err;
+}
+
+RawContainer* CRWFile::getContainer() const
+{
+  return m_container;
 }
 
 ::or_error CRWFile::_getThumbnail(uint32_t /*size*/, Thumbnail & thumbnail)

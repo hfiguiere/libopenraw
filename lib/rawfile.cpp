@@ -52,6 +52,7 @@
 #include "raffile.h"
 #include "metavalue.h"
 #include "exception.h"
+#include "rawfile_private.h"
 
 #include "rawfilefactory.h"
 
@@ -132,6 +133,7 @@ public:
     TypeId m_type_id;
     /** list of thumbnail sizes */
     std::vector<uint32_t> m_sizes;
+    Internals::ThumbLocations    m_thumbLocations;    
     std::map<int32_t, MetaValue*> m_metadata;
     const camera_ids_t *m_cam_ids;
 };
@@ -385,6 +387,43 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
     return ret;
 }
 
+/**
+ * Internal implementation of getThumbnail. The size must match.
+ */
+::or_error RawFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
+{
+  ::or_error ret = OR_ERROR_NOT_FOUND;
+  Internals::ThumbLocations::const_iterator iter = d->m_thumbLocations.find(size);
+  if(iter != d->m_thumbLocations.end()) 
+  {
+    const Internals::ThumbDesc & desc = iter->second;
+    thumbnail.setDataType(desc.type);
+    uint32_t byte_length= desc.length; /**< of the buffer */
+    uint32_t offset = desc.offset;
+
+    Trace(DEBUG1) << "Thumbnail at " << offset << " of " << byte_length << " bytes.\n";
+
+    if (byte_length != 0) {
+      void *p = thumbnail.allocData(byte_length);
+      size_t real_size = getContainer()->fetchData(p, offset, 
+                                                byte_length);
+      if (real_size < byte_length) {
+        Trace(WARNING) << "Size mismatch for data: got " << real_size 
+                       << " expected " << byte_length << " ignoring.\n";
+      }
+
+      thumbnail.setDimensions(desc.x, desc.y);
+      ret = OR_ERROR_NONE;
+    }
+  }
+
+  return ret;
+}
+
+void RawFile::_addThumbnail(uint32_t size, const Internals::ThumbDesc& desc)
+{
+    d->m_thumbLocations[size] = desc;
+}
 
 ::or_error RawFile::getRawData(RawData & rawdata, uint32_t options)
 {

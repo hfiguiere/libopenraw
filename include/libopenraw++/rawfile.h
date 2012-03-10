@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.h
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2005-2006,2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -37,6 +37,11 @@ class Thumbnail;
 class RawData;
 class BitmapData;
 class MetaValue;
+
+namespace Internals {
+class RawContainer;
+class ThumbDesc;
+}
 
 void init();
 
@@ -141,6 +146,9 @@ protected:
     /** Set the file type id */
     void _setTypeId(TypeId _type_id);
 
+    /** Get the container. */
+    virtual Internals::RawContainer* getContainer() const = 0;
+
     /** enumerate the thumbnail sizes. 
      * @param list the list to enumerate into
      * @return OR_ERROR_NONE if success
@@ -154,7 +162,9 @@ protected:
      * @seealso listThumbnailSizes() to understand how to fetch the sizes
      * available
      */
-    virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail) = 0;
+    virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+    void _addThumbnail(uint32_t size, const Internals::ThumbDesc& desc);
+
     /** get the RAW data 
      * @param data the RAW data
      * @param option the option bits

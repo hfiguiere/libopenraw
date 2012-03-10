@@ -23,6 +23,8 @@
 
 #include <assert.h>
 
+#include <map>
+
 namespace OpenRaw {
 namespace Internals {
 
@@ -49,6 +51,8 @@ struct ThumbDesc
   size_t   offset; /**< offset if the thumbnail data */
   size_t   length;
 };
+
+typedef std::map<uint32_t, ThumbDesc> ThumbLocations;
 
 }
 }

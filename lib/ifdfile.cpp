@@ -51,7 +51,6 @@ namespace Internals {
 IfdFile::IfdFile(IO::Stream *s, Type _type, 
                  bool instantiateContainer)
   : RawFile(s, _type),
-    m_thumbLocations(),
     m_io(s),
     m_container(NULL)
 {
@@ -252,14 +251,19 @@ void IfdFile::_identifyId()
     if(_type != OR_DATA_TYPE_NONE) {
       uint32_t dim = std::max(x, y);
       offset += dir->container().offset();
-      m_thumbLocations[dim] = ThumbDesc(x, y, _type, 
-                                        offset, byte_count);
+      _addThumbnail(dim, ThumbDesc(x, y, _type, 
+                                   offset, byte_count));
       list.push_back(dim);
       ret = OR_ERROR_NONE;
     }
   }
 
   return ret;
+}
+
+RawContainer* IfdFile::getContainer() const
+{
+  return m_container;
 }
 
 uint32_t IfdFile::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & byte_length)
@@ -277,35 +281,6 @@ uint32_t IfdFile::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & by
   return offset;
 }
 
-::or_error IfdFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
-{
-  ::or_error ret = OR_ERROR_NOT_FOUND;
-  ThumbLocations::const_iterator iter = m_thumbLocations.find(size);
-  if(iter != m_thumbLocations.end()) 
-  {
-    const ThumbDesc & desc = iter->second;
-    thumbnail.setDataType(desc.type);
-    uint32_t byte_length= desc.length; /**< of the buffer */
-    uint32_t offset = desc.offset;
-
-    Trace(DEBUG1) << "Thumbnail at " << offset << " of " << byte_length << " bytes.\n";
-
-    if (byte_length != 0) {
-      void *p = thumbnail.allocData(byte_length);
-      size_t real_size = m_container->fetchData(p, offset, 
-                                                byte_length);
-      if (real_size < byte_length) {
-        Trace(WARNING) << "Size mismatch for data: got " << real_size 
-                       << " expected " << byte_length << " ignoring.\n";
-      }
-
-      thumbnail.setDimensions(desc.x, desc.y);
-      ret = OR_ERROR_NONE;
-    }
-  }
-
-  return ret;
-}
 
 
 MetaValue *IfdFile::_getMetaValue(int32_t meta_index)

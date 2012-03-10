@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.h
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008,2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -50,6 +50,7 @@ namespace OpenRaw {
 		protected:
 
 
+			virtual RawContainer* getContainer() const;
 			virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 
 			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);

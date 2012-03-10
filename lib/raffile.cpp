@@ -91,15 +91,6 @@ RafFile::~RafFile()
 
 ::or_error RafFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
-  if(!m_thumbLocations.empty()) {
-    for(ThumbLocations::const_iterator iter = m_thumbLocations.begin();
-        iter != m_thumbLocations.end(); ++iter) {
-      list.push_back(iter->first);
-    }
-
-    return OR_ERROR_NONE;
-  }
-
 	or_error ret = OR_ERROR_NOT_FOUND;
 	
 	JfifContainer * jpegPreview = m_container->getJpegPreview();
@@ -108,12 +99,11 @@ RafFile::~RafFile()
     uint32_t size = std::max(x, y);
 
 		list.push_back(size);
-    m_thumbLocations.insert(
-      std::make_pair(size, ThumbDesc(x,y,
-                                     OR_DATA_TYPE_JPEG,
-                                     m_container->getJpegOffset(),
-                                     m_container->getJpegLength()
-                       )));
+    _addThumbnail(size, ThumbDesc(x,y,
+                                  OR_DATA_TYPE_JPEG,
+                                  m_container->getJpegOffset(),
+                                  m_container->getJpegLength()
+                    ));
 		ret = OR_ERROR_NONE;
 	}
   IfdDir::Ref dir = jpegPreview->getIfdDirAt(1);
@@ -143,13 +133,12 @@ RafFile::~RafFile()
           uint32_t size = std::max(x, y);
 
           list.push_back(size);
-          m_thumbLocations.insert(
-            std::make_pair(size, 
-                           ThumbDesc(x,y,
-                                     OR_DATA_TYPE_JPEG,
-                                     jpeg_offset + m_container->getJpegOffset(),
-                                     jpeg_size
-                             )));
+          _addThumbnail(size, 
+                        ThumbDesc(x,y,
+                                  OR_DATA_TYPE_JPEG,
+                                  jpeg_offset + m_container->getJpegOffset(),
+                                  jpeg_size
+                          ));
           ret = OR_ERROR_NONE;
         }
         delete thumb;
@@ -160,29 +149,9 @@ RafFile::~RafFile()
 	return ret;
 }
 
-::or_error RafFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
+RawContainer* RafFile::getContainer() const
 {
-	::or_error ret = OR_ERROR_NOT_FOUND;
-
-  ThumbLocations::const_iterator iter = m_thumbLocations.find(size);
-
-  if(iter != m_thumbLocations.end())
-  {
-    size_t offset = iter->second.offset;
-    uint32_t x, y;
-    boost::scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-    boost::scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
-    if (jfif && jfif->getDimensions(x,y)) {
-      thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-      thumbnail.setDimensions(x, y);
-      size_t byte_size = iter->second.length;
-      void *buf = thumbnail.allocData(byte_size);
-      m_container->fetchData(buf, m_container->getJpegOffset(), byte_size);
-      ret = OR_ERROR_NONE;
-    }
-  }
-
-	return ret;
+  return m_container;
 }
 
 ::or_error RafFile::_getRawData(RawData & data, uint32_t options)
