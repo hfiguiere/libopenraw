@@ -50,6 +50,11 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
                                        OR_TYPEID_SONY_A580) },
     { "DSLR-A700", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_A700) },
+    { "DSLR-A850", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_A850) },
+    // Likely a pre-release.
+    { "SLT-A00", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
+                                       OR_TYPEID_SONY_SLTA35) },
     { "SLT-A55V", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
                                        OR_TYPEID_SONY_SLTA55) },
     { "SLT-A65V", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
