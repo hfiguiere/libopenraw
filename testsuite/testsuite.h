@@ -70,6 +70,7 @@ private:
 	bool testThumbSizes(const std::string & result);
 	bool testThumbFormats(const std::string & result);
 	bool testThumbDataSizes(const std::string & result);
+	bool testThumbMd5(const std::string & result);
 	bool testRawDataType(const std::string & result);
 	bool testRawDataSize(const std::string & result);
 	bool testRawDataDimensions(const std::string & result);

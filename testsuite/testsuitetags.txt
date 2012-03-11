@@ -10,6 +10,7 @@ thumbNum
 thumbSizes
 thumbFormats
 thumbDataSizes
+thumbMd5
 rawDataType
 rawDataSize
 rawDataDimensions

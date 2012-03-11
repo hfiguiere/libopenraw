@@ -80,6 +80,17 @@ using OpenRaw::Thumbnail;
     }
 
 
+// a and b are strings. b is the expected value
+// success is return. Set to true if it is successful
+#define CHECK_TEST_EQUALS(a,b,success)                                  \
+    {                                                                   \
+        success = (a == b);                                             \
+        if(!success) {                                                  \
+            fprintf(stderr, "FAILED: %s on equality with '%s', expected '%s'\n",	\
+                    __FUNCTION__, a.c_str(), b.c_str());                \
+        }                                                               \
+    }
+
 #define RETURN_TEST(test,expected)                                      \
     {                                                                   \
         bool _success = (test);                                         \
@@ -331,6 +342,46 @@ bool Test::testThumbDataSizes(const std::string & result)
 }
 
 namespace {
+uint32_t computeCrc(const Thumbnail * thumb)
+{
+    boost::crc_optimal<8, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
+		
+    const uint8_t * data = static_cast<uint8_t *>(thumb->data());
+    size_t data_len = thumb->size();
+    crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
+    return crc_ccitt2();
+}
+}
+
+bool Test::testThumbMd5(const std::string & result)
+{
+    bool success = true;
+    std::vector<uint32_t> thumbs = m_rawfile->listThumbnailSizes();
+    std::vector< std::string > v;
+    boost::split(v, result, boost::is_any_of(" "));
+    std::vector< std::string >::iterator result_iter = v.begin();
+    if(v.size() != thumbs.size()) {
+        RETURN_FAIL("mismatch number of elements", result);
+    }
+    for(std::vector<uint32_t>::iterator thumbs_iter = thumbs.begin();
+        thumbs_iter != thumbs.end(); thumbs_iter++, result_iter++) 
+    {
+        Thumbnail t;
+        m_rawfile->getThumbnail(*thumbs_iter, t);
+        try {
+            bool succ = false;
+            uint32_t crc = computeCrc(&t);
+            CHECK_TEST_EQUALS(boost::lexical_cast<std::string>(crc), (*result_iter), succ);
+            success &= succ;
+        }
+        catch(...) {
+            RETURN_FAIL("conversion failed", result);
+        }
+    }
+    RETURN_TEST(success, result);
+}
+
+namespace {
 RawData * loadRawData(RawFile * file)
 {
     RawData *rawdata = new RawData();
@@ -572,6 +623,9 @@ int Test::run()
             break;
         case XML_thumbDataSizes:
             pass = testThumbDataSizes(iter->second);
+            break;
+        case XML_thumbMd5:
+            pass = testThumbMd5(iter->second);
             break;
         case XML_rawDataType:
             pass = testRawDataType(iter->second);

@@ -1,7 +1,7 @@
 /*
  * libopenraw - testsuitehandler.cpp
  *
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008,2012 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -31,7 +31,7 @@
 TestContext::TestContext(const xml::HandlerPtr & handler,  TestSuite * ts,
                          Test::Ptr test)
 	: xml::Context(handler),
-      m_ts(ts),
+	  m_ts(ts),
 	  m_test(test),
 	  m_results(false)
 {
@@ -63,13 +63,14 @@ xml::ContextPtr TestContext::startElement(int32_t element)
 	case XML_thumbSizes:
 	case XML_thumbFormats:
 	case XML_thumbDataSizes:
+	case XML_thumbMd5:
 	case XML_rawDataType:
 	case XML_rawDataSize:
 	case XML_rawDataDimensions:
 	case XML_rawDataRoi:
 	case XML_rawCfaPattern:
-    case XML_rawMinValue:
-    case XML_rawMaxValue:
+	case XML_rawMinValue:
+	case XML_rawMaxValue:
 	case XML_rawMd5:
 	case XML_rawDecompressedMd5:
 	case XML_metaOrientation:
