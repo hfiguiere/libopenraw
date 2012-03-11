@@ -53,7 +53,7 @@ namespace OpenRaw {
 			virtual RawContainer* getContainer() const;
 			virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 
-			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+//			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 			virtual MetaValue *_getMetaValue(int32_t meta_index);

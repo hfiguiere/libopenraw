@@ -37,6 +37,7 @@
 #include "jfifcontainer.h"
 #include "crwdecompressor.h"
 #include "metavalue.h"
+#include "rawfile_private.h"
 
 #include "rawfilefactory.h"
 
@@ -112,15 +113,16 @@ CRWFile::~CRWFile()
     if (iter != records.end()) {
         Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
         m_x = m_y = 0;
-				
-        scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, heap->offset()
-                                                          + (*iter).offset));
+	uint32_t offset = heap->offset() + (*iter).offset;
+        scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
         scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
 
         jfif->getDimensions(m_x, m_y);
         Trace(DEBUG1) << "JPEG dimensions x=" << m_x 
                       << " y=" << m_y << "\n";
-        list.push_back(std::max(m_x,m_y));
+        uint32_t dim = std::max(m_x,m_y);
+        _addThumbnail(dim, ThumbDesc(m_x, m_y, OR_DATA_TYPE_JPEG, offset, (*iter).length));
+        list.push_back(dim);
         err = OR_ERROR_NONE;
     }
 
@@ -130,36 +132,6 @@ CRWFile::~CRWFile()
 RawContainer* CRWFile::getContainer() const
 {
   return m_container;
-}
-
-::or_error CRWFile::_getThumbnail(uint32_t /*size*/, Thumbnail & thumbnail)
-{
-    ::or_error err = OR_ERROR_NOT_FOUND;
-    Heap::Ref heap = m_container->heap();
-    if(!heap) {
-        // this is not a CIFF file.
-        return err;
-    }
-
-    const RecordEntry::List & records = heap->records();
-    RecordEntry::List::const_iterator iter;
-    iter = std::find_if(records.begin(), records.end(), boost::bind(
-                            &RecordEntry::isA, _1, 
-                            static_cast<uint16_t>(TAG_JPEGIMAGE)));
-    if (iter != records.end()) {
-        Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
-        size_t byte_size = (*iter).length;
-        void *buf = thumbnail.allocData(byte_size);
-        size_t real_size = (*iter).fetchData(heap.get(), buf, byte_size);
-        if (real_size != byte_size) {
-            Trace(WARNING) << "wrong size\n";
-        }
-        thumbnail.setDimensions(m_x, m_y);
-        thumbnail.setDataType(OR_DATA_TYPE_JPEG);
-        err = OR_ERROR_NONE;
-    }
-
-    return err;
 }
 
 ::or_error CRWFile::_getRawData(RawData & data, uint32_t options)
