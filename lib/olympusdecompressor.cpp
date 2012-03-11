@@ -198,7 +198,11 @@ RawData *OlympusDecompressor::decompress(RawData *in)
 	
 	output->allocData(m_w * m_h * 2);
 	decompressOlympus(m_buffer, (uint8_t*)output->data(), m_w, m_h);
-	
+
+	// hardcoded 12bits values
+	output->setBpc(12);
+	output->setMax((1 << 12) - 1);
+
 	return output;
 }
 

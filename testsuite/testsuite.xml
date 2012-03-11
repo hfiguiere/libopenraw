@@ -408,7 +408,7 @@
       <rawDataDimensions>3360 2504</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
-      <rawMaxValue>65535</rawMaxValue>
+      <rawMaxValue>4095</rawMaxValue>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -429,7 +429,7 @@
       <rawDataDimensions>3280 2450</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
-      <rawMaxValue>65535</rawMaxValue>
+      <rawMaxValue>4095</rawMaxValue>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -445,7 +445,8 @@
       <rawDataDimensions>4100 3084</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
-      <rawMaxValue>65535</rawMaxValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>6</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -461,7 +462,8 @@
       <rawDataDimensions>3720 2800</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
-      <rawMaxValue>65535</rawMaxValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>252</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
