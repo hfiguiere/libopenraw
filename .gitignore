@@ -28,8 +28,6 @@ ltmain.sh
 libtool
 install-sh
 depcomp
-shave
-shave-libtool
 *.pc
 demo/ccfa
 demo/cfa
