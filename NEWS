@@ -48,6 +48,8 @@ Internal changes:
   - Streamline the loading of IFDs.
   - Move the rendering on the RawData class.
   - BUG: IO::StreamClone::seek() now return the proper value.
+  - Remove shave for automake silent rules (with help from Adrian Bunk 
+    Closes #48429)
 
 libopenraw 0.0.10
 
