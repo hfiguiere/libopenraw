@@ -131,15 +131,6 @@ extern "C" {
 	}
 	
 	or_error
-	or_rawdata_set_cfa_pattern(ORRawDataRef rawdata, or_cfa_pattern pattern)
-	{
-		CHECK_PTR(rawdata, OR_ERROR_NOTAREF);
-		reinterpret_cast<RawData *>(rawdata)->setCfaPattern(pattern);
-		return OR_ERROR_NONE;
-	}
-
-
-	or_error
 	or_rawdata_get_minmax(ORRawDataRef rawdata, uint16_t *min, uint16_t *max)
 	{
 		RawData* t = reinterpret_cast<RawData *>(rawdata);

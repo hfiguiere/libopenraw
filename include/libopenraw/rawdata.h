@@ -73,14 +73,6 @@ extern "C" {
 	or_cfa_pattern
 	or_rawdata_get_cfa_pattern(ORRawDataRef rawdata);
 
-	/** Return the bayer type for the raw data.
-	 * @param rawdata the raw data object
-	 * @param pattern one of the constant defined in %or_cfa_pattern
-	 * @return the error code.
-	 */
-	or_error
-	or_rawdata_set_cfa_pattern(ORRawDataRef rawdata, or_cfa_pattern pattern);
-	
 	/** Return the minimum and maximum values for the raw data.
 	 * This are possible values, not actual values.
 	 * @param rawdata the raw data object
