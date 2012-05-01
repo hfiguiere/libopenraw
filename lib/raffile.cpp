@@ -154,7 +154,7 @@ RawContainer* RafFile::getContainer() const
   return m_container;
 }
 
-::or_error RafFile::_getRawData(RawData & data, uint32_t options)
+::or_error RafFile::_getRawData(RawData & data, uint32_t /*options*/)
 {
 	::or_error ret = OR_ERROR_NOT_FOUND;
 
@@ -171,7 +171,8 @@ RawContainer* RafFile::getContainer() const
 
 	value = meta->getValue(RAF_TAG_RAW_INFO);
 	uint32_t rawProps = value->get().getInteger(0);
-	uint8_t layout = (rawProps & 0xFF000000) >> 24 >> 7; // MSBit in byte.
+  // TODO re-enable if needed.
+	// uint8_t layout = (rawProps & 0xFF000000) >> 24 >> 7; // MSBit in byte.
 	uint8_t compressed = ((rawProps & 0xFF0000) >> 16) & 8; // 8 == compressed
 	
 	//printf("layout %x - compressed %x\n", layout, compressed);
