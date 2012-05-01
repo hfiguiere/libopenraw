@@ -29,8 +29,9 @@ namespace OpenRaw {
 namespace Internals {
 
 /** describe the location of a thumbnail in an RAW file */
-struct ThumbDesc
+class ThumbDesc
 {
+public:
   ThumbDesc(uint32_t _x, uint32_t _y, ::or_data_type _type,
             size_t _offset, size_t _length)
     : x(_x), y(_y), type(_type)
