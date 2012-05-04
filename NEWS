@@ -21,7 +21,7 @@ New features:
   - Added support for Sony A-380, A-390, A-560, A-580, A-850, A-900, 
     SLT-A33, SLT-A35, SLT-A55, SLT-A65, SLT-A77, 
     Nex-3, Nex-5, Nex-5N, Nex-C3, Nex-7.
-  - Support for Pentax Q, K-r, K-x, K200D ; Leica M9, S2 - DNG
+  - Support for Pentax Q, K-r, K-x, K200D, K-01 ; Leica M9, S2 - DNG
   - Support for Nikon NRW: P6000, P7000 and P7100 (partial).
   - Support for Panasonic RAW and RW2.
   - Support for FujiFilm RAF.
