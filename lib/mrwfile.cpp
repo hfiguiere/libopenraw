@@ -102,7 +102,7 @@ void MRWFile::_identifyId()
 
 	if(_mainIfd && mc->prd) {
 		std::string version = mc->prd->string_val(MRW::PRD_VERSION);
-		_setTypeId(_typeIdFromModel(version));
+		_setTypeId(_typeIdFromModel("Minolta", version));
 	}
 }
 

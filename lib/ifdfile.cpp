@@ -95,9 +95,10 @@ void IfdFile::_identifyId()
     Trace(ERROR) << "Main IFD not found to identify the file.\n";
     return;
   }
-  std::string model;
-  if(_mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
-    _setTypeId(_typeIdFromModel(model));
+  std::string make, model;
+  if(_mainIfd->getValue(IFD::EXIF_TAG_MAKE, make) && 
+    _mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
+    _setTypeId(_typeIdFromModel(make, model));
   }
 }
 

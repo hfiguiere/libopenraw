@@ -175,13 +175,17 @@ protected:
 
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 
-    TypeId _typeIdFromModel(const std::string & model);
+    TypeId _typeIdFromModel(const std::string& make, const std::string & model);
+    TypeId _typeIdFromMake(const std::string& make);
     void _setIdMap(const camera_ids_t *map);
     virtual void _identifyId() = 0;
 private:
     static Type identify(const char*_filename);
     static ::or_error identifyBuffer(const uint8_t* buff, size_t len,
                                      Type &_type);
+    static const camera_ids_t s_make[];
+    static const camera_ids_t* _lookupCameraId(const camera_ids_t * map, 
+                                               const std::string& value);
 
 
     RawFile(const RawFile&);

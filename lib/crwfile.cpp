@@ -310,17 +310,23 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
 
 void CRWFile::_identifyId()
 {
-    MetaValue * v = _getMetaValue(META_NS_TIFF | EXIF_TAG_MODEL);
-    if(v) {
-        std::string model;
-        try {
+    std::string model;
+    std::string make;
+    try {
+        MetaValue * v = _getMetaValue(META_NS_TIFF | EXIF_TAG_MODEL);
+        if(v) {
             model = v->getString(0);
-            _setTypeId(_typeIdFromModel(model));
-        }
-        catch(...)
-        {
         }
         delete v;
+        v = _getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
+        if(v) {
+            make = v->getString(0);
+        }
+        delete v;
+        _setTypeId(_typeIdFromModel(make, model));
+    }
+    catch(...)
+    {
     }
 }
 

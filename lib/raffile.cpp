@@ -251,7 +251,7 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
 
 void RafFile::_identifyId()
 {
-  _setTypeId(_typeIdFromModel(m_container->getModel()));
+  _setTypeId(_typeIdFromModel("FujiFilm", m_container->getModel()));
 }
 	
 }

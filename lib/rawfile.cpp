@@ -513,19 +513,53 @@ const MetaValue *RawFile::getMetaValue(int32_t meta_index)
 }
 
 
-RawFile::TypeId RawFile::_typeIdFromModel(const std::string & model)
+const RawFile::camera_ids_t* 
+RawFile::_lookupCameraId(const camera_ids_t * map, const std::string& value)
 {
-    const struct camera_ids_t * p = d->m_cam_ids;
+    const camera_ids_t * p = map;
     if(!p) {
-        return 0;
+        return NULL;
     }
     while(p->model) {
-        if(model == p->model) {
-            break;
+        if(value == p->model) {
+            return p;
         }
         p++;
     }
+    return NULL;
+}
+
+RawFile::TypeId RawFile::_typeIdFromModel(const std::string & make,
+                                          const std::string & model)
+{
+    const camera_ids_t * p = _lookupCameraId(d->m_cam_ids, model);
+    if (!p) {
+        return _typeIdFromMake(make);
+    }
     return p->type_id;
+}
+
+const RawFile::camera_ids_t RawFile::s_make[] = {
+    { "Canon", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 0) },
+    { "NIKON CORPORATION", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 0) },
+    { "LEICA CAMERA AG        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
+    { "Leica Camera AG", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
+    { "Panasonic", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC, 0) },
+    // Hardcoded
+    { "Minolta", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA, 0) },
+    { "FujiFilm", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM, 0) },
+    { NULL, 0 }
+};
+
+
+RawFile::TypeId 
+RawFile::_typeIdFromMake(const std::string& make)
+{
+    const camera_ids_t * p = _lookupCameraId(s_make, make);
+    if (!p) {
+        return 0;
+    }
+    return p->type_id;    
 }
 
 void RawFile::_setIdMap(const camera_ids_t *map)
