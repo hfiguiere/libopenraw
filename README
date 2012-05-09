@@ -126,19 +126,27 @@ Nikon NEF                Y Y Y Y Y Y N N
  D2H                     T T Y T T T
  D2X                     T T X T T T
  D200                              T
- D300                              T
+ D3
+ D3S                     T   B     T
+ D3X                     T   B     T
+ D300                    T T T     T
+ D300S                   T   B     T
  D3000                   T B B T T T
  D3100                   T T T T T T
+ D3200                   T   B     T
  D4
  D40                     T T Y T T T
  D40X                    T T Y T T T
  D50                               T
- D5000
- D5100
+ D5000                   T   B     T
+ D5100                   T   B     T
  D70                     T T Y T T T
  D70s                    T T Y T T T
+ D700                              T
  D7000                   T T T T T T
  D80                               T
+ D800                              T
+ D800E                             T
  J1                      T T B Y Y T
  V1                      T T B Y Y T
 

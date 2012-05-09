@@ -16,7 +16,8 @@ New features:
   - Support for Canon G12, 600D, 1100D/Rebel T3, PowerShot S90, PowerShot S95,
     Rebel XS, PowerShot S100, PowerShot G1 X, 5DMkIII.
   - API: Canon camera ID have aliases.
-  - Support for Nikon D4, D3100, D5000, D5100, D7000, J1, V1
+  - Support for Nikon D4, D3100, D3200, D5000, D5100, D7000, J1, V1, D3S, D3X, 
+    D300S, D700, D800, D800E.
   - Extract compressed raw from ARW (but A-100).
   - Added support for Sony A-380, A-390, A-560, A-580, A-850, A-900, 
     SLT-A33, SLT-A35, SLT-A55, SLT-A65, SLT-A77, 
