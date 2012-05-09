@@ -101,6 +101,8 @@ const IfdFile::camera_ids_t NefFile::s_def[] = {
                                         OR_TYPEID_NIKON_D800) },
     { "NIKON D800E", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                          OR_TYPEID_NIKON_D800E) },
+    { "NIKON D90", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
+                                       OR_TYPEID_NIKON_D90) },
     { "COOLPIX P6000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
                                            OR_TYPEID_NIKON_COOLPIX_P6000) },
     { "COOLPIX P7000", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON,
