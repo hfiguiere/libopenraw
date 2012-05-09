@@ -23,6 +23,9 @@
 #ifndef __LIBOPENRAW_RAWDATA_H_
 #define __LIBOPENRAW_RAWDATA_H_
 
+#include <stdlib.h>
+
+#include <libopenraw/consts.h>
 #include <libopenraw/types.h>
 
 #ifdef __cplusplus

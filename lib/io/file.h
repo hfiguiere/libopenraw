@@ -26,10 +26,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <libopenraw/libopenraw.h>
+#include <libopenraw/io.h>
 
 #include "stream.h"
-
 
 namespace OpenRaw {
 	namespace IO {

@@ -22,7 +22,7 @@
 
 #include <iostream>
 #include <boost/scoped_array.hpp>
-#include <libopenraw/libopenraw.h>
+#include <libopenraw/cameraids.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 

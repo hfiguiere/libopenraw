@@ -21,8 +21,6 @@
 
 #include <string.h>
 
-#include <libopenraw/libopenraw.h>
-
 #include "memstream.h"
 #include "trace.h"
 

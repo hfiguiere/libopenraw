@@ -51,6 +51,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/crc.hpp>      // for boost::crc_basic, boost::crc_optimal
 
+#include <libopenraw/debug.h>
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/thumbnail.h>

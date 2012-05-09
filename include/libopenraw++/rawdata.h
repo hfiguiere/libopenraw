@@ -25,7 +25,6 @@
 
 #include <vector>
 
-#include <libopenraw/libopenraw.h>
 #include <libopenraw++/bitmapdata.h>
 
 

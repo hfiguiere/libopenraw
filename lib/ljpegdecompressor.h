@@ -25,8 +25,6 @@
 
 #include <vector>
 
-#include <libopenraw/libopenraw.h>
-
 #include "exception.h"
 #include "decompressor.h"
 

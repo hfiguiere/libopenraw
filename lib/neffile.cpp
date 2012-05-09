@@ -23,6 +23,8 @@
 
 #include <iostream>
 #include <vector>
+
+#include <libopenraw/cameraids.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 

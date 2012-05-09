@@ -21,6 +21,7 @@
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>
+#include <libopenraw/cameraids.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 

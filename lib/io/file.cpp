@@ -19,9 +19,7 @@
  */
 
 
-#include <libopenraw/libopenraw.h>
 #include "file.h"
-
 
 namespace OpenRaw {
 	namespace IO {

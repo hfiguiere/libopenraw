@@ -27,7 +27,7 @@
 
 #include <string>
 
-#include <libopenraw/libopenraw.h>
+#include <libopenraw/consts.h>
 
 #include "exception.h"
 

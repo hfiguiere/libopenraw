@@ -23,8 +23,6 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <libopenraw/libopenraw.h>
-
 #include "decompressor.h"
 
 namespace OpenRaw {

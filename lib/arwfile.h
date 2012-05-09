@@ -21,6 +21,8 @@
 #ifndef __ARWFILE_H_
 #define __ARWFILE_H_
 
+#include <libopenraw/cameraids.h>
+
 #include "ifdfile.h"
 #include "tiffepfile.h"
 

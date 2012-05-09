@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-#include <libopenraw/libopenraw.h>
+#include <libopenraw/rawfile.h>
 
 namespace OpenRaw {
 

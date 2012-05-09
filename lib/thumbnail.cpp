@@ -24,7 +24,6 @@
 
 #include "trace.h"
 
-#include <libopenraw/libopenraw.h>
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/thumbnail.h>
 

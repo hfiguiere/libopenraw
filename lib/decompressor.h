@@ -23,9 +23,6 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <libopenraw/libopenraw.h>
-
-
 namespace OpenRaw {
 
 	class RawData;

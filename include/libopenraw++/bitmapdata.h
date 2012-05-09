@@ -22,8 +22,8 @@
 #ifndef __OPENRAW_BITMAPDATA_H__
 #define __OPENRAW_BITMAPDATA_H__
 
-
-#include <libopenraw/libopenraw.h>
+#include <libopenraw/prefix.h>
+#include <libopenraw/rawdata.h>
 
 
 namespace OpenRaw {

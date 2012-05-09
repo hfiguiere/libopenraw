@@ -1,7 +1,7 @@
 /*
- * libopenraw - libopenraw.h
+ * libopenraw - prefix.h
  *
- * Copyright (C) 2005-2008 Hubert Figuiere
+ * Copyright (C) 2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,24 +18,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 /**
- * @brief the libopenraw public API header
+ * @brief the prefix public API header. Must be top include most of the time.
  * @author Hubert Figuiere <hub@figuiere.net>
  */
 
-#ifndef __LIBOPENRAW_H__
-#define __LIBOPENRAW_H__
+#ifndef __LIBOPENRAW_PREFIX_H__
+#define __LIBOPENRAW_PREFIX_H__
 
-#include <libopenraw/prefix.h>
-
-#include <libopenraw/types.h>
-#include <libopenraw/consts.h>
-#include <libopenraw/cameraids.h>
-#include <libopenraw/io.h>
-#include <libopenraw/thumbnails.h>
-#include <libopenraw/rawdata.h>
-#include <libopenraw/bitmapdata.h>
-#include <libopenraw/rawfile.h>
-#include <libopenraw/debug.h>
-#include <libopenraw/demosaic.h>
+#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+#define OR_DEPRECATED  __attribute__((__deprecated__))
+#else
+#define OR_DEPRECATED
+#endif /* __GNUC__ */
 
 #endif

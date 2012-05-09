@@ -19,7 +19,6 @@
  */
 
 
-#include <libopenraw/libopenraw.h>
 #include <libopenraw++/thumbnail.h>
 
 #include "trace.h"

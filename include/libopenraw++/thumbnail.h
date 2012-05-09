@@ -22,8 +22,6 @@
 #ifndef __OPENRAW_THUMBNAIL_H__
 #define __OPENRAW_THUMBNAIL_H__
 
-
-#include <libopenraw/libopenraw.h>
 #include <libopenraw++/bitmapdata.h>
 
 namespace OpenRaw {
