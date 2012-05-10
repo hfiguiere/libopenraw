@@ -461,37 +461,52 @@ int32_t RawFile::getOrientation()
     return idx;
 }
 
-uint32_t RawFile::countColorMatrices()
-{
-    return 1;
-}
-uint32_t RawFile::colorMatrixSize()
+uint32_t RawFile::colourMatrixSize()
 {
     return 9;
 }
 
-::or_error RawFile::getColorMatrix(uint32_t index, double* matrix)
+::or_error RawFile::getColourMatrix1(double* matrix, uint32_t & size)
+{
+    return _getColourMatrix(1, matrix, size);
+}
+
+::or_error RawFile::getColourMatrix2(double* matrix, uint32_t & size)
+{
+    return _getColourMatrix(2, matrix, size);
+}
+
+::or_error RawFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
 {
     int32_t meta_index = 0;
-    if(index == 0) {
+    switch(index) {
+    case 1:
         meta_index = META_NS_TIFF | DNG_TAG_COLORMATRIX1;
-    }
-    else if(index == 1) {
+        break;
+    case 2:
         meta_index = META_NS_TIFF | DNG_TAG_COLORMATRIX2;
-    }
-    else {
-        return OR_ERROR_NOT_FOUND;
+        break;
+    default:
+        size = 0;
+        return OR_ERROR_INVALID_PARAM;
     }
     const MetaValue* meta = getMetaValue(meta_index);
 
     if(!meta) {
+        size = 0;
         return OR_ERROR_NOT_FOUND;
     }
- 
-    // TODO check the count
-    for(int i = 0; i < 9; i++) {
+    uint32_t count = meta->getCount();
+    if(size < count) {
+        // return the expected size
+        size = count;
+        return OR_ERROR_BUF_TOO_SMALL;
+    }
+
+    for(uint32_t i = 0; i < count; i++) {
         matrix[i] = meta->getDouble(i);
     }
+    size = count;
 
     return OR_ERROR_NONE;
 }

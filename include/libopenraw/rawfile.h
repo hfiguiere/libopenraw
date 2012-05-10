@@ -76,11 +76,24 @@ or_rawfile_get_rendered_image(ORRawFileRef rawfile, ORBitmapDataRef rawdata,
 
 /** Get the orientation, This is a convenience method.
  * @param rawfile the RAW file object.
- * @return the orienation using EXIF semantics. If
+ * @return the orientation using EXIF semantics. If
  * there is no orientation attribute, return 0.
  */
 int32_t
 or_rawfile_get_orientation(ORRawFileRef rawfile);
+
+/** Get the colour matrix at index %idx
+ *  @param rawfile The RAW file object
+ *  @param idx The index of the matrix
+ *  @param matrix The storage array for the matrix
+ *  @param size The size of the %matrix array. On output the actual size of the matrix.
+ *  @return error code.
+ */
+or_error 
+or_rawfile_get_colourmatrix1(ORRawFileRef rawfile, double* matrix, uint32_t* size);
+
+or_error 
+or_rawfile_get_colourmatrix2(ORRawFileRef rawfile, double* matrix, uint32_t* size);
 
 #if 0
 /** Get the metadata value

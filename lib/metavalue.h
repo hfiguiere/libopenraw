@@ -49,7 +49,7 @@ public:
     explicit MetaValue(const std::vector<value_t> &v);
     explicit MetaValue(const Internals::IfdEntry::Ref & e);
 
-    int getCount() const
+    uint32_t getCount() const
         {
             return m_values.size();
         }

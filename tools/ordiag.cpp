@@ -227,27 +227,29 @@ public:
             m_out << boost::format("\t\tOrientation: %1%\n")
                 % o;
             double matrix[9];
-            ::or_error err = rf->getColorMatrix(0, matrix);
+            uint32_t size = 9;
+            ::or_error err = rf->getColourMatrix1(matrix, size);
             if(err == OR_ERROR_NONE) {
-                m_out << boost::format("\t\tColor Matrix 1: %1%, %2%, %3%, "
+                m_out << boost::format("\t\tColour Matrix 1: %1%, %2%, %3%, "
                                        "%4%, %5%, %6%, %7%, %8%, %9%\n")
                     % matrix[0] % matrix[1] % matrix[2]
                     % matrix[3] % matrix[4] % matrix[5]
                     % matrix[6] % matrix[7] % matrix[8];
             }
             else {
-                m_out << "\t\tNo Color Matrix 1\n";
+                m_out << "\t\tNo Colour Matrix 1\n";
             }
-            err = rf->getColorMatrix(1, matrix);
+            size = 9;
+            err = rf->getColourMatrix2(matrix, size);
             if(err == OR_ERROR_NONE) {
-                m_out << boost::format("\t\tColor Matrix 2: %1%, %2%, %3%, "
+                m_out << boost::format("\t\tColour Matrix 2: %1%, %2%, %3%, "
                                        "%4%, %5%, %6%, %7%, %8%, %9%\n")
                     % matrix[0] % matrix[1] % matrix[2]
                     % matrix[3] % matrix[4] % matrix[5]
                     % matrix[6] % matrix[7] % matrix[8];
             }
             else {
-                m_out << "\t\tNo Color Matrix 2\n";
+                m_out << "\t\tNo Colour Matrix 2\n";
             }
         }
     void operator()(const std::string &s)

@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.h
  *
- * Copyright (C) 2005-2006,2012 Hubert Figuiere
+ * Copyright (C) 2005-2006, 2012 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -118,17 +118,19 @@ public:
     int32_t getOrientation();
 
     /**
-     * Count the color matrices.
-     * @return the number of color matrices. Usually just 1. 
+     * @return the number of ites in the colour matrix.
      */
-    uint32_t countColorMatrices();
-    uint32_t colorMatrixSize();
+    uint32_t colourMatrixSize();
 
-    /** Get color matrix (aka the white balance coefficients)
-     * @param the index. Usually 0.
-     * @param [out] an array 9 double. BEWARE: the size must be at least 9 double
+    /** Get colour matrix
+     * @param index The matrix index.
+     * @param [out] matrix an array of %size double.
+     * @param size the size of the buffer. On out the actual size. If it is too 
+     * small the size is adjusted and an error %OR_ERROR_BUF_TOO_SMALL returned.
+     * @return an error code.
      */
-    ::or_error getColorMatrix(uint32_t index, double* matrix);
+    ::or_error getColourMatrix1(double* matrix, uint32_t & size);
+    ::or_error getColourMatrix2(double* matrix, uint32_t & size);
 
     const MetaValue *getMetaValue(int32_t meta_index);
 protected:
@@ -187,6 +189,7 @@ private:
     static const camera_ids_t* _lookupCameraId(const camera_ids_t * map, 
                                                const std::string& value);
 
+    ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
 
     RawFile(const RawFile&);
     RawFile & operator=(const RawFile &);

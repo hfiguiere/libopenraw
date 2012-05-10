@@ -20,6 +20,7 @@
  */
 
 #include <assert.h>
+#include <string.h>
 
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/rawfile.h>
@@ -44,6 +45,9 @@ public:
 
     std::vector<uint16_t> slices; /** all the slice width. */
 
+    double colourMatrix[12];
+    uint32_t colourMatrixCount;
+
     Private(RawData *_self)
         :	self(_self), 
                 min(0), max(0),
@@ -52,8 +56,10 @@ public:
                 pos(NULL), offset(0),
                 row_offset(0),
                 slice(0), sliceWidth(0),
-                sliceOffset(0), slices()
+                sliceOffset(0), slices(),
+                colourMatrixCount(0)
         {
+            memset(colourMatrix, 0, sizeof(colourMatrix));
         }
     void advance(size_t s);
     void nextSlice();
@@ -127,7 +133,10 @@ RawData::~RawData()
 	 * algorithm */
 	bimedian_demosaic(src, _x, _y, pattern, dst, out_x, out_y);
 	bitmapdata.setDimensions(out_x, out_y);
-	
+
+        // correct colour using the colour matrices
+        // TODO
+
 	return OR_ERROR_NONE;
 }
 	
@@ -151,6 +160,23 @@ void RawData::setMin(uint16_t m)
 void RawData::setMax(uint16_t m)
 {
     d->max = m;
+}
+
+const double* RawData::getColourMatrix1(uint32_t & matrixSize) const
+{
+    matrixSize = d->colourMatrixCount;
+    return d->colourMatrix;
+}
+
+void RawData::setColourMatrix1(const double* matrix, uint32_t matrixSize)
+{
+    if(matrixSize > 12) {
+        matrixSize = 12;
+    }
+    for(uint32_t i = 0; i < 12; i++) {
+        d->colourMatrix[i] = matrix[i];
+    }
+    d->colourMatrixCount = matrixSize;
 }
 
 void RawData::swap(RawData & with)

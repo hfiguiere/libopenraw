@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.cpp
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007, 2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -110,6 +110,24 @@ or_rawfile_get_orientation(ORRawFileRef rawfile)
 	RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
 	CHECK_PTR(rawfile, 0);
 	return prawfile->getOrientation();
+}
+
+or_error 
+or_rawfile_get_colourmatrix1(ORRawFileRef rawfile, double* matrix, uint32_t* size)
+{
+	RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
+	CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
+	CHECK_PTR(size, OR_ERROR_INVALID_PARAM);
+	return prawfile->getColourMatrix1(matrix, *size);
+}
+
+or_error 
+or_rawfile_get_colourmatrix2(ORRawFileRef rawfile, double* matrix, uint32_t* size)
+{
+	RawFile * prawfile = reinterpret_cast<RawFile *>(rawfile);
+	CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
+	CHECK_PTR(size, OR_ERROR_INVALID_PARAM);
+	return prawfile->getColourMatrix2(matrix, *size);
 }
 
 }

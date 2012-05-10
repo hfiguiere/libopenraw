@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.h
  *
- * Copyright (C) 2007-2008 Hubert Figuiere
+ * Copyright (C) 2007-2008, 2012 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -53,7 +53,23 @@ public:
     uint16_t min();
     uint16_t max();
     void setMin(uint16_t _m);
-    void setMax(uint16_t _m);		
+    void setMax(uint16_t _m);
+
+    /** Get colour matrix 1
+     * @param index The matrix index.
+     * @param size the size of the buffer.
+     * @return an array of %size double.
+     */
+    const double* getColourMatrix1(uint32_t & size) const;
+    void setColourMatrix1(const double* matrix, uint32_t size);
+
+    /** Get colour matrix 2
+     * @param index The matrix index.
+     * @param size the size of the buffer.
+     * @return an array of %size double.
+     */
+    const double* getColourMatrix2(uint32_t & size) const;
+    void setColourMatrix2(const double* matrix, uint32_t size);
 
     /** swap the two objects data. */
     void swap(RawData & with);
