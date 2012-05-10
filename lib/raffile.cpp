@@ -24,6 +24,7 @@
 #include <libopenraw/cameraids.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
+#include <libopenraw++/rawfile.h>
 
 #include "rawfile_private.h"
 #include "raffile.h"

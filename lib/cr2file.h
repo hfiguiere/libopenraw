@@ -46,6 +46,8 @@ namespace OpenRaw {
 			virtual IfdDir::Ref  _locateCfaIfd();
 			virtual IfdDir::Ref  _locateMainIfd();
 
+			virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
+
 		private:
 			
 			Cr2File(const Cr2File&);
@@ -60,3 +62,12 @@ namespace OpenRaw {
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

@@ -582,6 +582,33 @@ void RawFile::_setIdMap(const camera_ids_t *map)
     d->m_cam_ids = map;
 }
 
+namespace Internals {
+
+::or_error
+getBuiltinColourMatrix(const BuiltinColourMatrix* m, RawFile::TypeId type_id,
+                                              double* matrix,
+                                              uint32_t & size)
+{
+    if(size < 9) {
+        return OR_ERROR_BUF_TOO_SMALL;
+    }
+
+    while(m->camera) {
+        if(m->camera == type_id) {
+            for(int i = 0; i < 9; i++) {
+                matrix[i] = static_cast<double>(m->matrix[i]) / 10000.0;
+            }
+            size = 9;
+            return OR_ERROR_NONE;
+        }
+        ++m;
+    }
+    size = 0;
+    return OR_ERROR_NOT_FOUND;
+}
+
+}
+
 }
 
 /*

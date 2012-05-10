@@ -56,6 +56,7 @@ namespace OpenRaw {
 //			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
+			virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
 			virtual MetaValue *_getMetaValue(int32_t meta_index);
 
 			virtual void _identifyId();

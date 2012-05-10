@@ -175,6 +175,10 @@ protected:
      */
     virtual ::or_error _getRawData(RawData & data, uint32_t options) = 0;
 
+    /** get the colour matrix.
+     * @param index 1 or 2
+     */
+    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 
     TypeId _typeIdFromModel(const std::string& make, const std::string & model);
@@ -189,7 +193,6 @@ private:
     static const camera_ids_t* _lookupCameraId(const camera_ids_t * map, 
                                                const std::string& value);
 
-    ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
 
     RawFile(const RawFile&);
     RawFile & operator=(const RawFile &);

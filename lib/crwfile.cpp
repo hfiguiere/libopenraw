@@ -50,29 +50,46 @@ namespace Internals {
 
 using namespace CIFF;
 
+#define OR_MAKE_CANON_TYPEID(camid) \
+    OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,camid)
+
+/* taken from dcraw, by default */
+static const BuiltinColourMatrix s_matrices[] = {
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_D30), 0, 0,
+	{ 9805,-2689,-1312,-5803,13064,3068,-2438,3075,8775 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_D60), 0, 0xfa0,
+	{ 6188,-1341,-890,-7168,14489,2937,-2640,3228,8483 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_10D), 0, 0xfa0,
+	{ 8197,-2000,-1118,-6714,14335,2592,-2536,3178,8266 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_300D), 0, 0xfa0,
+	{ 8197,-2000,-1118,-6714,14335,2592,-2536,3178,8266 } },
+//    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G1), 0, 0,
+//	{ -4778,9467,2172,4743,-1141,4344,-5146,9908,6077,-1566,11051,557 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G2), 0, 0,
+	{ 9087,-2693,-1049,-6715,14382,2537,-2291,2819,7790 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G3), 0, 0,
+	{ 9212,-2781,-1073,-6573,14189,2605,-2300,2844,7664 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G5), 0, 0,
+	{ 9757,-2872,-933,-5972,13861,2301,-1622,2328,7212 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G6), 0, 0,
+	{ 9877,-3775,-871,-7613,14807,3072,-1448,1305,7485 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_PRO1), 0, 0,
+	{ 10062,-3522,-999,-7643,15117,2730,-765,817,7323 } },
+    { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
+};
+
 const RawFile::camera_ids_t CRWFile::s_def[] = {
-    { "Canon EOS D30" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-                                            OR_TYPEID_CANON_D30) },
-    { "Canon EOS D60" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-                                            OR_TYPEID_CANON_D60) },
-    { "Canon EOS 10D" , OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-                                            OR_TYPEID_CANON_10D) },
-    { "Canon EOS 300D DIGITAL", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-													OR_TYPEID_CANON_300D) },
-    { "Canon PowerShot G1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-                                                OR_TYPEID_CANON_G1) },
-    { "Canon PowerShot G2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-                                                OR_TYPEID_CANON_G2) },
-    { "Canon PowerShot G3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-                                                OR_TYPEID_CANON_G3) },
-    { "Canon PowerShot G5", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-                                                OR_TYPEID_CANON_G5) },
-    { "Canon PowerShot G6", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-                                                OR_TYPEID_CANON_G6) },
-    { "Canon PowerShot G7", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-                                                OR_TYPEID_CANON_G7) },
-    { "Canon PowerShot Pro1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,
-                                                  OR_TYPEID_CANON_PRO1) },
+    { "Canon EOS D30" , OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_D30) },
+    { "Canon EOS D60" , OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_D60) },
+    { "Canon EOS 10D" , OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_10D) },
+    { "Canon EOS 300D DIGITAL", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_300D) },
+    { "Canon PowerShot G1", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G1) },
+    { "Canon PowerShot G2", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G2) },
+    { "Canon PowerShot G3", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G3) },
+    { "Canon PowerShot G5", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G5) },
+    { "Canon PowerShot G6", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G6) },
+    { "Canon PowerShot G7", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7) },
+    { "Canon PowerShot Pro1", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_PRO1) },
     { 0, 0 }
 };
 
@@ -328,6 +345,16 @@ void CRWFile::_identifyId()
     catch(...)
     {
     }
+}
+
+::or_error 
+CRWFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
+{
+    if(index != 2) {
+        return OR_ERROR_NOT_FOUND;
+    }
+
+    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }
