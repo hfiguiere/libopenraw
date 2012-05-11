@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.h
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2012 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -50,7 +50,7 @@ namespace OpenRaw {
 			virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-
+			virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
 		private:
 
 			MRWFile(const MRWFile&);
