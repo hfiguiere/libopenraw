@@ -85,53 +85,51 @@ const struct IfdFile::camera_ids_t PEFFile::s_def[] = {
 };
 
 
-		RawFile *PEFFile::factory(IO::Stream *s)
-		{
-			return new PEFFile(s);
-		}
+RawFile *PEFFile::factory(IO::Stream *s)
+{
+    return new PEFFile(s);
+}
 
-		PEFFile::PEFFile(IO::Stream *s)
-			: IfdFile(s, OR_RAWFILE_TYPE_PEF)
-		{
-			_setIdMap(s_def);
-		}
+PEFFile::PEFFile(IO::Stream *s)
+    : IfdFile(s, OR_RAWFILE_TYPE_PEF)
+{
+    _setIdMap(s_def);
+}
 
+PEFFile::~PEFFile()
+{
+}
 
-		PEFFile::~PEFFile()
-		{
-		}
+IfdDir::Ref  PEFFile::_locateCfaIfd()
+{
+    // in PEF the CFA IFD is the main IFD
+    return mainIfd();
+}
 
-		IfdDir::Ref  PEFFile::_locateCfaIfd()
-		{
-			// in PEF the CFA IFD is the main IFD
-			return mainIfd();
-		}
+IfdDir::Ref  PEFFile::_locateMainIfd()
+{
+    return m_container->setDirectory(0);
+}
 
-
-		IfdDir::Ref  PEFFile::_locateMainIfd()
-		{
-			return m_container->setDirectory(0);
-		}
-
-		::or_error PEFFile::_getRawData(RawData & data, uint32_t options)
-		{
-			::or_error err;
-			const IfdDir::Ref & _cfaIfd = cfaIfd();
-			err = _getRawDataFromDir(data, _cfaIfd);
-			if(err == OR_ERROR_NONE) {
-                uint16_t compression = data.compression();
-                switch(compression) {
-                case IFD::COMPRESS_CUSTOM:
-                    if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-                        // TODO decompress
-                    }
-					break;
-				default:
-					break;
-				}
-			}
-			return err;
-		}
+::or_error PEFFile::_getRawData(RawData & data, uint32_t options)
+{
+    ::or_error err;
+    const IfdDir::Ref & _cfaIfd = cfaIfd();
+    err = _getRawDataFromDir(data, _cfaIfd);
+    if(err == OR_ERROR_NONE) {
+        uint16_t compression = data.compression();
+        switch(compression) {
+        case IFD::COMPRESS_CUSTOM:
+            if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
+                // TODO decompress
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    return err;
+}
 
 ::or_error 
 PEFFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
@@ -143,7 +141,7 @@ PEFFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
     return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
-	}
+}
 }
 /*
   Local Variables:

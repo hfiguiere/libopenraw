@@ -18,9 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #ifndef __PEFFILE_H_
 #define __PEFFILE_H_
 
@@ -28,35 +25,35 @@
 
 namespace OpenRaw {
 
-	class Thumbnail;
+class Thumbnail;
 
-	namespace Internals {
-		class IOFile;
-		class IFDFileContainer;
+namespace Internals {
+class IOFile;
+class IFDFileContainer;
 
-		class PEFFile
-			: public IfdFile
-		{
-		public:
-			static RawFile *factory(IO::Stream *s);
-			PEFFile(IO::Stream *);
-			virtual ~PEFFile();
+class PEFFile
+    : public IfdFile
+{
+public:
+    static RawFile *factory(IO::Stream *s);
+    PEFFile(IO::Stream *);
+    virtual ~PEFFile();
+    
+protected:
+    virtual IfdDir::Ref  _locateCfaIfd();
+    virtual IfdDir::Ref  _locateMainIfd();
+    
+    virtual ::or_error _getRawData(RawData & data, uint32_t options);
+    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
+private:
+    
+    PEFFile(const PEFFile&);
+    PEFFile & operator=(const PEFFile &);
+    
+    static const IfdFile::camera_ids_t s_def[];
+};
 
-		protected:
-			virtual IfdDir::Ref  _locateCfaIfd();
-			virtual IfdDir::Ref  _locateMainIfd();
-
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-                    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
-		private:
-
-			PEFFile(const PEFFile&);
-			PEFFile & operator=(const PEFFile &);
-
-			static const IfdFile::camera_ids_t s_def[];
-		};
-	}
-
+}
 }
 
 #endif

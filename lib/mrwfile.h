@@ -29,37 +29,46 @@
 
 namespace OpenRaw {
 
-	class Thumbnail;
+class Thumbnail;
 
-	namespace Internals {
+namespace Internals {
 
-		class MRWFile
-			: public IfdFile
-		{
-		public:
-			static RawFile *factory(IO::Stream* _filename);
-			MRWFile(IO::Stream* _filename);
-			virtual ~MRWFile();
+class MRWFile
+    : public IfdFile
+{
+public:
+    static RawFile *factory(IO::Stream* _filename);
+    MRWFile(IO::Stream* _filename);
+    virtual ~MRWFile();
+    
+protected:
+    virtual IfdDir::Ref  _locateCfaIfd();
+    virtual IfdDir::Ref  _locateMainIfd();
 
-		protected:
-			virtual IfdDir::Ref  _locateCfaIfd();
-			virtual IfdDir::Ref  _locateMainIfd();
+    virtual void _identifyId();
+    
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
+    virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+    virtual ::or_error _getRawData(RawData & data, uint32_t options);
+    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
+private:
+    
+    MRWFile(const MRWFile&);
+    MRWFile & operator=(const MRWFile&);
+    
+    static const struct IfdFile::camera_ids_t s_def[];
+};
 
-			virtual void _identifyId();
-			
-			virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
-			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-			virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
-		private:
-
-			MRWFile(const MRWFile&);
-			MRWFile & operator=(const MRWFile&);
-
-			static const struct IfdFile::camera_ids_t s_def[];
-		};
-	}
-
+}
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

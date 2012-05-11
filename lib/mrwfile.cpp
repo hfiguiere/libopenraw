@@ -68,28 +68,28 @@ static const BuiltinColourMatrix s_matrices[] = {
 };
 
 const struct IfdFile::camera_ids_t MRWFile::s_def[] = {
-	{ "21860002", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_MAXXUM_5D) },
-	{ "21810002", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_MAXXUM_7D) },
-	{ "27730001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_DIMAGE5) },
-	{ "27660001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_DIMAGE7) },
-	{ "27790001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_DIMAGE7I) },
-	{ "27780001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_DIMAGE7HI) },
-	{ "27820001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_A1) },
-	{ "27200001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_A2) },
-	{ "27470002", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_A200) },
-	{ 0, 0 }
+    { "21860002", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_MAXXUM_5D) },
+    { "21810002", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_MAXXUM_7D) },
+    { "27730001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_DIMAGE5) },
+    { "27660001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_DIMAGE7) },
+    { "27790001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_DIMAGE7I) },
+    { "27780001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_DIMAGE7HI) },
+    { "27820001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_A1) },
+    { "27200001", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_A2) },
+    { "27470002", OR_MAKE_MINOLTA_TYPEID(OR_TYPEID_MINOLTA_A200) },
+    { 0, 0 }
 };
 
 RawFile *MRWFile::factory(IO::Stream *_f)
 {
-	return new MRWFile(_f);
+    return new MRWFile(_f);
 }
 
 MRWFile::MRWFile(IO::Stream* _f)
-	: IfdFile(_f, OR_RAWFILE_TYPE_MRW, false)
+    : IfdFile(_f, OR_RAWFILE_TYPE_MRW, false)
 {
-	_setIdMap(s_def);
-	m_container = new MRWContainer (m_io, 0);
+    _setIdMap(s_def);
+    m_container = new MRWContainer (m_io, 0);
 }
 
 MRWFile::~MRWFile()
@@ -98,107 +98,107 @@ MRWFile::~MRWFile()
 
 IfdDir::Ref  MRWFile::_locateCfaIfd()
 {
-	// in MRW the CFA IFD is the main IFD
-	return mainIfd();
+    // in MRW the CFA IFD is the main IFD
+    return mainIfd();
 }
 
 
 IfdDir::Ref  MRWFile::_locateMainIfd()
 {
-	return m_container->setDirectory(0);
+    return m_container->setDirectory(0);
 }
 
 
 void MRWFile::_identifyId()
 {
-	MRWContainer *mc = (MRWContainer *)m_container;
-	
-	// it is important that the main IFD be loaded.
-	// this ensures it.
-	const IfdDir::Ref & _mainIfd = mainIfd();
-
-	if(_mainIfd && mc->prd) {
-		std::string version = mc->prd->string_val(MRW::PRD_VERSION);
-		_setTypeId(_typeIdFromModel("Minolta", version));
-	}
+    MRWContainer *mc = (MRWContainer *)m_container;
+    
+    // it is important that the main IFD be loaded.
+    // this ensures it.
+    const IfdDir::Ref & _mainIfd = mainIfd();
+    
+    if(_mainIfd && mc->prd) {
+        std::string version = mc->prd->string_val(MRW::PRD_VERSION);
+        _setTypeId(_typeIdFromModel("Minolta", version));
+    }
 }
 
 
 /* This code only knows about Dimage 5/7, in which the thumbnail position is special. */
 ::or_error MRWFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
-	::or_error err = OR_ERROR_NOT_FOUND;
-	list.push_back (640);
-	err = OR_ERROR_NONE;
-	return err;
+    ::or_error err = OR_ERROR_NOT_FOUND;
+    list.push_back (640);
+    err = OR_ERROR_NONE;
+    return err;
 }
 
 /* This code only knows about Dimage 5/7, in which the thumbnail position is special. */
 ::or_error MRWFile::_getThumbnail(uint32_t /*size*/, Thumbnail & thumbnail)
 {
-	IfdDir::Ref dir;
-	IfdEntry::Ref maker_ent;	/* Make note directory entry. */
-	IfdEntry::Ref thumb_ent;	/* Thumbnail data directory entry. */
-	::or_error ret = OR_ERROR_NOT_FOUND;
-	MRWContainer *mc = (MRWContainer *)m_container;
-	
-	dir = _locateExifIfd();
-	if (!dir) {
-		Trace(WARNING) << "EXIF dir not found\n";
-		return ret;
-	}
-
-	maker_ent = dir->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
-	if (!maker_ent) {
-		Trace(WARNING) << "maker note offset entry not found\n";
-		return ret;
-	}
-	uint32_t off = 0;
-	off = maker_ent->offset();
-
-	IfdDir::Ref ref(new IfdDir(mc->ttw->offset() + 
-							   MRW::DataBlockHeaderLength + off, 
-							   *m_container));
-	ref->load();
-	
-	uint32_t tnail_offset = 0;
-	uint32_t tnail_len = 0;
-	thumb_ent = ref->getEntry(MRW::MRWTAG_THUMBNAIL);
-	if (thumb_ent) {
-		tnail_offset = thumb_ent->offset();
-		tnail_len = thumb_ent->count();
-	}
-	else if(ref->getValue(MRW::MRWTAG_THUMBNAIL_OFFSET, tnail_offset)) {
-		if(!ref->getValue(MRW::MRWTAG_THUMBNAIL_LENGTH, tnail_len)) {
-			Trace(WARNING) << "thumbnail lenght entry not found\n";
-			return ret;
-		}
-	}
-	else 
-	{
-		Trace(WARNING) << "thumbnail offset entry not found\n";
-		return ret;
-	}
-	
-	Trace(DEBUG1) << "thumbnail offset found, "
-				  << " offset == " << tnail_offset  << " count == " 
-				  << tnail_len << "\n";
-	void *p = thumbnail.allocData (tnail_len);
-	size_t fetched = m_container->fetchData(p, mc->ttw->offset() 
-											+ MRW::DataBlockHeaderLength 
-											+ tnail_offset, 
-											tnail_len);
-	if (fetched != tnail_len) {
-		Trace(WARNING) << "Unable to fetch all thumbnail data: " 
-					   << fetched << " not " << tnail_len 
-					   << " bytes\n";
-	}
-	/* Need to patch first byte. */
-	((unsigned char *)p)[0] = 0xFF;
-
-	thumbnail.setDataType (OR_DATA_TYPE_JPEG);
-	thumbnail.setDimensions (640, 480);
-	return OR_ERROR_NONE;
+    IfdDir::Ref dir;
+    IfdEntry::Ref maker_ent;	/* Make note directory entry. */
+    IfdEntry::Ref thumb_ent;	/* Thumbnail data directory entry. */
+    ::or_error ret = OR_ERROR_NOT_FOUND;
+    MRWContainer *mc = (MRWContainer *)m_container;
+    
+    dir = _locateExifIfd();
+    if (!dir) {
+        Trace(WARNING) << "EXIF dir not found\n";
+        return ret;
+    }
+    
+    maker_ent = dir->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
+    if (!maker_ent) {
+        Trace(WARNING) << "maker note offset entry not found\n";
+        return ret;
+    }
+    uint32_t off = 0;
+    off = maker_ent->offset();
+    
+    IfdDir::Ref ref(new IfdDir(mc->ttw->offset() + 
+                               MRW::DataBlockHeaderLength + off, 
+                               *m_container));
+    ref->load();
+    
+    uint32_t tnail_offset = 0;
+    uint32_t tnail_len = 0;
+    thumb_ent = ref->getEntry(MRW::MRWTAG_THUMBNAIL);
+    if (thumb_ent) {
+        tnail_offset = thumb_ent->offset();
+        tnail_len = thumb_ent->count();
+    }
+    else if(ref->getValue(MRW::MRWTAG_THUMBNAIL_OFFSET, tnail_offset)) {
+        if(!ref->getValue(MRW::MRWTAG_THUMBNAIL_LENGTH, tnail_len)) {
+            Trace(WARNING) << "thumbnail lenght entry not found\n";
+            return ret;
+        }
+    }
+    else 
+    {
+        Trace(WARNING) << "thumbnail offset entry not found\n";
+        return ret;
+    }
+    
+    Trace(DEBUG1) << "thumbnail offset found, "
+                  << " offset == " << tnail_offset  << " count == " 
+                  << tnail_len << "\n";
+    void *p = thumbnail.allocData (tnail_len);
+    size_t fetched = m_container->fetchData(p, mc->ttw->offset() 
+                                            + MRW::DataBlockHeaderLength 
+                                            + tnail_offset, 
+                                            tnail_len);
+    if (fetched != tnail_len) {
+        Trace(WARNING) << "Unable to fetch all thumbnail data: " 
+                       << fetched << " not " << tnail_len 
+                       << " bytes\n";
+    }
+    /* Need to patch first byte. */
+    ((unsigned char *)p)[0] = 0xFF;
+    
+    thumbnail.setDataType (OR_DATA_TYPE_JPEG);
+    thumbnail.setDimensions (640, 480);
+    return OR_ERROR_NONE;
 }
 
 
@@ -308,3 +308,12 @@ MRWFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
 
 }
 }
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
