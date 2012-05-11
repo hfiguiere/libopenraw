@@ -1,7 +1,7 @@
 /*
  * libopenraw - erffile.cpp
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,50 +30,77 @@
 #include "ifddir.h"
 #include "ifdentry.h"
 #include "io/file.h"
+#include "rawfile_private.h"
 #include "erffile.h"
 
 using namespace Debug;
 
 namespace OpenRaw {
+namespace Internals {
 
+/* taken from dcraw, by default */
+static const BuiltinColourMatrix s_matrices[] = {
+    { OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON, OR_TYPEID_EPSON_RD1), 0, 0,
+      { 6827,-1878,-732,-8429,16012,2564,-704,592,7145 } },
+    { OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON, OR_TYPEID_EPSON_RD1S), 0, 0,
+      { 6827,-1878,-732,-8429,16012,2564,-704,592,7145 } },
+    { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
+};
 
-	namespace Internals {
+const IfdFile::camera_ids_t ERFFile::s_def[] = {
+    { "R-D1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
+                                  OR_TYPEID_EPSON_RD1) },
+    { "R-D1s", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
+                                   OR_TYPEID_EPSON_RD1S) },			{ 0, 0 }
+};
 
-		const IfdFile::camera_ids_t ERFFile::s_def[] = {
-			{ "R-D1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
-										   OR_TYPEID_EPSON_RD1) },
-			{ 0, 0 }
-		};
-
-
-		RawFile *ERFFile::factory(IO::Stream *s)
-		{
-			return new ERFFile(s);
-		}
-
-		ERFFile::ERFFile(IO::Stream *s)
-			: TiffEpFile(s, OR_RAWFILE_TYPE_ERF)
-		{
-			_setIdMap(s_def);
-		}
-
-
-		ERFFile::~ERFFile()
-		{
-		}
-
-		::or_error ERFFile::_getRawData(RawData & data, uint32_t /*options*/)
-		{
-			::or_error err;
-			const IfdDir::Ref & _cfaIfd = cfaIfd();
-			if(_cfaIfd) {
-				err = _getRawDataFromDir(data, _cfaIfd);
-			}
-			else {
-				err = OR_ERROR_NOT_FOUND;
-			}
-			return err;
-		}
-	}
+RawFile *ERFFile::factory(IO::Stream *s)
+{
+    return new ERFFile(s);
 }
 
+ERFFile::ERFFile(IO::Stream *s)
+    : TiffEpFile(s, OR_RAWFILE_TYPE_ERF)
+{
+    _setIdMap(s_def);
+}
+
+ERFFile::~ERFFile()
+{
+}
+
+::or_error ERFFile::_getRawData(RawData & data, uint32_t /*options*/)
+{
+    ::or_error err;
+    const IfdDir::Ref & _cfaIfd = cfaIfd();
+    if(_cfaIfd) {
+        err = _getRawDataFromDir(data, _cfaIfd);
+    }
+    else {
+        err = OR_ERROR_NOT_FOUND;
+    }
+    return err;
+}
+
+::or_error 
+ERFFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
+{
+    if(index != 2) {
+        return OR_ERROR_NOT_FOUND;
+    }
+
+    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
+}
+
+}
+}
+
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

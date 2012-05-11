@@ -1,7 +1,7 @@
 /*
  * libopenraw - erffile.h
  *
- * Copyright (C) 2007-2008 Hubert Figuiere
+ * Copyright (C) 2007-2008,2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,32 +28,42 @@
 
 namespace OpenRaw {
 
-	class Thumbnail;
+class Thumbnail;
 
-	namespace Internals {
-		class IOFile;
-		class IFDFileContainer;
+namespace Internals {
+class IOFile;
+class IFDFileContainer;
 
-		class ERFFile
-			: public TiffEpFile
-		{
-		public:
-			static RawFile *factory(IO::Stream *);
-			ERFFile(IO::Stream *);
-			virtual ~ERFFile();
+class ERFFile
+    : public TiffEpFile
+{
+public:
+    static RawFile *factory(IO::Stream *);
+    ERFFile(IO::Stream *);
+    virtual ~ERFFile();
+    
+protected:
+    virtual ::or_error _getRawData(RawData & data, uint32_t options);
 
-		protected:
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);
+    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
+private:
+    
+    ERFFile(const ERFFile&);
+    ERFFile & operator=(const ERFFile &);
+    
+    static const IfdFile::camera_ids_t s_def[];
+};
 
-		private:
-
-			ERFFile(const ERFFile&);
-			ERFFile & operator=(const ERFFile &);
-
-			static const IfdFile::camera_ids_t s_def[];
-		};
-	}
-
+}
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
