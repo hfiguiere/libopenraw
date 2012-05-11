@@ -2,7 +2,7 @@ libopenraw 0.1.0
 
 New features:
 
-  - Color Matrices support for DNG.
+  - Color Matrices support.
   - API: or_rawdata_get_rendered_image()
   - API: or_rawdata_set_cfa_pattern()
   - Get the default crop in CR2, CRW and DNG.
@@ -26,6 +26,7 @@ New features:
   - Support for Nikon NRW: P6000, P7000 and P7100 (partial).
   - Support for Panasonic RAW and RW2.
   - Support for FujiFilm RAF.
+  - Support for Epson R-D1s.
   - Nicer display of the type ID in ordiag.
   - API: mark deprecated APIs.
   - API: or_rawdata_get_roi() to get the region of interest from the RAW data.

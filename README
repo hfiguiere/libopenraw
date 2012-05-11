@@ -75,7 +75,7 @@ Support table:
                          | | | | | | /  Color Matrices
                          | | | | | | | /
                          | | | | | | | |
-Canon CR2                Y Y Y Y Y Y Y N
+Canon CR2                Y Y Y Y Y Y Y Y
  1000D/Rebel XS          T T T T T T T
  1100D/Rebel T3          T T T T T T T
  20D                     T T T T T T T
@@ -106,7 +106,7 @@ Canon CR2                Y Y Y Y Y Y Y N
  S95                     T T T T T T T
  S100
 
-Canon CRW                Y Y Y Y Y Y N N
+Canon CRW                Y Y Y Y Y Y N Y
  300D                    T T T T T T
  10D                     T T T   T T
  D60                     T T T   T T
@@ -156,7 +156,7 @@ Nikon NRW                Y         Y N N
  P7000                   T         T
  P7100
 
-Olympus ORF              Y Y B Y Y Y N N
+Olympus ORF              Y Y B Y Y Y N Y
  E-1                     T T T   T T
  E-10                    T B B     T
  E-3                     T T T   T T
@@ -222,25 +222,31 @@ Sony ARW                 Y Y N Y N Y N N
  Nex-C3                  T T       T
  Nex-7
 
-Pentax PEF               Y Y N Y Y Y N N
+Pentax PEF               Y Y N Y Y Y N Y
  *-ist D                 T T X X T T
  *-ist DL                T T N     T
  K10D                    T T N T T T
  K100D                   # # # # # T #
  K100D Super             T T N     T
  K20D                    T T N T   T
+ K-r                               T   T
+ K-x                               T   T
+ K-5                               T   T
+ K-7                               T   T
+ 645D                              T   T
 
-Epson ERF                Y Y Y Y Y Y N N
- Epson RD1               T T T T T T
+Epson ERF                Y Y Y Y Y Y N Y
+ Epson RD1               T T T T T T   Y
+ Epson RD1s                            Y
 
-Minolta MRW              Y Y B N Y Y N N
- A1                      T T T X T 
- A2                      T T T X T 
- Dimage 5                T T X X T T
- Dimage 7i               T T X X T T
- Dimage 7Hi              T T X X T T
- Maxxum 5D               T T T N T
- Maxxum 7D               T T T N T
+Minolta MRW              Y Y B N Y Y N Y
+ A1                      T T T X T     Y
+ A2                      T T T X T     Y
+ Dimage 5                T T X X T T   Y
+ Dimage 7i               T T X X T T   Y
+ Dimage 7Hi              T T X X T T   Y
+ Maxxum 5D               T T T N T     Y
+ Maxxum 7D               T T T N T     Y
  A200                    
 
 Sony SRF                 N N N N N N N N
@@ -252,7 +258,7 @@ Kodak DCR                N N N N N N N N
 
 Kodak KDC                N N N N N N N N
 
-FujiFilm RAF             Y Y B N N Y N N
+FujiFilm RAF             Y Y B N N Y N T
  Finepix S2Pro           T         T
  Finepix S3Pro           T         T
  Finepix S5Pro           T         T
@@ -263,8 +269,8 @@ FujiFilm RAF             Y Y B N N Y N N
  Finepix F700            T         T
  Finepix E900            T         T
  X10                     T         T
- X-Pro1                  T         T
- X-S1                    T         T
+ X-Pro1                  T         T   N
+ X-S1                    T         T   N
  Finepix S200 EXR        T         T
 
 Foveon X3F               N N N N N N N N
@@ -282,7 +288,7 @@ Panasonic RAW            Y Y N Y Y Y Y N
  Leica VLUX 1            N T X T   T T
 
 Panasonic RW2            Y Y N Y Y Y Y N
- GF1                     T T      T T
+ GF1                     T T       T T
  GF2                     T T       T T
  GH1                     T T       T T
  GH2                     T T N     T T
