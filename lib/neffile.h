@@ -1,7 +1,7 @@
 /*
  * libopenraw - neffile.h
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2012 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -57,7 +57,9 @@ public:
 protected:
     
     virtual MakerNoteDir::Ref  _locateMakerNoteIfd();
-    
+
+    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
+
 private:
     
     NefFile(const NefFile&);
