@@ -25,6 +25,8 @@
 
 #include <map>
 
+#include <libopenraw++/rawfile.h>
+
 namespace OpenRaw {
 namespace Internals {
 
