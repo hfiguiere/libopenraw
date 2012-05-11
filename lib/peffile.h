@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.h
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -47,7 +47,7 @@ namespace OpenRaw {
 			virtual IfdDir::Ref  _locateMainIfd();
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-
+                    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
 		private:
 
 			PEFFile(const PEFFile&);
@@ -60,3 +60,12 @@ namespace OpenRaw {
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
