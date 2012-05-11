@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.cpp
  *
- * Copyright (C) 2006,2008,2011 Hubert Figuiere
+ * Copyright (C) 2006,2008,2011,2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,6 +26,7 @@
 #include "ifdfilecontainer.h"
 #include "ifd.h"
 #include "arwfile.h"
+#include "rawfile_private.h"
 
 using namespace Debug;
 
@@ -34,49 +35,76 @@ namespace OpenRaw {
 
 namespace Internals {
 
+#define OR_MAKE_SONY_TYPEID(camid) \
+    OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,camid)
+
+/* taken from dcraw, by default */
+static const BuiltinColourMatrix s_matrices[] = {
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A100), 0, 0xfeb,
+      { 9437,-2811,-774,-8405,16215,2290,-710,596,7181 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A200), 0, 0,
+      { 9847,-3091,-928,-8485,16345,2225,-715,595,7103 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A380), 0, 0,
+      { 6038,-1484,-579,-9145,16746,2512,-875,746,7218 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A390), 0, 0,
+      { 6038,-1484,-579,-9145,16746,2512,-875,746,7218 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A550), 128, 0xfeb,
+      { 4950,-580,-103,-5228,12542,3029,-709,1435,7371 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A560), 128, 0xfeb,
+      { 4950,-580,-103,-5228,12542,3029,-709,1435,7371 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A700), 126, 0,
+      { 5775,-805,-359,-8574,16295,2391,-1943,2341,7249 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A850), 128, 0,
+      { 5413,-1162,-365,-5665,13098,2866,-608,1179,8440 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A900), 128, 0,
+      { 5209,-1072,-397,-8845,16120,2919,-1618,1803,8654 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA33), 128, 0,
+      { 6069,-1221,-366,-5221,12779,2734,-1024,2066,6834 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA35), 128, 0,
+      { 5986,-1618,-415,-4557,11820,3120,-681,1404,6971 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA55), 128, 0,
+      { 5932,-1492,-411,-4813,12285,2856,-741,1524,6739 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA65), 128, 0,
+      { 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA77), 128, 0,
+      { 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX3), 128, 0,	/* Adobe */
+      { 6549,-1550,-436,-4880,12435,2753,-854,1868,6976 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5), 128, 0,	/* Adobe */
+      { 6549,-1550,-436,-4880,12435,2753,-854,1868,6976 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5N), 128, 0,
+      { 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEXC3), 128, 0,
+      { 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX7), 128, 0,
+      { 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
+
+    { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
+};
+
 const IfdFile::camera_ids_t ArwFile::s_def[] = {
-    { "DSLR-A100", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_A100) },
-    { "DSLR-A200", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_A200) },
-    { "DSLR-A380", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_A380) },
-    { "DSLR-A390", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_A390) },
-    { "DSLR-A550", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_A550) },
-    { "DSLR-A560", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_A560) },
-    { "DSLR-A580", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_A580) },
-    { "DSLR-A700", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_A700) },
-    { "DSLR-A850", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_A850) },
-    { "DSLR-A900", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_A900) },
-    { "SLT-A33", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_SLTA33) },
+    { "DSLR-A100", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A100) },
+    { "DSLR-A200", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A200) },
+    { "DSLR-A380", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A380) },
+    { "DSLR-A390", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A390) },
+    { "DSLR-A550", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A550) },
+    { "DSLR-A560", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A560) },
+    { "DSLR-A580", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A580) },
+    { "DSLR-A700", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A700) },
+    { "DSLR-A850", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A850) },
+    { "DSLR-A900", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A900) },
+    { "SLT-A33", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA33) },
     // Likely a pre-release.
-    { "SLT-A00", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_SLTA35) },
-    { "SLT-A55V", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_SLTA55) },
-    { "SLT-A65V", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_SLTA65) },
-    { "SLT-A77V", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_SLTA77) },
-    { "NEX-3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_NEX3) },
-    { "NEX-5", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_NEX5) },
-    { "NEX-5N", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_NEX5N) },
+    { "SLT-A00", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA35) },
+    { "SLT-A55V", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA55) },
+    { "SLT-A65V", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA65) },
+    { "SLT-A77V", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA77) },
+    { "NEX-3", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX3) },
+    { "NEX-5", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5) },
+    { "NEX-5N", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5N) },
     // There are pre-production files with the type NEX-C00....
-    { "NEX-C3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_NEXC3) },
-    { "NEX-7", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,
-                                       OR_TYPEID_SONY_NEX7) },
+    { "NEX-C3", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEXC3) },
+    { "NEX-7", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX7) },
     { 0, 0 }
 };
 
@@ -119,6 +147,16 @@ IfdDir::Ref  ArwFile::_locateMainIfd()
         return OR_ERROR_NOT_FOUND;
     }
     return TiffEpFile::_getRawData(data, options);
+}
+
+::or_error 
+ArwFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
+{
+    if(index != 2) {
+        return OR_ERROR_NOT_FOUND;
+    }
+
+    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }
