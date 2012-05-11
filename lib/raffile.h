@@ -1,7 +1,7 @@
 /*
  * libopenraw - raffile.h
  *
- * Copyright (C) 2011 Hubert Figuiere
+ * Copyright (C) 2011-2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -50,8 +50,11 @@ protected:
   virtual ::or_error _getRawData(RawData & data, uint32_t options);
 	
   virtual MetaValue *_getMetaValue(int32_t /*meta_index*/);
-	
+
   virtual void _identifyId();
+
+  virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
+	
 private:
 	RafFile(const RafFile&);
 	RafFile & operator=(const RafFile&);

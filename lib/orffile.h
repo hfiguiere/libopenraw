@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.h
  *
- * Copyright (C) 2006-2008, 2010 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2010, 2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -51,6 +51,7 @@ namespace OpenRaw {
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 			virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression);
+			virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
 		private:
 			static RawFile::TypeId _typeIdFromModel(const std::string & model);
 
