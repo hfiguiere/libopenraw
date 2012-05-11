@@ -100,5 +100,4 @@ libopenraw_la_SOURCES = \
 	metavalue.cpp \
 	unpack.cpp \
 	bimedian_demosaic.cpp bimedian_demosaic.h \
-	coefficients.cpp \
 	$(NULL)
