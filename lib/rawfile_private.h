@@ -34,8 +34,8 @@ namespace Internals {
 struct BuiltinColourMatrix
 {
   OpenRaw::RawFile::TypeId camera;
-  int16_t black;
-  int16_t maximum;
+  uint16_t black;
+  uint16_t maximum;
   int16_t matrix[9]; // in 1/10,000th
 };
 
