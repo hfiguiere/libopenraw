@@ -119,8 +119,9 @@ Canon CRW CHDK           N N N N N N N N
 (unofficial firmware)
  A610                    N N N N N N N
 
-Nikon NEF                Y Y Y Y Y Y N N
+Nikon NEF                Y Y Y Y Y Y N Y
  D1                      T T X X T T
+ D1H                     # # # # # # # #
  D1X                     T T X X T T
  D100                    T T T X T T
  D2H                     T T Y T T T
@@ -140,6 +141,7 @@ Nikon NEF                Y Y Y Y Y Y N N
  D50                               T
  D5000                   T   B     T
  D5100                   T   B     T
+ D60                     # # # # # # # #
  D70                     T T Y T T T
  D70s                    T T Y T T T
  D700                              T
@@ -151,10 +153,10 @@ Nikon NEF                Y Y Y Y Y Y N N
  J1                      T T B Y Y T
  V1                      T T B Y Y T
 
-Nikon NRW                Y         Y N N
- P6000                   T         T
- P7000                   T         T
- P7100
+Nikon NRW                Y         Y N Y
+ P6000                   T         T   T
+ P7000                   T         T   T
+ P7100                   T             T
 
 Olympus ORF              Y Y B Y Y Y N Y
  E-1                     T T T   T T
@@ -200,7 +202,7 @@ Adobe DNG                Y Y B Y Y Y Y Y
  Ricoh GRX               T T X T T T
  Ricoh GX100
  
-Sony ARW                 Y Y N Y N Y N N
+Sony ARW                 Y Y N Y N Y N Y
  A-100                   T N   T   T
  A-200                   # # # # # T #
  A-550                   T T       T
