@@ -264,6 +264,12 @@ public:
                 % o;
             double matrix[9];
             uint32_t size = 9;
+            
+            ExifLightsourceValue calIll;
+            calIll = rf->getCalibrationIlluminant1();
+            m_out << boost::format("\t\tCalibration Illuminant 1: %1%\n")
+                % static_cast<int>(calIll);
+            
             ::or_error err = rf->getColourMatrix1(matrix, size);
             if(err == OR_ERROR_NONE) {
                 m_out << boost::format("\t\tColour Matrix 1: %1%, %2%, %3%, "
@@ -275,6 +281,11 @@ public:
             else {
                 m_out << "\t\tNo Colour Matrix 1\n";
             }
+
+            calIll = rf->getCalibrationIlluminant2();
+            m_out << boost::format("\t\tCalibration Illuminant 2: %1%\n")
+                % static_cast<int>(calIll);
+
             size = 9;
             err = rf->getColourMatrix2(matrix, size);
             if(err == OR_ERROR_NONE) {

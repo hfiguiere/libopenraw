@@ -510,6 +510,37 @@ uint32_t RawFile::colourMatrixSize()
 
     return OR_ERROR_NONE;
 }
+
+ExifLightsourceValue RawFile::getCalibrationIlluminant1()
+{
+    return _getCalibrationIlluminant(1);
+}
+
+ExifLightsourceValue RawFile::getCalibrationIlluminant2()
+{
+    return _getCalibrationIlluminant(2);
+}
+
+ExifLightsourceValue RawFile::_getCalibrationIlluminant(uint16_t index)
+{
+    int32_t meta_index = 0;
+    switch(index) {
+    case 1:
+        meta_index = META_NS_TIFF | DNG_TAG_CALIBRATION_ILLUMINANT1;
+        break;
+    case 2:
+        meta_index = META_NS_TIFF | DNG_TAG_CALIBRATION_ILLUMINANT2;
+        break;
+    default:
+        return EV_LIGHTSOURCE_UNKNOWN;
+    }
+    const MetaValue* meta = getMetaValue(meta_index);
+
+    if(!meta) {
+        return EV_LIGHTSOURCE_UNKNOWN;
+    }
+    return (ExifLightsourceValue)meta->getInteger(0);
+}
 	
 const MetaValue *RawFile::getMetaValue(int32_t meta_index)
 {

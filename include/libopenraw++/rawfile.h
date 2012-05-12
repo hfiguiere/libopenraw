@@ -132,6 +132,12 @@ public:
     ::or_error getColourMatrix1(double* matrix, uint32_t & size);
     ::or_error getColourMatrix2(double* matrix, uint32_t & size);
 
+    /** Get calibration illuminant that match the colour matrix.
+     * @return the Exif value. 0 = unknown. Likely not found.
+     */
+    ExifLightsourceValue getCalibrationIlluminant1();
+    ExifLightsourceValue getCalibrationIlluminant2();
+
     const MetaValue *getMetaValue(int32_t meta_index);
 protected:
     struct camera_ids_t {
@@ -179,6 +185,7 @@ protected:
      * @param index 1 or 2
      */
     virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
+    virtual ExifLightsourceValue _getCalibrationIlluminant(uint16_t index);
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 
     TypeId _typeIdFromModel(const std::string& make, const std::string & model);

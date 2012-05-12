@@ -47,6 +47,7 @@ namespace OpenRaw {
 			virtual IfdDir::Ref  _locateMainIfd();
 
 			virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
+                    virtual ExifLightsourceValue _getCalibrationIlluminant(uint16_t index);
 
 		private:
 			

@@ -46,6 +46,7 @@ namespace Internals {
     OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON,camid)
 
 /* taken from dcraw, by default */
+/* all relative to the D65 calibration illuminant */
 static const BuiltinColourMatrix s_matrices[] = {
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_1DMKII), 0, 0xe80,
       { 6264, -582, -724, -8312, 15948, 2504, -1744, 1919, 8664 } },
@@ -293,14 +294,20 @@ IfdDir::Ref  Cr2File::_locateMainIfd()
 	return ret;
 }
 
-::or_error 
+::or_error
 Cr2File::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
 {
-    if(index != 2) {
+    if(index != 1) {
         return OR_ERROR_NOT_FOUND;
     }
 
     return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
+}
+
+ExifLightsourceValue 
+Cr2File::_getCalibrationIlluminant(uint16_t index)
+{
+    return index == 1 ? EV_LIGHTSOURCE_D65 : EV_LIGHTSOURCE_UNKNOWN;
 }
 
 }

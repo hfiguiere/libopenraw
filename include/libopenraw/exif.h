@@ -144,14 +144,20 @@ typedef	enum {
 	EXIF_TAG_DEVICE_SETTING_DESCRIPTION	= 0xa40b,
 	EXIF_TAG_SUBJECT_DISTANCE_RANGE		= 0xa40c,
 	EXIF_TAG_IMAGE_UNIQUE_ID		= 0xa420,
-	EXIF_TAG_GAMMA = 0xa500,
-	EXIF_TAG_UNKNOWN_C4A5 = 0xc4a5,
+	EXIF_TAG_GAMMA                          = 0xa500,
+	EXIF_TAG_UNKNOWN_C4A5                   = 0xc4a5,
 	/* DNG tags */
 	TIFF_TAG_DNG_VERSION                     = 0xc612,
 	DNG_TAG_DEFAULT_CROP_ORIGIN              = 0xc61f,
 	DNG_TAG_DEFAULT_CROP_SIZE                = 0xc620,
 	DNG_TAG_COLORMATRIX1                     = 0xc621,
 	DNG_TAG_COLORMATRIX2                     = 0xc622,
+	DNG_TAG_CAMERA_CALIBRATION1              = 0xc623,
+	DNG_TAG_CAMERA_CALIBRATION2              = 0xc624,
+	DNG_TAG_REDUCTION_MATRIX1                = 0xc625,
+	DNG_TAG_REDUCTION_MATRIX2                = 0xc626,
+	DNG_TAG_CALIBRATION_ILLUMINANT1          = 0xc65a,
+	DNG_TAG_CALIBRATION_ILLUMINANT2          = 0xc65b,	
 	
 	/* CR2 tags */
 	CR2_TAG_c5d9 = 0xc5d9,
@@ -177,6 +183,22 @@ typedef	enum {
 	
 	_EXIF_TAG_LAST
 } ExifTag;
+
+
+typedef enum {
+	EV_LIGHTSOURCE_UNKNOWN     = 0,
+	EV_LIGHTSOURCE_DAYLIGHT    = 1,
+	EV_LIGHTSOURCE_FLUORESCENT = 2,
+	EV_LIGHTSOURCE_TUNGSTEN    = 3,
+	EV_LIGHTSOURCE_STANDARD_A  = 17,
+	EV_LIGHTSOURCE_STANDARD_B  = 18,
+	EV_LIGHTSOURCE_STANDARD_C  = 19,
+	EV_LIGHTSOURCE_D55         = 20,
+	EV_LIGHTSOURCE_D65         = 21,
+	EV_LIGHTSOURCE_D75         = 22,
+	/* 23...254 reserved */
+	EV_LIGHTSOURCE_OTHER       = 255
+} ExifLightsourceValue;
 
 
 #ifdef __cplusplus
