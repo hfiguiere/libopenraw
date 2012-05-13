@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.h
  *
- * Copyright (C) 2006, 2008 Hubert Figuiere
+ * Copyright (C) 2006, 2008, 2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,9 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #ifndef __CR2FILE_H_
 #define __CR2FILE_H_
 
@@ -30,36 +27,36 @@
 
 namespace OpenRaw {
 
-	class Thumbnail;
-	
-	namespace Internals {
-		
-		class Cr2File
-			: public IfdFile
-		{
-		public:
-			static RawFile *factory(IO::Stream * s);
-			Cr2File(IO::Stream *s);
-			virtual ~Cr2File();
+class Thumbnail;
 
-		protected:
-			virtual IfdDir::Ref  _locateCfaIfd();
-			virtual IfdDir::Ref  _locateMainIfd();
+namespace Internals {
 
-			virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
-                    virtual ExifLightsourceValue _getCalibrationIlluminant(uint16_t index);
+class Cr2File
+    : public IfdFile
+{
+public:
+    static RawFile *factory(IO::Stream * s);
+    Cr2File(IO::Stream *s);
+    virtual ~Cr2File();
+    
+protected:
+    virtual IfdDir::Ref  _locateCfaIfd();
+    virtual IfdDir::Ref  _locateMainIfd();
+    
+    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
+    virtual ExifLightsourceValue _getCalibrationIlluminant(uint16_t index);
+    
+private:
+    
+    Cr2File(const Cr2File&);
+    Cr2File & operator=(const Cr2File&);
+    
+    virtual ::or_error _getRawData(RawData & data, uint32_t options);
+    
+    static const IfdFile::camera_ids_t s_def[];
+};
 
-		private:
-			
-			Cr2File(const Cr2File&);
-			Cr2File & operator=(const Cr2File&);
-
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-			
-			static const IfdFile::camera_ids_t s_def[];
-		};
-
-	}
+}
 }
 
 #endif
