@@ -51,7 +51,6 @@ namespace OpenRaw {
 
 			virtual ::or_error _getRawData(RawData & data, uint32_t options);
 			virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression);
-			virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
 		private:
 			static RawFile::TypeId _typeIdFromModel(const std::string & model);
 

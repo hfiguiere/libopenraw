@@ -63,6 +63,7 @@ ERFFile::ERFFile(IO::Stream *s)
     : TiffEpFile(s, OR_RAWFILE_TYPE_ERF)
 {
     _setIdMap(s_def);
+    _setMatrices(s_matrices);
 }
 
 ERFFile::~ERFFile()
@@ -80,16 +81,6 @@ ERFFile::~ERFFile()
         err = OR_ERROR_NOT_FOUND;
     }
     return err;
-}
-
-::or_error 
-ERFFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
-{
-    if(index != 2) {
-        return OR_ERROR_NOT_FOUND;
-    }
-
-    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }

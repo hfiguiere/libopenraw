@@ -139,8 +139,9 @@ RawFile *Rw2File::factory(IO::Stream * s)
 Rw2File::Rw2File(IO::Stream * s)
 	: IfdFile(s, OR_RAWFILE_TYPE_RW2, false)
 {
-	_setIdMap(s_def);
-	m_container = new Rw2Container(m_io, 0);
+  _setIdMap(s_def);
+  _setMatrices(s_matrices);
+  m_container = new Rw2Container(m_io, 0);
 }
 
 Rw2File::~Rw2File()
@@ -290,16 +291,6 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 	data.setRoi(x, y, w, h);
 
 	return ret;
-}
-
-::or_error 
-Rw2File::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
-{
-  if(index != 2) {
-    return OR_ERROR_NOT_FOUND;
-  }
-  
-  return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }

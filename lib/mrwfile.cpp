@@ -89,6 +89,7 @@ MRWFile::MRWFile(IO::Stream* _f)
     : IfdFile(_f, OR_RAWFILE_TYPE_MRW, false)
 {
     _setIdMap(s_def);
+    _setMatrices(s_matrices);
     m_container = new MRWContainer (m_io, 0);
 }
 
@@ -294,16 +295,6 @@ void MRWFile::_identifyId()
 	data.setDimensions (x, y);
 
 	return ret; 
-}
-
-::or_error 
-MRWFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
-{
-    if(index != 2) {
-        return OR_ERROR_NOT_FOUND;
-    }
-
-    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }

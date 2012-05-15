@@ -118,6 +118,7 @@ ArwFile::ArwFile(IO::Stream *s)
     : TiffEpFile(s, OR_RAWFILE_TYPE_ARW)
 {
     _setIdMap(s_def);
+    _setMatrices(s_matrices);
 }
 
 ArwFile::~ArwFile()
@@ -147,16 +148,6 @@ IfdDir::Ref  ArwFile::_locateMainIfd()
         return OR_ERROR_NOT_FOUND;
     }
     return TiffEpFile::_getRawData(data, options);
-}
-
-::or_error 
-ArwFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
-{
-    if(index != 2) {
-        return OR_ERROR_NOT_FOUND;
-    }
-
-    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }

@@ -172,7 +172,8 @@ RawFile *Cr2File::factory(IO::Stream * s)
 Cr2File::Cr2File(IO::Stream * s)
 	: IfdFile(s, OR_RAWFILE_TYPE_CR2)
 {
-	_setIdMap(s_def);
+    _setIdMap(s_def);
+    _setMatrices(s_matrices);
 }
 
 Cr2File::~Cr2File()
@@ -292,22 +293,6 @@ IfdDir::Ref  Cr2File::_locateMainIfd()
 		ret = OR_ERROR_NOT_FOUND;
 	}
 	return ret;
-}
-
-::or_error
-Cr2File::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
-{
-    if(index != 1) {
-        return OR_ERROR_NOT_FOUND;
-    }
-
-    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
-}
-
-ExifLightsourceValue 
-Cr2File::_getCalibrationIlluminant(uint16_t index)
-{
-    return index == 1 ? EV_LIGHTSOURCE_D65 : EV_LIGHTSOURCE_UNKNOWN;
 }
 
 }

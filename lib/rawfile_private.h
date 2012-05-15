@@ -30,7 +30,7 @@
 namespace OpenRaw {
 namespace Internals {
 
-/** Define the builtin colour matrix 2. */
+/** Define the builtin colour matrix */
 struct BuiltinColourMatrix
 {
   OpenRaw::RawFile::TypeId camera;
@@ -40,10 +40,6 @@ struct BuiltinColourMatrix
 };
 
 /** Built in color matrices are 9 in size */
-::or_error getBuiltinColourMatrix(const BuiltinColourMatrix* m,
-                                  RawFile::TypeId type_id,
-                                  double* matrix,
-                                  uint32_t & size);
 
 /** describe the location of a thumbnail in an RAW file */
 class ThumbDesc

@@ -42,10 +42,6 @@ public:
 protected:
     virtual IfdDir::Ref  _locateCfaIfd();
     virtual IfdDir::Ref  _locateMainIfd();
-    
-    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
-    virtual ExifLightsourceValue _getCalibrationIlluminant(uint16_t index);
-    
 private:
     
     Cr2File(const Cr2File&);

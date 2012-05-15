@@ -18,9 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #ifndef __RW2FILE_H_
 #define __RW2FILE_H_
 
@@ -49,8 +46,6 @@ public:
 protected:
 	virtual IfdDir::Ref  _locateCfaIfd();
 	virtual IfdDir::Ref  _locateMainIfd();
-	virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
-
 private:
 	
 	Rw2File(const Rw2File&);

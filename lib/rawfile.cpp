@@ -113,7 +113,8 @@ public:
         : m_type(t),
           m_type_id(OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NONE, OR_TYPEID_UNKNOWN)),
           m_sizes(),
-          m_cam_ids(NULL)
+          m_cam_ids(NULL),
+          m_matrices(NULL)
         {
         }
     ~Private()
@@ -136,6 +137,7 @@ public:
     Internals::ThumbLocations    m_thumbLocations;    
     std::map<int32_t, MetaValue*> m_metadata;
     const camera_ids_t *m_cam_ids;
+    const Internals::BuiltinColourMatrix* m_matrices;
 };
 
 
@@ -493,8 +495,11 @@ uint32_t RawFile::colourMatrixSize()
     const MetaValue* meta = getMetaValue(meta_index);
 
     if(!meta) {
-        size = 0;
-        return OR_ERROR_NOT_FOUND;
+        if (index != 1) {
+            size = 0;
+            return OR_ERROR_INVALID_PARAM;            
+        }
+        return _getBuiltinColourMatrix(d->m_matrices, typeId(), matrix, size);
     }
     uint32_t count = meta->getCount();
     if(size < count) {
@@ -537,7 +542,7 @@ ExifLightsourceValue RawFile::_getCalibrationIlluminant(uint16_t index)
     const MetaValue* meta = getMetaValue(meta_index);
 
     if(!meta) {
-        return EV_LIGHTSOURCE_UNKNOWN;
+        return (index == 1) ? EV_LIGHTSOURCE_D65 : EV_LIGHTSOURCE_UNKNOWN;
     }
     return (ExifLightsourceValue)meta->getInteger(0);
 }
@@ -613,13 +618,20 @@ void RawFile::_setIdMap(const camera_ids_t *map)
     d->m_cam_ids = map;
 }
 
-namespace Internals {
+void RawFile::_setMatrices(const Internals::BuiltinColourMatrix* matrices)
+{
+    d->m_matrices = matrices;
+}
 
 ::or_error
-getBuiltinColourMatrix(const BuiltinColourMatrix* m, RawFile::TypeId type_id,
-                                              double* matrix,
-                                              uint32_t & size)
+RawFile::_getBuiltinColourMatrix(const Internals::BuiltinColourMatrix* m, 
+                                 TypeId type_id,
+                                 double* matrix,
+                                 uint32_t & size)
 {
+    if(!m) {
+        return OR_ERROR_NOT_FOUND;
+    }
     if(size < 9) {
         return OR_ERROR_BUF_TOO_SMALL;
     }
@@ -636,8 +648,6 @@ getBuiltinColourMatrix(const BuiltinColourMatrix* m, RawFile::TypeId type_id,
     }
     size = 0;
     return OR_ERROR_NOT_FOUND;
-}
-
 }
 
 }

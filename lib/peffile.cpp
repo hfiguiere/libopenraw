@@ -94,6 +94,7 @@ PEFFile::PEFFile(IO::Stream *s)
     : IfdFile(s, OR_RAWFILE_TYPE_PEF)
 {
     _setIdMap(s_def);
+    _setMatrices(s_matrices);
 }
 
 PEFFile::~PEFFile()
@@ -129,16 +130,6 @@ IfdDir::Ref  PEFFile::_locateMainIfd()
         }
     }
     return err;
-}
-
-::or_error 
-PEFFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
-{
-    if(index != 2) {
-        return OR_ERROR_NOT_FOUND;
-    }
-    
-    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }

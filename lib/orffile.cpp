@@ -133,6 +133,7 @@ OrfFile::OrfFile(IO::Stream *s)
     : IfdFile(s, OR_RAWFILE_TYPE_ORF, false)
 {
     _setIdMap(s_def);
+    _setMatrices(s_matrices);
     m_container = new OrfContainer(m_io, 0);
 }
 
@@ -199,16 +200,6 @@ uint32_t OrfFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
         return ORF_COMPRESSION;
     }
     return (uint32_t)tiffCompression;
-}
-
-::or_error 
-OrfFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
-{
-    if(index != 2) {
-        return OR_ERROR_NOT_FOUND;
-    }
-
-    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }

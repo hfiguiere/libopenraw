@@ -41,6 +41,7 @@ class MetaValue;
 namespace Internals {
 class RawContainer;
 class ThumbDesc;
+struct BuiltinColourMatrix;
 }
 
 void init();
@@ -191,6 +192,7 @@ protected:
     TypeId _typeIdFromModel(const std::string& make, const std::string & model);
     TypeId _typeIdFromMake(const std::string& make);
     void _setIdMap(const camera_ids_t *map);
+    void _setMatrices(const Internals::BuiltinColourMatrix* matrices);
     virtual void _identifyId() = 0;
 private:
     static Type identify(const char*_filename);
@@ -199,6 +201,11 @@ private:
     static const camera_ids_t s_make[];
     static const camera_ids_t* _lookupCameraId(const camera_ids_t * map, 
                                                const std::string& value);
+
+    static ::or_error _getBuiltinColourMatrix(const Internals::BuiltinColourMatrix* m,
+                                              TypeId type_id,
+                                              double* matrix,
+                                              uint32_t & size);
 
 
     RawFile(const RawFile&);

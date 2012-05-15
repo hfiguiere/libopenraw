@@ -108,7 +108,8 @@ RafFile::RafFile(IO::Stream * s)
 	, m_io(s)
 	, m_container(new RafContainer(s))
 {
-	_setIdMap(s_def);
+  _setIdMap(s_def);
+  _setMatrices(s_matrices);
 }
 
 RafFile::~RafFile()
@@ -283,16 +284,6 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
 void RafFile::_identifyId()
 {
   _setTypeId(_typeIdFromModel("FujiFilm", m_container->getModel()));
-}
-
-::or_error 
-RafFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
-{
-    if(index != 2) {
-        return OR_ERROR_NOT_FOUND;
-    }
-
-    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }

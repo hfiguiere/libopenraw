@@ -58,8 +58,6 @@ protected:
     
     virtual MakerNoteDir::Ref  _locateMakerNoteIfd();
 
-    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
-
 private:
     
     NefFile(const NefFile&);

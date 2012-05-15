@@ -173,6 +173,7 @@ NefFile::NefFile(IO::Stream* _filename)
     : TiffEpFile(_filename, OR_RAWFILE_TYPE_NEF)
 {
     _setIdMap(s_def);
+    _setMatrices(s_matrices);
 }
 
 
@@ -341,16 +342,6 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
     }
     
     return 1;
-}
-
-::or_error 
-NefFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
-{
-    if(index != 2) {
-        return OR_ERROR_NOT_FOUND;
-    }
-    
-    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }

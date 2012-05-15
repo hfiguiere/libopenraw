@@ -105,6 +105,7 @@ CRWFile::CRWFile(IO::Stream *s)
       m_x(0), m_y(0)
 {
     _setIdMap(s_def);
+    _setMatrices(s_matrices);
 }
 
 CRWFile::~CRWFile()
@@ -345,16 +346,6 @@ void CRWFile::_identifyId()
     catch(...)
     {
     }
-}
-
-::or_error 
-CRWFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
-{
-    if(index != 2) {
-        return OR_ERROR_NOT_FOUND;
-    }
-
-    return getBuiltinColourMatrix(s_matrices, typeId(), matrix, size);
 }
 
 }

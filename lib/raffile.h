@@ -53,8 +53,6 @@ protected:
 
   virtual void _identifyId();
 
-  virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
-	
 private:
 	RafFile(const RafFile&);
 	RafFile & operator=(const RafFile&);

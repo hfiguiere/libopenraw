@@ -44,8 +44,6 @@ public:
     
 protected:
     virtual ::or_error _getRawData(RawData & data, uint32_t options);
-
-    virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
 private:
     
     ERFFile(const ERFFile&);
