@@ -117,7 +117,7 @@ DngFile::~DngFile()
                     LJpegDecompressor decomp(s.get(), jfif.get());
                     RawData *dData = decomp.decompress();
                     if (dData != NULL) {
-                        dData->setCfaPattern(data.cfaPattern());
+                        dData->setCfaPatternType(data.cfaPattern()->patternType());
                         data.swap(*dData);
                         delete dData;
                     }

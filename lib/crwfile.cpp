@@ -232,7 +232,7 @@ RawContainer* CRWFile::getContainer() const
             Trace(WARNING) << "wrong size\n";
         }
         data.setDimensions(x, y);
-        data.setCfaPattern(OR_CFA_PATTERN_RGGB);
+        data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
         data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
 
         // decompress if we need
@@ -249,7 +249,7 @@ RawContainer* CRWFile::getContainer() const
             if (dData != NULL) {
                 Trace(DEBUG1) << "Out size is " << dData->width() 
                               << "x" << dData->height() << "\n";
-                dData->setCfaPattern(data.cfaPattern());
+                dData->setCfaPatternType(data.cfaPattern()->patternType());
                 data.swap(*dData);
                 delete dData;
             }

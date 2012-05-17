@@ -121,32 +121,31 @@ using OpenRaw::Thumbnail;
     }
 
 namespace {
-bool equalCfaPattern(const std::string & result, RawData::CfaPattern t)
+std::string cfaPatternToString(::or_cfa_pattern t)
 {
-    bool equal = false;
     switch(t) {
     case OR_CFA_PATTERN_NONE:
-        equal = (result == "NONE");
-        break;
+        return "NONE";
+
     case OR_CFA_PATTERN_NON_RGB22:
-        equal = (result == "NON_RGB22");
-        break;
+        return "NON_RGB22";
+
     case OR_CFA_PATTERN_RGGB:
-        equal = (result == "RGGB");
-        break;
+        return "RGGB";
+
     case OR_CFA_PATTERN_GBRG:
-        equal = (result == "GBRG");
-        break;
+        return "GBRG";
+
     case OR_CFA_PATTERN_BGGR:
-        equal = (result == "BGGR");
-        break;
+        return "BGGR";
+
     case OR_CFA_PATTERN_GRBG:
-        equal = (result == "GRBG");
-        break;
+        return "GRBG";
+
     default:
         break;
     }
-    return equal;
+    return "";
 }
 	
 
@@ -514,7 +513,11 @@ bool Test::testRawCfaPattern(const std::string & result)
             RETURN_FAIL("failed to get rawData", result);
         }
     }
-    RETURN_TEST(equalCfaPattern(result, m_rawdata->cfaPattern()), result);
+    bool succ = false;
+    CHECK_TEST_EQUALS(cfaPatternToString(
+                           m_rawdata->cfaPattern()->patternType()), 
+                      result, succ);
+    return succ;
 }
 
 bool Test::testRawMinValue(const std::string & result)

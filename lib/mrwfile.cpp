@@ -290,7 +290,7 @@ void MRWFile::_identifyId()
 	default:
 		break;
 	}
-	data.setCfaPattern(cfa_pattern);
+	data.setCfaPatternType(cfa_pattern);
 	data.setDimensions (x, y);
 
 	return ret; 

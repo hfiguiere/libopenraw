@@ -89,7 +89,8 @@ extern "C" {
 		OR_CFA_PATTERN_RGGB = 2,
 		OR_CFA_PATTERN_GBRG = 3,
 		OR_CFA_PATTERN_BGGR = 4,
-		OR_CFA_PATTERN_GRBG = 5
+		OR_CFA_PATTERN_GRBG = 5,
+		_OR_CFA_PATTERN_INVALID
 	} or_cfa_pattern;
 
 	typedef enum {

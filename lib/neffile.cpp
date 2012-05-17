@@ -244,7 +244,7 @@ MakerNoteDir::Ref NefFile::_locateMakerNoteIfd()
     uint16_t bpc = data.bpc();
     newData.setBpc(bpc);
     newData.setMax((1 << bpc) - 1);
-    newData.setCfaPattern(data.cfaPattern());
+    newData.setCfaPatternType(data.cfaPattern()->patternType());
 	
     for (unsigned int i = 0; i < rows; i++) {
         for (unsigned int j = 0; j < raw_columns; j++) {

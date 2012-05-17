@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.cpp
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007, 2012 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include <libopenraw++/rawdata.h>
+#include <libopenraw++/cfapattern.h>
 #include <libopenraw++/rawfile.h>
 
 #include "bimedian_demosaic.h"
@@ -34,7 +35,7 @@ class RawData::Private {
 public:
     RawData *self;
     uint16_t min, max;
-    CfaPattern cfa_pattern;
+    const CfaPattern* cfa_pattern; // IMMUTABLE
     uint32_t compression;
     uint8_t *pos;
     size_t offset;
@@ -49,15 +50,15 @@ public:
     uint32_t colourMatrixCount;
 
     Private(RawData *_self)
-        :	self(_self), 
-                min(0), max(0),
-                cfa_pattern(OR_CFA_PATTERN_NONE),
-                compression(0),
-                pos(NULL), offset(0),
-                row_offset(0),
-                slice(0), sliceWidth(0),
-                sliceOffset(0), slices(),
-                colourMatrixCount(0)
+        : self(_self), 
+          min(0), max(0),
+          cfa_pattern(CfaPattern::twoByTwoPattern(OR_CFA_PATTERN_NONE)),
+          compression(0),
+          pos(NULL), offset(0),
+          row_offset(0),
+          slice(0), sliceWidth(0),
+          sliceOffset(0), slices(),
+          colourMatrixCount(0)
         {
             memset(colourMatrix, 0, sizeof(colourMatrix));
         }
@@ -115,7 +116,7 @@ RawData::~RawData()
 		return OR_ERROR_INVALID_FORMAT;
 	}
 	or_cfa_pattern pattern;
-	pattern = cfaPattern();
+	pattern = cfaPattern()->patternType();
 	_x = width();
 	_y = height();
 	
@@ -216,12 +217,12 @@ void RawData::setSlices(const std::vector<uint16_t> & slices)
     }
 }
 
-void RawData::setCfaPattern(or_cfa_pattern t)
+void RawData::setCfaPatternType(or_cfa_pattern t)
 {
-    d->cfa_pattern = t;
+    d->cfa_pattern = CfaPattern::twoByTwoPattern(t);
 }
 
-or_cfa_pattern RawData::cfaPattern()
+const CfaPattern* RawData::cfaPattern() const
 {
     return d->cfa_pattern;
 }
@@ -231,7 +232,7 @@ void RawData::setCompression(uint32_t t)
     d->compression = t;
 }
 
-uint32_t RawData::compression()
+uint32_t RawData::compression() const
 {
     return d->compression;
 }

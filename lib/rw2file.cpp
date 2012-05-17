@@ -267,7 +267,7 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 	else {
 		data.setDataType(OR_DATA_TYPE_CFA);
 	}
-	data.setCfaPattern(OR_CFA_PATTERN_BGGR);
+	data.setCfaPatternType(OR_CFA_PATTERN_BGGR);
 	
 	
 	// they are not all RGGB.

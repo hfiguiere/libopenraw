@@ -127,7 +127,8 @@ extern "C" {
 	or_cfa_pattern
 	or_rawdata_get_cfa_pattern(ORRawDataRef rawdata)
 	{
-		return reinterpret_cast<RawData *>(rawdata)->cfaPattern();
+		return reinterpret_cast<RawData *>(rawdata)
+			->cfaPattern()->patternType();
 	}
 	
 	or_error

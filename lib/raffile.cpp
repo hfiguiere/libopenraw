@@ -207,7 +207,7 @@ RawContainer* RafFile::getContainer() const
 	data.setDataType(OR_DATA_TYPE_CFA);
 	data.setDimensions(w,h);
 	// TODO get the right pattern.
-	data.setCfaPattern(OR_CFA_PATTERN_GBRG);
+	data.setCfaPatternType(OR_CFA_PATTERN_GBRG);
 	// TODO actually read the 2048.
 	// TODO make sure this work for the other file formats...
 	size_t byte_size = m_container->getCfaLength() - 2048;

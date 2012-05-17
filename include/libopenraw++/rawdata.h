@@ -26,7 +26,7 @@
 #include <vector>
 
 #include <libopenraw++/bitmapdata.h>
-
+#include <libopenraw++/cfapattern.h>
 
 namespace OpenRaw {
 
@@ -34,7 +34,6 @@ class RawData
     : public BitmapData
 {
 public:
-    typedef or_cfa_pattern CfaPattern;
     static RawData * getAndExtractRawData(const char* filename, 
                                           uint32_t options,
                                           or_error & err);
@@ -76,9 +75,14 @@ public:
 
     virtual void *allocData(const size_t s);
     virtual void setDimensions(uint32_t x, uint32_t y);
-    void setCfaPattern(CfaPattern t);
-    CfaPattern cfaPattern();
-    uint32_t compression();
+
+    void setCfaPatternType(::or_cfa_pattern t);
+    /**
+     * @return the const CfaPattern*.
+     */
+    const CfaPattern* cfaPattern() const;
+
+    uint32_t compression() const;
     void setCompression(uint32_t c);
 
 

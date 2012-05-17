@@ -356,10 +356,10 @@ const MakerNoteDir::Ref & IfdFile::makerNoteIfd()
 
 namespace {
 
-RawData::CfaPattern 
+::or_cfa_pattern 
 _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
 {
-  RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
+  ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
   if(cfaPattern.size() != 4) {
     Trace(WARNING) << "Unsupported bayer pattern\n";
   }
@@ -414,9 +414,9 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
   return cfa_pattern;
 }
 
-RawData::CfaPattern _convertNewCfaPattern(const IfdEntry::Ref & e)
+::or_cfa_pattern _convertNewCfaPattern(const IfdEntry::Ref & e)
 {
-  RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
+  ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
   if(!e || (e->count() < 4)) {
     return cfa_pattern;
   }
@@ -439,10 +439,10 @@ RawData::CfaPattern _convertNewCfaPattern(const IfdEntry::Ref & e)
 
 
 /** convert the CFA Pattern as stored in the entry */
-RawData::CfaPattern _convertCfaPattern(const IfdEntry::Ref & e)
+::or_cfa_pattern _convertCfaPattern(const IfdEntry::Ref & e)
 {
   std::vector<uint8_t> cfaPattern;
-  RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
+  ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
 			
   e->getArray(cfaPattern);
   if(!cfaPattern.empty()) {
@@ -456,10 +456,10 @@ RawData::CfaPattern _convertCfaPattern(const IfdEntry::Ref & e)
  * @return the cfa_pattern value. %OR_CFA_PATTERN_NONE mean that
  * nothing has been found.
  */
-static RawData::CfaPattern _getCfaPattern(const IfdDir::Ref & dir)
+static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
 {
   Trace(DEBUG1) << __FUNCTION__ << "\n";
-  RawData::CfaPattern cfa_pattern = OR_CFA_PATTERN_NONE;
+  ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
   try {
     IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
     if(e) {
@@ -621,7 +621,7 @@ static RawData::CfaPattern _getCfaPattern(const IfdDir::Ref & dir)
 
   Trace(DEBUG1) << "RAW Compression is " << compression << "\n";
 			
-  RawData::CfaPattern cfa_pattern = _getCfaPattern(dir);
+  ::or_cfa_pattern cfa_pattern = _getCfaPattern(dir);
   if(cfa_pattern == OR_CFA_PATTERN_NONE) {
     // some file have it in the exif IFD instead.
     if(!m_exifIfd) {
@@ -689,7 +689,7 @@ static RawData::CfaPattern _getCfaPattern(const IfdDir::Ref & dir)
     Trace(ERROR) << "Unsupported bpc " << bpc << "\n";
     return OR_ERROR_INVALID_FORMAT;						
   }
-  data.setCfaPattern(cfa_pattern);
+  data.setCfaPatternType(cfa_pattern);
   data.setDataType(data_type);
   data.setCompression(data_type == OR_DATA_TYPE_COMPRESSED_CFA 
                       ? compression : 1);

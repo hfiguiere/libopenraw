@@ -51,7 +51,7 @@ public:
         {
         }
     
-    std::string cfaPatternToString(RawData::CfaPattern t) 
+    std::string cfaPatternToString(::or_cfa_pattern t) 
         {
             switch(t) {
             case OR_CFA_PATTERN_NONE:
@@ -208,7 +208,7 @@ public:
                 m_out << boost::format("\t\tROI: %1% %2% %3% %4%\n")
                     % rd.roi_x() % rd.roi_y() % rd.roi_width() % rd.roi_height();
                 m_out << boost::format("\t\tBayer Type: %1%\n")
-                    % cfaPatternToString(rd.cfaPattern());
+                    % cfaPatternToString(rd.cfaPattern()->patternType());
                 m_out << boost::format("\t\tBits per channel: %1%\n")
                     % rd.bpc();
                 m_out << boost::format("\t\tValues: min = %1% max = %2%\n")

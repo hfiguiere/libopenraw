@@ -56,6 +56,7 @@ libopenraw_la_SOURCES = \
 	trace.cpp \
 	bititerator.h \
 	bititerator.cpp \
+	cfapattern.cpp \
 	huffman.h \
 	huffman.cpp \
 	nefdiffiterator.h \

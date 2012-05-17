@@ -178,7 +178,7 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
                 OlympusDecompressor decomp((const uint8_t*)data.data(), m_container, x, y);
                 RawData *dData = decomp.decompress(NULL);
                 if (dData != NULL) {
-                    dData->setCfaPattern(data.cfaPattern());
+                    dData->setCfaPatternType(data.cfaPattern()->patternType());
                     data.swap(*dData);
                     data.setDataType(OR_DATA_TYPE_CFA);
                     data.setDimensions(x, y);

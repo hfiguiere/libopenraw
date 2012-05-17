@@ -246,7 +246,7 @@ IfdDir::Ref  Cr2File::_locateMainIfd()
 		// they are not all RGGB.
 		// but I don't seem to see where this is encoded.
 		// 
-		data.setCfaPattern(OR_CFA_PATTERN_RGGB);
+		data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
 		data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
 		data.setDimensions(x, y);
 
@@ -269,7 +269,7 @@ IfdDir::Ref  Cr2File::_locateMainIfd()
 				Trace(DEBUG1) << "Out size is " << dData->width() 
 											<< "x" << dData->height() << "\n";
 				// must re-set the cfaPattern
-				dData->setCfaPattern(data.cfaPattern());
+                                dData->setCfaPatternType(data.cfaPattern()->patternType());
 				data.swap(*dData);
 				delete dData;
 			}
