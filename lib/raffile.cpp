@@ -34,7 +34,7 @@
 #include "unpack.h"
 #include "trace.h"
 #include "io/streamclone.h"
-
+#include "xtranspattern.h"
 
 namespace OpenRaw {
 namespace Internals {
@@ -206,8 +206,13 @@ RawContainer* RafFile::getContainer() const
 	
 	data.setDataType(OR_DATA_TYPE_CFA);
 	data.setDimensions(w,h);
-	// TODO get the right pattern.
-	data.setCfaPatternType(OR_CFA_PATTERN_GBRG);
+  if(typeId() == OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO1)) {
+    data.setCfaPattern(XTransPattern::xtransPattern());
+  }
+  else {
+    // TODO get the right pattern.
+    data.setCfaPatternType(OR_CFA_PATTERN_GBRG);
+  }
 	// TODO actually read the 2048.
 	// TODO make sure this work for the other file formats...
 	size_t byte_size = m_container->getCfaLength() - 2048;

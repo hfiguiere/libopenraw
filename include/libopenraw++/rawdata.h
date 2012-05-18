@@ -81,6 +81,7 @@ public:
      * @return the const CfaPattern*.
      */
     const CfaPattern* cfaPattern() const;
+    void setCfaPattern(const CfaPattern* pattern);
 
     uint32_t compression() const;
     void setCompression(uint32_t c);

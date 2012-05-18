@@ -570,4 +570,26 @@
       <metaOrientation>1</metaOrientation>
     </results>    
   </test>
+  <test>
+    <name>RAF-test X-Pro1</name>
+    <file>/home/hub/samples/raf/X-Pro1/66002-raw-original.RAF</file>
+    <source>http://prophotos.ru/private/tests/fujifilm/fujifilm-x-pro1/66002-raw-original.RAF</source>
+    <results>
+      <rawType>RAF</rawType>
+      <rawTypeId>917517</rawTypeId>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>1920 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>400511 10211</thumbDataSizes>
+      <thumbMd5>212 59</thumbMd5>
+      <rawDataType>CFA</rawDataType>
+      <rawDataSize>33669120</rawDataSize>
+      <rawDataDimensions>5120 3288</rawDataDimensions>
+      <rawCfaPattern>NON_RGB22</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>0</rawMaxValue>
+      <rawMd5>51</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>    
+  </test>
 </testsuite>

@@ -29,13 +29,40 @@ namespace OpenRaw {
 
 namespace Internals {
 
+/** alias the colours. */
+static const uint8_t RED = OR_PATTERN_COLOUR_RED;
+static const uint8_t GREEN = OR_PATTERN_COLOUR_GREEN;
+static const uint8_t BLUE = OR_PATTERN_COLOUR_BLUE;
+
+static const uint8_t RGGB_PATTERN[] = { RED, GREEN, GREEN, BLUE };
+static const uint8_t GBRG_PATTERN[] = { GREEN, BLUE, RED, GREEN };
+static const uint8_t BGGR_PATTERN[] = { BLUE, GREEN, GREEN, RED };
+static const uint8_t GRBG_PATTERN[] = { GREEN, RED, BLUE, GREEN };
+
 class Cfa2x2RgbPattern
   : public CfaPattern
 {
 public:
   Cfa2x2RgbPattern(::or_cfa_pattern pattern)
-    : CfaPattern(pattern)
+    : CfaPattern(pattern, 2, 2)
     {
+      switch(pattern) {
+      case OR_CFA_PATTERN_RGGB:
+        setPatternPattern(RGGB_PATTERN, 4);
+        break;
+      case OR_CFA_PATTERN_GBRG:
+        setPatternPattern(GBRG_PATTERN, 4);
+        break;
+      case OR_CFA_PATTERN_BGGR:
+        setPatternPattern(BGGR_PATTERN, 4);
+        break;
+      case OR_CFA_PATTERN_GRBG:
+        setPatternPattern(GRBG_PATTERN, 4);
+        break;
+
+      default:
+        break;
+      }
     }
 
 };
@@ -68,14 +95,16 @@ public:
   friend class Internals::Cfa2x2RgbPattern;
 
   Private()
-    : x(0), y(0), n_colors(0)
+    : x(0), y(0), n_colours(0)
     , pattern_type(OR_CFA_PATTERN_NONE)
+    , pattern(NULL)
     {}
 
   uint16_t x;
   uint16_t y;
-  uint16_t n_colors;
+  uint16_t n_colours;
   ::or_cfa_pattern pattern_type;
+  const uint8_t* pattern;
 };
 
 CfaPattern::CfaPattern()
@@ -83,9 +112,11 @@ CfaPattern::CfaPattern()
 {
 }
 
-CfaPattern::CfaPattern(::or_cfa_pattern pattern)
+CfaPattern::CfaPattern(::or_cfa_pattern pattern,
+                       uint16_t width, uint16_t height)
   : d(new CfaPattern::Private)
 {
+  setSize(width, height);
   setPatternType(pattern);
 }
 
@@ -112,12 +143,35 @@ bool CfaPattern::is2by2Rgb() const
     && (d->pattern_type != OR_CFA_PATTERN_NON_RGB22);
 }
 
+void
+CfaPattern::setPatternPattern(const uint8_t* pattern, uint16_t count)
+{
+  if(count != d->x * d->y) {
+    d->pattern = NULL;
+    // TODO deal with the error
+    return;
+  }
+  d->pattern = pattern;
+}
+
+const uint8_t*
+CfaPattern::patternPattern(uint16_t& count) const
+{
+  if(d->pattern) {
+    count = d->x * d->y;
+    return d->pattern;
+  }
+  
+  count = 0;
+  return NULL;
+}
+
 void CfaPattern::setPatternType(::or_cfa_pattern pattern)
 {
   d->pattern_type = pattern;
   if(is2by2Rgb()) {
     setSize(2, 2);
-    d->n_colors = 3;
+    d->n_colours = 3;
   }
 }
 

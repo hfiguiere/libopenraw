@@ -21,6 +21,9 @@
 #ifndef __OPENRAW_CFA_PATTERN_H__
 #define __OPENRAW_CFA_PATTERN_H__
 
+#include <stdint.h>
+#include <libopenraw/consts.h>
+
 namespace OpenRaw {
 
 class CfaPattern
@@ -30,10 +33,16 @@ public:
 
   /** Set the pattern size */
   void setSize(uint16_t x, uint16_t y);
+
   /** Return if the pattern is 2x2 RGB */
   bool is2by2Rgb() const;
 
+  /** 
+   * @return the pattern type. Be cautious as this does not cover
+   * non 2x2 RGB.
+   */
   ::or_cfa_pattern patternType() const;
+  const uint8_t* patternPattern(uint16_t& count) const;
 
   /** factory to return a singleton instance of the right pattern 
    *  @return a const CfaPattern. Never delete it. MAY BE NULL.
@@ -42,7 +51,14 @@ public:
 
 protected:
   CfaPattern();
-  CfaPattern(::or_cfa_pattern pattern);
+  CfaPattern(::or_cfa_pattern pattern, uint16_t width, uint16_t height);
+
+  /** Set the pattern pattern.
+   * @param pattern the actual pattern sequence left to right, 
+   *  top to bottom
+   * @param count the number of element. Should be width x height
+   */
+  void setPatternPattern(const uint8_t* pattern, uint16_t count);
 
 private:
   // no copy allowed

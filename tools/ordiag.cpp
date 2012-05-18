@@ -36,6 +36,7 @@
 using OpenRaw::RawFile;
 using OpenRaw::Thumbnail;
 using OpenRaw::RawData;
+using OpenRaw::CfaPattern;
 
 /**
  * Dump on RawFile. (functor)
@@ -50,7 +51,34 @@ public:
         : m_out(out)
         {
         }
-    
+
+    std::string cfaPatternToString(const CfaPattern* pattern)
+        {
+            std::string out;
+            uint16_t size = 0;
+            const uint8_t* patternPattern = pattern->patternPattern(size);
+
+            for(uint16_t i = 0; i < size; ++i) {
+                switch(patternPattern[i]) {
+                case OR_PATTERN_COLOUR_RED:
+                    out.push_back('R');
+                    break;
+                case OR_PATTERN_COLOUR_GREEN:
+                    out.push_back('G');
+                    break;
+
+                case OR_PATTERN_COLOUR_BLUE:
+                    out.push_back('B');
+                    break;
+
+                default:
+                    out.push_back('*');
+                    break;
+                }
+            }
+
+            return out;
+        }
     std::string cfaPatternToString(::or_cfa_pattern t) 
         {
             switch(t) {
@@ -207,8 +235,16 @@ public:
                     % rd.width() % rd.height();
                 m_out << boost::format("\t\tROI: %1% %2% %3% %4%\n")
                     % rd.roi_x() % rd.roi_y() % rd.roi_width() % rd.roi_height();
+                ::or_cfa_pattern patternType
+                      = rd.cfaPattern()->patternType();
                 m_out << boost::format("\t\tBayer Type: %1%\n")
-                    % cfaPatternToString(rd.cfaPattern()->patternType());
+                    % cfaPatternToString(patternType);
+
+                if(patternType == OR_CFA_PATTERN_NON_RGB22) {
+                    m_out << boost::format("\t\tPattern: %1%\n")
+                        % cfaPatternToString(rd.cfaPattern());
+                }
+
                 m_out << boost::format("\t\tBits per channel: %1%\n")
                     % rd.bpc();
                 m_out << boost::format("\t\tValues: min = %1% max = %2%\n")

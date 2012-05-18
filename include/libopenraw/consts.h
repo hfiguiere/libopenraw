@@ -92,6 +92,12 @@ extern "C" {
 		OR_CFA_PATTERN_GRBG = 5,
 		_OR_CFA_PATTERN_INVALID
 	} or_cfa_pattern;
+	
+	typedef enum {
+		OR_PATTERN_COLOUR_RED = 0,
+		OR_PATTERN_COLOUR_GREEN = 1,
+		OR_PATTERN_COLOUR_BLUE = 2
+	} or_cfa_pattern_colour;
 
 	typedef enum {
 		OR_OPTIONS_NONE            = 0x00000000,

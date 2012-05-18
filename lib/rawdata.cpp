@@ -227,6 +227,11 @@ const CfaPattern* RawData::cfaPattern() const
     return d->cfa_pattern;
 }
 
+void RawData::setCfaPattern(const CfaPattern* pattern)
+{
+    d->cfa_pattern = pattern;
+}
+
 void RawData::setCompression(uint32_t t)
 {
     d->compression = t;
