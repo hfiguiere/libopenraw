@@ -3,6 +3,7 @@ libopenraw 0.1.0
 New features:
 
   - Color Matrices support.
+  - Custom CFA pattern support.
   - API: or_rawdata_get_rendered_image()
   - API: or_rawdata_set_cfa_pattern()
   - Get the default crop in CR2, CRW and DNG.

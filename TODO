@@ -3,14 +3,12 @@ TODO
 
 ROI for other format:
   CRW, NEF, ORF, ARW, PEF
-Fix ARW
+Fix ARW A-100
 Better implement DNG to fix the spec.
   - JPEG tile decompression
 SR2 support
 Decompress NRW
 Decompress Panasonic RAW and RW2
-Fixed WB Coeff xyz rgb
-Embedded WB
 Extract thumbnails from NEF MakerNote
 White and black point (replace min / max, extract from Exif if needed)
 sRAW from Canon, YCbCr
