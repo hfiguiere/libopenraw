@@ -176,6 +176,7 @@ extern "C" {
         /* DNG */
         OR_TYPEID_LEICA_M9 = 7,
         OR_TYPEID_LEICA_S2 = 8,
+        OR_TYPEID_LEICA_M_MONOCHROM = 9,
         _OR_TYPEID_LEICA_LAST
     };
 
