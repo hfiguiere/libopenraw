@@ -184,6 +184,15 @@ typedef	enum {
 	_EXIF_TAG_LAST
 } ExifTag;
 
+typedef enum {
+	EV_PI_BLACKISZERO = 1,
+	EV_PI_RGB = 2,
+	EV_PI_YCBCR = 6,
+
+	/* RAW only */
+	EV_PI_CFA = 32803,
+	EV_PI_LINEARRAW = 34892
+} ExifPhotometricInterpretation;
 
 typedef enum {
 	EV_LIGHTSOURCE_UNKNOWN     = 0,

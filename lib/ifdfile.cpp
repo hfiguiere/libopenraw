@@ -182,7 +182,7 @@ void IfdFile::_identifyId()
     }
     // photometric interpretation is RGB by default
     else {
-      photom_int = 2;
+      photom_int = IFD::EV_PI_RGB;
       Trace(DEBUG1) << "assume photometric int is RGB\n";
     }
 
@@ -238,7 +238,7 @@ void IfdFile::_identifyId()
 
       }
     }
-    else if (photom_int == 6) {
+    else if (photom_int == IFD::EV_PI_YCBCR) {
       Trace(WARNING) << "Unsupported YCbCr photometric "
         "interpretation in non JPEG.\n";
       ret = OR_ERROR_INVALID_FORMAT;
