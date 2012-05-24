@@ -692,6 +692,12 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
           break;
         }
       }
+      else {
+        // outdata point to uint16_t
+        std::copy(block.get(), block.get()+got,
+                  (uint16_t*)outdata);
+        outdata += (got << 1);
+      }
     }
   } while((got != 0) && (fetched < byte_length));
 
