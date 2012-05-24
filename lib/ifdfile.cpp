@@ -531,47 +531,39 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
   if(got_it) {
     IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
-    if(e) {
-      std::vector<uint32_t> counts;
-      e->getArray(counts);
-      Trace(DEBUG1) << "counting tiles\n";
-      byte_length = std::accumulate(counts.begin(), counts.end(), 0);
-    }
-    else {
+    if(!e) {
       Trace(DEBUG1) << "byte len not found\n";
       return OR_ERROR_NOT_FOUND;
     }
+    std::vector<uint32_t> counts;
+    e->getArray(counts);
+    Trace(DEBUG1) << "counting tiles\n";
+    byte_length = std::accumulate(counts.begin(), counts.end(), 0);
   }
   else {
     // the tile are individual JPEGS....
     // TODO extract all of them.
     IfdEntry::Ref e = dir->getEntry(IFD::TIFF_TAG_TILE_OFFSETS);
-    if(e) {
-      std::vector<uint32_t> offsets;
-      e->getArray(offsets);
-      if(offsets.size() > 1) {
-        offset = offsets[0];
-      }
-      else {
-        Trace(DEBUG1) << "tile offsets empty\n";
-        return OR_ERROR_NOT_FOUND;						
-      }
-    }
-    else {
-      Trace(DEBUG1) << "tile offsets not found\n";
+    if(!e) {
+      Trace(DEBUG1) << "tile offsets empty\n";
       return OR_ERROR_NOT_FOUND;						
     }
-    e = dir->getEntry(IFD::TIFF_TAG_TILE_BYTECOUNTS);
-    if(e) {
-      std::vector<uint32_t> counts;
-      e->getArray(counts);
-      Trace(DEBUG1) << "counting tiles\n";
-      byte_length = std::accumulate(counts.begin(), counts.end(), 0);
+    std::vector<uint32_t> offsets;
+    e->getArray(offsets);
+    if(offsets.size() == 0) {
+      Trace(DEBUG1) << "tile offsets not found\n";
+      return OR_ERROR_NOT_FOUND;
     }
-    else {
+    offset = offsets[0];
+    e = dir->getEntry(IFD::TIFF_TAG_TILE_BYTECOUNTS);
+    if(!e) {
       Trace(DEBUG1) << "tile byte counts not found\n";
       return OR_ERROR_NOT_FOUND;						
     }
+    std::vector<uint32_t> counts;
+    e->getArray(counts);
+    Trace(DEBUG1) << "counting tiles\n";
+    byte_length = std::accumulate(counts.begin(), counts.end(), 0);
   }
   got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
   if(!got_it) {
@@ -647,43 +639,8 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     }
   }
   else if((bpc == 12) || (bpc == 8)) {
-    size_t fetched = 0;
-    Unpack unpack(x, compression);
-    const size_t blocksize = (bpc == 8 ? x : unpack.block_size());
-    Trace(DEBUG1) << "Block size = " << blocksize << "\n";
-    Trace(DEBUG1) << "dimensions (x, y) " << x << ", "
-                  << y << "\n";
-    boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
-		size_t outsize = x * y * 2;
-    uint8_t * outdata = (uint8_t*)data.allocData(outsize);
-    size_t got;
-    Trace(DEBUG1) << "offset of RAW data = " << offset << "\n";
-    do {
-      got = m_container->fetchData (block.get(), 
-                                    offset, blocksize);
-      fetched += got;
-      offset += got;
-      if(got) {
-        if(bpc == 12) {
-          size_t out;
-          or_error err = unpack.unpack_be12to16(outdata, outsize,
-                                                block.get(), 
-                                                got, out);
-          outdata += out;
-          outsize -= out;
-          if(err != OR_ERROR_NONE) {
-            ret = err;
-            break;
-          }
-        }
-        else {
-          // outdata point to uint16_t
-          std::copy(block.get(), block.get()+got,
-                    (uint16_t*)outdata);
-          outdata += (got << 1);
-        }
-      }
-    } while((got != 0) && (fetched < byte_length));
+    ret = _unpackData(bpc, compression, data, x, y, offset, byte_length);
+    Trace(DEBUG1) << "unpack result " << ret << "\n";
   }
   else {
     Trace(ERROR) << "Unsupported bpc " << bpc << "\n";
@@ -697,7 +654,47 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     data.setMax((1 << bpc) - 1);
   }
   data.setDimensions(x, y);
-			
+  
+  return ret;
+}
+
+
+::or_error IfdFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data, uint32_t x, uint32_t y, uint32_t offset, uint32_t byte_length)
+{
+  ::or_error ret = OR_ERROR_NONE;
+  size_t fetched = 0;
+  uint32_t current_offset = offset;
+  Unpack unpack(x, compression);
+  const size_t blocksize = (bpc == 8 ? x : unpack.block_size());
+  Trace(DEBUG1) << "Block size = " << blocksize << "\n";
+  Trace(DEBUG1) << "dimensions (x, y) " << x << ", "
+                << y << "\n";
+  boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
+  size_t outsize = x * y * 2;
+  uint8_t * outdata = (uint8_t*)data.allocData(outsize);
+  size_t got;
+  Trace(DEBUG1) << "offset of RAW data = " << current_offset << "\n";
+  do {
+    got = m_container->fetchData (block.get(), 
+                                  current_offset, blocksize);
+    fetched += got;
+    offset += got;
+    current_offset += got;
+    if(got) {
+      if(bpc == 12) {
+        size_t out;
+        ret = unpack.unpack_be12to16(outdata, outsize,
+                                     block.get(), 
+                                     got, out);
+        outdata += out;
+        outsize -= out;
+        if(ret != OR_ERROR_NONE) {
+          break;
+        }
+      }
+    }
+  } while((got != 0) && (fetched < byte_length));
+
   return ret;
 }
 

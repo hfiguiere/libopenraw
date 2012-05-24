@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.h
  *
- * Copyright (C) 2006-2008,2012 Hubert Figuiere
+ * Copyright (C) 2006-2008,2011-2012 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,8 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
 #ifndef _IFD_FILE_H_
 #define _IFD_FILE_H_
 
@@ -33,8 +31,8 @@
 
 namespace OpenRaw {
 namespace IO {
-	class Stream;
-	class File;
+class Stream;
+class File;
 }
 
 namespace Internals {
@@ -43,9 +41,8 @@ class ThumbDesc;
 
 /** @brief generic IFD based raw file. */
 class IfdFile
-	: public OpenRaw::RawFile
+    : public OpenRaw::RawFile
 {
-
 protected:
 	IfdFile(IO::Stream * s, Type _type, 
 			bool instantiateContainer = true);
@@ -99,6 +96,19 @@ protected:
 	 * @return the actually value. Anything >= 2^16 is specific the RAW type
 	 */
 	virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression);
+
+  /** Unpack the data
+   * @param bpc bits per components
+   * @param compression the compression type
+   * @param x the width
+   * @param y the height
+   * @param offset the offset of the data
+   * @param byte_length the amount of data
+   * @return error code
+   */
+  virtual ::or_error _unpackData(uint16_t bpc, uint32_t compression, RawData & data, 
+                                 uint32_t x, uint32_t y, uint32_t offset, 
+                                 uint32_t byte_length);
 
 	/** access the corresponding IFD. Will locate them if needed */
 	const IfdDir::Ref & cfaIfd();
