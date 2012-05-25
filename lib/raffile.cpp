@@ -205,7 +205,7 @@ RawContainer* RafFile::getContainer() const
 	
 	//printf("layout %x - compressed %x\n", layout, compressed);
 	
-	data.setDataType(OR_DATA_TYPE_CFA);
+	data.setDataType(OR_DATA_TYPE_RAW);
 	data.setDimensions(w,h);
   if(typeId() == OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO1)) {
     data.setCfaPattern(XTransPattern::xtransPattern());

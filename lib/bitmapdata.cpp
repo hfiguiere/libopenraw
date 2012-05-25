@@ -102,8 +102,8 @@ namespace OpenRaw {
 			case OR_DATA_TYPE_NONE:
 				d->bpc = 0;
 				break;
-			case OR_DATA_TYPE_COMPRESSED_CFA:
-			case OR_DATA_TYPE_CFA:
+			case OR_DATA_TYPE_COMPRESSED_RAW:
+			case OR_DATA_TYPE_RAW:
 				d->bpc = 16;
 				break;
 			case OR_DATA_TYPE_PIXMAP_8RGB:

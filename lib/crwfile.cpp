@@ -234,7 +234,7 @@ RawContainer* CRWFile::getContainer() const
         }
         data.setDimensions(x, y);
         data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
-        data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+        data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
 
         // decompress if we need
         if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {

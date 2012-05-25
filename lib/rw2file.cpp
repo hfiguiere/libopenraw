@@ -257,7 +257,7 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 											  byte_length);
 
 	if (real_size / (x * 8 / 7) == y) {
-		data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+		data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
 		data.setCompression(PANA_RAW_COMPRESSION);
 	}
 	else if (real_size < byte_length) {
@@ -266,7 +266,7 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 		return OR_ERROR_NOT_FOUND;
 	}
 	else {
-		data.setDataType(OR_DATA_TYPE_CFA);
+		data.setDataType(OR_DATA_TYPE_RAW);
 	}
 	data.setCfaPatternType(OR_CFA_PATTERN_BGGR);
 	

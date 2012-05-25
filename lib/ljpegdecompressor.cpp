@@ -1539,7 +1539,7 @@ RawData *LJpegDecompressor::decompress(RawData *bitmap)
             bitmap = new RawData();
         }
         m_output = bitmap;
-        bitmap->setDataType(OR_DATA_TYPE_CFA);
+        bitmap->setDataType(OR_DATA_TYPE_RAW);
         uint32_t bpc = dcInfo.dataPrecision;
 
         bitmap->setBpc(bpc);

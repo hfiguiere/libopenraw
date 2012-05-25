@@ -249,7 +249,7 @@ IfdDir::Ref  Cr2File::_locateMainIfd()
 		// but I don't seem to see where this is encoded.
 		// 
 		data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
-		data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+		data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
 		data.setDimensions(x, y);
 
 		Trace(DEBUG1) << "In size is " << data.width() 

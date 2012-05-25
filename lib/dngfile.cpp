@@ -126,7 +126,7 @@ DngFile::~DngFile()
                 }
             }
             else {
-                data.setDataType(OR_DATA_TYPE_CFA);
+                data.setDataType(OR_DATA_TYPE_RAW);
             }
             uint32_t crop_x, crop_y, crop_w, crop_h;
             IfdEntry::Ref e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_ORIGIN);

@@ -69,7 +69,7 @@ main(int argc, char** argv)
     std::cout << "data size = " << rdata.size() << std::endl;
     std::cout << "data type = " << rdata.dataType() << std::endl;
     
-    if(!keepCompressed && rdata.dataType() == OR_DATA_TYPE_CFA) {
+    if(!keepCompressed && rdata.dataType() == OR_DATA_TYPE_RAW) {
         f = fopen("image.pgm", "wb");
         fprintf(f, "P5\n");
         fprintf(f, "%d %d\n", rdata.width(), rdata.height());

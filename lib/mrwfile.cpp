@@ -229,10 +229,10 @@ void MRWFile::_identifyId()
 		finaldatalen = datalen;
 	}
 	if(is_compressed && (options & OR_OPTIONS_DONT_DECOMPRESS)) {
-		data.setDataType (OR_DATA_TYPE_COMPRESSED_CFA);
+		data.setDataType (OR_DATA_TYPE_COMPRESSED_RAW);
 	}
 	else {
-		data.setDataType (OR_DATA_TYPE_CFA);
+		data.setDataType (OR_DATA_TYPE_RAW);
 	}
 	data.setBpc(bpc);
 	// this seems to be the hardcoded value.

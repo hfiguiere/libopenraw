@@ -576,6 +576,14 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     return OR_ERROR_NOT_FOUND;
   }
 
+  uint32_t photo_int = 0;
+  got_it = dir->getIntegerValue(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION,
+                                photo_int);
+  if(!got_it) {
+    // Default is CFA.
+    photo_int = IFD::EV_PI_CFA;
+  }
+
   uint16_t tiffCompression = 0;
   got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, tiffCompression);
   if(!got_it)
@@ -588,17 +596,17 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   switch(compression) 
   {
   case IFD::COMPRESS_NONE:
-    data_type = OR_DATA_TYPE_CFA;
+    data_type = OR_DATA_TYPE_RAW;
     break;
   case IFD::COMPRESS_NIKON_PACK:
-    data_type = OR_DATA_TYPE_CFA;
+    data_type = OR_DATA_TYPE_RAW;
     break;
   case IFD::COMPRESS_NIKON_QUANTIZED:
     // must check whether it is really compressed
     // only for D100
     if( !NefFile::isCompressed(*m_container, offset) ) {
       compression = IFD::COMPRESS_NIKON_PACK;
-      data_type = OR_DATA_TYPE_CFA;
+      data_type = OR_DATA_TYPE_RAW;
       // this is a hack. we should check if 
       // we have a D100 instead, but that case is already
       // a D100 corner case. WILL BREAK on compressed files.
@@ -607,7 +615,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
       break;
     }
   default:
-    data_type = OR_DATA_TYPE_COMPRESSED_CFA;
+    data_type = OR_DATA_TYPE_COMPRESSED_RAW;
     break;
   }
 
@@ -630,7 +638,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
                   << " to 16\n";
     bpc = 16;
   }
-  if((bpc == 16) || (data_type == OR_DATA_TYPE_COMPRESSED_CFA)) {
+  if((bpc == 16) || (data_type == OR_DATA_TYPE_COMPRESSED_RAW)) {
     void *p = data.allocData(byte_length);
     size_t real_size = m_container->fetchData(p, offset, 
                                               byte_length);
@@ -648,9 +656,9 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   }
   data.setCfaPatternType(cfa_pattern);
   data.setDataType(data_type);
-  data.setCompression(data_type == OR_DATA_TYPE_COMPRESSED_CFA 
+  data.setCompression(data_type == OR_DATA_TYPE_COMPRESSED_RAW
                       ? compression : 1);
-  if((data_type == OR_DATA_TYPE_CFA) && (data.max() == 0)) {
+  if((data_type == OR_DATA_TYPE_RAW) && (data.max() == 0)) {
     data.setMax((1 << bpc) - 1);
   }
   data.setDimensions(x, y);

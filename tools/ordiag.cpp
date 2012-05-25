@@ -124,11 +124,11 @@ public:
             case OR_DATA_TYPE_PNG:
                 return "PNG container";
                 break;
-            case OR_DATA_TYPE_CFA:
-                return "CFA data";
+            case OR_DATA_TYPE_RAW:
+                return "RAW data";
                 break;
-            case OR_DATA_TYPE_COMPRESSED_CFA:
-                return "Compressed CFA data";
+            case OR_DATA_TYPE_COMPRESSED_RAW:
+                return "Compressed RAW data";
                 break;
             case OR_DATA_TYPE_UNKNOWN:
                 return "Unknown type";
@@ -223,7 +223,7 @@ public:
                 m_out << "\tRAW data\n";
                 m_out << boost::format("\t\tType: %1%")
                     % dataTypeToString(rd.dataType());
-                if(rd.dataType() == OR_DATA_TYPE_COMPRESSED_CFA)  {
+                if(rd.dataType() == OR_DATA_TYPE_COMPRESSED_RAW)  {
                     m_out << boost::format(" (compression = %1%)\n") % rd.compression();
                 }
                 else {

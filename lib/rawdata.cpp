@@ -111,7 +111,7 @@ RawData::~RawData()
 	uint32_t _x, _y, out_x, out_y;
 	uint16_t *src;
 
-	if(dataType() != OR_DATA_TYPE_CFA) {
+	if(dataType() != OR_DATA_TYPE_RAW) {
 		Debug::Trace(DEBUG1) << "wrong data type\n";
 		return OR_ERROR_INVALID_FORMAT;
 	}

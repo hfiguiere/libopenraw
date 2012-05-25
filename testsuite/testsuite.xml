@@ -11,7 +11,7 @@
       <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
       <thumbDataSizes>377981 7239 294912</thumbDataSizes>
       <thumbMd5>73 237 94</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>16973120</rawDataSize>
       <rawDataDimensions>3596 2360</rawDataDimensions>
       <rawDataRoi>84 19 3503 2335</rawDataRoi>
@@ -34,7 +34,7 @@
       <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
       <thumbDataSizes>892728 11024 1151304</thumbDataSizes>
       <thumbMd5>83 217 175</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>24802624</rawDataSize>
       <rawDataDimensions>4312 2876</rawDataDimensions>
       <rawDataRoi>32 23 4271 2847</rawDataRoi>
@@ -57,7 +57,7 @@
       <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
       <thumbDataSizes>2263285 17704 1736640</thumbDataSizes>
       <thumbMd5>253 53 175</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>37691520</rawDataSize>
       <rawDataDimensions>5360 3516</rawDataDimensions>
       <rawDataRoi>168 56 5183 3455</rawDataRoi>
@@ -80,7 +80,7 @@
       <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
       <thumbDataSizes>632111 7297 935712</thumbDataSizes>
       <thumbMd5>221 219 155</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>20846592</rawDataSize>
       <rawDataDimensions>3744 2784</rawDataDimensions>
       <rawDataRoi>24 28 3647 2735</rawDataRoi>
@@ -103,7 +103,7 @@
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>1359526</thumbDataSizes>
       <thumbMd5>53</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>13036672</rawDataSize>
       <rawDataDimensions>3152 2068</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -125,7 +125,7 @@
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>233232</thumbDataSizes>
       <thumbMd5>20</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>13036672</rawDataSize>
       <rawDataDimensions>3152 2068</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -147,7 +147,7 @@
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
       <thumbMd5>8</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
       <rawCfaPattern>GRBG</rawCfaPattern>
@@ -168,7 +168,7 @@
       <thumbFormats>8RGB JPEG</thumbFormats>
       <thumbDataSizes>57600 578350</thumbDataSizes>
       <thumbMd5>23 89</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3039 2014</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
@@ -190,7 +190,7 @@
       <thumbFormats>8RGB JPEG</thumbFormats>
       <thumbDataSizes>57600 820445</thumbDataSizes>
       <thumbMd5>174 207</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3039 2014</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
@@ -212,7 +212,7 @@
       <thumbFormats>8RGB JPEG</thumbFormats>
       <thumbDataSizes>57600 697471</thumbDataSizes>
       <thumbMd5>200 106</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3039 2014</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
@@ -234,7 +234,7 @@
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
       <thumbMd5>213</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>5327776</rawDataSize>
       <rawDataDimensions>2012 1324</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
@@ -255,7 +255,7 @@
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
       <thumbMd5>169</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>8223520</rawDataSize>
       <rawDataDimensions>2495 1648</rawDataDimensions>
       <rawCfaPattern>GBRG</rawCfaPattern>
@@ -277,7 +277,7 @@
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
       <thumbMd5>17</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -299,7 +299,7 @@
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>6696 1254388</thumbDataSizes>
       <thumbMd5>180 245</thumbMd5>
-      <rawDataType>COMP_CFA</rawDataType>
+      <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>8025398</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -318,7 +318,7 @@
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>5308 1343392</thumbDataSizes>
       <thumbMd5>35 254</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -338,7 +338,7 @@
       <thumbFormats>8RGB JPEG</thumbFormats>
       <thumbDataSizes>57600 1265761</thumbDataSizes>
       <thumbMd5>120 211</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>20656128</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -360,7 +360,7 @@
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>191580</thumbDataSizes>
       <thumbMd5>105</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>20134656</rawDataSize>
       <rawDataDimensions>3884 2592</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -382,7 +382,7 @@
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>65280</thumbDataSizes>
       <thumbMd5>109</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>20681920</rawDataSize>
       <rawDataDimensions>3920 2638</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -403,7 +403,7 @@
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>10614</thumbDataSizes>
       <thumbMd5>126</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>16826880</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -424,7 +424,7 @@
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>11074</thumbDataSizes>
       <thumbMd5>48</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>16072000</rawDataSize>
       <rawDataDimensions>3280 2450</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -440,7 +440,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458766</rawTypeId>
       <thumbNum>0</thumbNum>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>25288800</rawDataSize>
       <rawDataDimensions>4100 3084</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -457,7 +457,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458759</rawTypeId>
       <thumbNum>0</thumbNum>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -479,7 +479,7 @@
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>34222</thumbDataSizes>
       <thumbMd5>155</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>6348928</rawDataSize>
       <rawDataDimensions>2056 1544</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -501,7 +501,7 @@
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>56306</thumbDataSizes>
       <thumbMd5>26</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -523,7 +523,7 @@
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>67497</thumbDataSizes>
       <thumbMd5>191</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
@@ -560,7 +560,7 @@
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>757744 8890</thumbDataSizes>
       <thumbMd5>133 231</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>25531520</rawDataSize>
       <rawDataDimensions>4448 2870</rawDataDimensions>
       <rawCfaPattern>GBRG</rawCfaPattern>
@@ -582,7 +582,7 @@
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>400511 10211</thumbDataSizes>
       <thumbMd5>212 59</thumbMd5>
-      <rawDataType>CFA</rawDataType>
+      <rawDataType>RAW</rawDataType>
       <rawDataSize>33669120</rawDataSize>
       <rawDataDimensions>5120 3288</rawDataDimensions>
       <rawCfaPattern>NON_RGB22</rawCfaPattern>

@@ -274,7 +274,7 @@ RawData *CrwDecompressor::decompress(RawData *in)
         bitmap = new RawData();
     else
         bitmap = in;
-    bitmap->setDataType(OR_DATA_TYPE_CFA);
+    bitmap->setDataType(OR_DATA_TYPE_RAW);
     // we know the 10-bits are hardcoded in the CRW
     bitmap->setBpc(10);
     bitmap->setMax((1 << 10) - 1);

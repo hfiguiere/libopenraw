@@ -165,11 +165,11 @@ bool equalDataType(const std::string & result, BitmapData::DataType t)
     case OR_DATA_TYPE_PNG:
         equal = (result == "PNG");
         break;
-    case OR_DATA_TYPE_CFA:
-        equal = (result == "CFA");
+    case OR_DATA_TYPE_RAW:
+        equal = (result == "RAW");
         break;
-    case OR_DATA_TYPE_COMPRESSED_CFA:
-        equal = (result == "COMP_CFA");
+    case OR_DATA_TYPE_COMPRESSED_RAW:
+        equal = (result == "COMP_RAW");
         break;
     default:
         break;

@@ -168,7 +168,7 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
         if(data.size() < x * y * 2) {
             compression = ORF_COMPRESSION;
             data.setCompression(ORF_COMPRESSION);
-            data.setDataType(OR_DATA_TYPE_COMPRESSED_CFA);
+            data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
         }
         else {
             compression = data.compression();
@@ -181,7 +181,7 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
                 if (dData != NULL) {
                     dData->setCfaPatternType(data.cfaPattern()->patternType());
                     data.swap(*dData);
-                    data.setDataType(OR_DATA_TYPE_CFA);
+                    data.setDataType(OR_DATA_TYPE_RAW);
                     data.setDimensions(x, y);
                     delete dData;
                 }						
