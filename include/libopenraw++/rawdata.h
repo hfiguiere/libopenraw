@@ -25,6 +25,7 @@
 
 #include <vector>
 
+#include <libopenraw/metadata.h>
 #include <libopenraw++/bitmapdata.h>
 #include <libopenraw++/cfapattern.h>
 
@@ -41,18 +42,24 @@ public:
     RawData();
     virtual ~RawData();
 
-	/** Get the rendered image
+    /** Get the rendered image
      * @param bitmapdata the BitmapData to put the image into
      * @param options the option bits. Pass 0 for now.
      * @return the error code
      */
     ::or_error getRenderedImage(BitmapData & bitmapdata, uint32_t options);    
 	
-	// deprecate rename black level and white level resp.
+    // deprecate rename black level and white level resp.
     uint16_t min();
     uint16_t max();
     void setMin(uint16_t _m);
     void setMax(uint16_t _m);
+
+
+    /**
+     */
+    void setPhotometricInterpretation(ExifPhotometricInterpretation pi);
+    ExifPhotometricInterpretation getPhotometricInterpretation() const;
 
     /** Get colour matrix 1
      * @param index The matrix index.

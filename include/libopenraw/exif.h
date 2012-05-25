@@ -191,7 +191,7 @@ typedef enum {
 
 	/* RAW only */
 	EV_PI_CFA = 32803,
-	EV_PI_LINEARRAW = 34892
+	EV_PI_LINEAR_RAW = 34892
 } ExifPhotometricInterpretation;
 
 typedef enum {

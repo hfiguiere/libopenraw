@@ -1,0 +1,72 @@
+/*
+ * libopenraw - render/grayscale.h
+ *
+ * Copyright (C) 2012 Hubert Figuiere
+ *
+ * This library is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+#include <stdlib.h>
+
+#include <algorithm>
+
+#include "render/grayscale.h"
+
+void
+grayscale_to_rgb (uint16_t *src, uint32_t src_x, uint32_t src_y, 
+                  uint8_t *dst)
+{
+  uint32_t x,y;
+  uint32_t offset, doffset;
+  float *src_buf;
+  float *dst_buf;
+  
+  src_buf = (float*)calloc(src_x * src_y, sizeof(float));
+  dst_buf = (float*)calloc(src_x * src_y * 3, sizeof(float));
+  
+  std::copy(src, src + (src_x * src_y), src_buf);
+  
+  offset = 0;
+  doffset = 0;
+  for(y = 0 ; y < src_y; y++)
+  {
+    for (x = 0 ; x < src_x; x++)
+    {
+      // change this. we currently clip.
+      dst_buf [doffset*3+0] = src_buf[offset] / 64.0;
+      dst_buf [doffset*3+1] = src_buf[offset] / 64.0;
+      dst_buf [doffset*3+2] = src_buf[offset] / 64.0;
+      
+      offset++;
+	    doffset++;
+    }
+  }
+  
+  std::copy(dst_buf, dst_buf + (src_x * src_y * 3), dst);		
+  free(src_buf);
+  free(dst_buf);
+}
+
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

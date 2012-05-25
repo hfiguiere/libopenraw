@@ -586,8 +586,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
 
   uint16_t tiffCompression = 0;
   got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, tiffCompression);
-  if(!got_it)
-  {
+  if(!got_it) {
     Trace(DEBUG1) << "Compression type not found\n";
   }
   BitmapData::DataType data_type = OR_DATA_TYPE_NONE;
@@ -658,6 +657,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   data.setDataType(data_type);
   data.setCompression(data_type == OR_DATA_TYPE_COMPRESSED_RAW
                       ? compression : 1);
+  data.setPhotometricInterpretation((ExifPhotometricInterpretation)photo_int);
   if((data_type == OR_DATA_TYPE_RAW) && (data.max() == 0)) {
     data.setMax((1 << bpc) - 1);
   }

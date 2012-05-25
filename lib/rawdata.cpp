@@ -27,6 +27,7 @@
 #include <libopenraw++/rawfile.h>
 
 #include "bimedian_demosaic.h"
+#include "render/grayscale.h"
 #include "trace.h"
 
 namespace OpenRaw {
@@ -35,6 +36,7 @@ class RawData::Private {
 public:
     RawData *self;
     uint16_t min, max;
+    ExifPhotometricInterpretation photometricInterpretation;
     const CfaPattern* cfa_pattern; // IMMUTABLE
     uint32_t compression;
     uint8_t *pos;
@@ -52,6 +54,7 @@ public:
     Private(RawData *_self)
         : self(_self), 
           min(0), max(0),
+          photometricInterpretation(EV_PI_CFA),
           cfa_pattern(CfaPattern::twoByTwoPattern(OR_CFA_PATTERN_NONE)),
           compression(0),
           pos(NULL), offset(0),
@@ -115,6 +118,12 @@ RawData::~RawData()
 		Debug::Trace(DEBUG1) << "wrong data type\n";
 		return OR_ERROR_INVALID_FORMAT;
 	}
+        if(d->photometricInterpretation != EV_PI_CFA &&
+           d->photometricInterpretation != EV_PI_LINEAR_RAW) {
+            Debug::Trace(DEBUG1) << "only CFA or LinearRaw are supported.\n";
+            return OR_ERROR_INVALID_FORMAT;
+        }
+
 	or_cfa_pattern pattern;
 	pattern = cfaPattern()->patternType();
 	_x = width();
@@ -129,12 +138,17 @@ RawData::~RawData()
 	 rawdata.clip();
 	 */
 	src = (uint16_t*)data();
-	
-	/* figure out how the demosaic can be plugged for a different 
-	 * algorithm */
-	bimedian_demosaic(src, _x, _y, pattern, dst, out_x, out_y);
-	bitmapdata.setDimensions(out_x, out_y);
 
+        if (d->photometricInterpretation == EV_PI_CFA) {
+            /* figure out how the demosaic can be plugged for a different 
+             * algorithm */
+            bimedian_demosaic(src, _x, _y, pattern, dst, out_x, out_y);
+            bitmapdata.setDimensions(out_x, out_y);
+        }
+        else {
+            grayscale_to_rgb(src, _x, _y, dst);
+            bitmapdata.setDimensions(_x, _y);
+        }
         // correct colour using the colour matrices
         // TODO
 
@@ -162,6 +176,17 @@ void RawData::setMax(uint16_t m)
 {
     d->max = m;
 }
+
+void RawData::setPhotometricInterpretation(ExifPhotometricInterpretation pi)
+{
+    d->photometricInterpretation = pi;
+}
+
+ExifPhotometricInterpretation RawData::getPhotometricInterpretation() const
+{
+    return d->photometricInterpretation;
+}
+
 
 const double* RawData::getColourMatrix1(uint32_t & matrixSize) const
 {
