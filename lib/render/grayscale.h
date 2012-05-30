@@ -23,9 +23,11 @@
 
 #include <stdint.h>
 
-void
+#include <libopenraw/consts.h>
+
+or_error
 grayscale_to_rgb (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-		  uint8_t *dst);
+		  uint16_t *dst);
 
 #endif
 /*

@@ -19,13 +19,14 @@
  *
  */
 
-
-
 #ifndef __BIMEDIAN_DEMOSAIC_H_
 #define __BIMEDIAN_DEMOSAIC_H_
 
+#include <stdint.h>
 
-void
+#include <libopenraw/consts.h>
+
+or_error
 bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
 		   or_cfa_pattern pattern, uint8_t *dst, uint32_t &out_x, uint32_t &out_y);
 

@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <endian.h>
 
 #include <libopenraw/libopenraw.h>
 
@@ -48,18 +49,32 @@ main(int argc, char **argv)
             if(err == OR_ERROR_NONE) {
                 uint32_t x, y;
                 FILE * f;
-                size_t size, written_size;
-		
+                size_t size, written_size, i;
+                uint16_t* data;		
+                or_data_type format = or_bitmapdata_format(bitmapdata);
+                size_t componentsize = (format == OR_DATA_TYPE_PIXMAP_16RGB) ? 2 : 1;
+
                 or_bitmapdata_dimensions(bitmapdata, &x, &y);
                 printf(" --- dimensions x = %d, y = %d\n", x, y);
                 f = fopen("image.ppm", "wb");
                 fprintf(f, "P6\n");
                 fprintf(f, "%d %d\n", x, y);
-                fprintf(f, "255\n");
+                fprintf(f, "%d\n", (componentsize == 2) ? 0xffff : 0xff);
                 
                 size = or_bitmapdata_data_size(bitmapdata);
                 printf(" --- size = %ld\n", (long)size);
-                written_size = fwrite(or_bitmapdata_data(bitmapdata), 1, size, f);
+                data = or_bitmapdata_data(bitmapdata);
+
+                if(componentsize == 2) {
+                    written_size = 0;
+                    for(i = 0; i < size; i+=2) {
+                        uint16_t value = htobe16(data[i/2]);
+                        written_size += fwrite(&value, 1, sizeof(value), f);
+                    }
+                }
+                else {
+                    written_size = fwrite(or_bitmapdata_data(bitmapdata), 1, size, f);
+                }
                 if(written_size != size) {
                     printf("short read\n");
                 }

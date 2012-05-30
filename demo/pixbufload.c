@@ -53,13 +53,20 @@ main(int argc, char **argv)
             err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
             if(err == OR_ERROR_NONE) {
                 uint32_t x,y;
+                or_data_type format = or_bitmapdata_format(bitmapdata);
                 x = y = 0;
                 or_bitmapdata_dimensions(bitmapdata, &x, &y);
-                pixbuf = gdk_pixbuf_new_from_data(or_bitmapdata_data(bitmapdata), 
-                                                  GDK_COLORSPACE_RGB,
-                                                  FALSE, 8, x , y , 
-                                                  x * 3, 
-                                                  pixbuf_free, bitmapdata);
+                if(format == OR_DATA_TYPE_PIXMAP_8RGB) {
+                    pixbuf = gdk_pixbuf_new_from_data(or_bitmapdata_data(bitmapdata), 
+                                                      GDK_COLORSPACE_RGB,
+                                                      FALSE, 8, x , y , 
+                                                      x * 3, 
+                                                      pixbuf_free, bitmapdata);
+                }
+                else {
+                    /* Gdk pixbuf still suck ass in 2012 not supporting 16bpp. */
+                    printf("16 bits isn't supported because Gdkpixbuf still suck\n");
+                }
             }
             or_rawfile_release(raw_file);
         }

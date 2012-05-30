@@ -20,7 +20,7 @@
  * Copyright 2008 Bradley Broom <bmbroom@gmail.com>
  *
  * In libopenraw:
- * Copyright 2008-2009 Hubert Figuiere <hub@figuiere.net>
+ * Copyright 2008-2009,2012 Hubert Figuiere <hub@figuiere.net>
  * Copyright 2008 Novell Inc.
  */
 
@@ -36,10 +36,10 @@
 /* Returns the median of four floats. We define the median as the average of
  * the central two elements.
  */
-static inline float
-m4 (float a, float b, float c, float d)
+static inline double
+m4 (double a, double b, double c, double d)
 {
-    float t;
+    double t;
 	
     /* Sort ab */
     if (a > b)
@@ -77,14 +77,14 @@ m4 (float a, float b, float c, float d)
 /* We expect src_extent to have a one pixel border around all four sides
  * of dst_extent.
  */
-void
+or_error
 bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
              or_cfa_pattern pattern, uint8_t *dst, uint32_t &out_x, uint32_t &out_y)
 {
     uint32_t x,y;
     uint32_t offset, doffset;
-    float *src_buf;
-    float *dst_buf;
+    double *src_buf;
+    double *dst_buf;
 
     int npattern = 0;
     switch(pattern) {
@@ -100,13 +100,15 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
     case OR_CFA_PATTERN_RGGB:
         npattern = 3;
         break;
+
     default:
-        break;
+        // invalid
+        return OR_ERROR_INVALID_FORMAT;
     }
 
     out_x = out_y = 0;
-    src_buf = (float*)calloc(src_x * src_y, sizeof(float));
-    dst_buf = (float*)calloc(src_x * src_y * 3, sizeof(float));
+    src_buf = (double*)calloc(src_x * src_y, sizeof(*src_buf));
+    dst_buf = (double*)calloc(src_x * src_y * 3, sizeof(*dst_buf));
 
     std::copy(src, src + (src_x * src_y), src_buf);
 
@@ -116,9 +118,9 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
     {
         for (x = 1 ; x < src_x - 1; x++)
         {
-            float red=0.0;
-            float green=0.0;
-            float blue=0.0;
+            double red=0.0;
+            double green=0.0;
+            double blue=0.0;
 			
             if ((y + npattern%2)%2==0) {
                 if ((x+npattern/2)%2==1) {
@@ -179,6 +181,8 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
     std::copy(dst_buf, dst_buf + (out_x * out_y * 3), dst);		
     free(src_buf);
     free(dst_buf);
+
+    return OR_ERROR_NONE;
 }
 
 

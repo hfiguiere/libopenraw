@@ -24,19 +24,12 @@
 
 #include "render/grayscale.h"
 
-void
+or_error
 grayscale_to_rgb (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-                  uint8_t *dst)
+                  uint16_t *dst)
 {
   uint32_t x,y;
   uint32_t offset, doffset;
-  float *src_buf;
-  float *dst_buf;
-  
-  src_buf = (float*)calloc(src_x * src_y, sizeof(float));
-  dst_buf = (float*)calloc(src_x * src_y * 3, sizeof(float));
-  
-  std::copy(src, src + (src_x * src_y), src_buf);
   
   offset = 0;
   doffset = 0;
@@ -45,18 +38,16 @@ grayscale_to_rgb (uint16_t *src, uint32_t src_x, uint32_t src_y,
     for (x = 0 ; x < src_x; x++)
     {
       // change this. we currently clip.
-      dst_buf [doffset*3+0] = src_buf[offset] / 64.0;
-      dst_buf [doffset*3+1] = src_buf[offset] / 64.0;
-      dst_buf [doffset*3+2] = src_buf[offset] / 64.0;
+      dst [doffset*3+0] = src[offset];
+      dst [doffset*3+1] = src[offset];
+      dst [doffset*3+2] = src[offset];
       
       offset++;
 	    doffset++;
     }
   }
-  
-  std::copy(dst_buf, dst_buf + (src_x * src_y * 3), dst);		
-  free(src_buf);
-  free(dst_buf);
+
+  return OR_ERROR_NONE;
 }
 
 /*

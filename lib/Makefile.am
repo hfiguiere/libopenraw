@@ -102,6 +102,6 @@ libopenraw_la_SOURCES = \
 	olympusdecompressor.cpp \
 	metavalue.cpp \
 	unpack.cpp \
-	bimedian_demosaic.cpp bimedian_demosaic.h \
+	render/bimedian_demosaic.cpp render/bimedian_demosaic.h \
 	render/grayscale.h render/grayscale.cpp
 	$(NULL)
