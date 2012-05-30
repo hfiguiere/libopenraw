@@ -54,6 +54,10 @@ public:
 
     std::string cfaPatternToString(const CfaPattern* pattern)
         {
+            if(pattern == NULL) {
+                return "(null)";
+            }
+
             std::string out;
             uint16_t size = 0;
             const uint8_t* patternPattern = pattern->patternPattern(size);
@@ -235,8 +239,10 @@ public:
                     % rd.width() % rd.height();
                 m_out << boost::format("\t\tROI: %1% %2% %3% %4%\n")
                     % rd.roi_x() % rd.roi_y() % rd.roi_width() % rd.roi_height();
+                const CfaPattern* pattern = rd.cfaPattern();
                 ::or_cfa_pattern patternType
-                      = rd.cfaPattern()->patternType();
+                      = pattern ? pattern->patternType() 
+                      : OR_CFA_PATTERN_NON_RGB22;
                 m_out << boost::format("\t\tBayer Type: %1%\n")
                     % cfaPatternToString(patternType);
 
