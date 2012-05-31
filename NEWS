@@ -2,8 +2,9 @@ libopenraw 0.1.0
 
 New features:
 
-  - Color Matrices support.
+  - Colour Matrices support and calibration illuminant.
   - Custom CFA pattern support.
+  - Grayscale LinearRaw decoding.
   - API: or_rawdata_get_rendered_image()
   - API: or_rawdata_set_cfa_pattern()
   - Get the default crop in CR2, CRW and DNG.
@@ -11,19 +12,20 @@ New features:
   - New demo ppmload to create a ppm out of the demosaicized image.
   - Support (partially) PEF from Pentax K-r, K-5, K-7, K-x (unconfirmed),
     645D.
-  - Support for Olympus ORF big-endian files and "RS" (12-bits). 
+  - Support for Olympus ORF big-endian files and "RS" (12-bits).
     Added E-P2, E-P3, E-PL1, E-PL2, E-PL3, E-PM1, E-620, E-M5 and XZ-1
     Olympus ORF decompression.
   - Support for Canon G12, 600D, 1100D/Rebel T3, PowerShot S90, PowerShot S95,
-    Rebel XS, PowerShot S100, PowerShot G1 X, 5DMkIII.
+    Rebel XS, PowerShot S100, PowerShot G1 X, 5DMkIII, Rebel T4i/650D.
   - API: Canon camera ID have aliases.
-  - Support for Nikon D4, D3100, D3200, D5000, D5100, D7000, J1, V1, D3S, D3X, 
+  - Support for Nikon D4, D3100, D3200, D5000, D5100, D7000, J1, V1, D3S, D3X,
     D300S, D700, D800, D800E, D90.
   - Extract compressed raw from ARW (but A-100).
-  - Added support for Sony A-380, A-390, A-560, A-580, A-850, A-900, 
-    SLT-A33, SLT-A35, SLT-A55, SLT-A65, SLT-A77, 
+  - Added support for Sony A-380, A-390, A-560, A-580, A-850, A-900,
+    SLT-A33, SLT-A35, SLT-A55, SLT-A65, SLT-A77,
     Nex-3, Nex-5, Nex-5N, Nex-C3, Nex-7.
-  - Support for DNG from Pentax Q, K-r, K-x, K200D, K-01 ; Leica M9, S2 ; Ricoh GXR
+  - Support for DNG from Pentax Q, K-r, K-x, K200D, K-01, K-30 ; 
+    Leica M9, M Monochrom, S2 ; Ricoh GXR
   - Support for Nikon NRW: P6000, P7000 and P7100 (partial).
   - Support for Panasonic RAW and RW2.
   - Support for FujiFilm RAF.
@@ -31,7 +33,7 @@ New features:
   - Nicer display of the type ID in ordiag.
   - API: mark deprecated APIs.
   - API: or_rawdata_get_roi() to get the region of interest from the RAW data.
- 
+
 Bug fixes:
 
   - API: or_rawfile_get_rendered_image() returns a ORBitmapDataRef with
@@ -41,10 +43,9 @@ Bug fixes:
   - Don't crash when the files can't be written in the testsuite bootstrap.
   - Detect that ORF file are compressed if they are. (Closes #26618)
   - Skip compressed CFA when rendering the image. (Closes #25464)
-  - Accept YCbCr when the compression is JPEG. The K10D DNG should now have 
+  - Accept YCbCr when the compression is JPEG. The K10D DNG should now have
     the large size preview.
-  - Install the GdkPixbuf in the right place. (Closes #29208) (Vincent Untz)
-  
+
 Internal changes:
 
   - Fixed warnings.
@@ -52,8 +53,10 @@ Internal changes:
   - Streamline the loading of IFDs.
   - Move the rendering on the RawData class.
   - BUG: IO::StreamClone::seek() now return the proper value.
-  - Remove shave for automake silent rules (with help from Adrian Bunk 
+  - Remove shave for automake silent rules (with help from Adrian Bunk
     Closes #48429)
+  - Remove debian packaging (Adrian Bunk. Closes #54224)
+  - Remove .cvisgnore (Adrian Bunk. Closes $54229)
 
 libopenraw 0.0.10
 
@@ -66,7 +69,7 @@ libopenraw 0.0.9
 New features:
 
   - Support (partially) PEF from Pentax K20D.
-  - Support for Olympus ORF big-endian files and "RS" (12-bits). 
+  - Support for Olympus ORF big-endian files and "RS" (12-bits).
     Added E-10, E-P1, E-620, SP350, SP500, SP510 and SP550.
   - Support for Canon G10, G11, 7D, 1DMarkIV, 5DMarkII, 500D, 550D, 60D and 1000D.
   - Support for Canon 50D (Closes #30846).
@@ -77,9 +80,9 @@ New features:
 
 Bug fixes:
 
-  - Properly decompress CFA from Canon 7D, 5DMkII, 500D, 1DMkIV (and any 
+  - Properly decompress CFA from Canon 7D, 5DMkII, 500D, 1DMkIV (and any
     other whose JPEG stream have 4 components)
-  - Accept YCbCr when the compression is JPEG. The K10D DNG should now have 
+  - Accept YCbCr when the compression is JPEG. The K10D DNG should now have
     the large size preview.
   - Install the GdkPixbuf in the right place. (Closes #29208) (Vincent Untz)
   - Fixed overflow in the unpack_be12to16() and report errors.
@@ -125,7 +128,7 @@ libopenraw 0.0.6
   - NEW: Decompress NEF files.
   - NEW: Python bindings.
   - NEW: testsuite can be overridden with an override file.
-  - NEW: testsuite can be bootstrapped to download its files off 
+  - NEW: testsuite can be bootstrapped to download its files off
     the internet.
   - NEW: add shave to the build system for saner output.
   - TODO: apply the coefficients.
@@ -184,11 +187,11 @@ libopenraw 0.0.2
 libopenraw 0.0.1 - 12/09/06
 
   - First release.
-	It features: 
+	It features:
 	-C and C++ api
 	-Thumbnail extraction
-	-Supported file formats are: Canon CR2 and CRW, 
-	Nikon NEF, Pentax PEF, Olympus ORF, 
+	-Supported file formats are: Canon CR2 and CRW,
+	Nikon NEF, Pentax PEF, Olympus ORF,
 	Adobe DNG, Sony ARW.
 
 
