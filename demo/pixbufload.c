@@ -75,7 +75,7 @@ main(int argc, char **argv)
         if(pixbuf) {
             gdk_pixbuf_save (pixbuf, "gdk-demosaic.jpg", "jpeg", NULL,
                              "quality", "100", NULL);
-            gdk_pixbuf_unref(pixbuf);
+            g_object_unref(pixbuf);
         }
         else {
             printf("error\n");
