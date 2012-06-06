@@ -61,7 +61,7 @@ static GdkPixbuf *rotate_pixbuf(GdkPixbuf *tmp, int32_t orientation)
 	case 5: {
 		GdkPixbuf* rotated = gdk_pixbuf_rotate_simple(tmp, GDK_PIXBUF_ROTATE_CLOCKWISE);
 		pixbuf = gdk_pixbuf_flip(rotated, FALSE);
-		gdk_pixbuf_unref(rotated);
+		g_object_unref(rotated);
 		break;
 	}
 	case 6:
@@ -121,9 +121,21 @@ static GdkPixbuf *_or_thumbnail_to_pixbuf(ORThumbnailRef thumbnail,
 		size_t count = or_thumbnail_data_size(thumbnail);
 		loader = gdk_pixbuf_loader_new();
 		if (loader != NULL) {
-			gdk_pixbuf_loader_write(loader, buf, count, NULL);
-			gdk_pixbuf_loader_close(loader, NULL);
+			GError* error = NULL;
+			if(!gdk_pixbuf_loader_write(loader, buf,
+						    count, &error) && error) {
+				fprintf(stderr, "loader write error: %s",
+					error->message);
+				g_error_free(error);
+				error = NULL;
+			}
+			if(!gdk_pixbuf_loader_close(loader, &error) && error) {
+				fprintf(stderr, "loader close error: %s",
+					error->message);
+				g_error_free(error);
+			}
 			tmp = gdk_pixbuf_loader_get_pixbuf(loader);
+			g_object_ref(tmp);
 			g_object_unref(loader);
 		}
 		break;
