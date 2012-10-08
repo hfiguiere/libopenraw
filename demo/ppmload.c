@@ -22,9 +22,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <endian.h>
 
 #include <libopenraw/libopenraw.h>
+
+/* TODO use configure instead. */
+#if defined(__APPLE__)
+# include <machine/endian.h>
+# include <libkern/OSByteOrder.h>
+# define htobe16(x) OSSwapHostToBigInt16(x)
+#else
+# include <endian.h>
+#endif
 
 int
 main(int argc, char **argv)
@@ -63,7 +71,7 @@ main(int argc, char **argv)
                 
                 size = or_bitmapdata_data_size(bitmapdata);
                 printf(" --- size = %ld\n", (long)size);
-                data = or_bitmapdata_data(bitmapdata);
+                data = (uint16_t*)or_bitmapdata_data(bitmapdata);
 
                 if(componentsize == 2) {
                     written_size = 0;
