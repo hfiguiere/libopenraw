@@ -179,6 +179,7 @@ extern "C" {
         OR_TYPEID_LEICA_M9 = 7,
         OR_TYPEID_LEICA_S2 = 8,
         OR_TYPEID_LEICA_M_MONOCHROM = 9,
+        OR_TYPEID_LEICA_X2 = 10,
         _OR_TYPEID_LEICA_LAST
     };
 
@@ -297,9 +298,11 @@ extern "C" {
         OR_TYPEID_SONY_A580,
         OR_TYPEID_SONY_A850,
         OR_TYPEID_SONY_A900,
-        OR_TYPEID_SONY_SLTA35,		
+        OR_TYPEID_SONY_SLTA35,
         OR_TYPEID_SONY_SLTA33,
         OR_TYPEID_SONY_A560,
+        OR_TYPEID_SONY_SLTA99,
+        OR_TYPEID_SONY_RX100,
         _OR_TYPEID_SONY_LAST
     };
 
@@ -326,9 +329,12 @@ extern "C" {
         OR_TYPEID_PANASONIC_FZ100 = 19,
         OR_TYPEID_PANASONIC_GX1 = 20,
         OR_TYPEID_PANASONIC_G3 = 21,
+        OR_TYPEID_PANASONIC_G5 = 22,
+        OR_TYPEID_PANASONIC_GF5 = 23,
+        OR_TYPEID_PANASONIC_LX7 = 24,
         _OR_TYPEID_PANASONIC_LAST
     };
-	
+
     enum {
         OR_TYPEID_FUJIFILM_UNKNOWN = 0,
         OR_TYPEID_FUJIFILM_X100 = 1,
