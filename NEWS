@@ -16,8 +16,9 @@ New features:
     Added E-P2, E-P3, E-PL1, E-PL2, E-PL3, E-PM1, E-620, E-M5, XZ-1 and
     XZ-2.
     Olympus ORF decompression.
-  - Support for Canon G12, 600D, 1100D/Rebel T3, PowerShot S90, PowerShot S95,
-    Rebel XS, PowerShot S100, PowerShot G1 X, 5DMkIII, Rebel T4i/650D.
+  - Support for Canon G12, G15, 600D, 1100D/Rebel T3, PowerShot S90,
+    PowerShot S95, Rebel XS, PowerShot S100, PowerShot G1 X, 1D X, 5DMkIII,
+    Rebel T4i/650D.
   - API: Canon camera ID have aliases.
   - Support for Nikon D4, D3100, D3200, D5000, D5100, D7000, J1, V1, D3S, D3X,
     D300S, D600, D700, D800, D800E, D90.
