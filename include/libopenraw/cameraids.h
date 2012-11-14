@@ -258,6 +258,7 @@ extern "C" {
         OR_TYPEID_OLYMPUS_EPL3,
         OR_TYPEID_OLYMPUS_EPM1,
         OR_TYPEID_OLYMPUS_EM5,
+        OR_TYPEID_OLYMPUS_XZ2,
         _OR_TYPEID_OLYMPUS_LAST
     };
 
