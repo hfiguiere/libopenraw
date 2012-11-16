@@ -307,6 +307,7 @@ extern "C" {
         OR_TYPEID_SONY_A560,
         OR_TYPEID_SONY_SLTA99,
         OR_TYPEID_SONY_RX100,
+        OR_TYPEID_SONY_RX1,
         _OR_TYPEID_SONY_LAST
     };
 
