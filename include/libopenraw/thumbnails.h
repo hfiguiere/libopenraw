@@ -1,7 +1,7 @@
 /*
  * libopenraw - thumbnails.h
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2005-2006, 2012 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,12 +19,14 @@
  */
 /**
  * @brief the libopenraw public API header for thumbnails
- * @author Hubert Figuiere <hub@figuiere.net>
+ * @author Hubert Figuière <hub@figuiere.net>
  */
 
 
 #ifndef __LIBOPENRAW_THUMBNAILS_H_
 #define __LIBOPENRAW_THUMBNAILS_H_
+
+#include <stdlib.h>
 
 #include <libopenraw/types.h>
 #include <libopenraw/consts.h>

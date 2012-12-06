@@ -21,8 +21,8 @@
 /* @brief C api for bitmapdata
  */
 
-
-#include <libopenraw/libopenraw.h>
+#include <libopenraw/consts.h>
+#include <libopenraw/bitmapdata.h>
 
 #include <libopenraw++/bitmapdata.h>
 

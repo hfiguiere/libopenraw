@@ -21,7 +21,7 @@
  */
 
 
-#include <libopenraw/libopenraw.h>
+#include <libopenraw/rawdata.h>
 
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/bitmapdata.h>

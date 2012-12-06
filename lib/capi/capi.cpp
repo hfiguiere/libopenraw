@@ -22,7 +22,8 @@
  * @author Hubert Figuiere <hub@figuiere.net>
  */
 
-#include <libopenraw/libopenraw.h>
+#include <libopenraw/consts.h>
+#include <libopenraw/thumbnails.h>
 
 #include <libopenraw++/thumbnail.h>
 

@@ -2,6 +2,7 @@
  * libopenraw - bitmapdata.h
  *
  * Copyright (C) 2008 Novell, Inc.
+ * Copyright (C) 2012 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,6 +22,8 @@
 
 #ifndef __LIBOPENRAW_BITMAPDATA_H_
 #define __LIBOPENRAW_BITMAPDATA_H_
+
+#include <stdlib.h>
 
 #include <libopenraw/types.h>
 

@@ -21,8 +21,8 @@
  */
 
 #include <boost/checked_delete.hpp>
-#include <libopenraw/libopenraw.h>
 
+#include <libopenraw/rawfile.h>
 
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/bitmapdata.h>
