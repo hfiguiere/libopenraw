@@ -1,7 +1,7 @@
 /*
  * libopenraw - cameraids.h
  *
- * Copyright (C) 2012 Hubert Figuiere
+ * Copyright (C) 2012 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,7 +19,7 @@
  */
 /**
  * @brief the libopenraw public consts types
- * @author Hubert Figuiere <hub@figuiere.net>
+ * @author Hubert Figuière <hub@figuiere.net>
  */
 
 #ifndef __LIBOPENRAW_CAMERAIDS_H__
@@ -355,11 +355,12 @@ extern "C" {
         OR_TYPEID_FUJIFILM_S5600 = 8,
         OR_TYPEID_FUJIFILM_S9500 = 9,
         OR_TYPEID_FUJIFILM_S6500FD = 10,
-        OR_TYPEID_FUJIFILM_HS10 = 11,		
+        OR_TYPEID_FUJIFILM_HS10 = 11,
         OR_TYPEID_FUJIFILM_X10 = 12,
         OR_TYPEID_FUJIFILM_XPRO1 = 13,
         OR_TYPEID_FUJIFILM_XS1 = 14,
         OR_TYPEID_FUJIFILM_S200EXR = 15,
+        OR_TYPEID_FUJIFILM_XE1 = 16,
         _OR_TYPEID_FUJIFILM_LAST
     };
 

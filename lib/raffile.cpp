@@ -1,7 +1,7 @@
 /*
  * libopenraw - raffile.cpp
  *
- * Copyright (C) 2011-2012 Hubert Figuiere
+ * Copyright (C) 2011-2012 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -97,6 +97,7 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
   { "X-Pro1" ,         OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO1) },
   { "X-S1" ,           OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XS1) },
   { "FinePix S200EXR", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_S200EXR) },
+  { "X-E1  " ,         OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1) },
 	{ NULL, 0 }
 };
 
