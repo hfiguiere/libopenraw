@@ -311,6 +311,8 @@ extern "C" {
         OR_TYPEID_SONY_SLTA99,
         OR_TYPEID_SONY_RX100,
         OR_TYPEID_SONY_RX1,
+        OR_TYPEID_SONY_NEX6,
+        OR_TYPEID_SONY_SLTA57,
         _OR_TYPEID_SONY_LAST
     };
 
@@ -341,6 +343,7 @@ extern "C" {
         OR_TYPEID_PANASONIC_GF5 = 23,
         OR_TYPEID_PANASONIC_LX7 = 24,
         OR_TYPEID_PANASONIC_GH3 = 25,
+        OR_TYPEID_PANASONIC_FZ200 = 26,
         _OR_TYPEID_PANASONIC_LAST
     };
 
