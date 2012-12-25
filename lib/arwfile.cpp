@@ -106,6 +106,7 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { "NEX-5N", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5N) },
     // There are pre-production files with the type NEX-C00....
     { "NEX-C3", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEXC3) },
+    { "NEX-F3", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEXF3) },
     { "NEX-7", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX7) },
     { "DSC-RX100", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX100) },
     { "DSC-RX1", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX1) },
