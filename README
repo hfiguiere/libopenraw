@@ -1,7 +1,7 @@
 Copyright
 =========
 
-libopenraw is Copyright (c) 2005-2011 Hubert Figuiere and
+libopenraw is Copyright (c) 2005-2013 Hubert Figuiere and
 other contributors. See the respective files.
 It is licensed under LGPLv3 or later. See files COPYING
 and COPYING.LESSER
@@ -41,6 +41,7 @@ below:
     - Sony ARW
     - Minolta MRW
     - Panasonic RAW and RW2
+    - Fujifilm RAF
 
 How to build:
 =============
@@ -146,19 +147,25 @@ Nikon NEF                Y Y Y Y Y Y N Y
  D50                               T
  D5000                   T   B     T
  D5100                   T   B     T
+ D5200
  D60                     # # # # # # # #
  D600
  D70                     T T Y T T T
  D70s                    T T Y T T T
  D700                              T
  D7000                   T T T T T T
+ D7100
  D80                               T
  D800                              T
  D800E                             T
  D90                         B     T
  J1                      T T B Y Y T
+ J2
+ J3
+ S1
  V1                      T T B Y Y T
  V2
+ Coolpix A
 
 Nikon NRW                Y         Y N Y
  P6000                   T         T   T
@@ -187,7 +194,9 @@ Olympus ORF              Y Y B Y Y Y N Y
  E-PL1                   B T T   T T
  E-PL2                   B T T   T T
  E-PL3                   B T T   T T
+ E-PL5
  E-PM1                   B T T   T T
+ E-PM2
  E-M5                    B       T T
  XZ-1                    B T T   T T
  XZ-2
@@ -237,6 +246,7 @@ Sony ARW                 Y Y N Y N Y N Y
  Nex-5N                  T T       T
  Nex-6
  Nex-C3                  T T       T
+ Nex-F3
  Nex-7
  RX-1
  RX-100
@@ -288,9 +298,12 @@ FujiFilm RAF             Y Y B N N Y N T
  Finepix F700            T         T
  Finepix E900            T         T
  X10                     T         T
+ X100S
+ X20
  X-Pro1                  T       Y T   N
  X-E1
  X-S1                    T         T   N
+ XF1
  Finepix S200 EXR        T         T
 
 Foveon X3F               N N N N N N N N
@@ -312,6 +325,7 @@ Panasonic RW2            Y Y N Y Y Y Y N
  GF2                     T T       T T
  GF3
  GF5
+ GF6
  GH1                     T T       T T
  GH2                     T T N     T T
  GH3
