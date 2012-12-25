@@ -18,14 +18,14 @@ New features:
     Olympus ORF decompression.
   - Support for Canon G12, G15, 600D, 1100D/Rebel T3, PowerShot S90,
     PowerShot S95, Rebel XS, PowerShot S100, PowerShot G1 X, 1D X, 5DMkIII,
-    Rebel T4i/650D.
+    Rebel T4i/650D, 6D, EOS-M.
   - API: Canon camera ID have aliases.
-  - Support for Nikon D4, D3100, D3200, D5000, D5100, D7000, J1, V1, D3S, D3X,
-    D300S, D600, D700, D800, D800E, D90.
+  - Support for Nikon D4, D3100, D3200, D5000, D5100, D7000, J1, V1, V2,
+    D3S, D3X, D300S, D600, D700, D800, D800E, D90.
   - Extract compressed raw from ARW (but A-100).
   - Added support for Sony A-380, A-390, A-560, A-580, A-850, A-900,
-    SLT-A33, SLT-A35, SLT-A55, SLT-A65, SLT-A77, SLT-A99
-    Nex-3, Nex-5, Nex-5N, Nex-C3, Nex-7, RX-1, RX-100.
+    SLT-A33, SLT-A35, SLT-A55, SLT-A57, SLT-A65, SLT-A77, SLT-A99,
+    Nex-3, Nex-5, Nex-5N, Nex-6, Nex-C3, Nex-7, RX-1, RX-100.
   - Support for DNG from Pentax Q, K-r, K-x, K200D, K-01, K-30 ;
     Leica M9, M Monochrom, S2, X2 ; Ricoh GXR
   - Support for Nikon NRW: P6000, P7000, P7100 and P7700 (partial).

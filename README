@@ -90,16 +90,21 @@ Canon CR2                Y Y Y Y Y Y Y Y
  5D                      T T T     T T
  5DMarkII                T T T T   T T
  5DMarkIII               T T T T   T T
+ 6D
  60D                     T T T T T T T
  600D                    T T T T T T T
+ 650D/T4i
  7D                      T T T     T T
  1DMarkII                T T T     T T
  1DMarkIII
  1DMarkIV                T T T T T T T
+ 1D X
+ EOS-M
  G9                                T T
  G10                               T T
  G11                     T T T     T T
  G12                     T T T T T T T
+ G15
  G1X
  SX1 IS                  # # # # # # #
  S90                     T T T T T T T
@@ -142,6 +147,7 @@ Nikon NEF                Y Y Y Y Y Y N Y
  D5000                   T   B     T
  D5100                   T   B     T
  D60                     # # # # # # # #
+ D600
  D70                     T T Y T T T
  D70s                    T T Y T T T
  D700                              T
@@ -152,11 +158,13 @@ Nikon NEF                Y Y Y Y Y Y N Y
  D90                         B     T
  J1                      T T B Y Y T
  V1                      T T B Y Y T
+ V2
 
 Nikon NRW                Y         Y N Y
  P6000                   T         T   T
  P7000                   T         T   T
  P7100                   T             T
+ P7700
 
 Olympus ORF              Y Y B Y Y Y N Y
  E-1                     T T T   T T
@@ -182,6 +190,7 @@ Olympus ORF              Y Y B Y Y Y N Y
  E-PM1                   B T T   T T
  E-M5                    B       T T
  XZ-1                    B T T   T T
+ XZ-2
 
 Adobe DNG                Y Y B Y Y Y Y Y
  Leica DMR               T T X T T T
@@ -189,10 +198,12 @@ Adobe DNG                Y Y B Y Y Y Y Y
  Leica M9                T T X T T T
  Leica M-Monochrom       T T X T T T
  Leica X1                T T T T T T
+ Leica X2
  Leica S2                T T B T T T
  Adobe DNG converter     T T B T T T
  Pentax K10D             T T X T T T T
  Pentax K200D            T T   T T T T
+ Pentax K30
  Pentax K-r              T T   T T T T
  Pentax K-x              T T   T T T T
  Pentax 645D             T T X T T T T
@@ -202,7 +213,7 @@ Adobe DNG                Y Y B Y Y Y Y Y
  Ricoh GR-2              T T X T T T
  Ricoh GRX               T T X T T T
  Ricoh GX100
- 
+
 Sony ARW                 Y Y N Y N Y N Y
  A-100                   T N   T   T
  A-200                   # # # # # T #
@@ -217,13 +228,18 @@ Sony ARW                 Y Y N Y N Y N Y
  SLT-A33
  SLT-A35
  SLT-A55                 T T       T
+ SLT-A57
  SLT-A65                 T T       T
  SLT-A77                 T T       T
+ SLT-A99
  Nex-3                   T T   T   T
  Nex-5                   T T       T
  Nex-5N                  T T       T
+ Nex-6
  Nex-C3                  T T       T
  Nex-7
+ RX-1
+ RX-100
 
 Pentax PEF               Y Y N Y Y Y N Y
  *-ist D                 T T X X T T
@@ -273,6 +289,7 @@ FujiFilm RAF             Y Y B N N Y N T
  Finepix E900            T         T
  X10                     T         T
  X-Pro1                  T       Y T   N
+ X-E1
  X-S1                    T         T   N
  Finepix S200 EXR        T         T
 
@@ -293,16 +310,21 @@ Panasonic RAW            Y Y N Y Y Y Y N
 Panasonic RW2            Y Y N Y Y Y Y N
  GF1                     T T       T T
  GF2                     T T       T T
+ GF3
+ GF5
  GH1                     T T       T T
  GH2                     T T N     T T
+ GH3
  G1                      T T       T T
  G2                      T T       T T
  G3
+ G5
  G10                     T T       T T
  LX3                     T T B     T T
  LX5                     T T B     T T
+ LX7
+ FZ200
  FZ28                    T T B     T T
- 
 
 Mamiya MEF               N N N N N N N N
  Mamiya ZD
