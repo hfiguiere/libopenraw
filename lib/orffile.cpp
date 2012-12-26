@@ -88,8 +88,9 @@ static const BuiltinColourMatrix s_matrices[] = {
       { 7575,-2159,-571,-3722,11341,2725,-1434,2819,6271 } },
     { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_XZ1), 0, 0,
       { 10901,-4095,-1074,-1141,9208,2293,-62,1417,5158 } },
-    // From DNG Converter 7.1-rc
-    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM5), 0, 0,
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_XZ2), 0, 0,
+      { 9777,-3483,-925,-2886,11297,1800,-602,1663,5134 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM5), 0, 0xfe1,
       { 8380, -2630, -639, -2887, 725, 2496, -627, 1427, 5438 } },
 
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
