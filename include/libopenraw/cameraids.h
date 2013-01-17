@@ -1,7 +1,7 @@
 /*
  * libopenraw - cameraids.h
  *
- * Copyright (C) 2012 Hubert Figuière
+ * Copyright (C) 2012-2013 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -123,6 +123,7 @@ extern "C" {
         OR_TYPEID_CANON_G15     = 48,
         OR_TYPEID_CANON_6D      = 49,
         OR_TYPEID_CANON_EOS_M   = 50,
+        OR_TYPEID_CANON_SX50_HS = 51,
         _OR_TYPEID_CANON_LAST
     };
 
