@@ -1,7 +1,7 @@
 /*
  * libopenraw - exif.h
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -179,7 +179,7 @@ typedef	enum {
 	MNOTE_CANON_SENSORINFO = 0x00e0,
 	
 	/* Nikon MakerNote tags */
-	MNOTE_NIKON_NEFDECODETABE2 = 0x96,
+	MNOTE_NIKON_NEFDECODETABLE2 = 0x96,
 	
 	_EXIF_TAG_LAST
 } ExifTag;

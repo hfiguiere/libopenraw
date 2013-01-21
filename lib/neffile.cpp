@@ -2,7 +2,7 @@
 /*
  * libopenraw - neffile.cpp
  *
- * Copyright (C) 2006-2008, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2012-2013 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -291,7 +291,7 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
         Trace(ERROR) << "makernote not found\n";
         return 0;
     }
-    IfdEntry::Ref curveEntry = _makerNoteIfd->getEntry(IFD::MNOTE_NIKON_NEFDECODETABE2);
+    IfdEntry::Ref curveEntry = _makerNoteIfd->getEntry(IFD::MNOTE_NIKON_NEFDECODETABLE2);
     if(!curveEntry) {
         Trace(ERROR) << "decode table2 tag not found\n";
         return 0;
@@ -315,6 +315,9 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
     if (header == 0x4410) {
         c.huffman = NefDiffIterator::Lossy12Bit;
         data.setBpc(12);
+    } else if (header == 0x4420) {
+        c.huffman = NefDiffIterator::Lossy14Bit;
+        data.setBpc(14);
     } else if (header == 0x4630) {
         c.huffman = NefDiffIterator::LossLess14Bit;
         data.setBpc(14);
@@ -333,7 +336,7 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
         }
     }
     
-    if (header == 0x4410) {
+    if (header == 0x4410 || header == 0x4420) {
         size_t nelems;
         read = m_container->readInt16(file, aux);
         nelems = aux;
