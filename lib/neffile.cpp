@@ -296,36 +296,48 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
         Trace(ERROR) << "decode table2 tag not found\n";
         return 0;
     }
-    
+
     size_t pos = _makerNoteIfd->getMnoteOffset() + curveEntry->offset();
-    
+
     IO::Stream *file = m_container->file();
     file->seek(pos, SEEK_SET);
-    
-    int16_t aux;
-    
-    uint16_t header;
-    bool read = m_container->readInt16(file, aux);
-    header = aux;
+
+    uint8_t header0, header1;
+    bool read = m_container->readUInt8(file, header0);
     if(!read) {
         Trace(ERROR) << "Header not found\n";
         return 0;
     }
-    
-    if (header == 0x4410) {
-        c.huffman = NefDiffIterator::Lossy12Bit;
-        data.setBpc(12);
-    } else if (header == 0x4420) {
-        c.huffman = NefDiffIterator::Lossy14Bit;
-        data.setBpc(14);
-    } else if (header == 0x4630) {
-        c.huffman = NefDiffIterator::LossLess14Bit;
-        data.setBpc(14);
-    } else {
-        Trace(ERROR) << "Wrong header, found " << header << "\n";
+    read = m_container->readUInt8(file, header1);
+    if(!read) {
+        Trace(ERROR) << "Header not found\n";
         return 0;
     }
-    
+
+    bool header_ok = false;
+    if (header0 == 0x44) {
+        if (header1 == 0x10) {
+            c.huffman = NefDiffIterator::Lossy12Bit;
+            data.setBpc(12);
+            header_ok = true;
+        } else if (header1 == 0x20) {
+            c.huffman = NefDiffIterator::Lossy14Bit;
+            data.setBpc(14);
+            header_ok = true;
+        }
+    } else if (header0 == 0x46 && header1 == 0x30) {
+        c.huffman = NefDiffIterator::LossLess14Bit;
+        data.setBpc(14);
+        header_ok = true;
+    }
+    if (!header_ok) {
+        Trace(ERROR) << "Wrong header, found " << header0 << "-"
+                     << header1 << "\n";
+        return 0;
+    }
+
+    int16_t aux;
+
     for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
             read = m_container->readInt16(file, aux);
@@ -335,24 +347,24 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
             c.vpred[i][j] = aux;
         }
     }
-    
-    if (header == 0x4410 || header == 0x4420) {
+
+    if (header0 == 0x44) {
         size_t nelems;
         read = m_container->readInt16(file, aux);
         nelems = aux;
-        
+
         for (size_t i = 0; i < nelems; ++i) {
             read = m_container->readInt16(file, aux);
             if (!read)
                 return 0;
             c.curve.push_back(aux);
         }
-    } else if (header == 0x4630) {
+    } else if (header0 == 0x46 && header1 == 0x30) {
         for (size_t i = 0; i <= 0x3fff; ++i) {
             c.curve.push_back(i);
         }
     }
-    
+
     return 1;
 }
 
