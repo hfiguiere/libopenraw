@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2008, 2011-2012 Hubert Figuiere
+ * Copyright (C) 2006-2008, 2011-2013 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -56,6 +56,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                  OR_TYPEID_PENTAX_K01_DNG) },
     { "PENTAX K-30        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_K30_DNG) },
+    { "PENTAX K-5 II s    ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
+                                                 OR_TYPEID_PENTAX_K5_IIS_DNG) },
     { "R9 - Digital Back DMR",   OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                                      OR_TYPEID_LEICA_DMR) },
     { "M8 Digital Camera",       OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
