@@ -20,7 +20,11 @@
 
 #include <stdint.h>
 #include <stddef.h>
+
 #include <vector>
+#include <tr1/array>
+
+#include <boost/static_assert.hpp>
 
 #include <libopenraw/consts.h>
 #include <libopenraw++/cfapattern.h>
@@ -69,12 +73,15 @@ public:
 
 }
 
-const CfaPattern* 
+const CfaPattern*
 CfaPattern::twoByTwoPattern(::or_cfa_pattern pattern)
 {
-  static std::vector<CfaPattern*> s_patterns(_OR_CFA_PATTERN_INVALID, NULL);
+  static std::tr1::array<CfaPattern*, _OR_CFA_PATTERN_INVALID> s_patterns
+    = { { NULL, NULL, NULL, NULL, NULL, NULL } };
+  // this should be updated if we change the enum
+  BOOST_STATIC_ASSERT(_OR_CFA_PATTERN_INVALID == 6);
 
-  if((pattern == OR_CFA_PATTERN_NON_RGB22) || 
+  if((pattern == OR_CFA_PATTERN_NON_RGB22) ||
      (pattern >= _OR_CFA_PATTERN_INVALID)) {
     return NULL;
   }

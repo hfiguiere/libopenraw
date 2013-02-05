@@ -24,7 +24,6 @@
 #define _OPENRAW_METAVALUE_H
 
 #include <boost/variant.hpp>
-#include <boost/array.hpp>
 #include <libopenraw/types.h>
 
 #include "ifdentry.h"
