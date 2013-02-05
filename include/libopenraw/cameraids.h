@@ -188,6 +188,7 @@ extern "C" {
         OR_TYPEID_LEICA_S2 = 8,
         OR_TYPEID_LEICA_M_MONOCHROM = 9,
         OR_TYPEID_LEICA_X2 = 10,
+        OR_TYPEID_LEICA_M_TYP240 = 11,
         _OR_TYPEID_LEICA_LAST
     };
 
