@@ -51,7 +51,7 @@ main(int argc, char **argv)
         return 1;
     }
 
-    raw_file = or_rawfile_new(filename, OR_DATA_TYPE_NONE);
+    raw_file = or_rawfile_new(filename, OR_RAWFILE_TYPE_UNKNOWN);
     if(!raw_file) {
         printf("error loading file %s\n", filename);
         return 1;
