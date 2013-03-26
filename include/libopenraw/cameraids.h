@@ -170,6 +170,7 @@ extern "C" {
         OR_TYPEID_NIKON_V2,
         OR_TYPEID_NIKON_D5200,
         OR_TYPEID_NIKON_D7100,
+        OR_TYPEID_NIKON_COOLPIX_A,
         _OR_TYPEID_NIKON_LAST
     };
 
