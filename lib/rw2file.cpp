@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2file.cpp
  *
- * Copyright (C) 2011-2012 Hubert Figuiere
+ * Copyright (C) 2011-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -56,6 +56,9 @@ static const BuiltinColourMatrix s_matrices[] = {
     { 9051,-2468,-1204,-5212,13276,2121,-1197,2510,6890 } },
   { OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GF5), 143, 0xfff,
     { 8228,-2945,-660,-3938,11792,2430,-1094,2278,5793 } },
+  // Adobe DNG convert 7.4
+  { OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GF6), 143, 0xfff,
+    { 8130,-2801,-946,-3520,11289,2552,-1314,2511,5791 } },
   { OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GX1), 143, 0,
     { 6763,-1919,-863,-3868,11515,2684,-1216,2387,5879 } },
   { OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_FZ8), 0, 0xf7f,
