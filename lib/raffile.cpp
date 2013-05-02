@@ -222,10 +222,14 @@ RawContainer* RafFile::getContainer() const
 	
 	data.setDataType(OR_DATA_TYPE_RAW);
 	data.setDimensions(w,h);
-  if(typeId() == OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO1)) {
+  switch(typeId()) {
+  case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO1):
+  case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1):
+  case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100S):
+  case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X20):
     data.setCfaPattern(XTransPattern::xtransPattern());
-  }
-  else {
+    break;
+  default:
     // TODO get the right pattern.
     data.setCfaPatternType(OR_CFA_PATTERN_GBRG);
   }
