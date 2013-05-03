@@ -175,6 +175,7 @@ extern "C" {
         OR_TYPEID_NIKON_1_J2,
         OR_TYPEID_NIKON_1_J3,
         OR_TYPEID_NIKON_1_S1,
+        OR_TYPEID_NIKON_D60,
         _OR_TYPEID_NIKON_LAST
     };
 
