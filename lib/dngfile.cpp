@@ -80,15 +80,18 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                      OR_TYPEID_LEICA_S2) },
     { "GR DIGITAL 2   ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
                                              OR_TYPEID_RICOH_GR2) },
+    { "GR                                                             ",
+                         OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
+                                             OR_TYPEID_RICOH_GR) },
     { "GXR            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
                                              OR_TYPEID_RICOH_GXR) },
     { "GXR A16                                                        ", 
       OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, OR_TYPEID_RICOH_GXR_A16) },
     { "SAMSUNG GX10       ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG,
                                                  OR_TYPEID_SAMSUNG_GX10) },
-    { "Pro 815    ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG, 
+    { "Pro 815    ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG,
                                          OR_TYPEID_SAMSUNG_PRO815) },
-    { 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE, 
+    { 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE,
                              OR_TYPEID_ADOBE_DNG_GENERIC) }
 };
 

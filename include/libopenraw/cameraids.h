@@ -295,6 +295,7 @@ extern "C" {
         OR_TYPEID_RICOH_GR2 = 1,
         OR_TYPEID_RICOH_GXR = 2,
         OR_TYPEID_RICOH_GXR_A16 = 3,
+        OR_TYPEID_RICOH_GR = 4, /* 2013 Ricoh GR-D */
         _OR_TYPEID_RICOH_LAST
     };
 
