@@ -125,6 +125,7 @@ extern "C" {
         OR_TYPEID_CANON_EOS_M   = 50,
         OR_TYPEID_CANON_SX50_HS = 51,
         OR_TYPEID_CANON_S110    = 52,
+        OR_TYPEID_CANON_100D    = 53,
         _OR_TYPEID_CANON_LAST
     };
 
