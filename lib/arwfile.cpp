@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.cpp
  *
- * Copyright (C) 2006,2008,2011,2012 Hubert Figuiere
+ * Copyright (C) 2006,2008,2011-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -123,6 +123,7 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { "NEX-F3", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEXF3) },
     { "NEX-7", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX7) },
     { "DSC-RX100", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX100) },
+    { "DSC-RX100M2", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX100M2) },
     { "DSC-RX1", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX1) },
     { "NEX-6", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX6) },
     { "NEX-5R", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5R) },

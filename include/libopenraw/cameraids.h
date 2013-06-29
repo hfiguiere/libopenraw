@@ -338,6 +338,7 @@ extern "C" {
         OR_TYPEID_SONY_SLTA57,
         OR_TYPEID_SONY_NEXF3,
         OR_TYPEID_SONY_NEX5R,
+        OR_TYPEID_SONY_RX100M2,
         _OR_TYPEID_SONY_LAST
     };
 
