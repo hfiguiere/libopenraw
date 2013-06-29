@@ -78,6 +78,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                       OR_TYPEID_LEICA_X2) },
     { "Leica S2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                                      OR_TYPEID_LEICA_S2) },
+    { "LEICA X VARIO (Typ 107)", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+                                                     OR_TYPEID_LEICA_X_VARIO) },
     { "GR DIGITAL 2   ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
                                              OR_TYPEID_RICOH_GR2) },
     { "GR                                                             ",
