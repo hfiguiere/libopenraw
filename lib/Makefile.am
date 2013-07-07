@@ -40,7 +40,6 @@ noinst_HEADERS = or_debug.h \
 	olympusdecompressor.h \
 	exception.h \
 	endianutils.h \
-	metavalue.h \
 	unpack.h
 
 lib_LTLIBRARIES = libopenraw.la

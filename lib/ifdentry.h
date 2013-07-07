@@ -32,6 +32,9 @@
 #include "ifd.h"
 
 namespace OpenRaw {
+
+class MetaValue;
+
 namespace Internals {
 
 class IfdFileContainer;
@@ -187,6 +190,8 @@ public:
 	RawContainer::EndianType endian() const;
 
 public:
+  MetaValue* make_meta_value();
+
 	/** load the data for the entry 
 	 * if all the data fits in m_data, it is a noop
 	 * @param unit_size the size of 1 unit of data
@@ -243,7 +248,7 @@ private:
  * @throw BadTypeException in case of wrong typing.
  * @throw OutOfRangeException in case of subscript out of range
  */
-template <typename T> 
+template <typename T>
 T IfdTypeTrait<T>::get(IfdEntry & e, uint32_t idx, bool ignore_type)
 	throw (BadTypeException, OutOfRangeException, TooBigException)
 {

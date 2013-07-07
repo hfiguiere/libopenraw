@@ -2,7 +2,7 @@
  * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2006-2008, 2010-2012 Hubert Figuiere
+ * Copyright (C) 2006-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -36,6 +36,7 @@
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/thumbnail.h>
+#include <libopenraw++/metavalue.h>
 
 #include "io/file.h"
 #include "io/memstream.h"
@@ -50,7 +51,6 @@
 #include "mrwfile.h"
 #include "rw2file.h"
 #include "raffile.h"
-#include "metavalue.h"
 #include "exception.h"
 #include "rawfile_private.h"
 

@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2008,2012 Hubert Figuiere
+ * Copyright (C) 2006-2013 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -26,6 +26,7 @@
 
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
+#include <libopenraw++/metavalue.h>
 
 #include "trace.h"
 #include "io/stream.h"
@@ -37,7 +38,6 @@
 #include "jfifcontainer.h"
 #include "rawfile_private.h"
 #include "neffile.h" // I wonder if this is smart as it break the abstraction.
-#include "metavalue.h"
 #include "unpack.h"
 
 using namespace Debug;
@@ -303,12 +303,12 @@ MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
 
     IfdEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
     if(e) {
-      val = new MetaValue(e);
+      val = e->make_meta_value();
     }
   }
   return val;
 }
-	
+
 /** by default we don't translate the compression 
  */
 uint32_t IfdFile::_translateCompressionType(IFD::TiffCompress tiffCompression)

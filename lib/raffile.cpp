@@ -1,7 +1,7 @@
 /*
  * libopenraw - raffile.cpp
  *
- * Copyright (C) 2011-2012 Hubert Figuière
+ * Copyright (C) 2011-2013 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -288,15 +288,15 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
 {
 	if(META_INDEX_MASKOUT(meta_index) == META_NS_EXIF
 	   || META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
-		
+
 		JfifContainer * jpegPreview = m_container->getJpegPreview();
 		IfdDir::Ref dir = jpegPreview->mainIfd();
 		IfdEntry::Ref e = dir->getEntry(META_NS_MASKOUT(meta_index));
 		if(e) {
-			return new MetaValue(e);
+			return e->make_meta_value();
 		}
 	}
-	
+
 	return NULL;
 }
 

@@ -1,7 +1,7 @@
 /*
  * libopenraw - metavalue.h
  *
- * Copyright (C) 2007, 2011-2012 Hubert Figuiere
+ * Copyright (C) 2007-2013 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -23,13 +23,13 @@
 #ifndef _OPENRAW_METAVALUE_H
 #define _OPENRAW_METAVALUE_H
 
+#include <vector>
+
 #include <boost/variant.hpp>
 #include <libopenraw/types.h>
 
-#include "ifdentry.h"
-
 namespace OpenRaw {
-	
+
 class MetaValue
 {
 public:
@@ -46,22 +46,17 @@ public:
         }
     explicit MetaValue(const value_t &v);
     explicit MetaValue(const std::vector<value_t> &v);
-    explicit MetaValue(const Internals::IfdEntry::Ref & e);
 
     uint32_t getCount() const
         {
             return m_values.size();
         }
 
-    uint32_t getInteger(int idx) const
-        throw(Internals::BadTypeException);
-    std::string getString(int idx) const
-        throw(Internals::BadTypeException);
-    double getDouble(int idx) const
-        throw(Internals::BadTypeException);
+    uint32_t getInteger(int idx) const;
+    std::string getString(int idx) const;
+    double getDouble(int idx) const;
 private:
-    template<typename T> T get(int idx) const
-        throw(Internals::BadTypeException);
+    template<typename T> T get(int idx) const;
 
     std::vector<value_t> m_values;
 };
