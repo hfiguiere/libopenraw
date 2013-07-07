@@ -90,7 +90,13 @@ static const BuiltinColourMatrix s_matrices[] = {
       { 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX100), 200, 0,
       { 8651,-2754,-1057,-3464,12207,1373,-568,1398,4434 } },
+    /* Adobe DNG converter 8.1 */
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX100M2), 200, 0,
+      { 8651,-2754,-1057,-3464,12207,1373,-568,1398,4434 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX1), 128, 0,
+      { 6344,-1612,-462,-4863,12477,2681,-865,1786,6899 } },
+    /* Adobe DNG converter 8.1 */
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX1R), 128, 0,
       { 6344,-1612,-462,-4863,12477,2681,-865,1786,6899 } },
 
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
