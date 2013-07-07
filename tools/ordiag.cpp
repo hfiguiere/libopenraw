@@ -1,7 +1,7 @@
 /*
  * libopenraw - ordiag.cpp
  *
- * Copyright (C) 2007-2012 Hubert Figuiere
+ * Copyright (C) 2007-2013 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -33,10 +33,13 @@
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
+#include <libopenraw++/metavalue.h>
+
 using OpenRaw::RawFile;
 using OpenRaw::Thumbnail;
 using OpenRaw::RawData;
 using OpenRaw::CfaPattern;
+using OpenRaw::MetaValue;
 
 /**
  * Dump on RawFile. (functor)
@@ -321,6 +324,15 @@ public:
                                          % OR_GET_FILE_TYPEID_VENDOR(rf->typeId())
                                          % OR_GET_FILE_TYPEID_CAMERA(rf->typeId()));
                 m_out << boost::format("\tType ID = %1%\n") % typeId;
+
+                const MetaValue* make = rf->getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
+                if (make) {
+                    m_out << boost::format("\tMake = %1%\n") % make->getString(0);
+                }
+                const MetaValue* model = rf->getMetaValue(META_NS_TIFF | EXIF_TAG_MODEL);
+                if (model) {
+                    m_out << boost::format("\tModel = %1%\n") % model->getString(0);
+                }
                 dumpPreviews(rf);
                 dumpRawData(rf);
                 dumpMetaData(rf);
