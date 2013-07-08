@@ -1,7 +1,7 @@
 /*
  * libopenraw - gdk.c
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007-2013 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,10 @@ main(int argc, char **argv)
 
     (void)argc;
     or_debug_set_level(DEBUG2);
+#if !GLIB_CHECK_VERSION(2,36,0)
+    /* deprecated in 2.36 */
     g_type_init();
+#endif
 
     if(!filename || !*filename) {
         printf("No input file name\n");
