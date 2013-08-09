@@ -233,6 +233,7 @@ extern "C" {
         OR_TYPEID_PENTAX_K5_IIS_DNG,
         OR_TYPEID_PENTAX_MX1_DNG,
         OR_TYPEID_PENTAX_Q10_DNG,
+        OR_TYPEID_PENTAX_Q7_DNG,
         _OR_TYPEID_PENTAX_LAST
     };
 
