@@ -24,9 +24,9 @@
 #include <cassert>
 #include <map>
 #include <string>
+#include <functional>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/bind.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/checked_delete.hpp>
 
@@ -65,44 +65,46 @@ using Internals::RawFileFactory;
 
 void init(void)
 {
+    using namespace std::placeholders;
+
     static RawFileFactory fctcr2(OR_RAWFILE_TYPE_CR2, 
-                                 boost::bind(&Internals::Cr2File::factory, _1),
+                                 std::bind(&Internals::Cr2File::factory, _1),
                                  "cr2");
     static RawFileFactory fctnef(OR_RAWFILE_TYPE_NEF, 
-                                 boost::bind(&Internals::NefFile::factory, _1),
+                                 std::bind(&Internals::NefFile::factory, _1),
                                  "nef");
     static RawFileFactory fctnrw(OR_RAWFILE_TYPE_NRW, 
-                                 boost::bind(&Internals::NefFile::factory, _1),
+                                 std::bind(&Internals::NefFile::factory, _1),
                                  "nrw");
     static RawFileFactory fctarw(OR_RAWFILE_TYPE_ARW, 
-                                 boost::bind(&Internals::ArwFile::factory, _1),
+                                 std::bind(&Internals::ArwFile::factory, _1),
                                  "arw");
     static RawFileFactory fctorf(OR_RAWFILE_TYPE_ORF, 
-                                 boost::bind(&Internals::OrfFile::factory, _1),
+                                 std::bind(&Internals::OrfFile::factory, _1),
                                  "orf");
     static RawFileFactory fctdng(OR_RAWFILE_TYPE_DNG, 
-                                 boost::bind(&Internals::DngFile::factory, _1),
+                                 std::bind(&Internals::DngFile::factory, _1),
                                  "dng");
     static RawFileFactory fctpef(OR_RAWFILE_TYPE_PEF, 
-                                 boost::bind(&Internals::PEFFile::factory, _1),
+                                 std::bind(&Internals::PEFFile::factory, _1),
                                  "pef");
     static RawFileFactory fctcrw(OR_RAWFILE_TYPE_CRW,
-                                 boost::bind(&Internals::CRWFile::factory, _1),
+                                 std::bind(&Internals::CRWFile::factory, _1),
                                  "crw");
     static RawFileFactory fcterf(OR_RAWFILE_TYPE_ERF,
-                                 boost::bind(&Internals::ERFFile::factory, _1),
+                                 std::bind(&Internals::ERFFile::factory, _1),
                                  "erf");
     static RawFileFactory fctmrw(OR_RAWFILE_TYPE_MRW,
-                                 boost::bind(&Internals::MRWFile::factory, _1),
+                                 std::bind(&Internals::MRWFile::factory, _1),
                                  "mrw");
     static RawFileFactory fctraw(OR_RAWFILE_TYPE_RW2,
-                                 boost::bind(&Internals::Rw2File::factory, _1),
+                                 std::bind(&Internals::Rw2File::factory, _1),
                                  "raw");
     static RawFileFactory fctrw2(OR_RAWFILE_TYPE_RW2,
-                                 boost::bind(&Internals::Rw2File::factory, _1),
+                                 std::bind(&Internals::Rw2File::factory, _1),
                                  "rw2");
     static RawFileFactory fctraf(OR_RAWFILE_TYPE_RAF,
-                                 boost::bind(&Internals::RafFile::factory, _1),
+                                 std::bind(&Internals::RafFile::factory, _1),
                                  "raf");
 }
 

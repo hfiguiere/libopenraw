@@ -1,7 +1,7 @@
 /*
  * libopenraw - trace.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,18 +26,16 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
-#include <boost/bind.hpp>
 
 #include <libopenraw/debug.h>
 
 namespace Debug {
 
-	
+
 	/** a basic Trace class for debug */
 	class Trace 
 	{
 	public:
-		
 		Trace(debug_level level)
 			: m_level(level)
 			{
@@ -62,7 +60,8 @@ namespace Debug {
 	Trace & Trace::operator<<(const std::vector<T> & v)
 	{
 		if (m_level <= debugLevel) {
-			std::for_each(v.begin(), v.end(), boost::bind(&print, _1));
+			std::for_each(v.begin(), v.end(),
+				      std::bind(&print, std::placeholders::_1));
 		}
 		return *this;
 	}

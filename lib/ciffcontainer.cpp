@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainer.cpp
  *
- * Copyright (C) 2006-2008 Hubert Figuiere
+ * Copyright (C) 2006-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,6 +20,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <functional>
 #include <boost/shared_ptr.hpp>
 
 #include <libopenraw/types.h>
@@ -29,6 +30,7 @@
 #include "trace.h"
 
 using namespace Debug;
+using std::placeholders::_1;
 
 namespace OpenRaw {
 	namespace Internals {
@@ -242,8 +244,8 @@ namespace OpenRaw {
 				CIFF::RecordEntry::List::const_iterator iter;
 				
 				// locate the properties
-				iter = std::find_if(records.begin(), records.end(), boost::bind(
-										&CIFF::RecordEntry::isA, _1, 
+				iter = std::find_if(records.begin(), records.end(), std::bind(
+							    &CIFF::RecordEntry::isA, _1, 
 										static_cast<uint16_t>(CIFF::TAG_IMAGEPROPS)));
 				if (iter == records.end()) {
 					Trace(ERROR) << "Couldn't find the image properties.\n";
@@ -265,7 +267,7 @@ namespace OpenRaw {
 				const CIFF::RecordEntry::List & propsRecs = props->records();
 				CIFF::RecordEntry::List::const_iterator iter;
 				iter = std::find_if(propsRecs.begin(), propsRecs.end(), 
-									boost::bind(
+									std::bind(
 										&CIFF::RecordEntry::isA, _1, 
 										static_cast<uint16_t>(CIFF::TAG_IMAGEINFO)));
 				if (iter == propsRecs.end()) {
@@ -289,7 +291,7 @@ namespace OpenRaw {
 				const CIFF::RecordEntry::List & propsRecs = props->records();
 				CIFF::RecordEntry::List::const_iterator iter;
 				iter = std::find_if(propsRecs.begin(), propsRecs.end(), 
-									boost::bind(
+									std::bind(
 										&CIFF::RecordEntry::isA, _1, 
 										static_cast<uint16_t>(CIFF::TAG_CAMERAOBJECT)));
 				if (iter == propsRecs.end()) {
@@ -310,7 +312,7 @@ namespace OpenRaw {
 			const CIFF::RecordEntry::List & records = m_heap->records();
 			CIFF::RecordEntry::List::const_iterator iter;
 			// locate the RAW data
-			iter = std::find_if(records.begin(), records.end(), boost::bind(
+			iter = std::find_if(records.begin(), records.end(), std::bind(
 									&CIFF::RecordEntry::isA, _1, 
 									static_cast<uint16_t>(CIFF::TAG_RAWIMAGEDATA)));
 			

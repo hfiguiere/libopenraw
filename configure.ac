@@ -70,7 +70,7 @@ AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
-
+AX_CXX_COMPILE_STDCXX_11(noext,mandatory)
 
 dnl Requirements
 EXEMPI_REQUIRED=1.99.5
@@ -169,7 +169,7 @@ AM_CONDITIONAL(BUILD_GNOME_SUPPORT, test x$HAVE_GNOME = xyes)
 AX_CFLAGS_GCC_OPTION([-Wextra])
 AX_CXXFLAGS_GCC_OPTION([-Wextra])
 
-CXXFLAGS="$CXXFLAGS -ansi -pedantic -g -Wall -Wshadow"
+CXXFLAGS="$CXXFLAGS -pedantic -g -Wall -Wshadow"
 CFLAGS="$CFLAGS -pedantic -g -Wall"
 
 

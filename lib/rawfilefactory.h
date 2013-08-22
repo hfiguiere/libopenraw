@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfilefactory.h
  *
- * Copyright (C) 2006, 2008 Hubert Figuiere
+ * Copyright (C) 2006-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,25 +26,25 @@
 
 #include <string>
 #include <map>
-#include <boost/function.hpp>
+#include <functional>
 
 #include <libopenraw++/rawfile.h>
 
 namespace OpenRaw {
 namespace Internals {
-		
+
 class RawFileFactory
 {
 public:
-    typedef boost::function<RawFile *(IO::Stream *)> raw_file_factory_t;
+    typedef std::function<RawFile*(IO::Stream*)> raw_file_factory_t;
     /** the factory type for raw files
      * key is the extension. file is factory method
      */
-    typedef 
+    typedef
     std::map<RawFile::Type, raw_file_factory_t> Table;
     typedef
     std::map<std::string, RawFile::Type> Extensions;
-			
+
     /** register a filetype with the factory
      * @param type the type of file
      * @param fn the factory method
@@ -52,19 +52,19 @@ public:
      * @note it is safe to call this method with the same
      * fn and type to register a different extension
      */
-    RawFileFactory(RawFile::Type type, 
-                   const raw_file_factory_t & fn, 
+    RawFileFactory(RawFile::Type type,
+                   const raw_file_factory_t & fn,
                    const char * ext);
 
     /** access the table. Ensure that it has been constructed. */
     static Table & table();
     /** access the extensions table. Ensure that it has been constructed. */
     static Extensions & extensions();
-    
+
     /** access the the list of file extenstions registered. */
     static const char **fileExtensions();
 
-    static void registerType(RawFile::Type type, 
+    static void registerType(RawFile::Type type,
                              const raw_file_factory_t & fn,
                              const char * ext);
     static void unRegisterType(RawFile::Type type);
@@ -88,7 +88,6 @@ inline RawFileFactory::Extensions & RawFileFactory::extensions()
     static Extensions rawExtensionsTable;
     return rawExtensionsTable;
 }
-		
 
 }
 }
