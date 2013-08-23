@@ -1,7 +1,7 @@
 /*
  * libopenraw - makernotedir.h
  *
- * Copyright (C) Hubert Figuiere
+ * Copyright (C) 2010-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,6 +22,8 @@
 #ifndef __OPENRAW_INTERNALS_MAKERNOTEDIR_H__
 #define __OPENRAW_INTERNALS_MAKERNOTEDIR_H__
 
+#include <memory>
+
 #include "ifddir.h"
 
 namespace OpenRaw {
@@ -31,8 +33,8 @@ class MakerNoteDir
 : public IfdDir
 {
 public:
-	typedef boost::shared_ptr<MakerNoteDir> Ref;
-	
+	typedef std::shared_ptr<MakerNoteDir> Ref;
+
 	MakerNoteDir(off_t _offset, IfdFileContainer & _container, off_t mnote_offset);
 
 	off_t getMnoteOffset() const
@@ -40,8 +42,7 @@ public:
 private:
 	off_t m_mnote_offset;
 };
-	
-	
+
 }
 }
 

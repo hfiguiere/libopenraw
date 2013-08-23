@@ -21,8 +21,6 @@
 
 #include <algorithm>
 #include <numeric>
-#include <boost/scoped_ptr.hpp>
-#include <boost/scoped_array.hpp>
 
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
@@ -41,14 +39,12 @@
 #include "unpack.h"
 
 using namespace Debug;
-using boost::scoped_ptr;
-
 
 namespace OpenRaw {
 namespace Internals {
 
 
-IfdFile::IfdFile(IO::Stream *s, Type _type, 
+IfdFile::IfdFile(IO::Stream *s, Type _type,
                  bool instantiateContainer)
   : RawFile(s, _type),
     m_io(s),
@@ -83,7 +79,7 @@ MakerNoteDir::Ref  IfdFile::_locateMakerNoteIfd()
 	const IfdDir::Ref & _exifIfd = exifIfd();
 	if(_exifIfd) {
 		// to not have a recursive declaration, getMakerNoteIFD() return an IfdDir.
-		return boost::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIFD());
+		return std::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIFD());
 	}
 	return MakerNoteDir::Ref();
 }
@@ -218,8 +214,8 @@ void IfdFile::_identifyId()
           _type = OR_DATA_TYPE_JPEG;
           Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
           if (x == 0 || y == 0) {
-            scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-            scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+            std::unique_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
+            std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
             if (jfif->getDimensions(x,y)) {
               Trace(DEBUG1) << "JPEG dimensions x=" << x 
                             << " y=" << y << "\n";
@@ -252,7 +248,7 @@ void IfdFile::_identifyId()
     if(_type != OR_DATA_TYPE_NONE) {
       uint32_t dim = std::max(x, y);
       offset += dir->container().offset();
-      _addThumbnail(dim, ThumbDesc(x, y, _type, 
+      _addThumbnail(dim, ThumbDesc(x, y, _type,
                                    offset, byte_count));
       list.push_back(dim);
       ret = OR_ERROR_NONE;
@@ -298,7 +294,7 @@ MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
     Trace(ERROR) << "Unknown Meta Namespace\n";
   }
   if(ifd) {
-    Trace(DEBUG1) << "Meta value for " 
+    Trace(DEBUG1) << "Meta value for "
                   << META_NS_MASKOUT(meta_index) << "\n";
 
     IfdEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
@@ -309,7 +305,7 @@ MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
   return val;
 }
 
-/** by default we don't translate the compression 
+/** by default we don't translate the compression
  */
 uint32_t IfdFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
 {
@@ -325,7 +321,7 @@ const IfdDir::Ref & IfdFile::cfaIfd()
 	}
 	return m_cfaIfd;
 }
-	
+
 
 const IfdDir::Ref & IfdFile::mainIfd()
 {
@@ -352,11 +348,11 @@ const MakerNoteDir::Ref & IfdFile::makerNoteIfd()
 	}
 	return m_makerNoteIfd;
 }
-	
+
 
 namespace {
 
-::or_cfa_pattern 
+::or_cfa_pattern
 _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
 {
   ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
@@ -365,14 +361,14 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
   }
   else {
     Trace(DEBUG2) << "patter is = " << cfaPattern[0] << ", "
-                  << cfaPattern[1] << ", " << cfaPattern[2] 
+                  << cfaPattern[1] << ", " << cfaPattern[2]
                   << ", " << cfaPattern[3] << "\n";
     switch(cfaPattern[0]) {
     case IFD::CFA_RED:
       switch(cfaPattern[1]) {
       case IFD::CFA_GREEN:
-        if((cfaPattern[2] == IFD::CFA_GREEN) 
-           && (cfaPattern[3] == IFD::CFA_BLUE)) 
+        if((cfaPattern[2] == IFD::CFA_GREEN)
+           && (cfaPattern[3] == IFD::CFA_BLUE))
         {
           cfa_pattern = OR_CFA_PATTERN_RGGB;
         }
@@ -382,15 +378,15 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
     case IFD::CFA_GREEN:
       switch(cfaPattern[1]) {
       case IFD::CFA_RED:
-        if((cfaPattern[2] == 2) 
-           && (cfaPattern[3] == IFD::CFA_GREEN)) 
+        if((cfaPattern[2] == 2)
+           && (cfaPattern[3] == IFD::CFA_GREEN))
         {
           cfa_pattern = OR_CFA_PATTERN_GRBG;
         }
         break;
       case 2:
-        if((cfaPattern[2] == IFD::CFA_RED) 
-           && (cfaPattern[3] == IFD::CFA_GREEN)) 
+        if((cfaPattern[2] == IFD::CFA_RED)
+           && (cfaPattern[3] == IFD::CFA_GREEN))
         {
           cfa_pattern = OR_CFA_PATTERN_GBRG;
         }
@@ -400,8 +396,8 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
     case IFD::CFA_BLUE:
       switch(cfaPattern[1]) {
       case IFD::CFA_GREEN:
-        if((cfaPattern[2] == IFD::CFA_GREEN) 
-           && (cfaPattern[3] == IFD::CFA_RED)) 
+        if((cfaPattern[2] == IFD::CFA_GREEN)
+           && (cfaPattern[3] == IFD::CFA_RED))
         {
           cfa_pattern = OR_CFA_PATTERN_BGGR;
         }
@@ -443,7 +439,7 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
 {
   std::vector<uint8_t> cfaPattern;
   ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
-			
+
   e->getArray(cfaPattern);
   if(!cfaPattern.empty()) {
     cfa_pattern = _convertArrayToCfaPattern(cfaPattern);
@@ -487,7 +483,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   ::or_error ret = OR_ERROR_NONE;
   const IfdDir::Ref & _cfaIfd = cfaIfd();
   Trace(DEBUG1) << "_getRawData()\n";
-    
+
   if(_cfaIfd) {
     ret = _getRawDataFromDir(data, _cfaIfd);
     if (ret != OR_ERROR_NONE) {
@@ -510,7 +506,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
 ::or_error IfdFile::_getRawDataFromDir(RawData & data, const IfdDir::Ref & dir)
 {
   ::or_error ret = OR_ERROR_NONE;
-			
+
   uint16_t bpc = 0;
   uint32_t offset = 0;
   uint32_t byte_length = 0;
@@ -546,7 +542,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     IfdEntry::Ref e = dir->getEntry(IFD::TIFF_TAG_TILE_OFFSETS);
     if(!e) {
       Trace(DEBUG1) << "tile offsets empty\n";
-      return OR_ERROR_NOT_FOUND;						
+      return OR_ERROR_NOT_FOUND;
     }
     std::vector<uint32_t> offsets;
     e->getArray(offsets);
@@ -558,7 +554,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     e = dir->getEntry(IFD::TIFF_TAG_TILE_BYTECOUNTS);
     if(!e) {
       Trace(DEBUG1) << "tile byte counts not found\n";
-      return OR_ERROR_NOT_FOUND;						
+      return OR_ERROR_NOT_FOUND;
     }
     std::vector<uint32_t> counts;
     e->getArray(counts);
@@ -592,7 +588,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   BitmapData::DataType data_type = OR_DATA_TYPE_NONE;
 
 	uint32_t compression = _translateCompressionType((IFD::TiffCompress)tiffCompression);
-  switch(compression) 
+  switch(compression)
   {
   case IFD::COMPRESS_NONE:
     data_type = OR_DATA_TYPE_RAW;
@@ -606,7 +602,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     if( !NefFile::isCompressed(*m_container, offset) ) {
       compression = IFD::COMPRESS_NIKON_PACK;
       data_type = OR_DATA_TYPE_RAW;
-      // this is a hack. we should check if 
+      // this is a hack. we should check if
       // we have a D100 instead, but that case is already
       // a D100 corner case. WILL BREAK on compressed files.
       // according to dcraw we must increase the size by 6.
@@ -619,7 +615,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   }
 
   Trace(DEBUG1) << "RAW Compression is " << compression << "\n";
-			
+
   ::or_cfa_pattern cfa_pattern = _getCfaPattern(dir);
   if(cfa_pattern == OR_CFA_PATTERN_NONE) {
     // some file have it in the exif IFD instead.
@@ -630,16 +626,16 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   }
 
 
-  if((bpc == 12 || bpc == 14) && (compression == 1) 
-     && (byte_length == (x * y * 2))) 
+  if((bpc == 12 || bpc == 14) && (compression == 1)
+     && (byte_length == (x * y * 2)))
   {
-    Trace(DEBUG1) << "setting bpc from " << bpc 
+    Trace(DEBUG1) << "setting bpc from " << bpc
                   << " to 16\n";
     bpc = 16;
   }
   if((bpc == 16) || (data_type == OR_DATA_TYPE_COMPRESSED_RAW)) {
     void *p = data.allocData(byte_length);
-    size_t real_size = m_container->fetchData(p, offset, 
+    size_t real_size = m_container->fetchData(p, offset,
                                               byte_length);
     if (real_size < byte_length) {
       Trace(WARNING) << "Size mismatch for data: ignoring.\n";
@@ -651,7 +647,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   }
   else {
     Trace(ERROR) << "Unsupported bpc " << bpc << "\n";
-    return OR_ERROR_INVALID_FORMAT;						
+    return OR_ERROR_INVALID_FORMAT;
   }
   data.setCfaPatternType(cfa_pattern);
   data.setDataType(data_type);
@@ -662,7 +658,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     data.setMax((1 << bpc) - 1);
   }
   data.setDimensions(x, y);
-  
+
   return ret;
 }
 
@@ -677,13 +673,13 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   Trace(DEBUG1) << "Block size = " << blocksize << "\n";
   Trace(DEBUG1) << "dimensions (x, y) " << x << ", "
                 << y << "\n";
-  boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
+  std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
   size_t outsize = x * y * 2;
   uint8_t * outdata = (uint8_t*)data.allocData(outsize);
   size_t got;
   Trace(DEBUG1) << "offset of RAW data = " << current_offset << "\n";
   do {
-    got = m_container->fetchData (block.get(), 
+    got = m_container->fetchData (block.get(),
                                   current_offset, blocksize);
     fetched += got;
     offset += got;
@@ -692,7 +688,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
       if(bpc == 12) {
         size_t out;
         ret = unpack.unpack_be12to16(outdata, outsize,
-                                     block.get(), 
+                                     block.get(),
                                      got, out);
         outdata += out;
         outsize -= out;

@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainer.h
  *
- * Copyright (C) 2006,2008 Hubert Figuiere
+ * Copyright (C) 2006-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,7 +28,7 @@
 #define _CIFFCONTAINER_H_
 
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "rawcontainer.h"
 #include "trace.h"
@@ -39,7 +39,7 @@ namespace OpenRaw {
 		class CIFFContainer;
 
 		namespace CIFF {
-			
+
 			/** mask for the typeCode */
 			enum {
 				STORAGELOC_MASK = 0xc000, /**< storage location bit mask */
@@ -47,7 +47,7 @@ namespace OpenRaw {
 				TAGCODE_MASK = 0x3fff  /**< include the format, because the last
 																* part is non significant */
 			};
-			/** tags for the CIFF records. 
+			/** tags for the CIFF records.
 			 * List made by a combination of the CIFF spec and
 			 * what exifprobe by Duane H. Hesser has.
 			 */
@@ -70,7 +70,7 @@ namespace OpenRaw {
 				TAG_SHUTTERRELEASETIMING = 0x1011,
 				TAG_RELEASESETTING = 0x1016,
 				TAG_BASEISO = 0x101c,
-				TAG_FOCALLENGTH = 0x1029,  
+				TAG_FOCALLENGTH = 0x1029,
 				TAG_SHOTINFO = 0x102a,
 				TAG_COLORINFO2 = 0x102c,
 				TAG_CAMERASETTINGS = 0x102d,
@@ -78,7 +78,7 @@ namespace OpenRaw {
 				TAG_CUSTOMFUNCTIONS = 0x1033,
 				TAG_PICTUREINFO = 0x1038,
 				TAG_WHITEBALANCETABLE = 0x10a9,
-				TAG_COLORSPACE = 0x10b4,  
+				TAG_COLORSPACE = 0x10b4,
 
 				TAG_IMAGESPEC = 0x1803,
 				TAG_RECORDID = 0x1804,
@@ -105,7 +105,7 @@ namespace OpenRaw {
 				TAG_IMAGEPROPS = 0x300a,
 				TAG_EXIFINFORMATION = 0x300b
 			};
-			
+
 			class Heap;
 
 
@@ -138,14 +138,14 @@ namespace OpenRaw {
 			};
 
 
-			class RecordEntry 
+			class RecordEntry
 			{
 			public:
 				typedef std::vector<RecordEntry> List;
 
 				RecordEntry();
 
-				/** load record from container 
+				/** load record from container
 				 * @param container the container
 				 * @return true if success
 				 */
@@ -162,9 +162,9 @@ namespace OpenRaw {
 				 * @return true if match
 				 */
 				bool isA(uint16_t _typeCode) const
-					{ 
+					{
 						Debug::Trace(DEBUG2) << "typeCode = " << typeCode << "\n";
-						return typeCode == (TAGCODE_MASK & _typeCode); 
+						return typeCode == (TAGCODE_MASK & _typeCode);
 					}
 
 				uint16_t   typeCode;/* type code of the record */
@@ -176,9 +176,9 @@ namespace OpenRaw {
 			class Heap
 			{
 			public:
-				typedef boost::shared_ptr<Heap> Ref;
+				typedef std::shared_ptr<Heap> Ref;
 
-				/** Construct a heap from a location in the container 
+				/** Construct a heap from a location in the container
 				 * @param start the begin address relative to the container.
 				 * @param length the length in bytes
 				 * @param container the container to read from
@@ -197,7 +197,7 @@ namespace OpenRaw {
 					}
 			private:
 				bool _loadRecords();
-				
+
 				Heap(const Heap &);
 				Heap & operator=(const Heap &);
 
@@ -209,7 +209,7 @@ namespace OpenRaw {
 
 
 			/** Heap Header of CIFF file*/
-			class HeapFileHeader 
+			class HeapFileHeader
 			{
 			public:
 				bool readFrom(CIFFContainer *);
@@ -220,14 +220,14 @@ namespace OpenRaw {
 				uint32_t   version; /* higher word: 0x0001, Lower word: 0x0002 */
 				//uint32_t   reserved1;
 				//uint32_t   reserved2;
-				RawContainer::EndianType endian;				
+				RawContainer::EndianType endian;
 			};
 		}
 
 		/** CIFF container
 		 * as described by the CIFF documentation
 		 */
-		class CIFFContainer 
+		class CIFFContainer
 			: public RawContainer
 		{
 		public:
@@ -247,7 +247,7 @@ namespace OpenRaw {
 		private:
 			bool _loadHeap();
 			EndianType _readHeader();
-			
+
 
 			CIFFContainer(const CIFFContainer &);
 			CIFFContainer & operator=(const CIFFContainer &);

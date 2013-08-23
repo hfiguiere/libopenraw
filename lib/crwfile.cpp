@@ -21,8 +21,8 @@
 
 #include <algorithm>
 #include <utility>
-#include <boost/bind.hpp>
-#include <boost/scoped_ptr.hpp>
+#include <functional>
+#include <memory>
 
 #include <libopenraw/cameraids.h>
 #include <libopenraw++/thumbnail.h>
@@ -42,7 +42,6 @@
 #include "rawfilefactory.h"
 
 using namespace Debug;
-using boost::scoped_ptr;
 
 namespace OpenRaw {
 
@@ -125,18 +124,18 @@ CRWFile::~CRWFile()
     }
     const RecordEntry::List & records = heap->records();
     RecordEntry::List::const_iterator iter;
-    iter = std::find_if(records.begin(), records.end(), boost::bind(
-                            &RecordEntry::isA, _1, 
+    iter = std::find_if(records.begin(), records.end(), std::bind(
+                            &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_JPEGIMAGE)));
     if (iter != records.end()) {
         Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
         m_x = m_y = 0;
 	uint32_t offset = heap->offset() + (*iter).offset;
-        scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-        scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+        std::unique_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
+        std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
 
         jfif->getDimensions(m_x, m_y);
-        Trace(DEBUG1) << "JPEG dimensions x=" << m_x 
+        Trace(DEBUG1) << "JPEG dimensions x=" << m_x
                       << " y=" << m_y << "\n";
         uint32_t dim = std::max(m_x,m_y);
         _addThumbnail(dim, ThumbDesc(m_x, m_y, OR_DATA_TYPE_JPEG, offset, (*iter).length));
@@ -172,10 +171,9 @@ RawContainer* CRWFile::getContainer() const
 
     // locate decoder table
     const CIFF::RecordEntry::List & propsRecs = props->records();
-    CIFF::RecordEntry::List::const_iterator iter;
-    iter = std::find_if(propsRecs.begin(), propsRecs.end(), boost::bind(
-                            &RecordEntry::isA, _1, 
-                            static_cast<uint16_t>(TAG_EXIFINFORMATION)));
+    auto iter = std::find_if(propsRecs.begin(), propsRecs.end(), std::bind(
+                                 &RecordEntry::isA, std::placeholders::_1,
+                                 static_cast<uint16_t>(TAG_EXIFINFORMATION)));
     if (iter == propsRecs.end()) {
         Trace(ERROR) << "Couldn't find the Exif information.\n";
         return err;
@@ -184,9 +182,9 @@ RawContainer* CRWFile::getContainer() const
     Heap exifProps(iter->offset + props->offset(), iter->length, m_container);
 
     const RecordEntry::List & exifPropsRecs = exifProps.records();
-    iter = std::find_if(exifPropsRecs.begin(), exifPropsRecs.end(), 
-                        boost::bind(
-                            &RecordEntry::isA, _1, 
+    iter = std::find_if(exifPropsRecs.begin(), exifPropsRecs.end(),
+                        std::bind(
+                            &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_DECODERTABLE)));
     if (iter == exifPropsRecs.end()) {
         Trace(ERROR) << "Couldn't find the decoder table.\n";
@@ -203,8 +201,8 @@ RawContainer* CRWFile::getContainer() const
 
     // locate the CFA info
     uint16_t cfa_x, cfa_y;
-    iter = std::find_if(exifPropsRecs.begin(), exifPropsRecs.end(), boost::bind(
-                            &RecordEntry::isA, _1, 
+    iter = std::find_if(exifPropsRecs.begin(), exifPropsRecs.end(), std::bind(
+                            &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_SENSORINFO)));
     if (iter == exifPropsRecs.end()) {
         Trace(ERROR) << "Couldn't find the sensor info.\n";
@@ -215,7 +213,7 @@ RawContainer* CRWFile::getContainer() const
 
     // go figure what the +2 is. looks like it is the byte #
     file->seek(exifProps.offset() + iter->offset + 2, SEEK_SET);
-    if(!(m_container->readUInt16(file, cfa_x) 
+    if(!(m_container->readUInt16(file, cfa_x)
          && m_container->readUInt16(file, cfa_y))) {
         Trace(ERROR) << "Couldn't find the sensor size.\n";
         return err;
@@ -238,17 +236,17 @@ RawContainer* CRWFile::getContainer() const
 
         // decompress if we need
         if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-            boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
-                                                              data.size()));
+            std::unique_ptr<IO::Stream> s(new IO::MemStream(data.data(),
+                                                            data.size()));
             s->open(); // TODO check success
-					
+
             CrwDecompressor decomp(s.get(), m_container);
-					
+
             decomp.setOutputDimensions(cfa_x, cfa_y);
             decomp.setDecoderTable(decoderTable);
             RawData *dData = decomp.decompress();
             if (dData != NULL) {
-                Trace(DEBUG1) << "Out size is " << dData->width() 
+                Trace(DEBUG1) << "Out size is " << dData->width()
                               << "x" << dData->height() << "\n";
                 dData->setCfaPatternType(data.cfaPattern()->patternType());
                 data.swap(*dData);
@@ -282,11 +280,11 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
             CIFF::Heap::Ref heap = m_container->getCameraProps();
             if(heap) {
                 const CIFF::RecordEntry::List & propsRecs = heap->records();
-                CIFF::RecordEntry::List::const_iterator iter;
-                iter = std::find_if(propsRecs.begin(), propsRecs.end(), 
-                                    boost::bind(
-                                        &CIFF::RecordEntry::isA, _1, 
-                                        static_cast<uint16_t>(CIFF::TAG_RAWMAKEMODEL)));
+                auto iter = std::find_if(propsRecs.begin(), propsRecs.end(),
+                                         std::bind(
+                                             &CIFF::RecordEntry::isA,
+                                             std::placeholders::_1,
+                                             static_cast<uint16_t>(CIFF::TAG_RAWMAKEMODEL)));
                 if (iter == propsRecs.end()) {
                     Trace(ERROR) << "Couldn't find the image info.\n";
                 }

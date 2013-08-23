@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwcontainer.h
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2013 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -24,8 +24,7 @@
 #define _MRW_CONTAINER_H__
 
 #include <string>
-#include <boost/config.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "ifdfilecontainer.h"
 
@@ -45,7 +44,7 @@ namespace OpenRaw {
 			class DataBlock
 			{
 			public:
-				typedef boost::shared_ptr<DataBlock> Ref;
+				typedef std::shared_ptr<DataBlock> Ref;
 				typedef std::vector<Ref> RefVec;
 
 				/** Construct a datablock from a location in the container 

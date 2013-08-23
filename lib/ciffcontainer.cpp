@@ -21,7 +21,6 @@
 #include <cstring>
 #include <iostream>
 #include <functional>
-#include <boost/shared_ptr.hpp>
 
 #include <libopenraw/types.h>
 
@@ -90,7 +89,7 @@ namespace OpenRaw {
 
 			size_t RecordEntry::fetchData(Heap* heap, void* buf, size_t size) const
 			{
-				return heap->container()->fetchData(buf, 
+				return heap->container()->fetchData(buf,
 													offset + heap->offset(), size);
 			}
 
@@ -120,7 +119,7 @@ namespace OpenRaw {
 				file->seek(m_start + m_length - 4, SEEK_SET);
 				int32_t record_offset;
 				bool ret = m_container->readInt32(file, record_offset);
-					
+
 				if (ret) {
 					int16_t numRecords;
 
@@ -179,7 +178,7 @@ namespace OpenRaw {
 				return ret;
 			}
 		}
-		
+
 		CIFFContainer::CIFFContainer(IO::Stream *_file)
 			: RawContainer(_file, 0),
 			  m_hdr(),
@@ -209,9 +208,9 @@ namespace OpenRaw {
 					off_t heapLength = m_file->filesize() - m_hdr.headerLength;
 
 					Trace(DEBUG1) << "heap len " << heapLength << "\n";
-					m_heap = CIFF::Heap::Ref(new CIFF::Heap(m_hdr.headerLength, 
+					m_heap = CIFF::Heap::Ref(new CIFF::Heap(m_hdr.headerLength,
 																									heapLength, this));
-					
+
 					ret = true;
 				}
 				else {
@@ -239,24 +238,24 @@ namespace OpenRaw {
 				if(!heap()) {
 					return CIFF::Heap::Ref();
 				}
-				
+
 				const CIFF::RecordEntry::List & records = m_heap->records();
 				CIFF::RecordEntry::List::const_iterator iter;
-				
+
 				// locate the properties
 				iter = std::find_if(records.begin(), records.end(), std::bind(
-							    &CIFF::RecordEntry::isA, _1, 
+							    &CIFF::RecordEntry::isA, _1,
 										static_cast<uint16_t>(CIFF::TAG_IMAGEPROPS)));
 				if (iter == records.end()) {
 					Trace(ERROR) << "Couldn't find the image properties.\n";
 					return CIFF::Heap::Ref();
 				}
-				
+
 				m_imageprops = CIFF::Heap::Ref(new CIFF::Heap(iter->offset + m_heap->offset(), iter->length, this));
 			}
 			return m_imageprops;
 		}
-		
+
 		const CIFF::ImageSpec * CIFFContainer::getImageSpec()
 		{
 			if(!m_hasImageSpec) {
@@ -266,9 +265,9 @@ namespace OpenRaw {
 					return NULL;
 				const CIFF::RecordEntry::List & propsRecs = props->records();
 				CIFF::RecordEntry::List::const_iterator iter;
-				iter = std::find_if(propsRecs.begin(), propsRecs.end(), 
+				iter = std::find_if(propsRecs.begin(), propsRecs.end(),
 									std::bind(
-										&CIFF::RecordEntry::isA, _1, 
+										&CIFF::RecordEntry::isA, _1,
 										static_cast<uint16_t>(CIFF::TAG_IMAGEINFO)));
 				if (iter == propsRecs.end()) {
 					Trace(ERROR) << "Couldn't find the image info.\n";
@@ -290,9 +289,9 @@ namespace OpenRaw {
 					return CIFF::Heap::Ref();
 				const CIFF::RecordEntry::List & propsRecs = props->records();
 				CIFF::RecordEntry::List::const_iterator iter;
-				iter = std::find_if(propsRecs.begin(), propsRecs.end(), 
+				iter = std::find_if(propsRecs.begin(), propsRecs.end(),
 									std::bind(
-										&CIFF::RecordEntry::isA, _1, 
+										&CIFF::RecordEntry::isA, _1,
 										static_cast<uint16_t>(CIFF::TAG_CAMERAOBJECT)));
 				if (iter == propsRecs.end()) {
 					Trace(ERROR) << "Couldn't find the camera props.\n";
@@ -313,9 +312,9 @@ namespace OpenRaw {
 			CIFF::RecordEntry::List::const_iterator iter;
 			// locate the RAW data
 			iter = std::find_if(records.begin(), records.end(), std::bind(
-									&CIFF::RecordEntry::isA, _1, 
+									&CIFF::RecordEntry::isA, _1,
 									static_cast<uint16_t>(CIFF::TAG_RAWIMAGEDATA)));
-			
+
 			if (iter != records.end()) {
 				return &(*iter);
 			}

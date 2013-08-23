@@ -19,13 +19,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <memory>
 
 #include <libopenraw/cameraids.h>
 
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
-
-#include <boost/scoped_ptr.hpp>
 
 #include "trace.h"
 #include "io/file.h"
@@ -131,10 +130,10 @@ DngFile::~DngFile()
                 compression == IFD::COMPRESS_LJPEG) {
                 // if the option is not set, decompress
                 if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-                    boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
+                    std::unique_ptr<IO::Stream> s(new IO::MemStream(data.data(),
                                                                       data.size()));
                     s->open(); // TODO check success
-                    boost::scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+                    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
                     LJpegDecompressor decomp(s.get(), jfif.get());
                     RawData *dData = decomp.decompress();
                     if (dData != NULL) {

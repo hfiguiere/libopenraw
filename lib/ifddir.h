@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifddir.h
  *
- * Copyright (C) 2006-2007,2012 Hubert Figuiere
+ * Copyright (C) 2006-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,9 +23,8 @@
 #define _OPENRAW_INTERNALS_IFDDIR_H
 
 #include <map>
+#include <memory>
 
-#include <boost/config.hpp>
-#include <boost/shared_ptr.hpp>
 #include "ifdentry.h"
 #include "trace.h"
 
@@ -37,7 +36,7 @@ class IfdFileContainer;
 class IfdDir
 {
 public:
-	typedef boost::shared_ptr<IfdDir> Ref;
+	typedef std::shared_ptr<IfdDir> Ref;
 	typedef std::vector<Ref> RefVec;
 	struct isPrimary
 	{
@@ -50,7 +49,7 @@ public:
 
 	IfdDir(off_t _offset, IfdFileContainer & _container);
 	virtual ~IfdDir();
-	
+
 	/** return the offset */
 	off_t offset() const
 		{
@@ -69,7 +68,7 @@ public:
 			return m_entries.size();
 		}
 	IfdEntry::Ref getEntry(uint16_t id) const ;
-	
+
 	/** Get a T value from an entry
 	 * @param id the IFD field id
 	 * @retval v the long value
@@ -94,8 +93,8 @@ public:
 		}
 
 	/** Get an loosely typed integer value from an entry.
-	 * This method is  preferred over getLongValue() 
-	 * or getShortValue() unless you really want the strong 
+	 * This method is  preferred over getLongValue()
+	 * or getShortValue() unless you really want the strong
 	 * typing that IFD structure provide
 	 * @param id the IFD field id
 	 * @retval v the long value
@@ -103,7 +102,7 @@ public:
 	 */
 	bool getIntegerValue(uint16_t id, uint32_t &v);
 
-	/** get the offset of the next IFD 
+	/** get the offset of the next IFD
 	 * in absolute
 	 */
 	off_t nextIFD();
@@ -112,8 +111,8 @@ public:
 	 * @return Ref to the new IfdDir if found
 	 */
 	Ref getSubIFD(uint32_t idx = 0) const;
-	/** get all SubIFDs 
-	 * @retval ifds the list of IFDs Ref	
+	/** get all SubIFDs
+	 * @retval ifds the list of IFDs Ref
 	 * @return true if found / success
 	 */
 	bool getSubIFDs(std::vector<IfdDir::Ref> & ifds);
@@ -122,7 +121,7 @@ public:
 	 * @return Ref to the new IfdDir if found
 	 */
 	Ref getExifIFD();
-	
+
 	/** get the MakerNote IFD.
 	 * @return Ref to the new MakerNoteDir if found
 	 */

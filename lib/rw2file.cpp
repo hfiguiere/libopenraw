@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 #include <boost/any.hpp>
 #include <libopenraw/cameraids.h>
 #include <libopenraw++/thumbnail.h>
@@ -185,7 +185,7 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
 {
     uint32_t offset = 0;
     uint32_t size = 0;
-    
+
     offset = _getJpegThumbnailOffset(dir, size);
     if(size == 0) {
         return OR_ERROR_NOT_FOUND;
@@ -195,10 +195,10 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
     uint32_t x = 0;
     uint32_t y = 0;
     ::or_data_type _type = OR_DATA_TYPE_JPEG;
-    boost::scoped_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-    boost::scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+    std::unique_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
+    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
     if (jfif->getDimensions(x,y)) {
-        Trace(DEBUG1) << "JPEG dimensions x=" << x 
+        Trace(DEBUG1) << "JPEG dimensions x=" << x
                       << " y=" << y << "\n";
     }
     if(_type != OR_DATA_TYPE_NONE) {
@@ -206,7 +206,7 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
         _addThumbnail(dim, ThumbDesc(x, y, _type, offset, size));
         list.push_back(dim);
     }
-	
+
     return OR_ERROR_NONE;
 }
 
@@ -269,11 +269,11 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 		Trace(DEBUG1) << "Y not found\n";
 		return OR_ERROR_NOT_FOUND;
 	}
-	
+
 	// this is were things are complicated. The real size of the raw data
-	// is whatever is read (if compressed) 
+	// is whatever is read (if compressed)
 	void *p = data.allocData(byte_length);
-	size_t real_size = m_container->fetchData(p, offset, 
+	size_t real_size = m_container->fetchData(p, offset,
 											  byte_length);
 
 	if (real_size / (x * 8 / 7) == y) {
@@ -281,7 +281,7 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 		data.setCompression(PANA_RAW_COMPRESSION);
 	}
 	else if (real_size < byte_length) {
-		Trace(WARNING) << "Size mismatch for data: expected " << byte_length 
+		Trace(WARNING) << "Size mismatch for data: expected " << byte_length
 			<< " got " << real_size << " ignoring.\n";
 		return OR_ERROR_NOT_FOUND;
 	}
@@ -289,14 +289,14 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 		data.setDataType(OR_DATA_TYPE_RAW);
 	}
 	data.setCfaPatternType(OR_CFA_PATTERN_BGGR);
-	
-	
+
+
 	// they are not all RGGB.
 	// but I don't seem to see where this is encoded.
-	// 
+	//
 	data.setDimensions(x, y);
 
-	Trace(DEBUG1) << "In size is " << data.width() 
+	Trace(DEBUG1) << "In size is " << data.width()
 				  << "x" << data.height() << "\n";
 	// get the sensor info
 	IfdEntry::Ref e = _cfaIfd->getEntry(IFD::RW2_TAG_SENSOR_LEFTBORDER);

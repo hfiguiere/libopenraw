@@ -19,8 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <boost/scoped_ptr.hpp>
-#include <boost/any.hpp>
+#include <memory>
+
 #include <libopenraw/cameraids.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
@@ -268,7 +268,7 @@ IfdDir::Ref  Cr2File::_locateMainIfd()
 			Trace(DEBUG1) << "Y not found\n";
 			return OR_ERROR_NOT_FOUND;
 		}
-		
+
 		void *p = data.allocData(byte_length);
 		size_t real_size = m_container->fetchData(p, offset, 
 												  byte_length);
@@ -277,24 +277,24 @@ IfdDir::Ref  Cr2File::_locateMainIfd()
 		}
 		// they are not all RGGB.
 		// but I don't seem to see where this is encoded.
-		// 
+		//
 		data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
 		data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
 		data.setDimensions(x, y);
 
-		Trace(DEBUG1) << "In size is " << data.width() 
+		Trace(DEBUG1) << "In size is " << data.width()
 					  << "x" << data.height() << "\n";
 		// decompress if we need
 		if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-			boost::scoped_ptr<IO::Stream> s(new IO::MemStream(data.data(),
+                    std::unique_ptr<IO::Stream> s(new IO::MemStream(data.data(),
 															  data.size()));
 			s->open(); // TODO check success
-			boost::scoped_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+                        std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
 			LJpegDecompressor decomp(s.get(), jfif.get());
 			// in fact on Canon CR2 files slices either do not exists
 			// or is 3.
 			if(slices.size() > 1) {
-				decomp.setSlices(slices); 
+				decomp.setSlices(slices);
 			}
 			RawData *dData = decomp.decompress();
 			if (dData != NULL) {
@@ -306,7 +306,7 @@ IfdDir::Ref  Cr2File::_locateMainIfd()
 				delete dData;
 			}
 		}
-		
+
 		// get the sensor info
 		std::vector<uint16_t> sensorInfo;
 		const IfdDir::Ref & _makerNoteIfd = makerNoteIfd();

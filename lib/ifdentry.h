@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.h
  *
- * Copyright (C) 2006-2008,2012 Hubert Figuiere
+ * Copyright (C) 2006-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,7 +23,7 @@
 #define _OPENRAW_INTERNALS_IFDENTRY_H
 
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <libopenraw/types.h>
 
 #include "exception.h"
@@ -158,9 +158,9 @@ class IfdEntry
 {
 public:
 	/** Ref (ie shared pointer) */
-	typedef boost::shared_ptr<IfdEntry> Ref;
+	typedef std::shared_ptr<IfdEntry> Ref;
 
-	IfdEntry(uint16_t _id, int16_t _type, int32_t _count, 
+	IfdEntry(uint16_t _id, int16_t _type, int32_t _count,
 			 uint32_t _data,
 			 IfdFileContainer &_container);
 	virtual ~IfdEntry();
@@ -169,7 +169,7 @@ public:
 		{
 			return m_type;
 		}
-	
+
 	/** the count of items in the entry */
 	uint32_t count() const
 		{
@@ -192,7 +192,7 @@ public:
 public:
   MetaValue* make_meta_value();
 
-	/** load the data for the entry 
+	/** load the data for the entry
 	 * if all the data fits in m_data, it is a noop
 	 * @param unit_size the size of 1 unit of data
 	 * @return true if success.

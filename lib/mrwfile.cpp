@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.cpp
  *
- * Copyright (C) 2006,2008,2012 Hubert Figuiere
+ * Copyright (C) 2006-2013 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -20,8 +20,7 @@
  */
 
 
-#include <iostream>
-#include <boost/scoped_array.hpp>
+#include <memory>
 #include <libopenraw/cameraids.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
@@ -113,11 +112,11 @@ IfdDir::Ref  MRWFile::_locateMainIfd()
 void MRWFile::_identifyId()
 {
     MRWContainer *mc = (MRWContainer *)m_container;
-    
+
     // it is important that the main IFD be loaded.
     // this ensures it.
     const IfdDir::Ref & _mainIfd = mainIfd();
-    
+
     if(_mainIfd && mc->prd) {
         std::string version = mc->prd->string_val(MRW::PRD_VERSION);
         _setTypeId(_typeIdFromModel("Minolta", version));
@@ -142,13 +141,13 @@ void MRWFile::_identifyId()
     IfdEntry::Ref thumb_ent;	/* Thumbnail data directory entry. */
     ::or_error ret = OR_ERROR_NOT_FOUND;
     MRWContainer *mc = (MRWContainer *)m_container;
-    
+
     dir = _locateExifIfd();
     if (!dir) {
         Trace(WARNING) << "EXIF dir not found\n";
         return ret;
     }
-    
+
     maker_ent = dir->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
     if (!maker_ent) {
         Trace(WARNING) << "maker note offset entry not found\n";
@@ -156,12 +155,12 @@ void MRWFile::_identifyId()
     }
     uint32_t off = 0;
     off = maker_ent->offset();
-    
-    IfdDir::Ref ref(new IfdDir(mc->ttw->offset() + 
-                               MRW::DataBlockHeaderLength + off, 
+
+    IfdDir::Ref ref(new IfdDir(mc->ttw->offset() +
+                               MRW::DataBlockHeaderLength + off,
                                *m_container));
     ref->load();
-    
+
     uint32_t tnail_offset = 0;
     uint32_t tnail_len = 0;
     thumb_ent = ref->getEntry(MRW::MRWTAG_THUMBNAIL);
@@ -175,36 +174,35 @@ void MRWFile::_identifyId()
             return ret;
         }
     }
-    else 
-    {
+    else {
         Trace(WARNING) << "thumbnail offset entry not found\n";
         return ret;
     }
-    
+
     Trace(DEBUG1) << "thumbnail offset found, "
-                  << " offset == " << tnail_offset  << " count == " 
+                  << " offset == " << tnail_offset  << " count == "
                   << tnail_len << "\n";
     void *p = thumbnail.allocData (tnail_len);
-    size_t fetched = m_container->fetchData(p, mc->ttw->offset() 
-                                            + MRW::DataBlockHeaderLength 
-                                            + tnail_offset, 
+    size_t fetched = m_container->fetchData(p, mc->ttw->offset()
+                                            + MRW::DataBlockHeaderLength
+                                            + tnail_offset,
                                             tnail_len);
     if (fetched != tnail_len) {
-        Trace(WARNING) << "Unable to fetch all thumbnail data: " 
-                       << fetched << " not " << tnail_len 
+        Trace(WARNING) << "Unable to fetch all thumbnail data: "
+                       << fetched << " not " << tnail_len
                        << " bytes\n";
     }
     /* Need to patch first byte. */
     ((unsigned char *)p)[0] = 0xFF;
-    
+
     thumbnail.setDataType (OR_DATA_TYPE_JPEG);
     thumbnail.setDimensions (640, 480);
     return OR_ERROR_NONE;
 }
 
 
-::or_error MRWFile::_getRawData(RawData & data, uint32_t options) 
-{ 
+::or_error MRWFile::_getRawData(RawData & data, uint32_t options)
+{
 	or_error ret = OR_ERROR_NONE;
 	MRWContainer *mc = (MRWContainer *)m_container;
 
@@ -248,13 +246,13 @@ void MRWFile::_identifyId()
 	else {
 		Unpack unpack(x, IFD::COMPRESS_NONE);
 		size_t blocksize = unpack.block_size();
-		boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
+		std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
 		uint8_t * outdata = (uint8_t*)data.data();
 		size_t outsize = finaldatalen;
 		size_t got;
 		do {
 			Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
-			got = m_container->fetchData (block.get(), 
+			got = m_container->fetchData (block.get(),
 										  offset, blocksize);
 			fetched += got;
 			offset += got;
@@ -280,7 +278,7 @@ void MRWFile::_identifyId()
 	}
 	uint16_t bpat = mc->prd->uint16_val (MRW::PRD_BAYER_PATTERN);
 	or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
-	switch(bpat) 
+	switch(bpat)
 	{
 	case 0x0001:
 		cfa_pattern = OR_CFA_PATTERN_RGGB;
@@ -294,7 +292,7 @@ void MRWFile::_identifyId()
 	data.setCfaPatternType(cfa_pattern);
 	data.setDimensions (x, y);
 
-	return ret; 
+	return ret;
 }
 
 }

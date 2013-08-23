@@ -18,9 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <memory>
 
-#include <boost/scoped_ptr.hpp>
-#include <boost/scoped_array.hpp>
 #include <libopenraw/cameraids.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
@@ -248,7 +247,7 @@ RawContainer* RafFile::getContainer() const
 	{
 		Unpack unpack(w, IFD::COMPRESS_NONE);
 		size_t blocksize = unpack.block_size();
-		boost::scoped_array<uint8_t> block(new uint8_t[blocksize]);
+		std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
 		uint8_t * outdata = (uint8_t*)data.data();
 		size_t outsize = finaldatalen;
 		size_t got;
