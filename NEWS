@@ -56,6 +56,7 @@ Bug fixes:
 
 Internal changes:
 
+  - Now requires a C++ 11 capable compiler.
   - Fixed warnings.
   - Support to load MakerNote IFD.
   - Streamline the loading of IFDs.
