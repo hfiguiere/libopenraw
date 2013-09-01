@@ -1,7 +1,7 @@
 /*
  * libopenraw - ljpegdecompressor_priv.h
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -95,9 +95,12 @@ struct HuffmanTable {
  * One of the following structures is used to pass around the
  * decompression information.
  */
-struct DecompressInfo 
-	: public boost::noncopyable
+struct DecompressInfo
 {
+	// non copyable
+	DecompressInfo(const DecompressInfo&) = delete;
+	DecompressInfo& operator=(const DecompressInfo&) = delete;
+
 	DecompressInfo()
 		: imageWidth(0), imageHeight(0),
 			dataPrecision(0), compInfo(NULL),

@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwdecompressor.h
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,8 +20,6 @@
 
 #ifndef __OPENRAW_CRWDECOMPRESS_H__
 #define __OPENRAW_CRWDECOMPRESS_H__
-
-#include <boost/noncopyable.hpp>
 
 #include "decompressor.h"
 

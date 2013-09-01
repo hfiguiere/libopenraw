@@ -1,7 +1,7 @@
 /*
  * libopenraw - decompressor.h
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007-2013 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,8 +21,6 @@
 #ifndef __OPENRAW_DECOMPRESS_H__
 #define __OPENRAW_DECOMPRESS_H__
 
-#include <boost/noncopyable.hpp>
-
 namespace OpenRaw {
 
 	class RawData;
@@ -36,13 +34,16 @@ namespace OpenRaw {
 		class RawContainer;
 
 		class Decompressor
-			: private boost::noncopyable
 		{
 		public:
 			Decompressor(IO::Stream * stream,
 									 RawContainer * container);
 			virtual ~Decompressor();
-			
+
+			//non copyable
+			Decompressor(const Decompressor&) = delete;
+			Decompressor& operator=(const Decompressor&) = delete;
+
 			/** decompress the bitmapdata and return a new bitmap
 			 * @param in a preallocated BitmapData instance
 			 * or NULL if decompress has to allocate it.
@@ -54,11 +55,6 @@ namespace OpenRaw {
 		protected:
 			IO::Stream *m_stream;
 			RawContainer *m_container;
-
-			/** private copy constructor to make sure it is not called */
-			Decompressor(const Decompressor& f);
-			/** private = operator to make sure it is never called */
-			Decompressor & operator=(const Decompressor&);
 		};
 
 	}

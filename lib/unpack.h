@@ -1,7 +1,7 @@
 /*
- * libopenraw - unpack.cpp
+ * libopenraw - unpack.h
  *
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008-2013 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -26,17 +26,18 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include <boost/noncopyable.hpp>
 #include <libopenraw/consts.h>
 
 namespace OpenRaw {	namespace Internals {
 
 	/** Unpack class. Because we need to maintain a state */
 	class Unpack
-		: public boost::noncopyable
 	{
 	public:
 		Unpack(uint32_t w, uint32_t t);
+		// noncopyable
+		Unpack(const Unpack&) = delete;
+		Unpack & operator=(const Unpack&) = delete;
 
 		size_t block_size();
 		or_error unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & outsize);
