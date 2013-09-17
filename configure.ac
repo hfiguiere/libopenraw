@@ -179,9 +179,9 @@ include/libopenraw++/Makefile
 lib/Makefile
 lib/capi/Makefile
 lib/io/Makefile
-lib/libopenraw-1.0.pc
+lib/libopenraw-0.1.pc
 gnome/Makefile
-gnome/libopenraw-gnome-1.0.pc
+gnome/libopenraw-gnome-0.1.pc
 gnome/include/Makefile
 gnome/include/libopenraw-gnome/Makefile
 doc/Makefile

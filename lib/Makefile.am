@@ -1,11 +1,11 @@
 
-INCLUDES = -I$(top_srcdir)/include 
+INCLUDES = -I$(top_srcdir)/include
 
 SUBDIRS = io capi
 
-EXTRA_DIST = libopenraw.sym libopenraw-1.0.pc.in
+EXTRA_DIST = libopenraw.sym
 
-pkgconfig_DATA = libopenraw-1.0.pc
+pkgconfig_DATA = libopenraw-0.1.pc
 
 noinst_HEADERS = or_debug.h \
 	trace.h	\
