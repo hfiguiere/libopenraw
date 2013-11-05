@@ -134,6 +134,7 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { "DSC-RX1R", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX1R) },
     { "NEX-6", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX6) },
     { "NEX-5R", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5R) },
+    { "ILCE-7R", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7R) },
     { 0, 0 }
 };
 
