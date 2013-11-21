@@ -130,6 +130,7 @@ const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
     { "XZ-2            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_XZ2) },
     { "E-M5            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM5) },
     { "E-M1            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM1) },
+    { "STYLUS1         ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1) },
     { 0, 0 }
 };
 
