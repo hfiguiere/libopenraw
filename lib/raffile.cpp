@@ -114,7 +114,7 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
   { "X-M1" ,           OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XM1) },
   { "XF1",             OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XF1) },
   { "X100S",           OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100S) },
-  { NULL, 0 }
+  { nullptr, 0 }
 };
 
 RawFile *RafFile::factory(IO::Stream * s)
@@ -306,7 +306,7 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void RafFile::_identifyId()

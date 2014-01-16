@@ -38,9 +38,9 @@ RafContainer::RafContainer(IO::Stream *_file)
 	: RawContainer(_file, 0)
 	, m_read(false)
 	, m_version(0)
-	, m_jpegPreview(NULL)
-	, m_cfaContainer(NULL)
-	, m_metaContainer(NULL)
+	, m_jpegPreview(nullptr)
+	, m_cfaContainer(nullptr)
+	, m_metaContainer(nullptr)
 {
 	memset((void*)&m_offsetDirectory, 0, sizeof(m_offsetDirectory));
 }
@@ -68,11 +68,11 @@ IfdFileContainer * RafContainer::getCfaContainer()
 		}
 		if(m_offsetDirectory.cfaOffset && m_offsetDirectory.cfaLength) {
 			m_cfaContainer = new IfdFileContainer(new IO::StreamClone(m_file, m_offsetDirectory.cfaOffset), 0);
-		}		
+		}
 	}
 	return m_cfaContainer;
 }
-	
+
 JfifContainer * RafContainer::getJpegPreview()
 {
 	if(!m_jpegPreview) {
@@ -85,7 +85,7 @@ JfifContainer * RafContainer::getJpegPreview()
 	}
 	return m_jpegPreview;
 }
-	
+
 RafMetaContainer * RafContainer::getMetaContainer()
 {
 	if(!m_metaContainer) {
@@ -104,7 +104,7 @@ bool RafContainer::_readHeader()
 	char magic[29];
 	char model[33];
 	magic[28] = 0;
-	model[32] = 0;	
+	model[32] = 0;
 	m_read = true;
 
 	m_file->read(magic, 28);
@@ -113,9 +113,9 @@ bool RafContainer::_readHeader()
 		// not a RAF file
 		return false;
 	}
-	
+
 	setEndian(ENDIAN_BIG);
-	
+
 	m_file->read(model, 32);
 	m_model = model;
 	readUInt32(m_file, m_version);
@@ -126,7 +126,7 @@ bool RafContainer::_readHeader()
 	readUInt32(m_file, m_offsetDirectory.metaLength);
 	readUInt32(m_file, m_offsetDirectory.cfaOffset);
 	readUInt32(m_file, m_offsetDirectory.cfaLength);
-	
+
 	return true;
 }
 
