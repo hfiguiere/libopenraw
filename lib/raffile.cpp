@@ -1,7 +1,7 @@
 /*
  * libopenraw - raffile.cpp
  *
- * Copyright (C) 2011-2013 Hubert Figuière
+ * Copyright (C) 2011-2014 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -114,18 +114,18 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
   { "X-M1" ,           OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XM1) },
   { "XF1",             OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XF1) },
   { "X100S",           OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100S) },
-	{ NULL, 0 }
+  { NULL, 0 }
 };
 
 RawFile *RafFile::factory(IO::Stream * s)
 {
-	return new RafFile(s);
+  return new RafFile(s);
 }
 
 RafFile::RafFile(IO::Stream * s)
-	: RawFile(s, OR_RAWFILE_TYPE_RAF)
-	, m_io(s)
-	, m_container(new RafContainer(s))
+  : RawFile(s, OR_RAWFILE_TYPE_RAF)
+  , m_io(s)
+  , m_container(new RafContainer(s))
 {
   _setIdMap(s_def);
   _setMatrices(s_matrices);
@@ -133,26 +133,30 @@ RafFile::RafFile(IO::Stream * s)
 
 RafFile::~RafFile()
 {
-	delete m_container;
+  delete m_container;
 }
 
 ::or_error RafFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
-	or_error ret = OR_ERROR_NOT_FOUND;
-	
-	JfifContainer * jpegPreview = m_container->getJpegPreview();
-	uint32_t x, y;
-	if(jpegPreview && jpegPreview->getDimensions(x, y)) {
+  or_error ret = OR_ERROR_NOT_FOUND;
+
+  JfifContainer * jpegPreview = m_container->getJpegPreview();
+  if(!jpegPreview) {
+    return ret;
+  }
+
+  uint32_t x, y;
+  if(jpegPreview->getDimensions(x, y)) {
     uint32_t size = std::max(x, y);
 
-		list.push_back(size);
+    list.push_back(size);
     _addThumbnail(size, ThumbDesc(x,y,
                                   OR_DATA_TYPE_JPEG,
                                   m_container->getJpegOffset(),
                                   m_container->getJpegLength()
                     ));
-		ret = OR_ERROR_NONE;
-	}
+    ret = OR_ERROR_NONE;
+  }
   IfdDir::Ref dir = jpegPreview->getIfdDirAt(1);
   if(dir) {
     bool got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
@@ -172,15 +176,16 @@ RafFile::~RafFile()
       }
 
       if(got_it) {
-        JfifContainer* thumb = 
-          new JfifContainer(new IO::StreamClone(jpegPreview->file(), 
-                                                jpeg_offset), 0);
+        std::unique_ptr<JfifContainer> thumb(
+          new JfifContainer(
+            new IO::StreamClone(jpegPreview->file(),
+                                jpeg_offset), 0));
 
         if(thumb->getDimensions(x, y)) {
           uint32_t size = std::max(x, y);
 
           list.push_back(size);
-          _addThumbnail(size, 
+          _addThumbnail(size,
                         ThumbDesc(x,y,
                                   OR_DATA_TYPE_JPEG,
                                   jpeg_offset + m_container->getJpegOffset(),
@@ -188,12 +193,11 @@ RafFile::~RafFile()
                           ));
           ret = OR_ERROR_NONE;
         }
-        delete thumb;
       }
     }
   }
-	
-	return ret;
+  
+  return ret;
 }
 
 RawContainer* RafFile::getContainer() const
@@ -203,29 +207,29 @@ RawContainer* RafFile::getContainer() const
 
 ::or_error RafFile::_getRawData(RawData & data, uint32_t /*options*/)
 {
-	::or_error ret = OR_ERROR_NOT_FOUND;
+  ::or_error ret = OR_ERROR_NOT_FOUND;
 
-	RafMetaContainer * meta = m_container->getMetaContainer();
+  RafMetaContainer * meta = m_container->getMetaContainer();
 
-	RafMetaValue::Ref value = meta->getValue(RAF_TAG_SENSOR_DIMENSION);
-	if(!value) {
-		// use this tag if the other is missing
-		value = meta->getValue(RAF_TAG_IMG_HEIGHT_WIDTH);
-	}
-	uint32_t dims = value->get().getInteger(0);
-	uint16_t h = (dims & 0xFFFF0000) >> 16;
-	uint16_t w = (dims & 0x0000FFFF);
+  RafMetaValue::Ref value = meta->getValue(RAF_TAG_SENSOR_DIMENSION);
+  if(!value) {
+    // use this tag if the other is missing
+    value = meta->getValue(RAF_TAG_IMG_HEIGHT_WIDTH);
+  }
+  uint32_t dims = value->get().getInteger(0);
+  uint16_t h = (dims & 0xFFFF0000) >> 16;
+  uint16_t w = (dims & 0x0000FFFF);
 
-	value = meta->getValue(RAF_TAG_RAW_INFO);
-	uint32_t rawProps = value->get().getInteger(0);
+  value = meta->getValue(RAF_TAG_RAW_INFO);
+  uint32_t rawProps = value->get().getInteger(0);
   // TODO re-enable if needed.
-	// uint8_t layout = (rawProps & 0xFF000000) >> 24 >> 7; // MSBit in byte.
-	uint8_t compressed = ((rawProps & 0xFF0000) >> 16) & 8; // 8 == compressed
-	
-	//printf("layout %x - compressed %x\n", layout, compressed);
-	
-	data.setDataType(OR_DATA_TYPE_RAW);
-	data.setDimensions(w,h);
+  // uint8_t layout = (rawProps & 0xFF000000) >> 24 >> 7; // MSBit in byte.
+  uint8_t compressed = ((rawProps & 0xFF0000) >> 16) & 8; // 8 == compressed
+  
+  //printf("layout %x - compressed %x\n", layout, compressed);
+  
+  data.setDataType(OR_DATA_TYPE_RAW);
+  data.setDimensions(w,h);
   switch(typeId()) {
   case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO1):
   case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1):
@@ -238,71 +242,71 @@ RawContainer* RafFile::getContainer() const
     // TODO get the right pattern.
     data.setCfaPatternType(OR_CFA_PATTERN_GBRG);
   }
-	// TODO actually read the 2048.
-	// TODO make sure this work for the other file formats...
-	size_t byte_size = m_container->getCfaLength() - 2048;
-	size_t fetched = 0;
-	off_t offset = m_container->getCfaOffset() + 2048;
-	
-	bool is_compressed = (compressed == 8);
-	uint32_t finaldatalen = 2 * h * w;
-	uint32_t datalen =	(is_compressed ? byte_size : finaldatalen);
-	void *buf = data.allocData(finaldatalen);
+  // TODO actually read the 2048.
+  // TODO make sure this work for the other file formats...
+  size_t byte_size = m_container->getCfaLength() - 2048;
+  size_t fetched = 0;
+  off_t offset = m_container->getCfaOffset() + 2048;
 
-	if(is_compressed)
-	{
-		Unpack unpack(w, IFD::COMPRESS_NONE);
-		size_t blocksize = unpack.block_size();
-		std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
-		uint8_t * outdata = (uint8_t*)data.data();
-		size_t outsize = finaldatalen;
-		size_t got;
-		do {
-			Debug::Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
-			got = m_container->fetchData (block.get(), 
-										  offset, blocksize);
-			fetched += got;
-			offset += got;
-			Debug::Trace(DEBUG2) << "got " << got << "\n";
-			if(got) {
-				size_t out;
-				or_error err = unpack.unpack_be12to16(outdata, outsize,
-													  block.get(), got, out);
-				outdata += out;
-				outsize -= out;
-				Debug::Trace(DEBUG2) << "unpacked " << out
+  bool is_compressed = (compressed == 8);
+  uint32_t finaldatalen = 2 * h * w;
+  uint32_t datalen =  (is_compressed ? byte_size : finaldatalen);
+  void *buf = data.allocData(finaldatalen);
+
+  ret = OR_ERROR_NONE;
+
+  if(is_compressed)
+  {
+    Unpack unpack(w, IFD::COMPRESS_NONE);
+    size_t blocksize = unpack.block_size();
+    std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
+    uint8_t * outdata = (uint8_t*)data.data();
+    size_t outsize = finaldatalen;
+    size_t got;
+    do {
+      Debug::Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
+      got = m_container->fetchData (block.get(),
+                      offset, blocksize);
+      fetched += got;
+      offset += got;
+      Debug::Trace(DEBUG2) << "got " << got << "\n";
+      if(got) {
+        size_t out;
+        or_error err = unpack.unpack_be12to16(outdata, outsize,
+                            block.get(), got, out);
+        outdata += out;
+        outsize -= out;
+        Debug::Trace(DEBUG2) << "unpacked " << out
                              << " bytes from " << got << "\n";
-				if(err != OR_ERROR_NONE) {
-					ret = err;
-					break;
-				}
-			}
-		} while((got != 0) && (fetched < datalen));
-	}
-	else
-	{
-		m_container->fetchData (buf, offset, datalen);
-	}
+        if(err != OR_ERROR_NONE) {
+          ret = err;
+          break;
+        }
+      }
+    } while((got != 0) && (fetched < datalen));
+  }
+  else
+  {
+    m_container->fetchData (buf, offset, datalen);
+  }
 
-	ret = OR_ERROR_NONE;
-
-	return ret;
+  return ret;
 }
 
 MetaValue *RafFile::_getMetaValue(int32_t meta_index)
 {
-	if(META_INDEX_MASKOUT(meta_index) == META_NS_EXIF
-	   || META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
+  if(META_INDEX_MASKOUT(meta_index) == META_NS_EXIF
+     || META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
 
-		JfifContainer * jpegPreview = m_container->getJpegPreview();
-		IfdDir::Ref dir = jpegPreview->mainIfd();
-		IfdEntry::Ref e = dir->getEntry(META_NS_MASKOUT(meta_index));
-		if(e) {
-			return e->make_meta_value();
-		}
-	}
+    JfifContainer * jpegPreview = m_container->getJpegPreview();
+    IfdDir::Ref dir = jpegPreview->mainIfd();
+    IfdEntry::Ref e = dir->getEntry(META_NS_MASKOUT(meta_index));
+    if(e) {
+      return e->make_meta_value();
+    }
+  }
 
-	return NULL;
+  return NULL;
 }
 
 void RafFile::_identifyId()
