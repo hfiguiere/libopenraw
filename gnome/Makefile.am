@@ -7,8 +7,9 @@ GDK_PIXBUF_PLUGIN = libopenraw_pixbuf.la
 PKG_CONFIG_FILES = libopenraw-gnome-0.1.pc
 endif
 
-INCLUDES = -I$(top_srcdir)/include \
+AM_CPPFLAGS = -I$(top_srcdir)/include \
 	-I$(srcdir)/include \
+	@BOOST_CPPFLAGS@ \
 	$(LIBGLIB_CFLAGS) \
 	$(LIBGDKPIXBUF_CFLAGS)
 

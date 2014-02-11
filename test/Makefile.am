@@ -4,7 +4,8 @@ TESTS_ENVIRONMENT =
 
 OPENRAW_LIB = $(top_builddir)/lib/libopenraw.la
 
-INCLUDES = \
+AM_CPPFLAGS = \
+	@BOOST_CPPFLAGS@ \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/lib
 

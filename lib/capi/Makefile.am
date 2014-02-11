@@ -1,7 +1,7 @@
 
 
 
-INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/lib 
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/lib @BOOST_CPPFLAGS@
 
 noinst_LTLIBRARIES = libopenrawc.la
 
