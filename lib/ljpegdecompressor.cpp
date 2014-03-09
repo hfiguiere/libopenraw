@@ -530,7 +530,7 @@ int32_t LJpegDecompressor::get_bit()
 }
 
 
-inline 
+inline
 int32_t LJpegDecompressor::readBits(IO::Stream * s, uint16_t nbits)
 {
     if (m_bitsLeft < nbits) {
@@ -556,22 +556,22 @@ int32_t LJpegDecompressor::readBits(IO::Stream * s, uint16_t nbits)
  *
  *--------------------------------------------------------------
  */
-inline void 
+inline void
 LJpegDecompressor::PmPutRow(MCU* RowBuf, int32_t numComp, int32_t numCol, int32_t Pt)
-{ 
+{
     // TODO this might be wrong in 8 bits...
     // original code was using putc which *i think* was a problem for
     // 16bpp
-	int32_t comp;
+    int32_t comp;
     int32_t col;
     uint16_t v;
-							
-	for (col = 0; col < numCol; col++) {	
-		for (comp = 0; comp < numComp; comp++) {
+
+    for (col = 0; col < numCol; col++) {
+        for (comp = 0; comp < numComp; comp++) {
             v = RowBuf[col][comp]<<Pt;
             m_output->append(v);
         }
-	}
+    }
 //			m_output->nextRow();
 }
 

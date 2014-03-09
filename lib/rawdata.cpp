@@ -290,17 +290,15 @@ RawData &RawData::append(uint16_t c)
     assert(d->pos);
     assert(d->offset < size());
     *(d->pos) = c & 0xff;
-    *(d->pos + 1) = (c >> 8) & 0xff; 
+    *(d->pos + 1) = (c >> 8) & 0xff;
     d->advance(sizeof(c));
     return *this;
 }
-	
 
 void RawData::nextRow()
 {
     d->nextRow();
 }
-
 
 void RawData::Private::nextRow()
 {
