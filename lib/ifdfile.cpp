@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -170,7 +170,7 @@ void IfdFile::_identifyId()
   if (subtype == 1) {
 
     uint16_t photom_int = 0;
-    got_it = dir->getValue(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION, 
+    got_it = dir->getValue(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION,
                            photom_int);
 
     if (got_it) {
@@ -187,14 +187,14 @@ void IfdFile::_identifyId()
 
     uint16_t compression = 0;
     got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
-                
+
     uint32_t offset = 0;
     uint32_t byte_count = 0;
     got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_count);
     got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
     if (!got_it || (compression == 6) || (compression == 7)) {
       if(!got_it) {
-        got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, 
+        got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
                                byte_count);
         got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
                                offset);
@@ -204,7 +204,11 @@ void IfdFile::_identifyId()
         // as JPEG. Check the real data size.
         if(x && y) {
           if(byte_count >= (x * y * 3)) {
-            _type = OR_DATA_TYPE_PIXMAP_8RGB;
+            //_type = OR_DATA_TYPE_PIXMAP_8RGB;
+            _type = OR_DATA_TYPE_NONE;
+            // See bug 72270
+            Trace(DEBUG1) << "8RGB as JPEG. Will ignore.\n";
+            ret = OR_ERROR_INVALID_FORMAT;
           }
           else {
             _type = OR_DATA_TYPE_JPEG;
@@ -217,7 +221,7 @@ void IfdFile::_identifyId()
             std::unique_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
             std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
             if (jfif->getDimensions(x,y)) {
-              Trace(DEBUG1) << "JPEG dimensions x=" << x 
+              Trace(DEBUG1) << "JPEG dimensions x=" << x
                             << " y=" << y << "\n";
             }
             else {
@@ -227,7 +231,7 @@ void IfdFile::_identifyId()
             }
           }
           else {
-            Trace(DEBUG1) << "JPEG (supposed) dimensions x=" << x 
+            Trace(DEBUG1) << "JPEG (supposed) dimensions x=" << x
                           << " y=" << y << "\n";
           }
         }
@@ -242,7 +246,27 @@ void IfdFile::_identifyId()
     else {
       Trace(DEBUG1) << "found strip offsets\n";
       if (x != 0 && y != 0) {
-        _type = OR_DATA_TYPE_PIXMAP_8RGB;
+        // See bug 72270 - some CR2 have 16 bpc RGB thumbnails.
+        // by default it is RGB8. Unless stated otherwise.
+        bool isRGB8 = true;
+        try {
+          IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
+          std::vector<uint16_t> arr;
+          entry->getArray(arr);
+          for(auto i = arr.begin(); i != arr.end(); ++i) {
+            isRGB8 = *i == 8;
+            if (!isRGB8) {
+              Trace(DEBUG1) << "bpc != 8, not RGB8 " << *i << "\n";
+              break;
+            }
+          }
+        }
+        catch(const std::exception & e) {
+          Trace(DEBUG1) << "Exception getting BPS " << e.what() << "\n";
+        }
+        if (isRGB8) {
+          _type = OR_DATA_TYPE_PIXMAP_8RGB;
+        }
       }
     }
     if(_type != OR_DATA_TYPE_NONE) {

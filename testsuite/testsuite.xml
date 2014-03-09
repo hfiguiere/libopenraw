@@ -2,15 +2,15 @@
   <test>
     <name>CR2-test 20D</name>
     <file>/home/hub/samples/cr2/20D/img_0620.cr2</file>
-    <source>http://libopenraw.freedesktop.org/samples/cr2/img_0620.cr2</source>
+    <source>http://libopenraw.freedesktop.org/samples/cr2/20D/img_0620.cr2</source>
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65537</rawTypeId>
-      <thumbNum>3</thumbNum>
-      <thumbSizes>1536 160 384</thumbSizes>
-      <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
-      <thumbDataSizes>377981 7239 294912</thumbDataSizes>
-      <thumbMd5>73 237 94</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>1536 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>377981 7239</thumbDataSizes>
+      <thumbMd5>73 237</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16973120</rawDataSize>
       <rawDataDimensions>3596 2360</rawDataDimensions>
@@ -29,11 +29,11 @@
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65542</rawTypeId>
-      <thumbNum>3</thumbNum>
-      <thumbSizes>2256 160 539</thumbSizes>
-      <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
-      <thumbDataSizes>892728 11024 1151304</thumbDataSizes>
-      <thumbMd5>83 217 175</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>2256 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>892728 11024</thumbDataSizes>
+      <thumbMd5>83 217</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>24802624</rawDataSize>
       <rawDataDimensions>4312 2876</rawDataDimensions>
@@ -52,11 +52,11 @@
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65564</rawTypeId>
-      <thumbNum>3</thumbNum>
-      <thumbSizes>5184 160 670</thumbSizes>
-      <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
-      <thumbDataSizes>2263285 17704 1736640</thumbDataSizes>
-      <thumbMd5>253 53 175</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>5184 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>2263285 17704</thumbDataSizes>
+      <thumbMd5>253 53</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>37691520</rawDataSize>
       <rawDataDimensions>5360 3516</rawDataDimensions>
@@ -69,17 +69,40 @@
     </results>
   </test>
   <test>
+    <name>CR2-test 5DMkII</name>
+    <file>/home/hub/samples/cr2/5DMkII/IMG_0001.CR2</file>
+    <source>http://libopenraw.freedesktop.org/samples/cr2/5DMkII/IMG_0001.CR2</source>
+    <results>
+      <rawType>CR2</rawType>
+      <rawTypeId>65568</rawTypeId>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>5616 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>3384601 17024</thumbDataSizes>
+      <thumbMd5>91 117</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>44065536</rawDataSize>
+      <rawDataDimensions>5792 3804</rawDataDimensions>
+      <rawDataRoi>168 56 5615 3743</rawDataRoi>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>16383</rawMaxValue>
+      <rawMd5>178</rawMd5>
+      <metaOrientation>8</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>CR2-test G11</name>
     <file>/home/hub/samples/cr2/G11/canong11_studio_ISO80.CR2</file>
     <source compress="zip">http://movies.dpreview.com.s3.amazonaws.com/canong11/studio_ISO80.zip</source>
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65565</rawTypeId>
-      <thumbNum>3</thumbNum>
-      <thumbSizes>1600 160 456</thumbSizes>
-      <thumbFormats>JPEG JPEG 8RGB</thumbFormats>
-      <thumbDataSizes>632111 7297 935712</thumbDataSizes>
-      <thumbMd5>221 219 155</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>1600 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>632111 7297</thumbDataSizes>
+      <thumbMd5>221 219</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20846592</rawDataSize>
       <rawDataDimensions>3744 2784</rawDataDimensions>
