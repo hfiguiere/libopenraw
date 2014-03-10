@@ -1,7 +1,7 @@
 /*
  * libopenraw - ordiag.cpp
  *
- * Copyright (C) 2007-2013 Hubert Figuiere
+ * Copyright (C) 2007-2014 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -21,12 +21,15 @@
 
 
 #include <unistd.h>
+
+#include <algorithm>
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/scoped_ptr.hpp>
 
 #include <libopenraw/libopenraw.h>
@@ -50,9 +53,20 @@ public:
     /** constructor
      * @param out the output stream
      */
-    OrDiag(std::ostream & out)
+    OrDiag(std::ostream & out, const std::string & extract_thumbs)
         : m_out(out)
+        , m_extract_all_thumbs(false)
         {
+            m_extract_all_thumbs = (extract_thumbs == "all");
+            if (!m_extract_all_thumbs) {
+                try {
+                    int size = boost::lexical_cast<int>(extract_thumbs);
+                    m_thumb_sizes.insert(size);
+                }
+                catch(...) {
+
+                }
+            }
         }
 
     std::string cfaPatternToString(const CfaPattern* pattern)
@@ -86,7 +100,7 @@ public:
 
             return out;
         }
-    std::string cfaPatternToString(::or_cfa_pattern t) 
+    std::string cfaPatternToString(::or_cfa_pattern t)
         {
             switch(t) {
             case OR_CFA_PATTERN_NONE:
@@ -112,7 +126,7 @@ public:
             }
             return str(boost::format("Unknown %1%") % t);
         };
-    
+
     std::string dataTypeToString(Thumbnail::DataType t)
         {
             switch(t) {
@@ -192,17 +206,47 @@ public:
             return "Unknown";
         }
 
+    /** Extract thumbnail to a file
+     */
+    void extractThumb(const Thumbnail & thumb)
+        {
+            FILE* f;
+            size_t s;
+            std::string ext;
+            switch(thumb.dataType()) {
+            case OR_DATA_TYPE_PIXMAP_8RGB:
+                ext = "rgb";
+                break;
+            case OR_DATA_TYPE_JPEG:
+                ext = "jpg";
+                break;
+            default:
+                break;
+            }
+            if (ext.empty()) {
+                return;
+            }
+            uint32_t dim = std::max(thumb.width(), thumb.height());
+            std::string name(str(boost::format("thumb_%1%.%2%") % dim  % ext));
+            f = fopen(name.c_str(), "wb");
+            s = fwrite(thumb.data(), 1, thumb.size(), f);
+            if(s != thumb.size()) {
+                std::cerr << "short write of " << s << " bytes\n";
+            }
+            fclose(f);
+
+        }
+
     /** dump the previews of the raw file to mout
      */
     void dumpPreviews(const boost::scoped_ptr<RawFile> & rf)
         {
             const std::vector<uint32_t> & previews = rf->listThumbnailSizes();
-            m_out << boost::format("\tNumber of previews: %1%\n") 
+            m_out << boost::format("\tNumber of previews: %1%\n")
                 % previews.size();
-			
+
             m_out << "\tAvailable previews:\n";
-            for(std::vector<uint32_t>::const_iterator iter = previews.begin();
-                iter != previews.end(); iter++)	{
+            for(auto iter = previews.begin(); iter != previews.end(); iter++) {
 
                 m_out << boost::format("\t\tSize %1%\n") % *iter;
 
@@ -212,12 +256,16 @@ public:
                     m_out << boost::format("\t\t\tError getting thumbnail %1%\n") % err;
                 }
                 else {
-                    m_out << boost::format("\t\t\tFormat %1%\n") 
+                    m_out << boost::format("\t\t\tFormat %1%\n")
                         % dataTypeToString(thumb.dataType());
                     m_out << boost::format("\t\t\tDimensions: width = %1% height = %2%\n")
                         % thumb.width() % thumb.height();
-                    m_out << boost::format("\t\t\tByte size: %1%\n") 
+                    m_out << boost::format("\t\t\tByte size: %1%\n")
                         % thumb.size();
+                }
+                if (m_extract_all_thumbs
+                    || m_thumb_sizes.find(*iter) != m_thumb_sizes.end()) {
+                    extractThumb(thumb);
                 }
             }
         }
@@ -244,7 +292,7 @@ public:
                     % rd.roi_x() % rd.roi_y() % rd.roi_width() % rd.roi_height();
                 const CfaPattern* pattern = rd.cfaPattern();
                 ::or_cfa_pattern patternType
-                      = pattern ? pattern->patternType() 
+                      = pattern ? pattern->patternType()
                       : OR_CFA_PATTERN_NON_RGB22;
                 m_out << boost::format("\t\tBayer Type: %1%\n")
                     % cfaPatternToString(patternType);
@@ -273,12 +321,12 @@ public:
                 % o;
             double matrix[9];
             uint32_t size = 9;
-            
+
             ExifLightsourceValue calIll;
             calIll = rf->getCalibrationIlluminant1();
             m_out << boost::format("\t\tCalibration Illuminant 1: %1%\n")
                 % static_cast<int>(calIll);
-            
+
             ::or_error err = rf->getColourMatrix1(matrix, size);
             if(err == OR_ERROR_NONE) {
                 m_out << boost::format("\t\tColour Matrix 1: %1%, %2%, %3%, "
@@ -318,9 +366,9 @@ public:
                 m_out << "unrecognized file\n";
             }
             else {
-                m_out << boost::format("\tType = %1% (%2%)\n") % rf->type() 
+                m_out << boost::format("\tType = %1% (%2%)\n") % rf->type()
                     % typeToString(rf->type());
-                std::string typeId = str(boost::format("%1%, %2%") 
+                std::string typeId = str(boost::format("%1%, %2%")
                                          % OR_GET_FILE_TYPEID_VENDOR(rf->typeId())
                                          % OR_GET_FILE_TYPEID_CAMERA(rf->typeId()));
                 m_out << boost::format("\tType ID = %1%\n") % typeId;
@@ -340,22 +388,25 @@ public:
         }
 private:
     std::ostream & m_out;
+    bool m_extract_all_thumbs;
+    std::set<int> m_thumb_sizes;
 };
 
 
 void print_help()
 {
-    std::cerr << "ordiag [-v] [-h] [-d 0-9] [files...]\n";
+    std::cerr << "ordiag [-v] [-h] [-t all|<size>] [-d 0-9] [files...]\n";
     std::cerr << "Print libopenraw diagnostics\n";
     std::cerr << "\t-h: show this help\n";
     std::cerr << "\t-v: show version\n";
     std::cerr << "\t-d level: set debug / verbosity to level\n";
+    std::cerr << "\t-t [all|<size>]: extract thumbnails. all or <size>.\n";
     std::cerr << "\tfiles: the files to diagnose\n";
 }
 
 void print_version()
 {
-    std::cerr << "ordiag version 0.0 - (c) 2007 Hubert Figuiere\n";
+    std::cerr << "ordiag version 0.1 - (c) 2007-2014 Hubert Figuiere\n";
 }
 
 
@@ -364,12 +415,13 @@ int main(int argc, char **argv)
 {
     int done = 0;
     int dbl = 0;
+    std::string extract_thumbs;
     std::vector<std::string> files;
 
     OpenRaw::init();
 
     int o;
-    while((o = getopt(argc, argv, "hvd")) != -1) {
+    while((o = getopt(argc, argv, "hvdt:")) != -1) {
         switch (o) {
         case 'h':
             print_help();
@@ -382,6 +434,15 @@ int main(int argc, char **argv)
         case 'd':
             dbl++;
             break;
+        case 't':
+            if(optarg) {
+                extract_thumbs = optarg;
+            }
+            else {
+                print_help();
+                done = 1;
+            }
+            break;
         case '?':
             break;
         default:
@@ -389,12 +450,12 @@ int main(int argc, char **argv)
         }
     }
     if (done) {
-        return 0;
+        return 1;
     }
     for ( ; optind < argc; optind++) {
         files.push_back(argv[optind]);
     }
-	
+
     if (files.empty()) {
         std::cerr << "missing file name.\n";
         if (dbl) {
@@ -408,7 +469,7 @@ int main(int argc, char **argv)
         or_debug_set_level(DEBUG2);
     }
     // do the business.
-    for_each(files.begin(), files.end(), OrDiag(std::cout));
+    for_each(files.begin(), files.end(), OrDiag(std::cout, extract_thumbs));
 
     return 0;
 }
