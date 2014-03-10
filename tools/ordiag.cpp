@@ -208,7 +208,7 @@ public:
 
     /** Extract thumbnail to a file
      */
-    void extractThumb(const Thumbnail & thumb)
+    std::string extractThumb(const Thumbnail & thumb)
         {
             FILE* f;
             size_t s;
@@ -224,8 +224,9 @@ public:
                 break;
             }
             if (ext.empty()) {
-                return;
+                return "";
             }
+
             uint32_t x, y;
             x = thumb.width();
             y = thumb.height();
@@ -244,6 +245,7 @@ public:
             }
             fclose(f);
 
+            return name;
         }
 
     /** dump the previews of the raw file to mout
@@ -274,7 +276,10 @@ public:
                 }
                 if (m_extract_all_thumbs
                     || m_thumb_sizes.find(*iter) != m_thumb_sizes.end()) {
-                    extractThumb(thumb);
+
+                    std::string name = extractThumb(thumb);
+
+                    m_out << boost::format("\t\t\tOutput as %1%\n") % name;
                 }
             }
         }
