@@ -215,7 +215,7 @@ public:
             std::string ext;
             switch(thumb.dataType()) {
             case OR_DATA_TYPE_PIXMAP_8RGB:
-                ext = "rgb";
+                ext = "ppm";
                 break;
             case OR_DATA_TYPE_JPEG:
                 ext = "jpg";
@@ -226,9 +226,18 @@ public:
             if (ext.empty()) {
                 return;
             }
-            uint32_t dim = std::max(thumb.width(), thumb.height());
+            uint32_t x, y;
+            x = thumb.width();
+            y = thumb.height();
+            uint32_t dim = std::max(x, y);
             std::string name(str(boost::format("thumb_%1%.%2%") % dim  % ext));
             f = fopen(name.c_str(), "wb");
+            if (thumb.dataType() == OR_DATA_TYPE_PIXMAP_8RGB) {
+                // ppm preemble.
+                fprintf(f, "P6\n");
+                fprintf(f, "%d %d\n", x, y);
+                fprintf(f, "%d\n", /*(componentsize == 2) ? 0xffff :*/ 0xff);
+            }
             s = fwrite(thumb.data(), 1, thumb.size(), f);
             if(s != thumb.size()) {
                 std::cerr << "short write of " << s << " bytes\n";
