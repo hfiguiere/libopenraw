@@ -20,8 +20,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __NEFDIFFITERATOR_H_
-#define __NEFDIFFITERATOR_H_
+#ifndef OR_INTERNALS_NEFDIFFITERATOR_H_
+#define OR_INTERNALS_NEFDIFFITERATOR_H_
 
 #include "bititerator.h"
 #include "huffman.h"

@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OPENRAW_CRWDECOMPRESS_H__
-#define __OPENRAW_CRWDECOMPRESS_H__
+#ifndef OR_INTERNALS_CRWDECOMPRESS_H_
+#define OR_INTERNALS_CRWDECOMPRESS_H_
 
 #include "decompressor.h"
 

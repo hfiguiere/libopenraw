@@ -20,8 +20,8 @@
 
 
 
-#ifndef __OR_DEBUG_H_
-#define __OR_DEBUG_H_
+#ifndef OR_INTERNALS_DEBUG_H_
+#define OR_INTERNALS_DEBUG_H_
 
 
 void

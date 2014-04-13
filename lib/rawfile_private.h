@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _RAWFILE_PRIV_H__
-#define _RAWFILE_PRIV_H__
+#ifndef OR_INTERNALS_RAWFILE_PRIV_H_
+#define OR_INTERNALS_RAWFILE_PRIV_H_
 
 #include <assert.h>
 

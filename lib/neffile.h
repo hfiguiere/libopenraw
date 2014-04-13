@@ -19,8 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __NEFFILE_H_
-#define __NEFFILE_H_
+#ifndef OR_INTERNALS_NEFFILE_H_
+#define OR_INTERNALS_NEFFILE_H_
 
 #include "tiffepfile.h"
 #include "huffman.h"

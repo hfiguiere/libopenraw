@@ -23,8 +23,8 @@
  * @author Hubert Figuiere <hub@figuiere.net>
  */
 
-#ifndef __LIBOPENRAW_CONSTS_H__
-#define __LIBOPENRAW_CONSTS_H__
+#ifndef LIBOPENRAW_CONSTS_H_
+#define LIBOPENRAW_CONSTS_H_
 
 #include <stdint.h>
 

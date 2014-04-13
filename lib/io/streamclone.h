@@ -19,8 +19,8 @@
  */
 
 
-#ifndef __IO_STREAMCLONE_H__
-#define __IO_STREAMCLONE_H__
+#ifndef OR_INTERNALS_IO_STREAMCLONE_H_
+#define OR_INTERNALS_IO_STREAMCLONE_H_
 
 #include <sys/types.h>
 #include <unistd.h>

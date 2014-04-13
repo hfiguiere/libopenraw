@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OPENRAW_CFA_PATTERN_H__
-#define __OPENRAW_CFA_PATTERN_H__
+#ifndef LIBOPENRAWPP_CFA_PATTERN_H_
+#define LIBOPENRAWPP_CFA_PATTERN_H_
 
 #include <stdint.h>
 #include <libopenraw/consts.h>

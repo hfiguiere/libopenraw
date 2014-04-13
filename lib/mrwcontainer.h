@@ -20,8 +20,8 @@
  */
 
 
-#ifndef _MRW_CONTAINER_H__
-#define _MRW_CONTAINER_H__
+#ifndef OR_INTERNALS_MRW_CONTAINER_H_
+#define OR_INTERNALS_MRW_CONTAINER_H_
 
 #include <string>
 #include <memory>

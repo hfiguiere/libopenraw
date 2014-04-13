@@ -19,8 +19,8 @@
  */
 
 
-#ifndef _ORF_CONTAINER_H__
-#define _ORF_CONTAINER_H__
+#ifndef OR_INTERNALS_ORF_CONTAINER_H_
+#define OR_INTERNALS_ORF_CONTAINER_H_
 
 #include "ifdfilecontainer.h"
 

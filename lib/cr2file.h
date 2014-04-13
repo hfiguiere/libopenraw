@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CR2FILE_H_
-#define __CR2FILE_H_
+#ifndef OR_INTERNALS_CR2FILE_H_
+#define OR_INTERNALS_CR2FILE_H_
 
 #include "ifdfile.h"
 #include "rawfilefactory.h"

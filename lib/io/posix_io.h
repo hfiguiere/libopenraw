@@ -18,11 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-#ifndef __POSIX_IO_H
-#define __POSIX_IO_H
+#ifndef OR_INTERNALS_POSIX_IO_H_
+#define OR_INTERNALS_POSIX_IO_H_
 
 #include "libopenraw/io.h"
 

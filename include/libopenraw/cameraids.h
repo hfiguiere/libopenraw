@@ -22,8 +22,8 @@
  * @author Hubert Figuière <hub@figuiere.net>
  */
 
-#ifndef __LIBOPENRAW_CAMERAIDS_H__
-#define __LIBOPENRAW_CAMERAIDS_H__
+#ifndef LIBOPENRAW_CAMERAIDS_H_
+#define LIBOPENRAW_CAMERAIDS_H_
 
 #include <stdint.h>
 

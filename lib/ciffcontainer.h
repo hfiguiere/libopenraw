@@ -24,8 +24,8 @@
  */
 
 
-#ifndef _CIFFCONTAINER_H_
-#define _CIFFCONTAINER_H_
+#ifndef OR_INTERNALS_CIFFCONTAINER_H_
+#define OR_INTERNALS_CIFFCONTAINER_H_
 
 #include <vector>
 #include <memory>

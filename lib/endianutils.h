@@ -18,12 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
-#ifndef __ENDIANUTILS_H_
-#define __ENDIANUTILS_H_
+#ifndef OR_INTERNALS_ENDIANUTILS_H_
+#define OR_INTERNALS_ENDIANUTILS_H_
 
 #define EL16(b) \
   ((b)[0] | ((b)[1] << 8))

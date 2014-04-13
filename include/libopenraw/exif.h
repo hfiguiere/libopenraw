@@ -19,7 +19,7 @@
  */
 
 
-#ifndef _INCLUDE_EXIF
+#ifndef INCLUDE_EXIF_
 #error Cannot include exif.h directly
 #endif
 
@@ -157,8 +157,8 @@ typedef	enum {
 	DNG_TAG_REDUCTION_MATRIX1                = 0xc625,
 	DNG_TAG_REDUCTION_MATRIX2                = 0xc626,
 	DNG_TAG_CALIBRATION_ILLUMINANT1          = 0xc65a,
-	DNG_TAG_CALIBRATION_ILLUMINANT2          = 0xc65b,	
-	
+	DNG_TAG_CALIBRATION_ILLUMINANT2          = 0xc65b,
+
 	/* CR2 tags */
 	CR2_TAG_c5d9 = 0xc5d9,
 	CR2_TAG_SLICE = 0xc640,    /**< Exif tag for CR2 RAW "slices" */

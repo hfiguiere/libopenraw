@@ -18,10 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-#ifndef _LIBOPENRAW_TYPES_H_
-#define _LIBOPENRAW_TYPES_H_
+#ifndef LIBOPENRAW_TYPES_H_
+#define LIBOPENRAW_TYPES_H_
 
 /* C99 standard */
 #include <stdint.h>

@@ -19,8 +19,8 @@
  */
 
 
-#ifndef __LIBOPENRAW_IO_PRIVATE_H
-#define __LIBOPENRAW_IO_PRIVATE_H
+#ifndef OR_INTERNALS_IO_PRIVATE_H_
+#define OR_INTERNALS_IO_PRIVATE_H_
 
 /*! private structure that define the file */
 struct _IOFile {

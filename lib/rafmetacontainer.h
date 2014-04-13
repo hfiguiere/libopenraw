@@ -19,8 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OPENRAW_RAFMETACONTAINER_H__
-#define __OPENRAW_RAFMETACONTAINER_H__
+#ifndef OR_INTERNALS_RAFMETACONTAINER_H_
+#define OR_INTERNALS_RAFMETACONTAINER_H_
 
 #include <tr1/memory>
 #include <map>

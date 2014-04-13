@@ -19,8 +19,8 @@
  */
 
 
-#ifndef _OPENRAW_INTERNALS_IFDDIR_H
-#define _OPENRAW_INTERNALS_IFDDIR_H
+#ifndef OR_INTERNALS_IFDDIR_H
+#define OR_INTERNALS_IFDDIR_H
 
 #include <map>
 #include <memory>

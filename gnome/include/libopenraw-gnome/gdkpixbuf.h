@@ -18,10 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-
-
-#ifndef __LIBOPENRAW_GDKPIXBUF_H_
-#define __LIBOPENRAW_GDKPIXBUF_H_
+#ifndef LIBOPENRAW_GDKPIXBUF_H_
+#define LIBOPENRAW_GDKPIXBUF_H_
 
 #ifdef __cplusplus
 extern "C" {

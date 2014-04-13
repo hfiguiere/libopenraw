@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __DNGFILE_H_
-#define __DNGFILE_H_
+#ifndef OR_INTERNALS_DNGFILE_H_
+#define OR_INTERNALS_DNGFILE_H_
 
 #include "tiffepfile.h"
 

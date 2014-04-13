@@ -19,8 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __NEFCFAITERATOR_H_
-#define __NEFCFAITERATOR_H_
+#ifndef OR_INTERNALS_NEFCFAITERATOR_H_
+#define OR_INTERNALS_NEFCFAITERATOR_H_
 
 #include "nefdiffiterator.h"
 

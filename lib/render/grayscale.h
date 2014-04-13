@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OR_RENDER_GRAYSCALE_H__
-#define __OR_RENDER_GRAYSCALE_H__
+#ifndef OR_INTERNALS_RENDER_GRAYSCALE_H_
+#define OR_INTERNALS_RENDER_GRAYSCALE_H_
 
 #include <stdint.h>
 

@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __LIBOPENRAW_RAWDATA_H_
-#define __LIBOPENRAW_RAWDATA_H_
+#ifndef LIBOPENRAW_RAWDATA_H_
+#define LIBOPENRAW_RAWDATA_H_
 
 #include <stdlib.h>
 

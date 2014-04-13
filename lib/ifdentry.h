@@ -19,8 +19,8 @@
  */
 
 
-#ifndef _OPENRAW_INTERNALS_IFDENTRY_H
-#define _OPENRAW_INTERNALS_IFDENTRY_H
+#ifndef OR_INTERNALS_IFDENTRY_H
+#define OR_INTERNALS_IFDENTRY_H
 
 #include <vector>
 #include <memory>

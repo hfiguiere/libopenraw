@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __BIMEDIAN_DEMOSAIC_H_
-#define __BIMEDIAN_DEMOSAIC_H_
+#ifndef OR_INTERNALS_RENDER_BIMEDIAN_DEMOSAIC_H_
+#define OR_INTERNALS_RENDER_BIMEDIAN_DEMOSAIC_H_
 
 #include <stdint.h>
 

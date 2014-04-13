@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __IO_MEMSTREAM_H__
-#define __IO_MEMSTREAM_H__
+#ifndef OR_INTERNALS_IO_MEMSTREAM_H_
+#define OR_INTERNALS_IO_MEMSTREAM_H_
 
 
 #include "io/stream.h"

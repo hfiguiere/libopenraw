@@ -18,11 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-#ifndef __RAWFILEFACTORY_H
-#define __RAWFILEFACTORY_H
-
+#ifndef OR_INTERNALS_RAWFILEFACTORY_H_
+#define OR_INTERNALS_RAWFILEFACTORY_H_
 
 #include <string>
 #include <map>

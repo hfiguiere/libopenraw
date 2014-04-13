@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __PEFFILE_H_
-#define __PEFFILE_H_
+#ifndef OR_INTERNALS_PEFFILE_H_
+#define OR_INTERNALS_PEFFILE_H_
 
 #include "ifdfile.h"
 

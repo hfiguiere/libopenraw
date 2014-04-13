@@ -18,11 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-#ifndef _RAWCONTAINER_H_
-#define _RAWCONTAINER_H_
+#ifndef OR_INTERNALS_RAWCONTAINER_H_
+#define OR_INTERNALS_RAWCONTAINER_H_
 
 #include <sys/types.h>
 

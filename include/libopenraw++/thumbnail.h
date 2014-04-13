@@ -19,8 +19,8 @@
  */
 
 
-#ifndef __OPENRAW_THUMBNAIL_H__
-#define __OPENRAW_THUMBNAIL_H__
+#ifndef LIBOPENRAWPP_THUMBNAIL_H_
+#define LIBOPENRAWPP_THUMBNAIL_H_
 
 #include <libopenraw++/bitmapdata.h>
 

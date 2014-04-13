@@ -19,8 +19,8 @@
  */
 
 
-#ifndef __OPENRAW_BITMAPDATA_H__
-#define __OPENRAW_BITMAPDATA_H__
+#ifndef LIBOPENRAWPP_BITMAPDATA_H_
+#define LIBOPENRAWPP_BITMAPDATA_H_
 
 #include <libopenraw/prefix.h>
 #include <libopenraw/rawdata.h>

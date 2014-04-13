@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __UNPACK_H__
-#define __UNPACK_H__
+#ifndef OR_INTERNALS_UNPACK_H_
+#define OR_INTERNALS_UNPACK_H_
 
 #include <stdint.h>
 #include <stddef.h>

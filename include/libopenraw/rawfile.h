@@ -19,8 +19,8 @@
  */
 
 
-#ifndef __LIBOPENRAW_RAWFILE_H_
-#define __LIBOPENRAW_RAWFILE_H_
+#ifndef LIBOPENRAW_RAWFILE_H_
+#define LIBOPENRAW_RAWFILE_H_
 
 #include <libopenraw/types.h>
 #include <libopenraw/consts.h>

@@ -26,8 +26,8 @@
 */
 
 
-#ifndef _IFDFILECONTAINER_H_
-#define _IFDFILECONTAINER_H_
+#ifndef OR_INTERNALS_IFDFILECONTAINER_H_
+#define OR_INTERNALS_IFDFILECONTAINER_H_
 
 #include <vector>
 

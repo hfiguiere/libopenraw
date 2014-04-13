@@ -18,10 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef _LIBOPENRAW_DEBUG_H_
-#define _LIBOPENRAW_DEBUG_H_
-
+#ifndef LIBOPENRAW_DEBUG_H_
+#define LIBOPENRAW_DEBUG_H_
 
 #ifdef __cplusplus
 extern "C" {

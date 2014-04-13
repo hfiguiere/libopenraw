@@ -18,15 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
 /**
  * @brief a JPEG container
  */
 
-
-#ifndef _JFIFCONTAINER_H_
-#define _JFIFCONTAINER_H_
+#ifndef OR_INTERNALS_JFIFCONTAINER_H_
+#define OR_INTERNALS_JFIFCONTAINER_H_
 
 #include <setjmp.h>
 #include <cstdio>

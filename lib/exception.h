@@ -18,10 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-#ifndef _OPENRAW_EXCEPTION_H_
-#define _OPENRAW_EXCEPTION_H_
+#ifndef OR_INTERNALS_EXCEPTION_H_
+#define OR_INTERNALS_EXCEPTION_H_
 
 #include <exception>
 #include <string>

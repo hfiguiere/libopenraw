@@ -16,8 +16,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OPENRAW_PYTONRAWFILE_H__
-#define __OPENRAW_PYTONRAWFILE_H__
+#ifndef LIBOPENRAW_PYTHONRAWFILE_H_
+#define LIBOPENRAW_PYTHONRAWFILE_H_
 
 #include "libopenraw++/rawfile.h"
 #include "libopenraw++/thumbnail.h"

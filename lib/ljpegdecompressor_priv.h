@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OPENRAW_LJPEGDECOMPRESSOR_PRIV_H__
-#define __OPENRAW_LJPEGDECOMPRESSOR_PRIV_H__
+#ifndef OR_INTERNALS_LJPEGDECOMPRESSOR_PRIV_H
+#define OR_INTERNALS_LJPEGDECOMPRESSOR_PRIV_H
 
 #include <string.h>
 

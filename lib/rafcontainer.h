@@ -19,6 +19,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef OR_INTERNALS_RAFCONTAINER_H_
+#define OR_INTERNALS_RAFCONTAINER_H_
+
 #include <string>
 
 #include "rawcontainer.h"
@@ -88,3 +91,5 @@ private:
 
 }
 }
+
+#endif

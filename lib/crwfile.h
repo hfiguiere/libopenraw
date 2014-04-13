@@ -18,11 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-#ifndef __CRWFILE_H_
-#define __CRWFILE_H_
+#ifndef OR_INTERNALS_CRWFILE_H_
+#define OR_INTERNALS_CRWFILE_H_
 
 #include <libopenraw++/rawfile.h>
 

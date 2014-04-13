@@ -25,16 +25,16 @@
  * @brief Define IFD values like fields ID and types
  */
 
-#ifndef __OPENRAW_IFD_H__
-#define __OPENRAW_IFD_H__
+#ifndef OR_INTERNALS_IFD_H_
+#define OR_INTERNALS_IFD_H_
 
 namespace OpenRaw {
 namespace Internals {
 namespace IFD {
 
-#define _INCLUDE_EXIF
+#define INCLUDE_EXIF_
 #include "libopenraw/exif.h"
-#undef _INCLUDE_EXIF
+#undef INCLUDE_EXIF_
 
 /** type for Exif field/tag
     taken from libexif

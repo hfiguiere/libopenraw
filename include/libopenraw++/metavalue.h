@@ -20,8 +20,8 @@
  */
 
 
-#ifndef _OPENRAW_METAVALUE_H
-#define _OPENRAW_METAVALUE_H
+#ifndef LIBOPENRAWPP_METAVALUE_H_
+#define LIBOPENRAWPP_METAVALUE_H_
 
 #include <vector>
 

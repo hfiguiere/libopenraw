@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _IFD_FILE_H_
-#define _IFD_FILE_H_
+#ifndef OR_INTERNALS_IFD_FILE_H_
+#define OR_INTERNALS_IFD_FILE_H_
 
 #include <vector>
 #include <libopenraw/types.h>

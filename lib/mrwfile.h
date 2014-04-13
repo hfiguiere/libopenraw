@@ -19,11 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-#ifndef __MRWFILE_H_
-#define __MRWFILE_H_
+#ifndef OR_INTERNALS_MRWFILE_H_
+#define OR_INTERNALS_MRWFILE_H_
 
 #include "ifdfile.h"
 

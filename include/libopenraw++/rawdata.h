@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __OPENRAW_RAWDATA_H__
-#define __OPENRAW_RAWDATA_H__
+#ifndef LIBOPENRAWPP_RAWDATA_H_
+#define LIBOPENRAWPP_RAWDATA_H_
 
 #include <vector>
 

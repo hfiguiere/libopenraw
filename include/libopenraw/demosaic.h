@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OPENRAW_DEMOSAIC_H__
-#define __OPENRAW_DEMOSAIC_H__
+#ifndef LIBOPENRAW_DEMOSAIC_H_
+#define LIBOPENRAW_DEMOSAIC_H_
 
 #include <stdint.h>
 #include <libopenraw/consts.h>

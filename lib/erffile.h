@@ -18,11 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-#ifndef __ERFFILE_H_
-#define __ERFFILE_H_
+#ifndef OR_INTERNALS_ERFFILE_H_
+#define OR_INTERNALS_ERFFILE_H_
 
 #include "tiffepfile.h"
 

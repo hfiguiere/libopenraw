@@ -22,8 +22,8 @@
  * @author Hubert Figuiere <hub@figuiere.net>
  */
 
-#ifndef __LIBOPENRAW_H__
-#define __LIBOPENRAW_H__
+#ifndef LIBOPENRAW_H_
+#define LIBOPENRAW_H_
 
 #include <libopenraw/prefix.h>
 

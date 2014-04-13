@@ -20,8 +20,8 @@
  */
 
 
-#ifndef _TIFF_EP_FILE_H_
-#define _TIFF_EP_FILE_H_
+#ifndef OR_INTERNALS_TIFF_EP_FILE_H_
+#define OR_INTERNALS_TIFF_EP_FILE_H_
 
 #include "ifdfile.h"
 

@@ -21,8 +21,8 @@
 
 
 
-#ifndef __ORFFILE_H_
-#define __ORFFILE_H_
+#ifndef OR_INTERNALS_ORFFILE_H_
+#define OR_INTERNALS_ORFFILE_H_
 
 #include "ifdfile.h"
 

@@ -19,12 +19,12 @@
  */
 
 
-#ifndef __LIBOPENRAW_METADATA_H_
-#define __LIBOPENRAW_METADATA_H_
+#ifndef LIBOPENRAW_METADATA_H_
+#define LIBOPENRAW_METADATA_H_
 
-#define _INCLUDE_EXIF
+#define INCLUDE_EXIF_
 #include <libopenraw/exif.h>
-#undef _INCLUDE_EXIF
+#undef INCLUDE_EXIF_
 
 #ifdef __cplusplus
 extern "C" {

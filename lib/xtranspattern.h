@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OPENRAW_XTRANSPATTERN_H__
-#define __OPENRAW_XTRANSPATTERN_H__
+#ifndef OR_INTERNALS_XTRANSPATTERN_H_
+#define OR_INTERNALS_XTRANSPATTERN_H_
 
 #include <libopenraw++/cfapattern.h>
 

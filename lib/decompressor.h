@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OPENRAW_DECOMPRESS_H__
-#define __OPENRAW_DECOMPRESS_H__
+#ifndef OR_INTERNALS_DECOMPRESS_H_
+#define OR_INTERNALS_DECOMPRESS_H_
 
 namespace OpenRaw {
 

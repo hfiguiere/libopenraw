@@ -20,8 +20,8 @@
 
 
 
-#ifndef __IO_FILE_H__
-#define __IO_FILE_H__
+#ifndef OR_INTERNALS_IO_FILE_H_
+#define OR_INTERNALS_IO_FILE_H_
 
 #include <sys/types.h>
 #include <unistd.h>

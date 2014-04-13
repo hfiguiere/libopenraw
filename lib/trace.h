@@ -19,8 +19,8 @@
  */
 
 
-#ifndef _OPENRAWPP_DEBUG_H_
-#define _OPENRAWPP_DEBUG_H_
+#ifndef OR_INTERNALS_TRACE_H_
+#define OR_INTERNALS_TRACE_H_
 
 #include <string>
 #include <vector>

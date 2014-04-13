@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OPENRAW_RAFFILE_H_
-#define __OPENRAW_RAFFILE_H_
+#ifndef OR_INTERNALS_RAFFILE_H_
+#define OR_INTERNALS_RAFFILE_H_
 
 #include <map>
 

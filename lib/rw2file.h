@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __RW2FILE_H_
-#define __RW2FILE_H_
+#ifndef OR_INTERNALS_RW2FILE_H_
+#define OR_INTERNALS_RW2FILE_H_
 
 #include "ifdfile.h"
 #include "rawfilefactory.h"

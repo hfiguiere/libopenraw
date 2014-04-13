@@ -20,8 +20,8 @@
 
 
 
-#ifndef __RAWFILE_H
-#define __RAWFILE_H
+#ifndef LIBOPENRAWPP_RAWFILE_H_
+#define LIBOPENRAWPP_RAWFILE_H_
 
 #include <string>
 #include <vector>

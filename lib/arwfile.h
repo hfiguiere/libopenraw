@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __ARWFILE_H_
-#define __ARWFILE_H_
+#ifndef OR_INTERNALS_ARWFILE_H_
+#define OR_INTERNALS_ARWFILE_H_
 
 #include <libopenraw/cameraids.h>
 

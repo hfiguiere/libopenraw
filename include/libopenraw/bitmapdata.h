@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __LIBOPENRAW_BITMAPDATA_H_
-#define __LIBOPENRAW_BITMAPDATA_H_
+#ifndef LIBOPENRAW_BITMAPDATA_H_
+#define LIBOPENRAW_BITMAPDATA_H_
 
 #include <stdlib.h>
 

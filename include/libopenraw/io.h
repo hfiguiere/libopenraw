@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIBOPENRAW_IO_H
-#define __LIBOPENRAW_IO_H
+#ifndef LIBOPENRAW_IO_H_
+#define LIBOPENRAW_IO_H_
 
 #include <sys/types.h>
 #include <unistd.h>

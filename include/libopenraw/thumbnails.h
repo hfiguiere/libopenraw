@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __LIBOPENRAW_THUMBNAILS_H_
-#define __LIBOPENRAW_THUMBNAILS_H_
+#ifndef LIBOPENRAW_THUMBNAILS_H_
+#define LIBOPENRAW_THUMBNAILS_H_
 
 #include <stdlib.h>
 

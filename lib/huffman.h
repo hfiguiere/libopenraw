@@ -19,8 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __HUFFMAN_H_
-#define __HUFFMAN_H_
+#ifndef OR_INTERNALS_HUFFMAN_H_
+#define OR_INTERNALS_HUFFMAN_H_
 
 #include <string>
 #include "bititerator.h"

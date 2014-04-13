@@ -19,8 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __BITITERATOR_H_
-#define __BITITERATOR_H_
+#ifndef OR_INTERNAL_BITITERATOR_H_
+#define OR_INTERNAL_BITITERATOR_H_
 
 #include <stdint.h>
 #include <cstring>
