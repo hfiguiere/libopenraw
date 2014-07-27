@@ -328,7 +328,10 @@ RawData *CrwDecompressor::decompress(RawData *in)
             for (i=j=0; j < 64/4; j++ ) {
                 c = m_stream->readByte();
                 for (r = 0; r < 8; r += 2) {
-                    outbuf[i] = (outbuf[i+1] << 2) + ((c >> r) & 3);
+                    // outbuf is 64, so we must check for it to not
+                    // overflow (read out of bounds)
+                    uint16_t next = i < 63 ? outbuf[i+1] : 0;
+                    outbuf[i] = (next << 2) + ((c >> r) & 3);
                     i++;
                 }
             }
