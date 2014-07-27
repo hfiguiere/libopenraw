@@ -320,15 +320,15 @@ void RawData::Private::nextRow()
 
 void RawData::Private::nextSlice()
 {
-    if(slices.size()) {
+    if(slices.size() > slice) {
         sliceOffset += slices[slice];
         slice++;
-        if(slices.size() > slice) {
-            sliceWidth = slices[slice];
-        }
-        else {
-            sliceWidth = 0;
-        }
+    }
+    if(slices.size() > slice) {
+        sliceWidth = slices[slice];
+    }
+    else {
+        sliceWidth = 0;
     }
 }
 	
