@@ -469,7 +469,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>6</rawMd5>
+      <rawMd5>118</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -486,7 +486,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>252</rawMd5>
+      <rawMd5>87</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>

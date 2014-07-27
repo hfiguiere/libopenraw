@@ -29,16 +29,18 @@ namespace OpenRaw {
 namespace Internals {
 
 class BitIterator {
-	const uint8_t* m_p;
-	uint32_t m_bitBuffer;
-	size_t m_bitsOnBuffer;
-	void load(size_t numBits);
+    const uint8_t* m_p;
+    size_t m_size;
 
- public:
-	BitIterator(const void *);
-	uint32_t get(size_t);
-	uint32_t peek(size_t);
-	void skip(size_t);
+    uint32_t m_bitBuffer;
+    size_t m_bitsOnBuffer;
+    void load(size_t numBits);
+
+public:
+    BitIterator(const uint8_t *p, size_t s);
+    uint32_t get(size_t);
+    uint32_t peek(size_t);
+    void skip(size_t);
 };
 
 }

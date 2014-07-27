@@ -32,10 +32,12 @@
 namespace OpenRaw {
 namespace Internals {
 
-static void decompressOlympus(const uint8_t* buffer, uint8_t* data, uint32_t w, uint32_t h);
+static void decompressOlympus(const uint8_t* buffer, size_t size,
+                              uint8_t* data, uint32_t w, uint32_t h);
 
 // decompression ported from RawSpeed.
-static void decompressOlympus(const uint8_t* buffer, uint8_t* data, uint32_t w, uint32_t h)
+static void decompressOlympus(const uint8_t* buffer, size_t size,
+                              uint8_t* data, uint32_t w, uint32_t h)
 {
 	int nbits, sign, low, high, i, wo0, n, nw0, wo1, nw1;
 	int acarry0[3], acarry1[3], pred, diff;
@@ -56,7 +58,7 @@ static void decompressOlympus(const uint8_t* buffer, uint8_t* data, uint32_t w, 
 	wo0 = nw0 = wo1 = nw1 = 0;
 	buffer += 7;
 	
-	BitIterator bits(buffer);
+	BitIterator bits(buffer, size - 7);
 
 	for (uint32_t y = 0; y < h; y++) {
 		memset(acarry0, 0, sizeof acarry0);
@@ -197,7 +199,7 @@ RawData *OlympusDecompressor::decompress(RawData *in)
 	}
 	
 	output->allocData(m_w * m_h * 2);
-	decompressOlympus(m_buffer, (uint8_t*)output->data(), m_w, m_h);
+	decompressOlympus(m_buffer, m_size, (uint8_t*)output->data(), m_w, m_h);
 
 	// hardcoded 12bits values
 	output->setBpc(12);

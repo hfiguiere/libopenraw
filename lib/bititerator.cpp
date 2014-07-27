@@ -26,30 +26,33 @@
 namespace OpenRaw {
 namespace Internals {
 
-BitIterator::BitIterator(const void * const p) :
-	m_p(static_cast<const uint8_t * const>(p)),
-	m_bitBuffer(0), m_bitsOnBuffer(0)
+BitIterator::BitIterator(const uint8_t * const p, size_t size)
+    : m_p(p)
+    , m_size(size)
+    , m_bitBuffer(0)
+    , m_bitsOnBuffer(0)
 
 {
 }
 
 void BitIterator::load(size_t numBits)
 {
-	size_t numBytes = (numBits + 7) / 8;
+    size_t numBytes = (numBits + 7) / 8;
 
-	//align the bits on the right
-	m_bitBuffer >>= (32 - m_bitsOnBuffer);
+    //align the bits on the right
+    m_bitBuffer >>= (32 - m_bitsOnBuffer);
 
-	m_bitsOnBuffer += 8 * numBytes;
+    m_bitsOnBuffer += 8 * numBytes;
 
-	//load the new bits from the right
-	for (size_t i = 0; i < numBytes; ++i) {
-		m_bitBuffer = (m_bitBuffer << 8) | *m_p;
-		++m_p;
-	}
+    //load the new bits from the right
+    for (size_t i = 0; i < numBytes && m_size > 0; ++i) {
+        m_bitBuffer = (m_bitBuffer << 8) | *m_p;
+        ++m_p;
+        m_size--;
+    }
 
-	//align the bits on the left
-	m_bitBuffer = m_bitBuffer << (32 - m_bitsOnBuffer);
+    //align the bits on the left
+    m_bitBuffer = m_bitBuffer << (32 - m_bitsOnBuffer);
 }
 
 uint32_t BitIterator::get(size_t n)

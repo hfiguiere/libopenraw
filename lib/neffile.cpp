@@ -271,7 +271,7 @@ MakerNoteDir::Ref NefFile::_locateMakerNoteIfd()
     const uint32_t columns = raw_columns - 1;
     
     NefDiffIterator
-        diffs(c.huffman, data.data());
+        diffs(c.huffman, static_cast<uint8_t*>(data.data()), data.size());
     NefCfaIterator iter(diffs, rows, raw_columns, c.vpred);
     
     RawData newData;

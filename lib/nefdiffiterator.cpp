@@ -3,7 +3,7 @@
  * libopenraw - nefdiffiterator.cpp
  *
  * Copyright (C) 2008 Rafael Avila de Espindola.
- * Copyright (C) 2013 Hubert Figuiere
+ * Copyright (C) 2013-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -180,8 +180,8 @@ const HuffmanNode NefDiffIterator::LossLess14Bit[] = {
 };
 
 NefDiffIterator::NefDiffIterator(const HuffmanNode* const t,
-							   const void *p) :
-	m_iter(p), m_decoder(t)
+                                 const uint8_t *p, size_t size) :
+	m_iter(p, size), m_decoder(t)
 {
 }
 

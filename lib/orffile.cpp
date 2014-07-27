@@ -186,7 +186,8 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
         switch(compression) {
         case ORF_COMPRESSION:
             if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-                OlympusDecompressor decomp((const uint8_t*)data.data(), m_container, x, y);
+                OlympusDecompressor decomp((const uint8_t*)data.data(),
+                                           data.size(), m_container, x, y);
                 RawData *dData = decomp.decompress(NULL);
                 if (dData != NULL) {
                     dData->setCfaPatternType(data.cfaPattern()->patternType());
