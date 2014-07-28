@@ -2,6 +2,7 @@ libopenraw 0.1.0
 
 New features:
 
+  - Require C++11
   - Colour Matrices support and calibration illuminant.
   - Custom CFA pattern support.
   - Grayscale LinearRaw decoding.
@@ -14,29 +15,31 @@ New features:
     645D.
   - Support for Olympus ORF big-endian files and "RS" (12-bits).
     Added E-P2, E-P3, E-PL1, E-PL2, E-PL3,E-PL5, E-PM1, E-PM2,
-    E-620, E-M5, XZ-1 and XZ-2.
+    E-620, E-M5, XZ-1, XZ-2 and Stylus 1.
     Olympus ORF decompression.
-  - Support for Canon G12, G15, 600D, 1100D/Rebel T3, PowerShot S90,
+  - Support for Canon G12, G15, G16, 600D, 1100D/Rebel T3, PowerShot S90,
     PowerShot S95, Rebel XS, PowerShot S100, PowerShot S110,
     PowerShot G1 X, 1D X, 5DMkIII,
-    Rebel T4i/650D, 6D, EOS-M, PowerShot SX50 HS
+    Rebel T4i/650D, 6D, EOS-M, PowerShot SX50 HS, 70D
   - API: Canon camera ID have aliases.
   - Support for Nikon D4, D3100, D3200, D5000, D5100, D5200, D7000, D7100,
     J1, J2, J3, S1, V1, V2, Coolpix A,
-    D3S, D3X, D300S, D600, D700, D800, D800E, D90, D60.
+    D3S, D3X, D300S, D600, D700, D800, D800E, D90, D60, Df.
   - Extract compressed raw from ARW (but A-100).
   - Added support for Sony A-380, A-390, A-560, A-580, A-850, A-900,
-    SLT-A33, SLT-A35, SLT-A55, SLT-A57, SLT-A65, SLT-A77, SLT-A99,
-    Nex-3, Nex-5, Nex-5N, Nex-5R, Nex-6, Nex-C3, Nex-F3, Nex-7,
-    RX-1, RX-1R, RX-100, RX-100M2.
-  - Support for DNG from Pentax Q, K-r, K-x, K200D, K-01, K-30, K-5 II s,
-    MX-1 ;
+    SLT-A33, SLT-A35, SLT-A55, SLT-A57, SLT-A58, SLT-A65, SLT-A77, SLT-A99,
+    Nex-3, Nex-5, Nex-5N, Nex-5R, Nex-5T, Nex-6, Nex-C3, Nex-F3, Nex-7,
+    RX-1, RX-1R, RX-100, RX-100M2, A7, A7R, A3000.
+  - Support for DNG from Pentax Q, Q7, K-r, K-x, K200D, K-01, K-30, K-5 II s,
+    MX-1, K-3, K-50, K-500 ;
     Leica M9, M Monochrom, M (typ 240), S2, X2, X-Vario ; Ricoh GXR
   - Support for Nikon NRW: P6000, P7000, P7100 and P7700 (partial).
   - Support for Panasonic RAW and RW2.
   - Support for FujiFilm RAF.
   - Support for Epson R-D1s.
-  - Nicer display of the type ID in ordiag.
+  - ordiag
+    - Nicer display of the type ID in ordiag.
+    - Display make and model.
   - API: mark deprecated APIs.
   - API: or_rawdata_get_roi() to get the region of interest from the RAW data.
 
@@ -45,14 +48,20 @@ Bug fixes:
   - API: or_rawfile_get_rendered_image() returns a ORBitmapDataRef with
     the correct dimensions.
     + corrected the Gdk support for above change.
-  - Check for get_current_dir_name() (Closes #24088)
+  - Bug 24088 - Check for get_current_dir_name().
   - Don't crash when the files can't be written in the testsuite bootstrap.
-  - Detect that ORF file are compressed if they are. (Closes #26618)
-  - Skip compressed CFA when rendering the image. (Closes #25464)
+  - Bug 26618 - Detect that ORF file are compressed if they are.
+  - Bug 25464 - Skip compressed CFA when rendering the image.
   - Accept YCbCr when the compression is JPEG. The K10D DNG should now have
     the large size preview.
-  - Implement decompression for D90 and other Lossy14Bits. (Close #54034)
+  - Bug 54034 - Implement decompression for D90 and other Lossy14Bits.
   - Fix some little-endian NEF decoding bugs.
+  - Bug 69432 - Rename .pc to libopenraw-0.1.pc
+  - Bug 74786 - Propagate the boost includes. Replace INCLUDES by AM_CPPFLAGS
+  - Bug 72270 - Don't load RGB8 thumbnails from CR2
+  - Bug 70699 - Header guards violated C standard.
+  - Fixed variuos overflow, in CRW decompress, ORF decompress,
+    CR2 slice parsing
 
 Internal changes:
 
@@ -62,10 +71,10 @@ Internal changes:
   - Streamline the loading of IFDs.
   - Move the rendering on the RawData class.
   - BUG: IO::StreamClone::seek() now return the proper value.
-  - Remove shave for automake silent rules (with help from Adrian Bunk
-    Closes #48429)
-  - Remove debian packaging (Adrian Bunk. Closes #54224)
-  - Remove .cvisgnore (Adrian Bunk. Closes $54229)
+  - Bug 48429 - Remove shave for automake silent rules (with help from
+    Adrian Bunk
+  - Bug 54224 - Remove debian packaging (Adrian Bunk).
+  - Bug 54229 - Remove .cvisgnore (Adrian Bunk).
 
 libopenraw 0.0.10
 
