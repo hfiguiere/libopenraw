@@ -170,6 +170,15 @@ AX_CXXFLAGS_GCC_OPTION([-Wextra])
 CXXFLAGS="$CXXFLAGS -pedantic -g -Wall -Wshadow"
 CFLAGS="$CFLAGS -pedantic -g -Wall"
 
+AC_ARG_ENABLE(asan,[  --enable-asan    Turn on address sanitizer],[
+    AX_CFLAGS_GCC_OPTION([-fsanitize=address -fno-omit-frame-pointer])
+    AX_CXXFLAGS_GCC_OPTION([-fsanitize=address -fno-omit-frame-pointer])
+]
+,
+[
+
+])
+
 
 AC_OUTPUT([
 Makefile
