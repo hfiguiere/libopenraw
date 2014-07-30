@@ -33,8 +33,7 @@
 #include <vector>
 #include <string>
 #include <map>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace OpenRaw {
 	class RawFile;
@@ -44,7 +43,7 @@ namespace OpenRaw {
 class Test
 {
 public:
-	typedef boost::shared_ptr<Test> Ptr;
+	typedef std::shared_ptr<Test> Ptr;
 
 	Test();
 	~Test();
@@ -63,7 +62,6 @@ public:
     /** a test in another test, only taking new values */
     void merge(const Test::Ptr & t);
 private:
-
 	bool testRawType(const std::string & result);
 	bool testRawTypeId(const std::string & result);
 	bool testThumbNum(const std::string & result);
@@ -81,6 +79,7 @@ private:
 	bool testRawMd5(const std::string & result);
 	bool testRawDecompressedMd5(const std::string & result);
 	bool testMetaOrientation(const std::string & result);
+    bool testMakerNoteCount(const std::string & result);
 
 	std::string m_name;
 	std::string m_file;

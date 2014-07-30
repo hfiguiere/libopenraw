@@ -1,7 +1,7 @@
 /*
  * libopenraw - testsuite.cpp
  *
- * Copyright (C) 2008-2009,2012 Hubert Figuiere
+ * Copyright (C) 2008-2014 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -51,17 +51,22 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/crc.hpp>      // for boost::crc_basic, boost::crc_optimal
 
+#define IN_TESTSUITE
 #include <libopenraw/debug.h>
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/bitmapdata.h>
-#include "io/file.h"
 
 #include "xmlhandler.h"
 #include "testsuite.h"
 #include "testsuitehandler.h"
 #include "testsuitetags.h"
+
+// Internal stuff. Because we can.
+#include "io/file.h"
+#include "ifdfile.h"
+
 
 using OpenRaw::RawFile;
 using OpenRaw::BitmapData;
@@ -600,6 +605,17 @@ bool Test::testMetaOrientation(const std::string & result)
     RETURN_TEST_EQUALS(orientation, boost::lexical_cast<int32_t>(result));
 }
 
+bool Test::testMakerNoteCount(const std::string & result)
+{
+    auto ifd_file = dynamic_cast<OpenRaw::Internals::IfdFile*>(m_rawfile);
+    if (!ifd_file) {
+        RETURN_FAIL("not an IFD file", result);
+    }
+    auto exif = ifd_file->exifIfd();
+    auto maker_note = exif->getMakerNoteIFD();
+    RETURN_TEST_EQUALS(maker_note->numTags(), boost::lexical_cast<int32_t>(result));
+}
+
 
 /** run the test.
  * @return the number of failures. 0 means success
@@ -676,6 +692,9 @@ int Test::run()
             break;
         case XML_metaOrientation:
             pass = testMetaOrientation(iter->second);
+            break;
+        case XML_makerNoteCount:
+            pass = testMakerNoteCount(iter->second);
             break;
         default:
             pass = false;

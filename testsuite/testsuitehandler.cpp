@@ -1,7 +1,7 @@
 /*
  * libopenraw - testsuitehandler.cpp
  *
- * Copyright (C) 2008,2012 Hubert Figuiere
+ * Copyright (C) 2008-2014 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -28,12 +28,13 @@
 #include "testsuite.h"
 #include "testsuitetags.h"
 
-TestContext::TestContext(const xml::HandlerPtr & handler,  TestSuite * ts,
+TestContext::TestContext(const xml::HandlerPtr & handler,
+                         TestSuite * ts,
                          Test::Ptr test)
-	: xml::Context(handler),
-	  m_ts(ts),
-	  m_test(test),
-	  m_results(false)
+  : xml::Context(handler),
+    m_ts(ts),
+    m_test(test),
+    m_results(false)
 {
 
 }
@@ -74,6 +75,7 @@ xml::ContextPtr TestContext::startElement(int32_t element)
 	case XML_rawMd5:
 	case XML_rawDecompressedMd5:
 	case XML_metaOrientation:
+        case XML_makerNoteCount:
 		// other tests...
 		if(m_results) {
 			std::string & s(m_test->results()[element]);

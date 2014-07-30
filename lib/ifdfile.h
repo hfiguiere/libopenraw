@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.h
  *
- * Copyright (C) 2006-2008,2011-2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -43,6 +43,11 @@ class ThumbDesc;
 class IfdFile
     : public OpenRaw::RawFile
 {
+#if defined(IN_TESTSUITE)
+public:
+  friend class ::Test; // for testing
+#endif
+
 protected:
 	IfdFile(IO::Stream * s, Type _type, 
 			bool instantiateContainer = true);

@@ -6,6 +6,7 @@
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65537</rawTypeId>
+      <makerNoteCount>24</makerNoteCount>
       <thumbNum>2</thumbNum>
       <thumbSizes>1536 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -29,6 +30,7 @@
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65542</rawTypeId>
+      <makerNoteCount>34</makerNoteCount>
       <thumbNum>2</thumbNum>
       <thumbSizes>2256 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -52,6 +54,7 @@
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65564</rawTypeId>
+      <makerNoteCount>41</makerNoteCount>
       <thumbNum>2</thumbNum>
       <thumbSizes>5184 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -75,6 +78,7 @@
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65568</rawTypeId>
+      <makerNoteCount>39</makerNoteCount>
       <thumbNum>2</thumbNum>
       <thumbSizes>5616 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -98,6 +102,7 @@
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65565</rawTypeId>
+      <makerNoteCount>28</makerNoteCount>
       <thumbNum>2</thumbNum>
       <thumbSizes>1600 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -252,6 +257,7 @@
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131074</rawTypeId>
+      <makerNoteCount>21</makerNoteCount>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
