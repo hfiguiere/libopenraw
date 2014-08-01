@@ -58,11 +58,11 @@ public:
 				rootFound = true;
 				break;
 			case XML_foo:
-				ctx.reset(new xml::SimpleElementContext(boost::static_pointer_cast<xml::Handler>(shared_from_this()),
+				ctx.reset(new xml::SimpleElementContext(std::static_pointer_cast<xml::Handler>(shared_from_this()),
 														foo));
 				break;
 			case XML_bar:
-				ctx.reset(new xml::SimpleElementContext(boost::static_pointer_cast<xml::Handler>(shared_from_this()),
+				ctx.reset(new xml::SimpleElementContext(std::static_pointer_cast<xml::Handler>(shared_from_this()),
 														bar));
 				break;
 			default:
@@ -95,9 +95,9 @@ int test_main( int, char *[] )             // note the name!
 	filename += "/test.xml";
 	xml::HandlerPtr handler(new TestHandler(filename));
 	BOOST_CHECK(handler->process());
-	BOOST_CHECK(boost::static_pointer_cast<TestHandler>(handler)->rootFound);
-	BOOST_CHECK(boost::static_pointer_cast<TestHandler>(handler)->foo == "foo");
-	BOOST_CHECK(boost::static_pointer_cast<TestHandler>(handler)->bar == "bar");
+	BOOST_CHECK(std::static_pointer_cast<TestHandler>(handler)->rootFound);
+	BOOST_CHECK(std::static_pointer_cast<TestHandler>(handler)->foo == "foo");
+	BOOST_CHECK(std::static_pointer_cast<TestHandler>(handler)->bar == "bar");
 
 	return 0;
 }

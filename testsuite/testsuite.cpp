@@ -42,9 +42,7 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/scoped_array.hpp>
+
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -210,10 +208,10 @@ bool Test::testRawType(const std::string & result)
                     boost::lexical_cast<std::string>(err));
     }
     off_t len = f.filesize();
-    boost::scoped_array<uint8_t> buff(new uint8_t[len]);
+    std::unique_ptr<uint8_t[]> buff(new uint8_t[len]);
     int res = f.read(buff.get(), len);
     if(res == len) {
-        boost::scoped_ptr<RawFile> r2(RawFile::newRawFileFromMemory(buff.get(), len));
+        std::unique_ptr<RawFile> r2(RawFile::newRawFileFromMemory(buff.get(), len));
         if(!r2) {
             RETURN_FAIL("failed to load from memory", std::string());
         }

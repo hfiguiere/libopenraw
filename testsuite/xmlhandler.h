@@ -1,7 +1,7 @@
 /*
  * libopenraw - xmlhandler.h
  *
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,12 +23,13 @@
 #define _XML_HANDLER_H_
 
 #include <stdint.h>
+
 #include <libxml/xmlreader.h>
+
 #include <stack>
 #include <string>
 #include <map>
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
+#include <memory>
 
 namespace xml {
 
@@ -41,13 +42,13 @@ public:
 
 
 class Handler;
-typedef boost::shared_ptr<Handler> HandlerPtr;
+typedef std::shared_ptr<Handler> HandlerPtr;
 
 class Context;
-typedef boost::shared_ptr<Context> ContextPtr;
+typedef std::shared_ptr<Context> ContextPtr;
 
 class Context
-	: public boost::enable_shared_from_this<Context>
+	: public std::enable_shared_from_this<Context>
 {
 public:
 	Context(const HandlerPtr & handler);
