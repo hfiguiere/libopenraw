@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.cpp
  *
- * Copyright (C) 2006, 2008, 2010-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -163,7 +163,32 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
     return m_container->setDirectory(0);
 }
 
+::or_error OrfFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
+{
+    auto err = OR_ERROR_NOT_FOUND;
 
+    err = IfdFile::_enumThumbnailSizes(list);
+
+    auto exif = exifIfd();
+    if (!exif) {
+        return err;
+    }
+
+    auto makerNote = exif->getMakerNoteIfd();
+    if (!makerNote) {
+        return err;
+    }
+
+    auto e = makerNote->getEntry(0x100);
+    if (e) {
+        auto val_offset = e->offset();
+        Trace(DEBUG1) << "val_offset " << val_offset << "\n";
+        Trace(DEBUG1) << "count " << e->count() << "\n";
+        Trace(DEBUG1) << "endian " << e->endian() << "\n";
+    }
+
+    return err;
+}
 
 ::or_error OrfFile::_getRawData(RawData & data, uint32_t options)
 {
@@ -195,7 +220,7 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
                     data.setDataType(OR_DATA_TYPE_RAW);
                     data.setDimensions(x, y);
                     delete dData;
-                }						
+                }
             }
             break;
         default:

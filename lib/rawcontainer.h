@@ -26,7 +26,6 @@
 #include <libopenraw/io.h>
 #include <libopenraw/types.h>
 
-
 namespace OpenRaw {
 namespace IO {
 class Stream;
@@ -88,7 +87,7 @@ public:
    * @return the size retrieved, <= buf_size likely equal
    */
   size_t fetchData(void *buf, off_t offset, size_t buf_size);
-  
+
 protected:
   
   RawContainer(const RawContainer&);

@@ -78,8 +78,8 @@ MakerNoteDir::Ref  IfdFile::_locateMakerNoteIfd()
 {
 	const IfdDir::Ref & _exifIfd = exifIfd();
 	if(_exifIfd) {
-		// to not have a recursive declaration, getMakerNoteIFD() return an IfdDir.
-		return std::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIFD());
+		// to not have a recursive declaration, getMakerNoteIfd() return an IfdDir.
+		return std::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIfd());
 	}
 	return MakerNoteDir::Ref();
 }
@@ -106,8 +106,8 @@ void IfdFile::_identifyId()
 
   Trace(DEBUG1) << "_enumThumbnailSizes()\n";
   std::vector<IfdDir::Ref> & dirs = m_container->directories();
-  std::vector<IfdDir::Ref>::iterator iter; 
-			
+  std::vector<IfdDir::Ref>::iterator iter;
+
   Trace(DEBUG1) << "num of dirs " << dirs.size() << "\n";
   for(iter = dirs.begin(); iter != dirs.end(); ++iter)
   {
@@ -121,8 +121,8 @@ void IfdFile::_identifyId()
     std::vector<IfdDir::Ref> subdirs;
     if(dir->getSubIFDs(subdirs)) {
       Trace(DEBUG1) << "Iterating subdirs\n";
-      std::vector<IfdDir::Ref>::iterator iter2; 
-      for(iter2 = subdirs.begin(); iter2 != subdirs.end(); 
+      std::vector<IfdDir::Ref>::iterator iter2;
+      for(iter2 = subdirs.begin(); iter2 != subdirs.end();
           ++iter2)
       {
         IfdDir::Ref & dir2 = *iter2;

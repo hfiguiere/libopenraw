@@ -236,27 +236,6 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
     return false;
 }
 
-MakerNoteDir::Ref NefFile::_locateMakerNoteIfd()
-{
-    const IfdDir::Ref & _exifIfd = exifIfd();
-    if(!_exifIfd) {
-        return MakerNoteDir::Ref();
-    }
-	
-    IfdEntry::Ref maker_ent =
-        _exifIfd->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
-    if(!maker_ent) {
-        return MakerNoteDir::Ref();
-    }
-	
-    uint32_t off = maker_ent->offset();
-    uint32_t base = off + 10;
-	
-    MakerNoteDir::Ref ref(new MakerNoteDir(base + 8, *m_container, base));
-    ref->load();
-    return ref;
-}
-
 ::or_error NefFile::_decompressNikonQuantized(RawData & data)
 {
     NEFCompressionInfo c;

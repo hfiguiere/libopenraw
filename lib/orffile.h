@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.h
  *
- * Copyright (C) 2006-2008, 2010, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,9 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 #ifndef OR_INTERNALS_ORFFILE_H_
 #define OR_INTERNALS_ORFFILE_H_
 
@@ -28,39 +25,51 @@
 
 namespace OpenRaw {
 
-	class Thumbnail;
-	class RawData;
+class Thumbnail;
+class RawData;
 
-	namespace Internals {
+namespace Internals {
 
-		class OrfFile
-			: public IfdFile
-		{
-		public:
-			static RawFile *factory(IO::Stream *);
-			OrfFile(IO::Stream *);
-			virtual ~OrfFile();
-			
-			enum {
-				ORF_COMPRESSION = 0x10000
-			};
+class OrfFile
+  : public IfdFile
+{
+public:
+  static RawFile *factory(IO::Stream *);
+  OrfFile(IO::Stream *);
+  virtual ~OrfFile();
 
-		protected:
-			virtual IfdDir::Ref  _locateCfaIfd();
-			virtual IfdDir::Ref  _locateMainIfd();
+  enum {
+    ORF_COMPRESSION = 0x10000
+  };
 
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-			virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression);
-		private:
-			static RawFile::TypeId _typeIdFromModel(const std::string & model);
+protected:
+  virtual IfdDir::Ref  _locateCfaIfd();
+  virtual IfdDir::Ref  _locateMainIfd();
 
-			OrfFile(const OrfFile&);
-			OrfFile & operator=(const OrfFile &);
+  ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
+  virtual ::or_error _getRawData(RawData & data, uint32_t options);
+  virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression);
+private:
+  static RawFile::TypeId _typeIdFromModel(const std::string & model);
 
-			static const IfdFile::camera_ids_t s_def[];
-		};
-	}
+  OrfFile(const OrfFile&);
+  OrfFile & operator=(const OrfFile &);
 
+  static const IfdFile::camera_ids_t s_def[];
+};
+
+}
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

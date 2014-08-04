@@ -170,6 +170,7 @@
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131076</rawTypeId>
+      <makerNoteCount>32</makerNoteCount>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -191,6 +192,7 @@
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131085</rawTypeId>
+      <makerNoteCount>43</makerNoteCount>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
@@ -213,6 +215,7 @@
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131085</rawTypeId>
+      <makerNoteCount>43</makerNoteCount>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
@@ -235,6 +238,7 @@
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131085</rawTypeId>
+      <makerNoteCount>43</makerNoteCount>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
@@ -279,6 +283,7 @@
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131077</rawTypeId>
+      <makerNoteCount>40</makerNoteCount>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -428,6 +433,7 @@
     <results>
       <rawType>ORF</rawType>
       <rawTypeId>458756</rawTypeId>
+      <makerNoteCount>27</makerNoteCount>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -449,6 +455,7 @@
     <results>
       <rawType>ORF</rawType>
       <rawTypeId>458757</rawTypeId>
+      <makerNoteCount>27</makerNoteCount>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -469,6 +476,7 @@
     <results>
       <rawType>ORF</rawType>
       <rawTypeId>458766</rawTypeId>
+      <makerNoteCount>8</makerNoteCount>
       <thumbNum>0</thumbNum>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>25288800</rawDataSize>
@@ -486,6 +494,7 @@
     <results>
       <rawType>ORF</rawType>
       <rawTypeId>458759</rawTypeId>
+      <makerNoteCount>8</makerNoteCount>
       <thumbNum>0</thumbNum>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20832000</rawDataSize>

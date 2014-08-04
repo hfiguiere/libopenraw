@@ -125,7 +125,7 @@ public:
 	/** get the MakerNote IFD.
 	 * @return Ref to the new MakerNoteDir if found
 	 */
-	Ref getMakerNoteIFD();
+	Ref getMakerNoteIfd();
 private:
 	off_t m_offset;
 	IfdFileContainer & m_container;

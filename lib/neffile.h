@@ -53,10 +53,6 @@ public:
         std::vector<uint16_t> curve;
         const HuffmanNode* huffman;
     };
-    
-protected:
-    
-    virtual MakerNoteDir::Ref  _locateMakerNoteIfd();
 
 private:
     

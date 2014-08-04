@@ -610,7 +610,7 @@ bool Test::testMakerNoteCount(const std::string & result)
         RETURN_FAIL("not an IFD file", result);
     }
     auto exif = ifd_file->exifIfd();
-    auto maker_note = exif->getMakerNoteIFD();
+    auto maker_note = exif->getMakerNoteIfd();
     RETURN_TEST_EQUALS(maker_note->numTags(), boost::lexical_cast<int32_t>(result));
 }
 

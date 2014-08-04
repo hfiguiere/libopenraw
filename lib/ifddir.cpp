@@ -37,23 +37,22 @@ namespace Internals {
 
 bool IfdDir::isPrimary::operator()(const Ref &dir)
 {
-	uint32_t subtype = 1; 
+	uint32_t subtype = 1;
 	return dir->getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype)
 		&& (subtype == 0);
 }
 
 bool IfdDir::isThumbnail::operator()(const Ref &dir)
 {
-	uint32_t subtype = 0; 
+	uint32_t subtype = 0;
 	return dir->getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype)
 		&& (subtype == 1);
 }
 
 IfdDir::IfdDir(off_t _offset, IfdFileContainer & _container)
-	: m_offset(_offset), m_container(_container), 
-		m_entries()
+	: m_offset(_offset), m_container(_container),
+          m_entries()
 {
-	
 }
 
 IfdDir::~IfdDir()
@@ -63,28 +62,28 @@ IfdDir::~IfdDir()
 
 bool IfdDir::load()
 {
-	Trace(DEBUG1) << "IfdDir::load() m_offset =" << m_offset << "\n";
-	int16_t numEntries = 0;
-	IO::Stream *file = m_container.file();
-	m_entries.clear();
-	file->seek(m_offset, SEEK_SET);
-	m_container.readInt16(file, numEntries);
+    Trace(DEBUG1) << "IfdDir::load() m_offset =" << m_offset << "\n";
+    int16_t numEntries = 0;
+    IO::Stream *file = m_container.file();
+    m_entries.clear();
+    file->seek(m_offset, SEEK_SET);
+    m_container.readInt16(file, numEntries);
+    Trace(DEBUG1) << "num entries " << numEntries << "\n";
+    for(int16_t i = 0; i < numEntries; i++) {
+        uint16_t id;
+        int16_t type;
+        int32_t count;
+        uint32_t data;
+        m_container.readUInt16(file, id);
+        m_container.readInt16(file, type);
+        m_container.readInt32(file, count);
+        file->read(&data, 4);
+        IfdEntry::Ref entry(new IfdEntry(id, type,
+                                         count, data, m_container));
+        m_entries[id] = entry;
+    }
 
-	for(int16_t i = 0; i < numEntries; i++) {
-		uint16_t id;
-		int16_t type;
-		int32_t count;
-		uint32_t data;
-		m_container.readUInt16(file, id);
-		m_container.readInt16(file, type);
-		m_container.readInt32(file, count);
-		file->read(&data, 4);
-		IfdEntry::Ref entry(new IfdEntry(id, type, 
-										 count, data, m_container));
-		m_entries[id] = entry;
-	}
-
-	return true;
+    return true;
 }
 
 IfdEntry::Ref IfdDir::getEntry(uint16_t id) const
@@ -200,26 +199,38 @@ IfdDir::Ref IfdDir::getExifIFD()
 	return Ref();
 }
 
-IfdDir::Ref IfdDir::getMakerNoteIFD()
+IfdDir::Ref IfdDir::getMakerNoteIfd()
 {
-	uint32_t val_offset = 0;
-	IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_MAKER_NOTE);
-	if (e) {
-		val_offset = e->offset();
-		Trace(DEBUG1) << "MakerNote IFD offset (uncorrected) = " << val_offset 
-		<< "\n";
-		val_offset += m_container.exifOffsetCorrection();
-		Trace(DEBUG1) << "MakerNote IFD offset = " << val_offset << "\n";
-		MakerNoteDir::Ref ref(new MakerNoteDir(val_offset, m_container, val_offset));
-		ref->load();
-		return ref;
-	}
-	else {
-		Trace(DEBUG1) << "MakerNote IFD offset not found.\n";				
-	}
-	return MakerNoteDir::Ref();
+    uint32_t val_offset = 0;
+    IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_MAKER_NOTE);
+    if (!e) {
+        Trace(DEBUG1) << "MakerNote IFD offset not found.\n";
+        return MakerNoteDir::Ref();
+    }
+    val_offset = e->offset();
+    Trace(DEBUG1) << "MakerNote IFD offset (uncorrected) = "
+                  << val_offset << "\n";
+    val_offset += m_container.exifOffsetCorrection();
+    Trace(DEBUG1) << "MakerNote IFD offset = " << val_offset
+                  << "\n";
+
+    auto ref = MakerNoteDir::createMakerNote(val_offset, m_container);
+    if (ref) {
+        ref->load();
+    }
+
+    return ref;
 }
 
 }
 }
 
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
