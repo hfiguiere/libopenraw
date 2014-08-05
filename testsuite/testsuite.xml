@@ -477,7 +477,11 @@
       <rawType>ORF</rawType>
       <rawTypeId>458766</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
-      <thumbNum>0</thumbNum>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>6312</thumbDataSizes>
+      <thumbMd5>23</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>25288800</rawDataSize>
       <rawDataDimensions>4100 3084</rawDataDimensions>
@@ -495,7 +499,11 @@
       <rawType>ORF</rawType>
       <rawTypeId>458759</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
-      <thumbNum>0</thumbNum>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>3003</thumbDataSizes>
+      <thumbMd5>213</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>

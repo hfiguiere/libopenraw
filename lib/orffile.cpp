@@ -31,6 +31,8 @@
 #include "olympusdecompressor.h"
 #include "rawfile_private.h"
 #include "io/file.h"
+#include "io/streamclone.h"
+#include "jfifcontainer.h"
 
 using namespace Debug;
 
@@ -174,7 +176,11 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
         return err;
     }
 
-    auto makerNote = exif->getMakerNoteIfd();
+    auto ifd = exif->getMakerNoteIfd();
+    if (!ifd) {
+        return err;
+    }
+    auto makerNote = std::dynamic_pointer_cast<MakerNoteDir>(ifd);
     if (!makerNote) {
         return err;
     }
@@ -182,9 +188,26 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
     auto e = makerNote->getEntry(0x100);
     if (e) {
         auto val_offset = e->offset();
-        Trace(DEBUG1) << "val_offset " << val_offset << "\n";
-        Trace(DEBUG1) << "count " << e->count() << "\n";
-        Trace(DEBUG1) << "endian " << e->endian() << "\n";
+
+        val_offset += makerNote->getMnoteOffset();
+
+        Trace(DEBUG1) << "fetching JPEG\n";
+        std::unique_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, val_offset));
+        std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+
+        uint32_t x, y;
+        x = y = 0;
+        jfif->getDimensions(x, y);
+        Trace(DEBUG1) << "JPEG dimensions x=" << x
+                      << " y=" << y << "\n";
+
+        uint32_t dim = std::max(x, y);
+        if (dim) {
+            _addThumbnail(dim, ThumbDesc(x, y, OR_DATA_TYPE_JPEG,
+                                         val_offset, e->count()));
+            list.push_back(dim);
+            err = OR_ERROR_NONE;
+        }
     }
 
     return err;

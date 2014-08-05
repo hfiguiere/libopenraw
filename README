@@ -179,7 +179,7 @@ Olympus ORF              Y Y B Y Y Y N Y
  E-300                   T T B T T T
  E-330                   T T N     T
  E-400                   T B T T T T
- E-410                   B T T T T T
+ E-410                   T T T T T T
  E-500                   T T B T   T
  E-510                   B T T T T T
  E-620                   B T T   T T
@@ -187,7 +187,7 @@ Olympus ORF              Y Y B Y Y Y N Y
  SP-500                  B B X T T T
  SP-510                  B B X T T T
  SP-550                  B B X T T T
- E-P1                    B T T   T T
+ E-P1                    T T T   T T
  E-P2                    B T T   T T
  E-P3                    B T T   T T
  E-PL1                   B T T   T T
