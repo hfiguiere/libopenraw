@@ -24,13 +24,13 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/scoped_ptr.hpp>
 
 #include <libopenraw/libopenraw.h>
 #include <libopenraw++/rawfile.h>
@@ -250,7 +250,7 @@ public:
 
     /** dump the previews of the raw file to mout
      */
-    void dumpPreviews(const boost::scoped_ptr<RawFile> & rf)
+    void dumpPreviews(const std::unique_ptr<RawFile> & rf)
         {
             const std::vector<uint32_t> & previews = rf->listThumbnailSizes();
             m_out << boost::format("\tNumber of previews: %1%\n")
@@ -284,7 +284,7 @@ public:
             }
         }
 
-    void dumpRawData(const boost::scoped_ptr<RawFile> & rf)
+    void dumpRawData(const std::unique_ptr<RawFile> & rf)
         {
             RawData rd;
             ::or_error err = rf->getRawData(rd, 0);
@@ -326,7 +326,7 @@ public:
                     % err;
             }
         }
-    void dumpMetaData(const boost::scoped_ptr<RawFile> & rf)
+    void dumpMetaData(const std::unique_ptr<RawFile> & rf)
         {
             int32_t o;
             o = rf->getOrientation();
@@ -374,7 +374,7 @@ public:
         {
             m_out << boost::format("Dumping %1%\n") % s;
 
-            boost::scoped_ptr<RawFile> rf(RawFile::newRawFile(s.c_str()));
+            std::unique_ptr<RawFile> rf(RawFile::newRawFile(s.c_str()));
 
             if (rf == NULL) {
                 m_out << "unrecognized file\n";
