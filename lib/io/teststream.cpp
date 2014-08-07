@@ -72,7 +72,7 @@ int test_main (int argc, char * argv[])
     BOOST_CHECK(clone->filesize() == (file_size - clone_offset));
 
     char buf2[128];
-    r = file->read(buf2, 4);
+    r = clone->read(buf2, 4);
     BOOST_CHECK(r == 4);
 
     BOOST_CHECK(strncmp(buf1 + clone_offset, buf2, 4) == 0);
@@ -80,6 +80,33 @@ int test_main (int argc, char * argv[])
     uint8_t c = file->readByte();
 
     BOOST_CHECK(c == 'g');
+
+    // seek
+
+    int new_pos = clone->seek(0, SEEK_CUR);
+    BOOST_CHECK(new_pos == 5);
+
+    new_pos = clone->seek(1, SEEK_CUR);
+    BOOST_CHECK(new_pos == 6);
+
+    new_pos = clone->seek(2, SEEK_SET);
+    BOOST_CHECK(new_pos == 2);
+
+    c = file->readByte();
+    BOOST_CHECK(c == 'e');
+
+    new_pos = clone->seek(0, SEEK_CUR);
+    BOOST_CHECK(new_pos == 3);
+
+    c = file->readByte();
+    BOOST_CHECK(c == 'f');
+
+    new_pos = clone->seek(-2, SEEK_END);
+    BOOST_CHECK(new_pos == 59);
+
+    c = file->readByte();
+    BOOST_CHECK(c == 'Z');
+
 
     clone->close();
 
