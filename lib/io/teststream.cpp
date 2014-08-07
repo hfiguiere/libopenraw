@@ -59,16 +59,23 @@ int test_main (int argc, char * argv[])
 
     BOOST_CHECK(memcmp(buf1, "abcdef", 6) == 0);
 
-    IO::StreamClone * clone = new IO::StreamClone(file, 2);
+    off_t file_size = file->filesize();
+    BOOST_CHECK(file_size == 63);
+
+    const off_t clone_offset = 2;
+
+    IO::StreamClone * clone = new IO::StreamClone(file, clone_offset);
 
     ret = clone->open();
     BOOST_CHECK(ret == 0);
+
+    BOOST_CHECK(clone->filesize() == (file_size - clone_offset));
 
     char buf2[128];
     r = file->read(buf2, 4);
     BOOST_CHECK(r == 4);
 
-    BOOST_CHECK(strncmp(buf1 + 2, buf2, 4) == 0);
+    BOOST_CHECK(strncmp(buf1 + clone_offset, buf2, 4) == 0);
 
     uint8_t c = file->readByte();
 

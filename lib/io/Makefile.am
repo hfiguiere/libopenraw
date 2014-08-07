@@ -16,5 +16,5 @@ libio_la_SOURCES = io.c \
 	memstream.cpp file.cpp
 
 teststream_SOURCES = teststream.cpp
-teststream_LDADD = ../libopenraw.la
- 
+teststream_LDADD = libio.la
+

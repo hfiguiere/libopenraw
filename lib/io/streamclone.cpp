@@ -90,7 +90,7 @@ off_t StreamClone::filesize()
     set_error(OR_ERROR_CLOSED_STREAM);
     return -1;
   }
-  return m_cloned->filesize();
+  return m_cloned->filesize() - m_offset;
 }
 
 }
