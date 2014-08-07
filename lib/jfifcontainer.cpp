@@ -147,6 +147,9 @@ bool JfifContainer::getDecompressedData(BitmapData &data)
 int JfifContainer::_loadHeader()
 {
   int ret = 0;
+
+  m_file->seek(0, SEEK_SET);
+
   if (::setjmp(m_jpegjmp) == 0) {
     ret = JPEG::jpeg_read_header(&m_cinfo, TRUE);
     //Trace(DEBUG1) << "jpeg_read_header " << ret << "\n";

@@ -176,10 +176,11 @@ RafFile::~RafFile()
       }
 
       if(got_it) {
+        std::unique_ptr<IO::StreamClone> s(
+          new IO::StreamClone(jpegPreview->file(),
+                              jpeg_offset));
         std::unique_ptr<JfifContainer> thumb(
-          new JfifContainer(
-            new IO::StreamClone(jpegPreview->file(),
-                                jpeg_offset), 0));
+          new JfifContainer(s.get(), 0));
 
         if(thumb->getDimensions(x, y)) {
           uint32_t size = std::max(x, y);
