@@ -34,8 +34,8 @@ class OrfFile
   : public IfdFile
 {
 public:
-  static RawFile *factory(IO::Stream *);
-  OrfFile(IO::Stream *);
+  static RawFile *factory(const IO::Stream::Ptr &);
+  OrfFile(const IO::Stream::Ptr &);
   virtual ~OrfFile();
 
   enum {
@@ -52,8 +52,8 @@ protected:
 private:
   static RawFile::TypeId _typeIdFromModel(const std::string & model);
 
-  OrfFile(const OrfFile&);
-  OrfFile & operator=(const OrfFile &);
+  OrfFile(const OrfFile&) = delete;
+  OrfFile & operator=(const OrfFile &) = delete;
 
   static const IfdFile::camera_ids_t s_def[];
 };

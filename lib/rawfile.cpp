@@ -2,7 +2,7 @@
  * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2006-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -170,7 +170,7 @@ RawFile *RawFile::newRawFile(const char*_filename, RawFile::Type _typeHint)
         Trace(WARNING) << "factory is NULL\n";
         return NULL;
     }
-    IO::Stream *f = new IO::File(_filename);
+    IO::Stream::Ptr f(new IO::File(_filename));
     return iter->second(f);
 }
 
@@ -199,7 +199,7 @@ RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer,
         Trace(WARNING) << "factory is NULL\n";
         return NULL;
     }
-    IO::Stream *f = new IO::MemStream((void*)buffer, len);
+    IO::Stream::Ptr f(new IO::MemStream((void*)buffer, len));
     return iter->second(f);
 }
 
@@ -260,7 +260,7 @@ RawFile::Type RawFile::identify(const char*_filename)
             }
         }
         if(len >= 8) {
-            IO::Stream *s = new IO::MemStream((void*)buff, len);
+            IO::Stream::Ptr s(new IO::MemStream((void*)buff, len));
             std::unique_ptr<Internals::TiffEpFile> f(new Internals::TiffEpFile(s, OR_RAWFILE_TYPE_TIFF));
 
             // Take into account DNG by checking the DNGVersion tag
@@ -296,7 +296,7 @@ RawFile::Type RawFile::identify(const char*_filename)
     return OR_ERROR_NONE;
 }
 
-RawFile::RawFile(IO::Stream *, RawFile::Type _type)
+RawFile::RawFile(RawFile::Type _type)
     : d(new Private(_type))
 {
 }

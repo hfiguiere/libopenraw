@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2container.cpp
  *
- * Copyright (C) 2011-2012 Hubert Figuiere
+ * Copyright (C) 2011-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,7 +30,7 @@ namespace OpenRaw {
 namespace Internals {
 
 
-Rw2Container::Rw2Container(IO::Stream *_file, off_t _offset)
+Rw2Container::Rw2Container(const IO::Stream::Ptr &_file, off_t _offset)
 	: IfdFileContainer(_file, _offset)
 	, subtype_(0)
 {

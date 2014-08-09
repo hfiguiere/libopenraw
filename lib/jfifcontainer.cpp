@@ -56,7 +56,7 @@ typedef struct {
   JPEG::JOCTET* buf;
 } jpeg_src_t;
 
-JfifContainer::JfifContainer(IO::Stream *_file, off_t _offset)
+JfifContainer::JfifContainer(const IO::Stream::Ptr &_file, off_t _offset)
   : RawContainer(_file, _offset),
     m_cinfo(), m_jerr(),
     m_headerLoaded(false),
@@ -225,8 +225,9 @@ IfdFileContainer* JfifContainer::ifdContainer()
     m_file->read(delim, 6);
     if(memcmp(delim, "Exif\0\0", 6) == 0) {
       size_t exif_offset = m_file->seek(0, SEEK_CUR);
-      m_ifd = new IfdFileContainer(new IO::StreamClone(m_file, exif_offset), 0);
-    }		
+      m_ifd = new IfdFileContainer(
+        IO::Stream::Ptr(new IO::StreamClone(m_file, exif_offset)), 0);
+    }
   }
   return m_ifd;
 }

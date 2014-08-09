@@ -1,7 +1,7 @@
 /*
  * libopenraw - erffile.h
  *
- * Copyright (C) 2007-2008,2012 Hubert Figuiere
+ * Copyright (C) 2007-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,16 +35,16 @@ class ERFFile
     : public TiffEpFile
 {
 public:
-    static RawFile *factory(IO::Stream *);
-    ERFFile(IO::Stream *);
+    static RawFile *factory(const IO::Stream::Ptr &);
+    ERFFile(const IO::Stream::Ptr &);
     virtual ~ERFFile();
     
 protected:
     virtual ::or_error _getRawData(RawData & data, uint32_t options);
 private:
     
-    ERFFile(const ERFFile&);
-    ERFFile & operator=(const ERFFile &);
+    ERFFile(const ERFFile&) = delete;
+    ERFFile & operator=(const ERFFile &) = delete;
     
     static const IfdFile::camera_ids_t s_def[];
 };

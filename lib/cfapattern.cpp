@@ -22,7 +22,7 @@
 #include <stddef.h>
 
 #include <vector>
-#include <tr1/array>
+#include <array>
 
 #include <boost/static_assert.hpp>
 
@@ -76,7 +76,7 @@ public:
 const CfaPattern*
 CfaPattern::twoByTwoPattern(::or_cfa_pattern pattern)
 {
-  static std::tr1::array<CfaPattern*, _OR_CFA_PATTERN_INVALID> s_patterns
+  static std::array<CfaPattern*, _OR_CFA_PATTERN_INVALID> s_patterns
     = { { NULL, NULL, NULL, NULL, NULL, NULL } };
   // this should be updated if we change the enum
   BOOST_STATIC_ASSERT(_OR_CFA_PATTERN_INVALID == 6);

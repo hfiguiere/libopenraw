@@ -27,7 +27,8 @@
 namespace OpenRaw {
 namespace IO {
 
-StreamClone::StreamClone(Stream *clone, off_t offset)
+StreamClone::StreamClone(const Stream::Ptr & clone,
+                         off_t offset)
   : Stream(clone->get_path().c_str()),
     m_cloned(clone), m_offset(offset)
 {

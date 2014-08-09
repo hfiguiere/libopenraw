@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.h
  *
- * Copyright (C) 2005-2006, 2012 Hubert Figuière
+ * Copyright (C) 2005-2014 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -145,12 +145,11 @@ protected:
         const char * model;
         const uint32_t type_id;
     };
-    /** 
+    /**
      * Construct a raw file
-     * @param s the stream to load from. Take ownership.
      * @param _type the type
      */
-    RawFile(IO::Stream *s, Type _type);
+    RawFile(Type _type);
 
     /** Set the file type id */
     void _setTypeId(TypeId _type_id);
@@ -208,8 +207,8 @@ private:
                                               uint32_t & size);
 
 
-    RawFile(const RawFile&);
-    RawFile & operator=(const RawFile &);
+    RawFile(const RawFile&) = delete;
+    RawFile & operator=(const RawFile &) = delete;
 
     class Private;
 

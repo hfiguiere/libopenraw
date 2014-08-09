@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.h
  *
- * Copyright (C) 2006-2008, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,8 +35,8 @@ class PEFFile
     : public IfdFile
 {
 public:
-    static RawFile *factory(IO::Stream *s);
-    PEFFile(IO::Stream *);
+    static RawFile *factory(const IO::Stream::Ptr &s);
+    PEFFile(const IO::Stream::Ptr &);
     virtual ~PEFFile();
     
 protected:
@@ -46,8 +46,8 @@ protected:
     virtual ::or_error _getRawData(RawData & data, uint32_t options);
 private:
     
-    PEFFile(const PEFFile&);
-    PEFFile & operator=(const PEFFile &);
+    PEFFile(const PEFFile&) = delete;
+    PEFFile & operator=(const PEFFile &) = delete;
     
     static const IfdFile::camera_ids_t s_def[];
 };

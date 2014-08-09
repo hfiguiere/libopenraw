@@ -117,13 +117,13 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
   { nullptr, 0 }
 };
 
-RawFile *RafFile::factory(IO::Stream * s)
+RawFile *RafFile::factory(const IO::Stream::Ptr& s)
 {
   return new RafFile(s);
 }
 
-RafFile::RafFile(IO::Stream * s)
-  : RawFile(s, OR_RAWFILE_TYPE_RAF)
+RafFile::RafFile(const IO::Stream::Ptr& s)
+  : RawFile(OR_RAWFILE_TYPE_RAF)
   , m_io(s)
   , m_container(new RafContainer(s))
 {
@@ -176,11 +176,9 @@ RafFile::~RafFile()
       }
 
       if(got_it) {
-        std::unique_ptr<IO::StreamClone> s(
-          new IO::StreamClone(jpegPreview->file(),
-                              jpeg_offset));
-        std::unique_ptr<JfifContainer> thumb(
-          new JfifContainer(s.get(), 0));
+        IO::Stream::Ptr s(new IO::StreamClone(jpegPreview->file(),
+                                              jpeg_offset));
+        std::unique_ptr<JfifContainer> thumb(new JfifContainer(s, 0));
 
         if(thumb->getDimensions(x, y)) {
           uint32_t size = std::max(x, y);
@@ -197,7 +195,7 @@ RafFile::~RafFile()
       }
     }
   }
-  
+
   return ret;
 }
 

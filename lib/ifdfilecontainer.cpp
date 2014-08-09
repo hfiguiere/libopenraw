@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfilecontainer.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -37,8 +37,8 @@ namespace OpenRaw {
 
 	namespace Internals {
 
-		IfdFileContainer::IfdFileContainer(IO::Stream *_file, off_t _offset)
-			: RawContainer(_file, _offset), 
+		IfdFileContainer::IfdFileContainer(const IO::Stream::Ptr &_file, off_t _offset)
+			: RawContainer(_file, _offset),
 			  m_error(0),
 			  m_exif_offset_correction(0),
 			  m_current_dir(),

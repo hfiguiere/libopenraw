@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainertest.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -31,9 +31,10 @@ int main(int /*argc*/, char **argv)
 {
 	Debug::Trace::setDebugLevel(DEBUG2);
 
-	OpenRaw::IO::File file(argv[1]);
-	CIFFContainer container(&file);
-	
+	auto file = OpenRaw::IO::File::Ptr(
+          new OpenRaw::IO::File(argv[1]));
+	CIFFContainer container(file);
+
 	const CIFF::HeapFileHeader & hdr = container.header();
 
 	std::cout << "byteOrder = " << hdr.byteOrder[0] << hdr.byteOrder[1] << std::endl;

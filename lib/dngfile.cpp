@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2008, 2011-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -104,13 +104,13 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                              OR_TYPEID_ADOBE_DNG_GENERIC) }
 };
 
-RawFile *DngFile::factory(IO::Stream *s)
+RawFile *DngFile::factory(const IO::Stream::Ptr &s)
 {
     return new DngFile(s);
 }
 
 
-DngFile::DngFile(IO::Stream *s)
+DngFile::DngFile(const IO::Stream::Ptr &s)
     : TiffEpFile(s, OR_RAWFILE_TYPE_DNG)
 {
     _setIdMap(s_def);
@@ -136,10 +136,10 @@ DngFile::~DngFile()
                 compression == IFD::COMPRESS_LJPEG) {
                 // if the option is not set, decompress
                 if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-                    std::unique_ptr<IO::Stream> s(new IO::MemStream(data.data(),
-                                                                      data.size()));
+                    IO::Stream::Ptr s(new IO::MemStream(data.data(),
+                                                        data.size()));
                     s->open(); // TODO check success
-                    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+                    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
                     LJpegDecompressor decomp(s.get(), jfif.get());
                     RawData *dData = decomp.decompress();
                     if (dData != NULL) {

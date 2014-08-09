@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.cpp
  *
- * Copyright (C) 2006-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -79,12 +79,12 @@ const struct IfdFile::camera_ids_t MRWFile::s_def[] = {
     { 0, 0 }
 };
 
-RawFile *MRWFile::factory(IO::Stream *_f)
+RawFile *MRWFile::factory(const IO::Stream::Ptr &_f)
 {
     return new MRWFile(_f);
 }
 
-MRWFile::MRWFile(IO::Stream* _f)
+MRWFile::MRWFile(const IO::Stream::Ptr &_f)
     : IfdFile(_f, OR_RAWFILE_TYPE_MRW, false)
 {
     _setIdMap(s_def);

@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.cpp
  *
- * Copyright (C) 2006-2008, 2010, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -85,12 +85,12 @@ const struct IfdFile::camera_ids_t PEFFile::s_def[] = {
 };
 
 
-RawFile *PEFFile::factory(IO::Stream *s)
+RawFile *PEFFile::factory(const IO::Stream::Ptr &s)
 {
     return new PEFFile(s);
 }
 
-PEFFile::PEFFile(IO::Stream *s)
+PEFFile::PEFFile(const IO::Stream::Ptr &s)
     : IfdFile(s, OR_RAWFILE_TYPE_PEF)
 {
     _setIdMap(s_def);

@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2file.cpp
  *
- * Copyright (C) 2011-2013 Hubert Figuiere
+ * Copyright (C) 2011-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -152,12 +152,12 @@ const IfdFile::camera_ids_t Rw2File::s_def[] = {
 	{ 0, 0 }
 };
 
-RawFile *Rw2File::factory(IO::Stream * s)
+RawFile *Rw2File::factory(const IO::Stream::Ptr & s)
 {
 	return new Rw2File(s);
 }
 
-Rw2File::Rw2File(IO::Stream * s)
+Rw2File::Rw2File(const IO::Stream::Ptr & s)
 	: IfdFile(s, OR_RAWFILE_TYPE_RW2, false)
 {
   _setIdMap(s_def);
@@ -196,8 +196,8 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
     uint32_t x = 0;
     uint32_t y = 0;
     ::or_data_type _type = OR_DATA_TYPE_JPEG;
-    std::unique_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+    IO::Stream::Ptr s(new IO::StreamClone(m_io, offset));
+    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
     if (jfif->getDimensions(x,y)) {
         Trace(DEBUG1) << "JPEG dimensions x=" << x
                       << " y=" << y << "\n";

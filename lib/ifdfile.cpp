@@ -20,6 +20,7 @@
  */
 
 #include <algorithm>
+#include <memory>
 #include <numeric>
 
 #include <libopenraw++/thumbnail.h>
@@ -44,9 +45,9 @@ namespace OpenRaw {
 namespace Internals {
 
 
-IfdFile::IfdFile(IO::Stream *s, Type _type,
+IfdFile::IfdFile(const IO::Stream::Ptr &s, Type _type,
                  bool instantiateContainer)
-  : RawFile(s, _type),
+  : RawFile(_type),
     m_io(s),
     m_container(NULL)
 {
@@ -58,7 +59,6 @@ IfdFile::IfdFile(IO::Stream *s, Type _type,
 IfdFile::~IfdFile()
 {
   delete m_container;
-  delete m_io;
 }
 
 // this one seems to be pretty much the same for all the
@@ -218,8 +218,8 @@ void IfdFile::_identifyId()
           _type = OR_DATA_TYPE_JPEG;
           Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
           if (x == 0 || y == 0) {
-            std::unique_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-            std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+            IO::Stream::Ptr s(new IO::StreamClone(m_io, offset));
+            std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
             if (jfif->getDimensions(x,y)) {
               Trace(DEBUG1) << "JPEG dimensions x=" << x
                             << " y=" << y << "\n";

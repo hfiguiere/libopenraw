@@ -1,7 +1,7 @@
 /*
  * libopenraw - tiffepfile.h
  *
- * Copyright (C) 2007-2008 Hubert Figuiere
+ * Copyright (C) 2007-2014 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -36,7 +36,7 @@ class TiffEpFile
     : public IfdFile
 {
 public:
-    TiffEpFile(IO::Stream *s, Type _type);
+    TiffEpFile(const IO::Stream::Ptr &s, Type _type);
 
 protected:
 

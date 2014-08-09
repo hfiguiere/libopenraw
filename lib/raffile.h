@@ -1,7 +1,7 @@
 /*
  * libopenraw - raffile.h
  *
- * Copyright (C) 2011-2012 Hubert Figuiere
+ * Copyright (C) 2011-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,6 +25,8 @@
 
 #include <libopenraw++/rawfile.h>
 
+#include "io/stream.h"
+
 #define RAF_MAGIC "FUJIFILMCCD-RAW "
 #define RAF_MAGIC_LEN 16
 
@@ -38,8 +40,8 @@ class RafFile
 	: public OpenRaw::RawFile
 {
 public:
-	static RawFile *factory(IO::Stream * s);
-	RafFile(IO::Stream *s);
+	static RawFile *factory(const IO::Stream::Ptr & s);
+	RafFile(const IO::Stream::Ptr &s);
 	virtual ~RafFile();
 	
 protected:
@@ -54,10 +56,10 @@ protected:
   virtual void _identifyId();
 
 private:
-	RafFile(const RafFile&);
-	RafFile & operator=(const RafFile&);
+	RafFile(const RafFile&) = delete;
+	RafFile & operator=(const RafFile&) = delete;
 	
-	IO::Stream *m_io; /**< the IO handle */
+	IO::Stream::Ptr m_io; /**< the IO handle */
 	RafContainer *m_container; /**< the real container */
 	uint32_t m_x;
 	uint32_t m_y;

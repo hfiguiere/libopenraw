@@ -2,7 +2,7 @@
 /*
  * libopenraw - rafcontainer.cpp
  *
- * Copyright (C) 2011-2013 Hubert Figuiere
+ * Copyright (C) 2011-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,7 +22,7 @@
 #ifndef OR_INTERNALS_RAFMETACONTAINER_H_
 #define OR_INTERNALS_RAFMETACONTAINER_H_
 
-#include <tr1/memory>
+#include <memory>
 #include <map>
 
 #include <libopenraw++/metavalue.h>
@@ -50,7 +50,7 @@ enum {
 class RafMetaValue
 {
 public:
-	typedef std::tr1::shared_ptr<RafMetaValue> Ref;
+	typedef std::shared_ptr<RafMetaValue> Ref;
 	RafMetaValue(uint16_t tag, uint16_t size, const MetaValue & v);
 	~RafMetaValue();
 	
@@ -68,7 +68,7 @@ class RafMetaContainer
 : public RawContainer
 {
 public:
-	RafMetaContainer(IO::Stream *_file);
+	RafMetaContainer(const IO::Stream::Ptr &_file);
 	
 	uint32_t count();
 	RafMetaValue::Ref getValue(uint16_t tag);

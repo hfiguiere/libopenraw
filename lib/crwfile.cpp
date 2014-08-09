@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.cpp
  *
- * Copyright (C) 2006-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -92,13 +92,13 @@ const RawFile::camera_ids_t CRWFile::s_def[] = {
     { 0, 0 }
 };
 
-RawFile *CRWFile::factory(IO::Stream *s)
+RawFile *CRWFile::factory(const IO::Stream::Ptr &s)
 {
     return new CRWFile(s);
 }
 
-CRWFile::CRWFile(IO::Stream *s)
-    : RawFile(s, OR_RAWFILE_TYPE_CRW),
+CRWFile::CRWFile(const IO::Stream::Ptr &s)
+    : RawFile(OR_RAWFILE_TYPE_CRW),
       m_io(s),
       m_container(new CIFFContainer(m_io)),
       m_x(0), m_y(0)
@@ -110,7 +110,6 @@ CRWFile::CRWFile(IO::Stream *s)
 CRWFile::~CRWFile()
 {
     delete m_container;
-    delete m_io;
 }
 
 ::or_error CRWFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
@@ -131,8 +130,8 @@ CRWFile::~CRWFile()
         Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
         m_x = m_y = 0;
 	uint32_t offset = heap->offset() + (*iter).offset;
-        std::unique_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, offset));
-        std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+        IO::StreamClone::Ptr s(new IO::StreamClone(m_io, offset));
+        std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
 
         jfif->getDimensions(m_x, m_y);
         Trace(DEBUG1) << "JPEG dimensions x=" << m_x
@@ -192,7 +191,7 @@ RawContainer* CRWFile::getContainer() const
     }
     Trace(DEBUG2) << "length = " << iter->length << "\n";
     Trace(DEBUG2) << "offset = " << exifProps.offset() + iter->offset << "\n";
-    IO::Stream *file = m_container->file();
+    auto file = m_container->file();
     file->seek(exifProps.offset() + iter->offset, SEEK_SET);
     uint32_t decoderTable;
     if(m_container->readUInt32(file, decoderTable)) {

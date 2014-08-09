@@ -136,12 +136,12 @@ const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
     { 0, 0 }
 };
 
-RawFile *OrfFile::factory(IO::Stream *s)
+RawFile *OrfFile::factory(const IO::Stream::Ptr &s)
 {
     return new OrfFile(s);
 }
 
-OrfFile::OrfFile(IO::Stream *s)
+OrfFile::OrfFile(const IO::Stream::Ptr &s)
     : IfdFile(s, OR_RAWFILE_TYPE_ORF, false)
 {
     _setIdMap(s_def);
@@ -192,8 +192,8 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
         val_offset += makerNote->getMnoteOffset();
 
         Trace(DEBUG1) << "fetching JPEG\n";
-        std::unique_ptr<IO::StreamClone> s(new IO::StreamClone(m_io, val_offset));
-        std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+        IO::Stream::Ptr s(new IO::StreamClone(m_io, val_offset));
+        std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
 
         uint32_t x, y;
         x = y = 0;

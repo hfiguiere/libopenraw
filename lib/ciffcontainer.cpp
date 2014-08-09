@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainer.cpp
  *
- * Copyright (C) 2006-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -40,7 +40,7 @@ namespace OpenRaw {
 			bool ImageSpec::readFrom(off_t offset, CIFFContainer *container)
 			{
 				bool ret;
-				IO::Stream *file = container->file();
+				auto file = container->file();
 				file->seek(offset, SEEK_SET);
 				ret = container->readUInt32(file, imageWidth);
 				ret = container->readUInt32(file, imageHeight);
@@ -80,7 +80,7 @@ namespace OpenRaw {
 			bool RecordEntry::readFrom(CIFFContainer *container)
 			{
 				bool ret;
-				IO::Stream *file = container->file();
+				auto file = container->file();
 				ret = container->readUInt16(file, typeCode);
 				ret = container->readUInt32(file, length);
 				ret = container->readUInt32(file, offset);
@@ -115,7 +115,7 @@ namespace OpenRaw {
 
 			bool Heap::_loadRecords()
 			{
-				IO::Stream *file = m_container->file();
+				auto file = m_container->file();
 				file->seek(m_start + m_length - 4, SEEK_SET);
 				int32_t record_offset;
 				bool ret = m_container->readInt32(file, record_offset);
@@ -154,7 +154,7 @@ namespace OpenRaw {
 			{
 				endian = RawContainer::ENDIAN_NULL;
 				bool ret = false;
-				IO::Stream *file = container->file();
+				auto file = container->file();
 				int s = file->read(byteOrder, 2);
 				if (s == 2) {
 					if((byteOrder[0] == 'I') && (byteOrder[1] == 'I')) {
@@ -179,7 +179,7 @@ namespace OpenRaw {
 			}
 		}
 
-		CIFFContainer::CIFFContainer(IO::Stream *_file)
+		CIFFContainer::CIFFContainer(const IO::Stream::Ptr &_file)
 			: RawContainer(_file, 0),
 			  m_hdr(),
 			  m_heap((CIFF::Heap*)NULL),

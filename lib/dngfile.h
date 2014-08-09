@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,9 +35,9 @@ class DngFile
     : public TiffEpFile
 {
 public:
-    static RawFile *factory(IO::Stream *);
+    static RawFile *factory(const IO::Stream::Ptr &);
     
-    DngFile(IO::Stream *);
+    DngFile(const IO::Stream::Ptr &);
     virtual ~DngFile();
     
 protected:
@@ -45,8 +45,8 @@ protected:
     
 private:
     
-    DngFile(const DngFile&);
-    DngFile & operator=(const DngFile&);
+    DngFile(const DngFile&) = delete;
+    DngFile & operator=(const DngFile&) = delete;
     
     static const IfdFile::camera_ids_t s_def[];
 };

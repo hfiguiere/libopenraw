@@ -51,7 +51,8 @@ public:
       @param file the file handle
       @param offset the offset from the start of the file
   */
-  IfdFileContainer(IO::Stream *file, off_t offset);
+  IfdFileContainer(const IO::Stream::Ptr &file,
+                   off_t offset);
   /** destructor */
   virtual ~IfdFileContainer();
 

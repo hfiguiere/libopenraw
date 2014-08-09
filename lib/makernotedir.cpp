@@ -34,7 +34,7 @@ MakerNoteDir::createMakerNote(off_t offset,
                               IfdFileContainer & container)
 {
     char data[18];
-    IO::Stream *file = container.file();
+    auto file = container.file();
     file->seek(offset, SEEK_SET);
     file->read(&data, 18);
 
