@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.h
  *
- * Copyright (C) 2006-2008,2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -40,8 +40,8 @@ namespace OpenRaw {
 			: public OpenRaw::RawFile
 		{
 		public:
-			static RawFile *factory(IO::Stream *);
-			CRWFile(IO::Stream *);
+			static RawFile *factory(const IO::Stream::Ptr &);
+			CRWFile(const IO::Stream::Ptr &);
 			virtual ~CRWFile();
 
 		protected:
@@ -57,10 +57,10 @@ namespace OpenRaw {
 
 			virtual void _identifyId();
 		private:
-			CRWFile(const CRWFile&);
-			CRWFile & operator=(const CRWFile&);
+			CRWFile(const CRWFile&) = delete;
+			CRWFile & operator=(const CRWFile&) = delete;
 
-			IO::Stream *m_io; /**< the IO handle */
+			IO::Stream::Ptr m_io; /**< the IO handle */
 			CIFFContainer *m_container; /**< the real container */
 			uint32_t m_x;
 			uint32_t m_y;

@@ -1,7 +1,7 @@
 /*
  * libopenraw - stream.h
  *
- * Copyright (C) 2006 Hubert Figuière
+ * Copyright (C) 2006-2014 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <memory>
 #include <string>
 
 #include <libopenraw/consts.h>
@@ -40,6 +41,7 @@ namespace IO {
 class Stream
 {
 public:
+  typedef std::shared_ptr<Stream> Ptr;
   /** Construct the file 
    * @param filename the full uri for the file
    */

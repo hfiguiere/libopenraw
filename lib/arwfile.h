@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.h
  *
- * Copyright (C) 2006-2008, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -38,8 +38,8 @@ class ArwFile
     : public TiffEpFile
 {
 public:
-    static RawFile *factory(IO::Stream* s);
-    ArwFile(IO::Stream * s);
+    static RawFile *factory(const IO::Stream::Ptr & s);
+    ArwFile(const IO::Stream::Ptr & s);
     virtual ~ArwFile();
 
     // this is the value for "compression" for ARW

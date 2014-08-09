@@ -53,7 +53,7 @@ class RafContainer
 	: public RawContainer
 {
 public:
-	RafContainer(IO::Stream *_file);
+	RafContainer(const IO::Stream::Ptr &_file);
 	/** destructor */
 	virtual ~RafContainer();
 

@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2container.h
  *
- * Copyright (C) 2011 Hubert Figuiere
+ * Copyright (C) 2011-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,7 +35,7 @@ class Rw2Container
 	: public IfdFileContainer
 {
 public:
-	Rw2Container(IO::Stream *file, off_t offset);
+	Rw2Container(const IO::Stream::Ptr &file, off_t offset);
 	/** destructor */
 	virtual ~Rw2Container();
 
@@ -47,9 +47,9 @@ public:
 
 private:
 	char subtype_;
-	/* avoid these being called. */
-	Rw2Container(const Rw2Container &);
-	Rw2Container & operator=(const Rw2Container &);
+
+	Rw2Container(const Rw2Container &) = delete;
+	Rw2Container & operator=(const Rw2Container &) = delete;
 };
 
 }

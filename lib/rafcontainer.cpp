@@ -34,7 +34,7 @@ namespace OpenRaw {
 namespace Internals {
 	
 
-RafContainer::RafContainer(IO::Stream *_file)
+RafContainer::RafContainer(const IO::Stream::Ptr &_file)
 	: RawContainer(_file, 0)
 	, m_read(false)
 	, m_version(0)
@@ -67,7 +67,9 @@ IfdFileContainer * RafContainer::getCfaContainer()
 			_readHeader();
 		}
 		if(m_offsetDirectory.cfaOffset && m_offsetDirectory.cfaLength) {
-			m_cfaContainer = new IfdFileContainer(new IO::StreamClone(m_file, m_offsetDirectory.cfaOffset), 0);
+			m_cfaContainer = new IfdFileContainer(
+				IO::Stream::Ptr(new IO::StreamClone(
+					m_file,	m_offsetDirectory.cfaOffset)), 0);
 		}
 	}
 	return m_cfaContainer;
@@ -80,7 +82,10 @@ JfifContainer * RafContainer::getJpegPreview()
 			_readHeader();
 		}
 		if(m_offsetDirectory.jpegOffset && m_offsetDirectory.jpegLength) {
-			m_jpegPreview = new JfifContainer(new IO::StreamClone(m_file, m_offsetDirectory.jpegOffset), 0);
+			m_jpegPreview = new JfifContainer(
+				IO::Stream::Ptr(
+					new IO::StreamClone(
+						m_file, m_offsetDirectory.jpegOffset)), 0);
 		}
 	}
 	return m_jpegPreview;
@@ -93,7 +98,10 @@ RafMetaContainer * RafContainer::getMetaContainer()
 			_readHeader();
 		}
 		if(m_offsetDirectory.metaOffset && m_offsetDirectory.metaLength) {
-			m_metaContainer = new RafMetaContainer(new IO::StreamClone(m_file, m_offsetDirectory.metaOffset));
+			m_metaContainer = new RafMetaContainer(
+				IO::Stream::Ptr(
+					new IO::StreamClone(
+						m_file, m_offsetDirectory.metaOffset)));
 		}
 	}
 	return m_metaContainer;

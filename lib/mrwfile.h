@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.h
  *
- * Copyright (C) 2006-2008, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -34,8 +34,8 @@ class MRWFile
     : public IfdFile
 {
 public:
-    static RawFile *factory(IO::Stream* _filename);
-    MRWFile(IO::Stream* _filename);
+    static RawFile *factory(const IO::Stream::Ptr&);
+    MRWFile(const IO::Stream::Ptr &);
     virtual ~MRWFile();
     
 protected:
@@ -49,8 +49,8 @@ protected:
     virtual ::or_error _getRawData(RawData & data, uint32_t options);
 private:
     
-    MRWFile(const MRWFile&);
-    MRWFile & operator=(const MRWFile&);
+    MRWFile(const MRWFile&) = delete;
+    MRWFile & operator=(const MRWFile&) = delete;
     
     static const struct IfdFile::camera_ids_t s_def[];
 };

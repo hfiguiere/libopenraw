@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.cpp
  *
- * Copyright (C) 2006,2008,2011-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -143,12 +143,12 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
 };
 
 
-RawFile *ArwFile::factory(IO::Stream * s)
+RawFile *ArwFile::factory(const IO::Stream::Ptr & s)
 {
     return new ArwFile(s);
 }
 
-ArwFile::ArwFile(IO::Stream *s)
+ArwFile::ArwFile(const IO::Stream::Ptr &s)
     : TiffEpFile(s, OR_RAWFILE_TYPE_ARW)
 {
     _setIdMap(s_def);

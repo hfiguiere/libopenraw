@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.h
  *
- * Copyright (C) 2006, 2008, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,8 +35,8 @@ class Cr2File
     : public IfdFile
 {
 public:
-    static RawFile *factory(IO::Stream * s);
-    Cr2File(IO::Stream *s);
+    static RawFile *factory(const IO::Stream::Ptr &s);
+    Cr2File(const IO::Stream::Ptr &s);
     virtual ~Cr2File();
     
 protected:
@@ -44,8 +44,8 @@ protected:
     virtual IfdDir::Ref  _locateMainIfd();
 private:
     
-    Cr2File(const Cr2File&);
-    Cr2File & operator=(const Cr2File&);
+    Cr2File(const Cr2File&) = delete;
+    Cr2File & operator=(const Cr2File&) = delete;
     
     virtual ::or_error _getRawData(RawData & data, uint32_t options);
     

@@ -54,10 +54,10 @@ int test_main(int argc, char *argv[])
 	
 
 	RawData *decompData;
-	File *s = new File(g_testfile.c_str());
+	File::Ptr s(new File(g_testfile.c_str()));
 	RawContainer *container = new JfifContainer(s, 0);
 
-	LJpegDecompressor decompressor(s, container);
+	LJpegDecompressor decompressor(s.get(), container);
 
 	decompData = decompressor.decompress();
 
@@ -69,7 +69,6 @@ int test_main(int argc, char *argv[])
 
 	delete decompData;
 	delete container;
-	delete s;
 
 	return 0;
 }

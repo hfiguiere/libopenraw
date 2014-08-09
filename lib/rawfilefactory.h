@@ -23,9 +23,12 @@
 
 #include <string>
 #include <map>
+#include <memory>
 #include <functional>
 
 #include <libopenraw++/rawfile.h>
+
+#include "io/stream.h"
 
 namespace OpenRaw {
 namespace Internals {
@@ -33,7 +36,7 @@ namespace Internals {
 class RawFileFactory
 {
 public:
-    typedef std::function<RawFile*(IO::Stream*)> raw_file_factory_t;
+    typedef std::function<RawFile*(const IO::Stream::Ptr&)> raw_file_factory_t;
     /** the factory type for raw files
      * key is the extension. file is factory method
      */

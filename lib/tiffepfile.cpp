@@ -1,7 +1,7 @@
 /*
  * libopenraw - tiffepfile.cpp
  *
- * Copyright (C) 2007-2008 Hubert Figuiere
+ * Copyright (C) 2007-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,7 +28,8 @@ using namespace Debug;
 namespace OpenRaw {
 namespace Internals {
 
-TiffEpFile::TiffEpFile(IO::Stream * s, Type _type)
+TiffEpFile::TiffEpFile(const IO::Stream::Ptr &s,
+                       Type _type)
     : IfdFile(s, _type)
 {
 }

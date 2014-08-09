@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2file.h
  *
- * Copyright (C) 2006, 2008, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,8 +35,8 @@ class Rw2File
 	: public IfdFile
 {
 public:
-	static RawFile *factory(IO::Stream * s);
-	Rw2File(IO::Stream *s);
+	static RawFile *factory(const IO::Stream::Ptr & s);
+	Rw2File(const IO::Stream::Ptr & s);
 	virtual ~Rw2File();
 	
 	enum {
@@ -48,8 +48,8 @@ protected:
 	virtual IfdDir::Ref  _locateMainIfd();
 private:
 	
-	Rw2File(const Rw2File&);
-	Rw2File & operator=(const Rw2File&);
+	Rw2File(const Rw2File&) = delete;
+	Rw2File & operator=(const Rw2File&) = delete;
 
 	virtual ::or_error _locateThumbnail(const IfdDir::Ref & dir,
                                      std::vector<uint32_t> &list);

@@ -196,12 +196,12 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
     { 0, 0 }
 };
 
-RawFile *Cr2File::factory(IO::Stream * s)
+RawFile *Cr2File::factory(const IO::Stream::Ptr & s)
 {
 	return new Cr2File(s);
 }
 
-Cr2File::Cr2File(IO::Stream * s)
+Cr2File::Cr2File(const IO::Stream::Ptr & s)
 	: IfdFile(s, OR_RAWFILE_TYPE_CR2)
 {
     _setIdMap(s_def);
@@ -288,10 +288,10 @@ IfdDir::Ref  Cr2File::_locateMainIfd()
 					  << "x" << data.height() << "\n";
 		// decompress if we need
 		if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-                    std::unique_ptr<IO::Stream> s(new IO::MemStream(data.data(),
-															  data.size()));
-			s->open(); // TODO check success
-                        std::unique_ptr<JfifContainer> jfif(new JfifContainer(s.get(), 0));
+                    IO::Stream::Ptr s(new IO::MemStream(data.data(),
+                                                        data.size()));
+                    s->open(); // TODO check success
+                    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
 			LJpegDecompressor decomp(s.get(), jfif.get());
 			// in fact on Canon CR2 files slices either do not exists
 			// or is 3.

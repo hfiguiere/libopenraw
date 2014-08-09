@@ -49,7 +49,7 @@ public:
 #endif
 
 protected:
-	IfdFile(IO::Stream * s, Type _type, 
+	IfdFile(const IO::Stream::Ptr &s, Type _type,
 			bool instantiateContainer = true);
 	virtual ~IfdFile();
 
@@ -81,7 +81,7 @@ protected:
 	 */
 	virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & len);
 
-	IO::Stream       *m_io; /**< the IO handle */
+	IO::Stream::Ptr  m_io; /**< the IO handle */
 	IfdFileContainer *m_container; /**< the real container */
 
   virtual RawContainer* getContainer() const;
@@ -133,8 +133,8 @@ private:
 	IfdDir::Ref       m_exifIfd; /**< the Exif IFD */
 	MakerNoteDir::Ref m_makerNoteIfd; /**< the MakerNote IFD */
 	
-	IfdFile(const IfdFile&);
-	IfdFile & operator=(const IfdFile &);
+	IfdFile(const IfdFile&) = delete;
+	IfdFile & operator=(const IfdFile &) = delete;
 };
 
 }

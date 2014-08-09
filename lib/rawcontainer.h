@@ -23,8 +23,12 @@
 
 #include <sys/types.h>
 
+#include <memory>
+
 #include <libopenraw/io.h>
 #include <libopenraw/types.h>
+
+#include "io/stream.h"
 
 namespace OpenRaw {
 namespace IO {
@@ -46,17 +50,18 @@ public:
     ENDIAN_BIG,      /** big endian found */
     ENDIAN_LITTLE    /** little endian found */
   } EndianType;
-  
-  /** 
+
+  /**
       @param file the stream to read from
       @param offset the offset since starting the 
       beginning of the file for the container
   */
-  RawContainer(IO::Stream *_file, off_t offset);
+  RawContainer(const IO::Stream::Ptr & _file,
+               off_t offset);
   /** destructor */
   virtual ~RawContainer();
-	
-  IO::Stream *file()
+
+  const IO::Stream::Ptr & file()
     {
       return m_file;
     }
@@ -69,16 +74,16 @@ public:
       return m_offset;
     }
   
-  bool readInt8(IO::Stream *f, int8_t & v);
-  bool readUInt8(IO::Stream *f, uint8_t & v);
+  bool readInt8(const IO::Stream::Ptr & f, int8_t & v);
+  bool readUInt8(const IO::Stream::Ptr & f, uint8_t & v);
   /** Read an int16 following the m_endian set */
-  bool readInt16(IO::Stream *f, int16_t & v);
+  bool readInt16(const IO::Stream::Ptr & f, int16_t & v);
   /** Read an int32 following the m_endian set */
-  bool readInt32(IO::Stream *f, int32_t & v);
+  bool readInt32(const IO::Stream::Ptr &f, int32_t & v);
   /** Read an uint16 following the m_endian set */
-  bool readUInt16(IO::Stream *f, uint16_t & v);
+  bool readUInt16(const IO::Stream::Ptr &f, uint16_t & v);
   /** Read an uint32 following the m_endian set */
-  bool readUInt32(IO::Stream *f, uint32_t & v);
+  bool readUInt32(const IO::Stream::Ptr &f, uint32_t & v);
   /** 
    * Fetch the data chunk from the file
    * @param buf the buffer to load into
@@ -99,7 +104,7 @@ protected:
     }
   
   /** the file handle */
-  IO::Stream *m_file;
+  IO::Stream::Ptr m_file;
   /** the offset from the beginning of the file */
   off_t m_offset;
   EndianType m_endian;

@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifddir.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -64,7 +64,7 @@ bool IfdDir::load()
 {
     Trace(DEBUG1) << "IfdDir::load() m_offset =" << m_offset << "\n";
     int16_t numEntries = 0;
-    IO::Stream *file = m_container.file();
+    auto file = m_container.file();
     m_entries.clear();
     file->seek(m_offset, SEEK_SET);
     m_container.readInt16(file, numEntries);
@@ -110,7 +110,7 @@ bool IfdDir::getIntegerValue(uint16_t id, uint32_t &v)
 off_t IfdDir::nextIFD()
 {
 	int16_t numEntries;
-	IO::Stream *file = m_container.file();
+	auto file = m_container.file();
 
 	if(m_entries.size() == 0) {
 		file->seek(m_offset, SEEK_SET);

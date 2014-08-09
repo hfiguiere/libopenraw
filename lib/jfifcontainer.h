@@ -1,7 +1,7 @@
 /*
  * libopenraw - jfifcontainer.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -27,6 +27,7 @@
 
 #include <setjmp.h>
 #include <cstdio>
+#include <memory>
 
 namespace JPEG {
 #include <jpeglib.h>
@@ -49,7 +50,7 @@ class JfifContainer
   : public RawContainer
 {
 public:
-  JfifContainer(IO::Stream *file, off_t offset);
+  JfifContainer(const IO::Stream::Ptr &file, off_t offset);
   /** destructor */
   virtual ~JfifContainer();
     

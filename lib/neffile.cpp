@@ -200,12 +200,12 @@ const IfdFile::camera_ids_t NefFile::s_def[] = {
     { 0, 0 }
 };
 
-RawFile *NefFile::factory(IO::Stream* _filename)
+RawFile *NefFile::factory(const IO::Stream::Ptr & _filename)
 {
     return new NefFile(_filename);
 }
 
-NefFile::NefFile(IO::Stream* _filename)
+NefFile::NefFile(const IO::Stream::Ptr & _filename)
     : TiffEpFile(_filename, OR_RAWFILE_TYPE_NEF)
 {
     _setIdMap(s_def);
@@ -305,7 +305,7 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
 
     size_t pos = _makerNoteIfd->getMnoteOffset() + curveEntry->offset();
 
-    IO::Stream *file = m_container->file();
+    auto file = m_container->file();
     file->seek(pos, SEEK_SET);
 
     uint8_t header0, header1;

@@ -49,7 +49,7 @@ int test_main (int argc, char * argv[])
     else {
         g_testfile = argv[1];
     }
-    IO::File *file = new IO::File(g_testfile.c_str());
+    auto file = IO::Stream::Ptr(new IO::File(g_testfile.c_str()));
     char buf1[128];
     int ret = file->open();
     BOOST_CHECK(ret == 0);
@@ -64,7 +64,7 @@ int test_main (int argc, char * argv[])
 
     const off_t clone_offset = 2;
 
-    IO::StreamClone * clone = new IO::StreamClone(file, clone_offset);
+    auto clone = new IO::StreamClone(file, clone_offset);
 
     ret = clone->open();
     BOOST_CHECK(ret == 0);

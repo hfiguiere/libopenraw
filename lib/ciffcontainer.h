@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainer.h
  *
- * Copyright (C) 2006-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -231,7 +231,7 @@ namespace OpenRaw {
 			: public RawContainer
 		{
 		public:
-			CIFFContainer(IO::Stream *file);
+			CIFFContainer(const IO::Stream::Ptr &file);
 			virtual ~CIFFContainer();
 
 			CIFF::Heap::Ref heap();
@@ -249,8 +249,8 @@ namespace OpenRaw {
 			EndianType _readHeader();
 
 
-			CIFFContainer(const CIFFContainer &);
-			CIFFContainer & operator=(const CIFFContainer &);
+			CIFFContainer(const CIFFContainer &) = delete;
+			CIFFContainer & operator=(const CIFFContainer &) = delete;
 
 			friend class CIFF::HeapFileHeader;
 			CIFF::HeapFileHeader m_hdr;

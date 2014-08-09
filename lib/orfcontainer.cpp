@@ -30,7 +30,7 @@ namespace OpenRaw {
 namespace Internals {
 
 
-OrfContainer::OrfContainer(IO::Stream *_file, off_t _offset)
+OrfContainer::OrfContainer(const IO::Stream::Ptr &_file, off_t _offset)
 	: IfdFileContainer(_file, _offset)
 	, subtype_(0)
 {

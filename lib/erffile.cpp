@@ -1,7 +1,7 @@
 /*
  * libopenraw - erffile.cpp
  *
- * Copyright (C) 2006-2008, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -54,12 +54,12 @@ const IfdFile::camera_ids_t ERFFile::s_def[] = {
                                    OR_TYPEID_EPSON_RD1S) },			{ 0, 0 }
 };
 
-RawFile *ERFFile::factory(IO::Stream *s)
+RawFile *ERFFile::factory(const IO::Stream::Ptr &s)
 {
     return new ERFFile(s);
 }
 
-ERFFile::ERFFile(IO::Stream *s)
+ERFFile::ERFFile(const IO::Stream::Ptr &s)
     : TiffEpFile(s, OR_RAWFILE_TYPE_ERF)
 {
     _setIdMap(s_def);

@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwcontainer.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -98,7 +98,7 @@ namespace OpenRaw {
 			}
 		}
 
-		MRWContainer::MRWContainer(IO::Stream *_file, off_t _offset)
+		MRWContainer::MRWContainer(const IO::Stream::Ptr &_file, off_t _offset)
 			: IfdFileContainer(_file, _offset)
 		{
 

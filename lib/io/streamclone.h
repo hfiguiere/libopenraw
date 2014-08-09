@@ -25,6 +25,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <memory>
+
 #include "stream.h"
 
 namespace OpenRaw {
@@ -36,7 +38,7 @@ class StreamClone
   : public Stream
 {
 public:
-  StreamClone(Stream *clone, off_t offset);
+  StreamClone(const Stream::Ptr &clone, off_t offset);
   virtual ~StreamClone();
 			
   virtual Error open();
@@ -47,12 +49,10 @@ public:
 
 
 private:
-  /** private copy constructor to make sure it is not called */
-  StreamClone(const StreamClone& f);
-  /** private = operator to make sure it is never called */
-  StreamClone & operator=(const StreamClone&);
+  StreamClone(const StreamClone& f) = delete;
+  StreamClone & operator=(const StreamClone&) = delete;
 
-  Stream *m_cloned;
+  Stream::Ptr m_cloned;
   off_t m_offset;
 };
 

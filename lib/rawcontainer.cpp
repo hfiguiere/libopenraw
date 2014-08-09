@@ -35,7 +35,7 @@ namespace OpenRaw {
 namespace Internals {
 
 
-RawContainer::RawContainer(IO::Stream *_file, off_t _offset)
+RawContainer::RawContainer(const IO::Stream::Ptr &_file, off_t _offset)
   : m_file(_file),
     m_offset(_offset),
     m_endian(ENDIAN_NULL)
@@ -51,7 +51,7 @@ RawContainer::~RawContainer()
 }
 
 
-bool RawContainer::readInt8(IO::Stream *f, int8_t & v)
+bool RawContainer::readInt8(const IO::Stream::Ptr &f, int8_t & v)
 {
   unsigned char buf;
   int s = f->read(&buf, 1);
@@ -62,7 +62,7 @@ bool RawContainer::readInt8(IO::Stream *f, int8_t & v)
   return true;
 }
 
-bool RawContainer::readUInt8(IO::Stream *f, uint8_t & v)
+bool RawContainer::readUInt8(const IO::Stream::Ptr &f, uint8_t & v)
 {
   unsigned char buf;
   int s = f->read(&buf, 1);
@@ -74,7 +74,7 @@ bool RawContainer::readUInt8(IO::Stream *f, uint8_t & v)
 }
 
 bool 
-RawContainer::readInt16(IO::Stream *f, int16_t & v)
+RawContainer::readInt16(const IO::Stream::Ptr &f, int16_t & v)
 {
   if (m_endian == ENDIAN_NULL) {
     
@@ -98,7 +98,7 @@ RawContainer::readInt16(IO::Stream *f, int16_t & v)
 
 
 bool 
-RawContainer::readInt32(IO::Stream *f, int32_t & v)
+RawContainer::readInt32(const IO::Stream::Ptr &f, int32_t & v)
 {
   if (m_endian == ENDIAN_NULL) {
     
@@ -125,7 +125,7 @@ RawContainer::readInt32(IO::Stream *f, int32_t & v)
 
 
 bool 
-RawContainer::readUInt16(IO::Stream *f, uint16_t & v)
+RawContainer::readUInt16(const IO::Stream::Ptr &f, uint16_t & v)
 {
   if (m_endian == ENDIAN_NULL) {
 
@@ -149,7 +149,7 @@ RawContainer::readUInt16(IO::Stream *f, uint16_t & v)
 
 
 bool 
-RawContainer::readUInt32(IO::Stream *f, uint32_t & v)
+RawContainer::readUInt32(const IO::Stream::Ptr &f, uint32_t & v)
 {
   if (m_endian == ENDIAN_NULL) {
 

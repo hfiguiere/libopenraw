@@ -1,7 +1,7 @@
 /*
  * libopenraw - neffile.h
  *
- * Copyright (C) 2006-2008, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -38,8 +38,8 @@ class NefFile
     : public TiffEpFile
 {
 public:
-    static RawFile *factory(IO::Stream* _f);
-    NefFile(IO::Stream * _f);
+    static RawFile *factory(const IO::Stream::Ptr & _f);
+    NefFile(const IO::Stream::Ptr & _f);
     virtual ~NefFile();
     
     /** hack because some (lot?) D100 do set as compressed even though 
@@ -56,8 +56,8 @@ public:
 
 private:
     
-    NefFile(const NefFile&);
-    NefFile & operator=(const NefFile &);
+    NefFile(const NefFile&) = delete;
+    NefFile & operator=(const NefFile &) = delete;
     
     static const IfdFile::camera_ids_t s_def[];
     int _getCompressionCurve(RawData&, NEFCompressionInfo&);
