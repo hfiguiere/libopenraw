@@ -49,7 +49,7 @@ XTransPattern::XTransPattern()
 const XTransPattern*
 XTransPattern::xtransPattern()
 {
-  const XTransPattern* s_pat = new XTransPattern();
+  static const XTransPattern* s_pat = new XTransPattern();
 
   return s_pat;
 }
