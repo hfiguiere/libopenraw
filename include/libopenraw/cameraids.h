@@ -1,7 +1,7 @@
 /*
  * libopenraw - cameraids.h
  *
- * Copyright (C) 2012-2013 Hubert Figuière
+ * Copyright (C) 2012-2014 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -414,6 +414,7 @@ extern "C" {
         OR_TYPEID_FUJIFILM_X20 = 19,
         OR_TYPEID_FUJIFILM_XM1 = 20,
         OR_TYPEID_FUJIFILM_XE2 = 21,
+        OR_TYPEID_FUJIFILM_XT1 = 22,
         _OR_TYPEID_FUJIFILM_LAST
     };
 

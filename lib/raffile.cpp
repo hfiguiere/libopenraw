@@ -112,6 +112,7 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
   { "X-E1  " ,         OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1) },
   { "X-E2" ,           OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE2) },
   { "X-M1" ,           OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XM1) },
+  { "X-T1" ,           OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT1) },
   { "XF1",             OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XF1) },
   { "X100S",           OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100S) },
   { nullptr, 0 }
@@ -232,7 +233,9 @@ RawContainer* RafFile::getContainer() const
   switch(typeId()) {
   case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO1):
   case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1):
+  case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE2):
   case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XM1):
+  case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT1):
   case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100S):
   case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X20):
     data.setCfaPattern(XTransPattern::xtransPattern());
@@ -247,10 +250,15 @@ RawContainer* RafFile::getContainer() const
   size_t fetched = 0;
   off_t offset = m_container->getCfaOffset() + 2048;
 
-  bool is_compressed = (compressed == 8);
   uint32_t finaldatalen = 2 * h * w;
+  bool is_compressed = byte_size < finaldatalen; //(compressed == 8);
   uint32_t datalen =  (is_compressed ? byte_size : finaldatalen);
   void *buf = data.allocData(finaldatalen);
+
+  Debug::Trace(DEBUG2) << "byte_size = " << byte_size
+                       << " finaldatalen = " << finaldatalen
+                       << " compressed = " << compressed
+                       << "\n";
 
   ret = OR_ERROR_NONE;
 
@@ -263,24 +271,28 @@ RawContainer* RafFile::getContainer() const
     size_t outsize = finaldatalen;
     size_t got;
     do {
-      Debug::Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
+//      Debug::Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
       got = m_container->fetchData (block.get(),
                       offset, blocksize);
       fetched += got;
       offset += got;
-      Debug::Trace(DEBUG2) << "got " << got << "\n";
+//      Debug::Trace(DEBUG2) << "got " << got << "\n";
       if(got) {
         size_t out;
         or_error err = unpack.unpack_be12to16(outdata, outsize,
                             block.get(), got, out);
         outdata += out;
         outsize -= out;
-        Debug::Trace(DEBUG2) << "unpacked " << out
-                             << " bytes from " << got << "\n";
+//        Debug::Trace(DEBUG2) << "unpacked " << out
+//                             << " bytes from " << got << "\n";
         if(err != OR_ERROR_NONE) {
+          Debug::Trace(DEBUG2) << "error is " << err << "\n";
           ret = err;
           break;
         }
+//        Debug::Trace(DEBUG2) << "got = " << got
+//                             << " fetched = " << fetched
+//                             << " datalen = " << datalen << "\n";
       }
     } while((got != 0) && (fetched < datalen));
   }
