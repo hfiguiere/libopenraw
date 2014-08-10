@@ -98,6 +98,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       { 9777,-3483,-925,-2886,11297,1800,-602,1663,5134 } },
     { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM5), 0, 0xfe1,
       { 8380, -2630, -639, -2887, 725, 2496, -627, 1427, 5438 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM1), 0, 0,
+      { 7687, -1984, -606, -4327, 11928, 2721, -1381, 2339, 6452 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1), 0, 0,
+      { 8360, -2420, -880, -3928, 12353, 1739, -1381, 2416, 5173 } },
 
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 
