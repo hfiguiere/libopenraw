@@ -246,6 +246,10 @@ RawFile::Type RawFile::identify(const char*_filename)
         _type = OR_RAWFILE_TYPE_ORF;
         return OR_ERROR_NONE;
     }
+    if(memcmp(buff, "IIU\0", 4) == 0) {
+        _type = OR_RAWFILE_TYPE_RW2;
+        return OR_ERROR_NONE;
+    }
     if(memcmp(buff, RAF_MAGIC, RAF_MAGIC_LEN) == 0) {
         _type = OR_RAWFILE_TYPE_RAF;
         return OR_ERROR_NONE;

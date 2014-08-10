@@ -637,6 +637,28 @@
       <rawMaxValue>0</rawMaxValue>
       <rawMd5>51</rawMd5>
       <metaOrientation>1</metaOrientation>
-    </results>    
+    </results>
+  </test>
+  <test>
+    <name>RW2-test GH4</name>
+    <file>/home/hub/samples/rw2/Panasonic_GH4/P9490010.RW2</file>
+    <source>http://www.dpreview.com/reviews/image-comparison/download-image?s3Key=ec839aaa3c8544f1a8b8190d6008881c.rw2</source>
+    <results>
+      <rawType>RW2</rawType>
+      <rawTypeId>720926</rawTypeId>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>1920</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>764928</thumbDataSizes>
+      <thumbMd5>2</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>19120128</rawDataSize>
+      <rawDataDimensions>4816 3472</rawDataDimensions>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>0</rawMaxValue>
+      <rawMd5>34</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
   </test>
 </testsuite>

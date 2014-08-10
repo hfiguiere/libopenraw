@@ -204,7 +204,7 @@ bool Test::testRawType(const std::string & result)
     OpenRaw::IO::File f(m_file.c_str());
     ::or_error err = f.open();
     if(err != OR_ERROR_NONE) {
-        RETURN_FAIL("failed to open", 
+        RETURN_FAIL("failed to open",
                     boost::lexical_cast<std::string>(err));
     }
     off_t len = f.filesize();
@@ -221,7 +221,7 @@ bool Test::testRawType(const std::string & result)
         }
     }
     else {
-        RETURN_FAIL("failed to load into buffer", 
+        RETURN_FAIL("failed to load into buffer",
                     boost::lexical_cast<std::string>(res));
     }
 
