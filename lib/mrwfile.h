@@ -37,21 +37,21 @@ public:
     static RawFile *factory(const IO::Stream::Ptr&);
     MRWFile(const IO::Stream::Ptr &);
     virtual ~MRWFile();
-    
+
 protected:
     virtual IfdDir::Ref  _locateCfaIfd();
     virtual IfdDir::Ref  _locateMainIfd();
 
     virtual void _identifyId();
-    
+
     virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
     virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
     virtual ::or_error _getRawData(RawData & data, uint32_t options);
 private:
-    
+
     MRWFile(const MRWFile&) = delete;
     MRWFile & operator=(const MRWFile&) = delete;
-    
+
     static const struct IfdFile::camera_ids_t s_def[];
 };
 
