@@ -45,14 +45,14 @@ namespace OpenRaw {
 			  m_dirs()
 		{
 		}
-	
+
 		IfdFileContainer::~IfdFileContainer()
 		{
 			m_dirs.clear();
 		}
 
 
-		IfdFileContainer::EndianType 
+		IfdFileContainer::EndianType
 		IfdFileContainer::isMagicHeader(const char *p, int len)
 		{
 			if (len < 4){
@@ -83,7 +83,7 @@ namespace OpenRaw {
 			return m_dirs.size();
 		}
 
-		std::vector<IfdDir::Ref> & 
+		std::vector<IfdDir::Ref> &
 		IfdFileContainer::directories()
 		{
 			if (m_dirs.size() == 0) {
@@ -105,7 +105,7 @@ namespace OpenRaw {
 				// FIXME set error
 				return IfdDir::Ref();
 			}
-			// dir is signed here because we can pass negative 
+			// dir is signed here because we can pass negative
 			// value for specific Exif IFDs.
 			if (dir > (int)m_dirs.size()) {
 				// FIXME set error
@@ -117,17 +117,17 @@ namespace OpenRaw {
 		}
 
 
-		size_t 
+		size_t
 		IfdFileContainer::getDirectoryDataSize()
 		{
 			// TODO move to IFDirectory
 			Trace(DEBUG1) << "getDirectoryDataSize()" << "\n";
 			off_t dir_offset = m_current_dir->offset();
 			// FIXME check error
-			Trace(DEBUG1) << "offset = " << dir_offset 
+			Trace(DEBUG1) << "offset = " << dir_offset
 								<< " m_numTags = " << m_current_dir->numTags() << "\n";
 			off_t begin = dir_offset + 2 + (m_current_dir->numTags()*12);
-			
+
 			Trace(DEBUG1) << "begin = " << begin << "\n";
 
 			m_file->seek(begin, SEEK_SET);
@@ -141,8 +141,8 @@ namespace OpenRaw {
 			return nextIFD - begin;
 		}
 
-		bool IfdFileContainer::locateDirsPreHook() 
-		{ 
+		bool IfdFileContainer::locateDirsPreHook()
+		{
 			return true;
 		}
 
@@ -175,7 +175,7 @@ namespace OpenRaw {
 
 					// we assume the offset is relative to the begining of
 					// the IFD.
-					IfdDir::Ref dir(new IfdDir(m_offset + dir_offset,*this));
+					IfdDir::Ref dir(std::make_shared<IfdDir>(m_offset + dir_offset,*this));
 					m_dirs.push_back(dir);
 
 //					std::cerr.setf((std::ios_base::fmtflags)0, std::ios_base::basefield);

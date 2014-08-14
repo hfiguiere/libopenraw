@@ -40,37 +40,39 @@ MakerNoteDir::createMakerNote(off_t offset,
 
     if (memcmp("Nikon\0", data, 6) == 0) {
         if (data[6] == 1) {
-            return Ref(new MakerNoteDir(offset + 8, container,
-                                        offset + 8));
+            return std::make_shared<MakerNoteDir>(
+                offset + 8, container, offset + 8);
         }
         else if (data[6] == 2) {
             // this one has an endian / TIFF header after the magic
-            return Ref(new MakerNoteDir(offset + 18, container,
-                                        offset + 10));
+            return std::make_shared<MakerNoteDir>(
+                offset + 18, container, offset + 10);
         }
         else {
-            return Ref(new MakerNoteDir(offset, container, offset));
+            return std::make_shared<MakerNoteDir>(
+                offset, container, offset);
         }
     }
 
     if (memcmp("OLYMPUS\0", data, 8) == 0) {
-        return Ref(new MakerNoteDir(offset + 12, container, offset));
+        return std::make_shared<MakerNoteDir>(
+            offset + 12, container, offset);
     }
 
     if (memcmp("OLYMP\0", data, 6) == 0) {
-        return Ref(new MakerNoteDir(offset + 8, container,
-                                    offset + 8));
+        return std::make_shared<MakerNoteDir>(
+            offset + 8, container, offset + 8);
     }
 
 #if 0 // Minolta stub. Untested.
     if (memcmp("MLT0\0", data + 10, 5) == 0) {
-        return Ref(new MakerNoteDir(offset + 8, container,
-                                    offset + 8));
+        return std::make_shared<MakerNoteDir>(
+            offset + 8, container, offset + 8);
     }
 #endif
 
 
-    return Ref(new MakerNoteDir(offset, container, offset));
+    return std::make_shared<MakerNoteDir>(offset, container, offset);
 }
 
 MakerNoteDir::MakerNoteDir(off_t _offset,

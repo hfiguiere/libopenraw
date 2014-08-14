@@ -156,9 +156,10 @@ void MRWFile::_identifyId()
     uint32_t off = 0;
     off = maker_ent->offset();
 
-    IfdDir::Ref ref(new IfdDir(mc->ttw->offset() +
-                               MRW::DataBlockHeaderLength + off,
-                               *m_container));
+    IfdDir::Ref ref(std::make_shared<IfdDir>(
+                        mc->ttw->offset()
+                        + MRW::DataBlockHeaderLength + off,
+                        *m_container));
     ref->load();
 
     uint32_t tnail_offset = 0;

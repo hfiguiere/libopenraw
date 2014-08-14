@@ -78,8 +78,9 @@ bool IfdDir::load()
         m_container.readInt16(file, type);
         m_container.readInt32(file, count);
         file->read(&data, 4);
-        IfdEntry::Ref entry(new IfdEntry(id, type,
-                                         count, data, m_container));
+        IfdEntry::Ref entry(std::make_shared<IfdEntry>(id, type,
+                                                       count, data,
+                                                       m_container));
         m_entries[id] = entry;
     }
 
@@ -100,7 +101,7 @@ bool IfdDir::getIntegerValue(uint16_t id, uint32_t &v)
 {
 	bool success = false;
 	IfdEntry::Ref e = getEntry(id);
-	if (e != NULL) {
+	if (e != nullptr) {
 	    v = e->getIntegerArrayItem(0);
 	    success = true;
 	}
@@ -115,9 +116,9 @@ off_t IfdDir::nextIFD()
 	if(m_entries.size() == 0) {
 		file->seek(m_offset, SEEK_SET);
 		m_container.readInt16(file, numEntries);
-		Trace(DEBUG1) << "numEntries =" << numEntries 
-							<< " shifting " << (numEntries * 12) + 2
-							<< "bytes\n";
+		Trace(DEBUG1) << "numEntries =" << numEntries
+                              << " shifting " << (numEntries * 12) + 2
+                              << "bytes\n";
 	}
 	else {
 		numEntries = m_entries.size();
@@ -136,13 +137,13 @@ IfdDir::Ref IfdDir::getSubIFD(uint32_t idx) const
 {
 	std::vector<uint32_t> offsets;
 	IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_SUB_IFDS);
-	if (e != NULL) {
+	if (e != nullptr) {
 		try {
 			e->getArray(offsets);
 			if (idx >= offsets.size()) {
-				Ref ref(new IfdDir(offsets[idx], m_container));
-				ref->load();
-				return ref;
+                            Ref ref(std::make_shared<IfdDir>(offsets[idx], m_container));
+                            ref->load();
+                            return ref;
 			}
 		}
 		catch(const std::exception &ex) {
@@ -153,24 +154,23 @@ IfdDir::Ref IfdDir::getSubIFD(uint32_t idx) const
 }
 
 
-bool IfdDir::getSubIFDs(std::vector<IfdDir::Ref> & ifds) 
+bool IfdDir::getSubIFDs(std::vector<IfdDir::Ref> & ifds)
 {
 	bool success = false;
 	std::vector<uint32_t> offsets;
 	IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_SUB_IFDS);
-	if (e != NULL) {
+	if (e != nullptr) {
 		try {
 			e->getArray(offsets);
-			for (std::vector<uint32_t>::const_iterator iter = offsets.begin();
-					 iter != offsets.end(); iter++) {
-				Ref ifd(new IfdDir(*iter, m_container));
-				ifd->load();
-				ifds.push_back(ifd);
+			for (auto iter : offsets) {
+                            Ref ifd(std::make_shared<IfdDir>(iter, m_container));
+                            ifd->load();
+                            ifds.push_back(ifd);
 			}
 			success = true;
 		}
 		catch(const std::exception &ex) {
-			Trace(ERROR) << "Exception " << ex.what() << "\n";					
+			Trace(ERROR) << "Exception " << ex.what() << "\n";
 		}
 	}
 	return success;
@@ -185,16 +185,17 @@ IfdDir::Ref IfdDir::getExifIFD()
 	uint32_t val_offset = 0;
 	success = getValue(IFD::EXIF_TAG_EXIF_IFD_POINTER, val_offset);
 	if (success) {
-		Trace(DEBUG1) << "Exif IFD offset (uncorrected) = " << val_offset 
+		Trace(DEBUG1) << "Exif IFD offset (uncorrected) = " << val_offset
 					 << "\n";
 		val_offset += m_container.exifOffsetCorrection();
 		Trace(DEBUG1) << "Exif IFD offset = " << val_offset << "\n";
-		Ref ref(new IfdDir(val_offset, m_container));
+		Ref ref(std::make_shared<IfdDir>(val_offset,
+                                                 m_container));
 		ref->load();
 		return ref;
 	}
 	else {
-		Trace(DEBUG1) << "Exif IFD offset not found.\n";				
+		Trace(DEBUG1) << "Exif IFD offset not found.\n";
 	}
 	return Ref();
 }

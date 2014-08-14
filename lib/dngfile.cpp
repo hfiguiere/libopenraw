@@ -136,8 +136,9 @@ DngFile::~DngFile()
                 compression == IFD::COMPRESS_LJPEG) {
                 // if the option is not set, decompress
                 if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-                    IO::Stream::Ptr s(new IO::MemStream(data.data(),
-                                                        data.size()));
+                    IO::Stream::Ptr s(
+                        std::make_shared<IO::MemStream>(data.data(),
+                                                  data.size()));
                     s->open(); // TODO check success
                     std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
                     LJpegDecompressor decomp(s.get(), jfif.get());

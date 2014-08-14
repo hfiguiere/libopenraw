@@ -68,8 +68,8 @@ IfdFileContainer * RafContainer::getCfaContainer()
 		}
 		if(m_offsetDirectory.cfaOffset && m_offsetDirectory.cfaLength) {
 			m_cfaContainer = new IfdFileContainer(
-				IO::Stream::Ptr(new IO::StreamClone(
-					m_file,	m_offsetDirectory.cfaOffset)), 0);
+				std::make_shared<IO::StreamClone>(
+                    m_file, m_offsetDirectory.cfaOffset), 0);
 		}
 	}
 	return m_cfaContainer;
@@ -83,9 +83,8 @@ JfifContainer * RafContainer::getJpegPreview()
 		}
 		if(m_offsetDirectory.jpegOffset && m_offsetDirectory.jpegLength) {
 			m_jpegPreview = new JfifContainer(
-				IO::Stream::Ptr(
-					new IO::StreamClone(
-						m_file, m_offsetDirectory.jpegOffset)), 0);
+				std::make_shared<IO::StreamClone>(
+                    m_file, m_offsetDirectory.jpegOffset), 0);
 		}
 	}
 	return m_jpegPreview;
@@ -99,9 +98,8 @@ RafMetaContainer * RafContainer::getMetaContainer()
 		}
 		if(m_offsetDirectory.metaOffset && m_offsetDirectory.metaLength) {
 			m_metaContainer = new RafMetaContainer(
-				IO::Stream::Ptr(
-					new IO::StreamClone(
-						m_file, m_offsetDirectory.metaOffset)));
+				std::make_shared<IO::StreamClone>(
+                    m_file, m_offsetDirectory.metaOffset));
 		}
 	}
 	return m_metaContainer;

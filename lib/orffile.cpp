@@ -196,7 +196,8 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
         val_offset += makerNote->getMnoteOffset();
 
         Trace(DEBUG1) << "fetching JPEG\n";
-        IO::Stream::Ptr s(new IO::StreamClone(m_io, val_offset));
+        IO::Stream::Ptr s(
+            std::make_shared<IO::StreamClone>(m_io, val_offset));
         std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
 
         uint32_t x, y;
@@ -240,8 +241,8 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
             if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
                 OlympusDecompressor decomp((const uint8_t*)data.data(),
                                            data.size(), m_container, x, y);
-                RawData *dData = decomp.decompress(NULL);
-                if (dData != NULL) {
+                RawData *dData = decomp.decompress(nullptr);
+                if (dData) {
                     dData->setCfaPatternType(data.cfaPattern()->patternType());
                     data.swap(*dData);
                     data.setDataType(OR_DATA_TYPE_RAW);

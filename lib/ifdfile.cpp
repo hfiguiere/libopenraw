@@ -49,7 +49,7 @@ IfdFile::IfdFile(const IO::Stream::Ptr &s, Type _type,
                  bool instantiateContainer)
   : RawFile(_type),
     m_io(s),
-    m_container(NULL)
+    m_container(nullptr)
 {
   if(instantiateContainer) {
     m_container = new IfdFileContainer(m_io, 0);
@@ -218,7 +218,8 @@ void IfdFile::_identifyId()
           _type = OR_DATA_TYPE_JPEG;
           Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
           if (x == 0 || y == 0) {
-            IO::Stream::Ptr s(new IO::StreamClone(m_io, offset));
+            IO::Stream::Ptr s(std::make_shared<IO::StreamClone>(
+                                m_io, offset));
             std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
             if (jfif->getDimensions(x,y)) {
               Trace(DEBUG1) << "JPEG dimensions x=" << x
@@ -306,7 +307,7 @@ uint32_t IfdFile::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & by
 
 MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
 {
-  MetaValue * val = NULL;
+  MetaValue * val = nullptr;
   IfdDir::Ref ifd;
   if(META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
     ifd = mainIfd();

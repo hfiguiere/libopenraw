@@ -180,8 +180,9 @@ RafFile::~RafFile()
       }
 
       if(got_it) {
-        IO::Stream::Ptr s(new IO::StreamClone(jpegPreview->file(),
-                                              jpeg_offset));
+        IO::Stream::Ptr s(
+          std::make_shared<IO::StreamClone>(jpegPreview->file(),
+                                            jpeg_offset));
         std::unique_ptr<JfifContainer> thumb(new JfifContainer(s, 0));
 
         if(thumb->getDimensions(x, y)) {
