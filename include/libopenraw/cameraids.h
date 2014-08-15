@@ -140,7 +140,7 @@ extern "C" {
     /** Nikon type IDs */
     enum {
         OR_TYPEID_NIKON_UNKNOWN = 0,
-        OR_TYPEID_NIKON_COOLPIX_5700 ,
+        OR_TYPEID_NIKON_E5700 ,
         OR_TYPEID_NIKON_D1,
         OR_TYPEID_NIKON_D1X,
         OR_TYPEID_NIKON_D100,
@@ -185,6 +185,8 @@ extern "C" {
         OR_TYPEID_NIKON_1_S1,
         OR_TYPEID_NIKON_D60,
         OR_TYPEID_NIKON_DF,
+        OR_TYPEID_NIKON_E5400,
+        OR_TYPEID_NIKON_E8400,
         _OR_TYPEID_NIKON_LAST
     };
 
