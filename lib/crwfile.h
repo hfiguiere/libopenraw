@@ -27,48 +27,56 @@
 
 namespace OpenRaw {
 
-	class Thumbnail;
+class Thumbnail;
 
-	namespace IO {
-		class File;
-	}
+namespace Internals {
 
-	namespace Internals {
-		class CIFFContainer;
+class CIFFContainer;
 
-		class CRWFile
-			: public OpenRaw::RawFile
-		{
-		public:
-			static RawFile *factory(const IO::Stream::Ptr &);
-			CRWFile(const IO::Stream::Ptr &);
-			virtual ~CRWFile();
+class CRWFile
+    : public OpenRaw::RawFile
+{
+public:
+    static RawFile *factory(const IO::Stream::Ptr &);
+    CRWFile(const IO::Stream::Ptr &);
+    virtual ~CRWFile();
 
-		protected:
+protected:
 
 
-			virtual RawContainer* getContainer() const;
-			virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
+    virtual RawContainer* getContainer() const;
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 
-//			virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+//virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
 
-			virtual ::or_error _getRawData(RawData & data, uint32_t options);
-			virtual MetaValue *_getMetaValue(int32_t meta_index);
+    virtual ::or_error _getRawData(RawData & data, uint32_t options);
+    virtual MetaValue *_getMetaValue(int32_t meta_index);
 
-			virtual void _identifyId();
-		private:
-			CRWFile(const CRWFile&) = delete;
-			CRWFile & operator=(const CRWFile&) = delete;
+    virtual void _identifyId();
+private:
+    CRWFile(const CRWFile&) = delete;
+    CRWFile & operator=(const CRWFile&) = delete;
 
-			IO::Stream::Ptr m_io; /**< the IO handle */
-			CIFFContainer *m_container; /**< the real container */
-			uint32_t m_x;
-			uint32_t m_y;
+    IO::Stream::Ptr m_io; /**< the IO handle */
+    CIFFContainer *m_container; /**< the real container */
+    uint32_t m_x;
+    uint32_t m_y;
+    std::string m_make;
+    std::string m_model;
 
-			static const RawFile::camera_ids_t s_def[];
-		};
-	}
+    static const RawFile::camera_ids_t s_def[];
+};
 
+}
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

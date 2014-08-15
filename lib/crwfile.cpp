@@ -264,7 +264,8 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
     switch(META_INDEX_MASKOUT(meta_index)) {
     case META_NS_TIFF:
     {
-        switch(META_NS_MASKOUT(meta_index)) {
+        uint32_t index = META_NS_MASKOUT(meta_index);
+        switch(index) {
         case EXIF_TAG_ORIENTATION:
         {
             const ImageSpec * img_spec = m_container->getImageSpec();
@@ -274,16 +275,26 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
             }
             break;
         }
+        case EXIF_TAG_MAKE:
         case EXIF_TAG_MODEL:
         {
+            if (index == EXIF_TAG_MAKE && !m_make.empty()) {
+                val = new MetaValue(m_make);
+                break;
+            }
+            if (index == EXIF_TAG_MODEL && !m_model.empty()) {
+                val = new MetaValue(m_model);
+                break;
+            }
+
             CIFF::Heap::Ref heap = m_container->getCameraProps();
             if(heap) {
-                const CIFF::RecordEntry::List & propsRecs = heap->records();
-                auto iter = std::find_if(propsRecs.begin(), propsRecs.end(),
-                                         std::bind(
-                                             &CIFF::RecordEntry::isA,
-                                             std::placeholders::_1,
-                                             static_cast<uint16_t>(CIFF::TAG_RAWMAKEMODEL)));
+                auto propsRecs = heap->records();
+                auto iter
+                    = std::find_if(propsRecs.begin(), propsRecs.end(),
+                                   [](const CIFF::RecordEntry &e){
+                                       return e.isA(static_cast<uint16_t>(CIFF::TAG_RAWMAKEMODEL));
+                                   });
                 if (iter == propsRecs.end()) {
                     Trace(ERROR) << "Couldn't find the image info.\n";
                 }
@@ -293,17 +304,23 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
                     if(sz > 256) {
                         sz = 256;
                     }
-                    size_t sz2;
-                    std::string model;
-                    sz2 = iter->fetchData(heap.get(), (void*)buf, sz);
-                    char *p = buf;
+                    size_t sz2 = iter->fetchData(heap.get(), (void*)buf, sz);
+                    const char *p = buf;
                     while(*p) {
                         p++;
                     }
+                    m_make = std::string(buf, p - buf);
                     p++;
-                    model = p;
-                    val = new MetaValue(model);
-                    Trace(DEBUG1) << "Model " << model << "\n";
+                    m_model = p;
+
+                    if (index == EXIF_TAG_MODEL) {
+                        val = new MetaValue(m_model);
+                    }
+                    else if (index == EXIF_TAG_MAKE) {
+                        val = new MetaValue(m_make);
+                    }
+                    Trace(DEBUG1) << "Make " << m_make << "\n";
+                    Trace(DEBUG1) << "Model " << m_model << "\n";
                 }
             }
 
