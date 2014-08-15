@@ -7,6 +7,8 @@
       <rawType>CR2</rawType>
       <rawTypeId>65537</rawTypeId>
       <makerNoteCount>24</makerNoteCount>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon EOS 20D</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>1536 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -31,6 +33,8 @@
       <rawType>CR2</rawType>
       <rawTypeId>65542</rawTypeId>
       <makerNoteCount>34</makerNoteCount>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon EOS 450D</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>2256 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -55,6 +59,8 @@
       <rawType>CR2</rawType>
       <rawTypeId>65564</rawTypeId>
       <makerNoteCount>41</makerNoteCount>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon EOS 7D</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>5184 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -79,6 +85,8 @@
       <rawType>CR2</rawType>
       <rawTypeId>65568</rawTypeId>
       <makerNoteCount>39</makerNoteCount>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon EOS 5D Mark II</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>5616 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -103,6 +111,8 @@
       <rawType>CR2</rawType>
       <rawTypeId>65565</rawTypeId>
       <makerNoteCount>28</makerNoteCount>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon PowerShot G11</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>1600 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -126,6 +136,8 @@
     <results>
       <rawType>CRW</rawType>
       <rawTypeId>65550</rawTypeId>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon EOS 300D DIGITAL</exifModel>
       <thumbNum>1</thumbNum>
       <thumbSizes>2048</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -148,6 +160,8 @@
     <results>
       <rawType>CRW</rawType>
       <rawTypeId>65553</rawTypeId>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon EOS 10D</exifModel>
       <thumbNum>1</thumbNum>
       <thumbSizes>1536</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -171,6 +185,8 @@
       <rawType>NEF</rawType>
       <rawTypeId>131076</rawTypeId>
       <makerNoteCount>32</makerNoteCount>
+      <exifMake>NIKON CORPORATION</exifMake>
+      <exifModel>NIKON D100 </exifModel>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -193,6 +209,8 @@
       <rawType>NEF</rawType>
       <rawTypeId>131085</rawTypeId>
       <makerNoteCount>43</makerNoteCount>
+      <exifMake>NIKON CORPORATION</exifMake>
+      <exifModel>NIKON D70</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
@@ -216,6 +234,8 @@
       <rawType>NEF</rawType>
       <rawTypeId>131085</rawTypeId>
       <makerNoteCount>43</makerNoteCount>
+      <exifMake>NIKON CORPORATION</exifMake>
+      <exifModel>NIKON D70</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
@@ -228,30 +248,7 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
       <rawMd5>87</rawMd5>
-      <metaOrientation>8</metaOrientation>      
-    </results>
-  </test>
-  <test>
-    <name>NEF-test Coolpix5700</name>
-    <file>/home/hub/samples/nef/Coolpix5700/NIKON-COOLPIX5700.NEF</file>
-    <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/HORIZONTAL/NIKON-COOLPIX5700.NEF</source>
-    <results>
-      <rawType>NEF</rawType>
-      <rawTypeId>131085</rawTypeId>
-      <makerNoteCount>43</makerNoteCount>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 3008</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 697471</thumbDataSizes>
-      <thumbMd5>200 106</thumbMd5>
-      <rawDataType>RAW</rawDataType>
-      <rawDataSize>12241092</rawDataSize>
-      <rawDataDimensions>3039 2014</rawDataDimensions>
-      <rawCfaPattern>BGGR</rawCfaPattern>
-      <rawMinValue>0</rawMinValue>
-      <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>246</rawMd5>
-      <metaOrientation>1</metaOrientation>      
+      <metaOrientation>8</metaOrientation>
     </results>
   </test>
   <test>
@@ -262,6 +259,8 @@
       <rawType>NEF</rawType>
       <rawTypeId>131074</rawTypeId>
       <makerNoteCount>21</makerNoteCount>
+      <exifMake>NIKON CORPORATION</exifMake>
+      <exifModel>NIKON D1 </exifModel>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -274,7 +273,7 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
       <rawMd5>207</rawMd5>
-      <metaOrientation>0</metaOrientation>            
+      <metaOrientation>0</metaOrientation>
     </results>
   </test>
   <test>
@@ -284,6 +283,8 @@
       <rawType>NEF</rawType>
       <rawTypeId>131077</rawTypeId>
       <makerNoteCount>40</makerNoteCount>
+      <exifMake>NIKON CORPORATION</exifMake>
+      <exifModel>NIKON D2H</exifModel>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -296,7 +297,7 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
       <rawMd5>52</rawMd5>
-      <metaOrientation>1</metaOrientation>            
+      <metaOrientation>1</metaOrientation>
     </results>
   </test>
   <test>
@@ -306,6 +307,8 @@
     <results>
       <rawType>ERF</rawType>
       <rawTypeId>327681</rawTypeId>
+      <exifMake>SEIKO EPSON CORP.</exifMake>
+      <exifModel>R-D1</exifModel>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -328,6 +331,8 @@
     <results>
       <rawType>PEF</rawType>
       <rawTypeId>262145</rawTypeId>
+      <exifMake>PENTAX Corporation </exifMake>
+      <exifModel>PENTAX K10D        </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3872</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -347,6 +352,8 @@
     <results>
       <rawType>PEF</rawType>
       <rawTypeId>262147</rawTypeId>
+      <exifMake>PENTAX Corporation </exifMake>
+      <exifModel>PENTAX *ist D      </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -602,6 +609,8 @@
     <results>
       <rawType>RAF</rawType>
       <rawTypeId>917505</rawTypeId>
+      <exifMake>FUJIFILM</exifMake>
+      <exifModel>FinePix X100</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>2176 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -615,7 +624,7 @@
       <rawMaxValue>0</rawMaxValue>
       <rawMd5>28</rawMd5>
       <metaOrientation>1</metaOrientation>
-    </results>    
+    </results>
   </test>
   <test>
     <name>RAF-test X-Pro1</name>
@@ -624,6 +633,8 @@
     <results>
       <rawType>RAF</rawType>
       <rawTypeId>917517</rawTypeId>
+      <exifMake>FUJIFILM</exifMake>
+      <exifModel>X-Pro1</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>1920 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>

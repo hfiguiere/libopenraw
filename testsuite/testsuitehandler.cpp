@@ -75,6 +75,8 @@ xml::ContextPtr TestContext::startElement(int32_t element)
 	case XML_rawMd5:
 	case XML_rawDecompressedMd5:
 	case XML_metaOrientation:
+        case XML_exifMake:
+        case XML_exifModel:
         case XML_makerNoteCount:
 		// other tests...
 		if(m_results) {
@@ -82,7 +84,7 @@ xml::ContextPtr TestContext::startElement(int32_t element)
 			ctxt.reset(new xml::SimpleElementContext(m_handler, s));
 		}
 		break;
-	default: 
+	default:
 			fprintf(stderr, "Unhandled tag %d\n", element);
 		break;
 	}
@@ -91,7 +93,6 @@ xml::ContextPtr TestContext::startElement(int32_t element)
 		ctxt = shared_from_this();
 
 	return ctxt;
-	
 }
 
 
@@ -99,10 +100,10 @@ void TestContext::endElement(int32_t element)
 {
 	switch(element)
 	{
-    case XML_test:
+        case XML_test:
 		m_ts->add_test(m_test);
-        m_test.reset();
-        break;
+                m_test.reset();
+                break;
 	case XML_results:
 		m_results = false;
 		break;
@@ -135,7 +136,7 @@ xml::ContextPtr TestSuiteHandler::startElement(int32_t element)
 		ctxt.reset(new TestContext(m_handler, m_ts, m_newtest));
 		break;
 	}
-	default: 
+	default:
 		break;
 	}
 

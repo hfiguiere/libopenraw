@@ -55,6 +55,7 @@
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/bitmapdata.h>
+#include <libopenraw++/metavalue.h>
 
 #include "xmlhandler.h"
 #include "testsuite.h"
@@ -71,56 +72,66 @@ using OpenRaw::BitmapData;
 using OpenRaw::RawData;
 using OpenRaw::Thumbnail;
 
+#define RETURN_TEST_EQUALS(a,b) \
+    {                               \
+        bool _success = (a == b);   \
+        if(!_success) {             \
+            fprintf(stderr, "FAILED: %s on equality. found '%s', "  \
+                    "expected '%s'\n",                       \
+                    __FUNCTION__, a.c_str(), b.c_str());     \
+        }                           \
+        return _success;            \
+    }
 
-#define RETURN_TEST_EQUALS(a,b)                                         \
-    {                                                                   \
-        bool _success = (a == b);					\
-        if(!_success) {                                                 \
-            fprintf(stderr, "FAILED: %s on equality. found %ld , "      \
-                    "expected '%ld'\n",                                 \
-                    __FUNCTION__, (long)a, (long)b);                    \
-        }                                                               \
-        return _success;                                                \
+#define RETURN_TEST_EQUALS_N(a,b) \
+    {                               \
+        bool _success = (a == b);   \
+        if(!_success) {             \
+            fprintf(stderr, "FAILED: %s on equality. found %ld, "  \
+                    "expected '%ld'\n",                             \
+                    __FUNCTION__, (long)a, (long)b);                \
+        }                           \
+        return _success;            \
     }
 
 
 // a and b are strings. b is the expected value
 // success is return. Set to true if it is successful
-#define CHECK_TEST_EQUALS(a,b,success)                                  \
-    {                                                                   \
-        success = (a == b);                                             \
-        if(!success) {                                                  \
-            fprintf(stderr, "FAILED: %s on equality with '%s', expected '%s'\n",	\
-                    __FUNCTION__, a.c_str(), b.c_str());                \
-        }                                                               \
+#define CHECK_TEST_EQUALS(a,b,success)  \
+    {                                   \
+        success = (a == b);             \
+        if(!success) {                  \
+            fprintf(stderr, "FAILED: %s on equality with '%s', expected '%s'\n", \
+                    __FUNCTION__, a.c_str(), b.c_str());     \
+        }                                                    \
     }
 
 // a and b are integers. b is the expected value
 // success is return. Set to true if it is successful
-#define CHECK_TEST_EQUALS_N(a,b,success)                                \
-    {                                                                   \
-        success = (a == b);                                             \
-        if(!success) {                                                  \
+#define CHECK_TEST_EQUALS_N(a,b,success) \
+    {                                    \
+        success = (a == b);              \
+        if(!success) {                   \
             fprintf(stderr, "FAILED: %s on equality with %ld, expected %ld\n",	\
-                    __FUNCTION__, (long)a, (long)b);                    \
-        }                                                               \
+                    __FUNCTION__, (long)a, (long)b);   \
+        }                                \
     }
 
-#define RETURN_TEST(test,expected)                                      \
-    {                                                                   \
-        bool _success = (test);                                         \
-        if(!_success) {                                                 \
-            fprintf(stderr, "FAILED: %s on '%s', expected '%s'\n",	\
-                    __FUNCTION__, #test, expected.c_str());		\
-        }                                                               \
-        return _success;                                                \
+#define RETURN_TEST(test,expected)       \
+    {                                    \
+        bool _success = (test);          \
+        if(!_success) {                  \
+            fprintf(stderr, "FAILED: %s on '%s', expected '%s'\n", \
+                    __FUNCTION__, #test, expected.c_str()); \
+        }                                \
+        return _success;                 \
     }
 
-#define RETURN_FAIL(message,expected)                                   \
-    {                                                                   \
-        fprintf(stderr, "FAILED: %s with '%s', expected '%s'\n",	\
-                __FUNCTION__, message, expected.c_str());		\
-        return false;                                                   \
+#define RETURN_FAIL(message,expected)    \
+    {                                    \
+        fprintf(stderr, "FAILED: %s with '%s', expected '%s'\n", \
+                __FUNCTION__, message, expected.c_str()); \
+        return false;                    \
     }
 
 namespace {
@@ -270,7 +281,8 @@ bool Test::testRawType(const std::string & result)
 
 bool Test::testRawTypeId(const std::string & result)
 {
-    RETURN_TEST_EQUALS(m_rawfile->typeId(), boost::lexical_cast<uint32_t>(result));
+    RETURN_TEST_EQUALS_N(m_rawfile->typeId(),
+                         boost::lexical_cast<uint32_t>(result));
 }
 
 
@@ -279,7 +291,7 @@ bool Test::testThumbNum(const std::string & result)
     const std::vector<uint32_t> & thumbs = m_rawfile->listThumbnailSizes();
     int num = thumbs.size();
     try {
-        RETURN_TEST_EQUALS(num, boost::lexical_cast<int>(result));
+        RETURN_TEST_EQUALS_N(num, boost::lexical_cast<int>(result));
     }
     catch(...)
     {
@@ -441,11 +453,11 @@ bool Test::testRawDataSize(const std::string & result)
         }
     }
     try {
-        RETURN_TEST_EQUALS(m_rawdata->size(), boost::lexical_cast<uint32_t>(result));
+        RETURN_TEST_EQUALS_N(m_rawdata->size(), boost::lexical_cast<uint32_t>(result));
     }
     catch(...) {
     }
-    RETURN_FAIL("conversion failed", result);		
+    RETURN_FAIL("conversion failed", result);
 }
 
 bool Test::testRawDataDimensions(const std::string & result)
@@ -539,7 +551,7 @@ bool Test::testRawMinValue(const std::string & result)
     {
         RETURN_FAIL("conversion failed", result);
     }
-    RETURN_TEST_EQUALS(m_rawdata->min(), expected);
+    RETURN_TEST_EQUALS_N(m_rawdata->min(), expected);
 }
 
 
@@ -559,7 +571,7 @@ bool Test::testRawMaxValue(const std::string & result)
     {
         RETURN_FAIL("conversion failed", result);
     }
-    RETURN_TEST_EQUALS(m_rawdata->max(), expected);
+    RETURN_TEST_EQUALS_N(m_rawdata->max(), expected);
 }
 
 bool Test::testRawMd5(const std::string & result)
@@ -581,7 +593,7 @@ bool Test::testRawMd5(const std::string & result)
     {
         RETURN_FAIL("conversion failed", result);
     }
-    RETURN_TEST_EQUALS(crc, expected);
+    RETURN_TEST_EQUALS_N(crc, expected);
 }
 
 
@@ -600,7 +612,19 @@ bool Test::testRawDecompressedMd5(const std::string & result)
 bool Test::testMetaOrientation(const std::string & result)
 {
     int32_t orientation = m_rawfile->getOrientation();
-    RETURN_TEST_EQUALS(orientation, boost::lexical_cast<int32_t>(result));
+    RETURN_TEST_EQUALS_N(orientation, boost::lexical_cast<int32_t>(result));
+}
+
+
+bool Test::testExifString(int32_t meta_index, const std::string & result)
+{
+    auto val = m_rawfile->getMetaValue(meta_index);
+    if (val) {
+        //
+        auto stringVal = val->getString(0);
+        RETURN_TEST_EQUALS(stringVal, result);
+    }
+    RETURN_FAIL("meta data not found", result);
 }
 
 bool Test::testMakerNoteCount(const std::string & result)
@@ -611,7 +635,7 @@ bool Test::testMakerNoteCount(const std::string & result)
     }
     auto exif = ifd_file->exifIfd();
     auto maker_note = exif->getMakerNoteIfd();
-    RETURN_TEST_EQUALS(maker_note->numTags(), boost::lexical_cast<int32_t>(result));
+    RETURN_TEST_EQUALS_N(maker_note->numTags(), boost::lexical_cast<int32_t>(result));
 }
 
 
@@ -690,6 +714,14 @@ int Test::run()
             break;
         case XML_metaOrientation:
             pass = testMetaOrientation(iter->second);
+            break;
+        case XML_exifMake:
+            pass = testExifString(META_NS_TIFF | EXIF_TAG_MAKE,
+                                  iter->second);
+            break;
+        case XML_exifModel:
+            pass = testExifString(META_NS_TIFF | EXIF_TAG_MODEL,
+                                  iter->second);
             break;
         case XML_makerNoteCount:
             pass = testMakerNoteCount(iter->second);
