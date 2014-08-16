@@ -21,4 +21,6 @@ rawMaxValue
 rawMd5
 rawDecompressedMd5
 metaOrientation
+exifMake
+exifModel
 makerNoteCount

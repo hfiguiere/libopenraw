@@ -64,13 +64,10 @@ MakerNoteDir::createMakerNote(off_t offset,
             offset + 8, container, offset + 8);
     }
 
-#if 0 // Minolta stub. Untested.
-    if (memcmp("MLT0\0", data + 10, 5) == 0) {
+    if (memcmp("MLT0", data + 10, 4) == 0) {
         return std::make_shared<MakerNoteDir>(
-            offset + 8, container, offset + 8);
+            offset, container, offset);
     }
-#endif
-
 
     return std::make_shared<MakerNoteDir>(offset, container, offset);
 }

@@ -224,10 +224,14 @@ bool MRWContainer::locateDirsPreHook()
    * the TIFF data (the contents of the TTW data block), and seek there.
    */
   m_offset = ttw->offset() + MRW::DataBlockHeaderLength;
-  if((version[2] != '7') || (version[3] != '3')) {
+
+// TODO: Not sure exactly here the origin of this.
+// But it doesn't work.
+//  if((version[2] != '7') || (version[3] != '3')) {
     setExifOffsetCorrection(m_offset);
     Trace(DEBUG1) << "setting correction to " << m_offset << "\n";
-  }
+//  }
+
   m_file->seek (m_offset, SEEK_SET);
   Trace(DEBUG1) << "< MRWContainer\n";
 
