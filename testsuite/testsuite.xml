@@ -528,6 +528,9 @@
     <results>
       <rawType>MRW</rawType>
       <rawTypeId>393219</rawTypeId>
+      <makerNoteCount>7</makerNoteCount>
+      <exifMake>Minolta Co., Ltd.</exifMake>
+      <exifModel>DiMAGE 5</exifModel>
       <thumbNum>1</thumbNum>
       <thumbSizes>640</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -541,7 +544,7 @@
       <rawMaxValue>3965</rawMaxValue>
       <rawMd5>251</rawMd5>
       <metaOrientation>0</metaOrientation>
-    </results>    
+    </results>
   </test>
   <test>
     <name>MRW-test Dimage7i</name>
@@ -550,6 +553,9 @@
     <results>
       <rawType>MRW</rawType>
       <rawTypeId>393221</rawTypeId>
+      <makerNoteCount>8</makerNoteCount>
+      <exifMake>Minolta Co., Ltd.</exifMake>
+      <exifModel>DiMAGE 7i</exifModel>
       <thumbNum>1</thumbNum>
       <thumbSizes>640</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -563,7 +569,7 @@
       <rawMaxValue>3965</rawMaxValue>
       <rawMd5>214</rawMd5>
       <metaOrientation>0</metaOrientation>
-    </results>    
+    </results>
   </test>
   <test>
     <name>MRW-test Dimage7hi</name>
@@ -572,6 +578,9 @@
     <results>
       <rawType>MRW</rawType>
       <rawTypeId>393222</rawTypeId>
+      <makerNoteCount>11</makerNoteCount>
+      <exifMake>Minolta Co., Ltd.</exifMake>
+      <exifModel>DiMAGE 7Hi</exifModel>
       <thumbNum>1</thumbNum>
       <thumbSizes>640</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -585,7 +594,7 @@
       <rawMaxValue>3965</rawMaxValue>
       <rawMd5>168</rawMd5>
       <metaOrientation>0</metaOrientation>
-    </results>    
+    </results>
   </test>
   <test>
     <name>ARW-test Sony A100</name>

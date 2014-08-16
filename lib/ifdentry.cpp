@@ -141,6 +141,7 @@ bool IfdEntry::loadData(size_t unit_size)
 		else {
 			_offset = IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data);
 		}
+		_offset += m_container.exifOffsetCorrection();
 		m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
 		success = (m_container.fetchData(m_dataptr, 
 										 _offset, 
