@@ -78,6 +78,7 @@ xml::ContextPtr TestContext::startElement(int32_t element)
         case XML_exifMake:
         case XML_exifModel:
         case XML_makerNoteCount:
+        case XML_makerNoteId:
 		// other tests...
 		if(m_results) {
 			std::string & s(m_test->results()[element]);

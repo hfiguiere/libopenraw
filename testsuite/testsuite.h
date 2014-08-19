@@ -80,6 +80,7 @@ private:
 	bool testRawDecompressedMd5(const std::string & result);
 	bool testMetaOrientation(const std::string & result);
     bool testExifString(int32_t meta_index, const std::string & results);
+    bool testMakerNoteId(const std::string & result);
     bool testMakerNoteCount(const std::string & result);
 
 	std::string m_name;

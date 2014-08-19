@@ -24,3 +24,4 @@ metaOrientation
 exifMake
 exifModel
 makerNoteCount
+makerNoteId

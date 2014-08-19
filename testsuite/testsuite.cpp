@@ -635,7 +635,24 @@ bool Test::testMakerNoteCount(const std::string & result)
     }
     auto exif = ifd_file->exifIfd();
     auto maker_note = exif->getMakerNoteIfd();
+    if (!maker_note) {
+        RETURN_FAIL("no maker not found", result);
+    }
     RETURN_TEST_EQUALS_N(maker_note->numTags(), boost::lexical_cast<int32_t>(result));
+}
+
+bool Test::testMakerNoteId(const std::string & result)
+{
+    auto ifd_file = dynamic_cast<OpenRaw::Internals::IfdFile*>(m_rawfile);
+    if (!ifd_file) {
+        RETURN_FAIL("not an IFD file", result);
+    }
+    auto exif = ifd_file->exifIfd();
+    auto maker_note = std::dynamic_pointer_cast<OpenRaw::Internals::MakerNoteDir>(exif->getMakerNoteIfd());
+    if (!maker_note) {
+        RETURN_FAIL("no maker not found", result);
+    }
+    RETURN_TEST_EQUALS(maker_note->getId(), result);
 }
 
 
@@ -725,6 +742,9 @@ int Test::run()
             break;
         case XML_makerNoteCount:
             pass = testMakerNoteCount(iter->second);
+            break;
+        case XML_makerNoteId:
+            pass = testMakerNoteId(iter->second);
             break;
         default:
             pass = false;

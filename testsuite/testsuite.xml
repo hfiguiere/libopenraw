@@ -185,6 +185,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131076</rawTypeId>
       <makerNoteCount>32</makerNoteCount>
+      <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D100 </exifModel>
       <thumbNum>1</thumbNum>
@@ -209,6 +210,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131085</rawTypeId>
       <makerNoteCount>43</makerNoteCount>
+      <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D70</exifModel>
       <thumbNum>2</thumbNum>
@@ -234,6 +236,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131085</rawTypeId>
       <makerNoteCount>43</makerNoteCount>
+      <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D70</exifModel>
       <thumbNum>2</thumbNum>
@@ -259,6 +262,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131074</rawTypeId>
       <makerNoteCount>21</makerNoteCount>
+      <makerNoteId></makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D1 </exifModel>
       <thumbNum>1</thumbNum>
@@ -283,6 +287,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131077</rawTypeId>
       <makerNoteCount>40</makerNoteCount>
+      <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D2H</exifModel>
       <thumbNum>1</thumbNum>
@@ -441,6 +446,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458756</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
+      <makerNoteId>Olympus</makerNoteId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -463,6 +469,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458757</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
+      <makerNoteId>Olympus</makerNoteId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -484,6 +491,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458766</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
+      <makerNoteId>Olympus2</makerNoteId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -506,6 +514,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458759</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
+      <makerNoteId>Olympus2</makerNoteId>
       <thumbNum>1</thumbNum>
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -529,6 +538,7 @@
       <rawType>MRW</rawType>
       <rawTypeId>393219</rawTypeId>
       <makerNoteCount>7</makerNoteCount>
+      <makerNoteId>Minolta</makerNoteId>
       <exifMake>Minolta Co., Ltd.</exifMake>
       <exifModel>DiMAGE 5</exifModel>
       <thumbNum>1</thumbNum>
@@ -554,6 +564,7 @@
       <rawType>MRW</rawType>
       <rawTypeId>393221</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
+      <makerNoteId>Minolta</makerNoteId>
       <exifMake>Minolta Co., Ltd.</exifMake>
       <exifModel>DiMAGE 7i</exifModel>
       <thumbNum>1</thumbNum>
@@ -579,6 +590,7 @@
       <rawType>MRW</rawType>
       <rawTypeId>393222</rawTypeId>
       <makerNoteCount>11</makerNoteCount>
+      <makerNoteId>Minolta</makerNoteId>
       <exifMake>Minolta Co., Ltd.</exifMake>
       <exifModel>DiMAGE 7Hi</exifModel>
       <thumbNum>1</thumbNum>
