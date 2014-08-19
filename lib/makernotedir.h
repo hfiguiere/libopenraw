@@ -43,20 +43,25 @@ public:
                                IfdFileContainer & container);
 
     MakerNoteDir(off_t _offset, IfdFileContainer & _container,
-                 off_t mnote_offset);
+                 off_t mnote_offset, const std::string & id);
     virtual ~MakerNoteDir();
 
     off_t getMnoteOffset() const
         { return m_mnote_offset; }
+
+    const std::string & getId() const
+        { return m_id; }
 protected:
     MakerNoteDir(const char* magic, size_t hlen,
                  off_t _offset,
                  IfdFileContainer & _container,
-                 off_t mnote_offset);
+                 off_t mnote_offset,
+                 const std::string & id);
 
     std::string m_magic;
     size_t m_hlen;
     off_t m_mnote_offset;
+    std::string m_id;
 };
 
 }
