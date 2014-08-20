@@ -619,9 +619,34 @@ void RawFile::_setIdMap(const camera_ids_t *map)
     d->m_cam_ids = map;
 }
 
+const Internals::BuiltinColourMatrix*
+RawFile::_getMatrices() const
+{
+    return d->m_matrices;
+}
+
 void RawFile::_setMatrices(const Internals::BuiltinColourMatrix* matrices)
 {
     d->m_matrices = matrices;
+}
+
+::or_error
+RawFile::_getBuiltinLevels(const Internals::BuiltinColourMatrix* m,
+                           TypeId type_id,
+                           uint16_t & black, uint16_t & white)
+{
+    if(!m) {
+        return OR_ERROR_NOT_FOUND;
+    }
+    while(m->camera) {
+        if(m->camera == type_id) {
+            black = m->black;
+            white = m->white;
+            return OR_ERROR_NONE;
+        }
+        ++m;
+    }
+    return OR_ERROR_NOT_FOUND;
 }
 
 ::or_error

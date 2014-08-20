@@ -192,19 +192,26 @@ protected:
     TypeId _typeIdFromMake(const std::string& make);
     void _setIdMap(const camera_ids_t *map);
     void _setMatrices(const Internals::BuiltinColourMatrix* matrices);
+    const Internals::BuiltinColourMatrix* _getMatrices() const;
+
     virtual void _identifyId() = 0;
+
+    static ::or_error _getBuiltinLevels(const Internals::BuiltinColourMatrix* m,
+                                        TypeId type_id,
+                                        uint16_t & black,
+                                        uint16_t & white);
+    static ::or_error _getBuiltinColourMatrix(const Internals::BuiltinColourMatrix* m,
+                                              TypeId type_id,
+                                              double* matrix,
+                                              uint32_t & size);
+
 private:
     static Type identify(const char*_filename);
     static ::or_error identifyBuffer(const uint8_t* buff, size_t len,
                                      Type &_type);
     static const camera_ids_t s_make[];
-    static const camera_ids_t* _lookupCameraId(const camera_ids_t * map, 
+    static const camera_ids_t* _lookupCameraId(const camera_ids_t * map,
                                                const std::string& value);
-
-    static ::or_error _getBuiltinColourMatrix(const Internals::BuiltinColourMatrix* m,
-                                              TypeId type_id,
-                                              double* matrix,
-                                              uint32_t & size);
 
 
     RawFile(const RawFile&) = delete;

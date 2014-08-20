@@ -235,7 +235,12 @@ void MRWFile::_identifyId()
 	}
 	data.setBpc(bpc);
 	// this seems to be the hardcoded value.
-	data.setWhiteLevel(0xf7d);
+	uint16_t black = 0;
+	uint16_t white = 0;
+	RawFile::_getBuiltinLevels(_getMatrices(), typeId(),
+				   black, white);
+	data.setBlackLevel(black);
+	data.setWhiteLevel(white);
 	Trace(DEBUG1) << "datalen = " << datalen <<
 		" final datalen = " << finaldatalen << "\n";
 	void *p = data.allocData(finaldatalen);
