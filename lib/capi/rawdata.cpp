@@ -121,7 +121,7 @@ extern "C" {
 	uint32_t
 	or_rawdata_bpc(ORRawDataRef rawdata)
 	{
-		return reinterpret_cast<RawData *>(rawdata)->bpc();		
+		return reinterpret_cast<RawData *>(rawdata)->bpc();
 	}
 
 	or_cfa_pattern
@@ -130,16 +130,17 @@ extern "C" {
 		return reinterpret_cast<RawData *>(rawdata)
 			->cfaPattern()->patternType();
 	}
-	
+
 	or_error
-	or_rawdata_get_minmax(ORRawDataRef rawdata, uint16_t *min, uint16_t *max)
+	or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
+                              uint16_t *white)
 	{
 		RawData* t = reinterpret_cast<RawData *>(rawdata);
-		if(min) {
-			*min = t->min();
+		if(black) {
+			*black = t->blackLevel();
 		}
-		if(max) {
-			*max = t->max();
+		if(white) {
+			*white = t->whiteLevel();
 		}
 		return OR_ERROR_NONE;
 	}

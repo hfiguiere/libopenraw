@@ -679,8 +679,8 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   data.setCompression(data_type == OR_DATA_TYPE_COMPRESSED_RAW
                       ? compression : 1);
   data.setPhotometricInterpretation((ExifPhotometricInterpretation)photo_int);
-  if((data_type == OR_DATA_TYPE_RAW) && (data.max() == 0)) {
-    data.setMax((1 << bpc) - 1);
+  if((data_type == OR_DATA_TYPE_RAW) && (data.whiteLevel() == 0)) {
+    data.setWhiteLevel((1 << bpc) - 1);
   }
   data.setDimensions(x, y);
 

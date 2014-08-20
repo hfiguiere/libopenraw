@@ -47,7 +47,9 @@ New features:
     - Nicer display of the type ID in ordiag.
     - Display make and model.
   - API: mark deprecated APIs.
-  - API: or_rawdata_get_roi() to get the region of interest from the RAW data.
+  - API: or_rawdata_get_roi() to get the region of interest from the
+    RAW data.
+  - API: or_rawdata_get_minmax() replaced by or_rawdata_get_levels().
 
 Bug fixes:
 

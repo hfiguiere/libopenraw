@@ -271,7 +271,7 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
     newData.setDataType(OR_DATA_TYPE_RAW);
     uint16_t bpc = data.bpc();
     newData.setBpc(bpc);
-    newData.setMax((1 << bpc) - 1);
+    newData.setWhiteLevel((1 << bpc) - 1);
     newData.setCfaPatternType(data.cfaPattern()->patternType());
 	
     for (unsigned int i = 0; i < rows; i++) {

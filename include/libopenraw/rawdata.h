@@ -73,17 +73,18 @@ extern "C" {
 	or_cfa_pattern
 	or_rawdata_get_cfa_pattern(ORRawDataRef rawdata);
 
-	/** Return the minimum and maximum values for the raw data.
+	/** Return the levels values for the raw data.
 	 * This are possible values, not actual values.
 	 * @param rawdata the raw data object
-	 * @param min the pointer to the minimum value. 
-	 * @param max the pointer to the maximum value.
+	 * @param black the pointer to the black value.
+	 * @param white the pointer to the white value.
 	 * @return the error code.
 	 */
 	or_error
-	or_rawdata_get_minmax(ORRawDataRef rawdata, uint16_t *min, uint16_t *max);
+	or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
+                             uint16_t *white);
 
-	/** Get the rendered image from the raw data 
+	/** Get the rendered image from the raw data
 	 * @param rawdata the raw data.
 	 * @param bitmapdata the preallocated bitmap data.
 	 * @param options option for rendering. Pass 0 for now.

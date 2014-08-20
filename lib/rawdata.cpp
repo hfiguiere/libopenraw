@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.cpp
  *
- * Copyright (C) 2007, 2012 Hubert Figuiere
+ * Copyright (C) 2007-2014 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -35,7 +35,7 @@ namespace OpenRaw {
 class RawData::Private {
 public:
     RawData *self;
-    uint16_t min, max;
+    uint16_t blackLevel, whiteLevel;
     ExifPhotometricInterpretation photometricInterpretation;
     const CfaPattern* cfa_pattern; // IMMUTABLE
     uint32_t compression;
@@ -52,8 +52,8 @@ public:
     uint32_t colourMatrixCount;
 
     Private(RawData *_self)
-        : self(_self), 
-          min(0), max(0),
+        : self(_self),
+          blackLevel(0), whiteLevel(0),
           photometricInterpretation(EV_PI_CFA),
           cfa_pattern(CfaPattern::twoByTwoPattern(OR_CFA_PATTERN_NONE)),
           compression(0),
@@ -161,27 +161,27 @@ RawData::~RawData()
 
 	return err;
 }
-	
+
 // other
-	
-uint16_t RawData::min()
+
+uint16_t RawData::blackLevel() const
 {
-    return d->min;
+    return d->blackLevel;
 }
 
-uint16_t RawData::max()
+uint16_t RawData::whiteLevel() const
 {
-    return d->max;
+    return d->whiteLevel;
 }
 
-void RawData::setMin(uint16_t m)
+void RawData::setBlackLevel(uint16_t m)
 {
-    d->min = m;
+    d->blackLevel = m;
 }
 
-void RawData::setMax(uint16_t m)
+void RawData::setWhiteLevel(uint16_t m)
 {
-    d->max = m;
+    d->whiteLevel = m;
 }
 
 void RawData::setPhotometricInterpretation(ExifPhotometricInterpretation pi)

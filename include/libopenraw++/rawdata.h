@@ -47,13 +47,13 @@ public:
      * @param options the option bits. Pass 0 for now.
      * @return the error code
      */
-    ::or_error getRenderedImage(BitmapData & bitmapdata, uint32_t options);    
-	
+    ::or_error getRenderedImage(BitmapData & bitmapdata, uint32_t options);
+
     // deprecate rename black level and white level resp.
-    uint16_t min();
-    uint16_t max();
-    void setMin(uint16_t _m);
-    void setMax(uint16_t _m);
+    uint16_t blackLevel() const;
+    uint16_t whiteLevel() const;
+    void setBlackLevel(uint16_t _m);
+    void setWhiteLevel(uint16_t _m);
 
 
     /**

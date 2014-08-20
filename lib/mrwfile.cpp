@@ -235,7 +235,7 @@ void MRWFile::_identifyId()
 	}
 	data.setBpc(bpc);
 	// this seems to be the hardcoded value.
-	data.setMax(0xf7d);
+	data.setWhiteLevel(0xf7d);
 	Trace(DEBUG1) << "datalen = " << datalen <<
 		" final datalen = " << finaldatalen << "\n";
 	void *p = data.allocData(finaldatalen);

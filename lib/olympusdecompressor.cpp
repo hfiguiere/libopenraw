@@ -203,7 +203,7 @@ RawData *OlympusDecompressor::decompress(RawData *in)
 
 	// hardcoded 12bits values
 	output->setBpc(12);
-	output->setMax((1 << 12) - 1);
+	output->setWhiteLevel((1 << 12) - 1);
 
 	return output;
 }

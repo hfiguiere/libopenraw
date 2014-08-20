@@ -551,7 +551,7 @@ bool Test::testRawMinValue(const std::string & result)
     {
         RETURN_FAIL("conversion failed", result);
     }
-    RETURN_TEST_EQUALS_N(m_rawdata->min(), expected);
+    RETURN_TEST_EQUALS_N(m_rawdata->blackLevel(), expected);
 }
 
 
@@ -571,7 +571,7 @@ bool Test::testRawMaxValue(const std::string & result)
     {
         RETURN_FAIL("conversion failed", result);
     }
-    RETURN_TEST_EQUALS_N(m_rawdata->max(), expected);
+    RETURN_TEST_EQUALS_N(m_rawdata->whiteLevel(), expected);
 }
 
 bool Test::testRawMd5(const std::string & result)

@@ -1541,7 +1541,7 @@ RawData *LJpegDecompressor::decompress(RawData *bitmap)
         uint32_t bpc = dcInfo.dataPrecision;
 
         bitmap->setBpc(bpc);
-        bitmap->setMax((1 << bpc) - 1);
+        bitmap->setWhiteLevel((1 << bpc) - 1);
         /*uint16_t *dataPtr = (uint16_t*)*/
         bitmap->allocData(dcInfo.imageWidth
                           * sizeof(uint16_t) 

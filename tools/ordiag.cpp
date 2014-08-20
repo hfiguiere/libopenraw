@@ -318,8 +318,9 @@ public:
 
                 m_out << boost::format("\t\tBits per channel: %1%\n")
                     % rd.bpc();
-                m_out << boost::format("\t\tValues: min = %1% max = %2%\n")
-                    % rd.min() % rd.max();
+                m_out << boost::format(
+                    "\t\tValues: black = %1% white = %2%\n")
+                    % rd.blackLevel() % rd.whiteLevel();
             }
             else {
                 m_out << boost::format("\tNo Raw Data found! (error = %1%)\n")
