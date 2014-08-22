@@ -7,7 +7,7 @@ EXTRA_DIST = libopenraw.sym
 
 pkgconfig_DATA = libopenraw-0.1.pc
 
-noinst_HEADERS = or_debug.h \
+noinst_HEADERS = \
 	trace.h	\
 	rawcontainer.h \
 	ifdfile.h tiffepfile.h \
@@ -83,7 +83,6 @@ libopenraw_la_SOURCES = \
 	bitmapdata.cpp \
 	thumbnail.cpp \
 	rawdata.cpp \
-	or_debug.c \
 	ifdfilecontainer.cpp \
 	ifddir.cpp ifdentry.cpp \
 	makernotedir.h makernotedir.cpp \

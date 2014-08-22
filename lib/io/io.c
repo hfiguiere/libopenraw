@@ -1,7 +1,7 @@
 /*
  * libopenraw - io.c
  *
- * Copyright (C) 2005-2007 Hubert Figuiere
+ * Copyright (C) 2005-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -24,7 +24,6 @@
 #include "libopenraw/io.h"
 #include "io_private.h"
 #include "posix_io.h"
-#include "or_debug.h"
 
 #ifdef __cplusplus
 extern "C" {
