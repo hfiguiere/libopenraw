@@ -185,6 +185,24 @@ DngFile::~DngFile()
     return ret;
 }
 
+void DngFile::_identifyId()
+{
+    TiffEpFile::_identifyId();
+    if (_typeId() == 0) {
+        const IfdDir::Ref & _mainIfd = mainIfd();
+
+        std::string uniqueCameraModel;
+        if (_mainIfd->getValue(IFD::DNG_TAG_UNIQUE_CAMERA_MODEL,
+                               uniqueCameraModel)) {
+            // set a generic DNG type if we found a
+            // unique camera model
+            _setTypeId(
+                OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE,
+                                    OR_TYPEID_ADOBE_DNG_GENERIC));
+        }
+    }
+}
+
 }
 }
 /*

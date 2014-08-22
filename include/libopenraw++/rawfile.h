@@ -153,6 +153,10 @@ protected:
 
     /** Set the file type id */
     void _setTypeId(TypeId _type_id);
+    /** Just get the type id value. No identification.
+     *  You might want to use %typeId() in the general case.
+     */
+    TypeId _typeId() const;
 
     /** Get the container. */
     virtual Internals::RawContainer* getContainer() const = 0;

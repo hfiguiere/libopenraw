@@ -325,6 +325,11 @@ RawFile::TypeId RawFile::typeId()
     return d->m_type_id;
 }
 
+RawFile::TypeId RawFile::_typeId() const
+{
+    return d->m_type_id;
+}
+
 void RawFile::_setTypeId(RawFile::TypeId _type_id)
 {
     d->m_type_id = _type_id;
