@@ -383,18 +383,30 @@ public:
             else {
                 m_out << boost::format("\tType = %1% (%2%)\n") % rf->type()
                     % typeToString(rf->type());
-                std::string typeId = str(boost::format("%1%, %2%")
-                                         % OR_GET_FILE_TYPEID_VENDOR(rf->typeId())
-                                         % OR_GET_FILE_TYPEID_CAMERA(rf->typeId()));
+                std::string typeId
+                    = str(boost::format("%1%, %2%")
+                          % OR_GET_FILE_TYPEID_VENDOR(rf->typeId())
+                          % OR_GET_FILE_TYPEID_CAMERA(rf->typeId()));
                 m_out << boost::format("\tType ID = %1%\n") % typeId;
 
-                const MetaValue* make = rf->getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
+                const MetaValue* make
+                    = rf->getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
                 if (make) {
-                    m_out << boost::format("\tMake = %1%\n") % make->getString(0);
+                    m_out << boost::format("\tMake = %1%\n")
+                        % make->getString(0);
                 }
-                const MetaValue* model = rf->getMetaValue(META_NS_TIFF | EXIF_TAG_MODEL);
+                const MetaValue* model
+                    = rf->getMetaValue(META_NS_TIFF | EXIF_TAG_MODEL);
                 if (model) {
-                    m_out << boost::format("\tModel = %1%\n") % model->getString(0);
+                    m_out << boost::format("\tModel = %1%\n")
+                        % model->getString(0);
+                }
+                auto uniqueCameraModel
+                    = rf->getMetaValue(META_NS_TIFF
+                                       | DNG_TAG_UNIQUE_CAMERA_MODEL);
+                if (uniqueCameraModel) {
+                    m_out << boost::format("\tUnique Camera Model = %1%\n")
+                        % uniqueCameraModel->getString(0);
                 }
                 dumpPreviews(rf);
                 dumpRawData(rf);
