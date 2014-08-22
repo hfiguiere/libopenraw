@@ -35,23 +35,23 @@ namespace OpenRaw {
 
 namespace Internals {
 
-bool IfdDir::isPrimary::operator()(const Ref &dir)
+bool IfdDir::isPrimary() const
 {
 	uint32_t subtype = 1;
-	return dir->getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype)
+	return getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype)
 		&& (subtype == 0);
 }
 
-bool IfdDir::isThumbnail::operator()(const Ref &dir)
+bool IfdDir::isThumbnail() const
 {
 	uint32_t subtype = 0;
-	return dir->getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype)
+	return getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype)
 		&& (subtype == 1);
 }
 
 IfdDir::IfdDir(off_t _offset, IfdFileContainer & _container)
 	: m_offset(_offset), m_container(_container),
-          m_entries()
+	  m_entries()
 {
 }
 

@@ -51,7 +51,8 @@ extern "C" {
         /* not really a camera vendor. For the converter. */
         OR_TYPEID_VENDOR_ADOBE = 13,
         OR_TYPEID_VENDOR_FUJIFILM = 14,
-	
+        OR_TYPEID_VENDOR_BLACKMAGIC = 15,
+
         _OR_TYPEID_VENDOR_LAST
     };
     
@@ -423,6 +424,12 @@ extern "C" {
         OR_TYPEID_FUJIFILM_XE2 = 21,
         OR_TYPEID_FUJIFILM_XT1 = 22,
         _OR_TYPEID_FUJIFILM_LAST
+    };
+
+    enum {
+        OR_TYPEID_BLACKMAGIC_UNKNOWN = 0,
+        OR_TYPEID_BLACKMAGIC_POCKET_CINEMA = 1,
+        _OR_TYPEID_BLACKMAGIC_LAST
     };
 
 #ifdef __cplusplus

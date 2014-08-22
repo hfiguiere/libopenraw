@@ -38,17 +38,12 @@ class IfdDir
 public:
 	typedef std::shared_ptr<IfdDir> Ref;
 	typedef std::vector<Ref> RefVec;
-	struct isPrimary
-	{
-		bool operator()(const Ref &dir);
-	};
-	struct isThumbnail
-	{
-		bool operator()(const Ref &dir);
-	};
 
 	IfdDir(off_t _offset, IfdFileContainer & _container);
 	virtual ~IfdDir();
+
+	bool isPrimary() const;
+	bool isThumbnail() const;
 
 	/** return the offset */
 	off_t offset() const

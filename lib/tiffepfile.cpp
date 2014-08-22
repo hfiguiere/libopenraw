@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "tiffepfile.h"
+#include "ifddir.h"
 #include "ifdfilecontainer.h"
 
 using namespace Debug;
@@ -37,17 +38,26 @@ TiffEpFile::TiffEpFile(const IO::Stream::Ptr &s,
 
 IfdDir::Ref  TiffEpFile::_locateCfaIfd()
 {
-	const IfdDir::Ref & _mainIfd = mainIfd();
+    const IfdDir::Ref & _mainIfd = mainIfd();
 
     std::vector<IfdDir::Ref> subdirs;
-    if (!_mainIfd || !_mainIfd->getSubIFDs(subdirs)) {
+    if (!_mainIfd) {
+        Trace(DEBUG1) << "couldn't find main ifd\n";
+        return IfdDir::Ref();
+    }
+    if (_mainIfd->isPrimary()) {
+        return _mainIfd;
+    }
+    if (!_mainIfd->getSubIFDs(subdirs)) {
         // error
         Trace(DEBUG1) << "couldn't find main ifd nor subifds\n";
         return IfdDir::Ref();
     }
-    IfdDir::RefVec::const_iterator i = find_if(subdirs.begin(), 
-                                               subdirs.end(),
-                                               IfdDir::isPrimary());
+    auto i = find_if(subdirs.begin(),
+                     subdirs.end(),
+                     [] (const IfdDir::Ref& e) {
+                         return e->isPrimary();
+                     });
     if (i != subdirs.end()) {
         return *i;
     }

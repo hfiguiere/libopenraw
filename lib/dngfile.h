@@ -36,18 +36,20 @@ class DngFile
 {
 public:
     static RawFile *factory(const IO::Stream::Ptr &);
-    
+
     DngFile(const IO::Stream::Ptr &);
     virtual ~DngFile();
-    
+
+    /** DNG specific for now: check if file is Cinema DNG. */
+    bool isCinema() const;
 protected:
     virtual ::or_error _getRawData(RawData & data, uint32_t options);
-    
+
 private:
-    
+
     DngFile(const DngFile&) = delete;
     DngFile & operator=(const DngFile&) = delete;
-    
+
     static const IfdFile::camera_ids_t s_def[];
 };
 

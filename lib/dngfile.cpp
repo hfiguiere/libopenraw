@@ -96,7 +96,7 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                              OR_TYPEID_RICOH_GR) },
     { "GXR            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
                                              OR_TYPEID_RICOH_GXR) },
-    { "GXR A16                                                        ", 
+    { "GXR A16                                                        ",
       OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, OR_TYPEID_RICOH_GXR_A16) },
     { "SAMSUNG GX10       ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG,
                                                  OR_TYPEID_SAMSUNG_GX10) },
@@ -126,62 +126,62 @@ DngFile::~DngFile()
 {
     ::or_error ret = OR_ERROR_NONE;
     const IfdDir::Ref & _cfaIfd = cfaIfd();
-    
+
     Trace(DEBUG1) << "_getRawData()\n";
-    
-    if (_cfaIfd) {
-        ret = _getRawDataFromDir(data, _cfaIfd);
-	
-        if(ret == OR_ERROR_NONE) {
-            uint16_t compression = 0;
-            if (_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression) &&
-                compression == IFD::COMPRESS_LJPEG) {
-                // if the option is not set, decompress
-                if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-                    IO::Stream::Ptr s(
-                        std::make_shared<IO::MemStream>(data.data(),
-                                                  data.size()));
-                    s->open(); // TODO check success
-                    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
-                    LJpegDecompressor decomp(s.get(), jfif.get());
-                    RawData *dData = decomp.decompress();
-                    if (dData != NULL) {
-                        dData->setCfaPattern(data.cfaPattern());
-                        data.swap(*dData);
-                        delete dData;
-                    }
-                }
+
+    if (!_cfaIfd) {
+        Trace(DEBUG1) << "cfaIfd is NULL: not found\n";
+        return OR_ERROR_NOT_FOUND;
+    }
+    ret = _getRawDataFromDir(data, _cfaIfd);
+
+    if(ret != OR_ERROR_NONE) {
+        Trace(ERROR) << "couldn't find raw data\n";
+        return ret;
+    }
+
+    uint16_t compression = 0;
+    if (_cfaIfd->getValue(IFD::EXIF_TAG_COMPRESSION, compression) &&
+        compression == IFD::COMPRESS_LJPEG) {
+        // if the option is not set, decompress
+        if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
+            IO::Stream::Ptr s(
+                std::make_shared<IO::MemStream>(data.data(),
+                                                data.size()));
+            s->open(); // TODO check success
+            std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+            LJpegDecompressor decomp(s.get(), jfif.get());
+            RawData *dData = decomp.decompress();
+            if (dData != NULL) {
+                dData->setCfaPattern(data.cfaPattern());
+                data.swap(*dData);
+                delete dData;
             }
-            else {
-                data.setDataType(OR_DATA_TYPE_RAW);
-            }
-            uint32_t crop_x, crop_y, crop_w, crop_h;
-            IfdEntry::Ref e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_ORIGIN);
-            if(e) {
-                crop_x = e->getIntegerArrayItem(0);
-                crop_y = e->getIntegerArrayItem(1);
-            }
-            else {
-                crop_x = crop_y = 0;
-            }
-            e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_SIZE);
-            if(e) {
-                crop_w = e->getIntegerArrayItem(0);
-                crop_h = e->getIntegerArrayItem(1);
-            }
-            else {
-                crop_w = data.width();
-                crop_h = data.height();
-            }
-            data.setRoi(crop_x, crop_y, crop_w, crop_h);
-        }
-        else {
-            Trace(ERROR) << "couldn't find raw data\n";
         }
     }
     else {
-        ret = OR_ERROR_NOT_FOUND;
+        data.setDataType(OR_DATA_TYPE_RAW);
     }
+    uint32_t crop_x, crop_y, crop_w, crop_h;
+    IfdEntry::Ref e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_ORIGIN);
+    if(e) {
+        crop_x = e->getIntegerArrayItem(0);
+        crop_y = e->getIntegerArrayItem(1);
+    }
+    else {
+        crop_x = crop_y = 0;
+    }
+    e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_SIZE);
+    if(e) {
+        crop_w = e->getIntegerArrayItem(0);
+        crop_h = e->getIntegerArrayItem(1);
+    }
+    else {
+        crop_w = data.width();
+        crop_h = data.height();
+    }
+    data.setRoi(crop_x, crop_y, crop_w, crop_h);
+
     return ret;
 }
 
