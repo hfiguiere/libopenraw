@@ -440,6 +440,23 @@
     </results>
   </test>
   <test>
+    <name>DNG-BlackMagic Cinema Pocket</name>
+    <file>/home/hub/samples/cinemadng/Black_Magic_Pocket/bmpcc-giles_1_2013-11-26_2337_C0000_000000.dng</file>
+    <results>
+      <rawType>DNG</rawType>
+      <rawTypeId>0</rawTypeId>
+      <thumbNum>0</thumbNum>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>2170624</rawDataSize>
+      <rawDataDimensions>1952 556</rawDataDimensions>
+      <rawCfaPattern>GBRG</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <metaOrientation>1</metaOrientation>
+      <rawMd5>115</rawMd5>
+    </results>
+  </test>
+  <test>
     <name>ORF-test E300</name>
     <file>/home/hub/samples/orf/Olympus_E300/P7080133.ORF</file>
     <results>
