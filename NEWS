@@ -65,7 +65,8 @@ Bug fixes:
   - Bug 54034 - Implement decompression for D90 and other Lossy14Bits.
   - Fix some little-endian NEF decoding bugs.
   - Bug 69432 - Rename .pc to libopenraw-0.1.pc
-  - Bug 74786 - Propagate the boost includes. Replace INCLUDES by AM_CPPFLAGS
+  - Bug 74786 - Propagate the boost includes. Replace INCLUDES by
+    AM_CPPFLAGS
   - Bug 72270 - Don't load RGB8 thumbnails from CR2
   - Bug 70699 - Header guards violated C standard.
   - Fixed variuos overflow, in CRW decompress, ORF decompress,
@@ -87,6 +88,7 @@ Internal changes:
   - Add libasan support for debugging.
   - Fix IO::Stream tests.
   - IO::Streams used shared_ptr<>
+  - New tracing/logging API.
 
 libopenraw 0.0.10
 
