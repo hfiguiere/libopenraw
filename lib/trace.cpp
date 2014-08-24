@@ -1,7 +1,7 @@
 /*
  * libopenraw - trace.cpp
  *
- * Copyright (C) 2006-2007, 2010 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,57 +18,82 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <stdarg.h>
 
 #include <iostream>
 
 #include "trace.h"
 
-
-
 namespace Debug {
-		
-	int Trace::debugLevel = NOTICE;
 
-	void Trace::setDebugLevel(debug_level lvl)
-	{
-		debugLevel = lvl;
-	}
+int Trace::debugLevel = NOTICE;
 
-	void Trace::print(int i)
-	{
-		std::cerr << i << " ";
-	}
+void log(debug_level level, const char *fmt, ...)
+{
+  if (level > Trace::debugLevel) {
+    return;
+  }
 
-	Trace & Trace::operator<<(int i)
-	{
-		if (m_level <= debugLevel) {
-			std::cerr << i;
-		}
-		return *this;
-	}
+  va_list marker;
 
-	Trace & Trace::operator<<(const char * s)
-	{
-		if (m_level <= debugLevel) {
-			std::cerr << s;
-		}
-		return *this;
-	}
+  va_start(marker, fmt);
+  vfprintf(stderr, fmt, marker);
 
-	Trace & Trace::operator<<(void *p)
-	{
-		if (m_level <= debugLevel) {
-			std::cerr << p;
-		}
-		return *this;
-	}
+  va_end(marker);
+}
 
-	Trace & Trace::operator<<(const std::string & s)
-	{
-		if (m_level <= debugLevel) {
-			std::cerr << s;
-		}
-		return *this;
-	}
+void Trace::setDebugLevel(debug_level lvl)
+{
+  debugLevel = lvl;
+}
+
+void Trace::print(int i)
+{
+  std::cerr << i << " ";
+}
+
+Trace & Trace::operator<<(int i)
+{
+  if (m_level <= debugLevel) {
+    std::cerr << i;
+  }
+  return *this;
+}
+
+Trace & Trace::operator<<(const char * s)
+{
+  if (m_level <= debugLevel) {
+    std::cerr << s;
+  }
+  return *this;
+}
+
+Trace & Trace::operator<<(void *p)
+{
+  if (m_level <= debugLevel) {
+    std::cerr << p;
+  }
+  return *this;
+}
+
+Trace & Trace::operator<<(const std::string & s)
+{
+  if (m_level <= debugLevel) {
+    std::cerr << s;
+  }
+  return *this;
+}
 
 }
+
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/

@@ -25,6 +25,7 @@
 #include "makernotedir.h"
 #include "io/stream.h"
 #include "ifdfilecontainer.h"
+#include "trace.h"
 
 namespace OpenRaw {
 namespace Internals {
@@ -38,6 +39,7 @@ MakerNoteDir::Ref
 MakerNoteDir::createMakerNote(off_t offset,
                               IfdFileContainer & container)
 {
+    Debug::log(DEBUG1, "createMakerNote()\n");
     char data[18];
     auto file = container.file();
     file->seek(offset, SEEK_SET);

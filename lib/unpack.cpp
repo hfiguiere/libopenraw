@@ -74,7 +74,7 @@ or_error Unpack::unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *
     size_t m = (i == n) ? rest / 3 : 5;
     if((reinterpret_cast<uint8_t *>(dest16) - dest) + (m * 4) >  destsize) {
       err = OR_ERROR_DECOMPRESSION;
-      Debug::Trace(ERROR) << "overflow !\n";
+      Debug::log(ERROR, "overflow !\n");
       break;
     }
     for(size_t j = 0; j < m; j++) {

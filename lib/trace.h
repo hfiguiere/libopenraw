@@ -1,7 +1,7 @@
 /*
  * libopenraw - trace.h
  *
- * Copyright (C) 2006-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -31,42 +31,62 @@
 
 namespace Debug {
 
-
-	/** a basic Trace class for debug */
-	class Trace 
-	{
-	public:
-		Trace(debug_level level)
-			: m_level(level)
-			{
-			}
-		Trace & operator<<(int i);
-		Trace & operator<<(const char * s);
-		Trace & operator<<(void *);
-		Trace & operator<<(const std::string & s);
-
-		template <class T>
-		Trace & operator<<(const std::vector<T> & v);
-
-		static void setDebugLevel(debug_level lvl);
-	private:
-		static void print(int i);
-		static int debugLevel; // global debug level
-		int m_level;
-	};
+/** Log debug messages. printf format.
+ * @param fmt the formt string, printf style
+ * @param func the func name
+ */
+void log(debug_level level, const char* fmt, ...)
+    __attribute__ ((format (printf, 2, 3)));
 
 
-	template <class T>
-	Trace & Trace::operator<<(const std::vector<T> & v)
-	{
-		if (m_level <= debugLevel) {
-			std::for_each(v.begin(), v.end(),
-				      std::bind(&print, std::placeholders::_1));
-		}
-		return *this;
-	}
+/** a basic Trace class for debug */
+class Trace
+{
+public:
+  Trace(debug_level level)
+    : m_level(level)
+    {
+    }
+  Trace & operator<<(int i);
+  Trace & operator<<(const char * s);
+  Trace & operator<<(void *);
+  Trace & operator<<(const std::string & s);
 
-	
+  template <class T>
+  Trace & operator<<(const std::vector<T> & v);
+
+  static void setDebugLevel(debug_level lvl);
+private:
+  friend void log(debug_level level, const char* fmt, ...);
+  static void print(int i);
+  static int debugLevel; // global debug level
+  int m_level;
+};
+
+
+template <class T>
+Trace & Trace::operator<<(const std::vector<T> & v)
+{
+  if (m_level <= debugLevel) {
+    std::for_each(v.begin(), v.end(),
+                  [](T a) {
+                    print(a);
+                  });
+  }
+  return *this;
+}
+
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
