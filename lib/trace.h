@@ -39,6 +39,15 @@ void log(debug_level level, const char* fmt, ...)
     __attribute__ ((format (printf, 2, 3)));
 
 
+#define LOGERR(...) \
+  Debug::log(ERROR, ## __VA_ARGS__)
+
+#define LOGDBG1(...) \
+  Debug::log(DEBUG1, ## __VA_ARGS__)
+
+#define LOGDBG2(...) \
+  Debug::log(DEBUG2, ## __VA_ARGS__)
+
 /** a basic Trace class for debug */
 class Trace
 {
