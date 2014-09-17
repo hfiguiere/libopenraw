@@ -14,9 +14,8 @@ check_PROGRAMS = fileio ciffcontainertest ljpegtest testunpack\
 
 EXTRA_DIST = ljpegtest1.jpg
 
-fileio_LDFLAGS = -L$(top_builddir)/lib/io
-fileio_LDADD = -lio
 fileio_SOURCES = fileio.t.c
+fileio_LDFLAGS = -static $(OPENRAW_LIB)
 
 extensions_SOURCES = extensions.cpp
 extensions_LDFLAGS = -static $(OPENRAW_LIB)

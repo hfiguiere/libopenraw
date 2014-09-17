@@ -1,11 +1,16 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/include @BOOST_CPPFLAGS@
 
-SUBDIRS = io capi
-
 EXTRA_DIST = libopenraw.sym
 
 pkgconfig_DATA = libopenraw-0.1.pc
+
+TESTS = teststream
+
+check_PROGRAMS = teststream
+
+teststream_SOURCES = io/teststream.cpp
+teststream_LDADD = libopenraw.la
 
 noinst_HEADERS = \
 	trace.h	\
@@ -49,9 +54,20 @@ libopenraw_la_LDFLAGS = \
 
 #	-export-symbols $(srcdir)/libopenraw.sym 
 
-libopenraw_la_LIBADD = io/libio.la capi/libopenrawc.la -ljpeg
+libopenraw_la_LIBADD = -ljpeg
 
 libopenraw_la_SOURCES = \
+	io/io.c io/posix_io.h \
+	io/posix_io.c io/posix_io.h \
+	io/stream.cpp io/stream.h \
+	io/streamclone.cpp io/streamclone.h \
+	io/memstream.cpp io/memstream.h \
+	io/file.cpp io/file.h \
+	capi/capi.cpp \
+	capi/debug.cpp \
+	capi/rawdata.cpp \
+	capi/rawfile.cpp \
+	capi/bitmapdata.cpp \
 	trace.cpp \
 	bititerator.h \
 	bititerator.cpp \

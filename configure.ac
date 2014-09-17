@@ -5,7 +5,7 @@ AC_PREREQ(2.50)
 AC_INIT(libopenraw, 0.1.0)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2 dist-xz subdir-objects])
 AM_MAINTAINER_MODE
 m4_ifndef([AM_SILENT_RULES], [m4_define([AM_SILENT_RULES],[])])
 AM_SILENT_RULES([yes])
@@ -35,7 +35,7 @@ dnl  REVISION is set to 0, otherwise REVISION is incremented.
 dnl ---------------------------------------------------------------------------
 dnl version 0.0.3 is 3 2 0
 dnl version 0.0.4 is 4 3 0
-dnl version 0.0.5 is 5 4 0 
+dnl version 0.0.5 is 5 4 0
 dnl version 0.0.6 is 6 5 0
 dnl version 0.0.7 is 6.5.1
 dnl version 0.0.8 is 6.5.2
@@ -186,8 +186,6 @@ include/Makefile
 include/libopenraw/Makefile
 include/libopenraw++/Makefile
 lib/Makefile
-lib/capi/Makefile
-lib/io/Makefile
 lib/libopenraw-0.1.pc
 gnome/Makefile
 gnome/libopenraw-gnome-0.1.pc

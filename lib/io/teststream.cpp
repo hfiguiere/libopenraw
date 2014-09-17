@@ -44,7 +44,7 @@ int test_main (int argc, char * argv[])
 
         BOOST_ASSERT(srcdir != NULL);
         g_testfile = std::string(srcdir);
-        g_testfile += "/testfile.tmp";
+        g_testfile += "/io/testfile.tmp";
     }
     else {
         g_testfile = argv[1];
