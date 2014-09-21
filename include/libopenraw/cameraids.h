@@ -134,6 +134,8 @@ extern "C" {
         OR_TYPEID_CANON_REBEL_T5I= OR_TYPEID_CANON_700D,
         OR_TYPEID_CANON_G16     = 55,
         OR_TYPEID_CANON_70D     = 56,
+        OR_TYPEID_CANON_7DMKII  = 57,
+        OR_TYPEID_CANON_G7X     = 58,
         _OR_TYPEID_CANON_LAST
     };
 
