@@ -191,6 +191,7 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
     { "Canon PowerShot G15", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G15) },
     { "Canon PowerShot G16", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G16) },
     { "Canon PowerShot G1 X", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G1X) },
+    { "Canon PowerShot G1 X Mark II", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G1XMKII) },
     { "Canon PowerShot G7 X", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7X) },
     { "Canon PowerShot S90", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S90) },
     { "Canon PowerShot S95", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S95) },

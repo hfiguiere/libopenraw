@@ -136,6 +136,7 @@ extern "C" {
         OR_TYPEID_CANON_70D     = 56,
         OR_TYPEID_CANON_7DMKII  = 57,
         OR_TYPEID_CANON_G7X     = 58,
+        OR_TYPEID_CANON_G1XMKII = 59,
         _OR_TYPEID_CANON_LAST
     };
 
