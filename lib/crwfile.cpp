@@ -161,11 +161,9 @@ RawContainer* CRWFile::getContainer() const
     const ImageSpec * img_spec = m_container->getImageSpec();
     uint32_t x, y;
     x = y = 0;
-    int32_t orientation = 0;
     if(img_spec) {
         x = img_spec->imageWidth;
         y = img_spec->imageHeight;
-        orientation = img_spec->exifOrientation();
     }
 
     // locate decoder table
@@ -304,7 +302,8 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
                     if(sz > 256) {
                         sz = 256;
                     }
-                    size_t sz2 = iter->fetchData(heap.get(), (void*)buf, sz);
+                    /*size_t sz2 = */iter->fetchData(heap.get(),
+                                                     (void*)buf, sz);
                     const char *p = buf;
                     while(*p) {
                         p++;
