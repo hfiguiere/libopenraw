@@ -34,237 +34,247 @@
 #include "trace.h"
 
 namespace OpenRaw {
-	namespace Internals {
+namespace Internals {
 
-		class CIFFContainer;
+class CIFFContainer;
 
-		namespace CIFF {
+namespace CIFF {
 
-			/** mask for the typeCode */
-			enum {
-				STORAGELOC_MASK = 0xc000, /**< storage location bit mask */
-				FORMAT_MASK = 0x3800,     /**< format of the data */
-				TAGCODE_MASK = 0x3fff  /**< include the format, because the last
-																* part is non significant */
-			};
-			/** tags for the CIFF records.
-			 * List made by a combination of the CIFF spec and
-			 * what exifprobe by Duane H. Hesser has.
-			 */
-			enum {
-				TAG_NULLRECORD =  0x0000,
-				TAG_FREEBYTES = 0x0001,
-				TAG_COLORINFO1 = 0x0032,
-				TAG_FILEDESCRIPTION = 0x0805,
-				TAG_RAWMAKEMODEL = 0x080a,
-				TAG_FIRMWAREVERSION = 0x080b,
-				TAG_COMPONENTVERSION = 0x080c,
-				TAG_ROMOPERATIONMODE = 0x080d,
-				TAG_OWNERNAME = 0x0810,
-				TAG_IMAGETYPE = 0x0815,
-				TAG_ORIGINALFILENAME = 0x0816,
-				TAG_THUMBNAILFILENAME = 0x0817,
+/** mask for the typeCode */
+enum {
+    STORAGELOC_MASK = 0xc000, /**< storage location bit mask */
+    FORMAT_MASK = 0x3800,     /**< format of the data */
+    TAGCODE_MASK = 0x3fff  /**< include the format, because the last
+                            * part is non significant */
+};
+/** tags for the CIFF records.
+ * List made by a combination of the CIFF spec and
+ * what exifprobe by Duane H. Hesser has.
+ */
+enum {
+    TAG_NULLRECORD =  0x0000,
+    TAG_FREEBYTES = 0x0001,
+    TAG_COLORINFO1 = 0x0032,
+    TAG_FILEDESCRIPTION = 0x0805,
+    TAG_RAWMAKEMODEL = 0x080a,
+    TAG_FIRMWAREVERSION = 0x080b,
+    TAG_COMPONENTVERSION = 0x080c,
+    TAG_ROMOPERATIONMODE = 0x080d,
+    TAG_OWNERNAME = 0x0810,
+    TAG_IMAGETYPE = 0x0815,
+    TAG_ORIGINALFILENAME = 0x0816,
+    TAG_THUMBNAILFILENAME = 0x0817,
 
-				TAG_TARGETIMAGETYPE = 0x100a,
-				TAG_SHUTTERRELEASEMETHOD = 0x1010,
-				TAG_SHUTTERRELEASETIMING = 0x1011,
-				TAG_RELEASESETTING = 0x1016,
-				TAG_BASEISO = 0x101c,
-				TAG_FOCALLENGTH = 0x1029,
-				TAG_SHOTINFO = 0x102a,
-				TAG_COLORINFO2 = 0x102c,
-				TAG_CAMERASETTINGS = 0x102d,
-				TAG_SENSORINFO = 0x1031,
-				TAG_CUSTOMFUNCTIONS = 0x1033,
-				TAG_PICTUREINFO = 0x1038,
-				TAG_WHITEBALANCETABLE = 0x10a9,
-				TAG_COLORSPACE = 0x10b4,
+    TAG_TARGETIMAGETYPE = 0x100a,
+    TAG_SHUTTERRELEASEMETHOD = 0x1010,
+    TAG_SHUTTERRELEASETIMING = 0x1011,
+    TAG_RELEASESETTING = 0x1016,
+    TAG_BASEISO = 0x101c,
+    TAG_FOCALLENGTH = 0x1029,
+    TAG_SHOTINFO = 0x102a,
+    TAG_COLORINFO2 = 0x102c,
+    TAG_CAMERASETTINGS = 0x102d,
+    TAG_SENSORINFO = 0x1031,
+    TAG_CUSTOMFUNCTIONS = 0x1033,
+    TAG_PICTUREINFO = 0x1038,
+    TAG_WHITEBALANCETABLE = 0x10a9,
+    TAG_COLORSPACE = 0x10b4,
 
-				TAG_IMAGESPEC = 0x1803,
-				TAG_RECORDID = 0x1804,
-				TAG_SELFTIMERTIME = 0x1806,
-				TAG_TARGETDISTANCESETTING = 0x1807,
-				TAG_SERIALNUMBER = 0x180b,
-				TAG_CAPTUREDTIME = 0x180e,
-				TAG_IMAGEINFO = 0x1810,
-				TAG_FLASHINFO = 0x1813,
-				TAG_MEASUREDEV = 0x1814,
-				TAG_FILENUMBER = 0x1817,
-				TAG_EXPOSUREINFO = 0x1818,
-				TAG_DECODERTABLE = 0x1835,
+    TAG_IMAGESPEC = 0x1803,
+    TAG_RECORDID = 0x1804,
+    TAG_SELFTIMERTIME = 0x1806,
+    TAG_TARGETDISTANCESETTING = 0x1807,
+    TAG_SERIALNUMBER = 0x180b,
+    TAG_CAPTUREDTIME = 0x180e,
+    TAG_IMAGEINFO = 0x1810,
+    TAG_FLASHINFO = 0x1813,
+    TAG_MEASUREDEV = 0x1814,
+    TAG_FILENUMBER = 0x1817,
+    TAG_EXPOSUREINFO = 0x1818,
+    TAG_DECODERTABLE = 0x1835,
 
-				TAG_RAWIMAGEDATA = 0x2005,
-				TAG_JPEGIMAGE = 0x2007,
-				TAG_JPEGTHUMBNAIL = 0x2008,
+    TAG_RAWIMAGEDATA = 0x2005,
+    TAG_JPEGIMAGE = 0x2007,
+    TAG_JPEGTHUMBNAIL = 0x2008,
 
-				TAG_IMAGEDESCRIPTION = 0x2804,
-				TAG_CAMERAOBJECT = 0x2807,
-				TAG_SHOOTINGRECORD = 0x3002,
-				TAG_MEASUREDINFO = 0x3003,
-				TAG_CAMERASPECIFICATION = 0x3004,
-				TAG_IMAGEPROPS = 0x300a,
-				TAG_EXIFINFORMATION = 0x300b
-			};
+    TAG_IMAGEDESCRIPTION = 0x2804,
+    TAG_CAMERAOBJECT = 0x2807,
+    TAG_SHOOTINGRECORD = 0x3002,
+    TAG_MEASUREDINFO = 0x3003,
+    TAG_CAMERASPECIFICATION = 0x3004,
+    TAG_IMAGEPROPS = 0x300a,
+    TAG_EXIFINFORMATION = 0x300b
+};
 
-			class Heap;
-
-
-			class ImageSpec
-			{
-			public:
-				ImageSpec()
-					: imageWidth(0), imageHeight(0),
-					  pixelAspectRatio(0), rotationAngle(0),
-					  componentBitDepth(0), colorBitDepth(0),
-					  colorBW(0)
-					{
-					}
-
-				/** read the struct from container
-				 * @param offset the offset to read from, relative
-				 * to the begining of the container.
-				 * @param container the container to read from.
-				 */
-				bool readFrom(off_t offset, CIFFContainer *container);
-				int32_t exifOrientation() const;
-
-				uint32_t imageWidth;
-				uint32_t imageHeight;
-				uint32_t /*float32*/pixelAspectRatio;
-				int32_t rotationAngle;
-				uint32_t componentBitDepth;
-				uint32_t colorBitDepth;
-				uint32_t colorBW;
-			};
+class Heap;
 
 
-			class RecordEntry
-			{
-			public:
-				typedef std::vector<RecordEntry> List;
+class ImageSpec
+{
+public:
+    ImageSpec()
+        : imageWidth(0), imageHeight(0),
+          pixelAspectRatio(0), rotationAngle(0),
+          componentBitDepth(0), colorBitDepth(0),
+          colorBW(0)
+        {
+        }
 
-				RecordEntry();
+    /** read the struct from container
+     * @param offset the offset to read from, relative
+     * to the begining of the container.
+     * @param container the container to read from.
+     */
+    bool readFrom(off_t offset, CIFFContainer *container);
+    int32_t exifOrientation() const;
 
-				/** load record from container
-				 * @param container the container
-				 * @return true if success
-				 */
-				bool readFrom(CIFFContainer *container);
-				/** fetch data define by the record from the heap
-				 * @param heap the heap to load from
-				 * @param buf the allocated buffer to load into
-				 * @param size the size of the allocated buffer
-				 * @return the size actually fetched. MIN(size, this->length);
-				 */
-				size_t fetchData(Heap* heap, void* buf, size_t size) const;
-				/** determine if entry match type code
-				 * @param _typeCode the code to check
-				 * @return true if match
-				 */
-				bool isA(uint16_t _typeCode) const
-					{
-						Debug::Trace(DEBUG2) << "typeCode = " << typeCode << "\n";
-						return typeCode == (TAGCODE_MASK & _typeCode);
-					}
-
-				uint16_t   typeCode;/* type code of the record */
-				uint32_t   length;/* record length */
-				uint32_t   offset;/* offset of the record in the heap*/
-			};
-
-			/** a CIFF Heap */
-			class Heap
-			{
-			public:
-				typedef std::shared_ptr<Heap> Ref;
-
-				/** Construct a heap from a location in the container
-				 * @param start the begin address relative to the container.
-				 * @param length the length in bytes
-				 * @param container the container to read from
-				 */
-				Heap(off_t start, off_t length, CIFFContainer * container);
-
-				RecordEntry::List & records();
-				CIFFContainer *container()
-					{
-						return m_container;
-					}
-				/** Eeturn the offset from the begining of the container. */
-				off_t offset()
-					{
-						return m_start;
-					}
-			private:
-				bool _loadRecords();
-
-				Heap(const Heap &);
-				Heap & operator=(const Heap &);
-
-				off_t m_start;
-				off_t m_length;
-				CIFFContainer *m_container;
-				RecordEntry::List m_records;
-			};
+    uint32_t imageWidth;
+    uint32_t imageHeight;
+    uint32_t /*float32*/pixelAspectRatio;
+    int32_t rotationAngle;
+    uint32_t componentBitDepth;
+    uint32_t colorBitDepth;
+    uint32_t colorBW;
+};
 
 
-			/** Heap Header of CIFF file*/
-			class HeapFileHeader
-			{
-			public:
-				bool readFrom(CIFFContainer *);
-				char       byteOrder[2];/* 'MM' for Motorola,'II' for Intel */
-				uint32_t   headerLength;/* length of header (in bytes) */
-				char       type[4];
-				char       subType[4];
-				uint32_t   version; /* higher word: 0x0001, Lower word: 0x0002 */
-				//uint32_t   reserved1;
-				//uint32_t   reserved2;
-				RawContainer::EndianType endian;
-			};
-		}
+class RecordEntry
+{
+public:
+    typedef std::vector<RecordEntry> List;
 
-		/** CIFF container
-		 * as described by the CIFF documentation
-		 */
-		class CIFFContainer
-			: public RawContainer
-		{
-		public:
-			CIFFContainer(const IO::Stream::Ptr &file);
-			virtual ~CIFFContainer();
+    RecordEntry();
 
-			CIFF::Heap::Ref heap();
+    /** load record from container
+     * @param container the container
+     * @return true if success
+     */
+    bool readFrom(CIFFContainer *container);
+    /** fetch data define by the record from the heap
+     * @param heap the heap to load from
+     * @param buf the allocated buffer to load into
+     * @param size the size of the allocated buffer
+     * @return the size actually fetched. MIN(size, this->length);
+     */
+    size_t fetchData(Heap* heap, void* buf, size_t size) const;
+    /** determine if entry match type code
+     * @param _typeCode the code to check
+     * @return true if match
+     */
+    bool isA(uint16_t _typeCode) const
+        {
+            Debug::Trace(DEBUG2) << "typeCode = " << typeCode << "\n";
+            return typeCode == (TAGCODE_MASK & _typeCode);
+        }
 
-			const CIFF::HeapFileHeader & header() const
-				{
-					return m_hdr;
-				}
-			CIFF::Heap::Ref getImageProps();
-			const CIFF::RecordEntry * getRawDataRecord() const;
-			const CIFF::ImageSpec * getImageSpec();
-			const CIFF::Heap::Ref getCameraProps();
-		private:
-			bool _loadHeap();
-			EndianType _readHeader();
+    uint16_t   typeCode;/* type code of the record */
+    uint32_t   length;/* record length */
+    uint32_t   offset;/* offset of the record in the heap*/
+};
+
+/** a CIFF Heap */
+class Heap
+{
+public:
+    typedef std::shared_ptr<Heap> Ref;
+
+    /** Construct a heap from a location in the container
+     * @param start the begin address relative to the container.
+     * @param length the length in bytes
+     * @param container the container to read from
+     */
+    Heap(off_t start, off_t length, CIFFContainer * container);
+
+    RecordEntry::List & records();
+    CIFFContainer *container()
+        {
+            return m_container;
+        }
+    /** Eeturn the offset from the begining of the container. */
+    off_t offset()
+        {
+            return m_start;
+        }
+private:
+    bool _loadRecords();
+
+    Heap(const Heap &);
+    Heap & operator=(const Heap &);
+
+    off_t m_start;
+    off_t m_length;
+    CIFFContainer *m_container;
+    RecordEntry::List m_records;
+};
 
 
-			CIFFContainer(const CIFFContainer &) = delete;
-			CIFFContainer & operator=(const CIFFContainer &) = delete;
+/** Heap Header of CIFF file*/
+class HeapFileHeader
+{
+public:
+    bool readFrom(CIFFContainer *);
+    char       byteOrder[2];/* 'MM' for Motorola,'II' for Intel */
+    uint32_t   headerLength;/* length of header (in bytes) */
+    char       type[4];
+    char       subType[4];
+    uint32_t   version; /* higher word: 0x0001, Lower word: 0x0002 */
+    //uint32_t   reserved1;
+    //uint32_t   reserved2;
+    RawContainer::EndianType endian;
+};
 
-			friend class CIFF::HeapFileHeader;
-			CIFF::HeapFileHeader m_hdr;
-			CIFF::Heap::Ref m_heap;
-			CIFF::Heap::Ref m_imageprops;
-			bool m_hasImageSpec;
-			CIFF::ImageSpec m_imagespec;
-			CIFF::Heap::Ref m_cameraprops;
-		};
+} // namespace CIFF
+
+/** CIFF container
+ * as described by the CIFF documentation
+ */
+class CIFFContainer
+    : public RawContainer
+{
+public:
+    CIFFContainer(const IO::Stream::Ptr &file);
+    virtual ~CIFFContainer();
+
+    CIFF::Heap::Ref heap();
+
+    const CIFF::HeapFileHeader & header() const
+        {
+            return m_hdr;
+        }
+    CIFF::Heap::Ref getImageProps();
+    const CIFF::RecordEntry * getRawDataRecord() const;
+    const CIFF::ImageSpec * getImageSpec();
+    const CIFF::Heap::Ref getCameraProps();
+private:
+    bool _loadHeap();
+    EndianType _readHeader();
+
+    CIFFContainer(const CIFFContainer &) = delete;
+    CIFFContainer & operator=(const CIFFContainer &) = delete;
+
+    friend class CIFF::HeapFileHeader;
+    CIFF::HeapFileHeader m_hdr;
+    CIFF::Heap::Ref m_heap;
+    CIFF::Heap::Ref m_imageprops;
+    bool m_hasImageSpec;
+    CIFF::ImageSpec m_imagespec;
+    CIFF::Heap::Ref m_cameraprops;
+};
 
 
-	}
+}
 }
 
 
 
 #endif
+
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
