@@ -1,7 +1,7 @@
 /*
  * libopenraw - exception.h
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,73 +26,84 @@
 #include <typeinfo>
 
 namespace OpenRaw {
-	namespace Internals {
+namespace Internals {
 
-		/** generic OpenRaw exception */
-		class Exception
-			: public std::exception
-		{
-		protected:
-			std::string m_what;
-		public:
-			Exception()
-				: std::exception(),
-					m_what()
-				{}
-			Exception(const std::string &w)
-				: std::exception(),
-					m_what(w)
-				{}
-			virtual ~Exception()
-				{}
-			const char *what() const noexcept(true)
-				{
-					if(m_what.empty()) {
-						return typeid(this).name();
-					}
-					return m_what.c_str();
-				}
-		};
+/** generic OpenRaw exception */
+class Exception
+  : public std::exception
+{
+protected:
+  std::string m_what;
+public:
+  Exception()
+    : std::exception(),
+      m_what()
+    {}
+  Exception(const std::string &w)
+    : std::exception(),
+      m_what(w)
+    {}
+  virtual ~Exception()
+    {}
+  const char *what() const noexcept(true)
+    {
+      if(m_what.empty()) {
+        return typeid(this).name();
+      }
+      return m_what.c_str();
+    }
+};
 
-		/** IO exception */
-		class IOException
-			: public Exception
-		{
-		public:
-			IOException(const std::string &w)
-				: Exception(w)
-				{}
-		};
+/** IO exception */
+class IOException
+  : public Exception
+{
+public:
+  IOException(const std::string &w)
+    : Exception(w)
+    {}
+};
 
 
-		/** data is of bad type */
-		class BadTypeException
-			: public Exception
-		{
+/** data is of bad type */
+class BadTypeException
+  : public Exception
+{
 
-		};
+};
 
-		/** data is of too big */
-		class TooBigException
-			: public Exception
-		{
-		};
+/** data is of too big */
+class TooBigException
+  : public Exception
+{
+};
 
-		class OutOfRangeException
-			: public Exception
-		{
-		};
+class OutOfRangeException
+  : public Exception
+{
+};
 
-		class DecodingException
-			: public Exception
-		{
-		public:
-			DecodingException(const std::string &w)
-				: Exception(w)
-				{}
-		};
+class DecodingException
+  : public Exception
+{
+public:
+  DecodingException(const std::string &w)
+    : Exception(w)
+    {}
+};
 
-	}
+}
 }
 
 #endif
+/*
+  Local Variables:
+  mode:c++
+  c-file-style:"stroustrup"
+  c-file-offsets:((innamespace . 0))
+  tab-width:2
+  c-basic-offset:2
+  indent-tabs-mode:nil
+  fill-column:80
+  End:
+*/
