@@ -327,7 +327,7 @@ static int32_t bmask[] = {0x0000,
  */
 void
 LJpegDecompressor::DecoderStructInit (DecompressInfo *dcPtr)
-    throw(DecodingException)
+    noexcept(false)
 {
     int16_t ci,i;
     JpegComponentInfo *compPtr;
@@ -683,7 +683,7 @@ void HuffExtend(int32_t & x, int32_t s)
  */
 void
 LJpegDecompressor::HuffDecoderInit (DecompressInfo *dcPtr)
-    throw(DecodingException)
+    noexcept(false)
 {
     int16_t ci;
     JpegComponentInfo *compptr;
@@ -735,7 +735,7 @@ LJpegDecompressor::HuffDecoderInit (DecompressInfo *dcPtr)
  */
 void
 LJpegDecompressor::ProcessRestart (DecompressInfo *dcPtr)
-    throw(DecodingException)
+    noexcept(false)
 {
     int32_t c, nbytes;
 
@@ -1057,7 +1057,7 @@ static inline void SkipVariable(IO::Stream * s)
  */
 void
 LJpegDecompressor::GetDht (DecompressInfo *dcPtr)
-    throw(DecodingException)
+    noexcept(false)
 {
     int32_t length;
     int32_t i, index, count;
@@ -1116,7 +1116,7 @@ LJpegDecompressor::GetDht (DecompressInfo *dcPtr)
  */
 void
 LJpegDecompressor::GetDri(DecompressInfo *dcPtr)
-    throw(DecodingException)
+    noexcept(false)
 {
     if (Get2bytes(m_stream) != 4) {
         throw DecodingException("Bogus length in DRI");
@@ -1166,7 +1166,8 @@ static void	GetApp0(IO::Stream *s)
  *--------------------------------------------------------------
  */
 void
-LJpegDecompressor::GetSof(DecompressInfo *dcPtr) throw(DecodingException)
+LJpegDecompressor::GetSof(DecompressInfo *dcPtr)
+    noexcept(false)
 {
     int32_t length;
     int16_t ci;
@@ -1232,7 +1233,7 @@ LJpegDecompressor::GetSof(DecompressInfo *dcPtr) throw(DecodingException)
  */
 void
 LJpegDecompressor::GetSos (DecompressInfo *dcPtr)
-    throw(DecodingException)
+    noexcept(false)
 {
     int32_t length;
     int32_t i;
@@ -1446,10 +1447,10 @@ LJpegDecompressor::ProcessTables (DecompressInfo *dcPtr)
  */
 void
 LJpegDecompressor::ReadFileHeader (DecompressInfo *dcPtr)
-    throw(DecodingException)
+    noexcept(false)
 {
     int c, c2;
-			
+
     /*
      * Demand an SOI marker at the start of the file --- otherwise it's
      * probably not a JPEG file at all.
@@ -1461,28 +1462,28 @@ LJpegDecompressor::ReadFileHeader (DecompressInfo *dcPtr)
                                                   "marker is %1% %2%\n")
                                     % c % c2));
     }
-			
+
     GetSoi (dcPtr);		/* OK, process SOI */
-			
+
     /*
      * Process markers until SOF
      */
     c = ProcessTables (dcPtr);
-			
+
     switch (c) {
     case M_SOF0:
     case M_SOF1:
     case M_SOF3:
         GetSof(dcPtr);
         break;
-				
+
     default:
         Trace(WARNING) << str(boost::format("Unsupported SOF marker "
                                             "type 0x%1%\n") % c);
         break;
     }
 }
-			
+
 /*
  *--------------------------------------------------------------
  *
