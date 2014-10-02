@@ -50,7 +50,7 @@ struct IfdTypeTrait
 	static T EL(const uint8_t* d);
 	static T BE(const uint8_t* d);
 	static T get(IfdEntry & e, uint32_t idx = 0, bool ignore_type = false)
-		throw (BadTypeException, OutOfRangeException, TooBigException);
+		noexcept(false);
 };
 
 
@@ -206,7 +206,7 @@ public:
 	 * @throw whatever is thrown
 	 */
 	template <typename T>
-	void getArray(std::vector<T> & array)
+	void getArray(std::vector<T> & array) noexcept(false)
 		{
 			try {
 				array.reserve(m_count);
@@ -250,7 +250,7 @@ private:
  */
 template <typename T>
 T IfdTypeTrait<T>::get(IfdEntry & e, uint32_t idx, bool ignore_type)
-	throw (BadTypeException, OutOfRangeException, TooBigException)
+	noexcept(false)
 {
 	/* format undefined means that we don't check the type */
 	if(!ignore_type && (e.m_type != IFD::EXIF_FORMAT_UNDEFINED)) {

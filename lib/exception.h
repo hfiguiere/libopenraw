@@ -43,10 +43,10 @@ namespace OpenRaw {
 				: std::exception(),
 					m_what(w)
 				{}
-			virtual ~Exception() throw()
+			virtual ~Exception()
 				{}
-			const char *what() const throw()
-				{ 
+			const char *what() const noexcept(true)
+				{
 					if(m_what.empty()) {
 						return typeid(this).name();
 					}

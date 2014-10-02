@@ -47,7 +47,7 @@ MetaValue::MetaValue(const std::vector<value_t> &v)
 }
 
 template<typename T>
-inline	T MetaValue::get(int idx) const
+inline	T MetaValue::get(int idx) const noexcept(false)
 {
     T v;
     assert(!m_values.empty());

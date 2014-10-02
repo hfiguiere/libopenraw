@@ -77,7 +77,7 @@ public:
       return m_fileName;
     }
 
-  uint8_t readByte() throw(Internals::IOException);
+  uint8_t readByte() noexcept(false);
 protected:
   void set_error(Error error)
     {
