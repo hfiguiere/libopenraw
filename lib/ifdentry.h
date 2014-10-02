@@ -100,7 +100,7 @@ inline std::string IfdTypeTrait<std::string>::EL(const uint8_t* b) noexcept
   }
   catch(...) {
   }
-	return s;
+  return s;
 }
 
 template <>
@@ -112,7 +112,7 @@ inline std::string IfdTypeTrait<std::string>::BE(const uint8_t* b) noexcept
   }
   catch(...) {
   }
-	return s;
+  return s;
 }
 
 #if defined(__APPLE_CC__)
