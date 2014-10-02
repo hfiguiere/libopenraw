@@ -39,6 +39,9 @@ void log(debug_level level, const char* fmt, ...)
     __attribute__ ((format (printf, 2, 3)));
 
 
+#define LOGWARN(...) \
+  Debug::log(WARNING, ## __VA_ARGS__)
+
 #define LOGERR(...) \
   Debug::log(ERROR, ## __VA_ARGS__)
 
