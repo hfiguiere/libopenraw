@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.h
  *
- * Copyright (C) 2006-2013 Hubert Figuiere
+ * Copyright (C) 2006-2014 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -47,64 +47,77 @@ struct IfdTypeTrait
 {
 	static const uint16_t type; /**< the EXIF enum for the type */
 	static const size_t   size; /**< the storage size unit in IFD*/
-	static T EL(const uint8_t* d);
-	static T BE(const uint8_t* d);
+	static T EL(const uint8_t* d) noexcept;
+	static T BE(const uint8_t* d) noexcept;
 	static T get(IfdEntry & e, uint32_t idx = 0, bool ignore_type = false)
 		noexcept(false);
 };
 
 
 template <>
-inline uint8_t IfdTypeTrait<uint8_t>::EL(const uint8_t* b)
+inline uint8_t IfdTypeTrait<uint8_t>::EL(const uint8_t* b) noexcept
 {
 	return *b;
 }
 
 template <>
-inline uint8_t IfdTypeTrait<uint8_t>::BE(const uint8_t* b)
+inline uint8_t IfdTypeTrait<uint8_t>::BE(const uint8_t* b) noexcept
 {
 	return *b;
 }
 
 
 template <>
-inline uint16_t IfdTypeTrait<uint16_t>::EL(const uint8_t* b)
+inline uint16_t IfdTypeTrait<uint16_t>::EL(const uint8_t* b) noexcept
 {
 	return EL16(b);
 }
 
 template <>
-inline uint16_t IfdTypeTrait<uint16_t>::BE(const uint8_t* b)
+inline uint16_t IfdTypeTrait<uint16_t>::BE(const uint8_t* b) noexcept
 {
 	return BE16(b);
 }
 
 template <>
-inline uint32_t IfdTypeTrait<uint32_t>::EL(const uint8_t* b)
+inline uint32_t IfdTypeTrait<uint32_t>::EL(const uint8_t* b) noexcept
 {
 	return EL32(b);
 }
 
 template <>
-inline uint32_t IfdTypeTrait<uint32_t>::BE(const uint8_t* b)
+inline uint32_t IfdTypeTrait<uint32_t>::BE(const uint8_t* b) noexcept
 {
 	return BE32(b);
 }
 
 template <>
-inline std::string IfdTypeTrait<std::string>::EL(const uint8_t* b)
+inline std::string IfdTypeTrait<std::string>::EL(const uint8_t* b) noexcept
 {
-	return std::string((const char*)b);
+  std::string s;
+  try {
+    s = (const char*)b;
+  }
+  catch(...) {
+  }
+	return s;
 }
 
 template <>
-inline std::string IfdTypeTrait<std::string>::BE(const uint8_t* b)
+inline std::string IfdTypeTrait<std::string>::BE(const uint8_t* b) noexcept
 {
-	return std::string((const char*)b);
+  std::string s;
+  try {
+    s = (const char*)b;
+  }
+  catch(...) {
+  }
+	return s;
 }
 
 #if defined(__APPLE_CC__)
 // Apple broken C++ needs this
+// Now that we are C++11 we might not even need this anymore.
 template <>
 inline unsigned long IfdTypeTrait<unsigned long>::EL(const uint8_t* b)
 {
@@ -119,7 +132,7 @@ inline unsigned long IfdTypeTrait<unsigned long>::BE(const uint8_t* b)
 #endif
 
 template <>
-inline IFD::Rational IfdTypeTrait<IFD::Rational>::EL(const uint8_t* b)
+inline IFD::Rational IfdTypeTrait<IFD::Rational>::EL(const uint8_t* b) noexcept
 {
     IFD::Rational r;
     r.num = EL32(b);
@@ -128,7 +141,7 @@ inline IFD::Rational IfdTypeTrait<IFD::Rational>::EL(const uint8_t* b)
 }
 
 template <>
-inline IFD::Rational IfdTypeTrait<IFD::Rational>::BE(const uint8_t* b)
+inline IFD::Rational IfdTypeTrait<IFD::Rational>::BE(const uint8_t* b) noexcept
 {
     IFD::Rational r;
     r.num = BE32(b);
@@ -137,7 +150,7 @@ inline IFD::Rational IfdTypeTrait<IFD::Rational>::BE(const uint8_t* b)
 }
 
 template <>
-inline IFD::SRational IfdTypeTrait<IFD::SRational>::EL(const uint8_t* b)
+inline IFD::SRational IfdTypeTrait<IFD::SRational>::EL(const uint8_t* b) noexcept
 {
     IFD::SRational r;
     r.num = EL32(b);
@@ -146,7 +159,7 @@ inline IFD::SRational IfdTypeTrait<IFD::SRational>::EL(const uint8_t* b)
 }
 
 template <>
-inline IFD::SRational IfdTypeTrait<IFD::SRational>::BE(const uint8_t* b)
+inline IFD::SRational IfdTypeTrait<IFD::SRational>::BE(const uint8_t* b) noexcept
 {
     IFD::SRational r;
     r.num = BE32(b);
@@ -165,13 +178,13 @@ public:
 			 IfdFileContainer &_container);
 	virtual ~IfdEntry();
 
-	int16_t type() const
+	int16_t type() const noexcept
 		{
 			return m_type;
 		}
 
 	/** the count of items in the entry */
-	uint32_t count() const
+	uint32_t count() const noexcept
 		{
 			return m_count;
 		}
@@ -179,7 +192,7 @@ public:
 	/** the offset of the data. It can just be the value
 	 * if the entry is self contained.
 	 */
-	off_t offset()
+	off_t offset() noexcept
 		{
 			if (endian() == RawContainer::ENDIAN_LITTLE) {
 				return IfdTypeTrait<uint32_t>::EL((uint8_t*)&m_data);
