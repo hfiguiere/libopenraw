@@ -1396,7 +1396,7 @@ LJpegDecompressor::ProcessTables (DecompressInfo *dcPtr)
             break;
 
         case M_DQT:
-            Trace(WARNING) << "Not a lossless JPEG file.\n";
+            LOGWARN("Not a lossless JPEG file.\n");
             break;
 
         case M_DRI:
@@ -1416,8 +1416,7 @@ LJpegDecompressor::ProcessTables (DecompressInfo *dcPtr)
         case M_RST6:
         case M_RST7:
         case M_TEM:
-            Trace(WARNING) << str(boost::format("Warning: unexpected "
-                                                "marker 0x%1%") % c);
+            LOGWARN("Warning: unexpected marker 0x%x", c);
             break;
 
         default:		/* must be DNL, DHP, EXP, APPn, JPGn, COM,
@@ -1477,8 +1476,7 @@ LJpegDecompressor::ReadFileHeader (DecompressInfo *dcPtr)
         break;
 
     default:
-        Trace(WARNING) << str(boost::format("Unsupported SOF marker "
-                                            "type 0x%1%\n") % c);
+        LOGWARN("Unsupported SOF marker type 0x%x\n", c);
         break;
     }
 }
