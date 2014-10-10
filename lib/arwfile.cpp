@@ -97,6 +97,9 @@ static const BuiltinColourMatrix s_matrices[] = {
     /* Adobe DNG converter 8.1 - strangely dcraw has one different */
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX100M2), 200, 0,
       { 8651,-2754,-1057,-3464,12207,1373,-568,1398,4434 } },
+    /* Adone DNG converter 8.7-rc */
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX100M3), 200, 0,
+      { 6596, -2079, -562, -4782, 13016, 1933, -970, 1581, 5181 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX1), 128, 0,
       { 6344,-1612,-462,-4863,12477,2681,-865,1786,6899 } },
     /* Adobe DNG converter 8.1 */
