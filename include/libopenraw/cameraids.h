@@ -193,6 +193,7 @@ extern "C" {
         OR_TYPEID_NIKON_E8400,
         OR_TYPEID_NIKON_D4S,
         OR_TYPEID_NIKON_D610,
+        OR_TYPEID_NIKON_D750,
         _OR_TYPEID_NIKON_LAST
     };
 
