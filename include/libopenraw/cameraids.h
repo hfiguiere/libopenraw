@@ -433,6 +433,7 @@ extern "C" {
         OR_TYPEID_FUJIFILM_XM1 = 20,
         OR_TYPEID_FUJIFILM_XE2 = 21,
         OR_TYPEID_FUJIFILM_XT1 = 22,
+        OR_TYPEID_FUJIFILM_X30 = 23,
         _OR_TYPEID_FUJIFILM_LAST
     };
 
