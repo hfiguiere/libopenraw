@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.cpp
  *
- * Copyright (C) 2007-2014 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -206,7 +206,7 @@ void RawData::setColourMatrix1(const double* matrix, uint32_t matrixSize)
     if(matrixSize > 12) {
         matrixSize = 12;
     }
-    for(uint32_t i = 0; i < 12; i++) {
+    for(uint32_t i = 0; i < matrixSize; i++) {
         d->colourMatrix[i] = matrix[i];
     }
     d->colourMatrixCount = matrixSize;

@@ -2,7 +2,7 @@
  * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -437,6 +437,21 @@ void RawFile::_addThumbnail(uint32_t size, const Internals::ThumbDesc& desc)
 {
     Trace(DEBUG1) << "getRawData()\n";
     ::or_error ret = _getRawData(rawdata, options);
+    if (ret != OR_ERROR_NONE) {
+        return ret;
+    }
+
+    // if the colour matrix isn't copied already, do it now.
+    uint32_t matrix_size = 0;
+    if (!rawdata.getColourMatrix1(matrix_size) || !matrix_size) {
+        matrix_size = colourMatrixSize();
+        double *matrix = new double[matrix_size];
+        if (getColourMatrix1(matrix, matrix_size) == OR_ERROR_NONE) {
+            rawdata.setColourMatrix1(matrix, matrix_size);
+        }
+        delete [] matrix;
+    }
+
     return ret;
 }
 

@@ -1,7 +1,7 @@
 /*
  * libopenraw - ordiag.cpp
  *
- * Copyright (C) 2007-2014 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -321,6 +321,19 @@ public:
                 m_out << boost::format(
                     "\t\tValues: black = %1% white = %2%\n")
                     % rd.blackLevel() % rd.whiteLevel();
+
+                uint32_t matrix_size = 0;
+                const double* matrix = rd.getColourMatrix1(matrix_size);
+                if (matrix) {
+                    m_out << boost::format("\t\tColour Matrix 1: ");
+                    for (uint32_t i = 0; i < matrix_size; i++) {
+                        if (i > 0) {
+                            m_out << ", ";
+                        }
+                        m_out << matrix[i];
+                    }
+                    m_out << "\n";
+                }
             }
             else {
                 m_out << boost::format("\tNo Raw Data found! (error = %1%)\n")
