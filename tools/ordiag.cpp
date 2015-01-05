@@ -325,7 +325,7 @@ public:
                     "\t\tValues: black = %1% white = %2%\n") % black % white;
 
                 uint32_t matrix_size = 0;
-                const double *matrix = or_rawdata_get_colourmatrix1(rd, &matrix_size);
+                const double *matrix = or_rawdata_get_colour_matrix(rd, 1, &matrix_size);
                 if (matrix) {
                     m_out << boost::format("\t\tColour Matrix 1: ");
                     for (uint32_t i = 0; i < matrix_size; i++) {

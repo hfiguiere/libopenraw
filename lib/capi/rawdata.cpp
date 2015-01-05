@@ -148,11 +148,35 @@ or_error or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
     return OR_ERROR_NONE;
 }
 
-const double*
-or_rawdata_get_colourmatrix1(ORRawDataRef rawdata, uint32_t* size)
+const double *or_rawdata_get_colour_matrix(ORRawDataRef rawdata, uint32_t index,
+                                           uint32_t *size)
 {
+    uint32_t matrix_size = 0;
     RawData *t = reinterpret_cast<RawData *>(rawdata);
-    return t->getColourMatrix1(*size);
+    const double *matrix = nullptr;
+
+    switch (index) {
+    case 0:
+        matrix = t->getColourMatrix1(matrix_size);
+        break;
+    case 1:
+        matrix = t->getColourMatrix2(matrix_size);
+        break;
+    default:
+        break;
+    }
+
+    if (!matrix_size) {
+        // a valid pointer might always be returned with size 0.
+        // force a return of nullptr.
+        // XXX change the C++ API instead?
+        matrix = nullptr;
+    }
+    if (size) {
+        *size = matrix_size;
+    }
+
+    return matrix;
 }
 
 or_error or_rawdata_get_rendered_image(ORRawDataRef rawdata,
@@ -165,3 +189,4 @@ or_error or_rawdata_get_rendered_image(ORRawDataRef rawdata,
         *reinterpret_cast<BitmapData *>(bitmapdata), options);
 }
 }
+

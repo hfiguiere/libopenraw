@@ -39,6 +39,8 @@
 
 namespace OpenRaw {
 
+static const int MAX_MATRIX_SIZE = 12;
+
 class RawData::Private {
 public:
     RawData *self;
@@ -55,8 +57,10 @@ public:
 
     std::vector<uint16_t> slices; /** all the slice width. */
 
-    double colourMatrix[12];
+    double colourMatrix[MAX_MATRIX_SIZE];
     uint32_t colourMatrixCount;
+    double colourMatrix2[MAX_MATRIX_SIZE];
+    uint32_t colourMatrix2Count;
 
     Private(RawData *_self)
         : self(_self),
@@ -68,9 +72,11 @@ public:
           row_offset(0),
           slice(0), sliceWidth(0),
           sliceOffset(0), slices(),
-          colourMatrixCount(0)
+          colourMatrixCount(0),
+          colourMatrix2Count(0)
         {
             memset(colourMatrix, 0, sizeof(colourMatrix));
+            memset(colourMatrix2, 0, sizeof(colourMatrix2));
         }
     void advance(size_t s);
     void nextSlice();
@@ -210,13 +216,30 @@ const double* RawData::getColourMatrix1(uint32_t & matrixSize) const
 
 void RawData::setColourMatrix1(const double* matrix, uint32_t matrixSize)
 {
-    if(matrixSize > 12) {
-        matrixSize = 12;
+    if(matrixSize > MAX_MATRIX_SIZE) {
+        matrixSize = MAX_MATRIX_SIZE;
     }
     for(uint32_t i = 0; i < matrixSize; i++) {
         d->colourMatrix[i] = matrix[i];
     }
     d->colourMatrixCount = matrixSize;
+}
+
+const double* RawData::getColourMatrix2(uint32_t & matrixSize) const
+{
+    matrixSize = d->colourMatrix2Count;
+    return d->colourMatrix2;
+}
+
+void RawData::setColourMatrix2(const double* matrix, uint32_t matrixSize)
+{
+    if(matrixSize > MAX_MATRIX_SIZE) {
+        matrixSize = MAX_MATRIX_SIZE;
+    }
+    for(uint32_t i = 0; i < matrixSize; i++) {
+        d->colourMatrix2[i] = matrix[i];
+    }
+    d->colourMatrix2Count = matrixSize;
 }
 
 void RawData::swap(RawData & with)

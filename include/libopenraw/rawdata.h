@@ -95,13 +95,16 @@ extern "C" {
 	or_error
 	or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
                              uint16_t *white);
-	/** Get the colour matrix
-	 * @param rawfile The RAW file object
-	 * @param size On output the actual size of the matrix.
-	 * @return the matrix array (or nullptr).
-	 * */
+
+	/** Get the colour matrix.
+	 * @param rawdata the raw data object
+	 * @param index the matrix index.
+	 * @param size of %matrix. Returns the actual size.
+	 * @return the matrix. Pointer is valid as long as %rawdata is.
+	 */
 	const double*
-	or_rawdata_get_colourmatrix1(ORRawDataRef rawdata, uint32_t* size);
+	or_rawdata_get_colour_matrix(ORRawDataRef rawdata, uint32_t index,
+				     uint32_t *size);
 
 	/** Get the rendered image from the raw data
 	 * @param rawdata the raw data.
@@ -109,8 +112,9 @@ extern "C" {
 	 * @param options option for rendering. Pass 0 for now.
 	 */
 	or_error
-	or_rawdata_get_rendered_image(ORRawDataRef rawdata, ORBitmapDataRef bitmapdata,
-								  uint32_t options);
+	or_rawdata_get_rendered_image(ORRawDataRef rawdata,
+				      ORBitmapDataRef bitmapdata,
+				      uint32_t options);
 
 #ifdef __cplusplus
 }
