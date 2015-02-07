@@ -1,7 +1,7 @@
 /*
  * libopenraw - cameraids.h
  *
- * Copyright (C) 2012-2014 Hubert Figuière
+ * Copyright (C) 2012-2015 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -407,6 +407,7 @@ extern "C" {
         OR_TYPEID_PANASONIC_GM1 = 29,
         OR_TYPEID_PANASONIC_GH4 = 30,
         OR_TYPEID_PANASONIC_LX100 = 31,
+        OR_TYPEID_PANASONIC_GM5 = 32,
         _OR_TYPEID_PANASONIC_LAST
     };
 
