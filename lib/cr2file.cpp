@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -106,6 +106,8 @@ static const BuiltinColourMatrix s_matrices[] = {
       { 7034,-804,-1014,-4420,12564,2058,-851,1994,5758 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_7D), 0, 0x3510,
       { 6844,-996,-856,-3876,11761,2396,-593,1772,6198 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_7DMKII), 0, 0x3510,
+      { 7268,-1082,-969,-4186,11839,2663,-825,2029,5839 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_70D), 0, 0x3bc7,
       { 7034,-804,-1014,-4420,12564,2058,-851,1994,5758 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M), 0, 0,
@@ -126,6 +128,8 @@ static const BuiltinColourMatrix s_matrices[] = {
     // From DNG Converter 8.7-rc
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G1XMKII), 0, 0,
       { 7378, -1255, -1043, -4088, 12251, 2048, -876, 1946, 5805 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7X), 0, 0,
+      { 9602,-3823,-937,-2984,11495,1675,-407,1415,5049 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S90), 0, 0,
       { 12374,-5016,-1049,-1677,9902,2078,-83,852,4683 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S95), 0, 0,
