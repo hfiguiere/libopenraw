@@ -1,7 +1,7 @@
 /*
  * libopenraw - jfifcontainer.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -148,18 +148,18 @@ bool JfifContainer::getDecompressedData(BitmapData &data)
 
 int JfifContainer::_loadHeader()
 {
-  int ret = 0;
 
   m_file->seek(0, SEEK_SET);
 
   if (::setjmp(m_jpegjmp) == 0) {
-    ret = JPEG::jpeg_read_header(&m_cinfo, TRUE);
+    int ret = JPEG::jpeg_read_header(&m_cinfo, TRUE);
     //Trace(DEBUG1) << "jpeg_read_header " << ret << "\n";
 
     JPEG::jpeg_calc_output_dimensions(&m_cinfo);
+    m_headerLoaded = (ret == 1);
+    return ret;
   }
-  m_headerLoaded = (ret == 1);
-  return ret;
+  return 0;
 }
 
 
