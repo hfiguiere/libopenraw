@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -43,7 +43,7 @@ int test_main(int argc, char *argv[])
 	if (argc == 1) {
 		// no argument, lets run like we are in "check"
 		const char * srcdir = getenv("srcdir");
-		
+
 		BOOST_ASSERT(srcdir != NULL);
 		g_testfile = std::string(srcdir);
 		g_testfile += "/ljpegtest1.jpg";
@@ -51,7 +51,6 @@ int test_main(int argc, char *argv[])
 	else {
 		g_testfile = argv[1];
 	}
-	
 
 	RawData *decompData;
 	File::Ptr s(new File(g_testfile.c_str()));
@@ -61,11 +60,12 @@ int test_main(int argc, char *argv[])
 
 	decompData = decompressor.decompress();
 
-	boost::crc_optimal<8, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
+	boost::crc_optimal<16, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
 	const uint8_t * data = static_cast<uint8_t *>(decompData->data());
 	size_t data_len = decompData->size();
 	crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
-	BOOST_CHECK(crc_ccitt2() == 0x49);
+
+	BOOST_CHECK(crc_ccitt2() == 0x20cc);
 
 	delete decompData;
 	delete container;
