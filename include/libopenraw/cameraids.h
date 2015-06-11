@@ -223,6 +223,8 @@ extern "C" {
         OR_TYPEID_LEICA_M_TYP240 = 11,
         OR_TYPEID_LEICA_X_VARIO = 12,
         OR_TYPEID_LEICA_T_TYP701 = 13,
+        OR_TYPEID_LEICA_Q_TYP116 = 14,
+        OR_TYPEID_LEICA_X_TYP113 = 15,
         _OR_TYPEID_LEICA_LAST
     };
 
