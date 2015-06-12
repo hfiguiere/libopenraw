@@ -13,7 +13,7 @@
       <thumbSizes>1536 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>377981 7239</thumbDataSizes>
-      <thumbMd5>73 237</thumbMd5>
+      <thumbMd5>32808 59392</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16973120</rawDataSize>
       <rawDataDimensions>3596 2360</rawDataDimensions>
@@ -21,7 +21,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>29</rawMd5>
+      <rawMd5>51638</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -39,7 +39,7 @@
       <thumbSizes>2256 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>892728 11024</thumbDataSizes>
-      <thumbMd5>83 217</thumbMd5>
+      <thumbMd5>35586 60486</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>24802624</rawDataSize>
       <rawDataDimensions>4312 2876</rawDataDimensions>
@@ -47,7 +47,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>16383</rawMaxValue>
-      <rawMd5>191</rawMd5>
+      <rawMd5>36420</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -65,7 +65,7 @@
       <thumbSizes>5184 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>2263285 17704</thumbDataSizes>
-      <thumbMd5>253 53</thumbMd5>
+      <thumbMd5>49192 14358</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>37691520</rawDataSize>
       <rawDataDimensions>5360 3516</rawDataDimensions>
@@ -73,7 +73,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>16383</rawMaxValue>
-      <rawMd5>89</rawMd5>
+      <rawMd5>21909</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -91,7 +91,7 @@
       <thumbSizes>5616 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>3384601 17024</thumbDataSizes>
-      <thumbMd5>91 117</thumbMd5>
+      <thumbMd5>5961 62355</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>44065536</rawDataSize>
       <rawDataDimensions>5792 3804</rawDataDimensions>
@@ -99,7 +99,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>16383</rawMaxValue>
-      <rawMd5>178</rawMd5>
+      <rawMd5>38395</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -117,7 +117,7 @@
       <thumbSizes>1600 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>632111 7297</thumbDataSizes>
-      <thumbMd5>221 219</thumbMd5>
+      <thumbMd5>17948 39087</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20846592</rawDataSize>
       <rawDataDimensions>3744 2784</rawDataDimensions>
@@ -125,7 +125,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>68</rawMd5>
+      <rawMd5>37727</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -142,14 +142,14 @@
       <thumbSizes>2048</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>1359526</thumbDataSizes>
-      <thumbMd5>53</thumbMd5>
+      <thumbMd5>42124</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>13036672</rawDataSize>
       <rawDataDimensions>3152 2068</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>1023</rawMaxValue>
-      <rawMd5>107</rawMd5>
+      <rawMd5>22551</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -166,14 +166,14 @@
       <thumbSizes>1536</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>233232</thumbDataSizes>
-      <thumbMd5>20</thumbMd5>
+      <thumbMd5>43759</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>13036672</rawDataSize>
       <rawDataDimensions>3152 2068</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>1023</rawMaxValue>
-      <rawMd5>49</rawMd5>
+      <rawMd5>52226</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -192,14 +192,14 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
-      <thumbMd5>8</thumbMd5>
+      <thumbMd5>49492</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
       <rawCfaPattern>GRBG</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>26</rawMd5>
+      <rawMd5>16091</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>
   </test>
@@ -217,14 +217,14 @@
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
       <thumbDataSizes>57600 578350</thumbDataSizes>
-      <thumbMd5>23 89</thumbMd5>
+      <thumbMd5>37211 45287</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3039 2014</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>109</rawMd5>
+      <rawMd5>7945</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -243,14 +243,14 @@
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
       <thumbDataSizes>57600 820445</thumbDataSizes>
-      <thumbMd5>174 207</thumbMd5>
+      <thumbMd5>64842 45385</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3039 2014</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>87</rawMd5>
+      <rawMd5>861</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -269,14 +269,14 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
-      <thumbMd5>213</thumbMd5>
+      <thumbMd5>49938</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>5327776</rawDataSize>
       <rawDataDimensions>2012 1324</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>207</rawMd5>
+      <rawMd5>5531</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>
   </test>
@@ -294,14 +294,14 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
-      <thumbMd5>169</thumbMd5>
+      <thumbMd5>20180</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>8223520</rawDataSize>
       <rawDataDimensions>2495 1648</rawDataDimensions>
       <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>52</rawMd5>
+      <rawMd5>54892</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -318,14 +318,14 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>57600</thumbDataSizes>
-      <thumbMd5>17</thumbMd5>
+      <thumbMd5>51254</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>2</rawMd5>
+      <rawMd5>30938</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -342,7 +342,7 @@
       <thumbSizes>160 3872</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>6696 1254388</thumbDataSizes>
-      <thumbMd5>180 245</thumbMd5>
+      <thumbMd5>47529 63340</thumbMd5>
       <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>8025398</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
@@ -363,12 +363,12 @@
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>5308 1343392</thumbDataSizes>
-      <thumbMd5>35 254</thumbMd5>
+      <thumbMd5>2932 57924</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMd5>63</rawMd5>
+      <rawMd5>11667</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>
   </test>
@@ -383,14 +383,14 @@
       <thumbSizes>160 3872</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
       <thumbDataSizes>57600 1265761</thumbDataSizes>
-      <thumbMd5>120 211</thumbMd5>
+      <thumbMd5>59356 17244</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20656128</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>113</rawMd5>
+      <rawMd5>35926</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -406,7 +406,7 @@
       <thumbSizes>310</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>191580</thumbDataSizes>
-      <thumbMd5>105</thumbMd5>
+      <thumbMd5>32570</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20134656</rawDataSize>
       <rawDataDimensions>3884 2592</rawDataDimensions>
@@ -414,7 +414,7 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>65535</rawMaxValue>
       <metaOrientation>1</metaOrientation>
-      <rawMd5>129</rawMd5>
+      <rawMd5>13997</rawMd5>
     </results>
   </test>
   <test>
@@ -428,7 +428,7 @@
       <thumbSizes>320</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
       <thumbDataSizes>65280</thumbDataSizes>
-      <thumbMd5>109</thumbMd5>
+      <thumbMd5>57401</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20681920</rawDataSize>
       <rawDataDimensions>3920 2638</rawDataDimensions>
@@ -436,7 +436,7 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>255</rawMaxValue>
       <metaOrientation>1</metaOrientation>
-      <rawMd5>233</rawMd5>
+      <rawMd5>28095</rawMd5>
     </results>
   </test>
   <test>
@@ -453,7 +453,7 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
       <metaOrientation>1</metaOrientation>
-      <rawMd5>115</rawMd5>
+      <rawMd5>727</rawMd5>
     </results>
   </test>
   <test>
@@ -468,7 +468,7 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>10614</thumbDataSizes>
-      <thumbMd5>126</thumbMd5>
+      <thumbMd5>55376</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16826880</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
@@ -491,7 +491,7 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>11074</thumbDataSizes>
-      <thumbMd5>48</thumbMd5>
+      <thumbMd5>64168</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16072000</rawDataSize>
       <rawDataDimensions>3280 2450</rawDataDimensions>
@@ -513,14 +513,14 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>6312</thumbDataSizes>
-      <thumbMd5>23</thumbMd5>
+      <thumbMd5>10303</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>25288800</rawDataSize>
       <rawDataDimensions>4100 3084</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>118</rawMd5>
+      <rawMd5>32693</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -536,14 +536,14 @@
       <thumbSizes>160</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>3003</thumbDataSizes>
-      <thumbMd5>213</thumbMd5>
+      <thumbMd5>63133</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>87</rawMd5>
+      <rawMd5>15791</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -562,14 +562,14 @@
       <thumbSizes>640</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>34222</thumbDataSizes>
-      <thumbMd5>155</thumbMd5>
+      <thumbMd5>9587</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>6348928</rawDataSize>
       <rawDataDimensions>2056 1544</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>3965</rawMaxValue>
-      <rawMd5>251</rawMd5>
+      <rawMd5>24931</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>
   </test>
@@ -588,14 +588,14 @@
       <thumbSizes>640</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>56306</thumbDataSizes>
-      <thumbMd5>26</thumbMd5>
+      <thumbMd5>6159</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>3965</rawMaxValue>
-      <rawMd5>214</rawMd5>
+      <rawMd5>9693</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>
   </test>
@@ -614,14 +614,14 @@
       <thumbSizes>640</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>67497</thumbDataSizes>
-      <thumbMd5>191</thumbMd5>
+      <thumbMd5>42646</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>9902208</rawDataSize>
       <rawDataDimensions>2568 1928</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>3965</rawMaxValue>
-      <rawMd5>168</rawMd5>
+      <rawMd5>59810</rawMd5>
       <metaOrientation>0</metaOrientation>
     </results>
   </test>
@@ -636,7 +636,7 @@
       <thumbSizes>3872</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>15915</thumbDataSizes>
-      <thumbMd5>248</thumbMd5>
+      <thumbMd5>63133</thumbMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -653,14 +653,14 @@
       <thumbSizes>2176 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>757744 8890</thumbDataSizes>
-      <thumbMd5>133 231</thumbMd5>
+      <thumbMd5>18245 48222</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>25531520</rawDataSize>
       <rawDataDimensions>4448 2870</rawDataDimensions>
       <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>
-      <rawMd5>28</rawMd5>
+      <rawMd5>36143</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -677,14 +677,14 @@
       <thumbSizes>1920 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>400511 10211</thumbDataSizes>
-      <thumbMd5>212 59</thumbMd5>
+      <thumbMd5>38886 27133</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>33669120</rawDataSize>
       <rawDataDimensions>5120 3288</rawDataDimensions>
       <rawCfaPattern>NON_RGB22</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>
-      <rawMd5>51</rawMd5>
+      <rawMd5>26116</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -699,14 +699,14 @@
       <thumbSizes>1920</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>764928</thumbDataSizes>
-      <thumbMd5>2</thumbMd5>
+      <thumbMd5>51492</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>
-      <rawMd5>34</rawMd5>
+      <rawMd5>3877</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>

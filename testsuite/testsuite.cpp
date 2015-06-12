@@ -1,7 +1,7 @@
 /*
  * libopenraw - testsuite.cpp
  *
- * Copyright (C) 2008-2014 Hubert Figuiere
+ * Copyright (C) 2008-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -370,8 +370,8 @@ bool Test::testThumbDataSizes(const std::string & result)
 namespace {
 uint32_t computeCrc(const Thumbnail * thumb)
 {
-    boost::crc_optimal<8, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
-		
+    boost::crc_optimal<16, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
+
     const uint8_t * data = static_cast<uint8_t *>(thumb->data());
     size_t data_len = thumb->size();
     crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
@@ -422,8 +422,8 @@ RawData * loadRawData(RawFile * file)
 
 uint32_t computeCrc(const RawData * rawdata)
 {
-    boost::crc_optimal<8, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
-		
+    boost::crc_optimal<16, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
+
     const uint8_t * data = static_cast<uint8_t *>(rawdata->data());
     size_t data_len = rawdata->size();
     crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
