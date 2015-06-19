@@ -1,7 +1,7 @@
 /*
  * libopenraw - stream.h
  *
- * Copyright (C) 2006-2014 Hubert Figuière
+ * Copyright (C) 2006-2015 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,14 +23,14 @@
 #define OR_INTERNALS_IO_STREAM_H_
 
 #include <sys/types.h>
-#include <unistd.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #include <memory>
 #include <string>
 
 #include <libopenraw/consts.h>
 
-#include "exception.h"
 
 namespace OpenRaw {
 namespace IO {

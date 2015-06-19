@@ -23,7 +23,7 @@
 #define OR_INTERNAL_BITITERATOR_H_
 
 #include <stdint.h>
-#include <cstring>
+#include <stddef.h>
 
 namespace OpenRaw {
 namespace Internals {

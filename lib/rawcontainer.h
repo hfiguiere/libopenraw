@@ -21,22 +21,15 @@
 #ifndef OR_INTERNALS_RAWCONTAINER_H_
 #define OR_INTERNALS_RAWCONTAINER_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <sys/types.h>
-
-#include <memory>
-
-#include <libopenraw/io.h>
-#include <libopenraw/types.h>
 
 #include "io/stream.h"
 
 namespace OpenRaw {
-namespace IO {
-class Stream;
-}
 
 namespace Internals {
-
 
 /**
    Generic interface for the RAW file container

@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwdecompressor.h
  *
- * Copyright (C) 2007-2014 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,15 +28,17 @@
 	$Date: 2005/06/27 14:07:24 $
 */
 
-#include <assert.h>
+#include <fcntl.h>
 #include <string.h>
+
+#include <libopenraw/consts.h>
+#include <libopenraw/debug.h>
 #include <libopenraw++/rawdata.h>
 
 #include "crwdecompressor.h"
-#include "trace.h"
-#include "rawcontainer.h"
-#include "io/stream.h"
 #include "exception.h"
+#include "trace.h"
+#include "io/stream.h"
 
 namespace OpenRaw {	namespace Internals {
 

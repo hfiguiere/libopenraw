@@ -19,23 +19,18 @@
  */
 
 
-#include <iostream>
 #include <libopenraw/cameraids.h>
-#include <libopenraw++/thumbnail.h>
-#include <libopenraw++/rawdata.h>
 
-#include "trace.h"
-#include "ifd.h"
-#include "ifdfilecontainer.h"
 #include "ifddir.h"
-#include "ifdentry.h"
-#include "io/file.h"
 #include "rawfile_private.h"
 #include "erffile.h"
 
 using namespace Debug;
 
 namespace OpenRaw {
+
+class RawData;
+
 namespace Internals {
 
 /* taken from dcraw, by default */

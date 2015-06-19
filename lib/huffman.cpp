@@ -22,6 +22,7 @@
 #include <string>
 #include <iostream>
 #include "huffman.h"
+#include "bititerator.h"
 
 namespace OpenRaw {
 namespace Internals {

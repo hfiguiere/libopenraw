@@ -1,7 +1,7 @@
 /*
  * libopenraw - xmlhandler.cpp
  *
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,11 @@
  */
 
 
-
+#include <stdio.h>
 #include <string.h>
+#include <utility>
+
+#include <libxml/xmlreader.h>
 
 #include "xmlhandler.h"
 

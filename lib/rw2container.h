@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2container.h
  *
- * Copyright (C) 2011-2014 Hubert Figuiere
+ * Copyright (C) 2011-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,6 +21,9 @@
 #ifndef OR_INTERNALS_ORF_CONTAINER_H_
 #define OR_INTERNALS_ORF_CONTAINER_H_
 
+#include <sys/types.h>
+#include "io/stream.h"
+#include "rawcontainer.h"
 #include "ifdfilecontainer.h"
 
 namespace OpenRaw {
@@ -28,8 +31,6 @@ namespace Internals {
 
 static const char ORF_SUBTYPE_16BPP = 'O';
 static const char ORF_SUBTYPE_12BPP = 'S';
-
-class IOFile;
 
 class Rw2Container
 	: public IfdFileContainer

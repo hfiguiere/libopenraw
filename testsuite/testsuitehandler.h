@@ -1,7 +1,7 @@
 /*
  * libopenraw - testsuitehandler.h
  *
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,6 +22,9 @@
 
 #ifndef _TEST_TESTSUITEHANDLER_H_
 #define _TEST_TESTSUITEHANDLER_H_
+
+#include <stdint.h>
+#include <string>
 
 #include "xmlhandler.h"
 #include "testsuite.h"

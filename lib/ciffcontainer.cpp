@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainer.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,13 +18,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <fcntl.h>
+#include <algorithm>
 #include <cstring>
-#include <iostream>
-#include <functional>
 
-#include <libopenraw/types.h>
-
-#include "io/file.h"
 #include "ciffcontainer.h"
 #include "trace.h"
 

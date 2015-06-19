@@ -1,7 +1,7 @@
 /*
  * libopenraw - makernotedir.h
  *
- * Copyright (C) 2010-2014 Hubert Figuiere
+ * Copyright (C) 2010-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,6 +22,8 @@
 #ifndef OR_INTERNALS_MAKERNOTEDIR_H_
 #define OR_INTERNALS_MAKERNOTEDIR_H_
 
+#include <stddef.h>
+#include <sys/types.h>
 #include <memory>
 #include <string>
 

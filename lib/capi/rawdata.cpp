@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.cpp
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,10 +21,20 @@
  */
 
 
-#include <libopenraw/rawdata.h>
+
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#include <libopenraw/consts.h>
+#include <libopenraw/types.h>
 
 #include <libopenraw++/rawdata.h>
-#include <libopenraw++/bitmapdata.h>
+#include <libopenraw++/cfapattern.h>
+
+namespace OpenRaw {
+  class BitmapData;
+}
 
 using OpenRaw::RawData;
 using OpenRaw::BitmapData;

@@ -1,7 +1,7 @@
 /*
  * libopenraw - testsuitehandler.cpp
  *
- * Copyright (C) 2008-2014 Hubert Figuiere
+ * Copyright (C) 2008-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -20,9 +20,9 @@
  */
 
 
-
-
-#include <iostream>
+#include <stdio.h>
+#include <map>
+#include <memory>
 
 #include "testsuitehandler.h"
 #include "testsuite.h"

@@ -19,9 +19,10 @@
  */
 
 
+#include <libopenraw/debug.h>
+
 #include "trace.h"
 #include "orfcontainer.h"
-
 
 using namespace Debug;
 

@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifddir.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,12 +18,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-#include <libopenraw/types.h>
+#include <fcntl.h>
+#include <cstdint>
+#include <utility>
 
 #include "trace.h"
-#include "exception.h"
-#include "ifd.h"
 #include "io/stream.h"
 #include "ifdfilecontainer.h"
 #include "ifddir.h"

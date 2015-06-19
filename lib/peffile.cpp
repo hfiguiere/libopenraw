@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,17 +19,12 @@
  */
 
 
-#include <iostream>
 #include <libopenraw/cameraids.h>
-#include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 
-#include "trace.h"
 #include "ifd.h"
 #include "ifdfilecontainer.h"
 #include "ifddir.h"
-#include "ifdentry.h"
-#include "io/file.h"
 #include "peffile.h"
 #include "rawfile_private.h"
 

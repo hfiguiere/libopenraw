@@ -1,7 +1,7 @@
 /*
  * libopenraw - capi.cpp
  *
- * Copyright (C) 2005-2006 Hubert Figuiere
+ * Copyright (C) 2005-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,6 +21,9 @@
  * @brief the libopenraw public C API
  * @author Hubert Figuiere <hub@figuiere.net>
  */
+
+#include <stddef.h>
+#include <stdint.h>
 
 #include <libopenraw/consts.h>
 #include <libopenraw/thumbnails.h>

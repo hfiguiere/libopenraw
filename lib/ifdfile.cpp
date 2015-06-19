@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -19,19 +19,27 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <stddef.h>
+
 #include <algorithm>
+#include <cstdint>
+#include <exception>
 #include <memory>
 #include <numeric>
+#include <string>
 
-#include <libopenraw++/thumbnail.h>
+#include <libopenraw/consts.h>
+#include <libopenraw/debug.h>
+#include <libopenraw/metadata.h>
+#include <libopenraw++/bitmapdata.h>
+#include <libopenraw++/rawfile.h>
 #include <libopenraw++/rawdata.h>
-#include <libopenraw++/metavalue.h>
 
 #include "trace.h"
 #include "io/stream.h"
 #include "io/streamclone.h"
-#include "io/file.h"
 #include "ifd.h"
+#include "ifdentry.h"
 #include "ifdfile.h"
 #include "ifdfilecontainer.h"
 #include "jfifcontainer.h"
@@ -42,6 +50,9 @@
 using namespace Debug;
 
 namespace OpenRaw {
+
+class MetaValue;
+
 namespace Internals {
 
 

@@ -20,26 +20,35 @@
  */
 
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <cstring>
-#include <cassert>
 #include <map>
 #include <string>
 #include <functional>
 #include <memory>
+#include <utility>
+#include <vector>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/checked_delete.hpp>
 
 #include "trace.h"
 
 #include <libopenraw/metadata.h>
+#include <libopenraw/cameraids.h>
+#include <libopenraw/consts.h>
+#include <libopenraw/debug.h>
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/metavalue.h>
 
+#include "io/stream.h"
 #include "io/file.h"
 #include "io/memstream.h"
+#include "rawcontainer.h"
+#include "tiffepfile.h"
 #include "cr2file.h"
 #include "neffile.h"
 #include "orffile.h"
@@ -60,6 +69,8 @@ using std::string;
 using namespace Debug;
 
 namespace OpenRaw {
+
+class BitmapData;
 
 using Internals::RawFileFactory;
 

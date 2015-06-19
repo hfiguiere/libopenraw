@@ -22,9 +22,13 @@
 #ifndef OR_INTERNALS_IFDENTRY_H
 #define OR_INTERNALS_IFDENTRY_H
 
+#include <stddef.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <exception>
+#include <string>
 #include <vector>
 #include <memory>
-#include <libopenraw/types.h>
 
 #include "exception.h"
 #include "endianutils.h"

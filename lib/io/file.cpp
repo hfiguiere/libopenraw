@@ -1,7 +1,7 @@
 /*
- * libopenraw - file.h
+ * libopenraw - file.cpp
  *
- * Copyright (C) 2006 Hubert Figuière
+ * Copyright (C) 2006-2015 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,7 +18,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <fcntl.h>
+#include <string>
 
+#include "libopenraw/consts.h"
+#include "libopenraw/io.h"
+
+#include "io/stream.h"
 #include "file.h"
 
 namespace OpenRaw {

@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.cpp
  *
- * Copyright (C) 2007, 2012 Hubert Figuiere
+ * Copyright (C) 2007, 2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,12 +20,21 @@
 /* @brief C api for rawfile
  */
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <boost/checked_delete.hpp>
 
-#include <libopenraw/rawfile.h>
-
+#include <libopenraw/consts.h>
+#include <libopenraw/thumbnails.h>
+#include <libopenraw/types.h>
 #include <libopenraw++/rawfile.h>
-#include <libopenraw++/bitmapdata.h>
+
+namespace OpenRaw {
+  class BitmapData;
+  class RawData;
+  class Thumbnail;
+}
 
 using OpenRaw::RawFile;
 using OpenRaw::RawData;

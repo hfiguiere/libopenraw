@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfilecontainer.h
  *
- * Copyright (C) 2005-2014 Hubert Figuiere
+ * Copyright (C) 2005-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -29,14 +29,16 @@
 #ifndef OR_INTERNALS_IFDFILECONTAINER_H_
 #define OR_INTERNALS_IFDFILECONTAINER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+#include <sys/types.h>
 #include <vector>
 
 #include <libopenraw/consts.h>
-#include <libopenraw/types.h>
 
 #include "rawcontainer.h"
 #include "ifddir.h"
-#include "ifdentry.h"
+#include "io/stream.h"
 
 namespace OpenRaw {
 namespace Internals {

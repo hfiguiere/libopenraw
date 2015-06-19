@@ -1,7 +1,7 @@
 /*
  * libopenraw - xtranspattern.cpp
  *
- * Copyright (C) 2012 Hubert Figuière
+ * Copyright (C) 2015 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -17,6 +17,11 @@
  * License along with this library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+
+#include <stdint.h>
+
+#include <libopenraw/consts.h>
+#include <libopenraw++/cfapattern.h>
 
 #include "xtranspattern.h"
 

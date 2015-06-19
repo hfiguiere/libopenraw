@@ -18,9 +18,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
+#include <cstdint>
+#include <memory>
+
+#include <libopenraw/debug.h>
 #include <libopenraw/cameraids.h>
-#include <libopenraw++/thumbnail.h>
+#include <libopenraw/consts.h>
+#include <libopenraw++/cfapattern.h>
 #include <libopenraw++/rawdata.h>
+#include <libopenraw++/rawfile.h>
+
+#include "ifdfilecontainer.h"
+#include "makernotedir.h"
 
 #include "trace.h"
 #include "orffile.h"
@@ -30,7 +40,6 @@
 #include "orfcontainer.h"
 #include "olympusdecompressor.h"
 #include "rawfile_private.h"
-#include "io/file.h"
 #include "io/streamclone.h"
 #include "jfifcontainer.h"
 

@@ -1,7 +1,7 @@
 /*
- * libopenraw - iostream.h
+ * libopenraw - stream.cpp
  *
- * Copyright (C) 2006-2007 Hubert Figuière
+ * Copyright (C) 2006-2015 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+
+#include "libopenraw/consts.h"
 
 #include "stream.h"
 #include "exception.h"

@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwcontainer.h
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -23,15 +23,20 @@
 #ifndef OR_INTERNALS_MRW_CONTAINER_H_
 #define OR_INTERNALS_MRW_CONTAINER_H_
 
+#include <stdint.h>
+#include <sys/types.h>
 #include <string>
 #include <memory>
+#include <vector>
+
+#include "io/stream.h"
+#include "rawcontainer.h"
+
 
 #include "ifdfilecontainer.h"
 
 namespace OpenRaw {
 	namespace Internals {
-
-		class IOFile;
 
 		class MRWContainer;
 

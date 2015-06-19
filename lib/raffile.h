@@ -21,20 +21,27 @@
 #ifndef OR_INTERNALS_RAFFILE_H_
 #define OR_INTERNALS_RAFFILE_H_
 
-#include <map>
+#include <stdint.h>
+#include <vector>
 
+#include <libopenraw/consts.h>
 #include <libopenraw++/rawfile.h>
 
+
+#include "rawcontainer.h"
 #include "io/stream.h"
 
 #define RAF_MAGIC "FUJIFILMCCD-RAW "
 #define RAF_MAGIC_LEN 16
 
 namespace OpenRaw {
+
+class RawData;
+class MetaValue;
+
 namespace Internals {
 	
 class RafContainer;
-class ThumbDesc;
 
 class RafFile
 	: public OpenRaw::RawFile

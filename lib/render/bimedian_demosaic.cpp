@@ -20,7 +20,7 @@
  * Copyright 2008 Bradley Broom <bmbroom@gmail.com>
  *
  * In libopenraw:
- * Copyright 2008-2009,2012 Hubert Figuiere <hub@figuiere.net>
+ * Copyright 2008-2015 Hubert Figuiere <hub@figuiere.net>
  * Copyright 2008 Novell Inc.
  */
 
@@ -28,7 +28,7 @@
 
 #include <algorithm>
 
-#include <libopenraw/demosaic.h>
+#include <libopenraw/consts.h>
 
 #include "bimedian_demosaic.h"
 

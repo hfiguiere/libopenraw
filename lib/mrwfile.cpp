@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -20,16 +20,23 @@
  */
 
 
+#include <stddef.h>
+#include <sys/types.h>
+#include <cstdint>
+#include <string>
 #include <memory>
+
 #include <libopenraw/cameraids.h>
+#include <libopenraw/debug.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 
 #include "trace.h"
 #include "io/stream.h"
-#include "io/file.h"
 #include "mrwcontainer.h"
 #include "ifd.h"
+#include "ifdentry.h"
+#include "ifdfilecontainer.h"
 #include "mrwfile.h"
 #include "unpack.h"
 #include "rawfile_private.h"

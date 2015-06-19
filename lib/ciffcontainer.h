@@ -27,9 +27,16 @@
 #ifndef OR_INTERNALS_CIFFCONTAINER_H_
 #define OR_INTERNALS_CIFFCONTAINER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+#include <sys/types.h>
+
 #include <vector>
 #include <memory>
 
+#include <libopenraw/debug.h>
+
+#include "io/stream.h"
 #include "rawcontainer.h"
 #include "trace.h"
 

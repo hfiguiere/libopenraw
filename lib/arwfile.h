@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.h
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,17 +22,19 @@
 #define OR_INTERNALS_ARWFILE_H_
 
 #include <libopenraw/cameraids.h>
+#include <libopenraw/consts.h>
+#include <libopenraw++/rawfile.h>
 
+#include "io/stream.h"
+#include "ifddir.h"
 #include "ifdfile.h"
 #include "tiffepfile.h"
 
 namespace OpenRaw {
 
-class Thumbnail;
+class RawData;
 
 namespace Internals {
-class IOFile;
-class IfdFileContainer;
 
 class ArwFile
     : public TiffEpFile

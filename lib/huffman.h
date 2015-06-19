@@ -23,10 +23,11 @@
 #define OR_INTERNALS_HUFFMAN_H_
 
 #include <string>
-#include "bititerator.h"
 
 namespace OpenRaw {
 namespace Internals {
+
+class BitIterator;
 
 struct HuffmanNode {
 	unsigned isLeaf :1;

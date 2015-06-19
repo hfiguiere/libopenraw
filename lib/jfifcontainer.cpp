@@ -20,7 +20,10 @@
 
 
 #include <setjmp.h>
-#include <cstdio>
+#include <fcntl.h>
+#include <stddef.h>
+#include <string.h>
+#include <memory>
 
 namespace JPEG {
 /*
@@ -32,12 +35,14 @@ extern "C" {
 }
 }
 
-#include <string.h>
+#include <libopenraw/debug.h>
 #include <libopenraw++/bitmapdata.h>
+
 #include "io/stream.h"
 #include "io/streamclone.h"
 #include "trace.h"
 #include "jfifcontainer.h"
+#include "ifdfilecontainer.h"
 
 namespace OpenRaw {
 

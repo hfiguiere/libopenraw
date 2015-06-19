@@ -2,7 +2,7 @@
 /*
  * libopenraw - rafcontainer.cpp
  *
- * Copyright (C) 2011 Hubert Figuiere
+ * Copyright (C) 2011-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,20 +19,20 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <fcntl.h>
 #include <string.h>
+#include <memory>
 
 #include "rafcontainer.h"
 #include "raffile.h"
 #include "jfifcontainer.h"
 #include "ifdfilecontainer.h"
 #include "rafmetacontainer.h"
-#include "endianutils.h"
 #include "io/stream.h"
 #include "io/streamclone.h"
 
 namespace OpenRaw {
 namespace Internals {
-	
 
 RafContainer::RafContainer(const IO::Stream::Ptr &_file)
 	: RawContainer(_file, 0)

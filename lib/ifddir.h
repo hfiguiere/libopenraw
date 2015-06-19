@@ -22,8 +22,15 @@
 #ifndef OR_INTERNALS_IFDDIR_H
 #define OR_INTERNALS_IFDDIR_H
 
+#include <stddef.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <exception>
 #include <map>
 #include <memory>
+#include <vector>
+
+#include <libopenraw/debug.h>
 
 #include "ifdentry.h"
 #include "trace.h"

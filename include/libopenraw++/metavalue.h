@@ -1,7 +1,7 @@
 /*
  * libopenraw - metavalue.h
  *
- * Copyright (C) 2007-2013 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -23,10 +23,10 @@
 #ifndef LIBOPENRAWPP_METAVALUE_H_
 #define LIBOPENRAWPP_METAVALUE_H_
 
+#include <stdint.h>
 #include <vector>
 
 #include <boost/variant.hpp>
-#include <libopenraw/types.h>
 
 namespace OpenRaw {
 

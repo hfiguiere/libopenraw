@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.h
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -22,10 +22,18 @@
 #ifndef OR_INTERNALS_MRWFILE_H_
 #define OR_INTERNALS_MRWFILE_H_
 
+#include <stdint.h>
+#include <vector>
+
+#include <libopenraw/consts.h>
+#include <libopenraw++/rawfile.h>
+
 #include "ifdfile.h"
+#include "io/stream.h"
 
 namespace OpenRaw {
 
+class RawData;
 class Thumbnail;
 
 namespace Internals {

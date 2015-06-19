@@ -1,7 +1,7 @@
 /*
  * libopenraw - jfifcontainer.h
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,26 +25,25 @@
 #ifndef OR_INTERNALS_JFIFCONTAINER_H_
 #define OR_INTERNALS_JFIFCONTAINER_H_
 
+#include <stdint.h>
+#include <sys/types.h>
 #include <setjmp.h>
-#include <cstdio>
-#include <memory>
 
 namespace JPEG {
 #include <jpeglib.h>
 }
 
-#include <libopenraw/types.h>
-#include <libopenraw/consts.h>
-
-#include "exception.h"
-#include "ifdfilecontainer.h"
 #include "ifddir.h"
+#include "io/stream.h"
+#include "rawcontainer.h"
 
 namespace OpenRaw {
 
 class BitmapData;
 
 namespace Internals {
+
+class IfdFileContainer;
 
 class JfifContainer
   : public RawContainer

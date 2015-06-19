@@ -22,6 +22,9 @@
 #ifndef OR_INTERNALS_NEFCFAITERATOR_H_
 #define OR_INTERNALS_NEFCFAITERATOR_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "nefdiffiterator.h"
 
 namespace OpenRaw {

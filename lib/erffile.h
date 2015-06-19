@@ -1,7 +1,7 @@
 /*
  * libopenraw - erffile.h
  *
- * Copyright (C) 2007-2014 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,15 +21,18 @@
 #ifndef OR_INTERNALS_ERFFILE_H_
 #define OR_INTERNALS_ERFFILE_H_
 
+#include <stdint.h>
+
+#include <libopenraw/consts.h>
+#include <libopenraw++/rawfile.h>
+
+#include "ifdfile.h"
+#include "io/stream.h"
 #include "tiffepfile.h"
 
 namespace OpenRaw {
 
-class Thumbnail;
-
 namespace Internals {
-class IOFile;
-class IFDFileContainer;
 
 class ERFFile
     : public TiffEpFile

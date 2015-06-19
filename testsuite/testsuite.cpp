@@ -26,24 +26,26 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stddef.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <cstdint>
 #include <unistd.h>
 #include <errno.h>
+#include <getopt.h>
 
-#include <libxml/xmlreader.h>
+#include <libxml/parser.h>
+#include <libxml/xmlstring.h>
 #include <libxml/tree.h>
 #include <libxml/xmlsave.h>
 
+#include <algorithm>
 #include <iostream>
-#include <numeric>
-#include <stack>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -51,11 +53,14 @@
 
 #define IN_TESTSUITE
 #include <libopenraw/debug.h>
+#include <libopenraw/consts.h>
+#include <libopenraw/metadata.h>
 #include <libopenraw++/rawfile.h>
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/thumbnail.h>
 #include <libopenraw++/bitmapdata.h>
 #include <libopenraw++/metavalue.h>
+#include <libopenraw++/cfapattern.h>
 
 #include "xmlhandler.h"
 #include "testsuite.h"
@@ -65,7 +70,8 @@
 // Internal stuff. Because we can.
 #include "io/file.h"
 #include "ifdfile.h"
-
+#include "ifddir.h"
+#include "makernotedir.h"
 
 using OpenRaw::RawFile;
 using OpenRaw::BitmapData;

@@ -19,8 +19,11 @@
  */
 
 #include <stdarg.h>
+#include <stdio.h>
 
 #include <iostream>
+
+#include <libopenraw/debug.h>
 
 #include "trace.h"
 

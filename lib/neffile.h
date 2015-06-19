@@ -1,7 +1,7 @@
 /*
  * libopenraw - neffile.h
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -22,17 +22,26 @@
 #ifndef OR_INTERNALS_NEFFILE_H_
 #define OR_INTERNALS_NEFFILE_H_
 
-#include "tiffepfile.h"
-#include "huffman.h"
+#include <stdint.h>
+
 #include <vector>
+
+#include <libopenraw/consts.h>
+#include <libopenraw++/rawfile.h>
+
+#include "tiffepfile.h"
+#include "ifdfile.h"
+#include "io/stream.h"
+
 
 namespace OpenRaw {
 
-class Thumbnail;
+class RawData;
 
 namespace Internals {
-class IOFile;
-class IfdFileContainer;
+
+class RawContainer;
+struct HuffmanNode;
 
 class NefFile
     : public TiffEpFile

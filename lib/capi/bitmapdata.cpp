@@ -1,7 +1,7 @@
 /*
  * libopenraw - bitmapdata.cpp
  *
- * Copyright (C) 2007-2008 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -21,8 +21,11 @@
 /* @brief C api for bitmapdata
  */
 
+#include <stddef.h>
+#include <stdint.h>
+
+#include <libopenraw/types.h>
 #include <libopenraw/consts.h>
-#include <libopenraw/bitmapdata.h>
 
 #include <libopenraw++/bitmapdata.h>
 

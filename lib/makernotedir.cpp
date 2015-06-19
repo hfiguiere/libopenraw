@@ -18,9 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
+#include <fcntl.h>
 
-#include <libopenraw/rawfile.h>
+#include <string.h>
 
 #include "makernotedir.h"
 #include "io/stream.h"

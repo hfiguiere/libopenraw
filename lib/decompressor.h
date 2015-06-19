@@ -1,7 +1,7 @@
 /*
  * libopenraw - decompressor.h
  *
- * Copyright (C) 2007-2013 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,6 +20,8 @@
 
 #ifndef OR_INTERNALS_DECOMPRESS_H_
 #define OR_INTERNALS_DECOMPRESS_H_
+
+#include <stddef.h>
 
 namespace OpenRaw {
 

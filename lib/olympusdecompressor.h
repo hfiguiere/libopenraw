@@ -1,7 +1,7 @@
 /*
- * libopenraw - olympusdecompressor.cpp
+ * libopenraw - olympusdecompressor.h
  *
- * Copyright (C) 2011-2014 Hubert Figuiere
+ * Copyright (C) 2011-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,10 +22,18 @@
 #ifndef OR_INTERNALS_OLYMPUSDECOMPRESSOR_H_
 #define OR_INTERNALS_OLYMPUSDECOMPRESSOR_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "decompressor.h"
 
 namespace OpenRaw {
+
+class RawData;
+
 namespace Internals {
+
+class RawContainer;
 
 class OlympusDecompressor
   : public Decompressor

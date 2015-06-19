@@ -1,7 +1,7 @@
 /*
  * libopenraw - testsuite.cpp
  *
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,11 +26,12 @@
 #include "config.h"
 #endif
 
+#include <sys/types.h>
+
 #if HAVE_CURL
 #include <curl/curl.h>
 #endif
 
-#include <vector>
 #include <string>
 #include <map>
 #include <memory>

@@ -18,16 +18,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#include <fcntl.h>
+#include <memory>
 
-#include <libopenraw/types.h>
+#include <libopenraw/debug.h>
 
 #include "trace.h"
 #include "endianutils.h"
-#include "io/file.h"
 #include "rawcontainer.h"
-
-
 
 using namespace Debug;
 

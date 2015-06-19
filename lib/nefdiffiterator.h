@@ -3,7 +3,7 @@
  * libopenraw - nefdiffiterator.h
  *
  * Copyright (C) 2008 Rafael Avila de Espindola.
- * Copyright (C) 2013-2014 Hubert Figuiere
+ * Copyright (C) 2013-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,6 +22,9 @@
 
 #ifndef OR_INTERNALS_NEFDIFFITERATOR_H_
 #define OR_INTERNALS_NEFDIFFITERATOR_H_
+
+#include <stddef.h>
+#include <stdint.h>
 
 #include "bititerator.h"
 #include "huffman.h"

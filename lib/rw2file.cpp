@@ -18,21 +18,21 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <stddef.h>
+
+#include <algorithm>
+#include <cstdint>
 #include <memory>
-#include <boost/any.hpp>
+
 #include <libopenraw/cameraids.h>
-#include <libopenraw++/thumbnail.h>
+#include <libopenraw/debug.h>
 #include <libopenraw++/rawdata.h>
 
 #include "trace.h"
-#include "io/file.h"
-#include "io/memstream.h"
 #include "io/streamclone.h"
-#include "ifd.h"
 #include "rw2file.h"
 #include "rw2container.h"
 #include "jfifcontainer.h"
-#include "rawfilefactory.h"
 #include "rawfile_private.h"
 
 using namespace Debug;

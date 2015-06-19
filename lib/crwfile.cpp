@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -19,18 +19,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <fcntl.h>
+#include <stddef.h>
+#include <cstdint>
 #include <algorithm>
-#include <utility>
 #include <functional>
 #include <memory>
 
+#include <libopenraw/debug.h>
+#include <libopenraw/metadata.h>
 #include <libopenraw/cameraids.h>
-#include <libopenraw++/thumbnail.h>
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/metavalue.h>
+#include <libopenraw++/cfapattern.h>
+#include <libopenraw++/rawfile.h>
 
 #include "trace.h"
-#include "io/file.h"
 #include "io/streamclone.h"
 #include "io/memstream.h"
 #include "crwfile.h"
@@ -38,8 +42,6 @@
 #include "jfifcontainer.h"
 #include "crwdecompressor.h"
 #include "rawfile_private.h"
-
-#include "rawfilefactory.h"
 
 using namespace Debug;
 

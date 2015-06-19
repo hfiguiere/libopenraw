@@ -1,7 +1,7 @@
 /*
  * libopenraw - bitmapdata.cpp
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,14 +18,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <stddef.h>
+#include <stdint.h>
+#include <algorithm>
 #include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <assert.h>
 
 #include "trace.h"
 
-#include <libopenraw++/rawfile.h>
+#include <libopenraw/consts.h>
+#include <libopenraw/debug.h>
 #include <libopenraw++/bitmapdata.h>
 
 using namespace Debug;

@@ -1,7 +1,7 @@
 /*
  * libopenraw - raffile.cpp
  *
- * Copyright (C) 2011-2014 Hubert Figuière
+ * Copyright (C) 2011-2015 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,13 +18,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <stddef.h>
+#include <sys/types.h>
+#include <algorithm>
+#include <cstdint>
+
 #include <memory>
 
 #include <libopenraw/cameraids.h>
-#include <libopenraw++/thumbnail.h>
+#include <libopenraw/debug.h>
+#include <libopenraw/metadata.h>
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/rawfile.h>
+#include <libopenraw++/metavalue.h>
 
+#include "ifd.h"
+#include "ifddir.h"
+#include "ifdentry.h"
 #include "rawfile_private.h"
 #include "raffile.h"
 #include "rafcontainer.h"

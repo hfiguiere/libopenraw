@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.cpp
  *
- * Copyright (C) 2006-2008,2012 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,18 +19,17 @@
  */
 
 
+#include <stdlib.h>
 #include <math.h>
 
-#include <cassert>
+#include <cstdint>
 #include <string>
 
+#include <libopenraw/debug.h>
 #include <libopenraw++/metavalue.h>
 
 #include "trace.h"
-#include "exception.h"
-#include "endianutils.h"
 
-#include "trace.h"
 #include "ifdfilecontainer.h"
 #include "ifdentry.h"
 #include "ifd.h"

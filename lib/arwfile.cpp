@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,12 +19,9 @@
  */
 
 
-#include <libopenraw++/thumbnail.h>
+#include <libopenraw/cameraids.h>
 
-#include "trace.h"
-#include "io/file.h"
 #include "ifdfilecontainer.h"
-#include "ifd.h"
 #include "arwfile.h"
 #include "rawfile_private.h"
 
@@ -32,6 +29,7 @@ using namespace Debug;
 
 namespace OpenRaw {
 
+class RawData;
 
 namespace Internals {
 

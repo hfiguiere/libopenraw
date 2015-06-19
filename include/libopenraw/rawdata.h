@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.h
  *
- * Copyright (C) 2007 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -23,7 +23,8 @@
 #ifndef LIBOPENRAW_RAWDATA_H_
 #define LIBOPENRAW_RAWDATA_H_
 
-#include <stdlib.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #include <libopenraw/consts.h>
 #include <libopenraw/types.h>

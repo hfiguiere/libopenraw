@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -19,20 +19,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <stddef.h>
+
+#include <string>
 #include <memory>
 
 #include <libopenraw/cameraids.h>
-
-#include <libopenraw++/thumbnail.h>
+#include <libopenraw/debug.h>
 #include <libopenraw++/rawdata.h>
 
 #include "trace.h"
-#include "io/file.h"
 #include "io/memstream.h"
-#include "ifdfilecontainer.h"
 #include "jfifcontainer.h"
 #include "ljpegdecompressor.h"
 #include "ifd.h"
+#include "ifddir.h"
+#include "ifdentry.h"
 #include "dngfile.h"
 
 using namespace Debug;

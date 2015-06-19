@@ -19,21 +19,26 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <stddef.h>
+#include <cstdint>
+#include <vector>
 #include <memory>
 
 #include <libopenraw/cameraids.h>
-#include <libopenraw++/thumbnail.h>
+#include <libopenraw/consts.h>
+#include <libopenraw/debug.h>
 #include <libopenraw++/rawdata.h>
+#include <libopenraw++/rawfile.h>
+#include <libopenraw++/cfapattern.h>
 
 #include "trace.h"
-#include "io/file.h"
 #include "io/memstream.h"
 #include "ifdfilecontainer.h"
-#include "ifd.h"
+#include "ifdentry.h"
+#include "makernotedir.h"
 #include "cr2file.h"
 #include "jfifcontainer.h"
 #include "ljpegdecompressor.h"
-#include "rawfilefactory.h"
 #include "rawfile_private.h"
 
 using namespace Debug;

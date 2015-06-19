@@ -21,11 +21,12 @@
 #ifndef OR_INTERNALS_LJPEGDECOMPRESSOR_H_
 #define OR_INTERNALS_LJPEGDECOMPRESSOR_H_
 
+#include <stddef.h>
+#include <sys/types.h>
 #include <stdint.h>
 
 #include <vector>
 
-#include "exception.h"
 #include "decompressor.h"
 
 namespace OpenRaw {
@@ -34,6 +35,8 @@ class RawData;
 
 namespace Internals {
 
+class Stream;
+class RawContainer;
 struct HuffmanTable;
 struct DecompressInfo;
 

@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2container.cpp
  *
- * Copyright (C) 2011-2014 Hubert Figuiere
+ * Copyright (C) 2011-2015 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,9 +19,10 @@
  */
 
 
+#include <libopenraw/debug.h>
+
 #include "trace.h"
 #include "rw2container.h"
-
 
 using namespace Debug;
 

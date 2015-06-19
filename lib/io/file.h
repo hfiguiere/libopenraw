@@ -1,7 +1,7 @@
 /*
  * libopenraw - file.h
  *
- * Copyright (C) 2006 Hubert Figuière
+ * Copyright (C) 2006-2015 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,8 +23,8 @@
 #ifndef OR_INTERNALS_IO_FILE_H_
 #define OR_INTERNALS_IO_FILE_H_
 
+#include <stddef.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 #include <libopenraw/io.h>
 

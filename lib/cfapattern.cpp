@@ -21,7 +21,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include <vector>
 #include <array>
 
 #include <boost/static_assert.hpp>

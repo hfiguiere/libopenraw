@@ -19,9 +19,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
+#include <stddef.h>
 #include <string.h>
+#include <algorithm>
+#include <cassert>
+#include <cstdint>
+#include <vector>
 
+#include <libopenraw/consts.h>
+#include <libopenraw/debug.h>
+#include <libopenraw++/bitmapdata.h>
 #include <libopenraw++/rawdata.h>
 #include <libopenraw++/cfapattern.h>
 #include <libopenraw++/rawfile.h>

@@ -1,7 +1,7 @@
 /*
  * libopenraw - memstream.h
  *
- * Copyright (C) 2007 Hubert Figuière
+ * Copyright (C) 2007-2015 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,12 +21,16 @@
 #ifndef OR_INTERNALS_IO_MEMSTREAM_H_
 #define OR_INTERNALS_IO_MEMSTREAM_H_
 
+#include <stddef.h>
+#include <sys/types.h>
+
+#include <libopenraw/consts.h>
 
 #include "io/stream.h"
 
 namespace OpenRaw {
 namespace IO {
-		
+
 class MemStream
   : public Stream
 {

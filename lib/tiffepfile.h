@@ -1,7 +1,7 @@
 /*
  * libopenraw - tiffepfile.h
  *
- * Copyright (C) 2007-2014 Hubert Figuiere
+ * Copyright (C) 2007-2015 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -23,8 +23,11 @@
 #ifndef OR_INTERNALS_TIFF_EP_FILE_H_
 #define OR_INTERNALS_TIFF_EP_FILE_H_
 
-#include "ifdfile.h"
+#include <libopenraw++/rawfile.h>
 
+#include "ifddir.h"
+#include "ifdfile.h"
+#include "io/stream.h"
 
 namespace OpenRaw {
 namespace Internals {
