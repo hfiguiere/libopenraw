@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - testsuite.cpp
  *
@@ -18,7 +19,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef _TEST_TESTSUITE_H_
 #define _TEST_TESTSUITE_H_
 
@@ -37,93 +37,78 @@
 #include <memory>
 
 namespace OpenRaw {
-	class RawFile;
-	class RawData;
+class RawFile;
+class RawData;
 }
 
-class Test
-{
+class Test {
 public:
-	typedef std::shared_ptr<Test> Ptr;
+    typedef std::shared_ptr<Test> Ptr;
 
-	Test();
-	~Test();
+    Test();
+    ~Test();
 
-	std::string & name()
-		{ return m_name; }
-	std::string & file()
-		{ return m_file; }
-	std::string & source()
-		{ return m_source; }
-	std::map<int, std::string> & results()
-		{ return m_results; }
-	/** return 0 the test ran perfectly */
-	int run();
+    std::string& name() { return m_name; }
+    std::string& file() { return m_file; }
+    std::string& source() { return m_source; }
+    std::map<int, std::string>& results() { return m_results; }
+    /** return 0 the test ran perfectly */
+    int run();
 
     /** a test in another test, only taking new values */
-    void merge(const Test::Ptr & t);
-private:
-	bool testRawType(const std::string & result);
-	bool testRawTypeId(const std::string & result);
-	bool testThumbNum(const std::string & result);
-	bool testThumbSizes(const std::string & result);
-	bool testThumbFormats(const std::string & result);
-	bool testThumbDataSizes(const std::string & result);
-	bool testThumbMd5(const std::string & result);
-	bool testRawDataType(const std::string & result);
-	bool testRawDataSize(const std::string & result);
-	bool testRawDataDimensions(const std::string & result);
-	bool testRawDataRoi(const std::string & result);
-	bool testRawCfaPattern(const std::string & result);
-	bool testRawMinValue(const std::string & result);
-	bool testRawMaxValue(const std::string & result);
-	bool testRawMd5(const std::string & result);
-	bool testRawDecompressedMd5(const std::string & result);
-	bool testMetaOrientation(const std::string & result);
-    bool testExifString(int32_t meta_index, const std::string & results);
-    bool testMakerNoteId(const std::string & result);
-    bool testMakerNoteCount(const std::string & result);
+    void merge(const Test::Ptr& t);
 
-	std::string m_name;
-	std::string m_file;
-	std::string m_source;
-	std::map<int, std::string> m_results;
+private:
+    bool testRawType(const std::string& result);
+    bool testRawTypeId(const std::string& result);
+    bool testThumbNum(const std::string& result);
+    bool testThumbSizes(const std::string& result);
+    bool testThumbFormats(const std::string& result);
+    bool testThumbDataSizes(const std::string& result);
+    bool testThumbMd5(const std::string& result);
+    bool testRawDataType(const std::string& result);
+    bool testRawDataSize(const std::string& result);
+    bool testRawDataDimensions(const std::string& result);
+    bool testRawDataRoi(const std::string& result);
+    bool testRawCfaPattern(const std::string& result);
+    bool testRawMinValue(const std::string& result);
+    bool testRawMaxValue(const std::string& result);
+    bool testRawMd5(const std::string& result);
+    bool testRawDecompressedMd5(const std::string& result);
+    bool testMetaOrientation(const std::string& result);
+    bool testExifString(int32_t meta_index, const std::string& results);
+    bool testMakerNoteId(const std::string& result);
+    bool testMakerNoteCount(const std::string& result);
+
+    std::string m_name;
+    std::string m_file;
+    std::string m_source;
+    std::map<int, std::string> m_results;
     // runtime data
-	OpenRaw::RawFile *m_rawfile;
-	OpenRaw::RawData * m_rawdata;
-	int m_total, m_success, m_failure;
+    OpenRaw::RawFile* m_rawfile;
+    OpenRaw::RawData* m_rawdata;
+    int m_total, m_success, m_failure;
 };
 
-class TestSuite
-{
+class TestSuite {
 public:
-	TestSuite();
-	
-	int load_tests(const char * testsuite_file);
-    int load_overrides(const std::string & overrides_file);
-    int bootstrap(const std::string & overrides_file,
-                  const std::string & download_dir);
-	/** return 0 if all test ran perfectly */
-	int run_all();
-	/** add a test. own the test */
-	void add_test(const Test::Ptr & t);
+    TestSuite();
+
+    int load_tests(const char* testsuite_file);
+    int load_overrides(const std::string& overrides_file);
+    int bootstrap(const std::string& overrides_file,
+                  const std::string& download_dir);
+    /** return 0 if all test ran perfectly */
+    int run_all();
+    /** add a test. own the test */
+    void add_test(const Test::Ptr& t);
+
 private:
 #if HAVE_CURL
-    void walk_tests(xmlNode * test, CURL* handle,
-                    const std::string & download_dir);
+    void walk_tests(xmlNode* test, CURL* handle,
+                    const std::string& download_dir);
 #endif
-	std::map<std::string, Test::Ptr> m_tests;
+    std::map<std::string, Test::Ptr> m_tests;
 };
 
-
-
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

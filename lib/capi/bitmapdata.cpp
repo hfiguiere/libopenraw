@@ -33,63 +33,50 @@ using OpenRaw::BitmapData;
 
 extern "C" {
 
-ORBitmapDataRef
-or_bitmapdata_new(void)
+ORBitmapDataRef or_bitmapdata_new(void)
 {
-	BitmapData * bitmapdata = new BitmapData();
-	return reinterpret_cast<ORBitmapDataRef>(bitmapdata);
+    BitmapData *bitmapdata = new BitmapData();
+    return reinterpret_cast<ORBitmapDataRef>(bitmapdata);
 }
 
-or_error
-or_bitmapdata_release(ORBitmapDataRef bitmapdata)
+or_error or_bitmapdata_release(ORBitmapDataRef bitmapdata)
 {
-	if (bitmapdata == NULL) {
-		return OR_ERROR_NOTAREF;
-	}
-	delete reinterpret_cast<BitmapData *>(bitmapdata);
-	return OR_ERROR_NONE;
+    if (bitmapdata == NULL) {
+        return OR_ERROR_NOTAREF;
+    }
+    delete reinterpret_cast<BitmapData *>(bitmapdata);
+    return OR_ERROR_NONE;
 }
 
-
-or_data_type 
-or_bitmapdata_format(ORBitmapDataRef bitmapdata)
+or_data_type or_bitmapdata_format(ORBitmapDataRef bitmapdata)
 {
-	return reinterpret_cast<BitmapData *>(bitmapdata)->dataType();
+    return reinterpret_cast<BitmapData *>(bitmapdata)->dataType();
 }
 
-
-void *
-or_bitmapdata_data(ORBitmapDataRef bitmapdata)
+void *or_bitmapdata_data(ORBitmapDataRef bitmapdata)
 {
-	return reinterpret_cast<BitmapData *>(bitmapdata)->data();		
+    return reinterpret_cast<BitmapData *>(bitmapdata)->data();
 }
 
-
-size_t
-or_bitmapdata_data_size(ORBitmapDataRef bitmapdata)
+size_t or_bitmapdata_data_size(ORBitmapDataRef bitmapdata)
 {
-	return reinterpret_cast<BitmapData *>(bitmapdata)->size();		
+    return reinterpret_cast<BitmapData *>(bitmapdata)->size();
 }
 
-
-void
-or_bitmapdata_dimensions(ORBitmapDataRef bitmapdata, 
-					  uint32_t *x, uint32_t *y)
+void or_bitmapdata_dimensions(ORBitmapDataRef bitmapdata, uint32_t *x,
+                              uint32_t *y)
 {
-	BitmapData* t = reinterpret_cast<BitmapData *>(bitmapdata);
-	if (x != NULL) {
-		*x = t->width();
-	}
-	if (y != NULL) {
-		*y = t->height();
-	}
+    BitmapData *t = reinterpret_cast<BitmapData *>(bitmapdata);
+    if (x != NULL) {
+        *x = t->width();
+    }
+    if (y != NULL) {
+        *y = t->height();
+    }
 }
 
-uint32_t
-or_bitmapdata_bpc(ORBitmapDataRef bitmapdata)
+uint32_t or_bitmapdata_bpc(ORBitmapDataRef bitmapdata)
 {
-	return reinterpret_cast<BitmapData *>(bitmapdata)->bpc();		
+    return reinterpret_cast<BitmapData *>(bitmapdata)->bpc();
 }
-
-
 }

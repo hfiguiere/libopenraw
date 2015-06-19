@@ -18,7 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
 #include <libopenraw/debug.h>
 
 #include "trace.h"
@@ -30,39 +29,32 @@ namespace OpenRaw {
 
 namespace Internals {
 
-
 Rw2Container::Rw2Container(const IO::Stream::Ptr &_file, off_t _offset)
-	: IfdFileContainer(_file, _offset)
-	, subtype_(0)
+    : IfdFileContainer(_file, _offset), subtype_(0)
 {
 }
-
 
 Rw2Container::~Rw2Container()
 {
 }
 
+IfdFileContainer::EndianType Rw2Container::isMagicHeader(const char *p, int len)
+{
+    if (len < 4) {
+        // we need at least 4 bytes to check
+        return ENDIAN_NULL;
+    }
+    if ((p[0] == 'I') && (p[1] == 'I')) {
+        if ((p[2] == 'U') && (p[3] == 0)) {
 
-IfdFileContainer::EndianType 
-Rw2Container::isMagicHeader(const char *p, int len)
-{			
-	if (len < 4){
-		// we need at least 4 bytes to check
-		return ENDIAN_NULL;
-	}
-	if ((p[0] == 'I') && (p[1] == 'I')) {
-		if((p[2] == 'U') && (p[3] == 0)) {
+            Trace(DEBUG1) << "Identified EL RW2 file.\n";
+            return ENDIAN_LITTLE;
+        }
+    }
 
-			Trace(DEBUG1) << "Identified EL RW2 file.\n";
-			return ENDIAN_LITTLE;
-		}
-	}
+    Trace(ERROR) << "Unidentified RW2 file\n";
 
-	Trace(ERROR) << "Unidentified RW2 file\n";
-
-	return ENDIAN_NULL;
-}
-
+    return ENDIAN_NULL;
 }
 }
-
+}

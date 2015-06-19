@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - rw2container.h
  *
@@ -32,29 +33,24 @@ namespace Internals {
 static const char ORF_SUBTYPE_16BPP = 'O';
 static const char ORF_SUBTYPE_12BPP = 'S';
 
-class Rw2Container
-	: public IfdFileContainer
-{
+class Rw2Container : public IfdFileContainer {
 public:
-	Rw2Container(const IO::Stream::Ptr &file, off_t offset);
-	/** destructor */
-	virtual ~Rw2Container();
+    Rw2Container(const IO::Stream::Ptr &file, off_t offset);
+    /** destructor */
+    virtual ~Rw2Container();
 
-	/**
-		 Check the ORF magic header.
-	 */
-	virtual IfdFileContainer::EndianType 
-	isMagicHeader(const char *p, int len);
+    /**
+     * Check the ORF magic header.
+     */
+    virtual IfdFileContainer::EndianType isMagicHeader(const char *p, int len);
 
 private:
-	char subtype_;
+    char subtype_;
 
-	Rw2Container(const Rw2Container &) = delete;
-	Rw2Container & operator=(const Rw2Container &) = delete;
+    Rw2Container(const Rw2Container &) = delete;
+    Rw2Container &operator=(const Rw2Container &) = delete;
 };
-
 }
 }
-
 
 #endif

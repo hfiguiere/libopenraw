@@ -1,7 +1,7 @@
 ---
 Language:        Cpp
 # BasedOnStyle:  Mozilla
-AccessModifierOffset: -2
+AccessModifierOffset: -4
 ConstructorInitializerIndentWidth: 4
 AlignEscapedNewlinesLeft: false
 AlignTrailingComments: true
@@ -10,7 +10,7 @@ AllowShortBlocksOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Inline
-AlwaysBreakTemplateDeclarations: false
+AlwaysBreakTemplateDeclarations: true
 AlwaysBreakBeforeMultilineStrings: false
 BreakBeforeBinaryOperators: false
 BreakBeforeTernaryOperators: true
@@ -41,7 +41,7 @@ Standard:        Cpp11
 IndentWidth:     4
 TabWidth:        8
 UseTab:          Never
-BreakBeforeBraces: Attach
+BreakBeforeBraces: Stroustrup
 SpacesInParentheses: false
 SpacesInAngles:  false
 SpaceInEmptyParentheses: false

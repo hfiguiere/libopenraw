@@ -18,23 +18,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
 #include "decompressor.h"
 
 namespace OpenRaw {
-	namespace Internals {
+namespace Internals {
 
-		Decompressor::Decompressor(IO::Stream *stream,
-															 RawContainer *container)
-			: m_stream(stream), m_container(container)
-		{
-		}
-
-
-		Decompressor::~Decompressor()
-		{
-		}
-
-	}
+Decompressor::Decompressor(IO::Stream *stream, RawContainer *container)
+    : m_stream(stream), m_container(container) {
 }
 
+Decompressor::~Decompressor() {
+}
+}
+}

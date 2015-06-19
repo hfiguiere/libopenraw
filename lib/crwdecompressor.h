@@ -28,63 +28,58 @@
 
 namespace OpenRaw {
 
-	class RawData;
+class RawData;
 
-	namespace IO {
-		class Stream;
-	}
-
-	namespace Internals {
-
-		class RawContainer;
-
-		class CrwDecompressor
-			: public Decompressor
-		{
-		public:
-			CrwDecompressor(IO::Stream * stream,
-													RawContainer * container);
-			virtual ~CrwDecompressor();
-			
-			/** decompress the bitmapdata and return a new bitmap
-			 * @param in a preallocated BitmapData instance
-			 * or NULL if decompress has to allocate it.
-			 * @return the new bitmap decompressed. NULL is failure.
-			 * Caller owns it.
-			 * @todo use a shared_ptr here, or something
-			 */
-			virtual RawData *decompress(RawData *in = NULL);
-			void setDecoderTable(uint32_t t)
-				{ m_table = t; }
-			void setOutputDimensions(uint32_t x, uint32_t y)
-				{ m_height = y; m_width = x; }
-		private:
-			
-			struct decode_t {
-				decode_t *branch[2];
-				int leaf;
-			};
-
-			uint32_t getbits(IO::Stream * s, int nbits);
-			void make_decoder(decode_t *dest, const uint8_t *source, 
-												int level);
-			void init_tables(uint32_t table_idx);
-
-			uint32_t m_table;
-			uint32_t m_height, m_width;
-
-			decode_t m_first_decode[32];
-			decode_t m_second_decode[512];
-			// for make_decoder
-			decode_t *m_free; /* Next unused node */
-			int m_leaf; /* no. of leaves already added */
-			// for getbits
-			uint32_t m_bitbuf;
-			int m_vbits;
-		};
-
-	}
+namespace IO {
+class Stream;
 }
 
+namespace Internals {
+
+class RawContainer;
+
+class CrwDecompressor : public Decompressor {
+public:
+    CrwDecompressor(IO::Stream *stream, RawContainer *container);
+    virtual ~CrwDecompressor();
+
+    /** decompress the bitmapdata and return a new bitmap
+     * @param in a preallocated BitmapData instance
+     * or NULL if decompress has to allocate it.
+     * @return the new bitmap decompressed. NULL is failure.
+     * Caller owns it.
+     * @todo use a shared_ptr here, or something
+     */
+    virtual RawData *decompress(RawData *in = NULL);
+    void setDecoderTable(uint32_t t) { m_table = t; }
+    void setOutputDimensions(uint32_t x, uint32_t y) {
+        m_height = y;
+        m_width = x;
+    }
+
+private:
+    struct decode_t {
+        decode_t *branch[2];
+        int leaf;
+    };
+
+    uint32_t getbits(IO::Stream *s, int nbits);
+    void make_decoder(decode_t *dest, const uint8_t *source, int level);
+    void init_tables(uint32_t table_idx);
+
+    uint32_t m_table;
+    uint32_t m_height, m_width;
+
+    decode_t m_first_decode[32];
+    decode_t m_second_decode[512];
+    // for make_decoder
+    decode_t *m_free; /* Next unused node */
+    int m_leaf;       /* no. of leaves already added */
+    // for getbits
+    uint32_t m_bitbuf;
+    int m_vbits;
+};
+}
+}
 
 #endif

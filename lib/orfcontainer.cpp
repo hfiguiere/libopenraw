@@ -18,7 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
 #include <libopenraw/debug.h>
 
 #include "trace.h"
@@ -30,48 +29,42 @@ namespace OpenRaw {
 
 namespace Internals {
 
-
 OrfContainer::OrfContainer(const IO::Stream::Ptr &_file, off_t _offset)
-	: IfdFileContainer(_file, _offset)
-	, subtype_(0)
+    : IfdFileContainer(_file, _offset), subtype_(0)
 {
 }
-
 
 OrfContainer::~OrfContainer()
 {
 }
 
+IfdFileContainer::EndianType OrfContainer::isMagicHeader(const char *p, int len)
+{
+    if (len < 4) {
+        // we need at least 4 bytes to check
+        return ENDIAN_NULL;
+    }
+    if ((p[0] == 'I') && (p[1] == 'I')) {
+        if ((p[2] == 'R') && ((p[3] == 'O') || (p[3] == 'S'))) {
 
-IfdFileContainer::EndianType 
-OrfContainer::isMagicHeader(const char *p, int len)
-{			
-	if (len < 4){
-		// we need at least 4 bytes to check
-		return ENDIAN_NULL;
-	}
-	if ((p[0] == 'I') && (p[1] == 'I')) {
-		if((p[2] == 'R') && ((p[3] == 'O') || (p[3] == 'S'))) {
+            Trace(DEBUG1) << "Identified EL ORF file. Subtype = " << p[3]
+                          << "\n";
+            subtype_ = p[3];
+            return ENDIAN_LITTLE;
+        }
+    } else if ((p[0] == 'M') && (p[1] == 'M')) {
+        if ((p[3] == 'R') && ((p[2] == 'O') || (p[2] == 'S'))) {
 
-			Trace(DEBUG1) << "Identified EL ORF file. Subtype = " << p[3] << "\n";
-			subtype_ = p[3];	
-			return ENDIAN_LITTLE;
-		}
-	}
-	else if((p[0] == 'M') && (p[1] == 'M')) {
-		if((p[3] == 'R') && ((p[2] == 'O') || (p[2] == 'S'))) {
+            Trace(DEBUG1) << "Identified BE ORF file. Subtype = " << p[2]
+                          << "\n";
+            subtype_ = p[2];
+            return ENDIAN_BIG;
+        }
+    }
 
-			Trace(DEBUG1) << "Identified BE ORF file. Subtype = " << p[2] << "\n";
-			subtype_ = p[2];
-			return ENDIAN_BIG;
-		}
-	}
+    Trace(ERROR) << "Unidentified ORF file\n";
 
-	Trace(ERROR) << "Unidentified ORF file\n";
-
-	return ENDIAN_NULL;
-}
-
+    return ENDIAN_NULL;
 }
 }
-
+}

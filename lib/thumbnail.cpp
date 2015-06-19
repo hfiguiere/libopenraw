@@ -28,51 +28,42 @@
 
 namespace OpenRaw {
 
-	/** Private data for the thumbnail class */
-	class Thumbnail::Private {
-	public:
-		Private()
-			{
-			}
-		
-		~Private()
-			{
-			}
-	private:
-		Private(const Private &);
-		Private & operator=(const Private &);
-	};
+/** Private data for the thumbnail class */
+class Thumbnail::Private {
+public:
+    Private() {}
 
-	Thumbnail::Thumbnail()
-		: BitmapData(),
-			d(new Thumbnail::Private())
-	{
-	}
+    ~Private() {}
 
-	Thumbnail::~Thumbnail()
-	{
-		delete d;
-	}
+private:
+    Private(const Private &);
+    Private &operator=(const Private &);
+};
 
-	Thumbnail *
-	Thumbnail::getAndExtractThumbnail(const char* _filename,
-																		uint32_t preferred_size, 
-																		or_error & err)
-	{
-		err = OR_ERROR_NONE;
-		Thumbnail *thumb = NULL;
+Thumbnail::Thumbnail() : BitmapData(), d(new Thumbnail::Private())
+{
+}
 
-		RawFile *file = RawFile::newRawFile(_filename);
-		if (file) {
-			thumb = new Thumbnail();
-			err = file->getThumbnail(preferred_size, *thumb);
-			delete file;
-		}
-		else {
-			err = OR_ERROR_CANT_OPEN; // file error
-		}
-		return thumb;
-	}
+Thumbnail::~Thumbnail()
+{
+    delete d;
+}
 
+Thumbnail *Thumbnail::getAndExtractThumbnail(const char *_filename,
+                                             uint32_t preferred_size,
+                                             or_error &err)
+{
+    err = OR_ERROR_NONE;
+    Thumbnail *thumb = NULL;
 
+    RawFile *file = RawFile::newRawFile(_filename);
+    if (file) {
+        thumb = new Thumbnail();
+        err = file->getThumbnail(preferred_size, *thumb);
+        delete file;
+    } else {
+        err = OR_ERROR_CANT_OPEN; // file error
+    }
+    return thumb;
+}
 }
