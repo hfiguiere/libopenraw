@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - raffile.h
  *
@@ -27,7 +28,6 @@
 #include <libopenraw/consts.h>
 #include <libopenraw++/rawfile.h>
 
-
 #include "rawcontainer.h"
 #include "io/stream.h"
 
@@ -40,52 +40,38 @@ class RawData;
 class MetaValue;
 
 namespace Internals {
-	
+
 class RafContainer;
 
-class RafFile
-	: public OpenRaw::RawFile
-{
+class RafFile : public OpenRaw::RawFile {
 public:
-	static RawFile *factory(const IO::Stream::Ptr & s);
-	RafFile(const IO::Stream::Ptr &s);
-	virtual ~RafFile();
-	
+    static RawFile *factory(const IO::Stream::Ptr &s);
+    RafFile(const IO::Stream::Ptr &s);
+    virtual ~RafFile();
+
 protected:
-  virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
-	
-  virtual RawContainer* getContainer() const;
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
 
-  virtual ::or_error _getRawData(RawData & data, uint32_t options);
-	
-  virtual MetaValue *_getMetaValue(int32_t /*meta_index*/);
+    virtual RawContainer *getContainer() const;
 
-  virtual void _identifyId();
+    virtual ::or_error _getRawData(RawData &data, uint32_t options);
+
+    virtual MetaValue *_getMetaValue(int32_t /*meta_index*/);
+
+    virtual void _identifyId();
 
 private:
-	RafFile(const RafFile&) = delete;
-	RafFile & operator=(const RafFile&) = delete;
-	
-	IO::Stream::Ptr m_io; /**< the IO handle */
-	RafContainer *m_container; /**< the real container */
-	uint32_t m_x;
-	uint32_t m_y;
+    RafFile(const RafFile &) = delete;
+    RafFile &operator=(const RafFile &) = delete;
 
-	static const RawFile::camera_ids_t s_def[];	
+    IO::Stream::Ptr m_io;      /**< the IO handle */
+    RafContainer *m_container; /**< the real container */
+    uint32_t m_x;
+    uint32_t m_y;
+
+    static const RawFile::camera_ids_t s_def[];
 };
-	
 }
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  tab-width:2
-  c-basic-offset:2
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/
