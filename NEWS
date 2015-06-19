@@ -14,29 +14,34 @@ New features:
   - Support (partially) PEF from Pentax K-r, K-5, K-7,
     K-x (unconfirmed), 645D, *-ist DS, K200D, K5 II s.
   - Support for Olympus ORF big-endian files and "RS" (12-bits).
-    Added E-P2, E-P3, E-PL1, E-PL2, E-PL3,E-PL5, E-PM1, E-PM2,
-    E-620, E-M5, XZ-1, XZ-2 and Stylus 1.
+    Added E-P2, E-P3, E-PL1, E-PL2, E-PL3, E-PL5, E-PL6, E-PL7,
+    E-PM1, E-PM2,
+    E-620, E-M5, E-M5 II, XZ-1, XZ-2 and Stylus 1.
     Olympus ORF decompression.
   - Support extracting previews from ORF MakerNote.
   - Support for Canon G12, G15, G16, 600D, 1100D/Rebel T3, PowerShot S90,
     PowerShot S95, Rebel XS, PowerShot S100, PowerShot S110,
-    PowerShot G1 X, 1D X, 5DMkIII,
+    PowerShot G1 X, PowerShot G7 X, 1D X, 5DMkIII,
     Rebel T4i/650D, 6D, EOS-M, PowerShot SX50 HS, 70D
+    7DMkII, PowerShot G1 X MkII, Rebel T6, Rebel T6s, 5DS R.
   - Support make and model metadata from CRW.
   - API: Canon camera ID have aliases.
-  - Support for Nikon D4, D3100, D3200, D5000, D5100, D5200, D7000, D7100,
-    J1, J2, J3, S1, V1, V2, Coolpix A,
-    D3S, D3X, D300S, D600, D700, D800, D800E, D90, D60, Df,
+  - Support for Nikon D4, D3100, D3200, D3300, D5000, D5100, D5200,
+    D5300, D5500, D7000, D7100, D7200,
+    J1, J2, J3, J5, S1, V1, V2, V3, Coolpix A,
+    D3S, D3X, D300S, D600, D610, D700, D750, D800, D800E, D810,
+    D90, D60, Df, D4S,
     Coolpix E5400, E5700, E8400.
-  - Extract compressed raw from ARW (but A-100).
   - Added support for Sony A-380, A-390, A-560, A-580, A-850, A-900,
     SLT-A33, SLT-A35, SLT-A55, SLT-A57, SLT-A58, SLT-A65, SLT-A77,
     SLT-A99,
     Nex-3, Nex-5, Nex-5N, Nex-5R, Nex-5T, Nex-6, Nex-C3, Nex-F3, Nex-7,
-    RX-1, RX-1R, RX-100, RX-100M2, A7, A7R, A3000.
+    RX-1, RX-1R, RX-100, RX-100M2, RX-100M3, A7, A7R, A3000, A6000.
+  - Extract compressed raw from ARW (but A-100).
   - Support for DNG from Pentax Q, Q7, K-r, K-x, K200D, K-01, K-30,
     K-5 II s, MX-1, K-3, K-50, K-500 ;
-    Leica M9, M Monochrom, M (typ 240), S2, X2, X-Vario, T (typ 701);
+    Leica M9, M Monochrom, M (typ 240), S2, X2, X-Vario, T (typ 701),
+    X (typ 113), Q (typ 116);
     Ricoh GXR
   - Support for Nikon NRW: P6000, P7000, P7100 and P7700 (partial).
   - Support for Panasonic RAW and RW2.
@@ -77,18 +82,20 @@ Internal changes:
   - Now requires a C++ 11 capable compiler.
   - Remove most of boost that is in C++11.
   - Fixed warnings.
+  - De-recursify the build system.
   - Support to load MakerNote IFD with test.
   - Streamline the loading of IFDs.
   - Move the rendering on the RawData class.
   - BUG: IO::StreamClone::seek() now return the proper value.
   - Bug 48429 - Remove shave for automake silent rules (with help from
-    Adrian Bunk
+    Adrian Bunk).
   - Bug 54224 - Remove debian packaging (Adrian Bunk).
   - Bug 54229 - Remove .cvisgnore (Adrian Bunk).
   - Add libasan support for debugging.
   - Fix IO::Stream tests.
   - IO::Streams used shared_ptr<>
   - New tracing/logging API.
+  - Use 16bits CRC for testsuite.
 
 libopenraw 0.0.10
 

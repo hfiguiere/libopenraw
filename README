@@ -1,7 +1,7 @@
 Copyright
 =========
 
-libopenraw is Copyright (c) 2005-2013 Hubert Figuiere and
+libopenraw is Copyright (c) 2005-2015 Hubert Figuiere and
 other contributors. See the respective files.
 It is licensed under LGPLv3 or later. See files COPYING
 and COPYING.LESSER
@@ -275,7 +275,7 @@ Minolta MRW              Y Y B N Y Y N Y
  Dimage 7Hi              T T X X T T   Y
  Maxxum 5D               T T T N T     Y
  Maxxum 7D               T T T N T     Y
- A200                    
+ A200
 
 Sony SRF                 N N N N N N N N
 
@@ -343,7 +343,7 @@ Mamiya MEF               N N N N N N N N
  Mamiya ZD
 
 Samsung SRW              N N N N N N N N
- 
+
 
 Test suite
 ==========
