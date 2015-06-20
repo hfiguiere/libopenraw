@@ -221,43 +221,48 @@ RafFile::~RafFile()
         ret = OR_ERROR_NONE;
     }
     IfdDir::Ref dir = jpegPreview->getIfdDirAt(1);
-    if (dir) {
-        bool got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
+    if (!dir) {
+        return ret;
+    }
 
-        if (got_it) {
-            got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
-        }
+    bool got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
+
+    if (got_it) {
+        got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
+    }
+
+    if (!got_it) {
+        uint32_t jpeg_offset = 0;
+        uint32_t jpeg_size = 0;
+        got_it =
+            dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, jpeg_offset);
 
         if (!got_it) {
-            uint32_t jpeg_offset = 0;
-            uint32_t jpeg_size = 0;
-            got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
-                                   jpeg_offset);
+            return ret;
+        }
 
-            if (got_it) {
-                jpeg_offset +=
-                    12; // magic number. uh? I need to re-read the Exif spec.
-                got_it = dir->getValue(
-                    IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, jpeg_size);
-            }
+        jpeg_offset += 12; // magic number. uh?
+                           // I need to re-read the Exif spec.
+        got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
+                               jpeg_size);
 
-            if (got_it) {
-                IO::Stream::Ptr s(std::make_shared<IO::StreamClone>(
-                    jpegPreview->file(), jpeg_offset));
-                std::unique_ptr<JfifContainer> thumb(new JfifContainer(s, 0));
+        if (!got_it) {
+            return ret;
+        }
 
-                if (thumb->getDimensions(x, y)) {
-                    uint32_t size = std::max(x, y);
+        IO::Stream::Ptr s(std::make_shared<IO::StreamClone>(jpegPreview->file(),
+                                                            jpeg_offset));
+        std::unique_ptr<JfifContainer> thumb(new JfifContainer(s, 0));
 
-                    list.push_back(size);
-                    _addThumbnail(
-                        size,
-                        ThumbDesc(x, y, OR_DATA_TYPE_JPEG,
-                                  jpeg_offset + m_container->getJpegOffset(),
-                                  jpeg_size));
-                    ret = OR_ERROR_NONE;
-                }
-            }
+        if (thumb->getDimensions(x, y)) {
+            uint32_t size = std::max(x, y);
+
+            list.push_back(size);
+            _addThumbnail(size,
+                          ThumbDesc(x, y, OR_DATA_TYPE_JPEG,
+                                    jpeg_offset + m_container->getJpegOffset(),
+                                    jpeg_size));
+            ret = OR_ERROR_NONE;
         }
     }
 
