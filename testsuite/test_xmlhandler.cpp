@@ -49,7 +49,7 @@ public:
 			mapTags(tags);
 		}
 
-	virtual xml::ContextPtr startElement(int32_t element)
+	virtual xml::ContextPtr startElement(int32_t element) override
 		{
 			xml::ContextPtr ctx;
 

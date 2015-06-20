@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - streamclone.h
  *
@@ -38,17 +39,17 @@ class StreamClone
 public:
   StreamClone(const Stream::Ptr &clone, off_t offset);
   virtual ~StreamClone();
-			
-  virtual Error open();
-  virtual int close();
-  virtual int seek(off_t offset, int whence);
-  virtual int read(void *buf, size_t count);
-  virtual off_t filesize();
 
-
-private:
   StreamClone(const StreamClone& f) = delete;
   StreamClone & operator=(const StreamClone&) = delete;
+
+  virtual Error open() override;
+  virtual int close() override;
+  virtual int seek(off_t offset, int whence) override;
+  virtual int read(void *buf, size_t count) override;
+  virtual off_t filesize() override;
+
+private:
 
   Stream::Ptr m_cloned;
   off_t m_offset;
@@ -58,14 +59,3 @@ private:
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  tab-width:2
-  c-basic-offset:2
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

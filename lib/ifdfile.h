@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - ifdfile.h
  *
@@ -40,108 +41,109 @@ namespace OpenRaw {
 class MetaValue;
 class RawData;
 
-
 namespace Internals {
 class IfdFileContainer;
 
 /** @brief generic IFD based raw file. */
-class IfdFile
-    : public OpenRaw::RawFile
-{
+class IfdFile : public OpenRaw::RawFile {
 #if defined(IN_TESTSUITE)
 public:
-  friend class ::Test; // for testing
+    friend class ::Test; // for testing
 #endif
 
 protected:
-	IfdFile(const IO::Stream::Ptr &s, Type _type,
-			bool instantiateContainer = true);
-	virtual ~IfdFile();
+    IfdFile(const IO::Stream::Ptr &s, Type _type,
+            bool instantiateContainer = true);
+    virtual ~IfdFile();
 
-	/** list the thumbnails in the IFD
-	 * @retval list the list of thumbnails
-	 * @return the error code. OR_ERROR_NOT_FOUND if no
-	 * thumbnail are found. 
-	 */
-	virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
+    /** list the thumbnails in the IFD
+     * @retval list the list of thumbnails
+     * @return the error code. OR_ERROR_NOT_FOUND if no
+     * thumbnail are found.
+     */
+    virtual ::or_error _enumThumbnailSizes(
+        std::vector<uint32_t> &list) override;
 
-	/** locate the thumnail in the IFD 
-	 * @param dir the IfdDir where to locate the thumbnail
-	 * @return the error code. OR_ERROR_NOT_FOUND if the
-	 * thumbnail are not found.
-	 */
-	virtual ::or_error _locateThumbnail(const IfdDir::Ref & dir,
-										std::vector<uint32_t> &list);
-	/** load the compressed rawdata from a standard location in an IFD
-	 * @param data the data storage
-	 * @param dir the IFD
-	 * @return the error code.
-	 */
-	::or_error _getRawDataFromDir(RawData & data, const IfdDir::Ref & dir);
-	
-	/** Get the JPEG thumbnail offset from dir.
-	 * @param dir the IFD to get the thumbnail from
-	 * @param len the length of the JPEG stream. 0 is not valid.
-	 * @return the offset. 0 is not valid.
-	 */
-	virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & len);
+    /** locate the thumnail in the IFD
+     * @param dir the IfdDir where to locate the thumbnail
+     * @return the error code. OR_ERROR_NOT_FOUND if the
+     * thumbnail are not found.
+     */
+    virtual ::or_error _locateThumbnail(const IfdDir::Ref &dir,
+                                        std::vector<uint32_t> &list);
+    /** load the compressed rawdata from a standard location in an IFD
+     * @param data the data storage
+     * @param dir the IFD
+     * @return the error code.
+     */
+    ::or_error _getRawDataFromDir(RawData &data, const IfdDir::Ref &dir);
 
-	IO::Stream::Ptr  m_io; /**< the IO handle */
-	IfdFileContainer *m_container; /**< the real container */
+    /** Get the JPEG thumbnail offset from dir.
+     * @param dir the IFD to get the thumbnail from
+     * @param len the length of the JPEG stream. 0 is not valid.
+     * @return the offset. 0 is not valid.
+     */
+    virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref &dir,
+                                             uint32_t &len);
 
-  virtual RawContainer* getContainer() const;
+    IO::Stream::Ptr m_io;          /**< the IO handle */
+    IfdFileContainer *m_container; /**< the real container */
 
-	virtual IfdDir::Ref  _locateCfaIfd() = 0;
-	virtual IfdDir::Ref  _locateMainIfd() = 0;
-	virtual IfdDir::Ref  _locateExifIfd();
-	virtual MakerNoteDir::Ref  _locateMakerNoteIfd();
+    virtual RawContainer *getContainer() const override;
 
-	virtual void _identifyId();
+    virtual IfdDir::Ref _locateCfaIfd() = 0;
+    virtual IfdDir::Ref _locateMainIfd() = 0;
+    virtual IfdDir::Ref _locateExifIfd();
+    virtual MakerNoteDir::Ref _locateMakerNoteIfd();
 
-	virtual MetaValue *_getMetaValue(int32_t meta_index);
-	
-	/** Translate the compression type from the tiff type (16MSB) 
-	 * to the RAW specific type if needed (16MSB)
-	 * @param tiffCompression the 16 bits value from TIFF
-	 * @return the actually value. Anything >= 2^16 is specific the RAW type
-	 */
-	virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression);
+    virtual void _identifyId() override;
 
-  /** Unpack the data
-   * @param bpc bits per components
-   * @param compression the compression type
-   * @param x the width
-   * @param y the height
-   * @param offset the offset of the data
-   * @param byte_length the amount of data
-   * @return error code
-   */
-  virtual ::or_error _unpackData(uint16_t bpc, uint32_t compression, RawData & data, 
-                                 uint32_t x, uint32_t y, uint32_t offset, 
-                                 uint32_t byte_length);
+    virtual MetaValue *_getMetaValue(int32_t meta_index) override;
 
-	/** access the corresponding IFD. Will locate them if needed */
-	const IfdDir::Ref & cfaIfd();
-	const IfdDir::Ref & mainIfd();
-	const IfdDir::Ref & exifIfd();
-	const MakerNoteDir::Ref & makerNoteIfd();			
+    /** Translate the compression type from the tiff type (16MSB)
+     * to the RAW specific type if needed (16MSB)
+     * @param tiffCompression the 16 bits value from TIFF
+     * @return the actually value. Anything >= 2^16 is specific the RAW type
+     */
+    virtual uint32_t _translateCompressionType(
+        IFD::TiffCompress tiffCompression);
 
-	virtual ::or_error _getRawData(RawData & data, uint32_t options);
-	// call to decrompress if needed from _getRawData()
-	virtual ::or_error _decompressIfNeeded(RawData&, uint32_t);
+    /** Unpack the data
+     * @param bpc bits per components
+     * @param compression the compression type
+     * @param x the width
+     * @param y the height
+     * @param offset the offset of the data
+     * @param byte_length the amount of data
+     * @return error code
+     */
+    virtual ::or_error _unpackData(uint16_t bpc, uint32_t compression,
+                                   RawData &data, uint32_t x, uint32_t y,
+                                   uint32_t offset, uint32_t byte_length);
+
+    /** access the corresponding IFD. Will locate them if needed */
+    const IfdDir::Ref &cfaIfd();
+    const IfdDir::Ref &mainIfd();
+    const IfdDir::Ref &exifIfd();
+    const MakerNoteDir::Ref &makerNoteIfd();
+
+    virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
+    // call to decrompress if needed from _getRawData()
+    virtual ::or_error _decompressIfNeeded(RawData &, uint32_t);
+
 private:
-	IfdDir::Ref       m_cfaIfd;  /**< the IFD for the CFA */
-	IfdDir::Ref       m_mainIfd; /**< the IFD for the main image 
-								  * does not necessarily reference 
-								  * the CFA
-								  */
-	IfdDir::Ref       m_exifIfd; /**< the Exif IFD */
-	MakerNoteDir::Ref m_makerNoteIfd; /**< the MakerNote IFD */
-	
-	IfdFile(const IfdFile&) = delete;
-	IfdFile & operator=(const IfdFile &) = delete;
-};
+    IfdDir::Ref m_cfaIfd; /**< the IFD for the CFA */
+    IfdDir::Ref
+        m_mainIfd;                    /**< the IFD for the main image
+                                                                   * does not necessarily reference
+                                                                   * the CFA
+                                                                   */
+    IfdDir::Ref m_exifIfd;            /**< the Exif IFD */
+    MakerNoteDir::Ref m_makerNoteIfd; /**< the MakerNote IFD */
 
+    IfdFile(const IfdFile &) = delete;
+    IfdFile &operator=(const IfdFile &) = delete;
+};
 }
 }
 

@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - tiffepfile.h
  *
@@ -33,8 +34,9 @@ namespace OpenRaw {
 namespace Internals {
 
 
-/** This is for TIFF EP conformant files. This include DNG, NEF, 
- *  ERF */
+/** This is for TIFF EP conformant files. This include DNG, NEF,
+ *  ERF
+ */
 class TiffEpFile
     : public IfdFile
 {
@@ -43,20 +45,10 @@ public:
 
 protected:
 
-    virtual IfdDir::Ref  _locateCfaIfd();
-    virtual IfdDir::Ref  _locateMainIfd();
+    virtual IfdDir::Ref  _locateCfaIfd() override;
+    virtual IfdDir::Ref  _locateMainIfd() override;
 };
 
 }
 }
-
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/
 #endif

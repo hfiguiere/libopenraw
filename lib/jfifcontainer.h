@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - jfifcontainer.h
  *
@@ -88,14 +89,3 @@ private:
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  tab-width:2
-  c-basic-offset:2
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

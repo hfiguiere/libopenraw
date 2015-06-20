@@ -32,8 +32,8 @@ class TestContext : public xml::Context {
 public:
     TestContext(const xml::HandlerPtr& handler, TestSuite* ts, Test::Ptr test);
 
-    xml::ContextPtr startElement(int32_t element);
-    void endElement(int32_t element);
+    xml::ContextPtr startElement(int32_t element) override;
+    void endElement(int32_t element) override;
 
 private:
     TestSuite* m_ts;
@@ -45,8 +45,8 @@ class TestSuiteHandler : public xml::Handler {
 public:
     TestSuiteHandler(const std::string& filename, TestSuite* ts);
 
-    virtual xml::ContextPtr startElement(int32_t element);
-    virtual void endElement(int32_t element);
+    virtual xml::ContextPtr startElement(int32_t element) override;
+    virtual void endElement(int32_t element) override;
 
 private:
     TestSuite* m_ts;

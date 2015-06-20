@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - orffile.h
  *
@@ -39,46 +40,32 @@ class RawData;
 
 namespace Internals {
 
-class OrfFile
-  : public IfdFile
-{
+class OrfFile : public IfdFile {
 public:
-  static RawFile *factory(const IO::Stream::Ptr &);
-  OrfFile(const IO::Stream::Ptr &);
-  virtual ~OrfFile();
+    static RawFile *factory(const IO::Stream::Ptr &);
+    OrfFile(const IO::Stream::Ptr &);
+    virtual ~OrfFile();
 
-  enum {
-    ORF_COMPRESSION = 0x10000
-  };
+    OrfFile(const OrfFile &) = delete;
+    OrfFile &operator=(const OrfFile &) = delete;
+
+    enum { ORF_COMPRESSION = 0x10000 };
 
 protected:
-  virtual IfdDir::Ref  _locateCfaIfd();
-  virtual IfdDir::Ref  _locateMainIfd();
+    virtual IfdDir::Ref _locateCfaIfd() override;
+    virtual IfdDir::Ref _locateMainIfd() override;
 
-  ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
-  virtual ::or_error _getRawData(RawData & data, uint32_t options);
-  virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression);
+    ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
+    virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
+    virtual uint32_t _translateCompressionType(
+        IFD::TiffCompress tiffCompression) override;
+
 private:
-  static RawFile::TypeId _typeIdFromModel(const std::string & model);
+    static RawFile::TypeId _typeIdFromModel(const std::string &model);
 
-  OrfFile(const OrfFile&) = delete;
-  OrfFile & operator=(const OrfFile &) = delete;
-
-  static const IfdFile::camera_ids_t s_def[];
+    static const IfdFile::camera_ids_t s_def[];
 };
-
 }
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  tab-width:2
-  c-basic-offset:2
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

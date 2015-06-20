@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - mrwcontainer.h
  *
@@ -218,10 +219,13 @@ public:
     /** destructor */
     virtual ~MRWContainer();
 
+    MRWContainer(const MRWContainer &) = delete;
+    MRWContainer &operator=(const MRWContainer &) = delete;
+
     /**
      * Check the MRW magic header.
      */
-    virtual IfdFileContainer::EndianType isMagicHeader(const char *p, int len);
+    virtual IfdFileContainer::EndianType isMagicHeader(const char *p, int len) override;
 
     /* Known datablocks within an MRW file.
      */
@@ -239,13 +243,11 @@ public:
     }
 
 protected:
-    virtual bool locateDirsPreHook();
+    virtual bool locateDirsPreHook() override;
 
 private:
     std::string m_version;
 
-    MRWContainer(const MRWContainer &) = delete;
-    MRWContainer &operator=(const MRWContainer &) = delete;
 };
 }
 }

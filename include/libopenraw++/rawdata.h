@@ -35,12 +35,15 @@ class RawData
     : public BitmapData
 {
 public:
-    static RawData * getAndExtractRawData(const char* filename, 
+    static RawData * getAndExtractRawData(const char* filename,
                                           uint32_t options,
                                           or_error & err);
 
     RawData();
     virtual ~RawData();
+
+    RawData(const RawData& f) = delete;
+    RawData & operator=(const RawData&) = delete;
 
     /** Get the rendered image
      * @param bitmapdata the BitmapData to put the image into
@@ -80,8 +83,8 @@ public:
     /** swap the two objects data. */
     void swap(RawData & with);
 
-    virtual void *allocData(const size_t s);
-    virtual void setDimensions(uint32_t x, uint32_t y);
+    virtual void *allocData(const size_t s) override;
+    virtual void setDimensions(uint32_t x, uint32_t y) override;
 
     void setCfaPatternType(::or_cfa_pattern t);
     /**
@@ -105,11 +108,6 @@ public:
 private:
     class Private;
     RawData::Private *d;
-
-    /** private copy constructor to make sure it is not called */
-    RawData(const RawData& f);
-    /** private = operator to make sure it is never called */
-    RawData & operator=(const RawData&);
 };
 
 }

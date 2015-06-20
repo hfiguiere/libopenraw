@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - file.h
  *
@@ -18,8 +19,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
 #ifndef OR_INTERNALS_IO_FILE_H_
 #define OR_INTERNALS_IO_FILE_H_
 
@@ -31,47 +30,40 @@
 #include "stream.h"
 
 namespace OpenRaw {
-	namespace IO {
-
+namespace IO {
 
 /** file IO stream */
-		class File
-			: public Stream
-		{
-		public:
-			/** Contruct the file 
-			 * @param filename the full pathname for the file
-			 */
-			File(const char *filename);
-			virtual ~File();
-			
-// file APIs
-			/** open the file */
-			virtual Error open();
-			/** close the file */
-			virtual int close();
-			/** seek in the file. Semantics are similar to POSIX */
-			virtual int seek(off_t offset, int whence);
-			/** read in the file. Semantics are similar to POSIX */
-			virtual int read(void *buf, size_t count);
-			virtual off_t filesize();
-//			virtual void *mmap(size_t l, off_t offset);
-//			virtual int munmap(void *addr, size_t l);
-			
-		private:
-			/** private copy constructor to make sure it is not called */
-			File(const File& f);
-			/** private = operator to make sure it is never called */
-			File & operator=(const File&);
-			
-			/** the interface to the C io */
-			::io_methods *m_methods;
-			/** the C io file handle */
-			::IOFileRef m_ioRef;
-		};
+class File : public Stream {
+public:
+    /** Contruct the file
+     * @param filename the full pathname for the file
+     */
+    File(const char *filename);
+    virtual ~File();
 
+    File(const File &f) = delete;
+    File &operator=(const File &) = delete;
 
-	}
+    // file APIs
+    /** open the file */
+    virtual Error open() override;
+    /** close the file */
+    virtual int close() override;
+    /** seek in the file. Semantics are similar to POSIX */
+    virtual int seek(off_t offset, int whence) override;
+    /** read in the file. Semantics are similar to POSIX */
+    virtual int read(void *buf, size_t count) override;
+    virtual off_t filesize() override;
+    //virtual void *mmap(size_t l, off_t offset) override;
+    //virtual int munmap(void *addr, size_t l) override;
+
+private:
+    /** the interface to the C io */
+    ::io_methods *m_methods;
+    /** the C io file handle */
+    ::IOFileRef m_ioRef;
+};
+}
 }
 
 #endif

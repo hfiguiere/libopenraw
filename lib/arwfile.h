@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - arwfile.h
  *
@@ -44,21 +45,20 @@ public:
     ArwFile(const IO::Stream::Ptr & s);
     virtual ~ArwFile();
 
+    ArwFile(const ArwFile&) = delete;
+    ArwFile & operator=(const ArwFile&) = delete;
+
     // this is the value for "compression" for ARW
     enum {
-        ARW2_RAW_COMPRESSION = 32767
+        ARW_RAW_COMPRESSION = 32767
     };
-    
-protected:
-    virtual IfdDir::Ref  _locateCfaIfd();
-    virtual IfdDir::Ref  _locateMainIfd();
-    
-    virtual ::or_error _getRawData(RawData & data, uint32_t options);
-private:
-    
-    ArwFile(const ArwFile&);
-    ArwFile & operator=(const ArwFile&);
 
+protected:
+    virtual IfdDir::Ref  _locateCfaIfd() override;
+    virtual IfdDir::Ref  _locateMainIfd() override;
+
+    virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+private:
     // first version of ARW. Different from the rest.
     bool isA100()
         {
@@ -73,12 +73,3 @@ private:
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

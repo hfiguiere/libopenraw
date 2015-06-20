@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - memstream.h
  *
@@ -40,37 +41,23 @@ public:
   virtual ~MemStream()
     {}
 
-  virtual or_error open();
-  virtual int close();
-  virtual int seek(off_t offset, int whence);
-  virtual int read(void *buf, size_t count);
-  virtual off_t filesize();
+  MemStream(const MemStream& f) = delete;
+  MemStream & operator=(const MemStream&) = delete;
+
+  virtual or_error open() override;
+  virtual int close() override;
+  virtual int seek(off_t offset, int whence) override;
+  virtual int read(void *buf, size_t count) override;
+  virtual off_t filesize() override;
 
 
 private:
   void * m_ptr;
   size_t m_size;
   unsigned char * m_current;
-
-  /** private copy constructor to make sure it is not called */
-  MemStream(const MemStream& f);
-  /** private = operator to make sure it is never called */
-  MemStream & operator=(const MemStream&);
 };
 
 }
 }
 
 #endif
-
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  tab-width:2
-  c-basic-offset:2
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

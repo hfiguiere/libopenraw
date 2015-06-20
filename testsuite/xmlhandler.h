@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - xmlhandler.h
  *
@@ -100,7 +101,7 @@ class SimpleElementContext
 {
 public:
 	SimpleElementContext(const HandlerPtr & handler, std::string & content);
-	virtual void appendText(const xmlChar * content);
+	virtual void appendText(const xmlChar * content) override;
 private:
 	std::string & m_content;
 };

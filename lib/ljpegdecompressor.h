@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - ljpegdecompressor.h
  *
@@ -59,7 +60,7 @@ public:
      * Caller owns it.
      * @todo use a shared_ptr here, or something
      */
-    virtual RawData *decompress(RawData *in = NULL);
+    virtual RawData *decompress(RawData *in = NULL) override;
     /** Set the "slices"
      * @param slices the vector containing the Canon-style slices.
      *

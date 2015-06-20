@@ -45,7 +45,7 @@ public:
     {}
   virtual ~Exception()
     {}
-  const char *what() const noexcept(true)
+  const char *what() const noexcept(true) override
     {
       if(m_what.empty()) {
         return typeid(this).name();

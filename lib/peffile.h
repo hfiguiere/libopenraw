@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - peffile.h
  *
@@ -43,17 +44,16 @@ public:
     static RawFile *factory(const IO::Stream::Ptr &s);
     PEFFile(const IO::Stream::Ptr &);
     virtual ~PEFFile();
-    
-protected:
-    virtual IfdDir::Ref  _locateCfaIfd();
-    virtual IfdDir::Ref  _locateMainIfd();
-    
-    virtual ::or_error _getRawData(RawData & data, uint32_t options);
-private:
-    
+
     PEFFile(const PEFFile&) = delete;
     PEFFile & operator=(const PEFFile &) = delete;
-    
+
+protected:
+    virtual IfdDir::Ref  _locateCfaIfd() override;
+    virtual IfdDir::Ref  _locateMainIfd() override;
+
+    virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+private:
     static const IfdFile::camera_ids_t s_def[];
 };
 
@@ -61,12 +61,3 @@ private:
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

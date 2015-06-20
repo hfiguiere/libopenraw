@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - neffile.h
  *
@@ -50,12 +51,15 @@ public:
     static RawFile *factory(const IO::Stream::Ptr & _f);
     NefFile(const IO::Stream::Ptr & _f);
     virtual ~NefFile();
-    
+
+    NefFile(const NefFile&) = delete;
+    NefFile & operator=(const NefFile &) = delete;
+
     /** hack because some (lot?) D100 do set as compressed even though 
      *  it is not
      */
     static bool isCompressed(RawContainer & container, uint32_t offset);
-    
+
     class NEFCompressionInfo {
     public:
         uint16_t vpred[2][2];
@@ -64,26 +68,14 @@ public:
     };
 
 private:
-    
-    NefFile(const NefFile&) = delete;
-    NefFile & operator=(const NefFile &) = delete;
-    
+
     static const IfdFile::camera_ids_t s_def[];
     int _getCompressionCurve(RawData&, NEFCompressionInfo&);
     ::or_error _decompressNikonQuantized(RawData&);
-    virtual ::or_error _decompressIfNeeded(RawData&, uint32_t);
+    virtual ::or_error _decompressIfNeeded(RawData&, uint32_t) override;
 };
-	
+
 }
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

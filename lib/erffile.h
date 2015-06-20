@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - erffile.h
  *
@@ -41,14 +42,14 @@ public:
     static RawFile *factory(const IO::Stream::Ptr &);
     ERFFile(const IO::Stream::Ptr &);
     virtual ~ERFFile();
-    
-protected:
-    virtual ::or_error _getRawData(RawData & data, uint32_t options);
-private:
-    
+
     ERFFile(const ERFFile&) = delete;
     ERFFile & operator=(const ERFFile &) = delete;
-    
+
+protected:
+    virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+private:
+
     static const IfdFile::camera_ids_t s_def[];
 };
 
@@ -56,12 +57,3 @@ private:
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

@@ -39,16 +39,16 @@ public:
     /** destructor */
     virtual ~Rw2Container();
 
+    Rw2Container(const Rw2Container &) = delete;
+    Rw2Container &operator=(const Rw2Container &) = delete;
+
     /**
      * Check the ORF magic header.
      */
-    virtual IfdFileContainer::EndianType isMagicHeader(const char *p, int len);
+    virtual IfdFileContainer::EndianType isMagicHeader(const char *p, int len) override;
 
 private:
     char subtype_;
-
-    Rw2Container(const Rw2Container &) = delete;
-    Rw2Container &operator=(const Rw2Container &) = delete;
 };
 }
 }

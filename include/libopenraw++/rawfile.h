@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - rawfile.h
  *
@@ -52,6 +53,8 @@ public:
     typedef ::or_rawfile_type Type;
     typedef ::or_rawfile_typeid TypeId;
 
+    RawFile(const RawFile&) = delete;
+    RawFile & operator=(const RawFile &) = delete;
 
     /** return a NULL terminated list of file extensions 
      * that the library handle. This is purely informational.
@@ -217,9 +220,6 @@ private:
     static const camera_ids_t* _lookupCameraId(const camera_ids_t * map,
                                                const std::string& value);
 
-
-    RawFile(const RawFile&) = delete;
-    RawFile & operator=(const RawFile &) = delete;
 
     class Private;
 

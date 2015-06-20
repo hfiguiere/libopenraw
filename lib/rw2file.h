@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - rw2file.h
  *
@@ -44,23 +45,23 @@ public:
 	static RawFile *factory(const IO::Stream::Ptr & s);
 	Rw2File(const IO::Stream::Ptr & s);
 	virtual ~Rw2File();
-	
+
+  Rw2File(const Rw2File&) = delete;
+	Rw2File & operator=(const Rw2File&) = delete;
+
 	enum {
 		PANA_RAW_COMPRESSION = 0x11000
 	};
 
 protected:
-	virtual IfdDir::Ref  _locateCfaIfd();
-	virtual IfdDir::Ref  _locateMainIfd();
+	virtual IfdDir::Ref  _locateCfaIfd() override;
+	virtual IfdDir::Ref  _locateMainIfd() override;
 private:
-	
-	Rw2File(const Rw2File&) = delete;
-	Rw2File & operator=(const Rw2File&) = delete;
 
 	virtual ::or_error _locateThumbnail(const IfdDir::Ref & dir,
-                                     std::vector<uint32_t> &list);
-	virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & len);
-	virtual ::or_error _getRawData(RawData & data, uint32_t options);
+                                     std::vector<uint32_t> &list) override;
+	virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & len) override;
+	virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
 
 	static const IfdFile::camera_ids_t s_def[];
 };

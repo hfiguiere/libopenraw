@@ -46,19 +46,19 @@ public:
     MRWFile(const IO::Stream::Ptr &);
     virtual ~MRWFile();
 
-protected:
-    virtual IfdDir::Ref  _locateCfaIfd();
-    virtual IfdDir::Ref  _locateMainIfd();
-
-    virtual void _identifyId();
-
-    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
-    virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
-    virtual ::or_error _getRawData(RawData & data, uint32_t options);
-private:
-
     MRWFile(const MRWFile&) = delete;
     MRWFile & operator=(const MRWFile&) = delete;
+
+protected:
+    virtual IfdDir::Ref  _locateCfaIfd() override;
+    virtual IfdDir::Ref  _locateMainIfd() override;
+
+    virtual void _identifyId() override;
+
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
+    virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail) override;
+    virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+private:
 
     static const struct IfdFile::camera_ids_t s_def[];
 };

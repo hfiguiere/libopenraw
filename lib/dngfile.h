@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - dngfile.h
  *
@@ -45,16 +46,17 @@ public:
     DngFile(const IO::Stream::Ptr &);
     virtual ~DngFile();
 
+    DngFile(const DngFile&) = delete;
+    DngFile & operator=(const DngFile&) = delete;
+
+
     /** DNG specific for now: check if file is Cinema DNG. */
     bool isCinema() const;
 protected:
-    virtual ::or_error _getRawData(RawData & data, uint32_t options);
-    virtual void _identifyId();
+    virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+    virtual void _identifyId() override;
 
 private:
-
-    DngFile(const DngFile&) = delete;
-    DngFile & operator=(const DngFile&) = delete;
 
     static const IfdFile::camera_ids_t s_def[];
 };
@@ -63,12 +65,3 @@ private:
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

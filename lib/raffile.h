@@ -49,21 +49,21 @@ public:
     RafFile(const IO::Stream::Ptr &s);
     virtual ~RafFile();
 
-protected:
-    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
-
-    virtual RawContainer *getContainer() const;
-
-    virtual ::or_error _getRawData(RawData &data, uint32_t options);
-
-    virtual MetaValue *_getMetaValue(int32_t /*meta_index*/);
-
-    virtual void _identifyId();
-
-private:
     RafFile(const RafFile &) = delete;
     RafFile &operator=(const RafFile &) = delete;
 
+protected:
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
+
+    virtual RawContainer *getContainer() const override;
+
+    virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
+
+    virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) override;
+
+    virtual void _identifyId() override;
+
+private:
     IO::Stream::Ptr m_io;      /**< the IO handle */
     RafContainer *m_container; /**< the real container */
     uint32_t m_x;

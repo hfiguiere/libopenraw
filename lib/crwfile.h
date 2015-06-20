@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - crwfile.h
  *
@@ -48,21 +49,22 @@ public:
     CRWFile(const IO::Stream::Ptr &);
     virtual ~CRWFile();
 
+    CRWFile(const CRWFile&) = delete;
+    CRWFile & operator=(const CRWFile&) = delete;
+
 protected:
 
 
-    virtual RawContainer* getContainer() const;
-    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list);
+    virtual RawContainer* getContainer() const override;
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
 
-//virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
+//virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail) override;
 
-    virtual ::or_error _getRawData(RawData & data, uint32_t options);
-    virtual MetaValue *_getMetaValue(int32_t meta_index);
+    virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+    virtual MetaValue *_getMetaValue(int32_t meta_index) override;
 
-    virtual void _identifyId();
+    virtual void _identifyId() override;
 private:
-    CRWFile(const CRWFile&) = delete;
-    CRWFile & operator=(const CRWFile&) = delete;
 
     IO::Stream::Ptr m_io; /**< the IO handle */
     CIFFContainer *m_container; /**< the real container */
@@ -78,12 +80,3 @@ private:
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

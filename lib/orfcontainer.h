@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - orfcontainer.h
  *
@@ -42,17 +43,17 @@ public:
 	/** destructor */
 	virtual ~OrfContainer();
 
+  	OrfContainer(const OrfContainer &) = delete;
+	OrfContainer & operator=(const OrfContainer &) = delete;
+
 	/**
-		 Check the ORF magic header.
+         * Check the ORF magic header.
 	 */
 	virtual IfdFileContainer::EndianType
-	isMagicHeader(const char *p, int len);
+	isMagicHeader(const char *p, int len) override;
 
 private:
 	char subtype_;
-	/* avoid these being called. */
-	OrfContainer(const OrfContainer &) = delete;
-	OrfContainer & operator=(const OrfContainer &) = delete;
 };
 
 }

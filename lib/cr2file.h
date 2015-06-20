@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - cr2file.h
  *
@@ -43,17 +44,15 @@ public:
     static RawFile *factory(const IO::Stream::Ptr &s);
     Cr2File(const IO::Stream::Ptr &s);
     virtual ~Cr2File();
-    
-protected:
-    virtual IfdDir::Ref  _locateCfaIfd();
-    virtual IfdDir::Ref  _locateMainIfd();
-private:
-    
+
     Cr2File(const Cr2File&) = delete;
     Cr2File & operator=(const Cr2File&) = delete;
-    
-    virtual ::or_error _getRawData(RawData & data, uint32_t options);
-    
+protected:
+    virtual IfdDir::Ref  _locateCfaIfd() override;
+    virtual IfdDir::Ref  _locateMainIfd() override;
+private:
+    virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+
     static const IfdFile::camera_ids_t s_def[];
 };
 
@@ -61,12 +60,3 @@ private:
 }
 
 #endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/

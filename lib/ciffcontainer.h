@@ -1,3 +1,4 @@
+/* -*- Mode: C++ -*- */
 /*
  * libopenraw - ciffcontainer.h
  *
@@ -192,6 +193,9 @@ public:
      */
     Heap(off_t start, off_t length, CIFFContainer * container);
 
+    Heap(const Heap &) = delete;
+    Heap & operator=(const Heap &) = delete;
+
     RecordEntry::List & records();
     CIFFContainer *container()
         {
@@ -204,9 +208,6 @@ public:
         }
 private:
     bool _loadRecords();
-
-    Heap(const Heap &);
-    Heap & operator=(const Heap &);
 
     off_t m_start;
     off_t m_length;
@@ -242,6 +243,9 @@ public:
     CIFFContainer(const IO::Stream::Ptr &file);
     virtual ~CIFFContainer();
 
+    CIFFContainer(const CIFFContainer &) = delete;
+    CIFFContainer & operator=(const CIFFContainer &) = delete;
+
     CIFF::Heap::Ref heap();
 
     const CIFF::HeapFileHeader & header() const
@@ -255,9 +259,6 @@ public:
 private:
     bool _loadHeap();
     EndianType _readHeader();
-
-    CIFFContainer(const CIFFContainer &) = delete;
-    CIFFContainer & operator=(const CIFFContainer &) = delete;
 
     friend class CIFF::HeapFileHeader;
     CIFF::HeapFileHeader m_hdr;
@@ -275,13 +276,3 @@ private:
 
 
 #endif
-
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/
