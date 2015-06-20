@@ -165,8 +165,7 @@ fi
 AM_CONDITIONAL(BUILD_GNOME_SUPPORT, test x$HAVE_GNOME = xyes)
 
 AX_CFLAGS_GCC_OPTION([-Wextra])
-AX_CXXFLAGS_GCC_OPTION([-Wextra])
-AX_CXXFLAGS_GCC_OPTION([-Wsuggest-override])
+AX_CXXFLAGS_GCC_OPTION([-Wextra  -Wsign-compare -Wpointer-arith -Wchar-subscripts -Wwrite-strings -Wunused -Wpointer-arith -Wsuggest-override])
 
 CXXFLAGS="$CXXFLAGS -pedantic -g -Wall -Wshadow"
 CFLAGS="$CFLAGS -pedantic -g -Wall"
