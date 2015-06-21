@@ -117,10 +117,9 @@ void IfdFile::_identifyId()
 
   Trace(DEBUG1) << "_enumThumbnailSizes()\n";
   std::vector<IfdDir::Ref> & dirs = m_container->directories();
-  std::vector<IfdDir::Ref>::iterator iter;
 
   Trace(DEBUG1) << "num of dirs " << dirs.size() << "\n";
-  for(iter = dirs.begin(); iter != dirs.end(); ++iter)
+  for(auto iter = dirs.begin(); iter != dirs.end(); ++iter)
   {
     IfdDir::Ref & dir = *iter;
     dir->load();
@@ -132,8 +131,7 @@ void IfdFile::_identifyId()
     std::vector<IfdDir::Ref> subdirs;
     if(dir->getSubIFDs(subdirs)) {
       Trace(DEBUG1) << "Iterating subdirs\n";
-      std::vector<IfdDir::Ref>::iterator iter2;
-      for(iter2 = subdirs.begin(); iter2 != subdirs.end();
+      for(auto iter2 = subdirs.begin(); iter2 != subdirs.end();
           ++iter2)
       {
         IfdDir::Ref & dir2 = *iter2;
@@ -265,7 +263,7 @@ void IfdFile::_identifyId()
           IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
           std::vector<uint16_t> arr;
           entry->getArray(arr);
-          for(auto i = arr.begin(); i != arr.end(); ++i) {
+          for(auto i = arr.cbegin(); i != arr.cend(); ++i) {
             isRGB8 = *i == 8;
             if (!isRGB8) {
               Trace(DEBUG1) << "bpc != 8, not RGB8 " << *i << "\n";
@@ -570,7 +568,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     std::vector<uint32_t> counts;
     e->getArray(counts);
     Trace(DEBUG1) << "counting tiles\n";
-    byte_length = std::accumulate(counts.begin(), counts.end(), 0);
+    byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
   }
   else {
     // the tile are individual JPEGS....
@@ -595,7 +593,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     std::vector<uint32_t> counts;
     e->getArray(counts);
     Trace(DEBUG1) << "counting tiles\n";
-    byte_length = std::accumulate(counts.begin(), counts.end(), 0);
+    byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
   }
   got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
   if(!got_it) {

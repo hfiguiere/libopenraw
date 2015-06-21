@@ -125,7 +125,7 @@ CRWFile::~CRWFile()
     }
     const RecordEntry::List & records = heap->records();
     RecordEntry::List::const_iterator iter;
-    iter = std::find_if(records.begin(), records.end(), std::bind(
+    iter = std::find_if(records.cbegin(), records.cend(), std::bind(
                             &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_JPEGIMAGE)));
     if (iter != records.end()) {
@@ -170,7 +170,7 @@ RawContainer* CRWFile::getContainer() const
 
     // locate decoder table
     const CIFF::RecordEntry::List & propsRecs = props->records();
-    auto iter = std::find_if(propsRecs.begin(), propsRecs.end(), std::bind(
+    auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(), std::bind(
                                  &RecordEntry::isA, std::placeholders::_1,
                                  static_cast<uint16_t>(TAG_EXIFINFORMATION)));
     if (iter == propsRecs.end()) {
@@ -181,7 +181,7 @@ RawContainer* CRWFile::getContainer() const
     Heap exifProps(iter->offset + props->offset(), iter->length, m_container);
 
     const RecordEntry::List & exifPropsRecs = exifProps.records();
-    iter = std::find_if(exifPropsRecs.begin(), exifPropsRecs.end(),
+    iter = std::find_if(exifPropsRecs.cbegin(), exifPropsRecs.cend(),
                         std::bind(
                             &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_DECODERTABLE)));
@@ -200,7 +200,7 @@ RawContainer* CRWFile::getContainer() const
 
     // locate the CFA info
     uint16_t cfa_x, cfa_y;
-    iter = std::find_if(exifPropsRecs.begin(), exifPropsRecs.end(), std::bind(
+    iter = std::find_if(exifPropsRecs.cbegin(), exifPropsRecs.cend(), std::bind(
                             &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_SENSORINFO)));
     if (iter == exifPropsRecs.end()) {
@@ -291,7 +291,7 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
             if(heap) {
                 auto propsRecs = heap->records();
                 auto iter
-                    = std::find_if(propsRecs.begin(), propsRecs.end(),
+                    = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
                                    [](const CIFF::RecordEntry &e){
                                        return e.isA(static_cast<uint16_t>(CIFF::TAG_RAWMAKEMODEL));
                                    });

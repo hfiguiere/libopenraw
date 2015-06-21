@@ -79,7 +79,7 @@ template <class T>
 Trace & Trace::operator<<(const std::vector<T> & v)
 {
   if (m_level <= debugLevel) {
-    std::for_each(v.begin(), v.end(),
+    std::for_each(v.cbegin(), v.cend(),
                   [](T a) {
                     print(a);
                   });

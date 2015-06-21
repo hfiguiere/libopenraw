@@ -240,7 +240,7 @@ CIFF::Heap::Ref CIFFContainer::getImageProps()
         auto & records = m_heap->records();
 
         // locate the properties
-        auto iter = std::find_if(records.begin(), records.end(),
+        auto iter = std::find_if(records.cbegin(), records.cend(),
                                  [](const CIFF::RecordEntry& e) {
                                      return e.isA(static_cast<uint16_t>(CIFF::TAG_IMAGEPROPS));
                                  });
@@ -264,7 +264,7 @@ const CIFF::ImageSpec * CIFFContainer::getImageSpec()
             return nullptr;
         }
         auto & propsRecs = props->records();
-        auto iter = std::find_if(propsRecs.begin(), propsRecs.end(),
+        auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
                                  [] (const CIFF::RecordEntry &e) {
                                      return e.isA(static_cast<uint16_t>(CIFF::TAG_IMAGEINFO));
                                  });
@@ -287,7 +287,7 @@ const CIFF::Heap::Ref CIFFContainer::getCameraProps()
             return CIFF::Heap::Ref();
         }
         auto & propsRecs = props->records();
-        auto iter = std::find_if(propsRecs.begin(), propsRecs.end(),
+        auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
                                  [] (const CIFF::RecordEntry & e) {
                                      return e.isA(static_cast<uint16_t>(CIFF::TAG_CAMERAOBJECT));
                                  });
@@ -308,7 +308,7 @@ const CIFF::RecordEntry * CIFFContainer::getRawDataRecord() const
     }
     auto & records = m_heap->records();
     // locate the RAW data
-    auto iter = std::find_if(records.begin(), records.end(),
+    auto iter = std::find_if(records.cbegin(), records.cend(),
                              [] (const CIFF::RecordEntry &e) {
                                  return e.isA(static_cast<uint16_t>(CIFF::TAG_RAWIMAGEDATA));
                              });

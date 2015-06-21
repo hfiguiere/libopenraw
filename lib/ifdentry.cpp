@@ -65,7 +65,7 @@ void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
 {
     std::vector<T> v;
     e->getArray(v);
-    values.insert(values.end(), v.begin(), v.end());
+    values.insert(values.end(), v.cbegin(), v.cend());
 }
 
 // T is the Ifd primitive type. T2 is the target MetaValue type.
@@ -74,7 +74,7 @@ void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
 {
     std::vector<T> v;
     e->getArray(v);
-    for(typename std::vector<T>::const_iterator iter = v.begin(); iter != v.end(); ++iter) {
+    for(auto iter = v.cbegin(); iter != v.cend(); ++iter) {
         values.push_back(T2(*iter));
     }
 }
