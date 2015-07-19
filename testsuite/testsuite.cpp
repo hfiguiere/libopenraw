@@ -167,7 +167,7 @@ std::string cfaPatternToString(::or_cfa_pattern t)
     }
     return "";
 }
-	
+
 
 bool equalDataType(const std::string & result, BitmapData::DataType t)
 {
@@ -314,32 +314,31 @@ bool Test::testThumbSizes(const std::string & result)
         RETURN_FAIL("mismatch number of elements", result);
     }
     std::vector<uint32_t> v2;
-    for(std::vector< std::string >::iterator iter = v.begin();
-        iter != v.end(); iter++) 
+    for(const auto & s : v)
     {
         try {
-            v2.push_back(boost::lexical_cast<uint32_t>(*iter));
+            v2.push_back(boost::lexical_cast<uint32_t>(s));
         }
         catch(...)
         {
             RETURN_FAIL("conversion failed", result);
         }
     }
-    RETURN_TEST(std::equal(thumbs.begin(), thumbs.end(), v2.begin()), result);
+    RETURN_TEST(std::equal(thumbs.cbegin(), thumbs.cend(), v2.cbegin()), result);
 }
 
 bool Test::testThumbFormats(const std::string & result)
 {
     bool success = true;
-    std::vector<uint32_t> thumbs = m_rawfile->listThumbnailSizes();
+    auto thumbs = m_rawfile->listThumbnailSizes();
     std::vector< std::string > v;
     boost::split(v, result, boost::is_any_of(" "));
-    std::vector< std::string >::iterator result_iter = v.begin();
+    auto result_iter = v.cbegin();
     if(v.size() != thumbs.size()) {
         RETURN_FAIL("mismatch number of elements", result);
     }
-    for(std::vector<uint32_t>::iterator thumbs_iter = thumbs.begin();
-        thumbs_iter != thumbs.end(); thumbs_iter++, result_iter++) 
+    for(auto thumbs_iter = thumbs.cbegin();
+        thumbs_iter != thumbs.cend(); thumbs_iter++, result_iter++)
     {
         Thumbnail t;
         m_rawfile->getThumbnail(*thumbs_iter, t);
@@ -351,15 +350,15 @@ bool Test::testThumbFormats(const std::string & result)
 bool Test::testThumbDataSizes(const std::string & result)
 {
     bool success = true;
-    std::vector<uint32_t> thumbs = m_rawfile->listThumbnailSizes();
+    auto thumbs = m_rawfile->listThumbnailSizes();
     std::vector< std::string > v;
     boost::split(v, result, boost::is_any_of(" "));
-    std::vector< std::string >::iterator result_iter = v.begin();
+    auto result_iter = v.cbegin();
     if(v.size() != thumbs.size()) {
         RETURN_FAIL("mismatch number of elements", result);
     }
-    for(std::vector<uint32_t>::iterator thumbs_iter = thumbs.begin();
-        thumbs_iter != thumbs.end(); thumbs_iter++, result_iter++) 
+    for(auto thumbs_iter = thumbs.cbegin(); thumbs_iter != thumbs.cend();
+        thumbs_iter++, result_iter++)
     {
         Thumbnail t;
         m_rawfile->getThumbnail(*thumbs_iter, t);
@@ -388,15 +387,15 @@ uint32_t computeCrc(const Thumbnail * thumb)
 bool Test::testThumbMd5(const std::string & result)
 {
     bool success = true;
-    std::vector<uint32_t> thumbs = m_rawfile->listThumbnailSizes();
+    auto thumbs = m_rawfile->listThumbnailSizes();
     std::vector< std::string > v;
     boost::split(v, result, boost::is_any_of(" "));
-    std::vector< std::string >::iterator result_iter = v.begin();
+    auto result_iter = v.cbegin();
     if(v.size() != thumbs.size()) {
         RETURN_FAIL("mismatch number of elements", result);
     }
-    for(std::vector<uint32_t>::iterator thumbs_iter = thumbs.begin();
-        thumbs_iter != thumbs.end(); thumbs_iter++, result_iter++) 
+    for(auto thumbs_iter = thumbs.cbegin(); thumbs_iter != thumbs.cend();
+        thumbs_iter++, result_iter++)
     {
         Thumbnail t;
         m_rawfile->getThumbnail(*thumbs_iter, t);
@@ -420,7 +419,7 @@ RawData * loadRawData(RawFile * file)
     ::or_error err;
     err = file->getRawData(*rawdata, OR_OPTIONS_NONE);
     if(OR_ERROR_NONE != err) {
-        delete rawdata; 
+        delete rawdata;
         rawdata = NULL;
     }
     return rawdata;
@@ -430,7 +429,7 @@ uint32_t computeCrc(const RawData * rawdata)
 {
     boost::crc_optimal<16, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
 
-    const uint8_t * data = static_cast<uint8_t *>(rawdata->data());
+    auto data = static_cast<const uint8_t *>(rawdata->data());
     size_t data_len = rawdata->size();
     crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
     return crc_ccitt2();
@@ -521,9 +520,9 @@ bool Test::testRawDataRoi(const std::string & result)
     {
         RETURN_FAIL("conversion failed", result);
     }
-    RETURN_TEST(x == m_rawdata->roi_x() && y == m_rawdata->roi_y() 
-    	&& w == m_rawdata->roi_width() && h == m_rawdata->roi_height(), 
-    	result)
+    RETURN_TEST(x == m_rawdata->roi_x() && y == m_rawdata->roi_y()
+        && w == m_rawdata->roi_width() && h == m_rawdata->roi_height(),
+        result)
 }
 
 bool Test::testRawCfaPattern(const std::string & result)
@@ -536,7 +535,7 @@ bool Test::testRawCfaPattern(const std::string & result)
     }
     bool succ = false;
     CHECK_TEST_EQUALS(cfaPatternToString(
-                           m_rawdata->cfaPattern()->patternType()), 
+                          m_rawdata->cfaPattern()->patternType()),
                       result, succ);
     return succ;
 }
@@ -592,7 +591,7 @@ bool Test::testRawMd5(const std::string & result)
     uint32_t crc = computeCrc(m_rawdata);
 
     uint32_t expected = 0;
-    try { 
+    try {
         expected = boost::lexical_cast<uint32_t>(result);
     }
     catch(...)
@@ -644,7 +643,8 @@ bool Test::testMakerNoteCount(const std::string & result)
     if (!maker_note) {
         RETURN_FAIL("no maker not found", result);
     }
-    RETURN_TEST_EQUALS_N(maker_note->numTags(), boost::lexical_cast<int32_t>(result));
+    RETURN_TEST_EQUALS_N(maker_note->numTags(),
+                         boost::lexical_cast<int32_t>(result));
 }
 
 bool Test::testMakerNoteId(const std::string & result)
@@ -681,76 +681,75 @@ int Test::run()
     if(m_rawfile == NULL) {
         RETURN_FAIL("m_rawfile == NULL", std::string("not NULL"));
     }
-	
-    std::map<int, std::string>::const_iterator iter;
-    for(iter = m_results.begin(); iter != m_results.end(); iter++) {
+
+    for(const auto & elem : m_results) {
         bool pass = false;
-        switch(iter->first)
+        switch(elem.first)
         {
         case XML_rawType:
-            pass = testRawType(iter->second);
+            pass = testRawType(elem.second);
             break;
         case XML_rawTypeId:
-            pass = testRawTypeId(iter->second);
+            pass = testRawTypeId(elem.second);
             break;
         case XML_thumbNum:
-            pass = testThumbNum(iter->second);
+            pass = testThumbNum(elem.second);
             break;
         case XML_thumbSizes:
-            pass = testThumbSizes(iter->second);
+            pass = testThumbSizes(elem.second);
             break;
         case XML_thumbFormats:
-            pass = testThumbFormats(iter->second);
+            pass = testThumbFormats(elem.second);
             break;
         case XML_thumbDataSizes:
-            pass = testThumbDataSizes(iter->second);
+            pass = testThumbDataSizes(elem.second);
             break;
         case XML_thumbMd5:
-            pass = testThumbMd5(iter->second);
+            pass = testThumbMd5(elem.second);
             break;
         case XML_rawDataType:
-            pass = testRawDataType(iter->second);
+            pass = testRawDataType(elem.second);
             break;
         case XML_rawDataSize:
-            pass = testRawDataSize(iter->second);
+            pass = testRawDataSize(elem.second);
             break;
         case XML_rawDataDimensions:
-            pass = testRawDataDimensions(iter->second);
+            pass = testRawDataDimensions(elem.second);
             break;
         case XML_rawDataRoi:
-            pass = testRawDataRoi(iter->second);
+            pass = testRawDataRoi(elem.second);
             break;
         case XML_rawCfaPattern:
-            pass = testRawCfaPattern(iter->second);
+            pass = testRawCfaPattern(elem.second);
             break;
         case XML_rawMinValue:
-            pass = testRawMinValue(iter->second);
+            pass = testRawMinValue(elem.second);
             break;
         case XML_rawMaxValue:
-            pass = testRawMaxValue(iter->second);
+            pass = testRawMaxValue(elem.second);
             break;
         case XML_rawMd5:
-            pass = testRawMd5(iter->second);
+            pass = testRawMd5(elem.second);
             break;
         case XML_rawDecompressedMd5:
-            pass = testRawDecompressedMd5(iter->second);
+            pass = testRawDecompressedMd5(elem.second);
             break;
         case XML_metaOrientation:
-            pass = testMetaOrientation(iter->second);
+            pass = testMetaOrientation(elem.second);
             break;
         case XML_exifMake:
             pass = testExifString(META_NS_TIFF | EXIF_TAG_MAKE,
-                                  iter->second);
+                                  elem.second);
             break;
         case XML_exifModel:
             pass = testExifString(META_NS_TIFF | EXIF_TAG_MODEL,
-                                  iter->second);
+                                  elem.second);
             break;
         case XML_makerNoteCount:
-            pass = testMakerNoteCount(iter->second);
+            pass = testMakerNoteCount(elem.second);
             break;
         case XML_makerNoteId:
-            pass = testMakerNoteId(iter->second);
+            pass = testMakerNoteId(elem.second);
             break;
         default:
             pass = false;
@@ -781,9 +780,8 @@ void Test::merge(const Test::Ptr & t)
     }
     // the results for t invariably replace the
     // existing on in this.
-    for(auto iter = t->m_results.cbegin();
-        iter != t->m_results.cend(); ++iter) {
-        m_results[iter->first] = iter->second;
+    for(const auto & elem : t->m_results) {
+        m_results[elem.first] = elem.second;
     }
 }
 
@@ -819,7 +817,7 @@ int TestSuite::load_tests(const char * testsuite_file)
 int TestSuite::load_overrides(const std::string & overrides_file)
 {
     xml::HandlerPtr handler(new TestSuiteHandler(overrides_file, this));
-	
+
     handler->process();
 
     return 0;
@@ -864,9 +862,9 @@ int download(const std::string & source, CURL* handle,
             CURLcode error;
             std::cout << "Downloading " << source
                       << " to " << dest << std::endl;
-            
+
             fp = fopen(dest.c_str(), "wb");
-            
+
             if(fp == NULL) {
                 std::cout << " File Error " << strerror(errno) << std::endl;
                 dest = "";
@@ -906,7 +904,7 @@ void TestSuite::walk_tests(xmlNode * testsuite, CURL* handle,
     xmlNode *test = testsuite->children;
 
     while(test) {
-        if((test->type == XML_ELEMENT_NODE) 
+        if((test->type == XML_ELEMENT_NODE)
            && (strcmp((const char*)(test->name), "test") == 0)) {
             xmlNode * childrens = test->children;
             while(childrens) {
@@ -919,25 +917,23 @@ void TestSuite::walk_tests(xmlNode * testsuite, CURL* handle,
         }
         test = test->next;
     }
-    
-    std::map<std::string, Test::Ptr>::const_iterator iter(m_tests.begin());
-    for( ; iter != m_tests.end(); iter++) {
-        std::string n = iter->first;
+
+    for(const auto & elem : m_tests) {
+        std::string n = elem.first;
         std::string dest;
-        int ret = download(iter->second->source(), handle, download_dir, dest);
+        int ret = download(elem.second->source(), handle, download_dir, dest);
 
         if(ret == 0 && !dest.empty()) {
             xmlNode * test2 = NULL;
-            std::map<std::string, xmlNode *>::iterator iter2 
-                = overrides.find(n);
-            if (iter2 != overrides.end()) {
+            auto iter2 = overrides.find(n);
+            if (iter2 != overrides.cend()) {
                 test2 = iter2->second;
             }
             else {
                 test2 = xmlNewNode(NULL, (const xmlChar*)"test");
                 xmlAddChild(testsuite, test2);
-                xmlNode *name_node = xmlNewTextChild(test2, NULL, 
-                                                     (const xmlChar*)"name", 
+                xmlNode *name_node = xmlNewTextChild(test2, NULL,
+                                                     (const xmlChar*)"name",
                                                      (const xmlChar*)n.c_str());
                 xmlAddChild(test2, name_node);
             }
@@ -966,7 +962,7 @@ int curl_write_function(void *buffer, size_t size, size_t nmemb, void *stream)
 
     return (int) w;
 }
-#endif 
+#endif
 
 }
 
@@ -979,7 +975,7 @@ int TestSuite::bootstrap(const std::string & overrides_file,
     CURL *handle;
 
     handle = curl_easy_init();
-    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curl_write_function);    
+    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curl_write_function);
 
     doc = xmlReadFile(overrides_file.c_str(), NULL, 0);
     xmlNode *root_element;
@@ -988,7 +984,7 @@ int TestSuite::bootstrap(const std::string & overrides_file,
     }
     else {
         doc = xmlNewDoc((const xmlChar *)"1.0");
-        root_element = xmlNewDocNode(doc, 
+        root_element = xmlNewDocNode(doc,
                                      NULL, (xmlChar*)"testsuite", NULL);
         xmlDocSetRootElement(doc, root_element);
     }
@@ -1017,9 +1013,8 @@ int TestSuite::bootstrap(const std::string & /*overrides_file*/,
 int TestSuite::run_all()
 {
     int failures = 0;
-    std::map<std::string, Test::Ptr>::iterator iter(m_tests.begin());
-    for( ; iter != m_tests.end(); ++iter) {
-        failures += iter->second->run();
+    for(const auto & elem : m_tests) {
+        failures += elem.second->run();
     }
     return failures;
 }
