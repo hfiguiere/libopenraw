@@ -30,10 +30,10 @@
 
 TestContext::TestContext(const xml::HandlerPtr & handler,
                          TestSuite * ts,
-                         Test::Ptr test)
+                         Test::Ptr&& test)
   : xml::Context(handler),
     m_ts(ts),
-    m_test(test),
+    m_test(std::move(test)),
     m_results(false)
 {
 
@@ -102,7 +102,7 @@ void TestContext::endElement(int32_t element)
 	switch(element)
 	{
         case XML_test:
-		m_ts->add_test(m_test);
+                m_ts->add_test(std::move(m_test));
                 m_test.reset();
                 break;
 	case XML_results:
@@ -133,8 +133,7 @@ xml::ContextPtr TestSuiteHandler::startElement(int32_t element)
 		break;
 	case XML_test:
 	{
-		m_newtest = Test::Ptr(new Test());
-		ctxt.reset(new TestContext(m_handler, m_ts, m_newtest));
+		ctxt.reset(new TestContext(m_handler, m_ts, Test::Ptr(new Test())));
 		break;
 	}
 	default:

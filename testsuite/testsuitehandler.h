@@ -30,7 +30,7 @@
 
 class TestContext : public xml::Context {
 public:
-    TestContext(const xml::HandlerPtr& handler, TestSuite* ts, Test::Ptr test);
+    TestContext(const xml::HandlerPtr& handler, TestSuite* ts, Test::Ptr&& test);
 
     xml::ContextPtr startElement(int32_t element) override;
     void endElement(int32_t element) override;
@@ -50,7 +50,6 @@ public:
 
 private:
     TestSuite* m_ts;
-    Test::Ptr m_newtest;
 };
 
 #endif

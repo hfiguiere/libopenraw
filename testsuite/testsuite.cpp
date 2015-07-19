@@ -781,9 +781,8 @@ void Test::merge(const Test::Ptr & t)
     }
     // the results for t invariably replace the
     // existing on in this.
-    std::map<int, std::string>::iterator iter;
-    for(iter = t->m_results.begin(); 
-        iter != t->m_results.end(); ++iter) {
+    for(auto iter = t->m_results.cbegin();
+        iter != t->m_results.cend(); ++iter) {
         m_results[iter->first] = iter->second;
     }
 }
@@ -794,12 +793,11 @@ TestSuite::TestSuite()
 }
 
 
-void TestSuite::add_test(const Test::Ptr & t)
+void TestSuite::add_test(Test::Ptr && t)
 {
-    std::map<std::string, Test::Ptr>::iterator iter 
-        = m_tests.find(t->name());
+    auto iter = m_tests.find(t->name());
     if(iter == m_tests.end()) {
-        m_tests.insert(make_pair(t->name(), t));
+        m_tests.insert(std::make_pair(t->name(), std::move(t)));
     }
     else {
         iter->second->merge(t);
@@ -810,7 +808,7 @@ void TestSuite::add_test(const Test::Ptr & t)
 int TestSuite::load_tests(const char * testsuite_file)
 {
     xml::HandlerPtr handler(new TestSuiteHandler(testsuite_file, this));
-	
+
     bool has_data = false;
 
     has_data = handler->process();

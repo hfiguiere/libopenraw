@@ -43,7 +43,7 @@ class RawData;
 
 class Test {
 public:
-    typedef std::shared_ptr<Test> Ptr;
+    typedef std::unique_ptr<Test> Ptr;
 
     Test();
     ~Test();
@@ -101,7 +101,7 @@ public:
     /** return 0 if all test ran perfectly */
     int run_all();
     /** add a test. own the test */
-    void add_test(const Test::Ptr& t);
+    void add_test(Test::Ptr&& t);
 
 private:
 #if HAVE_CURL
@@ -109,6 +109,9 @@ private:
                     const std::string& download_dir);
 #endif
     std::map<std::string, Test::Ptr> m_tests;
+
+    TestSuite(const TestSuite&) = delete;
+    TestSuite & operator=(const TestSuite&) = delete;
 };
 
 #endif
