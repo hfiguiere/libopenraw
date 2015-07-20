@@ -1,7 +1,7 @@
 /*
  * libopenraw - thumbcpp
  *
- * Copyright (C) 2006, 2009 Hubert Figuiere
+ * Copyright (C) 2006-2015 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,44 @@
 #include <boost/scoped_ptr.hpp>
 
 using OpenRaw::Thumbnail;
-using boost::scoped_ptr;
+
+void writeThumbnail(const std::unique_ptr<Thumbnail> & thumb,
+                    const char* basename)
+{
+    FILE * f;
+    size_t s;
+    auto thumbnailFormat = thumb->dataType();
+    std::cerr << "thumb data size =" << thumb->size() << std::endl;
+    std::cerr << "thumb data type =" << thumbnailFormat << std::endl;
+
+    std::string filename = basename;
+
+    switch (thumbnailFormat) {
+    case OR_DATA_TYPE_JPEG:
+        filename += ".jpg";
+        break;
+    case OR_DATA_TYPE_PIXMAP_8RGB:
+        filename += ".ppm";
+        break;
+    default:
+        std::cerr << "invalid format" << std::endl;
+        return;
+    }
+
+    f = fopen(filename.c_str(), "wb");
+    if(thumbnailFormat == OR_DATA_TYPE_PIXMAP_8RGB) {
+        fprintf(f, "P6\n");
+        fprintf(f, "%u\n%u\n", thumb->width(), thumb->height());
+        fprintf(f, "%d\n", 255);
+    }
+
+    s = fwrite(thumb->data(), 1, thumb->size(), f);
+    if(s != thumb->size()) {
+        std::cerr << "short write of " << s << " bytes\n";
+    }
+    fclose(f);
+}
+
 
 int
 main(int argc, char** argv)
@@ -44,38 +81,28 @@ main(int argc, char** argv)
 
     OpenRaw::init();
     or_debug_set_level(DEBUG2);
-    FILE * f;
 
     {
-        scoped_ptr<OpenRaw::RawFile> raw_file(OpenRaw::RawFile::newRawFile(argv[1]));
+        std::unique_ptr<OpenRaw::RawFile> raw_file(
+            OpenRaw::RawFile::newRawFile(argv[1]));
         if(!raw_file)
         {
             std::cout << "Unable to open raw file.\n";
             return 1;
         }
-        std::vector<uint32_t> list = raw_file->listThumbnailSizes();
-	
-        for(std::vector<uint32_t>::iterator i = list.begin();
-            i != list.end(); ++i)
+        auto list = raw_file->listThumbnailSizes();
+        for(auto elem : list)
         {
-            std::cout << "found " << *i << " pixels\n";
+            std::cout << "found " << elem << " pixels\n";
         }
     }
 
     {
-        scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
-                                                                      160, err));
+        std::unique_ptr<Thumbnail> thumb(
+            Thumbnail::getAndExtractThumbnail(argv[1],
+                                              160, err));
         if (thumb != NULL) {
-            size_t s;
-            std::cerr << "thumb data size =" << thumb->size() << std::endl;
-            std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
-			
-            f = fopen("thumb.jpg", "wb");
-            s = fwrite(thumb->data(), 1, thumb->size(), f);
-            if(s != thumb->size()) {
-                std::cerr << "short write of " << s << " bytes\n";
-            }
-            fclose(f);
+            writeThumbnail(thumb, "thumb");
         }
         else {
             std::cerr << "error = " << err << std::endl;
@@ -83,20 +110,11 @@ main(int argc, char** argv)
     }
 
     {
-        scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
-                                                                      640, err));
-		
+        std::unique_ptr<Thumbnail> thumb(
+            Thumbnail::getAndExtractThumbnail(argv[1],
+                                              640, err));
         if (thumb != NULL) {
-            size_t s;
-            std::cerr << "thumb data size =" << thumb->size() << std::endl;
-            std::cerr << "thumb data type =" << thumb->dataType() << std::endl;
-			
-            f = fopen("thumbl.jpg", "wb");
-            s = fwrite(thumb->data(), 1, thumb->size(), f);
-            if(s != thumb->size()) {
-                std::cerr << "short write of " << s << " bytes\n";
-            }
-            fclose(f);
+            writeThumbnail(thumb, "thumbl");
         }
         else {
             std::cerr << "error = " << err << std::endl;
@@ -104,19 +122,11 @@ main(int argc, char** argv)
     }
 
     {
-        scoped_ptr<Thumbnail> thumb(Thumbnail::getAndExtractThumbnail(argv[1],
-                                                                      2048, err));
+        std::unique_ptr<Thumbnail> thumb(
+            Thumbnail::getAndExtractThumbnail(argv[1],
+                                              2048, err));
         if (thumb != NULL) {
-            size_t s;
-            std::cerr << "preview data size =" << thumb->size() << std::endl;
-            std::cerr << "preview data type =" << thumb->dataType() << std::endl;
-			
-            f = fopen("preview.jpg", "wb");
-            s = fwrite(thumb->data(), 1, thumb->size(), f);
-            if(s != thumb->size()) {
-                std::cerr << "short write of " << s << " bytes\n";
-            }
-            fclose(f);
+            writeThumbnail(thumb, "preview");
         }
         else {
             std::cerr << "error = " << err << std::endl;
