@@ -74,8 +74,8 @@ void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
 {
     std::vector<T> v;
     e->getArray(v);
-    for(auto iter = v.cbegin(); iter != v.cend(); ++iter) {
-        values.push_back(T2(*iter));
+    for(const auto & elem : v) {
+        values.push_back(T2(elem));
     }
 }
 

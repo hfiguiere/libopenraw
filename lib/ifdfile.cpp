@@ -119,9 +119,8 @@ void IfdFile::_identifyId()
   std::vector<IfdDir::Ref> & dirs = m_container->directories();
 
   Trace(DEBUG1) << "num of dirs " << dirs.size() << "\n";
-  for(auto iter = dirs.begin(); iter != dirs.end(); ++iter)
+  for(auto dir : dirs)
   {
-    IfdDir::Ref & dir = *iter;
     dir->load();
     or_error ret = _locateThumbnail(dir, list);
     if (ret == OR_ERROR_NONE)
@@ -131,10 +130,8 @@ void IfdFile::_identifyId()
     std::vector<IfdDir::Ref> subdirs;
     if(dir->getSubIFDs(subdirs)) {
       Trace(DEBUG1) << "Iterating subdirs\n";
-      for(auto iter2 = subdirs.begin(); iter2 != subdirs.end();
-          ++iter2)
+      for(auto dir2 : subdirs)
       {
-        IfdDir::Ref & dir2 = *iter2;
         dir2->load();
         ret = _locateThumbnail(dir2, list);
         if (ret == OR_ERROR_NONE)
@@ -263,10 +260,10 @@ void IfdFile::_identifyId()
           IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
           std::vector<uint16_t> arr;
           entry->getArray(arr);
-          for(auto i = arr.cbegin(); i != arr.cend(); ++i) {
-            isRGB8 = *i == 8;
+          for(auto bpc : arr) {
+            isRGB8 = (bpc == 8);
             if (!isRGB8) {
-              Trace(DEBUG1) << "bpc != 8, not RGB8 " << *i << "\n";
+              Trace(DEBUG1) << "bpc != 8, not RGB8 " << bpc << "\n";
               break;
             }
           }
