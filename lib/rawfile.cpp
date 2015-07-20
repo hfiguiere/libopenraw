@@ -78,25 +78,25 @@ void init(void)
 {
     using namespace std::placeholders;
 
-    static RawFileFactory fctcr2(OR_RAWFILE_TYPE_CR2, 
+    static RawFileFactory fctcr2(OR_RAWFILE_TYPE_CR2,
                                  std::bind(&Internals::Cr2File::factory, _1),
                                  "cr2");
-    static RawFileFactory fctnef(OR_RAWFILE_TYPE_NEF, 
+    static RawFileFactory fctnef(OR_RAWFILE_TYPE_NEF,
                                  std::bind(&Internals::NefFile::factory, _1),
                                  "nef");
-    static RawFileFactory fctnrw(OR_RAWFILE_TYPE_NRW, 
+    static RawFileFactory fctnrw(OR_RAWFILE_TYPE_NRW,
                                  std::bind(&Internals::NefFile::factory, _1),
                                  "nrw");
-    static RawFileFactory fctarw(OR_RAWFILE_TYPE_ARW, 
+    static RawFileFactory fctarw(OR_RAWFILE_TYPE_ARW,
                                  std::bind(&Internals::ArwFile::factory, _1),
                                  "arw");
-    static RawFileFactory fctorf(OR_RAWFILE_TYPE_ORF, 
+    static RawFileFactory fctorf(OR_RAWFILE_TYPE_ORF,
                                  std::bind(&Internals::OrfFile::factory, _1),
                                  "orf");
-    static RawFileFactory fctdng(OR_RAWFILE_TYPE_DNG, 
+    static RawFileFactory fctdng(OR_RAWFILE_TYPE_DNG,
                                  std::bind(&Internals::DngFile::factory, _1),
                                  "dng");
-    static RawFileFactory fctpef(OR_RAWFILE_TYPE_PEF, 
+    static RawFileFactory fctpef(OR_RAWFILE_TYPE_PEF,
                                  std::bind(&Internals::PEFFile::factory, _1),
                                  "pef");
     static RawFileFactory fctcrw(OR_RAWFILE_TYPE_CRW,
@@ -119,7 +119,7 @@ void init(void)
                                  "raf");
 }
 
-class RawFile::Private 
+class RawFile::Private
 {
 public:
     Private(Type t)
@@ -185,8 +185,8 @@ RawFile *RawFile::newRawFile(const char*_filename, RawFile::Type _typeHint)
     return iter->second(f);
 }
 
-RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer, 
-                                       uint32_t len, 
+RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer,
+                                       uint32_t len,
                                        RawFile::Type _typeHint)
 {
     init();
