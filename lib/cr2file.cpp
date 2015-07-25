@@ -306,6 +306,7 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
     { "Canon PowerShot S110", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S110) },
     { "Canon PowerShot SX50 HS",
       OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_SX50_HS) },
+    { "Canon PowerShot G3 X", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G3X) },
     { 0, 0 }
 };
 
