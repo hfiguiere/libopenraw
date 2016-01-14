@@ -98,7 +98,6 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
 	
     GdkPixbuf *pixbuf = NULL;
     ORRawFileRef raw_file = NULL;
-    (void)error;
 
     raw_file = or_rawfile_new_from_memory(context->data->data, context->data->len,
                                           OR_RAWFILE_TYPE_UNKNOWN);
@@ -137,8 +136,12 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
                                       context->user_data);
         }
         result = TRUE;
+    } else {
+        g_set_error (error,
+                     GDK_PIXBUF_ERROR,
+                     GDK_PIXBUF_ERROR_FAILED,
+                     "Unable to load RAW file");
     }
-
 
     g_byte_array_free(context->data, TRUE);
     free(context);
