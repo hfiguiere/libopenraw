@@ -1,7 +1,7 @@
 /*
  * libopenraw - pixbuf-loader.c
  *
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -41,7 +41,7 @@ static void pixbuf_free(guchar * data, gpointer u)
 }
 
 #if 0
-static GdkPixbuf * 
+static GdkPixbuf *
 gdk_pixbuf__or_image_load(FILE *f, GError **error)
 {
     (void)f;
@@ -95,13 +95,13 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
 {
     OrContext *context = (OrContext*)data;
     gboolean result = FALSE;
-	
+
     GdkPixbuf *pixbuf = NULL;
     ORRawFileRef raw_file = NULL;
 
     raw_file = or_rawfile_new_from_memory(context->data->data, context->data->len,
                                           OR_RAWFILE_TYPE_UNKNOWN);
-	
+
     if(raw_file) {
         or_error err;
         ORBitmapDataRef bitmapdata = or_bitmapdata_new();
@@ -112,14 +112,14 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
             char orientation_str[16];
             x = y = 0;
             or_bitmapdata_dimensions(bitmapdata, &x, &y);
-            pixbuf = gdk_pixbuf_new_from_data((guchar*)or_bitmapdata_data(bitmapdata), 
-                                              GDK_COLORSPACE_RGB,
-                                              FALSE, 8, x, y, 
-                                              x * 3, 
-                                              pixbuf_free, bitmapdata);
+            pixbuf = gdk_pixbuf_new_from_data(
+                (guchar*)or_bitmapdata_data(bitmapdata),
+                GDK_COLORSPACE_RGB, FALSE, 8, x, y, x * 3,
+                pixbuf_free, bitmapdata);
             orientation = or_rawfile_get_orientation(raw_file);
             if(orientation) {
-                g_snprintf (orientation_str, sizeof (orientation_str), "%d", orientation);
+                g_snprintf (orientation_str, sizeof (orientation_str),
+                            "%d", orientation);
                 orientation_str[15] = 0;
                 gdk_pixbuf_set_option(pixbuf, "orientation", orientation_str);
             }
@@ -169,9 +169,10 @@ fill_info (GdkPixbufFormat *info)
         { "IIRO", "    ", 100 },   /* ORF */
         { " MRM", "z   ", 100 },   /* MRW */
         { "II\x1a   HEAPCCDR", "   zzz        ", 100 }, /* CRW */
+        { "FUJIFILMCCD-RAW ",  "                " },    /* RAF */
         { NULL, NULL, 0 }
     };
-	
+
     static gchar *mime_types[] = {
         "image/x-adobe-dng",
         "image/x-canon-cr2",
@@ -182,9 +183,10 @@ fill_info (GdkPixbufFormat *info)
         "image/x-sony-arw",
         "image/x-epson-erf",
         "image/x-minolta-mrw",
+        "image/x-fuji-raf",
         NULL
     };
-	
+
     static gchar *extensions[] = {
         "dng",
         "cr2",
@@ -195,9 +197,10 @@ fill_info (GdkPixbufFormat *info)
         "arw",
         "erf",
         "mrw",
+        "raf",
         NULL
     };
-	
+
     info->name        = "Digital camera RAW";
     info->signature   = signature;
     info->description = "Digital camera RAW images loader.";
