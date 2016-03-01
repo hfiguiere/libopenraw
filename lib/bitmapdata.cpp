@@ -1,7 +1,7 @@
 /*
  * libopenraw - bitmapdata.cpp
  *
- * Copyright (C) 2007-2015 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -54,7 +54,7 @@ public:
     uint32_t roi_h;
 
     Private()
-        : data(NULL)
+        : data(nullptr)
         , data_size(0)
         , data_type(OR_DATA_TYPE_NONE)
         , width(0)
@@ -69,14 +69,13 @@ public:
 
     ~Private()
     {
-        if (NULL != data) {
+        if (data) {
             free(data);
         }
     }
 
-private:
-    Private(const Private &);
-    Private &operator=(const Private &);
+    Private(const Private &) = delete;
+    Private &operator=(const Private &) = delete;
 };
 
 BitmapData::BitmapData() : d(new BitmapData::Private())

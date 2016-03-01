@@ -20,6 +20,7 @@
 
 #include <stdint.h>
 #include <cstdlib>
+#include <memory>
 
 #include <libopenraw/consts.h>
 #include <libopenraw++/bitmapdata.h>
@@ -35,9 +36,8 @@ public:
 
     ~Private() {}
 
-private:
-    Private(const Private &);
-    Private &operator=(const Private &);
+    Private(const Private &) = delete;
+    Private &operator=(const Private &) = delete;
 };
 
 Thumbnail::Thumbnail() : BitmapData(), d(new Thumbnail::Private())
@@ -56,11 +56,10 @@ Thumbnail *Thumbnail::getAndExtractThumbnail(const char *_filename,
     err = OR_ERROR_NONE;
     Thumbnail *thumb = NULL;
 
-    RawFile *file = RawFile::newRawFile(_filename);
+    std::unique_ptr<RawFile> file(RawFile::newRawFile(_filename));
     if (file) {
         thumb = new Thumbnail();
         err = file->getThumbnail(preferred_size, *thumb);
-        delete file;
     } else {
         err = OR_ERROR_CANT_OPEN; // file error
     }
