@@ -85,8 +85,8 @@ private:
     std::string m_source;
     std::map<int, std::string> m_results;
     // runtime data
-    OpenRaw::RawFile* m_rawfile;
-    OpenRaw::RawData* m_rawdata;
+    std::unique_ptr<OpenRaw::RawFile> m_rawfile;
+    std::unique_ptr<OpenRaw::RawData> m_rawdata;
     int m_total, m_success, m_failure;
 };
 

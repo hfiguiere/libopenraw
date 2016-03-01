@@ -1,7 +1,7 @@
 /*
  * libopenraw - testsuite.cpp
  *
- * Copyright (C) 2008-2015 Hubert Figuiere
+ * Copyright (C) 2008-2016 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -77,6 +77,8 @@ using OpenRaw::RawFile;
 using OpenRaw::BitmapData;
 using OpenRaw::RawData;
 using OpenRaw::Thumbnail;
+
+using std::unique_ptr;
 
 #define RETURN_TEST_EQUALS(a,b) \
     {                               \
@@ -200,16 +202,14 @@ bool equalDataType(const std::string & result, BitmapData::DataType t)
 }
 
 Test::Test()
-    : m_rawfile(NULL),
-      m_rawdata(NULL),
+    : m_rawfile(nullptr),
+      m_rawdata(nullptr),
       m_total(0), m_success(0), m_failure(0)
 {
 }
 
 Test::~Test()
 {
-    delete m_rawfile;
-    delete m_rawdata;
 }
 
 bool Test::testRawType(const std::string & result)
@@ -225,10 +225,10 @@ bool Test::testRawType(const std::string & result)
                     boost::lexical_cast<std::string>(err));
     }
     off_t len = f.filesize();
-    std::unique_ptr<uint8_t[]> buff(new uint8_t[len]);
+    unique_ptr<uint8_t[]> buff(new uint8_t[len]);
     int res = f.read(buff.get(), len);
     if(res == len) {
-        std::unique_ptr<RawFile> r2(RawFile::newRawFileFromMemory(buff.get(), len));
+        unique_ptr<RawFile> r2(RawFile::newRawFileFromMemory(buff.get(), len));
         if(!r2) {
             RETURN_FAIL("failed to load from memory", std::string());
         }
@@ -413,19 +413,18 @@ bool Test::testThumbMd5(const std::string & result)
 }
 
 namespace {
-RawData * loadRawData(RawFile * file)
+unique_ptr<RawData> loadRawData(const unique_ptr<RawFile> & file)
 {
-    RawData *rawdata = new RawData();
+    unique_ptr<RawData> rawdata(new RawData());
     ::or_error err;
     err = file->getRawData(*rawdata, OR_OPTIONS_NONE);
     if(OR_ERROR_NONE != err) {
-        delete rawdata;
-        rawdata = NULL;
+        rawdata.reset();
     }
     return rawdata;
 }
 
-uint32_t computeCrc(const RawData * rawdata)
+uint32_t computeCrc(const unique_ptr<RawData> & rawdata)
 {
     boost::crc_optimal<16, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
 
@@ -634,31 +633,45 @@ bool Test::testExifString(int32_t meta_index, const std::string & result)
 
 bool Test::testMakerNoteCount(const std::string & result)
 {
-    auto ifd_file = dynamic_cast<OpenRaw::Internals::IfdFile*>(m_rawfile);
-    if (!ifd_file) {
+    try {
+        OpenRaw::Internals::IfdFile & ifd_file =
+            dynamic_cast<OpenRaw::Internals::IfdFile &>(*m_rawfile.get());
+        auto exif = ifd_file.exifIfd();
+        auto maker_note = exif->getMakerNoteIfd();
+        if (!maker_note) {
+            RETURN_FAIL("no maker not found", result);
+        }
+        RETURN_TEST_EQUALS_N(maker_note->numTags(),
+                             boost::lexical_cast<int32_t>(result));
+    }
+    catch(const std::bad_cast & e) {
         RETURN_FAIL("not an IFD file", result);
     }
-    auto exif = ifd_file->exifIfd();
-    auto maker_note = exif->getMakerNoteIfd();
-    if (!maker_note) {
-        RETURN_FAIL("no maker not found", result);
+    catch(...) {
+        RETURN_FAIL("unknown exception", result);
     }
-    RETURN_TEST_EQUALS_N(maker_note->numTags(),
-                         boost::lexical_cast<int32_t>(result));
 }
 
 bool Test::testMakerNoteId(const std::string & result)
 {
-    auto ifd_file = dynamic_cast<OpenRaw::Internals::IfdFile*>(m_rawfile);
-    if (!ifd_file) {
+    try {
+        OpenRaw::Internals::IfdFile& ifd_file =
+            dynamic_cast<OpenRaw::Internals::IfdFile&>(*m_rawfile.get());
+        auto exif = ifd_file.exifIfd();
+        auto maker_note =
+            std::dynamic_pointer_cast<OpenRaw::Internals::MakerNoteDir>(
+                exif->getMakerNoteIfd());
+        if (!maker_note) {
+            RETURN_FAIL("no maker not found", result);
+        }
+        RETURN_TEST_EQUALS(maker_note->getId(), result);
+    }
+    catch(const std::bad_cast & e) {
         RETURN_FAIL("not an IFD file", result);
     }
-    auto exif = ifd_file->exifIfd();
-    auto maker_note = std::dynamic_pointer_cast<OpenRaw::Internals::MakerNoteDir>(exif->getMakerNoteIfd());
-    if (!maker_note) {
-        RETURN_FAIL("no maker not found", result);
+    catch(...) {
+        RETURN_FAIL("unknown exception", result);
     }
-    RETURN_TEST_EQUALS(maker_note->getId(), result);
 }
 
 
@@ -676,7 +689,7 @@ int Test::run()
         fprintf(stderr, "File not found, skipping. (%d)\n", errno);
         return 0;
     }
-    m_rawfile = RawFile::newRawFile(m_file.c_str());
+    m_rawfile.reset(RawFile::newRawFile(m_file.c_str()));
 
     if(m_rawfile == NULL) {
         RETURN_FAIL("m_rawfile == NULL", std::string("not NULL"));
