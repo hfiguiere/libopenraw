@@ -25,8 +25,8 @@
 #include <stdint.h>
 
 #include <libopenraw/consts.h>
-#include <libopenraw++/rawfile.h>
 
+#include "rawfile.hpp"
 #include "ifdfile.h"
 #include "io/stream.h"
 #include "tiffepfile.h"

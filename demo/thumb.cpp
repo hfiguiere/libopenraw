@@ -1,7 +1,7 @@
 /*
  * libopenraw - thumbcpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,9 @@
 #include <iostream>
 #include <libopenraw/libopenraw.h>
 #include <libopenraw/debug.h>
-#include <libopenraw++/thumbnail.h>
-#include <libopenraw++/rawfile.h>
+
+#include "thumbnail.hpp"
+#include "rawfile.hpp"
 
 #include <boost/scoped_ptr.hpp>
 

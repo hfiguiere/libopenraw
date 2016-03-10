@@ -6,7 +6,8 @@ endif
 
 noinst_PROGRAMS = extensions thumb thumbc cfa ccfa ppmload $(GNOME_BINARIES)
 
-AM_CPPFLAGS = -I$(top_srcdir)/include  -I$(top_srcdir)/gnome/include \
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/lib \
+	-I$(top_srcdir)/gnome/include \
 	@LIBGDKPIXBUF_CFLAGS@ @BOOST_CPPFLAGS@
 
 LIBOPENRAW_LIBS = ../lib/libopenraw.la -lstdc++ -ljpeg

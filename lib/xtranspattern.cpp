@@ -21,9 +21,9 @@
 #include <stdint.h>
 
 #include <libopenraw/consts.h>
-#include <libopenraw++/cfapattern.h>
 
-#include "xtranspattern.h"
+#include "cfapattern.hpp"
+#include "xtranspattern.hpp"
 
 namespace OpenRaw {
 namespace Internals {

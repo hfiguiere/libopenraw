@@ -28,8 +28,8 @@
 #include <vector>
 
 #include <libopenraw/consts.h>
-#include <libopenraw++/rawfile.h>
 
+#include "rawfile.hpp"
 #include "io/stream.h"
 #include "ifd.h"
 #include "rawcontainer.h"

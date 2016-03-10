@@ -24,8 +24,8 @@
 
 #include <libopenraw/cameraids.h>
 #include <libopenraw/consts.h>
-#include <libopenraw++/rawfile.h>
 
+#include "rawfile.hpp"
 #include "io/stream.h"
 #include "ifddir.h"
 #include "ifdfile.h"

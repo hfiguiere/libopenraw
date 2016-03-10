@@ -31,9 +31,10 @@
 #include <libopenraw/cameraids.h>
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
-#include <libopenraw++/cfapattern.h>
-#include <libopenraw++/rawdata.h>
-#include <libopenraw++/rawfile.h>
+
+#include "cfapattern.hpp"
+#include "rawdata.hpp"
+#include "rawfile.hpp"
 
 
 #include "trace.h"

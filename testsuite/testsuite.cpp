@@ -55,12 +55,13 @@
 #include <libopenraw/debug.h>
 #include <libopenraw/consts.h>
 #include <libopenraw/metadata.h>
-#include <libopenraw++/rawfile.h>
-#include <libopenraw++/rawdata.h>
-#include <libopenraw++/thumbnail.h>
-#include <libopenraw++/bitmapdata.h>
-#include <libopenraw++/metavalue.h>
-#include <libopenraw++/cfapattern.h>
+
+#include "rawfile.hpp"
+#include "rawdata.hpp"
+#include "thumbnail.hpp"
+#include "bitmapdata.hpp"
+#include "metavalue.hpp"
+#include "cfapattern.hpp"
 
 #include "xmlhandler.h"
 #include "testsuite.h"

@@ -28,11 +28,11 @@
 
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
-#include <libopenraw++/bitmapdata.h>
-#include <libopenraw++/rawdata.h>
-#include <libopenraw++/cfapattern.h>
-#include <libopenraw++/rawfile.h>
 
+#include "bitmapdata.hpp"
+#include "rawdata.hpp"
+#include "cfapattern.hpp"
+#include "rawfile.hpp"
 #include "render/bimedian_demosaic.h"
 #include "render/grayscale.h"
 #include "trace.h"

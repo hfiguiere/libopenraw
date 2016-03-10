@@ -27,7 +27,8 @@
 
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
-#include <libopenraw++/bitmapdata.h>
+
+#include "bitmapdata.hpp"
 
 using namespace Debug;
 

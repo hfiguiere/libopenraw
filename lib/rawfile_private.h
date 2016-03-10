@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile_private.h
  *
- * Copyright (C) 2012 Hubert Figuiere
+ * Copyright (C) 2012-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,7 +25,7 @@
 
 #include <map>
 
-#include <libopenraw++/rawfile.h>
+#include "rawfile.hpp"
 
 namespace OpenRaw {
 namespace Internals {

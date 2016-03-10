@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -27,10 +27,10 @@
 #include <libopenraw/cameraids.h>
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
-#include <libopenraw++/rawdata.h>
-#include <libopenraw++/rawfile.h>
-#include <libopenraw++/cfapattern.h>
 
+#include "rawdata.hpp"
+#include "rawfile.hpp"
+#include "cfapattern.hpp"
 #include "trace.h"
 #include "io/memstream.h"
 #include "ifdfilecontainer.h"

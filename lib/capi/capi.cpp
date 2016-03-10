@@ -28,7 +28,7 @@
 #include <libopenraw/consts.h>
 #include <libopenraw/thumbnails.h>
 
-#include <libopenraw++/thumbnail.h>
+#include "thumbnail.hpp"
 
 using OpenRaw::Thumbnail;
 

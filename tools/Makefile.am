@@ -1,6 +1,6 @@
 
 
-AM_CPPFLAGS = -I$(top_srcdir)/include @BOOST_CPPFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/lib @BOOST_CPPFLAGS@
 
 noinst_PROGRAMS = ordiag
 

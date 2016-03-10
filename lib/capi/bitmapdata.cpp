@@ -27,7 +27,7 @@
 #include <libopenraw/types.h>
 #include <libopenraw/consts.h>
 
-#include <libopenraw++/bitmapdata.h>
+#include "bitmapdata.hpp"
 
 using OpenRaw::BitmapData;
 

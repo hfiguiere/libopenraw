@@ -1,7 +1,7 @@
 /*
  * libopenraw - ljpegdecompressor.cpp
  *
- * Copyright (C) 2007-2015 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -62,8 +62,8 @@
 
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
-#include <libopenraw++/rawdata.h>
 
+#include "rawdata.hpp"
 #include "exception.h"
 #include "io/stream.h"
 #include "trace.h"

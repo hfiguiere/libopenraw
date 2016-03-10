@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.cpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,9 +25,10 @@
 #include <libopenraw/debug.h>
 #include <libopenraw/cameraids.h>
 #include <libopenraw/consts.h>
-#include <libopenraw++/cfapattern.h>
-#include <libopenraw++/rawdata.h>
-#include <libopenraw++/rawfile.h>
+
+#include "cfapattern.hpp"
+#include "rawdata.hpp"
+#include "rawfile.hpp"
 
 #include "ifdfilecontainer.h"
 #include "makernotedir.h"

@@ -1,7 +1,7 @@
 /*
  * libopenraw - olympusdecompressor.cpp
  *
- * Copyright (C) 2011-2015 Hubert Figuiere
+ * Copyright (C) 2011-2016 Hubert Figuiere
  * Olympus Decompression copied from RawSpeed
  * Copyright (C) 2009 Klaus Post
  *
@@ -25,8 +25,7 @@
 
 #include <algorithm>
 
-#include <libopenraw++/rawdata.h>
-
+#include "rawdata.hpp"
 #include "olympusdecompressor.h"
 #include "bititerator.h"
 

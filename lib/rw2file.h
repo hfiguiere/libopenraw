@@ -2,7 +2,7 @@
 /*
  * libopenraw - rw2file.h
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,8 +26,8 @@
 #include <vector>
 
 #include <libopenraw/consts.h>
-#include <libopenraw++/rawfile.h>
 
+#include "rawfile.hpp"
 #include "ifddir.h"
 #include "ifdfile.h"
 #include "io/stream.h"

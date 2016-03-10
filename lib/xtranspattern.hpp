@@ -21,7 +21,7 @@
 #ifndef OR_INTERNALS_XTRANSPATTERN_H_
 #define OR_INTERNALS_XTRANSPATTERN_H_
 
-#include <libopenraw++/cfapattern.h>
+#include "cfapattern.hpp"
 
 namespace OpenRaw {
 namespace Internals {

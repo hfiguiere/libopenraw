@@ -28,7 +28,8 @@
 #include <libopenraw/consts.h>
 #include <libopenraw/thumbnails.h>
 #include <libopenraw/types.h>
-#include <libopenraw++/rawfile.h>
+
+#include "rawfile.hpp"
 
 namespace OpenRaw {
 class BitmapData;

@@ -26,7 +26,8 @@
 #include <boost/static_assert.hpp>
 
 #include <libopenraw/consts.h>
-#include <libopenraw++/cfapattern.h>
+
+#include "cfapattern.hpp"
 
 namespace OpenRaw {
 

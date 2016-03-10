@@ -39,10 +39,11 @@
 #include <libopenraw/cameraids.h>
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
-#include <libopenraw++/rawfile.h>
-#include <libopenraw++/rawdata.h>
-#include <libopenraw++/thumbnail.h>
-#include <libopenraw++/metavalue.h>
+
+#include "rawfile.hpp"
+#include "rawdata.hpp"
+#include "thumbnail.hpp"
+#include "metavalue.hpp"
 
 #include "io/stream.h"
 #include "io/file.h"

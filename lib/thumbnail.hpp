@@ -22,7 +22,7 @@
 #ifndef LIBOPENRAWPP_THUMBNAIL_H_
 #define LIBOPENRAWPP_THUMBNAIL_H_
 
-#include <libopenraw++/bitmapdata.h>
+#include "bitmapdata.hpp"
 
 namespace OpenRaw {
 

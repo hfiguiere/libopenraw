@@ -1,7 +1,7 @@
 /*
  * libopenraw - metavalue.cpp
  *
- * Copyright (C) 2007-2015 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -22,8 +22,7 @@
 
 #include <assert.h>
 
-#include <libopenraw++/metavalue.h>
-
+#include "metavalue.hpp"
 #include "exception.h"
 
 namespace OpenRaw {

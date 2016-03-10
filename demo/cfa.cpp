@@ -1,7 +1,7 @@
 /*
  * libopenraw - cfa.cpp
  *
- * Copyright (C) 2007, 2009 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,9 +24,10 @@
 #include <iostream>
 #include <libopenraw/libopenraw.h>
 #include <libopenraw/debug.h>
-#include <libopenraw++/thumbnail.h>
-#include <libopenraw++/rawfile.h>
-#include <libopenraw++/rawdata.h>
+
+#include "thumbnail.hpp"
+#include "rawfile.hpp"
+#include "rawdata.hpp"
 
 #include <boost/scoped_ptr.hpp>
 

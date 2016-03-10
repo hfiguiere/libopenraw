@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -31,10 +31,10 @@
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
 #include <libopenraw/metadata.h>
-#include <libopenraw++/bitmapdata.h>
-#include <libopenraw++/rawfile.h>
-#include <libopenraw++/rawdata.h>
 
+#include "bitmapdata.hpp"
+#include "rawfile.hpp"
+#include "rawdata.hpp"
 #include "trace.h"
 #include "io/stream.h"
 #include "io/streamclone.h"

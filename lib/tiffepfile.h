@@ -24,11 +24,11 @@
 #ifndef OR_INTERNALS_TIFF_EP_FILE_H_
 #define OR_INTERNALS_TIFF_EP_FILE_H_
 
-#include <libopenraw++/rawfile.h>
 
 #include "ifddir.h"
 #include "ifdfile.h"
 #include "io/stream.h"
+#include "rawfile.hpp"
 
 namespace OpenRaw {
 namespace Internals {

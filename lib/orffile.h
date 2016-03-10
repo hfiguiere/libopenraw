@@ -27,8 +27,8 @@
 #include <vector>
 
 #include <libopenraw/consts.h>
-#include <libopenraw++/rawfile.h>
 
+#include "rawfile.hpp"
 #include "ifd.h"
 #include "ifddir.h"
 #include "ifdfile.h"

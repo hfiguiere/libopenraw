@@ -1,7 +1,7 @@
 /*
  * libopenraw - ordiag.cpp
  *
- * Copyright (C) 2007-2015 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -33,10 +33,11 @@
 #include <boost/lexical_cast.hpp>
 
 #include <libopenraw/libopenraw.h>
-#include <libopenraw++/rawfile.h>
-#include <libopenraw++/thumbnail.h>
-#include <libopenraw++/rawdata.h>
-#include <libopenraw++/metavalue.h>
+
+#include "rawfile.hpp"
+#include "thumbnail.hpp"
+#include "rawdata.hpp"
+#include "metavalue.hpp"
 
 using OpenRaw::RawFile;
 using OpenRaw::Thumbnail;

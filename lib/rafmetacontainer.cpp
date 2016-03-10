@@ -2,7 +2,7 @@
 /*
  * libopenraw - rafcontainer.cpp
  *
- * Copyright (C) 2011-2015 Hubert Figuiere
+ * Copyright (C) 2011-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,8 +25,7 @@
 #include <string>
 #include <utility>
 
-#include <libopenraw++/metavalue.h>
-
+#include "metavalue.hpp"
 #include "rafmetacontainer.h"
 #include "io/stream.h"
 

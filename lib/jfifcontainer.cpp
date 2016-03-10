@@ -1,7 +1,7 @@
 /*
  * libopenraw - jfifcontainer.cpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -36,8 +36,8 @@ extern "C" {
 }
 
 #include <libopenraw/debug.h>
-#include <libopenraw++/bitmapdata.h>
 
+#include "bitmapdata.hpp"
 #include "io/stream.h"
 #include "io/streamclone.h"
 #include "trace.h"

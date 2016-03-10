@@ -1,7 +1,7 @@
 /*
  * libopenraw - raffile.cpp
  *
- * Copyright (C) 2011-2015 Hubert Figuière
+ * Copyright (C) 2011-2016 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,9 +28,10 @@
 #include <libopenraw/cameraids.h>
 #include <libopenraw/debug.h>
 #include <libopenraw/metadata.h>
-#include <libopenraw++/rawdata.h>
-#include <libopenraw++/rawfile.h>
-#include <libopenraw++/metavalue.h>
+
+#include "rawdata.hpp"
+#include "rawfile.hpp"
+#include "metavalue.hpp"
 
 #include "ifd.h"
 #include "ifddir.h"
@@ -43,7 +44,7 @@
 #include "unpack.h"
 #include "trace.h"
 #include "io/streamclone.h"
-#include "xtranspattern.h"
+#include "xtranspattern.hpp"
 
 namespace OpenRaw {
 namespace Internals {

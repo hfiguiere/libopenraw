@@ -28,6 +28,12 @@ noinst_HEADERS = \
 	mrwfile.h \
 	rw2file.h \
 	raffile.h \
+	rawfile.hpp \
+	bitmapdata.hpp \
+	thumbnail.hpp \
+	rawdata.hpp \
+	cfapattern.hpp \
+	metavalue.hpp \
 	ifd.h \
 	ifdfilecontainer.h \
 	ifddir.h ifdentry.h \
@@ -72,7 +78,7 @@ libopenraw_la_SOURCES = \
 	bititerator.h \
 	bititerator.cpp \
 	cfapattern.cpp \
-	xtranspattern.h \
+	xtranspattern.hpp \
 	xtranspattern.cpp \
 	huffman.h \
 	huffman.cpp \

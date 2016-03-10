@@ -26,8 +26,8 @@
 #include <vector>
 
 #include <libopenraw/metadata.h>
-#include <libopenraw++/bitmapdata.h>
-#include <libopenraw++/cfapattern.h>
+#include "bitmapdata.hpp"
+#include "cfapattern.hpp"
 
 namespace OpenRaw {
 
