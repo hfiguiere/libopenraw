@@ -2,7 +2,7 @@
 /*
  * libopenraw - neffile.cpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -37,16 +37,16 @@
 #include "rawfile.hpp"
 
 
-#include "trace.h"
-#include "ifd.h"
-#include "ifdfilecontainer.h"
-#include "ifdentry.h"
-#include "makernotedir.h"
-#include "nefdiffiterator.h"
-#include "nefcfaiterator.h"
-#include "neffile.h"
-#include "rawcontainer.h"
-#include "rawfile_private.h"
+#include "trace.hpp"
+#include "ifd.hpp"
+#include "ifdfilecontainer.hpp"
+#include "ifdentry.hpp"
+#include "makernotedir.hpp"
+#include "nefdiffiterator.hpp"
+#include "nefcfaiterator.hpp"
+#include "neffile.hpp"
+#include "rawcontainer.hpp"
+#include "rawfile_private.hpp"
 
 using namespace Debug;
 

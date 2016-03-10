@@ -1,7 +1,7 @@
 /*
  * libopenraw - erffile.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,9 +21,9 @@
 
 #include <libopenraw/cameraids.h>
 
-#include "ifddir.h"
-#include "rawfile_private.h"
-#include "erffile.h"
+#include "ifddir.hpp"
+#include "rawfile_private.hpp"
+#include "erffile.hpp"
 
 using namespace Debug;
 

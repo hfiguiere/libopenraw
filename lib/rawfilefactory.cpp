@@ -27,8 +27,8 @@
 #include <libopenraw/debug.h>
 
 #include "rawfile.hpp"
-#include "rawfilefactory.h"
-#include "trace.h"
+#include "rawfilefactory.hpp"
+#include "trace.hpp"
 
 using namespace Debug;
 

@@ -1,7 +1,7 @@
 /*
  * libopenraw - unpack.cpp
  *
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008-2016 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -20,10 +20,12 @@
  */
 
 #include <assert.h>
-#include "libopenraw/consts.h"
-#include "unpack.h"
-#include "trace.h"
-#include "ifd.h"
+
+#include <libopenraw/consts.h>
+
+#include "unpack.hpp"
+#include "trace.hpp"
+#include "ifd.hpp"
 
 namespace OpenRaw {
 namespace Internals {

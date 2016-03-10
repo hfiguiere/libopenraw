@@ -30,19 +30,19 @@
 #include "rawdata.hpp"
 #include "rawfile.hpp"
 
-#include "ifdfilecontainer.h"
-#include "makernotedir.h"
+#include "ifdfilecontainer.hpp"
+#include "makernotedir.hpp"
 
-#include "trace.h"
-#include "orffile.h"
-#include "ifd.h"
-#include "ifddir.h"
-#include "ifdentry.h"
-#include "orfcontainer.h"
-#include "olympusdecompressor.h"
-#include "rawfile_private.h"
-#include "io/streamclone.h"
-#include "jfifcontainer.h"
+#include "trace.hpp"
+#include "orffile.hpp"
+#include "ifd.hpp"
+#include "ifddir.hpp"
+#include "ifdentry.hpp"
+#include "orfcontainer.hpp"
+#include "olympusdecompressor.hpp"
+#include "rawfile_private.hpp"
+#include "io/streamclone.hpp"
+#include "jfifcontainer.hpp"
 
 using namespace Debug;
 

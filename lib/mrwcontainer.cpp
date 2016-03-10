@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwcontainer.cpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -24,8 +24,8 @@
 
 #include <libopenraw/debug.h>
 
-#include "trace.h"
-#include "mrwcontainer.h"
+#include "trace.hpp"
+#include "mrwcontainer.hpp"
 
 using namespace Debug;
 

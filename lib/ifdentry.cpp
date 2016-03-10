@@ -28,10 +28,10 @@
 #include <libopenraw/debug.h>
 
 #include "metavalue.hpp"
-#include "trace.h"
-#include "ifdfilecontainer.h"
-#include "ifdentry.h"
-#include "ifd.h"
+#include "trace.hpp"
+#include "ifdfilecontainer.hpp"
+#include "ifdentry.hpp"
+#include "ifd.hpp"
 
 using namespace Debug;
 

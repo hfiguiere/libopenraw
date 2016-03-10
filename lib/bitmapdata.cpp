@@ -23,11 +23,10 @@
 #include <algorithm>
 #include <cstdlib>
 
-#include "trace.h"
-
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
 
+#include "trace.hpp"
 #include "bitmapdata.hpp"
 
 using namespace Debug;

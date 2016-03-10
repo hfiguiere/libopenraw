@@ -28,12 +28,12 @@
 #include <libopenraw/debug.h>
 
 #include "rawdata.hpp"
-#include "trace.h"
-#include "io/streamclone.h"
-#include "rw2file.h"
-#include "rw2container.h"
-#include "jfifcontainer.h"
-#include "rawfile_private.h"
+#include "trace.hpp"
+#include "io/streamclone.hpp"
+#include "rw2file.hpp"
+#include "rw2container.hpp"
+#include "jfifcontainer.hpp"
+#include "rawfile_private.hpp"
 
 using namespace Debug;
 

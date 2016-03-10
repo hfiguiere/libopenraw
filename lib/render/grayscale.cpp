@@ -1,7 +1,7 @@
 /*
  * libopenraw - render/grayscale.h
  *
- * Copyright (C) 2012-2015 Hubert Figuiere
+ * Copyright (C) 2012-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,7 +20,7 @@
 
 #include <libopenraw/consts.h>
 
-#include "render/grayscale.h"
+#include "render/grayscale.hpp"
 
 or_error
 grayscale_to_rgb (uint16_t *src, uint32_t src_x, uint32_t src_y, 

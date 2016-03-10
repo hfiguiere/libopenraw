@@ -26,10 +26,10 @@
 #include <libopenraw/debug.h>
 
 #include "rawfile.hpp"
-#include "trace.h"
-#include "tiffepfile.h"
-#include "ifddir.h"
-#include "ifdfilecontainer.h"
+#include "trace.hpp"
+#include "tiffepfile.hpp"
+#include "ifddir.hpp"
+#include "ifdfilecontainer.hpp"
 
 using namespace Debug;
 

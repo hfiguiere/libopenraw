@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfilecontainer.cpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,8 +26,8 @@
 
 #include <libopenraw/debug.h>
 
-#include "trace.h"
-#include "ifdfilecontainer.h"
+#include "trace.hpp"
+#include "ifdfilecontainer.hpp"
 
 using namespace Debug;
 

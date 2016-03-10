@@ -22,10 +22,10 @@
 
 #include <string.h>
 
-#include "makernotedir.h"
-#include "io/stream.h"
-#include "ifdfilecontainer.h"
-#include "trace.h"
+#include "makernotedir.hpp"
+#include "io/stream.hpp"
+#include "ifdfilecontainer.hpp"
+#include "trace.hpp"
 
 namespace OpenRaw {
 namespace Internals {

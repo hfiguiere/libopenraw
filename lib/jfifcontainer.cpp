@@ -38,11 +38,11 @@ extern "C" {
 #include <libopenraw/debug.h>
 
 #include "bitmapdata.hpp"
-#include "io/stream.h"
-#include "io/streamclone.h"
-#include "trace.h"
-#include "jfifcontainer.h"
-#include "ifdfilecontainer.h"
+#include "io/stream.hpp"
+#include "io/streamclone.hpp"
+#include "trace.hpp"
+#include "jfifcontainer.hpp"
+#include "ifdfilecontainer.hpp"
 
 namespace OpenRaw {
 

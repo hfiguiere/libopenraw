@@ -1,7 +1,7 @@
 /*
  * libopenraw - stream.cpp
  *
- * Copyright (C) 2006-2015 Hubert Figuière
+ * Copyright (C) 2006-2016 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,10 +19,10 @@
  */
 
 
-#include "libopenraw/consts.h"
+#include <libopenraw/consts.h>
 
-#include "stream.h"
-#include "exception.h"
+#include "stream.hpp"
+#include "exception.hpp"
 
 namespace OpenRaw {
 namespace IO {

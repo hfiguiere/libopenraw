@@ -30,7 +30,7 @@
 
 #include <libopenraw/consts.h>
 
-#include "bimedian_demosaic.h"
+#include "bimedian_demosaic.hpp"
 
 
 /* Returns the median of four floats. We define the median as the average of

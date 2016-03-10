@@ -28,14 +28,14 @@
 #include <libopenraw/debug.h>
 
 #include "rawdata.hpp"
-#include "trace.h"
-#include "io/memstream.h"
-#include "jfifcontainer.h"
-#include "ljpegdecompressor.h"
-#include "ifd.h"
-#include "ifddir.h"
-#include "ifdentry.h"
-#include "dngfile.h"
+#include "trace.hpp"
+#include "io/memstream.hpp"
+#include "jfifcontainer.hpp"
+#include "ljpegdecompressor.hpp"
+#include "ifd.hpp"
+#include "ifddir.hpp"
+#include "ifdentry.hpp"
+#include "dngfile.hpp"
 
 using namespace Debug;
 

@@ -64,11 +64,11 @@
 #include <libopenraw/debug.h>
 
 #include "rawdata.hpp"
-#include "exception.h"
-#include "io/stream.h"
-#include "trace.h"
-#include "ljpegdecompressor.h"
-#include "ljpegdecompressor_priv.h"
+#include "exception.hpp"
+#include "io/stream.hpp"
+#include "trace.hpp"
+#include "ljpegdecompressor.hpp"
+#include "ljpegdecompressor_priv.hpp"
 
 namespace OpenRaw {
 

@@ -22,11 +22,11 @@
 #include <libopenraw/cameraids.h>
 
 #include "rawdata.hpp"
-#include "ifd.h"
-#include "ifdfilecontainer.h"
-#include "ifddir.h"
-#include "peffile.h"
-#include "rawfile_private.h"
+#include "ifd.hpp"
+#include "ifdfilecontainer.hpp"
+#include "ifddir.hpp"
+#include "peffile.hpp"
+#include "rawfile_private.hpp"
 
 using namespace Debug;
 

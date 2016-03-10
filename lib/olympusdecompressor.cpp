@@ -26,8 +26,8 @@
 #include <algorithm>
 
 #include "rawdata.hpp"
-#include "olympusdecompressor.h"
-#include "bititerator.h"
+#include "olympusdecompressor.hpp"
+#include "bititerator.hpp"
 
 namespace OpenRaw {
 namespace Internals {

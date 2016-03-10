@@ -34,14 +34,14 @@
 #include "metavalue.hpp"
 #include "cfapattern.hpp"
 #include "rawfile.hpp"
-#include "trace.h"
-#include "io/streamclone.h"
-#include "io/memstream.h"
-#include "crwfile.h"
-#include "ciffcontainer.h"
-#include "jfifcontainer.h"
-#include "crwdecompressor.h"
-#include "rawfile_private.h"
+#include "trace.hpp"
+#include "io/streamclone.hpp"
+#include "io/memstream.hpp"
+#include "crwfile.hpp"
+#include "ciffcontainer.hpp"
+#include "jfifcontainer.hpp"
+#include "crwdecompressor.hpp"
+#include "rawfile_private.hpp"
 
 using namespace Debug;
 

@@ -1,7 +1,7 @@
 /* -*- tab-width:4; indent-tabs-mode:'t c-file-style:"stroustrup" -*- */
 /*
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2009 Hubert Figuiere
+ * Copyright (C) 2009-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,8 +21,8 @@
 
 #include <boost/test/minimal.hpp>
 
-#include "unpack.h"
-#include "ifd.h"
+#include "unpack.hpp"
+#include "ifd.hpp"
 
 
 int test_unpack()

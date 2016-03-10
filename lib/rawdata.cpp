@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.cpp
  *
- * Copyright (C) 2007-2015 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -33,9 +33,9 @@
 #include "rawdata.hpp"
 #include "cfapattern.hpp"
 #include "rawfile.hpp"
-#include "render/bimedian_demosaic.h"
-#include "render/grayscale.h"
-#include "trace.h"
+#include "render/bimedian_demosaic.hpp"
+#include "render/grayscale.hpp"
+#include "trace.hpp"
 
 namespace OpenRaw {
 

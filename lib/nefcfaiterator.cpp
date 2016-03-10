@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "nefcfaiterator.h"
+#include "nefcfaiterator.hpp"
 
 namespace OpenRaw {
 namespace Internals {

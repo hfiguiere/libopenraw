@@ -1,7 +1,7 @@
 /*
  * libopenraw - teststream.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,9 +28,9 @@
 
 #include <boost/test/minimal.hpp>
 
-#include "stream.h"
-#include "file.h"
-#include "streamclone.h"
+#include "stream.hpp"
+#include "file.hpp"
+#include "streamclone.hpp"
 
 using namespace OpenRaw;
 

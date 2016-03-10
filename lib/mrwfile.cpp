@@ -32,15 +32,15 @@
 #include "thumbnail.hpp"
 #include "rawdata.hpp"
 
-#include "trace.h"
-#include "io/stream.h"
-#include "mrwcontainer.h"
-#include "ifd.h"
-#include "ifdentry.h"
-#include "ifdfilecontainer.h"
-#include "mrwfile.h"
-#include "unpack.h"
-#include "rawfile_private.h"
+#include "trace.hpp"
+#include "io/stream.hpp"
+#include "mrwcontainer.hpp"
+#include "ifd.hpp"
+#include "ifdentry.hpp"
+#include "ifdfilecontainer.hpp"
+#include "mrwfile.hpp"
+#include "unpack.hpp"
+#include "rawfile_private.hpp"
 
 using namespace Debug;
 

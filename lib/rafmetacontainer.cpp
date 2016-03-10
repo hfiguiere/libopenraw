@@ -26,8 +26,8 @@
 #include <utility>
 
 #include "metavalue.hpp"
-#include "rafmetacontainer.h"
-#include "io/stream.h"
+#include "rafmetacontainer.hpp"
+#include "io/stream.hpp"
 
 namespace OpenRaw {
 namespace Internals {

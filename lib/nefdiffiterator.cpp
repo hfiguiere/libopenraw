@@ -3,7 +3,7 @@
  * libopenraw - nefdiffiterator.cpp
  *
  * Copyright (C) 2008 Rafael Avila de Espindola.
- * Copyright (C) 2013-2014 Hubert Figuiere
+ * Copyright (C) 2013-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "nefdiffiterator.h"
+#include "nefdiffiterator.hpp"
 
 namespace OpenRaw {
 namespace Internals {

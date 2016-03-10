@@ -24,11 +24,11 @@
 #include <boost/crc.hpp>      // for boost::crc_basic, boost::crc_optimal
 
 #include "rawdata.hpp"
-#include "io/file.h"
-#include "rawcontainer.h"
-#include "jfifcontainer.h"
-#include "ljpegdecompressor.h"
-#include "ljpegdecompressor_priv.h"
+#include "io/file.hpp"
+#include "rawcontainer.hpp"
+#include "jfifcontainer.hpp"
+#include "ljpegdecompressor.hpp"
+#include "ljpegdecompressor_priv.hpp"
 
 using OpenRaw::RawData;
 using OpenRaw::IO::File;

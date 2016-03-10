@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainertest.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,9 +21,9 @@
 
 #include <iostream>
 
-#include "trace.h"
-#include "ciffcontainer.h"
-#include "io/file.h"
+#include "trace.hpp"
+#include "ciffcontainer.hpp"
+#include "io/file.hpp"
 
 using namespace OpenRaw::Internals;
 

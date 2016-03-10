@@ -20,8 +20,8 @@
 
 #include <libopenraw/debug.h>
 
-#include "trace.h"
-#include "rw2container.h"
+#include "trace.hpp"
+#include "rw2container.hpp"
 
 using namespace Debug;
 

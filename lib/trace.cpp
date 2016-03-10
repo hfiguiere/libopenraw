@@ -25,7 +25,7 @@
 
 #include <libopenraw/debug.h>
 
-#include "trace.h"
+#include "trace.hpp"
 
 namespace Debug {
 

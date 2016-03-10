@@ -1,7 +1,7 @@
 /*
  * libopenraw - orfcontainer.cpp
  *
- * Copyright (C) 2006, 2010, 2012 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,8 +20,8 @@
 
 #include <libopenraw/debug.h>
 
-#include "trace.h"
-#include "orfcontainer.h"
+#include "trace.hpp"
+#include "orfcontainer.hpp"
 
 using namespace Debug;
 

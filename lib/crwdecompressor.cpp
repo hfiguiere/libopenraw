@@ -35,10 +35,10 @@
 #include <libopenraw/debug.h>
 
 #include "rawdata.hpp"
-#include "crwdecompressor.h"
-#include "exception.h"
-#include "trace.h"
-#include "io/stream.h"
+#include "crwdecompressor.hpp"
+#include "exception.hpp"
+#include "trace.hpp"
+#include "io/stream.hpp"
 
 namespace OpenRaw {	namespace Internals {
 

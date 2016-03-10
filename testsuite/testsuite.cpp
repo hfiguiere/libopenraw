@@ -69,10 +69,10 @@
 #include "testsuitetags.h"
 
 // Internal stuff. Because we can.
-#include "io/file.h"
-#include "ifdfile.h"
-#include "ifddir.h"
-#include "makernotedir.h"
+#include "io/file.hpp"
+#include "ifdfile.hpp"
+#include "ifddir.hpp"
+#include "makernotedir.hpp"
 
 using OpenRaw::RawFile;
 using OpenRaw::BitmapData;

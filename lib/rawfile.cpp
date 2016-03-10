@@ -2,7 +2,7 @@
  * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -33,7 +33,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "trace.h"
+#include "trace.hpp"
 
 #include <libopenraw/metadata.h>
 #include <libopenraw/cameraids.h>
@@ -45,26 +45,26 @@
 #include "thumbnail.hpp"
 #include "metavalue.hpp"
 
-#include "io/stream.h"
-#include "io/file.h"
-#include "io/memstream.h"
-#include "rawcontainer.h"
-#include "tiffepfile.h"
-#include "cr2file.h"
-#include "neffile.h"
-#include "orffile.h"
-#include "arwfile.h"
-#include "peffile.h"
-#include "crwfile.h"
-#include "erffile.h"
-#include "dngfile.h"
-#include "mrwfile.h"
-#include "rw2file.h"
-#include "raffile.h"
-#include "exception.h"
-#include "rawfile_private.h"
+#include "io/stream.hpp"
+#include "io/file.hpp"
+#include "io/memstream.hpp"
+#include "rawcontainer.hpp"
+#include "tiffepfile.hpp"
+#include "cr2file.hpp"
+#include "neffile.hpp"
+#include "orffile.hpp"
+#include "arwfile.hpp"
+#include "peffile.hpp"
+#include "crwfile.hpp"
+#include "erffile.hpp"
+#include "dngfile.hpp"
+#include "mrwfile.hpp"
+#include "rw2file.hpp"
+#include "raffile.hpp"
+#include "exception.hpp"
+#include "rawfile_private.hpp"
 
-#include "rawfilefactory.h"
+#include "rawfilefactory.hpp"
 
 using std::string;
 using namespace Debug;

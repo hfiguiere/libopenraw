@@ -21,7 +21,7 @@
 
 #include <assert.h>
 #include <algorithm>
-#include "bititerator.h"
+#include "bititerator.hpp"
 
 namespace OpenRaw {
 namespace Internals {

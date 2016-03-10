@@ -13,45 +13,47 @@ teststream_SOURCES = io/teststream.cpp
 teststream_LDADD = libopenraw.la
 
 noinst_HEADERS = \
-	trace.h	\
-	rawcontainer.h \
-	ifdfile.h tiffepfile.h \
-	rawfilefactory.h \
-	cr2file.h \
-	neffile.h \
-	orffile.h \
-	arwfile.h \
-	dngfile.h \
-	peffile.h \
-	crwfile.h \
-	erffile.h \
-	mrwfile.h \
-	rw2file.h \
-	raffile.h \
+	trace.hpp	\
+	rawcontainer.hpp \
+	ifdfile.hpp \
+	tiffepfile.hpp \
+	rawfilefactory.hpp \
+	cr2file.hpp \
+	neffile.hpp \
+	orffile.hpp \
+	arwfile.hpp \
+	dngfile.hpp \
+	peffile.hpp \
+	crwfile.hpp \
+	erffile.hpp \
+	mrwfile.hpp \
+	rw2file.hpp \
+	raffile.hpp \
 	rawfile.hpp \
 	bitmapdata.hpp \
 	thumbnail.hpp \
 	rawdata.hpp \
 	cfapattern.hpp \
 	metavalue.hpp \
-	ifd.h \
-	ifdfilecontainer.h \
-	ifddir.h ifdentry.h \
-	orfcontainer.h \
-	rw2container.h \
-	mrwcontainer.h \
-	ciffcontainer.h \
-	jfifcontainer.h \
-	rafcontainer.h \
-	rafmetacontainer.h \
-	decompressor.h \
-	ljpegdecompressor.h \
-	ljpegdecompressor_priv.h \
-	crwdecompressor.h \
-	olympusdecompressor.h \
-	exception.h \
-	endianutils.h \
-	unpack.h
+	ifd.hpp \
+	ifdfilecontainer.hpp \
+	ifddir.hpp ifdentry.hpp \
+	orfcontainer.hpp \
+	rw2container.hpp \
+	mrwcontainer.hpp \
+	ciffcontainer.hpp \
+	jfifcontainer.hpp \
+	rafcontainer.hpp \
+	rafmetacontainer.hpp \
+	decompressor.hpp \
+	ljpegdecompressor.hpp \
+	ljpegdecompressor_priv.hpp \
+	crwdecompressor.hpp \
+	olympusdecompressor.hpp \
+	exception.hpp \
+	endianutils.hpp \
+	unpack.hpp \
+	$(NULL)
 
 lib_LTLIBRARIES = libopenraw.la
 
@@ -65,28 +67,28 @@ libopenraw_la_LIBADD = -ljpeg
 libopenraw_la_SOURCES = \
 	io/io.c io/posix_io.h \
 	io/posix_io.c io/posix_io.h \
-	io/stream.cpp io/stream.h \
-	io/streamclone.cpp io/streamclone.h \
-	io/memstream.cpp io/memstream.h \
-	io/file.cpp io/file.h \
+	io/stream.cpp io/stream.hpp \
+	io/streamclone.cpp io/streamclone.hpp \
+	io/memstream.cpp io/memstream.hpp \
+	io/file.cpp io/file.hpp \
 	capi/capi.cpp \
 	capi/debug.cpp \
 	capi/rawdata.cpp \
 	capi/rawfile.cpp \
 	capi/bitmapdata.cpp \
 	trace.cpp \
-	bititerator.h \
+	bititerator.hpp \
 	bititerator.cpp \
 	cfapattern.cpp \
 	xtranspattern.hpp \
 	xtranspattern.cpp \
-	huffman.h \
+	huffman.hpp \
 	huffman.cpp \
-	nefdiffiterator.h \
+	nefdiffiterator.hpp \
 	nefdiffiterator.cpp \
-	nefcfaiterator.h \
+	nefcfaiterator.hpp \
 	nefcfaiterator.cpp \
-	rawfile_private.h \
+	rawfile_private.hpp \
 	rawfile.cpp \
 	ifdfile.cpp \
 	tiffepfile.cpp \
@@ -122,6 +124,6 @@ libopenraw_la_SOURCES = \
 	olympusdecompressor.cpp \
 	metavalue.cpp \
 	unpack.cpp \
-	render/bimedian_demosaic.cpp render/bimedian_demosaic.h \
-	render/grayscale.h render/grayscale.cpp
+	render/bimedian_demosaic.cpp render/bimedian_demosaic.hpp \
+	render/grayscale.hpp render/grayscale.cpp
 	$(NULL)

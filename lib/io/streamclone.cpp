@@ -1,7 +1,7 @@
 /*
  * libopenraw - streamclone.cpp
  *
- * Copyright (C) 2006-2015 Hubert Figuière
+ * Copyright (C) 2006-2016 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,10 +23,10 @@
 #include <memory>
 #include <string>
 
-#include "io/stream.h"
+#include "io/stream.hpp"
 #include "libopenraw/consts.h"
 
-#include "streamclone.h"
+#include "streamclone.hpp"
 
 
 namespace OpenRaw {

@@ -23,7 +23,7 @@
 #include <assert.h>
 
 #include "metavalue.hpp"
-#include "exception.h"
+#include "exception.hpp"
 
 namespace OpenRaw {
 

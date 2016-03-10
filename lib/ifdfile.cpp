@@ -35,17 +35,17 @@
 #include "bitmapdata.hpp"
 #include "rawfile.hpp"
 #include "rawdata.hpp"
-#include "trace.h"
-#include "io/stream.h"
-#include "io/streamclone.h"
-#include "ifd.h"
-#include "ifdentry.h"
-#include "ifdfile.h"
-#include "ifdfilecontainer.h"
-#include "jfifcontainer.h"
-#include "rawfile_private.h"
-#include "neffile.h" // I wonder if this is smart as it break the abstraction.
-#include "unpack.h"
+#include "trace.hpp"
+#include "io/stream.hpp"
+#include "io/streamclone.hpp"
+#include "ifd.hpp"
+#include "ifdentry.hpp"
+#include "ifdfile.hpp"
+#include "ifdfilecontainer.hpp"
+#include "jfifcontainer.hpp"
+#include "rawfile_private.hpp"
+#include "neffile.hpp" // I wonder if this is smart as it break the abstraction.
+#include "unpack.hpp"
 
 using namespace Debug;
 
