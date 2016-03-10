@@ -8,6 +8,11 @@ New features:
   - Grayscale LinearRaw decoding.
   - API: or_rawdata_get_rendered_image()
   - API: or_rawdata_set_cfa_pattern()
+  - API: mark deprecated APIs.
+  - API: or_rawdata_get_roi() to get the region of interest from the
+    RAW data.
+  - API: or_rawdata_get_minmax() replaced by or_rawdata_get_levels().
+  - API: removed C++ public headers.
   - Get the default crop in CR2, CRW and DNG.
   - make dist make a bzip2 archive too (build only).
   - New demo ppmload to create a ppm out of the demosaicized image.
@@ -51,10 +56,6 @@ New features:
   - ordiag
     - Nicer display of the type ID in ordiag.
     - Display make and model.
-  - API: mark deprecated APIs.
-  - API: or_rawdata_get_roi() to get the region of interest from the
-    RAW data.
-  - API: or_rawdata_get_minmax() replaced by or_rawdata_get_levels().
 
 Bug fixes:
 

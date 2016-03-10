@@ -1,7 +1,7 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/include @BOOST_CPPFLAGS@
 
-EXTRA_DIST = libopenraw.sym
+EXTRA_DIST = libopenraw.sym io/testfile.tmp
 
 pkgconfig_DATA = libopenraw-0.1.pc
 
@@ -71,6 +71,7 @@ libopenraw_la_SOURCES = \
 	io/streamclone.cpp io/streamclone.hpp \
 	io/memstream.cpp io/memstream.hpp \
 	io/file.cpp io/file.hpp \
+	io/io_private.h \
 	capi/capi.cpp \
 	capi/debug.cpp \
 	capi/rawdata.cpp \
@@ -109,7 +110,7 @@ libopenraw_la_SOURCES = \
 	rawdata.cpp \
 	ifdfilecontainer.cpp \
 	ifddir.cpp ifdentry.cpp \
-	makernotedir.h makernotedir.cpp \
+	makernotedir.hpp makernotedir.cpp \
 	rawcontainer.cpp \
 	orfcontainer.cpp \
 	rw2container.cpp \
