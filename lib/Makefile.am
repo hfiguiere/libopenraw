@@ -77,6 +77,8 @@ libopenraw_la_SOURCES = \
 	capi/rawdata.cpp \
 	capi/rawfile.cpp \
 	capi/bitmapdata.cpp \
+	capi/cfapattern.cpp \
+	capi/metadata.cpp \
 	trace.cpp \
 	bititerator.hpp \
 	bititerator.cpp \

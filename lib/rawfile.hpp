@@ -122,7 +122,7 @@ public:
     int32_t getOrientation();
 
     /**
-     * @return the number of ites in the colour matrix.
+     * @return the number of items in the colour matrix.
      */
     uint32_t colourMatrixSize();
 

@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.h
  *
- * Copyright (C) 2007-2008 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -56,6 +56,15 @@ or_rawfile_get_type(ORRawFileRef rawfile);
 or_rawfile_typeid
 or_rawfile_get_typeid(ORRawFileRef rawfile);
 
+/** return an array of thumbnail sizes.
+ * @param rawfile
+ * @param size the size of the array is returned
+ * @return the array. It is owned by the raw file
+ * */
+const uint32_t *
+or_rawfile_get_thumbnail_sizes(ORRawFileRef  rawfile,
+                               size_t       *size);
+
 or_error
 or_rawfile_get_thumbnail(ORRawFileRef rawfile, uint32_t preferred_size,
 						 ORThumbnailRef thumb);
@@ -95,7 +104,12 @@ or_rawfile_get_colourmatrix1(ORRawFileRef rawfile, double* matrix, uint32_t* siz
 or_error 
 or_rawfile_get_colourmatrix2(ORRawFileRef rawfile, double* matrix, uint32_t* size);
 
-#if 0
+/** Get calibration illuminant that match the colour matrix.
+ * @return the Exif value. 0 = unknown. Likely not found.
+ */
+ExifLightsourceValue or_rawfile_get_calibration_illuminant1(ORRawFileRef rawfile);
+ExifLightsourceValue or_rawfile_get_calibration_illuminant2(ORRawFileRef rawfile);
+
 /** Get the metadata value
  * @param rawfile the RAW file object.
  * @param meta_index the index value which is NS | index
@@ -103,6 +117,7 @@ or_rawfile_get_colourmatrix2(ORRawFileRef rawfile, double* matrix, uint32_t* siz
 ORConstMetaValueRef
 or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index);
 
+#if 0
 /** Get the metadata out of the raw file as XMP
  * @param rawfile the rawfile object
  * @return the XMP meta. It belongs to the rawfile.

@@ -44,12 +44,24 @@ MetaValue::MetaValue(const std::vector<value_t> &v)
 }
 
 template<typename T>
-inline	T MetaValue::get(int idx) const noexcept(false)
+inline T MetaValue::get(int idx) const noexcept(false)
 {
-    T v;
     assert(!m_values.empty());
     try {
-        v = boost::get<T>(m_values[idx]);
+        return boost::get<T>(m_values[idx]);
+    }
+    catch(...) { //const boost::bad_any_cast &) {
+        throw Internals::BadTypeException();
+    }
+}
+
+template<typename T>
+inline const T & MetaValue::getRef(int idx) const noexcept(false)
+{
+    static const T v;
+    assert(!m_values.empty());
+    try {
+        return boost::get<T>(m_values[idx]);
     }
     catch(...) { //const boost::bad_any_cast &) {
         throw Internals::BadTypeException();
@@ -63,9 +75,9 @@ uint32_t MetaValue::getInteger(int idx) const
     return get<uint32_t>(idx);
 }
 
-std::string MetaValue::getString(int idx) const
+const std::string & MetaValue::getString(int idx) const
 {
-    return get<std::string>(idx);
+    return getRef<std::string>(idx);
 }
 
 double MetaValue::getDouble(int idx) const

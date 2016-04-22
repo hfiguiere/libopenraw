@@ -34,17 +34,6 @@
 
 #include <libopenraw/libopenraw.h>
 
-#include "rawfile.hpp"
-#include "thumbnail.hpp"
-#include "rawdata.hpp"
-#include "metavalue.hpp"
-
-using OpenRaw::RawFile;
-using OpenRaw::Thumbnail;
-using OpenRaw::RawData;
-using OpenRaw::CfaPattern;
-using OpenRaw::MetaValue;
-
 /**
  * Dump on RawFile. (functor)
  */
@@ -70,7 +59,7 @@ public:
             }
         }
 
-    std::string cfaPatternToString(const CfaPattern* pattern)
+    std::string cfaPatternToString(ORCfaPatternRef pattern)
         {
             if(pattern == NULL) {
                 return "(null)";
@@ -78,7 +67,8 @@ public:
 
             std::string out;
             uint16_t size = 0;
-            const uint8_t* patternPattern = pattern->patternPattern(size);
+            const uint8_t* patternPattern
+              = or_cfapattern_get_pattern(pattern, &size);
 
             for(uint16_t i = 0; i < size; ++i) {
                 switch(patternPattern[i]) {
@@ -128,7 +118,7 @@ public:
             return str(boost::format("Unknown %1%") % t);
         };
 
-    std::string dataTypeToString(Thumbnail::DataType t)
+    std::string dataTypeToString(or_data_type t)
         {
             switch(t) {
             case OR_DATA_TYPE_NONE:
@@ -163,7 +153,7 @@ public:
 
     /** return a string for the raw file type
      */
-    std::string typeToString(RawFile::Type t)
+    std::string typeToString(or_rawfile_type t)
         {
             switch(t) {
             case OR_RAWFILE_TYPE_UNKNOWN:
@@ -209,12 +199,12 @@ public:
 
     /** Extract thumbnail to a file
      */
-    std::string extractThumb(const Thumbnail & thumb)
+    std::string extractThumb(ORThumbnailRef thumb)
         {
             FILE* f;
             size_t s;
             std::string ext;
-            switch(thumb.dataType()) {
+            switch(or_thumbnail_format(thumb)) {
             case OR_DATA_TYPE_PIXMAP_8RGB:
                 ext = "ppm";
                 break;
@@ -229,19 +219,19 @@ public:
             }
 
             uint32_t x, y;
-            x = thumb.width();
-            y = thumb.height();
+            or_thumbnail_dimensions(thumb, &x, &y);
             uint32_t dim = std::max(x, y);
             std::string name(str(boost::format("thumb_%1%.%2%") % dim  % ext));
             f = fopen(name.c_str(), "wb");
-            if (thumb.dataType() == OR_DATA_TYPE_PIXMAP_8RGB) {
+            if (or_thumbnail_format(thumb) == OR_DATA_TYPE_PIXMAP_8RGB) {
                 // ppm preemble.
                 fprintf(f, "P6\n");
                 fprintf(f, "%d %d\n", x, y);
                 fprintf(f, "%d\n", /*(componentsize == 2) ? 0xffff :*/ 0xff);
             }
-            s = fwrite(thumb.data(), 1, thumb.size(), f);
-            if(s != thumb.size()) {
+            size_t dataSize = or_thumbnail_data_size(thumb);
+            s = fwrite(or_thumbnail_data(thumb), 1, dataSize, f);
+            if(s != dataSize) {
                 std::cerr << "short write of " << s << " bytes\n";
             }
             fclose(f);
@@ -251,80 +241,91 @@ public:
 
     /** dump the previews of the raw file to mout
      */
-    void dumpPreviews(const std::unique_ptr<RawFile> & rf)
+    void dumpPreviews(ORRawFileRef rf)
         {
-            const std::vector<uint32_t> & previews = rf->listThumbnailSizes();
+            size_t size = 0;
+            const uint32_t * previews = or_rawfile_get_thumbnail_sizes(rf, &size);
             m_out << boost::format("\tNumber of previews: %1%\n")
-                % previews.size();
+                % size;
 
             m_out << "\tAvailable previews:\n";
-            for(auto iter = previews.begin(); iter != previews.end(); iter++) {
+            for(size_t i = 0; i < size; i++) {
 
-                m_out << boost::format("\t\tSize %1%\n") % *iter;
+                m_out << boost::format("\t\tSize %1%\n") % previews[i];
 
-                Thumbnail thumb;
-                ::or_error err = rf->getThumbnail(*iter, thumb);
+                ORThumbnailRef thumb = or_thumbnail_new();
+                ::or_error err = or_rawfile_get_thumbnail(rf, previews[i], thumb);
                 if (err != OR_ERROR_NONE) {
                     m_out << boost::format("\t\t\tError getting thumbnail %1%\n") % err;
                 }
                 else {
                     m_out << boost::format("\t\t\tFormat %1%\n")
-                        % dataTypeToString(thumb.dataType());
+                        % dataTypeToString(or_thumbnail_format(thumb));
+                    uint32_t x, y;
+                    or_thumbnail_dimensions(thumb, &x, &y);
                     m_out << boost::format("\t\t\tDimensions: width = %1% height = %2%\n")
-                        % thumb.width() % thumb.height();
+                        % x % y;
                     m_out << boost::format("\t\t\tByte size: %1%\n")
-                        % thumb.size();
+                        % or_thumbnail_data_size(thumb);
                 }
                 if (m_extract_all_thumbs
-                    || m_thumb_sizes.find(*iter) != m_thumb_sizes.end()) {
+                    || m_thumb_sizes.find(previews[i]) != m_thumb_sizes.end()) {
 
                     std::string name = extractThumb(thumb);
 
                     m_out << boost::format("\t\t\tOutput as %1%\n") % name;
                 }
+                or_thumbnail_release(thumb);
             }
         }
 
-    void dumpRawData(const std::unique_ptr<RawFile> & rf)
+    void dumpRawData(ORRawFileRef rf)
         {
-            RawData rd;
-            ::or_error err = rf->getRawData(rd, 0);
+            ORRawDataRef rd = or_rawdata_new();
+            ::or_error err = or_rawfile_get_rawdata(rf, rd, 0);
             if (err == OR_ERROR_NONE) {
                 m_out << "\tRAW data\n";
+                or_data_type dataType = or_rawdata_format(rd);
                 m_out << boost::format("\t\tType: %1%")
-                    % dataTypeToString(rd.dataType());
-                if(rd.dataType() == OR_DATA_TYPE_COMPRESSED_RAW)  {
-                    m_out << boost::format(" (compression = %1%)\n") % rd.compression();
+                    % dataTypeToString(dataType);
+                if(dataType == OR_DATA_TYPE_COMPRESSED_RAW)  {
+                    m_out << boost::format(" (compression = %1%)\n")
+                        % or_rawdata_get_compression(rd);
                 }
                 else {
                     m_out << "\n";
                 }
                 m_out << boost::format("\t\tByte size: %1%\n")
-                    % rd.size();
+                    % or_rawdata_data_size(rd);
+                uint32_t x, y;
+                or_rawdata_dimensions(rd, &x, &y);
                 m_out << boost::format("\t\tDimensions: width = %1% height = %2%\n")
-                    % rd.width() % rd.height();
+                    % x % y;
+                uint32_t roi_x, roi_y, roi_width, roi_height;
+                or_rawdata_get_roi(rd, &roi_x, &roi_y, &roi_width, &roi_height);
                 m_out << boost::format("\t\tROI: %1% %2% %3% %4%\n")
-                    % rd.roi_x() % rd.roi_y() % rd.roi_width() % rd.roi_height();
-                const CfaPattern* pattern = rd.cfaPattern();
+                    % roi_x % roi_y % roi_width % roi_height;
+                ORCfaPatternRef pattern = or_rawdata_get_cfa_pattern(rd);
                 ::or_cfa_pattern patternType
-                      = pattern ? pattern->patternType()
+                      = pattern ? or_cfapattern_get_type(pattern)
                       : OR_CFA_PATTERN_NON_RGB22;
                 m_out << boost::format("\t\tBayer Type: %1%\n")
                     % cfaPatternToString(patternType);
 
                 if(patternType == OR_CFA_PATTERN_NON_RGB22) {
                     m_out << boost::format("\t\tPattern: %1%\n")
-                        % cfaPatternToString(rd.cfaPattern());
+                        % cfaPatternToString(pattern);
                 }
 
                 m_out << boost::format("\t\tBits per channel: %1%\n")
-                    % rd.bpc();
+                    % or_rawdata_bpc(rd);
+                uint16_t black, white;
+                or_rawdata_get_levels(rd, &black, &white);
                 m_out << boost::format(
-                    "\t\tValues: black = %1% white = %2%\n")
-                    % rd.blackLevel() % rd.whiteLevel();
+                    "\t\tValues: black = %1% white = %2%\n") % black % white;
 
                 uint32_t matrix_size = 0;
-                const double* matrix = rd.getColourMatrix1(matrix_size);
+                const double *matrix = or_rawdata_get_colourmatrix1(rd, &matrix_size);
                 if (matrix) {
                     m_out << boost::format("\t\tColour Matrix 1: ");
                     for (uint32_t i = 0; i < matrix_size; i++) {
@@ -340,11 +341,11 @@ public:
                 m_out << boost::format("\tNo Raw Data found! (error = %1%)\n")
                     % err;
             }
+            or_rawdata_release(rd);
         }
-    void dumpMetaData(const std::unique_ptr<RawFile> & rf)
+    void dumpMetaData(ORRawFileRef rf)
         {
-            int32_t o;
-            o = rf->getOrientation();
+            int32_t o = or_rawfile_get_orientation(rf);
             m_out << "\tMeta data\n";
             m_out << boost::format("\t\tOrientation: %1%\n")
                 % o;
@@ -352,11 +353,11 @@ public:
             uint32_t size = 9;
 
             ExifLightsourceValue calIll;
-            calIll = rf->getCalibrationIlluminant1();
+            calIll = or_rawfile_get_calibration_illuminant1(rf);
             m_out << boost::format("\t\tCalibration Illuminant 1: %1%\n")
                 % static_cast<int>(calIll);
 
-            ::or_error err = rf->getColourMatrix1(matrix, size);
+            ::or_error err = or_rawfile_get_colourmatrix1(rf, matrix, &size);
             if(err == OR_ERROR_NONE) {
                 m_out << boost::format("\t\tColour Matrix 1: %1%, %2%, %3%, "
                                        "%4%, %5%, %6%, %7%, %8%, %9%\n")
@@ -368,12 +369,12 @@ public:
                 m_out << "\t\tNo Colour Matrix 1\n";
             }
 
-            calIll = rf->getCalibrationIlluminant2();
+            calIll = or_rawfile_get_calibration_illuminant2(rf);
             m_out << boost::format("\t\tCalibration Illuminant 2: %1%\n")
                 % static_cast<int>(calIll);
 
             size = 9;
-            err = rf->getColourMatrix2(matrix, size);
+            err = or_rawfile_get_colourmatrix2(rf, matrix, &size);
             if(err == OR_ERROR_NONE) {
                 m_out << boost::format("\t\tColour Matrix 2: %1%, %2%, %3%, "
                                        "%4%, %5%, %6%, %7%, %8%, %9%\n")
@@ -389,43 +390,48 @@ public:
         {
             m_out << boost::format("Dumping %1%\n") % s;
 
-            std::unique_ptr<RawFile> rf(RawFile::newRawFile(s.c_str()));
+            ORRawFileRef rf = or_rawfile_new(s.c_str(), OR_RAWFILE_TYPE_UNKNOWN);
+
+            //std::unique_ptr<RawFile> rf(RawFile::newRawFile(s.c_str()));
 
             if (rf == NULL) {
                 m_out << "unrecognized file\n";
             }
             else {
-                m_out << boost::format("\tType = %1% (%2%)\n") % rf->type()
-                    % typeToString(rf->type());
+                or_rawfile_type fileType = or_rawfile_get_type(rf);
+                m_out << boost::format("\tType = %1% (%2%)\n")
+                    % fileType % typeToString(fileType);
+                or_rawfile_typeid fileTypeId = or_rawfile_get_typeid(rf);
                 std::string typeId
                     = str(boost::format("%1%, %2%")
-                          % OR_GET_FILE_TYPEID_VENDOR(rf->typeId())
-                          % OR_GET_FILE_TYPEID_CAMERA(rf->typeId()));
+                          % OR_GET_FILE_TYPEID_VENDOR(fileTypeId)
+                          % OR_GET_FILE_TYPEID_CAMERA(fileTypeId));
                 m_out << boost::format("\tType ID = %1%\n") % typeId;
 
-                const MetaValue* make
-                    = rf->getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
+                ORConstMetaValueRef make
+                    = or_rawfile_get_metavalue(rf, META_NS_TIFF | EXIF_TAG_MAKE);
                 if (make) {
                     m_out << boost::format("\tMake = %1%\n")
-                        % make->getString(0);
+                        % or_metavalue_get_string(make, 0);
                 }
-                const MetaValue* model
-                    = rf->getMetaValue(META_NS_TIFF | EXIF_TAG_MODEL);
+                ORConstMetaValueRef model
+                    = or_rawfile_get_metavalue(rf, META_NS_TIFF | EXIF_TAG_MODEL);
                 if (model) {
                     m_out << boost::format("\tModel = %1%\n")
-                        % model->getString(0);
+                        % or_metavalue_get_string(model, 0);
                 }
-                auto uniqueCameraModel
-                    = rf->getMetaValue(META_NS_TIFF
+                ORConstMetaValueRef uniqueCameraModel
+                    = or_rawfile_get_metavalue(rf, META_NS_TIFF
                                        | DNG_TAG_UNIQUE_CAMERA_MODEL);
                 if (uniqueCameraModel) {
                     m_out << boost::format("\tUnique Camera Model = %1%\n")
-                        % uniqueCameraModel->getString(0);
+                        % or_metavalue_get_string(uniqueCameraModel, 0);
                 }
                 dumpPreviews(rf);
                 dumpRawData(rf);
                 dumpMetaData(rf);
             }
+            or_rawfile_release(rf);
         }
 private:
     std::ostream & m_out;
@@ -458,8 +464,6 @@ int main(int argc, char **argv)
     int dbl = 0;
     std::string extract_thumbs;
     std::vector<std::string> files;
-
-    OpenRaw::init();
 
     int o;
     while((o = getopt(argc, argv, "hvdt:")) != -1) {

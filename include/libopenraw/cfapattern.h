@@ -1,7 +1,7 @@
 /*
- * libopenraw - metadata.h
+ * libopenraw - cfapattern.h
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2016 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,35 +19,31 @@
  */
 
 
-#ifndef LIBOPENRAW_METADATA_H_
-#define LIBOPENRAW_METADATA_H_
+#ifndef LIBOPENRAW_CFAPATTERN_H_
+#define LIBOPENRAW_CFAPATTERN_H_
 
 #include <stdint.h>
 
-#define INCLUDE_EXIF_
-#include <libopenraw/exif.h>
-#undef INCLUDE_EXIF_
+#include <libopenraw/consts.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct _MetaValue *ORMetaValueRef;
-typedef const struct _MetaValue *ORConstMetaValueRef;
+typedef const struct _CfaPattern *ORCfaPatternRef;
 
-/** The meta data namespaces, 16 high bits of the index */
-enum {
-	META_NS_EXIF = (1 << 16),
-	META_NS_TIFF = (2 << 16)
-};
+void or_cfapattern_set_size(ORCfaPatternRef pattern, uint16_t x, uint16_t y);
 
-#define META_NS_MASKOUT(x) (x & 0xffff)
-#define META_INDEX_MASKOUT(x) (x & (0xffff<<16))
+or_cfa_pattern or_cfapattern_get_type(ORCfaPatternRef);
 
-const char* or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx);
+const uint8_t *or_cfapattern_get_pattern(ORCfaPatternRef pattern, uint16_t * count);
+
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
+
+
+

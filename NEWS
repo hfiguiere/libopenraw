@@ -12,7 +12,18 @@ New features:
   - API: or_rawdata_get_roi() to get the region of interest from the
     RAW data.
   - API: or_rawdata_get_minmax() replaced by or_rawdata_get_levels().
+  - API: or_cfapattern_set_size(), or_cfapattern_get_type() and
+    or_cfapattern_get_pattern()
+  - API: or_rawdata_get_cfa_pattern_type(). Changed or_rawdata_get_cfa_pattern()
+  - API: or_rawdata_get_compression()
+  - API: or_rawdata_get_colourmatrix1()
+  - API: or_rawfile_get_thumbnail_sizes()
+  - API: or_rawfile_get_calibration_illuminant1() and
+    or_rawfile_get_calibration_illuminant2()
+  - API: or_rawfile_get_metavalue()
+  - API: or_metavalue_get_string()
   - API: removed C++ public headers.
+  - ordiag now uses the public C APIs.
   - Get the default crop in CR2, CRW and DNG.
   - make dist make a bzip2 archive too (build only).
   - New demo ppmload to create a ppm out of the demosaicized image.

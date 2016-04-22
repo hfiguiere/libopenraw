@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.cpp
  *
- * Copyright (C) 2007-2015 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -120,9 +120,19 @@ uint32_t or_rawdata_bpc(ORRawDataRef rawdata)
     return reinterpret_cast<RawData *>(rawdata)->bpc();
 }
 
-or_cfa_pattern or_rawdata_get_cfa_pattern(ORRawDataRef rawdata)
+or_cfa_pattern or_rawdata_get_cfa_pattern_type(ORRawDataRef rawdata)
 {
     return reinterpret_cast<RawData *>(rawdata)->cfaPattern()->patternType();
+}
+
+ORCfaPatternRef or_rawdata_get_cfa_pattern(ORRawDataRef rawdata)
+{
+    return reinterpret_cast<ORCfaPatternRef>(reinterpret_cast<RawData *>(rawdata)->cfaPattern());
+}
+
+uint32_t or_rawdata_get_compression(ORRawDataRef rawdata)
+{
+  return reinterpret_cast<RawData *>(rawdata)->compression();
 }
 
 or_error or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
@@ -136,6 +146,13 @@ or_error or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
         *white = t->whiteLevel();
     }
     return OR_ERROR_NONE;
+}
+
+const double*
+or_rawdata_get_colourmatrix1(ORRawDataRef rawdata, uint32_t* size)
+{
+    RawData *t = reinterpret_cast<RawData *>(rawdata);
+    return t->getColourMatrix1(*size);
 }
 
 or_error or_rawdata_get_rendered_image(ORRawDataRef rawdata,

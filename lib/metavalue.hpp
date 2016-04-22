@@ -1,7 +1,7 @@
 /*
  * libopenraw - metavalue.h
  *
- * Copyright (C) 2007-2015 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -53,10 +53,13 @@ public:
         }
 
     uint32_t getInteger(int idx) const;
-    std::string getString(int idx) const;
+    const std::string & getString(int idx) const;
     double getDouble(int idx) const;
 private:
+    /// Return a copy of the value
     template<typename T> T get(int idx) const;
+    /// Return a const ref to the value. T needs to be default constructible.
+    template<typename T> const T & getRef(int idx) const;
 
     std::vector<value_t> m_values;
 };

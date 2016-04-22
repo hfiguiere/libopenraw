@@ -1,7 +1,8 @@
+/* -*- mode: C++; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: t -*- */
 /*
  * libopenraw - rawdata.h
  *
- * Copyright (C) 2007-2015 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -28,6 +29,7 @@
 
 #include <libopenraw/consts.h>
 #include <libopenraw/types.h>
+#include <libopenraw/cfapattern.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,7 +74,16 @@ extern "C" {
 	 * @return one of the constant defined in %or_cfa_pattern
 	 */
 	or_cfa_pattern
+	or_rawdata_get_cfa_pattern_type(ORRawDataRef rawdata);
+
+	ORCfaPatternRef
 	or_rawdata_get_cfa_pattern(ORRawDataRef rawdata);
+
+	/** Return the compression type for the RawData.
+	 * @return the numerical value.
+	 */
+	uint32_t
+	or_rawdata_get_compression(ORRawDataRef rawdata);
 
 	/** Return the levels values for the raw data.
 	 * This are possible values, not actual values.
@@ -84,6 +95,13 @@ extern "C" {
 	or_error
 	or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
                              uint16_t *white);
+	/** Get the colour matrix
+	 * @param rawfile The RAW file object
+	 * @param size On output the actual size of the matrix.
+	 * @return the matrix array (or nullptr).
+	 * */
+	const double*
+	or_rawdata_get_colourmatrix1(ORRawDataRef rawdata, uint32_t* size);
 
 	/** Get the rendered image from the raw data
 	 * @param rawdata the raw data.
@@ -93,7 +111,7 @@ extern "C" {
 	or_error
 	or_rawdata_get_rendered_image(ORRawDataRef rawdata, ORBitmapDataRef bitmapdata,
 								  uint32_t options);
-	
+
 #ifdef __cplusplus
 }
 #endif

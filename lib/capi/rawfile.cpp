@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.cpp
  *
- * Copyright (C) 2007-2015 Hubert Figuiere
+ * Copyright (C) 2007-2016 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -46,7 +46,7 @@ extern "C" {
 
 /** check pointer validity */
 #define CHECK_PTR(p, r)                                                        \
-    if (p == NULL) {                                                           \
+    if (p == nullptr) {                                                           \
         return r;                                                              \
     }
 
@@ -82,6 +82,31 @@ or_rawfile_type or_rawfile_get_type(ORRawFileRef rawfile)
     CHECK_PTR(rawfile, OR_RAWFILE_TYPE_UNKNOWN);
     RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
     return prawfile->type();
+}
+
+or_rawfile_typeid or_rawfile_get_typeid(ORRawFileRef rawfile)
+{
+    CHECK_PTR(rawfile, OR_RAWFILE_TYPE_UNKNOWN);
+    RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
+    return prawfile->typeId();
+}
+
+const uint32_t *
+or_rawfile_get_thumbnail_sizes(ORRawFileRef  rawfile,
+                               size_t       *size)
+{
+    CHECK_PTR(rawfile, nullptr);
+    CHECK_PTR(size, nullptr);
+    RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
+    const auto & v = prawfile->listThumbnailSizes();
+    if (v.empty()) {
+      *size = 0;
+      return nullptr;
+    }
+    *size = v.size();
+    // we return a pointer to the storage
+    // C++11 spec says it has to be contiguous.
+    return &(*v.begin());
 }
 
 or_error or_rawfile_get_thumbnail(ORRawFileRef rawfile,
@@ -136,4 +161,27 @@ or_error or_rawfile_get_colourmatrix2(ORRawFileRef rawfile, double *matrix,
     CHECK_PTR(size, OR_ERROR_INVALID_PARAM);
     return prawfile->getColourMatrix2(matrix, *size);
 }
+
+ExifLightsourceValue or_rawfile_get_calibration_illuminant1(ORRawFileRef rawfile)
+{
+    RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
+    CHECK_PTR(rawfile, (ExifLightsourceValue)0);
+    return prawfile->getCalibrationIlluminant1();
+}
+
+ExifLightsourceValue or_rawfile_get_calibration_illuminant2(ORRawFileRef rawfile)
+{
+    RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
+    CHECK_PTR(rawfile, (ExifLightsourceValue)0);
+    return prawfile->getCalibrationIlluminant2();
+}
+
+ORConstMetaValueRef
+or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index)
+{
+    RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
+    CHECK_PTR(rawfile, nullptr);
+    return reinterpret_cast<ORConstMetaValueRef>(prawfile->getMetaValue(meta_index));
+}
+
 }
