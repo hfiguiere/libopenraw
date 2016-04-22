@@ -169,7 +169,7 @@ fill_info (GdkPixbufFormat *info)
         { "IIRO", "    ", 100 },   /* ORF */
         { " MRM", "z   ", 100 },   /* MRW */
         { "II\x1a   HEAPCCDR", "   zzz        ", 100 }, /* CRW */
-        { "FUJIFILMCCD-RAW ",  "                " },    /* RAF */
+        { "FUJIFILMCCD-RAW ",  "                ", 100 },    /* RAF */
         { NULL, NULL, 0 }
     };
 
