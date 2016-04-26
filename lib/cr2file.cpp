@@ -337,7 +337,6 @@ IfdDir::Ref Cr2File::_locateMainIfd()
 
 ::or_error Cr2File::_getRawData(RawData &data, uint32_t options)
 {
-    ::or_error ret = OR_ERROR_NONE;
     const IfdDir::Ref &_cfaIfd = cfaIfd();
     if (!_cfaIfd) {
         Trace(DEBUG1) << "cfa IFD not found\n";
@@ -367,72 +366,79 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     }
 
     const IfdDir::Ref &_exifIfd = exifIfd();
-    if (_exifIfd) {
-        uint16_t x, y;
-        x = 0;
-        y = 0;
-        got_it = _exifIfd->getValue(IFD::EXIF_TAG_PIXEL_X_DIMENSION, x);
-        if (!got_it) {
-            Trace(DEBUG1) << "X not found\n";
-            return OR_ERROR_NOT_FOUND;
-        }
-        got_it = _exifIfd->getValue(IFD::EXIF_TAG_PIXEL_Y_DIMENSION, y);
-        if (!got_it) {
-            Trace(DEBUG1) << "Y not found\n";
-            return OR_ERROR_NOT_FOUND;
-        }
-
-        void *p = data.allocData(byte_length);
-        size_t real_size = m_container->fetchData(p, offset, byte_length);
-        if (real_size < byte_length) {
-            Trace(WARNING) << "Size mismatch for data: ignoring.\n";
-        }
-        // they are not all RGGB.
-        // but I don't seem to see where this is encoded.
-        //
-        data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
-        data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
-        data.setDimensions(x, y);
-
-        Trace(DEBUG1) << "In size is " << data.width() << "x" << data.height()
-                      << "\n";
-        // decompress if we need
-        if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-            IO::Stream::Ptr s(new IO::MemStream(data.data(), data.size()));
-            s->open(); // TODO check success
-            std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
-            LJpegDecompressor decomp(s.get(), jfif.get());
-            // in fact on Canon CR2 files slices either do not exists
-            // or is 3.
-            if (slices.size() > 1) {
-                decomp.setSlices(slices);
-            }
-            RawData *dData = decomp.decompress();
-            if (dData != NULL) {
-                Trace(DEBUG1) << "Out size is " << dData->width() << "x"
-                              << dData->height() << "\n";
-                // must re-set the cfaPattern
-                dData->setCfaPatternType(data.cfaPattern()->patternType());
-                data.swap(*dData);
-                delete dData;
-            }
-        }
-
-        // get the sensor info
-        std::vector<uint16_t> sensorInfo;
-        const IfdDir::Ref &_makerNoteIfd = makerNoteIfd();
-        e = _makerNoteIfd->getEntry(IFD::MNOTE_CANON_SENSORINFO);
-        if (e) {
-            e->getArray(sensorInfo);
-            uint32_t w = sensorInfo[7] - sensorInfo[5];
-            uint32_t h = sensorInfo[8] - sensorInfo[6];
-            data.setRoi(sensorInfo[5], sensorInfo[6], w, h);
-        }
-    } else {
+    if (!_exifIfd) {
         Trace(ERROR) << "unable to find ExifIFD\n";
-        ret = OR_ERROR_NOT_FOUND;
+        return OR_ERROR_NOT_FOUND;
     }
-    return ret;
+
+    uint16_t x, y;
+    x = 0;
+    y = 0;
+    got_it = _exifIfd->getValue(IFD::EXIF_TAG_PIXEL_X_DIMENSION, x);
+    if (!got_it) {
+      Trace(DEBUG1) << "X not found\n";
+      return OR_ERROR_NOT_FOUND;
+    }
+    got_it = _exifIfd->getValue(IFD::EXIF_TAG_PIXEL_Y_DIMENSION, y);
+    if (!got_it) {
+      Trace(DEBUG1) << "Y not found\n";
+      return OR_ERROR_NOT_FOUND;
+    }
+
+    void *p = data.allocData(byte_length);
+    size_t real_size = m_container->fetchData(p, offset, byte_length);
+    if (real_size < byte_length) {
+      Trace(WARNING) << "Size mismatch for data: ignoring.\n";
+    }
+    // they are not all RGGB.
+    // but I don't seem to see where this is encoded.
+    //
+    data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
+    data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
+    data.setDimensions(x, y);
+
+    Trace(DEBUG1) << "In size is " << data.width() << "x" << data.height()
+                  << "\n";
+    // decompress if we need
+    if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
+      IO::Stream::Ptr s(new IO::MemStream(data.data(), data.size()));
+      s->open(); // TODO check success
+      std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+      LJpegDecompressor decomp(s.get(), jfif.get());
+      // in fact on Canon CR2 files slices either do not exists
+      // or is 3.
+      if (slices.size() > 1) {
+        decomp.setSlices(slices);
+      }
+      RawData *dData = decomp.decompress();
+      if (dData != NULL) {
+        Trace(DEBUG1) << "Out size is " << dData->width() << "x"
+                      << dData->height() << "\n";
+        // must re-set the cfaPattern
+        dData->setCfaPatternType(data.cfaPattern()->patternType());
+        data.swap(*dData);
+        delete dData;
+      }
+    }
+
+    // get the sensor info
+    std::vector<uint16_t> sensorInfo;
+    const IfdDir::Ref &_makerNoteIfd = makerNoteIfd();
+    e = _makerNoteIfd->getEntry(IFD::MNOTE_CANON_SENSORINFO);
+    if (e) {
+      e->getArray(sensorInfo);
+      if (sensorInfo.size() > 8) {
+        uint32_t w = sensorInfo[7] - sensorInfo[5];
+        uint32_t h = sensorInfo[8] - sensorInfo[6];
+        data.setRoi(sensorInfo[5], sensorInfo[6], w, h);
+      }
+      else {
+        LOGWARN("sensorInfo is too small: %lu - skipping.\n",
+                sensorInfo.size());
+      }
+    }
+
+    return OR_ERROR_NONE;
 }
 }
 }
