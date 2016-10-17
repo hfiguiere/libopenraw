@@ -109,7 +109,7 @@ int test_main (int argc, char * argv[])
 
 
     clone->close();
-
+    delete clone;
     file->close();
     return 0;
 }

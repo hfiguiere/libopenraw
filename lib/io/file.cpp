@@ -39,6 +39,9 @@ namespace OpenRaw {
 
 		File::~File()
 		{
+			if (m_ioRef) {
+				close();
+			}
 		}
 	
 		File::Error File::open()
@@ -52,7 +55,9 @@ namespace OpenRaw {
 
 		int File::close()
 		{
-			return ::raw_close(m_ioRef);
+			int result = ::raw_close(m_ioRef);
+			m_ioRef = NULL;
+			return result;
 		}
 
 		int File::seek(off_t offset, int whence)
