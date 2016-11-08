@@ -14,7 +14,7 @@ AM_SILENT_RULES([yes])
 dnl ---------------------------------------------------------------------------
 dnl Advanced information about versioning:
 dnl   * "Writing shared libraries" by Mike Hearn
-dnl         http://navi.cx/~mike/writing-shared-libraries.html
+dnl         http://plan99.net/~mike/writing-shared-libraries.html
 dnl   * libtool.info chapter "Versioning"
 dnl   * libtool.info chapter "Updating library version information"
 dnl ---------------------------------------------------------------------------
