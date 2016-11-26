@@ -1,4 +1,4 @@
-libopenraw 0.1.0
+libopenraw 0.1.0 - 2016/11/27
 
 New features:
 
@@ -88,6 +88,8 @@ Bug fixes:
   - Bug 70699 - Header guards violated C standard.
   - Fixed variuos overflow, in CRW decompress, ORF decompress,
     CR2 slice parsing
+  - Fixed memory leak in or_gdkpixbuf_extract_thumbnail() and friends.
+  - Fixed various memory leaks.
 
 Internal changes:
 
@@ -102,20 +104,14 @@ Internal changes:
   - Bug 48429 - Remove shave for automake silent rules (with help from
     Adrian Bunk).
   - Bug 54224 - Remove debian packaging (Adrian Bunk).
-  - Bug 54229 - Remove .cvisgnore (Adrian Bunk).
+  - Bug 54229 - Remove .cvsignore (Adrian Bunk).
   - Add libasan support for debugging.
   - Fix IO::Stream tests.
   - IO::Streams used shared_ptr<>
   - New tracing/logging API.
   - Use 16bits CRC for testsuite.
 
-libopenraw 0.0.10
-
-Bug fixes:
-
-  - Fixed memory leak in or_gdkpixbuf_extract_thumbnail() and friends.
-
-libopenraw 0.0.9
+libopenraw 0.0.9 - 2011/11/13
 
 New features:
 
@@ -146,21 +142,21 @@ Internal changes:
   - Rename debug.{h,cpp} to trace.{h,cpp}
   - Fixed the case on several class names.
 
-libopenraw 0.0.8
+libopenraw 0.0.8 - 2009/05/15
 
 Bug fixes:
 
   - includes missing for gcc 4.4
   - Fix crash in or_get_file_extensions()
 
-libopenraw 0.0.7
+libopenraw 0.0.7 - 2009/04/28
 
 Bug fixes:
 
   - fix some warnings in the test and demo programs.
   - fix a huge memory leak (Closes #21435) (Priit Laes)
 
-libopenraw 0.0.6
+libopenraw 0.0.6 - 2009/02/21
 
   - LICENSE change to LGPLv3+
   - BUG: cfa output should write the data in PGM as big endian.
@@ -184,7 +180,7 @@ libopenraw 0.0.6
   - NEW: add shave to the build system for saner output.
   - TODO: apply the coefficients.
 
-libopenraw 0.0.5
+libopenraw 0.0.5 - 2008/02/26
 
   - BUG: re-order commands in autogen.sh bug #14055
   - BUG: IFDFileContainer inside another container was
@@ -208,7 +204,7 @@ libopenraw 0.0.5
   - NEW: demo/thumbc output PPM if the thumbnail is 8RGB.
   - NEW: demo/thumbc now allow -s to pass the thumbnail size wanted.
 
-libopenraw 0.0.4
+libopenraw 0.0.4 - 2008/01/12
 
   - NEW: support for Epson ERF.
   - NEW: support getting the image orientation: CR2, CRW, PEF, NEF, ORF,
@@ -223,19 +219,19 @@ libopenraw 0.0.4
   - BUG: gdk demo shouldn't be compiled without Gnome support. bug #13718
   - BUG: boost detection cleanup. bug #13658, bug #13659
 
-libopenraw 0.0.3
+libopenraw 0.0.3 - 2007/11/25
 
   - NEW: Decompress several formats: CR2, DNG and CRW.
   - NEW: Added gdk pixbuf demo.
   - BUG: fix crash if the file is not found. bug #13371
   - BUG: fix memory bug in GdkPixbuf support. bug #13383
 
-libopenraw 0.0.2
+libopenraw 0.0.2 - 2007/01/25
 
   - Added GdkPixbuf support for Gnome
   - No longer install libopenraw++ headers
 
-libopenraw 0.0.1 - 12/09/06
+libopenraw 0.0.1 - 2006/12/09
 
   - First release.
 	It features:
