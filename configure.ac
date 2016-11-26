@@ -179,6 +179,9 @@ AC_ARG_ENABLE(asan,[  --enable-asan    Turn on address sanitizer],[
 
 ])
 
+dnl we need to disable gdk pixbuf for distcheck
+DISTCHECK_CONFIGURE_FLAGS="--disable-gnome"
+AC_SUBST([DISTCHECK_CONFIGURE_FLAGS])
 
 AC_OUTPUT([
 Makefile

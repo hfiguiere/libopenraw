@@ -110,6 +110,7 @@ Internal changes:
   - IO::Streams used shared_ptr<>
   - New tracing/logging API.
   - Use 16bits CRC for testsuite.
+  - Allow `make distscheck` to pass by disabling GNOME support.
 
 libopenraw 0.0.9 - 2011/11/13
 
