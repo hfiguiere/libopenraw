@@ -54,13 +54,9 @@ public:
     virtual ~LJpegDecompressor();
 
     /** decompress the bitmapdata and return a new bitmap
-     * @param in a preallocated BitmapData instance
-     * or NULL if decompress has to allocate it.
      * @return the new bitmap decompressed. NULL is failure.
-     * Caller owns it.
-     * @todo use a shared_ptr here, or something
      */
-    virtual RawData *decompress(RawData *in = NULL) override;
+    virtual RawDataPtr decompress() override;
     /** Set the "slices"
      * @param slices the vector containing the Canon-style slices.
      *
@@ -172,12 +168,11 @@ private:
     void fillBitBuffer (IO::Stream * s, uint16_t nbits);
     uint16_t m_bitsLeft;
     uint32_t m_getBuffer;
-    RawData *m_output;
+    RawDataPtr m_output;
 
-    /** private copy constructor to make sure it is not called */
-    LJpegDecompressor(const LJpegDecompressor& f);
-    /** private = operator to make sure it is never called */
-    LJpegDecompressor & operator=(const LJpegDecompressor&);
+    /** non copytable */
+    LJpegDecompressor(const LJpegDecompressor& f) = delete;
+    LJpegDecompressor & operator=(const LJpegDecompressor&) = delete;
 };
 
 }

@@ -258,13 +258,12 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
             if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
                 OlympusDecompressor decomp((const uint8_t*)data.data(),
                                            data.size(), m_container, x, y);
-                RawData *dData = decomp.decompress(nullptr);
+                RawDataPtr dData = decomp.decompress();
                 if (dData) {
                     dData->setCfaPatternType(data.cfaPattern()->patternType());
                     data.swap(*dData);
                     data.setDataType(OR_DATA_TYPE_RAW);
                     data.setDimensions(x, y);
-                    delete dData;
                 }
             }
             break;

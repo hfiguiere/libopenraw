@@ -262,7 +262,7 @@ int canon_has_lowbits(IO::Stream * s)
 
 
 //	int oldmain(int argc, char **argv)
-RawData *CrwDecompressor::decompress(RawData *in)
+RawDataPtr CrwDecompressor::decompress()
 {
     decode_t *decode, *dindex;
     int i, j, leaf, len, diff, diffbuf[64], r, save;
@@ -271,7 +271,7 @@ RawData *CrwDecompressor::decompress(RawData *in)
     uint16_t outbuf[64];
     uint8_t c;
 
-    RawData *bitmap = in ? in : new RawData();
+    RawDataPtr bitmap(new RawData);
 
     bitmap->setDataType(OR_DATA_TYPE_RAW);
     // we know the 10-bits are hardcoded in the CRW

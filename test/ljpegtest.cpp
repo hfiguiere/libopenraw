@@ -30,7 +30,7 @@
 #include "ljpegdecompressor.hpp"
 #include "ljpegdecompressor_priv.hpp"
 
-using OpenRaw::RawData;
+
 using OpenRaw::IO::File;
 
 std::string g_testfile;
@@ -51,13 +51,12 @@ int test_main(int argc, char *argv[])
 		g_testfile = argv[1];
 	}
 
-	RawData *decompData;
 	File::Ptr s(new File(g_testfile.c_str()));
 	RawContainer *container = new JfifContainer(s, 0);
 
 	LJpegDecompressor decompressor(s.get(), container);
 
-	decompData = decompressor.decompress();
+	OpenRaw::RawDataPtr decompData = decompressor.decompress();
 
 	boost::crc_optimal<16, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
 	const uint8_t * data = static_cast<uint8_t *>(decompData->data());
@@ -66,7 +65,6 @@ int test_main(int argc, char *argv[])
 
 	BOOST_CHECK(crc_ccitt2() == 0x20cc);
 
-	delete decompData;
 	delete container;
 
 	return 0;

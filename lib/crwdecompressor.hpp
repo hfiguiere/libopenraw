@@ -45,13 +45,9 @@ public:
     virtual ~CrwDecompressor();
 
     /** decompress the bitmapdata and return a new bitmap
-     * @param in a preallocated BitmapData instance
-     * or NULL if decompress has to allocate it.
      * @return the new bitmap decompressed. NULL is failure.
-     * Caller owns it.
-     * @todo use a shared_ptr here, or something
      */
-    virtual RawData *decompress(RawData *in = NULL) override;
+    virtual RawDataPtr decompress() override;
     void setDecoderTable(uint32_t t) { m_table = t; }
     void setOutputDimensions(uint32_t x, uint32_t y) {
         m_height = y;

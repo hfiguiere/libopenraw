@@ -90,8 +90,7 @@ LJpegDecompressor::LJpegDecompressor(IO::Stream *stream,
       m_mcuROW1(NULL), m_mcuROW2(NULL),
       m_buf1(NULL), m_buf2(NULL),
       m_bitsLeft(0),
-      m_getBuffer(0),
-      m_output(0)
+      m_getBuffer(0)
 {
 }
 
@@ -1534,25 +1533,21 @@ LJpegDecompressor::ReadScanHeader (DecompressInfo *dcPtr)
 }
 
 
-RawData *LJpegDecompressor::decompress(RawData *bitmap)
+RawDataPtr LJpegDecompressor::decompress()
 {
     DecompressInfo dcInfo;
     try {
         ReadFileHeader(&dcInfo); 
         ReadScanHeader (&dcInfo);
 
-        if(bitmap == NULL)
-        {
-            bitmap = new RawData();
-        }
-        m_output = bitmap;
-        bitmap->setDataType(OR_DATA_TYPE_RAW);
+        m_output = RawDataPtr(new RawData);
+        m_output->setDataType(OR_DATA_TYPE_RAW);
         uint32_t bpc = dcInfo.dataPrecision;
 
-        bitmap->setBpc(bpc);
-        bitmap->setWhiteLevel((1 << bpc) - 1);
+        m_output->setBpc(bpc);
+        m_output->setWhiteLevel((1 << bpc) - 1);
         /*uint16_t *dataPtr = (uint16_t*)*/
-        bitmap->allocData(dcInfo.imageWidth
+        m_output->allocData(dcInfo.imageWidth
                           * sizeof(uint16_t) 
                           * dcInfo.imageHeight
                           * dcInfo.numComponents);
@@ -1565,8 +1560,8 @@ RawData *LJpegDecompressor::decompress(RawData *bitmap)
          * @todo check that this is valid with DNG too.
          */ 
         uint32_t width = dcInfo.imageWidth * dcInfo.numComponents;
-        bitmap->setDimensions(width, dcInfo.imageHeight);
-        bitmap->setSlices(m_slices);
+        m_output->setDimensions(width, dcInfo.imageHeight);
+        m_output->setSlices(m_slices);
         DecoderStructInit(&dcInfo);
         HuffDecoderInit(&dcInfo);
         DecodeImage(&dcInfo);
@@ -1576,8 +1571,7 @@ RawData *LJpegDecompressor::decompress(RawData *bitmap)
     {
         Trace(ERROR) << "Decompression error\n";
     }
-    m_output = NULL;
-    return bitmap;
+    return std::move(m_output);
 }
 
 }

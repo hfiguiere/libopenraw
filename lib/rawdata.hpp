@@ -23,6 +23,7 @@
 #ifndef LIBOPENRAWPP_RAWDATA_H_
 #define LIBOPENRAWPP_RAWDATA_H_
 
+#include <memory>
 #include <vector>
 
 #include <libopenraw/metadata.h>
@@ -109,6 +110,9 @@ private:
     class Private;
     RawData::Private *d;
 };
+
+
+typedef std::unique_ptr<RawData> RawDataPtr;
 
 }
 

@@ -410,14 +410,13 @@ IfdDir::Ref Cr2File::_locateMainIfd()
       if (slices.size() > 1) {
         decomp.setSlices(slices);
       }
-      RawData *dData = decomp.decompress();
-      if (dData != NULL) {
+      RawDataPtr dData = decomp.decompress();
+      if (dData) {
         Trace(DEBUG1) << "Out size is " << dData->width() << "x"
                       << dData->height() << "\n";
         // must re-set the cfaPattern
         dData->setCfaPatternType(data.cfaPattern()->patternType());
         data.swap(*dData);
-        delete dData;
       }
     }
 

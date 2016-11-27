@@ -49,7 +49,7 @@ OlympusDecompressor(const uint8_t *buffer, size_t size,
     , m_w(w)
   {
   }
-  virtual RawData *decompress(RawData *in = NULL) override;
+  virtual RawDataPtr decompress() override;
 private:
   const uint8_t *m_buffer;
   size_t m_size;

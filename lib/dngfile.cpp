@@ -159,11 +159,10 @@ DngFile::~DngFile()
             s->open(); // TODO check success
             std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
             LJpegDecompressor decomp(s.get(), jfif.get());
-            RawData *dData = decomp.decompress();
-            if (dData != NULL) {
+            RawDataPtr dData = decomp.decompress();
+            if (dData) {
                 dData->setCfaPattern(data.cfaPattern());
                 data.swap(*dData);
-                delete dData;
             }
         }
     }

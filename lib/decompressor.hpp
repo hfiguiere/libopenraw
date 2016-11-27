@@ -23,9 +23,9 @@
 
 #include <stddef.h>
 
-namespace OpenRaw {
+#include "rawdata.hpp"
 
-class RawData;
+namespace OpenRaw {
 
 namespace IO {
 class Stream;
@@ -45,13 +45,9 @@ public:
     Decompressor &operator=(const Decompressor &) = delete;
 
     /** decompress the bitmapdata and return a new bitmap
-     * @param in a preallocated BitmapData instance
-     * or NULL if decompress has to allocate it.
      * @return the new bitmap decompressed. NULL is failure.
-     * Caller owns it.
-     * @todo use a shared_ptr here, or something
      */
-    virtual RawData *decompress(RawData *in = NULL) = 0;
+    virtual RawDataPtr decompress() = 0;
 
 protected:
     IO::Stream *m_stream;

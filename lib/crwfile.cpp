@@ -243,13 +243,12 @@ RawContainer* CRWFile::getContainer() const
 
             decomp.setOutputDimensions(cfa_x, cfa_y);
             decomp.setDecoderTable(decoderTable);
-            RawData *dData = decomp.decompress();
-            if (dData != NULL) {
+            RawDataPtr dData = decomp.decompress();
+            if (dData) {
                 Trace(DEBUG1) << "Out size is " << dData->width()
                               << "x" << dData->height() << "\n";
                 dData->setCfaPatternType(data.cfaPattern()->patternType());
                 data.swap(*dData);
-                delete dData;
             }
         }
         err = OR_ERROR_NONE;

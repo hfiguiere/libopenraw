@@ -177,14 +177,9 @@ static void decompressOlympus(const uint8_t* buffer, size_t size, uint8_t* data,
     }
 }
 
-RawData* OlympusDecompressor::decompress(RawData* in)
+RawDataPtr OlympusDecompressor::decompress()
 {
-    RawData* output;
-    if (in) {
-        output = in;
-    } else {
-        output = new RawData;
-    }
+    RawDataPtr output(new RawData);
 
     output->allocData(m_w * m_h * 2);
     decompressOlympus(m_buffer, m_size, (uint8_t*)output->data(), m_w, m_h);
@@ -195,5 +190,6 @@ RawData* OlympusDecompressor::decompress(RawData* in)
 
     return output;
 }
+
 }
 }
