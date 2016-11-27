@@ -1,3 +1,9 @@
+libopenraw 0.1.1 -
+
+Internal changes:
+
+  - Added misc/release.sh to help releasing.
+
 libopenraw 0.1.0 - 2016/11/27
 
 New features:
