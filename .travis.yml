@@ -1,0 +1,14 @@
+dist: trusty
+language: cpp
+compiler:
+        - clang
+        - gcc
+addons:
+        apt:
+                packages:
+                        - libboost-test-dev
+                        - libgdk-pixbuf2.0-dev
+script:
+        - ./autogen.sh
+        - make
+        - make check
