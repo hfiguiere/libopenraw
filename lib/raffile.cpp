@@ -155,6 +155,7 @@ static const BuiltinColourMatrix s_matrices[] = {
 };
 
 const RawFile::camera_ids_t RafFile::s_def[] = {
+    { "GFX 50S", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_GFX50S) },
     { "FinePix F700  ", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_F700) },
     { "FinePix F810   ", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_F810) },
     { "FinePix E900   ", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_E900) },
