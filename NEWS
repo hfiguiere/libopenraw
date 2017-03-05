@@ -1,8 +1,27 @@
 libopenraw 0.1.1 -
 
+New features:
+
+  - Support for Canon G5X, G7X MkII, G9X MkII, EOS-M3, EOS-M5, 5D MkIV,
+    Rebel T6.
+  - Support for Leica M10 and Leica SL (Typ 601).
+  - Support for Nikon D5600.
+  - Support for Fujifilm GFX 50S, X70, X-E2S, X-T2.
+  - Support for Sony A99II, A7R2, A6300 and A6500, RX100M5.
+  - Support for Panasonic LX10, G80.
+  - Support for XIAOYI M1.
+  - Support for Olympus E-M1 MkII.
+  - Support for Pentax K-1 (PEF) and K-70 (DNG)
+
+Bug fixes:
+
+  - Bug 98929 - fix endian detection on FreeBSD.
+  - Bug 99927 - fix build with various libjpeg.
+
 Internal changes:
 
   - Added misc/release.sh to help releasing.
+  - More use of std::unique_ptr<> instead of raw pointers.
 
 libopenraw 0.1.0 - 2016/11/27
 
