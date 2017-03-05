@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -153,6 +153,7 @@ const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
     { "E-M5            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM5) },
     { "E-M5MarkII      ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM5II) },
     { "E-M1            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM1) },
+    { "E-M1MarkII      ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM1II) },
     { "STYLUS1         ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1) },
     { 0, 0 }
 };
