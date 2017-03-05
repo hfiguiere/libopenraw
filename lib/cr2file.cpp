@@ -285,6 +285,7 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
     { "Canon EOS 5D", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_5D) },
     { "Canon EOS 5D Mark II", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_5DMKII) },
     { "Canon EOS 5D Mark III", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_5DMKIII) },
+    { "Canon EOS 5D Mark IV", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_5DMKIV) },
     { "Canon EOS 5DS R", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_5DS_R) },
     { "Canon EOS 6D", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_6D) },
     { "Canon EOS 7D", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_7D) },
@@ -299,14 +300,15 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
     { "Canon PowerShot G1 X", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G1X) },
     { "Canon PowerShot G1 X Mark II",
       OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G1XMKII) },
+    { "Canon PowerShot G3 X", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G3X) },
     { "Canon PowerShot G7 X", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7X) },
+    { "Canon PowerShot G9 X Mark II", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G9XMKII) },
     { "Canon PowerShot S90", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S90) },
     { "Canon PowerShot S95", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S95) },
     { "Canon PowerShot S100", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S100) },
     { "Canon PowerShot S110", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S110) },
     { "Canon PowerShot SX50 HS",
       OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_SX50_HS) },
-    { "Canon PowerShot G3 X", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G3X) },
     { 0, 0 }
 };
 
