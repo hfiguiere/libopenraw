@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -114,6 +114,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                  OR_TYPEID_SAMSUNG_GX10) },
     { "Pro 815    ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG,
                                          OR_TYPEID_SAMSUNG_PRO815) },
+    { "M1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_XIAOYI,
+                                         OR_TYPEID_XIAOYI_M1) },
     { 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE,
                              OR_TYPEID_ADOBE_DNG_GENERIC) }
 };
