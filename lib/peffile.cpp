@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -79,6 +79,7 @@ const struct IfdFile::camera_ids_t PEFFile::s_def[] = {
     { "PENTAX K100D Super ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K100D_PEF) },
     { "PENTAX K20D        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K20D_PEF) },
     { "PENTAX K200D       ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K200D_PEF) },
+    { "PENTAX K-1         ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K1_PEF) },
     { "PENTAX K-r         ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KR_PEF) },
     { "PENTAX K-5         ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K5_PEF) },
     { "PENTAX K-5 II s    ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K5_IIS_PEF) },
