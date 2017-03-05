@@ -30,13 +30,15 @@
 #include <sys/types.h>
 #include <setjmp.h>
 
-namespace JPEG {
-#include <jpeglib.h>
-}
+#include <memory>
 
 #include "ifddir.hpp"
 #include "io/stream.hpp"
 #include "rawcontainer.hpp"
+
+extern "C" {
+#include <jpeglib.h>
+}
 
 namespace OpenRaw {
 
@@ -64,25 +66,19 @@ public:
   /** Return Exif ifd */
   IfdDir::Ref exifIfd();
   /** Return the ifd container */
-  IfdFileContainer* ifdContainer();
+  std::unique_ptr<IfdFileContainer> & ifdContainer();
 
-  /* libjpeg callbacks j_ is the prefix for these callbacks */
-  static void j_init_source(JPEG::j_decompress_ptr cinfo);
-  static JPEG::boolean j_fill_input_buffer(JPEG::j_decompress_ptr cinfo);
-  static void j_skip_input_data(JPEG::j_decompress_ptr cinfo,
-                                long num_bytes);
-//			static void j_jpeg_resync_to_restart(JPEG::j_decompress_ptr cinfo);
-  static void j_term_source(JPEG::j_decompress_ptr cinfo);
-  static void j_error_exit(JPEG::j_common_ptr cinfo);
-
+  jmp_buf & jpegjmp() {
+    return m_jpegjmp;
+  }
 private:
   int _loadHeader();
 
-  struct JPEG::jpeg_decompress_struct m_cinfo;
-  struct JPEG::jpeg_error_mgr m_jerr;
+  struct jpeg_decompress_struct m_cinfo;
+  struct jpeg_error_mgr m_jerr;
   jmp_buf m_jpegjmp;
   bool m_headerLoaded;
-  IfdFileContainer* m_ifd;
+  std::unique_ptr<IfdFileContainer> m_ifd;
 };
 
 }
