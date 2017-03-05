@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -291,6 +291,7 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
     { "Canon EOS 7D", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_7D) },
     { "Canon EOS 7D Mark II", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_7DMKII) },
     { "Canon EOS M", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M) },
+    { "Canon EOS M5", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M5) },
     { "Canon PowerShot G9", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G9) },
     { "Canon PowerShot G10", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G10) },
     { "Canon PowerShot G11", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G11) },
@@ -301,6 +302,7 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
     { "Canon PowerShot G1 X Mark II",
       OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G1XMKII) },
     { "Canon PowerShot G3 X", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G3X) },
+    { "Canon PowerShot G5 X", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G5X) },
     { "Canon PowerShot G7 X", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7X) },
     { "Canon PowerShot G9 X Mark II", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G9XMKII) },
     { "Canon PowerShot S90", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S90) },
