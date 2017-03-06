@@ -301,6 +301,31 @@ RawContainer *RafFile::getContainer() const
     return m_container;
 }
 
+bool
+RafFile::isXTrans(RawFile::TypeId type) const
+{
+    switch (type) {
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO1):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE2):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE2S):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XM1):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XQ1):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT1):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT10):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT2):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100S):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100T):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X20):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X30):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X70):
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 ::or_error RafFile::_getRawData(RawData &data, uint32_t /*options*/)
 {
     ::or_error ret = OR_ERROR_NOT_FOUND;
@@ -326,22 +351,9 @@ RawContainer *RafFile::getContainer() const
 
     data.setDataType(OR_DATA_TYPE_RAW);
     data.setDimensions(w, h);
-    switch (typeId()) {
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO1):
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1):
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE2):
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XM1):
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XQ1):
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT1):
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT10):
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100S):
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100T):
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X20):
-    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X30):
+    if (isXTrans(typeId())) {
         data.setCfaPattern(XTransPattern::xtransPattern());
-        break;
-    default:
-        // TODO get the right pattern.
+    } else {
         data.setCfaPatternType(OR_CFA_PATTERN_GBRG);
     }
     // TODO actually read the 2048.

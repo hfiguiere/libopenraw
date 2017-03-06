@@ -1,8 +1,8 @@
-/* -*- Mode: C++ -*- */
+/* -*- Mode: C++ ; tab-width:4; c-basic-offset:4 -*- */
 /*
  * libopenraw - raffile.h
  *
- * Copyright (C) 2011-2016 Hubert Figuiere
+ * Copyright (C) 2011-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -64,6 +64,8 @@ protected:
     virtual void _identifyId() override;
 
 private:
+    bool isXTrans(RawFile::TypeId type) const;
+
     IO::Stream::Ptr m_io;      /**< the IO handle */
     RafContainer *m_container; /**< the real container */
     uint32_t m_x;
