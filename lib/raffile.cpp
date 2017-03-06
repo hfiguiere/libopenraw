@@ -1,3 +1,4 @@
+/* -*- mode:c++; tab-width:4; c-basic-offset:4 -*- */
 /*
  * libopenraw - raffile.cpp
  *
@@ -175,6 +176,7 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
     { "X-S1", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XS1) },
     { "FinePix S200EXR", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_S200EXR) },
     { "X-A1", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XA1) },
+    { "X-A2", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XA2) },
     { "XQ1", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XQ1) },
     { "X-E1  ", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1) },
     { "X-E2", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE2) },
