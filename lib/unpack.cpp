@@ -65,12 +65,20 @@ or_error Unpack::unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *
   size_t rest = size % (15 + pad);
   size_t ret = n * 20 + rest / 3 * 4;
 
+  out = 0;
+
   /* The inner loop advances 10 columns, which corresponds to 15 input
      bytes, 20 output bytes and, in a Nikon pack, one padding byte.*/
   if (pad) {
-    assert (size % 16 == 0);
+    if ((size % 16) != 0) {
+      LOGERR("be12to16 incorrect padding.\n");
+      return OR_ERROR_DECOMPRESSION;
+    }
   }
-  assert (rest % 3 == 0);
+  if ((rest % 3) != 0) {
+    LOGERR("be12to16 incorrect rest.\n");
+    return OR_ERROR_DECOMPRESSION;
+  }
 
   for (size_t i = 0; i < n + 1; i++) {
     size_t m = (i == n) ? rest / 3 : 5;
