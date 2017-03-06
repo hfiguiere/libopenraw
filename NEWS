@@ -5,8 +5,8 @@ New features:
   Camera support:
   [ a * denote that coefficients have been included ]
 
-  - Support for Canon G5X*, G7X MkII, G9X MkII, EOS-M3*, EOS-M5, 5D MkIV*,
-    80D*, Rebel T6*.
+  - Support for Canon G5X*, G7X MkII, G9X MkII, EOS-M3*, EOS-M5, 1DX MkII*,
+    5D MkIV*, 80D*, Rebel T6*.
   - Support for Leica M10 and Leica SL (Typ 601).
   - Support for Nikon D3400, D5*, D500*, D5600.
   - Support for Fujifilm GFX 50S, X70*, X-A2*, X-E2S*, X-Pro2*, X-T2.
