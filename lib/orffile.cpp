@@ -178,6 +178,14 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 7687, -1984, -606, -4327, 11928, 2721, -1381, 2339, 6452 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10),
+      0,
+      0,
+      { 8380, -2630, -639, -2887, 10725, 2496, -627, 1427, 5438 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10II), // Identical to MarkI
+      0,
+      0,
+      { 8380, -2630, -639, -2887, 10725, 2496, -627, 1427, 5438 } },
     { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1),
       0,
       0,
@@ -224,6 +232,8 @@ const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
     { "E-M5MarkII      ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM5II) },
     { "E-M1            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM1) },
     { "E-M1MarkII      ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM1II) },
+    { "E-M10           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10) },
+    { "E-M10MarkII     ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10II) },
     { "STYLUS1         ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1) },
     { "PEN-F           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_PEN_F) },
     { 0, 0 }
