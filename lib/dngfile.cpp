@@ -120,6 +120,10 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                          OR_TYPEID_SAMSUNG_PRO815) },
     { "M1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_XIAOYI,
                                          OR_TYPEID_XIAOYI_M1) },
+    { "iPhone 6s Plus", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
+                                         OR_TYPEID_APPLE_IPHONE_6SPLUS) },
+    { "iPhone 7 Plus", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
+                                         OR_TYPEID_APPLE_IPHONE_7PLUS) },
     { 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE,
                              OR_TYPEID_ADOBE_DNG_GENERIC) }
 };
