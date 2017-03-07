@@ -342,6 +342,10 @@ RafFile::isXTrans(RawFile::TypeId type) const
     ::or_error ret = OR_ERROR_NOT_FOUND;
 
     RafMetaContainer *meta = m_container->getMetaContainer();
+    if (!meta) {
+        LOGERR("RAF: Can't get meta container\n");
+        return ret;
+    }
 
     RafMetaValue::Ref value = meta->getValue(RAF_TAG_SENSOR_DIMENSION);
     if (!value) {
@@ -430,6 +434,11 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
         META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
 
         JfifContainer *jpegPreview = m_container->getJpegPreview();
+        if (!jpegPreview) {
+            LOGERR("RAF: Can't get JPEG preview\n");
+            return nullptr;
+        }
+
         IfdDir::Ref dir = jpegPreview->mainIfd();
         IfdEntry::Ref e = dir->getEntry(META_NS_MASKOUT(meta_index));
         if (e) {
