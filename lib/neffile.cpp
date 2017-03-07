@@ -273,6 +273,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       { 10321,-3920,-931,-2750,11146,1824,-442,1545,5539 } },
 
+    { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_1_AW1),
+      0,
+      0,
+      { 6588, -1305, -693, -3277, 10987, 2634, -355, 2016, 5106 } },
     { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_1_J1),
       0,
       0,
@@ -308,6 +312,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 8994,-2667,-865,-4594,12324,2552,-699,1786,6260 } },
+    { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_1_S2),
+      0,
+      0,
+      { 6612, -1342, -618, -3338, 11055, 2623, -174, 1792, 5075 } },
 
     // From DNG Converter 7.4
     { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_COOLPIX_A),
@@ -380,6 +388,8 @@ const IfdFile::camera_ids_t NefFile::s_def[] = {
     { "NIKON 1 V2", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_1_V2) },
     { "NIKON 1 V3", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_1_V3) },
     { "NIKON 1 S1", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_1_S1) },
+    { "NIKON 1 S2", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_1_S2) },
+    { "NIKON 1 AW1", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_1_AW1) },
     { 0, 0 }
 };
 
