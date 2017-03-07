@@ -6,16 +6,17 @@ New features:
   [ a * denote that coefficients have been included ]
 
   - Support for Canon G5X*, G7X MkII, G9X MkII, EOS-M3*, EOS-M5, 1DX MkII*,
-    5D MkIV*, 80D*, Rebel T6*.
+    5D MkIV*, 750D*, 760D*, 80D*, Rebel T5/1200D*, Rebel T6/1300D*.
   - Support for Leica M10 and Leica SL (Typ 601).
-  - Support for Nikon D3400, D5*, D500*, D5600.
-  - Support for Fujifilm GFX 50S, X70*, X-A2*, X-E2S*, X-Pro2*, X-T2.
+  - Support for Nikon D3400, D5*, D500*, D5600, 1 S2*, 1 AW1*.
+  - Support for Fujifilm GFX 50S, X100F, X70*, X-A2*, X-E2S*, X-Pro2*, X-T2, X-T20.
   - Support for  Sony A99II, A7R2*,  A6300* and A6500,  RX1RM2*, RX10,
     RX10M2, RX10M3, RX100M4*, RX100M5.
   - Support for Panasonic FZ2500, G80/G85, GX8*, GX80/GX85, LX10/LX15, ZS100.
   - Support for XIAOYI M1.
-  - Support for Olympus E-M1 MkII, PEN-F*.
-  - Support for Pentax K-1 (PEF)* and K-70 (DNG)
+  - Support for Olympus E-M10*, E-M10 MkII*, E-M1 MkII, PEN-F*.
+  - Support for Pentax K-1 (PEF & DNG)* and K-70 (PEF & DNG)
+  - Support for Apple iPhone 6S+* and 7+*
 
   - Coefficients for Canon G3X, 70D, 100D
   - Coefficients for Nikon D3300, D5300, D5500, D7200, D810, 1 V3, 1 J5
@@ -30,6 +31,7 @@ Bug fixes:
   - Bug 98929 - fix endian detection on FreeBSD.
   - Bug 99927 - fix build with various libjpeg.
   - Do not abort when ecountering some unpacking errors.
+  - Do not crash on RAF file not found.
 
 Internal changes:
 
