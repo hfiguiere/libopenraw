@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -645,7 +645,8 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     break;
   }
 
-  Trace(DEBUG1) << "RAW Compression is " << compression << "\n";
+  LOGDBG1("RAW Compression is %u\n", compression);
+  LOGDBG1("bpc is %u\n", bpc);
 
   ::or_cfa_pattern cfa_pattern = _getCfaPattern(dir);
   if(cfa_pattern == OR_CFA_PATTERN_NONE) {
@@ -657,9 +658,9 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   }
 
 
-  if((bpc == 12 || bpc == 14) && (compression == 1)
-     && (byte_length == (x * y * 2)))
-  {
+  if((bpc == 12 || bpc == 14) && (compression == IFD::COMPRESS_NONE)
+     && (byte_length == (x * y * 2))) {
+    // We turn this to a 16-bits per sample. MSB are 0
     Trace(DEBUG1) << "setting bpc from " << bpc
                   << " to 16\n";
     bpc = 16;
@@ -682,6 +683,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   }
   data.setCfaPatternType(cfa_pattern);
   data.setDataType(data_type);
+  data.setBpc(bpc);
   data.setCompression(data_type == OR_DATA_TYPE_COMPRESSED_RAW
                       ? compression : 1);
   data.setPhotometricInterpretation((ExifPhotometricInterpretation)photo_int);

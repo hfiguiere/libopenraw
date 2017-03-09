@@ -2,7 +2,7 @@
 /*
  * libopenraw - neffile.h
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -25,7 +25,7 @@
 
 #include <stdint.h>
 
-#include <vector>
+#include <array>
 
 #include <libopenraw/consts.h>
 
@@ -62,6 +62,9 @@ public:
 
     class NEFCompressionInfo {
     public:
+        NEFCompressionInfo()
+            : curve(0x8000, 0) {
+        }
         uint16_t vpred[2][2];
         std::vector<uint16_t> curve;
         const HuffmanNode* huffman;

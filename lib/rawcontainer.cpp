@@ -1,7 +1,8 @@
+/* -*- Mode: C++; c-basic-offset:4; tab-width:4; indent-tab-mode:nil -*- */
 /*
  * libopenraw - rawcontainer.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -48,6 +49,11 @@ RawContainer::~RawContainer()
   m_file->close();
 }
 
+bool RawContainer::skip(off_t offset)
+{
+  m_file->seek(offset, SEEK_CUR);
+  return true;
+}
 
 bool RawContainer::readInt8(const IO::Stream::Ptr &f, int8_t & v)
 {
@@ -95,6 +101,41 @@ RawContainer::readInt16(const IO::Stream::Ptr &f, int16_t & v)
 }
 
 
+/**
+ * Return the number of element read.
+ */
+size_t
+RawContainer::readUInt16Array(const IO::Stream::Ptr &f, std::vector<uint16_t> & v, size_t count)
+{
+  if (m_endian == ENDIAN_NULL) {
+    LOGERR("null endian\n");
+    return 0;
+  }
+
+  if (v.size() < count) {
+    v.resize(count, 0);
+  }
+  uint8_t buf[2];
+  size_t num_read = 0;
+  for (size_t i = 0; i < count; i++) {
+    int s = f->read(buf, 2);
+    uint16_t val;
+    if (s != 2) {
+      return num_read;
+    }
+    if (m_endian == ENDIAN_LITTLE) {
+      val = EL16(buf);
+    } else {
+      val = BE16(buf);
+    }
+    v[i] = val;
+    num_read++;
+  }
+
+  return num_read;
+}
+
+
 bool 
 RawContainer::readInt32(const IO::Stream::Ptr &f, int32_t & v)
 {
@@ -122,7 +163,7 @@ RawContainer::readInt32(const IO::Stream::Ptr &f, int32_t & v)
 }
 
 
-bool 
+bool
 RawContainer::readUInt16(const IO::Stream::Ptr &f, uint16_t & v)
 {
   if (m_endian == ENDIAN_NULL) {
@@ -146,7 +187,7 @@ RawContainer::readUInt16(const IO::Stream::Ptr &f, uint16_t & v)
 }
 
 
-bool 
+bool
 RawContainer::readUInt32(const IO::Stream::Ptr &f, uint32_t & v)
 {
   if (m_endian == ENDIAN_NULL) {

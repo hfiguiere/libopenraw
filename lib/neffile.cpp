@@ -454,7 +454,7 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
     newData.setBpc(bpc);
     newData.setWhiteLevel((1 << bpc) - 1);
     newData.setCfaPatternType(data.cfaPattern()->patternType());
-	
+
     for (unsigned int i = 0; i < rows; i++) {
         for (unsigned int j = 0; j < raw_columns; j++) {
             uint16_t t = iter.get();
@@ -464,7 +464,7 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
             }
         }
     }
-    
+
     data.swap(newData);
     return OR_ERROR_NONE;
 }
@@ -501,6 +501,7 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
     auto file = m_container->file();
     file->seek(pos, SEEK_SET);
 
+    uint16_t bpc = data.bpc();
     uint8_t header0, header1;
     bool read = m_container->readUInt8(file, header0);
     if(!read) {
@@ -513,30 +514,14 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
         return 0;
     }
 
-    bool header_ok = false;
-    if (header0 == 0x44) {
-        if (header1 == 0x10) {
-            c.huffman = NefDiffIterator::Lossy12Bit;
-            data.setBpc(12);
-            header_ok = true;
-        } else if (header1 == 0x20) {
-            c.huffman = NefDiffIterator::Lossy14Bit;
-            data.setBpc(14);
-            header_ok = true;
-        }
-    } else if (header0 == 0x46 && header1 == 0x30) {
-        c.huffman = NefDiffIterator::LossLess14Bit;
-        data.setBpc(14);
-        header_ok = true;
-    }
-    if (!header_ok) {
-        Trace(ERROR) << "Wrong header, found " << header0 << "-"
-                     << header1 << "\n";
-        return 0;
+    if (header0 == 0x49) {
+        // some interesting stuff at 2110
+        // XXX we need to implement this.
+        LOGWARN("NEF: header0 is 0x49 - case not yet handled\n");
+        m_container->skip(2110);
     }
 
     int16_t aux;
-
     for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
             read = m_container->readInt16(file, aux);
@@ -547,22 +532,86 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
         }
     }
 
-    if (header0 == 0x44) {
-        size_t nelems;
-        read = m_container->readInt16(file, aux);
-        nelems = aux;
+    LOGDBG2("header0 = %d header1 = %d bpc = %u\n", header0, header1, bpc);
 
-        for (size_t i = 0; i < nelems; ++i) {
-            read = m_container->readInt16(file, aux);
-            if (!read)
-                return 0;
-            c.curve.push_back(aux);
+    bool header_ok = false;
+    // header0 == 0x44 || 0x49 -> lossy
+    // header0 == 0x46 -> lossless
+    if (header0 == 0x44 || header0 == 0x49) {
+        if (bpc == 12) {
+            c.huffman = NefDiffIterator::Lossy12Bit;
+            LOGDBG1("12 bits lossy %u\n", bpc);
+            header_ok = true;
+        } else if (bpc == 14) {
+            c.huffman = NefDiffIterator::Lossy14Bit;
+            LOGDBG1("14 bits lossy %u\n", bpc);
+            header_ok = true;
         }
-    } else if (header0 == 0x46 && header1 == 0x30) {
-        for (size_t i = 0; i <= 0x3fff; ++i) {
-            c.curve.push_back(i);
+    } else if (header0 == 0x46) {
+        if (bpc == 14) {
+            c.huffman = NefDiffIterator::LossLess14Bit;
+            LOGDBG1("14 bits lossless\n");
+            header_ok = true;
+        } else if (bpc == 12) {
+//            c.huffman = NefDiffIterator::LossLess12Bit;
+            LOGDBG1("12 bits lossless\n");
+            LOGERR("12 bits lossless isn't yet supported\n");
+            header_ok = true;
+            return 0;
         }
     }
+    if (!header_ok) {
+        LOGERR("Wrong header, found %d-%d\n", header0, header1);
+        return 0;
+    }
+
+    // number of elements in the curve
+    size_t nelems;
+    read = m_container->readInt16(file, aux);
+    nelems = aux;
+    LOGDBG1("Num elems %ld\n", nelems);
+
+    uint32_t ceiling = 1 << bpc & 0x7fff;
+    uint32_t step = 0;
+    if (nelems > 1) {
+        step = ceiling / (nelems - 1);
+    }
+    LOGDBG1("ceiling %u, step = %u\n", ceiling, step);
+
+    if (header0 == 0x44 && header1 == 0x20 && step > 0) {
+        for (size_t i = 0; i < nelems; ++i) {
+            read = m_container->readInt16(file, aux);
+            if (!read) {
+                LOGERR("NEF: short read\n");
+                return 0;
+            }
+            c.curve[i * step] = aux;
+        }
+        for (size_t i = 0; i < ceiling; ++i) {
+            c.curve[i] = (c.curve[i - i % step] * (step - i % step) +
+                          c.curve[i - i % step + step] * (i % step)) / step;
+        }
+        // split flag is at offset 562.
+        // XXX
+    } else if (header0 != 0x46 && nelems <= 0x4001) {
+        size_t num_read = m_container->readUInt16Array(file, c.curve, nelems);
+        if (num_read < nelems) {
+            LOGERR("NEF: short read of %ld elements instead of %ld\n", num_read, nelems);
+            return 0;
+        }
+        ceiling = nelems;
+    }
+
+    auto black = c.curve[0];
+    auto white = c.curve[ceiling - 1];
+    for (size_t i = ceiling; i < 0x8000; i++) {
+        c.curve[i] = white;
+    }
+//    else if (header0 == 0x46 && header1 == 0x30) {
+//        for (size_t i = 0; i <= 0x3fff; ++i) {
+//            c.curve.push_back(i);
+//        }
+//    }
 
     return 1;
 }
