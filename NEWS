@@ -30,6 +30,7 @@ Bug fixes:
     - Nikon D3200
   - Bug 98929 - fix endian detection on FreeBSD.
   - Bug 99927 - fix build with various libjpeg.
+  - Bug 54034 - NEF: don't crash with D90 files and similar.
   - Do not abort when ecountering some unpacking errors.
   - Do not crash on RAF file not found.
 
@@ -37,6 +38,7 @@ Internal changes:
 
   - Added misc/release.sh to help releasing.
   - More use of std::unique_ptr<> instead of raw pointers.
+  - Added Nikon D90 and D300 to the testsuite.
 
 libopenraw 0.1.0 - 2016/11/27
 
