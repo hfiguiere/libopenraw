@@ -255,6 +255,32 @@
     </results>
   </test>
   <test>
+    <name>NEF-test D90</name>
+    <file>/home/hub/samples/nef/D90/D90hMULTII0100.NEF</file>
+    <source>http://216.18.212.226/PRODS/D90/FULLRES/D90hMULTII0100.NEF</source>
+    <results>
+      <rawType>NEF</rawType>
+      <rawTypeId>131106</rawTypeId>
+      <makerNoteCount>54</makerNoteCount>
+      <makerNoteId>Nikon</makerNoteId>
+      <exifMake>NIKON CORPORATION</exifMake>
+      <exifModel>NIKON D90</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 4288</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 905419</thumbDataSizes>
+      <thumbMd5>13475 4145</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>24957336</rawDataSize>
+      <rawDataDimensions>4351 2868</rawDataDimensions>
+      <rawCfaPattern>GBRG</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>9593</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>NEF-test D1</name>
     <file>/home/hub/samples/nef/D1/DSC_0489.nef</file>
     <source>http://www.steves-digicams.com/sdc-classic/nikond1/samples/dsc_0489.nef</source>
