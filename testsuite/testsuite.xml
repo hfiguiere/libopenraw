@@ -332,6 +332,32 @@
     </results>
   </test>
   <test>
+    <name>NEF-test D300</name>
+    <file>/home/hub/samples/nef/D300/RAW_NIKON_D300.NEF</file>
+    <source>http://www.rawsamples.ch/raws/nikon/d300/RAW_NIKON_D300.NEF</source>
+    <results>
+      <rawType>NEF</rawType>
+      <rawTypeId>131081</rawTypeId>
+      <makerNoteCount>53</makerNoteCount>
+      <makerNoteId>Nikon</makerNoteId>
+      <exifMake>NIKON CORPORATION</exifMake>
+      <exifModel>NIKON D300</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 4288</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 1092124</thumbDataSizes>
+      <thumbMd5>47314 48693</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>24957336</rawDataSize>
+      <rawDataDimensions>4351 2868</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>16383</rawMaxValue>
+      <rawMd5>44049</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>ERF-test R-D1</name>
     <file>/home/hub/samples/erf/Epson_RD1/_eps8447.erf</file>
     <source>http://libopenraw.freedesktop.org/samples/erf/_eps8447.erf</source>
