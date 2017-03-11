@@ -607,12 +607,10 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
     for (size_t i = ceiling; i < 0x8000; i++) {
         c.curve[i] = white;
     }
-//    else if (header0 == 0x46 && header1 == 0x30) {
-//        for (size_t i = 0; i <= 0x3fff; ++i) {
-//            c.curve.push_back(i);
-//        }
-//    }
 
+    data.setBlackLevel(black);
+    data.setWhiteLevel(white);
+    LOGDBG1("black %u white %u\n", black, white);
     return 1;
 }
 
