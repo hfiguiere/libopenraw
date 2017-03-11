@@ -73,7 +73,7 @@ public:
 private:
 
     static const IfdFile::camera_ids_t s_def[];
-    int _getCompressionCurve(RawData&, NEFCompressionInfo&);
+    bool _getCompressionCurve(RawData&, NEFCompressionInfo&);
     ::or_error _decompressNikonQuantized(RawData&);
     virtual ::or_error _decompressIfNeeded(RawData&, uint32_t) override;
 };

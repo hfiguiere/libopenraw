@@ -483,17 +483,18 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
     }
 }
 
-int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
+bool
+NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 {
     MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
     if(!_makerNoteIfd) {
         Trace(ERROR) << "makernote not found\n";
-        return 0;
+        return false;
     }
     IfdEntry::Ref curveEntry = _makerNoteIfd->getEntry(IFD::MNOTE_NIKON_NEFDECODETABLE2);
     if(!curveEntry) {
         Trace(ERROR) << "decode table2 tag not found\n";
-        return 0;
+        return false;
     }
 
     size_t pos = _makerNoteIfd->getMnoteOffset() + curveEntry->offset();
@@ -506,12 +507,12 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
     bool read = m_container->readUInt8(file, header0);
     if(!read) {
         Trace(ERROR) << "Header not found\n";
-        return 0;
+        return false;
     }
     read = m_container->readUInt8(file, header1);
     if(!read) {
         Trace(ERROR) << "Header not found\n";
-        return 0;
+        return false;
     }
 
     if (header0 == 0x49) {
@@ -526,7 +527,7 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
         for (int j = 0; j < 2; ++j) {
             read = m_container->readInt16(file, aux);
             if(!read) {
-                return 0;
+                return false;
             }
             c.vpred[i][j] = aux;
         }
@@ -557,12 +558,12 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
             LOGDBG1("12 bits lossless\n");
             LOGERR("12 bits lossless isn't yet supported\n");
             header_ok = true;
-            return 0;
+            return false;
         }
     }
     if (!header_ok) {
         LOGERR("Wrong header, found %d-%d\n", header0, header1);
-        return 0;
+        return false;
     }
 
     // number of elements in the curve
@@ -583,7 +584,7 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
             read = m_container->readInt16(file, aux);
             if (!read) {
                 LOGERR("NEF: short read\n");
-                return 0;
+                return false;
             }
             c.curve[i * step] = aux;
         }
@@ -597,7 +598,7 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
         size_t num_read = m_container->readUInt16Array(file, c.curve, nelems);
         if (num_read < nelems) {
             LOGERR("NEF: short read of %ld elements instead of %ld\n", num_read, nelems);
-            return 0;
+            return false;
         }
         ceiling = nelems;
     }
@@ -611,7 +612,7 @@ int NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& 
     data.setBlackLevel(black);
     data.setWhiteLevel(white);
     LOGDBG1("black %u white %u\n", black, white);
-    return 1;
+    return true;
 }
 
 }
