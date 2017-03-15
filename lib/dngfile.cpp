@@ -75,6 +75,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                  OR_TYPEID_PENTAX_K3_II_DNG) },
     { "PENTAX K-70        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_K70_DNG) },
+    { "PENTAX K-S1        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
+                                                 OR_TYPEID_PENTAX_KS1_DNG) },
     { "PENTAX MX-1            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_MX1_DNG) },
     { "R9 - Digital Back DMR",   OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
