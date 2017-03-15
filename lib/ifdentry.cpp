@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -134,10 +134,9 @@ bool IfdEntry::loadData(size_t unit_size)
 	else {
 		off_t _offset;
 		if (endian() == RawContainer::ENDIAN_LITTLE) {
-			_offset = IfdTypeTrait<uint32_t>::EL((uint8_t*)&m_data);
-		}
-		else {
-			_offset = IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data);
+			_offset = IfdTypeTrait<uint32_t>::EL((uint8_t*)&m_data, sizeof(uint32_t));
+		} else {
+			_offset = IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data, sizeof(uint32_t));
 		}
 		_offset += m_container.exifOffsetCorrection();
 		m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
