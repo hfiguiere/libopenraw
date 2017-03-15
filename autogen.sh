@@ -13,12 +13,12 @@ fi
 builddir=`pwd`
 
 AUTOCONF=autoconf
-if test -x /usr/bin/glibtool ; then
+if which -s glibtool ; then
     LIBTOOL=glibtool
 else
     LIBTOOL=libtool
 fi
-if test -x /usr/bin/glibtoolize ; then
+if which -s glibtoolize ; then
     LIBTOOLIZE=glibtoolize
 else
     LIBTOOLIZE=libtoolize
