@@ -121,22 +121,6 @@ inline std::string IfdTypeTrait<std::string>::BE(const uint8_t* b, size_t len) n
   return s;
 }
 
-#if defined(__APPLE_CC__)
-// Apple broken C++ needs this
-// Now that we are C++11 we might not even need this anymore.
-template <>
-inline unsigned long IfdTypeTrait<unsigned long>::EL(const uint8_t* b, size_t)
-{
-	return EL32(b);
-}
-
-template <>
-inline unsigned long IfdTypeTrait<unsigned long>::BE(const uint8_t* b, size_t)
-{
-	return BE32(b);
-}
-#endif
-
 template <>
 inline IFD::Rational IfdTypeTrait<IFD::Rational>::EL(const uint8_t* b, size_t) noexcept
 {

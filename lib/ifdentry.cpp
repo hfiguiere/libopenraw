@@ -225,13 +225,6 @@ template <>
 const size_t IfdTypeTrait<IFD::SRational>::size = 8;
 
 
-#if defined(__APPLE_CC__)
-// Apple broken g++ version or linker seems to choke.
-template <>
-const uint16_t IfdTypeTrait<unsigned long>::type = IFD::EXIF_FORMAT_LONG;
-template <>
-const size_t IfdTypeTrait<unsigned long>::size = 4;
-#endif
 template <>
 const uint16_t IfdTypeTrait<uint32_t>::type = IFD::EXIF_FORMAT_LONG;
 template <>
