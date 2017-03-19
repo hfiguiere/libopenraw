@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -47,8 +47,6 @@
 #include "neffile.hpp" // I wonder if this is smart as it break the abstraction.
 #include "unpack.hpp"
 
-using namespace Debug;
-
 namespace OpenRaw {
 
 class MetaValue;
@@ -78,8 +76,7 @@ IfdDir::Ref  IfdFile::_locateExifIfd()
 {
 	const IfdDir::Ref & _mainIfd = mainIfd();
   if (!_mainIfd) {
-    Trace(ERROR) << "IfdFile::_locateExifIfd() "
-      "main IFD not found\n";
+    LOGERR("IfdFile::_locateExifIfd() main IFD not found\n");
     return IfdDir::Ref();
   }
   return _mainIfd->getExifIFD();
@@ -98,13 +95,13 @@ MakerNoteDir::Ref  IfdFile::_locateMakerNoteIfd()
 void IfdFile::_identifyId()
 {
 	const IfdDir::Ref & _mainIfd = mainIfd();
-  if(!_mainIfd) {
-    Trace(ERROR) << "Main IFD not found to identify the file.\n";
+  if (!_mainIfd) {
+    LOGERR("Main IFD not found to identify the file.\n");
     return;
   }
   std::string make, model;
-  if(_mainIfd->getValue(IFD::EXIF_TAG_MAKE, make) && 
-    _mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
+  if (_mainIfd->getValue(IFD::EXIF_TAG_MAKE, make) &&
+      _mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
     _setTypeId(_typeIdFromModel(make, model));
   }
 }
@@ -115,28 +112,26 @@ void IfdFile::_identifyId()
 {
   ::or_error err = OR_ERROR_NONE;
 
-  Trace(DEBUG1) << "_enumThumbnailSizes()\n";
+  LOGDBG1("_enumThumbnailSizes()\n");
   std::vector<IfdDir::Ref> & dirs = m_container->directories();
 
-  Trace(DEBUG1) << "num of dirs " << dirs.size() << "\n";
+  LOGDBG1("num of dirs %lu\n", dirs.size());
   for(auto dir : dirs)
   {
     dir->load();
     or_error ret = _locateThumbnail(dir, list);
-    if (ret == OR_ERROR_NONE)
-    {
-      Trace(DEBUG1) << "Found " << list.back() << " pixels\n";
+    if (ret == OR_ERROR_NONE) {
+      LOGDBG1("Found %u pixels\n", list.back());
     }
     std::vector<IfdDir::Ref> subdirs;
     if(dir->getSubIFDs(subdirs)) {
-      Trace(DEBUG1) << "Iterating subdirs\n";
+      LOGDBG1("Iterating subdirs\n");
       for(auto dir2 : subdirs)
       {
         dir2->load();
         ret = _locateThumbnail(dir2, list);
-        if (ret == OR_ERROR_NONE)
-        {
-          Trace(DEBUG1) << "Found " << list.back() << " pixels\n";
+        if (ret == OR_ERROR_NONE) {
+          LOGDBG1("Found %u pixels\n", list.back());
         }
       }
     }
@@ -158,10 +153,10 @@ void IfdFile::_identifyId()
   ::or_data_type _type = OR_DATA_TYPE_NONE;
   uint32_t subtype = 0;
 
-  Trace(DEBUG1) << "_locateThumbnail\n";
+  LOGDBG1("_locateThumbnail\n");
 
   got_it = dir->getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype);
-  Trace(DEBUG1) << "subtype " << subtype  << "\n";
+  LOGDBG1("subtype %u\n", subtype);
   if(!got_it) {
     if(!m_cfaIfd) {
       m_cfaIfd = _locateCfaIfd();
@@ -180,12 +175,12 @@ void IfdFile::_identifyId()
                            photom_int);
 
     if (got_it) {
-      Trace(DEBUG1) << "photometric int " << photom_int  << "\n";
+      LOGDBG1("photometric int %u\n", photom_int);
     }
     // photometric interpretation is RGB by default
     else {
       photom_int = IFD::EV_PI_RGB;
-      Trace(DEBUG1) << "assume photometric int is RGB\n";
+      LOGDBG1("assume photometric int is RGB\n");
     }
 
     got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
@@ -213,7 +208,7 @@ void IfdFile::_identifyId()
             //_type = OR_DATA_TYPE_PIXMAP_8RGB;
             _type = OR_DATA_TYPE_NONE;
             // See bug 72270
-            Trace(DEBUG1) << "8RGB as JPEG. Will ignore.\n";
+            LOGDBG1("8RGB as JPEG. Will ignore.\n");
             ret = OR_ERROR_INVALID_FORMAT;
           }
           else {
@@ -222,36 +217,32 @@ void IfdFile::_identifyId()
         }
         else {
           _type = OR_DATA_TYPE_JPEG;
-          Trace(DEBUG1) << "looking for JPEG at " << offset << "\n";
+          LOGDBG1("looking for JPEG at %u\n", offset);
           if (x == 0 || y == 0) {
             IO::Stream::Ptr s(std::make_shared<IO::StreamClone>(
                                 m_io, offset));
             std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
             if (jfif->getDimensions(x,y)) {
-              Trace(DEBUG1) << "JPEG dimensions x=" << x
-                            << " y=" << y << "\n";
+              LOGDBG1("JPEG dimensions x=%u y=%u\n", x, y);
             }
             else {
               _type = OR_DATA_TYPE_NONE;
-              Trace(WARNING) << "Couldn't get JPEG "
-                "dimensions.\n";
+              LOGWARN("Couldn't get JPEG dimensions.\n");
             }
           }
           else {
-            Trace(DEBUG1) << "JPEG (supposed) dimensions x=" << x
-                          << " y=" << y << "\n";
+            LOGDBG1("JPEG (supposed) dimensions x=%u y=%u\n", x, y);
           }
         }
 
       }
     }
     else if (photom_int == IFD::EV_PI_YCBCR) {
-      Trace(WARNING) << "Unsupported YCbCr photometric "
-        "interpretation in non JPEG.\n";
+      LOGWARN("Unsupported YCbCr photometric interpretation in non JPEG.\n");
       ret = OR_ERROR_INVALID_FORMAT;
     }
     else {
-      Trace(DEBUG1) << "found strip offsets\n";
+      LOGDBG1("found strip offsets\n");
       if (x != 0 && y != 0) {
         // See bug 72270 - some CR2 have 16 bpc RGB thumbnails.
         // by default it is RGB8. Unless stated otherwise.
@@ -263,13 +254,13 @@ void IfdFile::_identifyId()
           for(auto bpc : arr) {
             isRGB8 = (bpc == 8);
             if (!isRGB8) {
-              Trace(DEBUG1) << "bpc != 8, not RGB8 " << bpc << "\n";
+              LOGDBG1("bpc != 8, not RGB8 %u\n", bpc);
               break;
             }
           }
         }
         catch(const std::exception & e) {
-          Trace(DEBUG1) << "Exception getting BPS " << e.what() << "\n";
+          LOGDBG1("Exception getting BPS %s\n", e.what());
         }
         if (isRGB8) {
           _type = OR_DATA_TYPE_PIXMAP_8RGB;
@@ -322,11 +313,10 @@ MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
     ifd = exifIfd();
   }
   else {
-    Trace(ERROR) << "Unknown Meta Namespace\n";
+    LOGERR("Unknown Meta Namespace\n");
   }
   if(ifd) {
-    Trace(DEBUG1) << "Meta value for "
-                  << META_NS_MASKOUT(meta_index) << "\n";
+    LOGDBG1("Meta value for %u\n", META_NS_MASKOUT(meta_index));
 
     IfdEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
     if(e) {
@@ -388,51 +378,40 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
 {
   ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
   if(cfaPattern.size() != 4) {
-    Trace(WARNING) << "Unsupported bayer pattern\n";
+    LOGWARN("Unsupported bayer pattern\n");
   }
   else {
-    Trace(DEBUG2) << "patter is = " << cfaPattern[0] << ", "
-                  << cfaPattern[1] << ", " << cfaPattern[2]
-                  << ", " << cfaPattern[3] << "\n";
+    LOGDBG2("pattern is = %d, %d, %d, %d\n", cfaPattern[0],
+            cfaPattern[1], cfaPattern[2], cfaPattern[3]);
     switch(cfaPattern[0]) {
     case IFD::CFA_RED:
-      switch(cfaPattern[1]) {
-      case IFD::CFA_GREEN:
-        if((cfaPattern[2] == IFD::CFA_GREEN)
-           && (cfaPattern[3] == IFD::CFA_BLUE))
-        {
-          cfa_pattern = OR_CFA_PATTERN_RGGB;
-        }
-        break;
+      if ((cfaPattern[1] == IFD::CFA_GREEN)
+          && (cfaPattern[2] == IFD::CFA_GREEN)
+          && (cfaPattern[3] == IFD::CFA_BLUE)) {
+        cfa_pattern = OR_CFA_PATTERN_RGGB;
       }
       break;
     case IFD::CFA_GREEN:
       switch(cfaPattern[1]) {
       case IFD::CFA_RED:
-        if((cfaPattern[2] == 2)
-           && (cfaPattern[3] == IFD::CFA_GREEN))
-        {
+        if ((cfaPattern[2] == IFD::CFA_BLUE)
+            && (cfaPattern[3] == IFD::CFA_GREEN)) {
           cfa_pattern = OR_CFA_PATTERN_GRBG;
         }
         break;
       case 2:
-        if((cfaPattern[2] == IFD::CFA_RED)
-           && (cfaPattern[3] == IFD::CFA_GREEN))
-        {
+        if ((cfaPattern[2] == IFD::CFA_RED)
+            && (cfaPattern[3] == IFD::CFA_GREEN)) {
           cfa_pattern = OR_CFA_PATTERN_GBRG;
         }
         break;
       }
       break;
     case IFD::CFA_BLUE:
-      switch(cfaPattern[1]) {
-      case IFD::CFA_GREEN:
-        if((cfaPattern[2] == IFD::CFA_GREEN)
-           && (cfaPattern[3] == IFD::CFA_RED))
-        {
-          cfa_pattern = OR_CFA_PATTERN_BGGR;
-        }
-        break;
+      if ((cfaPattern[1] ==IFD::CFA_GREEN)
+          && (cfaPattern[2] == IFD::CFA_GREEN)
+          && (cfaPattern[3] == IFD::CFA_RED)) {
+        cfa_pattern = OR_CFA_PATTERN_BGGR;
       }
       break;
     }
@@ -485,7 +464,7 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
  */
 static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
 {
-  Trace(DEBUG1) << __FUNCTION__ << "\n";
+  LOGDBG1("%s\n", __FUNCTION__);
   ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
   try {
     IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
@@ -501,7 +480,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   }
   catch(...)
   {
-    Trace(ERROR) << "Exception in _getCfaPattern().\n";
+    LOGERR("Exception in _getCfaPattern().\n");
   }
   return cfa_pattern;
 }
@@ -513,7 +492,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
 {
   ::or_error ret = OR_ERROR_NONE;
   const IfdDir::Ref & _cfaIfd = cfaIfd();
-  Trace(DEBUG1) << "_getRawData()\n";
+  LOGDBG1("_getRawData()\n");
 
   if(_cfaIfd) {
     ret = _getRawDataFromDir(data, _cfaIfd);
@@ -547,24 +526,24 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   y = 0;
 
   if(!dir) {
-    Trace(ERROR) << "dir is NULL\n";
+    LOGERR("dir is NULL\n");
     return OR_ERROR_NOT_FOUND;
   }
   got_it = dir->getValue(IFD::EXIF_TAG_BITS_PER_SAMPLE, bpc);
   if(!got_it) {
-    Trace(ERROR) << "unable to guess Bits per sample\n";
+    LOGERR("unable to guess Bits per sample\n");
   }
 
   got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
   if(got_it) {
     IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
     if(!e) {
-      Trace(DEBUG1) << "byte len not found\n";
+      LOGDBG1("byte len not found\n");
       return OR_ERROR_NOT_FOUND;
     }
     std::vector<uint32_t> counts;
     e->getArray(counts);
-    Trace(DEBUG1) << "counting tiles\n";
+    LOGDBG1("counting tiles\n");
     byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
   }
   else {
@@ -572,34 +551,34 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     // TODO extract all of them.
     IfdEntry::Ref e = dir->getEntry(IFD::TIFF_TAG_TILE_OFFSETS);
     if(!e) {
-      Trace(DEBUG1) << "tile offsets empty\n";
+      LOGDBG1("tile offsets empty\n");
       return OR_ERROR_NOT_FOUND;
     }
     std::vector<uint32_t> offsets;
     e->getArray(offsets);
     if(offsets.size() == 0) {
-      Trace(DEBUG1) << "tile offsets not found\n";
+      LOGDBG1("tile offsets not found\n");
       return OR_ERROR_NOT_FOUND;
     }
     offset = offsets[0];
     e = dir->getEntry(IFD::TIFF_TAG_TILE_BYTECOUNTS);
     if(!e) {
-      Trace(DEBUG1) << "tile byte counts not found\n";
+      LOGDBG1("tile byte counts not found\n");
       return OR_ERROR_NOT_FOUND;
     }
     std::vector<uint32_t> counts;
     e->getArray(counts);
-    Trace(DEBUG1) << "counting tiles\n";
+    LOGDBG1("counting tiles\n");
     byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
   }
   got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
   if(!got_it) {
-    Trace(DEBUG1) << "X not found\n";
+    LOGDBG1("X not found\n");
     return OR_ERROR_NOT_FOUND;
   }
   got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
   if(!got_it) {
-    Trace(DEBUG1) << "Y not found\n";
+    LOGDBG1("Y not found\n");
     return OR_ERROR_NOT_FOUND;
   }
 
@@ -614,7 +593,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   uint16_t tiffCompression = 0;
   got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, tiffCompression);
   if(!got_it) {
-    Trace(DEBUG1) << "Compression type not found\n";
+    LOGDBG1("Compression type not found\n");
   }
   BitmapData::DataType data_type = OR_DATA_TYPE_NONE;
 
@@ -630,7 +609,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   case IFD::COMPRESS_NIKON_QUANTIZED:
     // must check whether it is really compressed
     // only for D100
-    if( !NefFile::isCompressed(*m_container, offset) ) {
+    if (!NefFile::isCompressed(*m_container, offset)) {
       compression = IFD::COMPRESS_NIKON_PACK;
       data_type = OR_DATA_TYPE_RAW;
       // this is a hack. we should check if
@@ -661,8 +640,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   if((bpc == 12 || bpc == 14) && (compression == IFD::COMPRESS_NONE)
      && (byte_length == (x * y * 2))) {
     // We turn this to a 16-bits per sample. MSB are 0
-    Trace(DEBUG1) << "setting bpc from " << bpc
-                  << " to 16\n";
+    LOGDBG1("setting bpc from %u to 16\n", bpc);
     bpc = 16;
   }
   if((bpc == 16) || (data_type == OR_DATA_TYPE_COMPRESSED_RAW)) {
@@ -670,15 +648,15 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     size_t real_size = m_container->fetchData(p, offset,
                                               byte_length);
     if (real_size < byte_length) {
-      Trace(WARNING) << "Size mismatch for data: ignoring.\n";
+      LOGWARN("Size mismatch for data: ignoring.\n");
     }
   }
   else if((bpc == 12) || (bpc == 8)) {
     ret = _unpackData(bpc, compression, data, x, y, offset, byte_length);
-    Trace(DEBUG1) << "unpack result " << ret << "\n";
+    LOGDBG1("unpack result %d\n", ret);
   }
   else {
-    Trace(ERROR) << "Unsupported bpc " << bpc << "\n";
+    LOGERR("Unsupported bpc %u\n", bpc);
     return OR_ERROR_INVALID_FORMAT;
   }
   data.setCfaPatternType(cfa_pattern);
@@ -696,21 +674,22 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
 }
 
 
-::or_error IfdFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data, uint32_t x, uint32_t y, uint32_t offset, uint32_t byte_length)
+::or_error
+IfdFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data,
+                     uint32_t x, uint32_t y, uint32_t offset, uint32_t byte_length)
 {
   ::or_error ret = OR_ERROR_NONE;
   size_t fetched = 0;
   uint32_t current_offset = offset;
   Unpack unpack(x, compression);
   const size_t blocksize = (bpc == 8 ? x : unpack.block_size());
-  Trace(DEBUG1) << "Block size = " << blocksize << "\n";
-  Trace(DEBUG1) << "dimensions (x, y) " << x << ", "
-                << y << "\n";
+  LOGDBG1("Block size = %lu\n", blocksize);
+  LOGDBG1("dimensions (x, y) %u, %u\n", x, y);
   std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
   size_t outsize = x * y * 2;
   uint8_t * outdata = (uint8_t*)data.allocData(outsize);
   size_t got;
-  Trace(DEBUG1) << "offset of RAW data = " << current_offset << "\n";
+  LOGDBG1("offset of RAW data = %u\n", current_offset);
   do {
     got = m_container->fetchData (block.get(),
                                   current_offset, blocksize);
