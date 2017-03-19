@@ -14,6 +14,7 @@ teststream_LDADD = libopenraw.la
 
 noinst_HEADERS = \
 	trace.hpp	\
+	option.hpp \
 	rawcontainer.hpp \
 	ifdfile.hpp \
 	tiffepfile.hpp \

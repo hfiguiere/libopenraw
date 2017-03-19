@@ -243,7 +243,7 @@ RafFile::~RafFile()
 
     JfifContainer *jpegPreview = m_container->getJpegPreview();
     if (!jpegPreview) {
-        return ret;
+        return OR_ERROR_NOT_FOUND;
     }
 
     uint32_t x, y;
@@ -261,30 +261,28 @@ RafFile::~RafFile()
         return ret;
     }
 
-    bool got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
-
-    if (got_it) {
-        got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
+    auto result = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH);
+    if (result.ok()) {
+        x = result.unwrap();
+        result = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH);
+        y = result.unwrap_or(0);
     }
 
-    if (!got_it) {
-        uint32_t jpeg_offset = 0;
-        uint32_t jpeg_size = 0;
-        got_it =
-            dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, jpeg_offset);
-
-        if (!got_it) {
+    if (result.empty()) {
+        result =
+            dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT);
+        if (result.empty()) {
             return ret;
         }
+        uint32_t jpeg_offset = result.unwrap();
 
-        jpeg_offset += 12; // magic number. uh?
+        jpeg_offset += 12; // XXX magic number. eh?
                            // I need to re-read the Exif spec.
-        got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-                               jpeg_size);
-
-        if (!got_it) {
+        result = dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
+        if (result.empty()) {
             return ret;
         }
+        uint32_t jpeg_size = result.unwrap();
 
         IO::Stream::Ptr s(std::make_shared<IO::StreamClone>(jpegPreview->file(),
                                                             jpeg_offset));

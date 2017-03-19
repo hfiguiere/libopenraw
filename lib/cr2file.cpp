@@ -413,19 +413,21 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     }
 
     Trace(DEBUG1) << "_getRawData()\n";
-    uint32_t offset = 0;
-    uint32_t byte_length = 0;
-    bool got_it;
-    got_it = _cfaIfd->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-    if (!got_it) {
+
+    auto result = _cfaIfd->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_OFFSETS);
+    if (result.empty()) {
         Trace(DEBUG1) << "offset not found\n";
         return OR_ERROR_NOT_FOUND;
     }
-    got_it = _cfaIfd->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
-    if (!got_it) {
+    uint32_t offset = result.unwrap();
+
+    result = _cfaIfd->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
+    if (result.empty()) {
         Trace(DEBUG1) << "byte len not found\n";
         return OR_ERROR_NOT_FOUND;
     }
+    uint32_t byte_length = result.unwrap();
+
     // get the "slicing", tag 0xc640 (3 SHORT)
     std::vector<uint16_t> slices;
     IfdEntry::Ref e = _cfaIfd->getEntry(IFD::CR2_TAG_SLICE);
@@ -440,19 +442,19 @@ IfdDir::Ref Cr2File::_locateMainIfd()
         return OR_ERROR_NOT_FOUND;
     }
 
-    uint16_t x, y;
-    x = 0;
-    y = 0;
-    got_it = _exifIfd->getValue(IFD::EXIF_TAG_PIXEL_X_DIMENSION, x);
-    if (!got_it) {
+    auto result2 = _exifIfd->getValue<uint16_t>(IFD::EXIF_TAG_PIXEL_X_DIMENSION);
+    if (result2.empty()) {
       Trace(DEBUG1) << "X not found\n";
       return OR_ERROR_NOT_FOUND;
     }
-    got_it = _exifIfd->getValue(IFD::EXIF_TAG_PIXEL_Y_DIMENSION, y);
-    if (!got_it) {
+    uint16_t x = result2.unwrap();
+
+    result2 = _exifIfd->getValue<uint16_t>(IFD::EXIF_TAG_PIXEL_Y_DIMENSION);
+    if (result2.empty()) {
       Trace(DEBUG1) << "Y not found\n";
       return OR_ERROR_NOT_FOUND;
     }
+    uint16_t y = result2.unwrap();
 
     void *p = data.allocData(byte_length);
     size_t real_size = m_container->fetchData(p, offset, byte_length);

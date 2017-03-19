@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -147,19 +147,18 @@ void MRWFile::_identifyId()
     IfdDir::Ref dir;
     IfdEntry::Ref maker_ent;	/* Make note directory entry. */
     IfdEntry::Ref thumb_ent;	/* Thumbnail data directory entry. */
-    ::or_error ret = OR_ERROR_NOT_FOUND;
     MRWContainer *mc = (MRWContainer *)m_container;
 
     dir = _locateExifIfd();
     if (!dir) {
         Trace(WARNING) << "EXIF dir not found\n";
-        return ret;
+        return OR_ERROR_NOT_FOUND;
     }
 
     maker_ent = dir->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
     if (!maker_ent) {
         Trace(WARNING) << "maker note offset entry not found\n";
-        return ret;
+        return OR_ERROR_NOT_FOUND;
     }
     uint32_t off = 0;
     off = maker_ent->offset();
@@ -176,16 +175,20 @@ void MRWFile::_identifyId()
     if (thumb_ent) {
         tnail_offset = thumb_ent->offset();
         tnail_len = thumb_ent->count();
-    }
-    else if(ref->getValue(MRW::MRWTAG_THUMBNAIL_OFFSET, tnail_offset)) {
-        if(!ref->getValue(MRW::MRWTAG_THUMBNAIL_LENGTH, tnail_len)) {
-            Trace(WARNING) << "thumbnail lenght entry not found\n";
-            return ret;
+    } else {
+        auto result = ref->getValue<uint32_t>(MRW::MRWTAG_THUMBNAIL_OFFSET);
+        if (result.empty()) {
+            LOGWARN("thumbnail offset entry not found\n");
+            return OR_ERROR_NOT_FOUND;
         }
-    }
-    else {
-        Trace(WARNING) << "thumbnail offset entry not found\n";
-        return ret;
+        tnail_offset = result.unwrap();
+
+        result = ref->getValue<uint32_t>(MRW::MRWTAG_THUMBNAIL_LENGTH);
+        if (result.empty()) {
+            LOGWARN("thumbnail lenght entry not found\n");
+            return OR_ERROR_NOT_FOUND;
+        }
+        tnail_len = result.unwrap();
     }
 
     Trace(DEBUG1) << "thumbnail offset found, "

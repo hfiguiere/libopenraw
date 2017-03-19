@@ -36,14 +36,14 @@ namespace Internals {
 
 bool IfdDir::isPrimary() const
 {
-    uint32_t subtype = 1;
-    return getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype) && (subtype == 0);
+    auto result =  getValue<uint32_t>(IFD::EXIF_TAG_NEW_SUBFILE_TYPE);
+    return result.ok() && (result.unwrap() == 0);
 }
 
 bool IfdDir::isThumbnail() const
 {
-    uint32_t subtype = 0;
-    return getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype) && (subtype == 1);
+    auto result = getValue<uint32_t>(IFD::EXIF_TAG_NEW_SUBFILE_TYPE);
+    return result.ok() && (result.unwrap() == 1);
 }
 
 IfdDir::IfdDir(off_t _offset, IfdFileContainer &_container)
@@ -91,15 +91,14 @@ IfdEntry::Ref IfdDir::getEntry(uint16_t id) const
     return IfdEntry::Ref();
 }
 
-bool IfdDir::getIntegerValue(uint16_t id, uint32_t &v)
+Option<uint32_t>
+IfdDir::getIntegerValue(uint16_t id)
 {
-    bool success = false;
     IfdEntry::Ref e = getEntry(id);
     if (e != nullptr) {
-        v = e->getIntegerArrayItem(0);
-        success = true;
+        return Option<uint32_t>(e->getIntegerArrayItem(0));
     }
-    return success;
+    return Option<uint32_t>();
 }
 
 off_t IfdDir::nextIFD()
@@ -172,21 +171,20 @@ bool IfdDir::getSubIFDs(std::vector<IfdDir::Ref> &ifds)
  */
 IfdDir::Ref IfdDir::getExifIFD()
 {
-    bool success = false;
-    uint32_t val_offset = 0;
-    success = getValue(IFD::EXIF_TAG_EXIF_IFD_POINTER, val_offset);
-    if (success) {
-        Trace(DEBUG1) << "Exif IFD offset (uncorrected) = " << val_offset
-                      << "\n";
-        val_offset += m_container.exifOffsetCorrection();
-        Trace(DEBUG1) << "Exif IFD offset = " << val_offset << "\n";
-        Ref ref(std::make_shared<IfdDir>(val_offset, m_container));
-        ref->load();
-        return ref;
-    } else {
-        Trace(DEBUG1) << "Exif IFD offset not found.\n";
+    auto result = getValue<uint32_t>(IFD::EXIF_TAG_EXIF_IFD_POINTER);
+    if (result.empty()) {
+        LOGDBG1("Exif IFD offset not found.\n");
+        return Ref();
     }
-    return Ref();
+
+    uint32_t val_offset = result.unwrap();
+    LOGDBG1("Exif IFD offset (uncorrected) = %u\n", val_offset);
+    val_offset += m_container.exifOffsetCorrection();
+    LOGDBG1("Exif IFD offset = %u\n", val_offset);
+
+    Ref ref(std::make_shared<IfdDir>(val_offset, m_container));
+    ref->load();
+    return ref;
 }
 
 IfdDir::Ref IfdDir::getMakerNoteIfd()
@@ -210,5 +208,6 @@ IfdDir::Ref IfdDir::getMakerNoteIfd()
 
     return ref;
 }
+
 }
 }

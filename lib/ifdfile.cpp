@@ -99,10 +99,11 @@ void IfdFile::_identifyId()
     LOGERR("Main IFD not found to identify the file.\n");
     return;
   }
-  std::string make, model;
-  if (_mainIfd->getValue(IFD::EXIF_TAG_MAKE, make) &&
-      _mainIfd->getValue(IFD::EXIF_TAG_MODEL, model)) {
-    _setTypeId(_typeIdFromModel(make, model));
+
+  auto make = _mainIfd->getValue<std::string>(IFD::EXIF_TAG_MAKE);
+  auto model = _mainIfd->getValue<std::string>(IFD::EXIF_TAG_MODEL);
+  if (make.ok() && model.ok()) {
+    _setTypeId(_typeIdFromModel(make.unwrap(), model.unwrap()));
   }
 }
 
@@ -147,17 +148,13 @@ void IfdFile::_identifyId()
                                      std::vector<uint32_t> &list)
 {
   ::or_error ret = OR_ERROR_NOT_FOUND;
-  bool got_it;
-  uint32_t x = 0;
-  uint32_t y = 0;
   ::or_data_type _type = OR_DATA_TYPE_NONE;
   uint32_t subtype = 0;
 
   LOGDBG1("_locateThumbnail\n");
 
-  got_it = dir->getValue(IFD::EXIF_TAG_NEW_SUBFILE_TYPE, subtype);
-  LOGDBG1("subtype %u\n", subtype);
-  if(!got_it) {
+  auto result = dir->getValue<uint32_t>(IFD::EXIF_TAG_NEW_SUBFILE_TYPE);
+  if (result.empty()) {
     if(!m_cfaIfd) {
       m_cfaIfd = _locateCfaIfd();
     }
@@ -167,38 +164,37 @@ void IfdFile::_identifyId()
     else {
       subtype = 1;
     }
+  } else {
+    subtype = result.unwrap();
   }
+  LOGDBG1("subtype %u\n", subtype);
   if (subtype == 1) {
 
-    uint16_t photom_int = 0;
-    got_it = dir->getValue(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION,
-                           photom_int);
+    uint16_t photom_int =
+      dir->getValue<uint16_t>(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION).unwrap_or(IFD::EV_PI_RGB);
 
-    if (got_it) {
-      LOGDBG1("photometric int %u\n", photom_int);
-    }
-    // photometric interpretation is RGB by default
-    else {
-      photom_int = IFD::EV_PI_RGB;
-      LOGDBG1("assume photometric int is RGB\n");
-    }
+    uint32_t x = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH).unwrap_or(0);
+    uint32_t y = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH).unwrap_or(0);
 
-    got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
-    got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
-
-    uint16_t compression = 0;
-    got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, compression);
+    uint16_t compression = dir->getValue<uint16_t>(IFD::EXIF_TAG_COMPRESSION).unwrap_or(0);
 
     uint32_t offset = 0;
-    uint32_t byte_count = 0;
-    got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_count);
-    got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
+    uint32_t byte_count = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_BYTE_COUNTS).unwrap_or(0);
+
+    result = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_OFFSETS);
+    bool got_it = result.ok();
+    if (result.ok()) {
+      offset = result.unwrap();
+    }
     if (!got_it || (compression == 6) || (compression == 7)) {
-      if(!got_it) {
-        got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-                               byte_count);
-        got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT,
-                               offset);
+      if (!got_it) {
+        byte_count =
+          dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH).unwrap_or(0);
+        result = dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT);
+        got_it = result.ok();
+        if (got_it) {
+          offset = result.unwrap();
+        }
       }
       if (got_it) {
         // workaround for CR2 files where 8RGB data is marked
@@ -287,17 +283,15 @@ RawContainer* IfdFile::getContainer() const
 
 uint32_t IfdFile::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & byte_length)
 {
-  uint32_t offset = 0;
-  bool got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, byte_length);
-  if(got_it) {
-    got_it = dir->getValue(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT, offset);
+  auto result = dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
+  if (result.ok()) {
+    byte_length = result.unwrap();
+    return dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT).unwrap_or(0);
   }
-  else {
-    // some case it is STRIP_OFFSETS for JPEG
-    got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-    got_it = dir->getValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS, byte_length);
-  }
-  return offset;
+
+  // some case it is STRIP_OFFSETS for JPEG
+  byte_length = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_BYTE_COUNTS).unwrap_or(0);
+  return dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_OFFSETS).unwrap_or(0);
 }
 
 
@@ -328,9 +322,9 @@ MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
 
 /** by default we don't translate the compression
  */
-uint32_t IfdFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
+uint32_t IfdFile::_translateCompressionType(IFD::TiffCompress tiff_compression)
 {
-	return (uint32_t)tiffCompression;
+	return (uint32_t)tiff_compression;
 }
 
 
@@ -517,25 +511,22 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
 {
   ::or_error ret = OR_ERROR_NONE;
 
-  uint16_t bpc = 0;
   uint32_t offset = 0;
   uint32_t byte_length = 0;
-  bool got_it;
-  uint32_t x, y;
-  x = 0;
-  y = 0;
 
   if(!dir) {
     LOGERR("dir is NULL\n");
     return OR_ERROR_NOT_FOUND;
   }
-  got_it = dir->getValue(IFD::EXIF_TAG_BITS_PER_SAMPLE, bpc);
-  if(!got_it) {
+  auto result = dir->getValue<uint16_t>(IFD::EXIF_TAG_BITS_PER_SAMPLE);
+  if(result.empty()) {
     LOGERR("unable to guess Bits per sample\n");
   }
+  uint16_t bpc = result.unwrap_or(0);
 
-  got_it = dir->getValue(IFD::EXIF_TAG_STRIP_OFFSETS, offset);
-  if(got_it) {
+  auto result2 = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_OFFSETS);
+  if(result2.ok()) {
+    offset = result2.unwrap();
     IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
     if(!e) {
       LOGDBG1("byte len not found\n");
@@ -571,33 +562,34 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     LOGDBG1("counting tiles\n");
     byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
   }
-  got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH, x);
-  if(!got_it) {
+
+  result2 = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH);
+  if(result2.empty()) {
     LOGDBG1("X not found\n");
     return OR_ERROR_NOT_FOUND;
   }
-  got_it = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH, y);
-  if(!got_it) {
+  uint32_t x = result2.unwrap();
+
+  result2 = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH);
+  if(result2.empty()) {
     LOGDBG1("Y not found\n");
     return OR_ERROR_NOT_FOUND;
   }
+  uint32_t y = result2.unwrap();
 
-  uint32_t photo_int = 0;
-  got_it = dir->getIntegerValue(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION,
-                                photo_int);
-  if(!got_it) {
-    // Default is CFA.
-    photo_int = IFD::EV_PI_CFA;
-  }
+  uint32_t photo_int
+    = dir->getIntegerValue(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
+    .unwrap_or(IFD::EV_PI_CFA);
 
-  uint16_t tiffCompression = 0;
-  got_it = dir->getValue(IFD::EXIF_TAG_COMPRESSION, tiffCompression);
-  if(!got_it) {
-    LOGDBG1("Compression type not found\n");
-  }
   BitmapData::DataType data_type = OR_DATA_TYPE_NONE;
 
-	uint32_t compression = _translateCompressionType((IFD::TiffCompress)tiffCompression);
+  result = dir->getValue<uint16_t>(IFD::EXIF_TAG_COMPRESSION);
+  if(result.empty()) {
+    LOGDBG1("Compression type not found\n");
+  }
+	uint32_t compression = _translateCompressionType(
+    static_cast<IFD::TiffCompress>(result.unwrap_or(0)));
+
   switch(compression)
   {
   case IFD::COMPRESS_NONE:

@@ -34,6 +34,7 @@
 
 #include "ifdentry.hpp"
 #include "trace.hpp"
+#include "option.hpp"
 
 namespace OpenRaw {
 namespace Internals {
@@ -63,25 +64,21 @@ public:
 
     /** Get a T value from an entry
      * @param id the IFD field id
-     * @retval v the long value
-     * @return true if success
+     * @return an Option<T> containing the value or none.
      */
     template <typename T>
-    bool getValue(uint16_t id, T &v) const
+    Option<T> getValue(uint16_t id) const
     {
-        bool success = false;
         IfdEntry::Ref e = getEntry(id);
         if (e != NULL) {
             try {
-                v = IfdTypeTrait<T>::get(*e);
-                success = true;
+                return Option<T>(IfdTypeTrait<T>::get(*e));
             }
             catch (const std::exception &ex) {
-                Debug::Trace(ERROR) << "Exception raised " << ex.what()
-                                    << " fetch value for " << id << "\n";
+                LOGERR("Exception raised %s fetch value for %u\n", ex.what(), id);
             }
         }
-        return success;
+        return Option<T>();
     }
 
     /** Get an loosely typed integer value from an entry.
@@ -89,10 +86,9 @@ public:
      * or getShortValue() unless you really want the strong
      * typing that IFD structure provide
      * @param id the IFD field id
-     * @retval v the long value
-     * @return true if success
+     * @return an Option<uint32_t> containing the value or none.
      */
-    bool getIntegerValue(uint16_t id, uint32_t &v);
+    Option<uint32_t> getIntegerValue(uint16_t id);
 
     /** get the offset of the next IFD
      * in absolute
