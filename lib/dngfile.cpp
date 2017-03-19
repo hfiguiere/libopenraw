@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -213,7 +213,9 @@ DngFile::~DngFile()
 void DngFile::_identifyId()
 {
     TiffEpFile::_identifyId();
-    if (_typeId() == 0) {
+    // XXX what if the DNG file match the non DNG?
+    // XXX maybe we should hint of the type in the camera ID table
+    if (OR_GET_FILE_TYPEID_CAMERA(_typeId()) == 0) {
         const IfdDir::Ref & _mainIfd = mainIfd();
 
         std::string uniqueCameraModel;
