@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifddir.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -36,7 +36,7 @@ namespace Internals {
 
 bool IfdDir::isPrimary() const
 {
-    auto result =  getValue<uint32_t>(IFD::EXIF_TAG_NEW_SUBFILE_TYPE);
+    auto result = getValue<uint32_t>(IFD::EXIF_TAG_NEW_SUBFILE_TYPE);
     return result.ok() && (result.unwrap() == 0);
 }
 
@@ -57,13 +57,14 @@ IfdDir::~IfdDir()
 
 bool IfdDir::load()
 {
-    Trace(DEBUG1) << "IfdDir::load() m_offset =" << m_offset << "\n";
+    LOGDBG1("IfdDir::load() m_offset =%ld\n", m_offset);
     int16_t numEntries = 0;
     auto file = m_container.file();
     m_entries.clear();
     file->seek(m_offset, SEEK_SET);
     m_container.readInt16(file, numEntries);
-    Trace(DEBUG1) << "num entries " << numEntries << "\n";
+    LOGDBG1("num entries %d\n", numEntries);
+
     for (int16_t i = 0; i < numEntries; i++) {
         uint16_t id;
         int16_t type;
@@ -109,8 +110,7 @@ off_t IfdDir::nextIFD()
     if (m_entries.size() == 0) {
         file->seek(m_offset, SEEK_SET);
         m_container.readInt16(file, numEntries);
-        Trace(DEBUG1) << "numEntries =" << numEntries << " shifting "
-                      << (numEntries * 12) + 2 << "bytes\n";
+        LOGDBG1("numEntries =%d shifting %d bytes\n", numEntries, (numEntries * 12) + 2);
     } else {
         numEntries = m_entries.size();
     }
@@ -138,7 +138,7 @@ IfdDir::Ref IfdDir::getSubIFD(uint32_t idx) const
             }
         }
         catch (const std::exception &ex) {
-            Trace(ERROR) << "Exception " << ex.what() << "\n";
+            LOGERR("Exception %s\n", ex.what());
         }
     }
     return Ref();
@@ -160,7 +160,7 @@ bool IfdDir::getSubIFDs(std::vector<IfdDir::Ref> &ifds)
             success = true;
         }
         catch (const std::exception &ex) {
-            Trace(ERROR) << "Exception " << ex.what() << "\n";
+            LOGERR("Exception %s\n", ex.what());
         }
     }
     return success;
@@ -192,14 +192,13 @@ IfdDir::Ref IfdDir::getMakerNoteIfd()
     uint32_t val_offset = 0;
     IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_MAKER_NOTE);
     if (!e) {
-        Trace(DEBUG1) << "MakerNote IFD offset not found.\n";
+        LOGDBG1("MakerNote IFD offset not found.\n");
         return MakerNoteDir::Ref();
     }
     val_offset = e->offset();
-    Trace(DEBUG1) << "MakerNote IFD offset (uncorrected) = " << val_offset
-                  << "\n";
+    LOGDBG1("MakerNote IFD offset (uncorrected) = %u\n", val_offset);
     val_offset += m_container.exifOffsetCorrection();
-    Trace(DEBUG1) << "MakerNote IFD offset = " << val_offset << "\n";
+    LOGDBG1("MakerNote IFD offset = %u\n", val_offset);
 
     auto ref = MakerNoteDir::createMakerNote(val_offset, m_container);
     if (ref) {
