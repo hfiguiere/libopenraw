@@ -1,9 +1,9 @@
-libopenraw 0.1.1 -
+libopenraw 0.1.1 - 2017/03/18
 
 New features:
 
   Camera support:
-  [ a * denote that coefficients have been included ]
+  [ a * denote that WB coefficients have been included ]
 
   - Support for Canon G5X*, G7X MkII, G9X*, G9X MkII, EOS-M3*, EOS-M5, EOS-M10*,
     1DX MkII*, 5D MkIV*, 750D*, 760D*, 80D*, Rebel T7i/800D, Rebel T5/1200D*,

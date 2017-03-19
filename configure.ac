@@ -41,7 +41,8 @@ dnl version 0.0.7 is 6.5.1
 dnl version 0.0.8 is 6.5.2
 dnl version 0.0.9 is 6.5.3
 dnl version 0.1.0 is 7.0.0
-AC_SUBST([LIBOPENRAW_REVISION], [0])
+dnl version 0.1.1 is 7.0.1
+AC_SUBST([LIBOPENRAW_REVISION], [1])
 AC_SUBST([LIBOPENRAW_AGE],      [0])
 AC_SUBST([LIBOPENRAW_CURRENT],  [7])
 AC_SUBST([LIBOPENRAW_CURRENT_MIN],
