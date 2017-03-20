@@ -49,7 +49,7 @@ IfdDir::Ref  TiffEpFile::_locateCfaIfd()
 
     std::vector<IfdDir::Ref> subdirs;
     if (!_mainIfd) {
-        Trace(DEBUG1) << "couldn't find main ifd\n";
+        LOGDBG1("couldn't find main ifd\n");
         return IfdDir::Ref();
     }
     if (_mainIfd->isPrimary()) {
@@ -57,7 +57,7 @@ IfdDir::Ref  TiffEpFile::_locateCfaIfd()
     }
     if (!_mainIfd->getSubIFDs(subdirs)) {
         // error
-        Trace(DEBUG1) << "couldn't find main ifd nor subifds\n";
+        LOGDBG1("couldn't find main ifd nor subifds\n");
         return IfdDir::Ref();
     }
     auto i = find_if(subdirs.begin(),
@@ -68,7 +68,7 @@ IfdDir::Ref  TiffEpFile::_locateCfaIfd()
     if (i != subdirs.end()) {
         return *i;
     }
-    Trace(DEBUG1) << "couldn't find a primary subifd\n";
+    LOGDBG1("couldn't find a primary subifd\n");
     return IfdDir::Ref();
 }
 

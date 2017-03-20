@@ -2,7 +2,7 @@
 /*
  * libopenraw - neffile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -426,11 +426,11 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
     }
     for(i = 15; i < 256; i+= 16) {
         if(buf[i]) {
-            Trace(DEBUG1) << "isCompressed: true\n";
+            LOGDBG1("isCompressed: true\n");
             return true;
         }
     }
-    Trace(DEBUG1) << "isCompressed: false\n";
+    LOGDBG1("isCompressed: false\n");
     return false;
 }
 
@@ -438,7 +438,7 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
 {
     NEFCompressionInfo c;
     if (!_getCompressionCurve(data, c)) {
-        Trace(ERROR) << "compression curve not found\n";
+        LOGERR("compression curve not found\n");
         return OR_ERROR_NOT_FOUND;
     }
     const uint32_t rows = data.height();
@@ -493,12 +493,12 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 {
     MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
     if(!_makerNoteIfd) {
-        Trace(ERROR) << "makernote not found\n";
+        LOGERR("makernote not found\n");
         return false;
     }
     IfdEntry::Ref curveEntry = _makerNoteIfd->getEntry(IFD::MNOTE_NIKON_NEFDECODETABLE2);
     if(!curveEntry) {
-        Trace(ERROR) << "decode table2 tag not found\n";
+        LOGERR("decode table2 tag not found\n");
         return false;
     }
 
@@ -511,12 +511,12 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
     uint8_t header0, header1;
     bool read = m_container->readUInt8(file, header0);
     if(!read) {
-        Trace(ERROR) << "Header not found\n";
+        LOGERR("Header not found\n");
         return false;
     }
     read = m_container->readUInt8(file, header1);
     if(!read) {
-        Trace(ERROR) << "Header not found\n";
+        LOGERR("Header not found\n");
         return false;
     }
 

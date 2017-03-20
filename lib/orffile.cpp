@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -310,7 +310,7 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
 
         val_offset += makerNote->getMnoteOffset();
 
-        Trace(DEBUG1) << "fetching JPEG\n";
+        LOGDBG1("fetching JPEG\n");
         IO::Stream::Ptr s(
             std::make_shared<IO::StreamClone>(m_io, val_offset));
         std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
@@ -318,8 +318,7 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
         uint32_t x, y;
         x = y = 0;
         jfif->getDimensions(x, y);
-        Trace(DEBUG1) << "JPEG dimensions x=" << x
-                      << " y=" << y << "\n";
+        LOGDBG1("JPEG dimensions x=%d y=%d\n", x, y);
 
         uint32_t dim = std::max(x, y);
         if (dim) {

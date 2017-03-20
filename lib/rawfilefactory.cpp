@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfilefactory.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -40,7 +40,7 @@ RawFileFactory::RawFileFactory(RawFile::Type type,
                                const RawFileFactory::raw_file_factory_t &fn,
                                const char *ext)
 {
-    Trace(DEBUG1) << "registering type " << (int)type << "\n";
+    LOGDBG1("registering type %d\n", (int)type);
     registerType(type, fn, ext);
 }
 
@@ -48,9 +48,9 @@ void RawFileFactory::registerType(RawFile::Type type,
                                   const RawFileFactory::raw_file_factory_t &fn,
                                   const char *ext)
 {
-    if (fn == NULL) {
-        Trace(ERROR) << "NULL fn for registerFactory()\n";
-        assert(fn == NULL);
+    if (fn == nullptr) {
+        LOGERR("NULL fn for registerFactory()\n");
+        assert(fn == nullptr);
     }
     table()[type] = fn;
     extensions()[ext] = type;
@@ -60,8 +60,7 @@ void RawFileFactory::unRegisterType(RawFile::Type type)
 {
     Table::iterator iter = table().find(type);
     if (iter == table().end()) {
-        Trace(ERROR) << "attempting to unregisterFactory() in unregistered "
-                        "element\n";
+        LOGERR("attempting to unregisterFactory() in unregistered element\n");
         assert(true);
     }
     table().erase(iter);

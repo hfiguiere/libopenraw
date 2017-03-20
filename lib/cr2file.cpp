@@ -1,7 +1,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -408,22 +408,22 @@ IfdDir::Ref Cr2File::_locateMainIfd()
 {
     const IfdDir::Ref &_cfaIfd = cfaIfd();
     if (!_cfaIfd) {
-        Trace(DEBUG1) << "cfa IFD not found\n";
+        LOGDBG1("cfa IFD not found\n");
         return OR_ERROR_NOT_FOUND;
     }
 
-    Trace(DEBUG1) << "_getRawData()\n";
+    LOGDBG1("_getRawData()\n");
 
     auto result = _cfaIfd->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_OFFSETS);
     if (result.empty()) {
-        Trace(DEBUG1) << "offset not found\n";
+        LOGDBG1("offset not found\n");
         return OR_ERROR_NOT_FOUND;
     }
     uint32_t offset = result.unwrap();
 
     result = _cfaIfd->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
     if (result.empty()) {
-        Trace(DEBUG1) << "byte len not found\n";
+        LOGDBG1("byte len not found\n");
         return OR_ERROR_NOT_FOUND;
     }
     uint32_t byte_length = result.unwrap();
@@ -433,33 +433,33 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     IfdEntry::Ref e = _cfaIfd->getEntry(IFD::CR2_TAG_SLICE);
     if (e) {
         e->getArray(slices);
-        Trace(DEBUG1) << "Found slice entry " << slices << "\n";
+        LOGDBG1("Found slice entry count %ld\n", slices.size());
     }
 
     const IfdDir::Ref &_exifIfd = exifIfd();
     if (!_exifIfd) {
-        Trace(ERROR) << "unable to find ExifIFD\n";
+        LOGERR("unable to find ExifIFD\n");
         return OR_ERROR_NOT_FOUND;
     }
 
     auto result2 = _exifIfd->getValue<uint16_t>(IFD::EXIF_TAG_PIXEL_X_DIMENSION);
     if (result2.empty()) {
-      Trace(DEBUG1) << "X not found\n";
-      return OR_ERROR_NOT_FOUND;
+        LOGDBG1("X not found\n");
+        return OR_ERROR_NOT_FOUND;
     }
     uint16_t x = result2.unwrap();
 
     result2 = _exifIfd->getValue<uint16_t>(IFD::EXIF_TAG_PIXEL_Y_DIMENSION);
     if (result2.empty()) {
-      Trace(DEBUG1) << "Y not found\n";
-      return OR_ERROR_NOT_FOUND;
+        LOGDBG1("Y not found\n");
+        return OR_ERROR_NOT_FOUND;
     }
     uint16_t y = result2.unwrap();
 
     void *p = data.allocData(byte_length);
     size_t real_size = m_container->fetchData(p, offset, byte_length);
     if (real_size < byte_length) {
-      Trace(WARNING) << "Size mismatch for data: ignoring.\n";
+        LOGWARN("Size mismatch for data: ignoring.\n");
     }
     // they are not all RGGB.
     // but I don't seem to see where this is encoded.
@@ -468,8 +468,7 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
     data.setDimensions(x, y);
 
-    Trace(DEBUG1) << "In size is " << data.width() << "x" << data.height()
-                  << "\n";
+    LOGDBG1("In size is %dx%d\n", data.width(), data.height());
     // decompress if we need
     if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
       IO::Stream::Ptr s(new IO::MemStream(data.data(), data.size()));
@@ -483,8 +482,7 @@ IfdDir::Ref Cr2File::_locateMainIfd()
       }
       RawDataPtr dData = decomp.decompress();
       if (dData) {
-        Trace(DEBUG1) << "Out size is " << dData->width() << "x"
-                      << dData->height() << "\n";
+        LOGDBG1("Out size is %dx%d\n", dData->width(), dData->height());
         // must re-set the cfaPattern
         dData->setCfaPatternType(data.cfaPattern()->patternType());
         data.swap(*dData);

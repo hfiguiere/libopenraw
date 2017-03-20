@@ -172,14 +172,14 @@ RawFile *RawFile::newRawFile(const char*_filename, RawFile::Type _typeHint)
     else {
         type = _typeHint;
     }
-    Trace(DEBUG1) << "factory size " << RawFileFactory::table().size() << "\n";
+    LOGDBG1("factory size %ld\n", RawFileFactory::table().size());
     auto iter = RawFileFactory::table().find(type);
     if (iter == RawFileFactory::table().end()) {
-        Trace(WARNING) << "factory not found\n";
+        LOGWARN("factory not found\n");
         return NULL;
     }
     if (iter->second == NULL) {
-        Trace(WARNING) << "factory is NULL\n";
+        LOGWARN("factory is NULL\n");
         return NULL;
     }
     IO::Stream::Ptr f(new IO::File(_filename));
@@ -195,7 +195,7 @@ RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer,
     if (_typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
         ::or_error err = identifyBuffer(buffer, len, type);
         if(err != OR_ERROR_NONE) {
-            Trace(ERROR) << "error identifying buffer\n";
+            LOGERR("error identifying buffer\n");
             return NULL;
         }
     }
@@ -204,11 +204,11 @@ RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer,
     }
     auto iter = RawFileFactory::table().find(type);
     if (iter == RawFileFactory::table().end()) {
-        Trace(WARNING) << "factory not found\n";
+        LOGWARN("factory not found\n");
         return NULL;
     }
-    if (iter->second == NULL) {
-        Trace(WARNING) << "factory is NULL\n";
+    if (iter->second == nullptr) {
+        LOGWARN("factory is NULL\n");
         return NULL;
     }
     IO::Stream::Ptr f(new IO::MemStream((void*)buffer, len));
@@ -220,7 +220,7 @@ RawFile::Type RawFile::identify(const char*_filename)
 {
     const char *e = ::strrchr(_filename, '.');
     if (e == NULL) {
-        Trace(DEBUG1) << "Extension not found\n";
+        LOGDBG1("Extension not found\n");
         return OR_RAWFILE_TYPE_UNKNOWN;
     }
     std::string extension(e + 1);
@@ -282,7 +282,7 @@ RawFile::Type RawFile::identify(const char*_filename)
             // Take into account DNG by checking the DNGVersion tag
             const MetaValue *dng_version = f->getMetaValue(META_NS_TIFF | TIFF_TAG_DNG_VERSION);
             if(dng_version) {
-                Trace(DEBUG1) << "found DNG versions\n";
+                LOGDBG1("found DNG versions\n");
                 _type = OR_RAWFILE_TYPE_DNG;
                 return OR_ERROR_NONE;
             }
@@ -350,10 +350,10 @@ void RawFile::_setTypeId(RawFile::TypeId _type_id)
 const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
 {
     if (d->m_sizes.empty()) {
-        Trace(DEBUG1) << "_enumThumbnailSizes init\n";
+        LOGDBG1("_enumThumbnailSizes init\n");
         ::or_error ret = _enumThumbnailSizes(d->m_sizes);
         if (ret != OR_ERROR_NONE) {
-            Trace(DEBUG1) << "_enumThumbnailSizes failed\n";
+            LOGDBG1("_enumThumbnailSizes failed\n");
         }
     }
     return d->m_sizes;
@@ -367,12 +367,12 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
     uint32_t biggest_smaller = 0;
     uint32_t found_size = 0;
 
-    Trace(DEBUG1) << "requested size " << tsize << "\n";
+    LOGDBG1("requested size %u\n", tsize);
 
     auto sizes(listThumbnailSizes());
 
     for (auto s : sizes) {
-        Trace(DEBUG1) << "current iter is " << s << "\n";
+        LOGDBG1("current iter is %u\n", s);
         if (s < tsize) {
             if (s > biggest_smaller) {
                 biggest_smaller = s;
@@ -395,12 +395,12 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
     }
 
     if (found_size != 0) {
-        Trace(DEBUG1) << "size " << found_size << " found\n";
+        LOGDBG1("size %u found\n", found_size);
         ret = _getThumbnail(found_size, thumbnail);
     }
     else {
         // no size found, let's fail gracefuly
-        Trace(DEBUG1) << "no size found\n";
+        LOGDBG1("no size found\n");
         ret = OR_ERROR_NOT_FOUND;
     }
 
@@ -421,15 +421,15 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
     uint32_t byte_length= desc.length; /**< of the buffer */
     uint32_t offset = desc.offset;
 
-    Trace(DEBUG1) << "Thumbnail at " << offset << " of " << byte_length << " bytes.\n";
+    LOGDBG1("Thumbnail at %u of %u bytes.\n", offset, byte_length);
 
     if (byte_length != 0) {
       void *p = thumbnail.allocData(byte_length);
       size_t real_size = getContainer()->fetchData(p, offset,
                                                 byte_length);
       if (real_size < byte_length) {
-        Trace(WARNING) << "Size mismatch for data: got " << real_size
-                       << " expected " << byte_length << " ignoring.\n";
+        LOGWARN("Size mismatch for data: got %lu expected %u ignoring.\n",
+                real_size, byte_length);
       }
 
       thumbnail.setDimensions(desc.x, desc.y);
@@ -447,7 +447,7 @@ void RawFile::_addThumbnail(uint32_t size, const Internals::ThumbDesc& desc)
 
 ::or_error RawFile::getRawData(RawData & rawdata, uint32_t options)
 {
-    Trace(DEBUG1) << "getRawData()\n";
+    LOGDBG1("getRawData()\n");
     ::or_error ret = _getRawData(rawdata, options);
     if (ret != OR_ERROR_NONE) {
         return ret;
@@ -470,7 +470,7 @@ void RawFile::_addThumbnail(uint32_t size, const Internals::ThumbDesc& desc)
 ::or_error RawFile::getRenderedImage(BitmapData & bitmapdata, uint32_t options)
 {
     RawData rawdata;
-    Trace(DEBUG1) << "options are " << options << "\n";
+    LOGDBG1("options are %u\n", options);
     ::or_error ret = getRawData(rawdata, options);
     if(ret == OR_ERROR_NONE) {
         ret = rawdata.getRenderedImage(bitmapdata, options);
@@ -491,7 +491,7 @@ int32_t RawFile::getOrientation()
         idx = value->getInteger(0);
     }
     catch(const Internals::BadTypeException & e)	{
-        Trace(DEBUG1) << "wrong type - " << e.what() << "\n";
+        LOGDBG1("wrong type - %s\n", e.what());
     }
     return idx;
 }

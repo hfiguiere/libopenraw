@@ -313,7 +313,7 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
     if(size == 0) {
         return OR_ERROR_NOT_FOUND;
     }
-    Trace(DEBUG1) << "Jpeg offset: " << offset << "\n";
+    LOGDBG1("Jpeg offset: %u\n", offset);
 
     uint32_t x = 0;
     uint32_t y = 0;
@@ -321,8 +321,7 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
     IO::Stream::Ptr s(new IO::StreamClone(m_io, offset));
     std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
     if (jfif->getDimensions(x,y)) {
-        Trace(DEBUG1) << "JPEG dimensions x=" << x
-                      << " y=" << y << "\n";
+        LOGDBG1("JPEG dimensions x=%u y=%u\n", x, y);
     }
     if(_type != OR_DATA_TYPE_NONE) {
         uint32_t dim = std::max(x, y);
@@ -338,7 +337,7 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
     IfdEntry::Ref e = dir->getEntry(IFD::RW2_TAG_JPEG_FROM_RAW);
 	if(!e) {
 	    len = 0;
-		Trace(DEBUG1) << "JpegFromRaw not found\n";
+		LOGDBG1("JpegFromRaw not found\n");
 		return 0;
 	}
     uint32_t offset = e->offset();
@@ -352,11 +351,11 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 	::or_error ret = OR_ERROR_NONE;
 	const IfdDir::Ref & _cfaIfd = cfaIfd();
 	if(!_cfaIfd) {
-		Trace(DEBUG1) << "cfa IFD not found\n";
+		LOGDBG1("cfa IFD not found\n");
 		return OR_ERROR_NOT_FOUND;
 	}
 
-	Trace(DEBUG1) << "_getRawData()\n";
+	LOGDBG1("_getRawData()\n");
 	uint32_t offset = 0;
 	uint32_t byte_length = 0;
 	// RW2 file
@@ -383,14 +382,14 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 
 	result = _cfaIfd->getIntegerValue(IFD::RW2_TAG_SENSOR_WIDTH);
 	if(result.empty()) {
-		Trace(DEBUG1) << "X not found\n";
+		LOGDBG1("X not found\n");
 		return OR_ERROR_NOT_FOUND;
 	}
 	uint32_t x = result.unwrap();
 
 	result = _cfaIfd->getIntegerValue(IFD::RW2_TAG_SENSOR_HEIGHT);
 	if(result.empty()) {
-		Trace(DEBUG1) << "Y not found\n";
+		LOGDBG1("Y not found\n");
 		return OR_ERROR_NOT_FOUND;
 	}
 	uint32_t y = result.unwrap();
@@ -406,8 +405,8 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 		data.setCompression(PANA_RAW_COMPRESSION);
 	}
 	else if (real_size < byte_length) {
-		Trace(WARNING) << "Size mismatch for data: expected " << byte_length
-			<< " got " << real_size << " ignoring.\n";
+		LOGWARN("Size mismatch for data: expected %u got %lu ignoring.\n",
+				byte_length, real_size);
 		return OR_ERROR_NOT_FOUND;
 	}
 	else {
@@ -421,8 +420,7 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 	//
 	data.setDimensions(x, y);
 
-	Trace(DEBUG1) << "In size is " << data.width()
-				  << "x" << data.height() << "\n";
+	LOGDBG1("In size is %ux%u\n", data.width(), data.height());
 	// get the sensor info
 	// XXX what if it is not found?
 	IfdEntry::Ref e = _cfaIfd->getEntry(IFD::RW2_TAG_SENSOR_LEFTBORDER);

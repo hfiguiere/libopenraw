@@ -151,13 +151,13 @@ void MRWFile::_identifyId()
 
     dir = _locateExifIfd();
     if (!dir) {
-        Trace(WARNING) << "EXIF dir not found\n";
+        LOGWARN("EXIF dir not found\n");
         return OR_ERROR_NOT_FOUND;
     }
 
     maker_ent = dir->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
     if (!maker_ent) {
-        Trace(WARNING) << "maker note offset entry not found\n";
+        LOGWARN("maker note offset entry not found\n");
         return OR_ERROR_NOT_FOUND;
     }
     uint32_t off = 0;
@@ -191,18 +191,16 @@ void MRWFile::_identifyId()
         tnail_len = result.unwrap();
     }
 
-    Trace(DEBUG1) << "thumbnail offset found, "
-                  << " offset == " << tnail_offset  << " count == "
-                  << tnail_len << "\n";
+    LOGDBG1("thumbnail offset found, offset == %u count == %u\n",
+            tnail_offset, tnail_len);
     void *p = thumbnail.allocData (tnail_len);
     size_t fetched = m_container->fetchData(p, mc->ttw->offset()
                                             + MRW::DataBlockHeaderLength
                                             + tnail_offset,
                                             tnail_len);
     if (fetched != tnail_len) {
-        Trace(WARNING) << "Unable to fetch all thumbnail data: "
-                       << fetched << " not " << tnail_len
-                       << " bytes\n";
+        LOGWARN("Unable to fetch all thumbnail data: %lu not %u bytes\n",
+                fetched, tnail_len);
     }
     /* Need to patch first byte. */
     ((unsigned char *)p)[0] = 0xFF;
@@ -252,8 +250,7 @@ void MRWFile::_identifyId()
 				   black, white);
 	data.setBlackLevel(black);
 	data.setWhiteLevel(white);
-	Trace(DEBUG1) << "datalen = " << datalen <<
-		" final datalen = " << finaldatalen << "\n";
+	LOGDBG1("datalen = %d final datalen = %u\n", datalen, finaldatalen);
 	void *p = data.allocData(finaldatalen);
 	size_t fetched = 0;
 	off_t offset = mc->pixelDataOffset();
@@ -268,20 +265,19 @@ void MRWFile::_identifyId()
 		size_t outsize = finaldatalen;
 		size_t got;
 		do {
-			Trace(DEBUG2) << "fatchData @offset " << offset << "\n";
+			LOGDBG2("fetchData @offset %ld\n", offset);
 			got = m_container->fetchData (block.get(),
 										  offset, blocksize);
 			fetched += got;
 			offset += got;
-			Trace(DEBUG2) << "got " << got << "\n";
+			LOGDBG2("got %ld\n", got);
 			if(got) {
 				size_t out;
                                 or_error err = unpack.unpack_be12to16(outdata, outsize,
 									block.get(), got, out);
 				outdata += out;
 				outsize -= out;
-				Trace(DEBUG2) << "unpacked " << out
-							  << " bytes from " << got << "\n";
+				LOGDBG2("unpacked %ld bytes from %ld\n", out, got);
                                 if(err != OR_ERROR_NONE) {
                                     ret = err;
                                     break;
@@ -290,8 +286,8 @@ void MRWFile::_identifyId()
 		} while((got != 0) && (fetched < datalen));
 	}
 	if (fetched < datalen) {
-		Trace(WARNING) << "Fetched only " << fetched <<
-			" of " << datalen << ": continuing anyway.\n";
+		LOGWARN("Fetched only %ld of %u: continuing anyway.\n", fetched,
+			datalen);
 	}
 	uint16_t bpat = mc->prd->uint16_val (MRW::PRD_BAYER_PATTERN);
 	or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;

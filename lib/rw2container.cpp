@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2container.cpp
  *
- * Copyright (C) 2011-2015 Hubert Figuiere
+ * Copyright (C) 2011-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -47,12 +47,12 @@ IfdFileContainer::EndianType Rw2Container::isMagicHeader(const char *p, int len)
     if ((p[0] == 'I') && (p[1] == 'I')) {
         if ((p[2] == 'U') && (p[3] == 0)) {
 
-            Trace(DEBUG1) << "Identified EL RW2 file.\n";
+            LOGDBG1("Identified EL RW2 file.\n");
             return ENDIAN_LITTLE;
         }
     }
 
-    Trace(ERROR) << "Unidentified RW2 file\n";
+    LOGERR("Unidentified RW2 file\n");
 
     return ENDIAN_NULL;
 }

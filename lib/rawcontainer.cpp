@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawcontainer.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -77,13 +77,13 @@ bool RawContainer::readUInt8(const IO::Stream::Ptr &f, uint8_t & v)
   return true;
 }
 
-bool 
+bool
 RawContainer::readInt16(const IO::Stream::Ptr &f, int16_t & v)
 {
   if (m_endian == ENDIAN_NULL) {
-    
-    Trace(ERROR) << "null endian\n";
-    
+
+    LOGERR("null endian\n");
+
     return false;
   }
   unsigned char buf[2];
@@ -136,19 +136,17 @@ RawContainer::readUInt16Array(const IO::Stream::Ptr &f, std::vector<uint16_t> & 
 }
 
 
-bool 
+bool
 RawContainer::readInt32(const IO::Stream::Ptr &f, int32_t & v)
 {
   if (m_endian == ENDIAN_NULL) {
-    
-    Trace(ERROR) << "null endian\n";
-    
+    LOGERR("null endian\n");
     return false;
   }
   unsigned char buf[4];
   int s = f->read(buf, 4);
   if (s != 4) {
-    Trace(ERROR) << "read " << s << " bytes\n";
+    LOGERR("read %d bytes\n", s);
     return false;
   }
 
@@ -168,7 +166,7 @@ RawContainer::readUInt16(const IO::Stream::Ptr &f, uint16_t & v)
 {
   if (m_endian == ENDIAN_NULL) {
 
-    Trace(ERROR) << "null endian\n";
+    LOGERR("null endian\n");
 
     return false;
   }
@@ -191,8 +189,7 @@ bool
 RawContainer::readUInt32(const IO::Stream::Ptr &f, uint32_t & v)
 {
   if (m_endian == ENDIAN_NULL) {
-
-    Trace(ERROR) << "null endian\n";
+    LOGERR("null endian\n");
 
     return false;
   }
@@ -213,7 +210,7 @@ RawContainer::readUInt32(const IO::Stream::Ptr &f, uint32_t & v)
 }
 
 
-size_t 
+size_t
 RawContainer::fetchData(void *buf, off_t _offset,
                         size_t buf_size)
 {

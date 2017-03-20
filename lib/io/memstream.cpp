@@ -1,7 +1,7 @@
 /*
  * libopenraw - memstream.cpp
  *
- * Copyright (C) 2007-2016 Hubert Figuière
+ * Copyright (C) 2007-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -32,12 +32,12 @@ using namespace Debug;
 
 namespace OpenRaw {
 namespace IO {
-		
+
 MemStream::MemStream(void *ptr, size_t s)
   : Stream(""),
     m_ptr(ptr),
     m_size(s),
-    m_current(NULL)
+    m_current(nullptr)
 {
 }
 
@@ -57,11 +57,9 @@ int MemStream::close()
 int MemStream::seek(off_t offset, int whence)
 {
   int newpos = 0;
-//			Trace(DEBUG1) << "MemStream::seek " << offset 
-//										<< " bytes - whence = " 
-//										<< whence <<  "\n";
+//			LOGDBG1("MemStream::seek %ld bytes - whence = %d", offset, whence);
   // TODO check bounds
-  if (m_current == NULL) {
+  if (m_current == nullptr) {
     // TODO set error code
     return -1;
   }
@@ -89,8 +87,8 @@ int MemStream::seek(off_t offset, int whence)
 
 int MemStream::read(void *buf, size_t count)
 {
-  if((m_current == NULL) || (m_ptr == NULL)) {
-    Trace(DEBUG1) << "MemStream::failed\n";
+  if((m_current == nullptr) || (m_ptr == nullptr)) {
+    LOGDBG1("MemStream::failed\n");
     return -1;
   }
 

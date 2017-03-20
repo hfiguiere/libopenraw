@@ -286,43 +286,48 @@ RawDataPtr CrwDecompressor::decompress()
     init_tables(m_table);
 
     int lowbits = canon_has_lowbits(m_stream);
-    Debug::Trace(DEBUG2) << "lowbits = " << lowbits
-                         << " height = " << m_height
-                         << " width = " << m_width
-                         << "\n";
-    m_stream->seek(514 + lowbits*m_height*m_width/4, SEEK_SET);
+    LOGDBG2("lowbits = %d height = %d width = %d\n", lowbits,
+            m_height, m_width);
+    m_stream->seek(514 + lowbits * m_height * m_width / 4, SEEK_SET);
     getbits(m_stream, -1);			/* Prime the bit buffer */
 
     while (column < m_width * m_height) {
-        memset(diffbuf,0,sizeof(diffbuf));
+        memset(diffbuf, 0, sizeof(diffbuf));
         decode = m_first_decode;
-        for (i=0; i < 64; i++ ) {
+        for (i = 0; i < 64; i++ ) {
 
-            for (dindex=decode; dindex->branch[0]; )
+            for (dindex = decode; dindex->branch[0]; ) {
                 dindex = dindex->branch[getbits(m_stream, 1)];
+            }
             leaf = dindex->leaf;
             decode = m_second_decode;
 
-            if (leaf == 0 && i)
+            if (leaf == 0 && i) {
                 break;
-            if (leaf == 0xff)
+            }
+            if (leaf == 0xff) {
                 continue;
+            }
             i  += leaf >> 4;
             len = leaf & 15;
-            if (len == 0)
+            if (len == 0) {
                 continue;
+            }
             diff = getbits(m_stream, len);
-            if ((diff & (1 << (len-1))) == 0)
+            if ((diff & (1 << (len-1))) == 0) {
                 diff -= (1 << len) - 1;
-            if (i < 64)
+            }
+            if (i < 64) {
                 diffbuf[i] = diff;
+            }
         }
         diffbuf[0] += carry;
         carry = diffbuf[0];
         for (i=0; i < 64; i++ ) {
-            if (column++ % m_width == 0)
+            if (column++ % m_width == 0) {
                 base[0] = base[1] = 512;
-            outbuf[i] = ( base[i & 1] += diffbuf[i] );
+            }
+            outbuf[i] = (base[i & 1] += diffbuf[i]);
         }
         if (lowbits) {
             save = m_stream->seek(0, SEEK_CUR);

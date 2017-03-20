@@ -381,9 +381,8 @@ RafFile::isXTrans(RawFile::TypeId type) const
     uint32_t datalen = (is_compressed ? byte_size : finaldatalen);
     void *buf = data.allocData(finaldatalen);
 
-    Debug::Trace(DEBUG2) << "byte_size = " << byte_size
-                         << " finaldatalen = " << finaldatalen
-                         << " compressed = " << compressed << "\n";
+    LOGDBG2("byte_size = %lu finaldatalen = %u compressed = %u", byte_size,
+            finaldatalen, compressed);
 
     ret = OR_ERROR_NONE;
 
@@ -395,29 +394,21 @@ RafFile::isXTrans(RawFile::TypeId type) const
         size_t outsize = finaldatalen;
         size_t got;
         do {
-            //      Debug::Trace(DEBUG2) << "fatchData @offset " << offset <<
-            //      "\n";
             got = m_container->fetchData(block.get(), offset, blocksize);
             fetched += got;
             offset += got;
-            //      Debug::Trace(DEBUG2) << "got " << got << "\n";
+
             if (got) {
                 size_t out;
                 or_error err = unpack.unpack_be12to16(outdata, outsize,
                                                       block.get(), got, out);
                 outdata += out;
                 outsize -= out;
-                //        Debug::Trace(DEBUG2) << "unpacked " << out
-                //                             << " bytes from " << got << "\n";
                 if (err != OR_ERROR_NONE) {
-                    Debug::Trace(DEBUG2) << "error is " << err << "\n";
+                    LOGDBG2("error is %d\n", static_cast<int>(err));
                     ret = err;
                     break;
                 }
-                //        Debug::Trace(DEBUG2) << "got = " << got
-                //                             << " fetched = " << fetched
-                //                             << " datalen = " << datalen <<
-                //                             "\n";
             }
         } while ((got != 0) && (fetched < datalen));
     } else {

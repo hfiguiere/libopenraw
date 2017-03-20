@@ -1,7 +1,7 @@
 /*
  * libopenraw - jfifcontainer.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -116,7 +116,7 @@ bool JfifContainer::getDimensions(uint32_t &x, uint32_t &y)
 {
   if(!m_headerLoaded) {
     if (_loadHeader() == 0) {
-      Trace(DEBUG1) << "load header failed\n";
+      LOGDBG1("load header failed\n");
       return false;
     }
   }
@@ -130,7 +130,7 @@ bool JfifContainer::getDecompressedData(BitmapData &data)
 {
   if(!m_headerLoaded) {
     if (_loadHeader() == 0) {
-      Trace(DEBUG1) << "load header failed\n";
+      LOGDBG1("load header failed\n");
       return false;
     }
   }

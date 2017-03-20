@@ -111,7 +111,7 @@ MetaValue* IfdEntry::make_meta_value()
         break;
     }
     default:
-        Trace(DEBUG1) << "unhandled type " << type() << "\n";
+        LOGDBG1("unhandled type %d\n", type());
         return NULL;
     }
     return new MetaValue(values);
@@ -176,8 +176,7 @@ uint32_t IfdEntry::getIntegerArrayItem(int idx)
         }
     }
     catch(const std::exception & ex) {
-        Debug::Trace(ERROR) << "Exception raised " << ex.what() 
-                     << " fetch integer value for " << m_id << "\n";
+        LOGERR("Exception raised %s fetch integer value for %d\n", ex.what(), m_id);
     }
 
     return v;

@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainer.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -96,8 +96,7 @@ Heap::Heap(off_t start, off_t length, CIFFContainer * _container)
       m_container(_container),
       m_records()
 {
-    Debug::Trace(DEBUG2) << "Heap @ " << start << " length = "
-                         << m_length << "\n";
+    LOGDBG2("Heap @ %ld length = %ld\n", start, m_length);
 }
 
 std::vector<RecordEntry> & Heap::records()
@@ -123,9 +122,9 @@ bool Heap::_loadRecords()
         file->seek(m_start + record_offset, SEEK_SET);
         ret = m_container->readInt16(file, numRecords);
         if (!ret) {
-            Trace(DEBUG1) << "read failed: " << ret << "\n";
+            LOGDBG1("read failed: %d\n", ret);
         }
-        Trace(DEBUG2) << "numRecords " << numRecords << "\n";
+        LOGDBG2("numRecords %d\n", numRecords);
         int16_t i;
         m_records.reserve(numRecords);
         for (i = 0; i < numRecords; i++) {
@@ -205,14 +204,14 @@ bool CIFFContainer::_loadHeap()
     if (m_endian != ENDIAN_NULL) {
         off_t heapLength = m_file->filesize() - m_hdr.headerLength;
 
-        Trace(DEBUG1) << "heap len " << heapLength << "\n";
+        LOGDBG1("heap len %ld\n", heapLength);
         m_heap = std::make_shared<CIFF::Heap>(m_hdr.headerLength,
                                               heapLength, this);
 
         ret = true;
     }
     else {
-        Trace(DEBUG1) << "Unknown endian\n";
+        LOGDBG1("Unknown endian\n");
     }
 
     return ret;
@@ -245,7 +244,7 @@ CIFF::Heap::Ref CIFFContainer::getImageProps()
                                      return e.isA(static_cast<uint16_t>(CIFF::TAG_IMAGEPROPS));
                                  });
         if (iter == records.end()) {
-            Trace(ERROR) << "Couldn't find the image properties.\n";
+            LOGERR("Couldn't find the image properties.\n");
             return CIFF::Heap::Ref();
         }
 
@@ -269,7 +268,7 @@ const CIFF::ImageSpec * CIFFContainer::getImageSpec()
                                      return e.isA(static_cast<uint16_t>(CIFF::TAG_IMAGEINFO));
                                  });
         if (iter == propsRecs.end()) {
-            Trace(ERROR) << "Couldn't find the image info.\n";
+            LOGERR("Couldn't find the image info.\n");
             return nullptr;
         }
         m_imagespec.readFrom(iter->offset + props->offset(), this);
@@ -292,7 +291,7 @@ const CIFF::Heap::Ref CIFFContainer::getCameraProps()
                                      return e.isA(static_cast<uint16_t>(CIFF::TAG_CAMERAOBJECT));
                                  });
         if (iter == propsRecs.end()) {
-            Trace(ERROR) << "Couldn't find the camera props.\n";
+            LOGERR("Couldn't find the camera props.\n");
             return CIFF::Heap::Ref();
         }
         m_cameraprops = std::make_shared<CIFF::Heap>(

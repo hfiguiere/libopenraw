@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -129,15 +129,14 @@ CRWFile::~CRWFile()
                             &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_JPEGIMAGE)));
     if (iter != records.end()) {
-        Trace(DEBUG2) << "JPEG @" << (*iter).offset << "\n";
+        LOGDBG2("JPEG @%u\n", (*iter).offset);
         m_x = m_y = 0;
-	uint32_t offset = heap->offset() + (*iter).offset;
+        uint32_t offset = heap->offset() + (*iter).offset;
         IO::StreamClone::Ptr s(new IO::StreamClone(m_io, offset));
         std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
 
         jfif->getDimensions(m_x, m_y);
-        Trace(DEBUG1) << "JPEG dimensions x=" << m_x
-                      << " y=" << m_y << "\n";
+        LOGDBG1("JPEG dimensions x=%d y=%d\n", m_x, m_y);
         uint32_t dim = std::max(m_x,m_y);
         _addThumbnail(dim, ThumbDesc(m_x, m_y, OR_DATA_TYPE_JPEG, offset, (*iter).length));
         list.push_back(dim);
@@ -174,7 +173,7 @@ RawContainer* CRWFile::getContainer() const
                                  &RecordEntry::isA, std::placeholders::_1,
                                  static_cast<uint16_t>(TAG_EXIFINFORMATION)));
     if (iter == propsRecs.end()) {
-        Trace(ERROR) << "Couldn't find the Exif information.\n";
+        LOGERR("Couldn't find the Exif information.\n");
         return err;
     }
 
@@ -186,16 +185,16 @@ RawContainer* CRWFile::getContainer() const
                             &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_DECODERTABLE)));
     if (iter == exifPropsRecs.end()) {
-        Trace(ERROR) << "Couldn't find the decoder table.\n";
+        LOGERR("Couldn't find the decoder table.\n");
         return err;
     }
-    Trace(DEBUG2) << "length = " << iter->length << "\n";
-    Trace(DEBUG2) << "offset = " << exifProps.offset() + iter->offset << "\n";
+    LOGDBG2("length = %d\n", iter->length);
+    LOGDBG2("offset = %ld\n", exifProps.offset() + iter->offset);
     auto file = m_container->file();
     file->seek(exifProps.offset() + iter->offset, SEEK_SET);
     uint32_t decoderTable;
     if(m_container->readUInt32(file, decoderTable)) {
-        Trace(DEBUG2) << "decoder table = " << decoderTable << "\n";
+        LOGDBG2("decoder table = %u\n", decoderTable);
     }
 
     // locate the CFA info
@@ -204,17 +203,17 @@ RawContainer* CRWFile::getContainer() const
                             &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_SENSORINFO)));
     if (iter == exifPropsRecs.end()) {
-        Trace(ERROR) << "Couldn't find the sensor info.\n";
+        LOGERR("Couldn't find the sensor info.\n");
         return err;
     }
-    Trace(DEBUG2) << "length = " << iter->length << "\n";
-    Trace(DEBUG2) << "offset = " << exifProps.offset() + iter->offset << "\n";
+    LOGDBG2("length = %u\n", iter->length);
+    LOGDBG2("offset = %ld\n", exifProps.offset() + iter->offset);
 
     // go figure what the +2 is. looks like it is the byte #
     file->seek(exifProps.offset() + iter->offset + 2, SEEK_SET);
     if(!(m_container->readUInt16(file, cfa_x)
          && m_container->readUInt16(file, cfa_y))) {
-        Trace(ERROR) << "Couldn't find the sensor size.\n";
+        LOGERR("Couldn't find the sensor size.\n");
         return err;
     }
 
@@ -222,12 +221,12 @@ RawContainer* CRWFile::getContainer() const
     const CIFF::RecordEntry *entry = m_container->getRawDataRecord();
     if (entry) {
         CIFF::Heap::Ref heap = m_container->heap();
-        Trace(DEBUG2) << "RAW @" << heap->offset() + entry->offset << "\n";
+        LOGDBG2("RAW @%ld\n", heap->offset() + entry->offset);
         size_t byte_size = entry->length;
         void *buf = data.allocData(byte_size);
         size_t real_size = entry->fetchData(heap.get(), buf, byte_size);
         if (real_size != byte_size) {
-            Trace(WARNING) << "wrong size\n";
+            LOGWARN("wrong size\n");
         }
         data.setDimensions(x, y);
         data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
@@ -245,8 +244,7 @@ RawContainer* CRWFile::getContainer() const
             decomp.setDecoderTable(decoderTable);
             RawDataPtr dData = decomp.decompress();
             if (dData) {
-                Trace(DEBUG1) << "Out size is " << dData->width()
-                              << "x" << dData->height() << "\n";
+                LOGDBG1("Out size is %dx%d\n", dData->width(), dData->height());
                 dData->setCfaPatternType(data.cfaPattern()->patternType());
                 data.swap(*dData);
             }
@@ -295,7 +293,7 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
                                        return e.isA(static_cast<uint16_t>(CIFF::TAG_RAWMAKEMODEL));
                                    });
                 if (iter == propsRecs.end()) {
-                    Trace(ERROR) << "Couldn't find the image info.\n";
+                    LOGERR("Couldn't find the image info.\n");
                 }
                 else {
                     char buf[256];
@@ -319,8 +317,8 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
                     else if (index == EXIF_TAG_MAKE) {
                         val = new MetaValue(m_make);
                     }
-                    Trace(DEBUG1) << "Make " << m_make << "\n";
-                    Trace(DEBUG1) << "Model " << m_model << "\n";
+                    LOGDBG1("Make %s\n", m_make.c_str());
+                    LOGDBG1("Model %s\n", m_model.c_str());
                 }
             }
 
@@ -333,7 +331,7 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
     case META_NS_EXIF:
         break;
     default:
-        Trace(ERROR) << "Unknown Meta Namespace\n";
+        LOGERR("Unknown Meta Namespace\n");
         break;
     }
 

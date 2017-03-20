@@ -153,16 +153,16 @@ DngFile::~DngFile()
     ::or_error ret = OR_ERROR_NONE;
     const IfdDir::Ref & _cfaIfd = cfaIfd();
 
-    Trace(DEBUG1) << "_getRawData()\n";
+    LOGDBG1("_getRawData()\n");
 
     if (!_cfaIfd) {
-        Trace(DEBUG1) << "cfaIfd is NULL: not found\n";
+        LOGDBG1("cfaIfd is NULL: not found\n");
         return OR_ERROR_NOT_FOUND;
     }
     ret = _getRawDataFromDir(data, _cfaIfd);
 
     if(ret != OR_ERROR_NONE) {
-        Trace(ERROR) << "couldn't find raw data\n";
+        LOGERR("couldn't find raw data\n");
         return ret;
     }
 

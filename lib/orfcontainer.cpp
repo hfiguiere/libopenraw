@@ -1,7 +1,7 @@
 /*
  * libopenraw - orfcontainer.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuière
+ * Copyright (C) 2006-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -47,22 +47,20 @@ IfdFileContainer::EndianType OrfContainer::isMagicHeader(const char *p, int len)
     if ((p[0] == 'I') && (p[1] == 'I')) {
         if ((p[2] == 'R') && ((p[3] == 'O') || (p[3] == 'S'))) {
 
-            Trace(DEBUG1) << "Identified EL ORF file. Subtype = " << p[3]
-                          << "\n";
+            LOGDBG1("Identified EL ORF file. Subtype = %c\n", p[3]);
             subtype_ = p[3];
             return ENDIAN_LITTLE;
         }
     } else if ((p[0] == 'M') && (p[1] == 'M')) {
         if ((p[3] == 'R') && ((p[2] == 'O') || (p[2] == 'S'))) {
 
-            Trace(DEBUG1) << "Identified BE ORF file. Subtype = " << p[2]
-                          << "\n";
+            LOGDBG1("Identified BE ORF file. Subtype = %c\n", p[2]);
             subtype_ = p[2];
             return ENDIAN_BIG;
         }
     }
 
-    Trace(ERROR) << "Unidentified ORF file\n";
+    LOGERR("Unidentified ORF file\n");
 
     return ENDIAN_NULL;
 }

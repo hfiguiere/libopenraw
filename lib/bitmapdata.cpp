@@ -1,7 +1,7 @@
 /*
  * libopenraw - bitmapdata.cpp
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -119,9 +119,9 @@ void BitmapData::setDataType(BitmapData::DataType _type)
 
 void *BitmapData::allocData(const size_t s)
 {
-    Trace(DEBUG1) << "allocate s=" << s << " data =" << d->data << "\n";
+    LOGDBG1("allocate s=%lu data =%p\n", s, d->data);
     d->data = calloc(s, 1);
-    Trace(DEBUG1) << " data =" << d->data << "\n";
+    LOGDBG1(" data =%p\n", d->data);
     d->data_size = s;
     return d->data;
 }

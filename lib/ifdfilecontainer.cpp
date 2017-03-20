@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfilecontainer.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -111,21 +111,20 @@ IfdDir::Ref IfdFileContainer::setDirectory(int dir)
 size_t IfdFileContainer::getDirectoryDataSize()
 {
     // TODO move to IFDirectory
-    Trace(DEBUG1) << "getDirectoryDataSize()"
-                  << "\n";
+    LOGDBG1("getDirectoryDataSize()\n");
     off_t dir_offset = m_current_dir->offset();
     // FIXME check error
-    Trace(DEBUG1) << "offset = " << dir_offset
-                  << " m_numTags = " << m_current_dir->numTags() << "\n";
+    LOGDBG1("offset = %ld m_numTags = %d\n", dir_offset, m_current_dir->numTags());
     off_t begin = dir_offset + 2 + (m_current_dir->numTags() * 12);
 
-    Trace(DEBUG1) << "begin = " << begin << "\n";
+    LOGDBG1("begin = %ld\n", begin);
 
     m_file->seek(begin, SEEK_SET);
     begin += 2;
+
     int32_t nextIFD;
     readInt32(m_file, nextIFD);
-    Trace(DEBUG1) << "nextIFD = " << nextIFD << "\n";
+    LOGDBG1("nextIFD = %d\n", nextIFD);
     if (nextIFD == 0) {
         // FIXME not good
     }
@@ -142,7 +141,7 @@ bool IfdFileContainer::_locateDirs(void)
     if (!locateDirsPreHook()) {
         return false;
     }
-    Trace(DEBUG1) << "_locateDirs()\n";
+    LOGDBG1("_locateDirs()\n");
     if (m_endian == ENDIAN_NULL) {
         char buf[4];
         m_file->seek(m_offset, SEEK_SET);
@@ -159,9 +158,7 @@ bool IfdFileContainer::_locateDirs(void)
     m_dirs.clear();
     do {
         if (dir_offset != 0) {
-            //					std::cerr.setf(std::ios_base::hex,
-            // std::ios_base::basefield);
-            Trace(DEBUG1) << "push offset =0x" << dir_offset << "\n";
+            LOGDBG1("push offset =0x%x\n", dir_offset);
 
             // we assume the offset is relative to the begining of
             // the IFD.
@@ -169,14 +166,11 @@ bool IfdFileContainer::_locateDirs(void)
                 std::make_shared<IfdDir>(m_offset + dir_offset, *this));
             m_dirs.push_back(dir);
 
-            //					std::cerr.setf((std::ios_base::fmtflags)0,
-            // std::ios_base::basefield);
-
             dir_offset = dir->nextIFD();
         }
     } while (dir_offset != 0);
 
-    Trace(DEBUG1) << "# dir found = " << m_dirs.size() << "\n";
+    LOGDBG1("# dir found = %ld\n", m_dirs.size());
     return (m_dirs.size() != 0);
 }
 }

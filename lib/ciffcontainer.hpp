@@ -171,7 +171,7 @@ public:
      */
     bool isA(uint16_t _typeCode) const
         {
-            Debug::Trace(DEBUG2) << "typeCode = " << typeCode << "\n";
+            LOGDBG2("typeCode = %u\n", typeCode);
             return typeCode == (TAGCODE_MASK & _typeCode);
         }
 

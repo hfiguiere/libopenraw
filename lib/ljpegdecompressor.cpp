@@ -496,30 +496,29 @@ inline int32_t LJpegDecompressor::QuickPredict(int32_t col, int16_t curComp,
         predictor = (left+upper)>>1;
         break;
     default:
-        Trace(WARNING) << "Warning: Undefined PSV\n";
+        LOGWARN("Warning: Undefined PSV\n");
         predictor = 0;
     }
     return predictor;
 }
 
 inline
-int32_t LJpegDecompressor::show_bits8(IO::Stream * s) 
+int32_t LJpegDecompressor::show_bits8(IO::Stream * s)
 {
     if (m_bitsLeft < 8) {
         fillBitBuffer(s, 8);
     }
-    return (m_getBuffer >> (m_bitsLeft-8)) & 0xff;	
+    return (m_getBuffer >> (m_bitsLeft-8)) & 0xff;
 }
-		
+
 inline
-void LJpegDecompressor::flush_bits(uint16_t nbits) 
+void LJpegDecompressor::flush_bits(uint16_t nbits)
 {
     m_bitsLeft -= (nbits);
 }
-		
-		
+
 inline
-int32_t LJpegDecompressor::get_bits(uint16_t nbits) 
+int32_t LJpegDecompressor::get_bits(uint16_t nbits)
 {
     if (m_bitsLeft < nbits) 
         fillBitBuffer(m_stream, nbits);
@@ -602,7 +601,7 @@ LJpegDecompressor::HuffDecode(HuffmanTable *htbl)
     int32_t rv;
     int32_t l, temp;
     int32_t code;
-	
+
     /*
      * If the huffman code is less than 8 bits, we can use the fast
      * table lookup to get its value.  It's more than 8 bits about
@@ -620,13 +619,13 @@ LJpegDecompressor::HuffDecode(HuffmanTable *htbl)
             code = (code << 1) | temp;
             l++;
         }
-		
+
         /*
          * With garbage input we may reach the sentinel value l = 17.
          */
-		
+
         if (l > 16) {
-            //Trace(WARNING) << "Corrupt JPEG data: bad Huffman code " << l << "\n";
+            //LOGWARN("Corrupt JPEG data: bad Huffman code %d\n", l);
             rv = 0;		/* fake a zero as the safest result */
         } else {
             rv = htbl->huffval[htbl->valptr[l] +
@@ -1525,8 +1524,7 @@ LJpegDecompressor::ReadScanHeader (DecompressInfo *dcPtr)
         return 0;
 
     default:
-        Trace(WARNING) << str(boost::format("Unexpected marker "
-                                            "0x%1%\n") % c);
+        LOGWARN("Unexpected marker 0x%x\n", c);
         break;
     }
     return 0;
@@ -1551,14 +1549,13 @@ RawDataPtr LJpegDecompressor::decompress()
                           * sizeof(uint16_t) 
                           * dcInfo.imageHeight
                           * dcInfo.numComponents);
-				
-        Trace(DEBUG1) << "dc width = " << dcInfo.imageWidth
-                      << " dc height = " << dcInfo.imageHeight
-                      << "\n";
+
+        LOGDBG1("dc width = %d dc height = %d\n", dcInfo.imageWidth,
+                dcInfo.imageHeight);
         /* consistently the real width is the JPEG width * numComponent
          * at least with all the Canon.
          * @todo check that this is valid with DNG too.
-         */ 
+         */
         uint32_t width = dcInfo.imageWidth * dcInfo.numComponents;
         m_output->setDimensions(width, dcInfo.imageHeight);
         m_output->setSlices(m_slices);
@@ -1569,7 +1566,7 @@ RawDataPtr LJpegDecompressor::decompress()
     }
     catch(...)
     {
-        Trace(ERROR) << "Decompression error\n";
+        LOGERR("Decompression error\n");
     }
     return std::move(m_output);
 }

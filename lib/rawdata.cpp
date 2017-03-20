@@ -128,12 +128,12 @@ RawData::~RawData()
 	uint16_t *src;
 
 	if(dataType() != OR_DATA_TYPE_RAW) {
-		Debug::Trace(DEBUG1) << "wrong data type\n";
-		return OR_ERROR_INVALID_FORMAT;
+            LOGDBG1("wrong data type\n");
+            return OR_ERROR_INVALID_FORMAT;
 	}
         if(d->photometricInterpretation != EV_PI_CFA &&
            d->photometricInterpretation != EV_PI_LINEAR_RAW) {
-            Debug::Trace(DEBUG1) << "only CFA or LinearRaw are supported.\n";
+            LOGDBG1("only CFA or LinearRaw are supported.\n");
             return OR_ERROR_INVALID_FORMAT;
         }
 
@@ -141,7 +141,7 @@ RawData::~RawData()
 	pattern = cfaPattern()->patternType();
 	_x = width();
 	_y = height();
-	
+
 	/*
 	 rawdata.linearize();
 	 rawdata.subtractBlack();
@@ -153,7 +153,7 @@ RawData::~RawData()
         or_error err = OR_ERROR_NONE;
 
         if (d->photometricInterpretation == EV_PI_CFA) {
-            /* figure out how the demosaic can be plugged for a different 
+            /* figure out how the demosaic can be plugged for a different
              * algorithm */
             bitmapdata.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
             uint8_t *dst = (uint8_t *)bitmapdata.allocData(sizeof(uint8_t) * 3 * _x * _y);
@@ -165,7 +165,7 @@ RawData::~RawData()
         }
         else {
             bitmapdata.setDataType(OR_DATA_TYPE_PIXMAP_16RGB);
-            uint16_t *dst = (uint16_t *)bitmapdata.allocData(sizeof(uint16_t) 
+            uint16_t *dst = (uint16_t *)bitmapdata.allocData(sizeof(uint16_t)
                                                              * 3 * _x * _y);
 
             err = grayscale_to_rgb(src, _x, _y, dst);
