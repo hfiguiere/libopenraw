@@ -58,25 +58,29 @@ IfdDir::~IfdDir()
 bool IfdDir::load()
 {
     LOGDBG1("IfdDir::load() m_offset =%ld\n", m_offset);
-    int16_t numEntries = 0;
+
     auto file = m_container.file();
     m_entries.clear();
     file->seek(m_offset, SEEK_SET);
-    m_container.readInt16(file, numEntries);
+
+    int16_t numEntries = m_container.readInt16(file).unwrap_or(0);
     LOGDBG1("num entries %d\n", numEntries);
 
     for (int16_t i = 0; i < numEntries; i++) {
-        uint16_t id;
-        int16_t type;
-        int32_t count;
         uint32_t data;
-        m_container.readUInt16(file, id);
-        m_container.readInt16(file, type);
-        m_container.readInt32(file, count);
-        file->read(&data, 4);
-        IfdEntry::Ref entry(
-            std::make_shared<IfdEntry>(id, type, count, data, m_container));
-        m_entries[id] = entry;
+        auto id = m_container.readUInt16(file);
+        auto type = m_container.readInt16(file);
+        auto count = m_container.readInt32(file);
+        size_t sz = file->read(&data, 4);
+        if (id.empty() || type.empty() || count.empty() || sz != 4) {
+          LOGERR("Failed to read entry %d\n", i);
+          return false;
+        }
+        uint16_t n_id = id.unwrap();
+        IfdEntry::Ref entry =
+          std::make_shared<IfdEntry>(n_id, type.unwrap(),
+                                     count.unwrap(), data, m_container);
+        m_entries[n_id] = entry;
     }
 
     return true;
@@ -104,21 +108,20 @@ IfdDir::getIntegerValue(uint16_t id)
 
 off_t IfdDir::nextIFD()
 {
-    int16_t numEntries;
+    int16_t numEntries = 0;
     auto file = m_container.file();
 
     if (m_entries.size() == 0) {
         file->seek(m_offset, SEEK_SET);
-        m_container.readInt16(file, numEntries);
+        numEntries = m_container.readInt16(file).unwrap_or(0);
         LOGDBG1("numEntries =%d shifting %d bytes\n", numEntries, (numEntries * 12) + 2);
     } else {
         numEntries = m_entries.size();
     }
 
     file->seek(m_offset + (numEntries * 12) + 2, SEEK_SET);
-    int32_t next;
-    m_container.readInt32(file, next);
-    return next;
+    // XXX how about we check the error. Even though 0 is not valid.
+    return m_container.readInt32(file).unwrap_or(0);
 }
 
 /** The SubIFD is locate at offset found in the field

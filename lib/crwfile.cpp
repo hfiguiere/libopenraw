@@ -174,7 +174,7 @@ RawContainer* CRWFile::getContainer() const
                                  static_cast<uint16_t>(TAG_EXIFINFORMATION)));
     if (iter == propsRecs.end()) {
         LOGERR("Couldn't find the Exif information.\n");
-        return err;
+        return OR_ERROR_NOT_FOUND;
     }
 
     Heap exifProps(iter->offset + props->offset(), iter->length, m_container);
@@ -192,13 +192,17 @@ RawContainer* CRWFile::getContainer() const
     LOGDBG2("offset = %ld\n", exifProps.offset() + iter->offset);
     auto file = m_container->file();
     file->seek(exifProps.offset() + iter->offset, SEEK_SET);
-    uint32_t decoderTable;
-    if(m_container->readUInt32(file, decoderTable)) {
-        LOGDBG2("decoder table = %u\n", decoderTable);
+
+    auto result = m_container->readUInt32(file);
+    if(result.empty()) {
+        LOGERR("Couldn't find decoder table\n");
+        return OR_ERROR_NOT_FOUND;
     }
 
+    uint32_t decoderTable = result.unwrap();
+    LOGDBG2("decoder table = %u\n", decoderTable);
+
     // locate the CFA info
-    uint16_t cfa_x, cfa_y;
     iter = std::find_if(exifPropsRecs.cbegin(), exifPropsRecs.cend(), std::bind(
                             &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_SENSORINFO)));
@@ -211,10 +215,12 @@ RawContainer* CRWFile::getContainer() const
 
     // go figure what the +2 is. looks like it is the byte #
     file->seek(exifProps.offset() + iter->offset + 2, SEEK_SET);
-    if(!(m_container->readUInt16(file, cfa_x)
-         && m_container->readUInt16(file, cfa_y))) {
+
+    auto cfa_x = m_container->readUInt16(file);
+    auto cfa_y = m_container->readUInt16(file);
+    if(cfa_x.empty() || cfa_y.empty()) {
         LOGERR("Couldn't find the sensor size.\n");
-        return err;
+        return OR_ERROR_NOT_FOUND;
     }
 
 
@@ -240,7 +246,7 @@ RawContainer* CRWFile::getContainer() const
 
             CrwDecompressor decomp(s.get(), m_container);
 
-            decomp.setOutputDimensions(cfa_x, cfa_y);
+            decomp.setOutputDimensions(cfa_x.unwrap(), cfa_y.unwrap());
             decomp.setDecoderTable(decoderTable);
             RawDataPtr dData = decomp.decompress();
             if (dData) {

@@ -230,10 +230,10 @@ std::unique_ptr<IfdFileContainer> & JfifContainer::ifdContainer()
   if(!m_ifd) {
     m_file->seek(0, SEEK_SET);
 
-    uint16_t marker;
-    readUInt16(m_file, marker); // SOI
-    readUInt16(m_file, marker); // APP0
-    readUInt16(m_file, marker); // ignore
+    // XXX check results and bail.
+    auto result = readUInt16(m_file); // SOI
+    result = readUInt16(m_file); // APP0
+    result = readUInt16(m_file); // ignore
 
     char delim[7];
     delim[6] = 0;

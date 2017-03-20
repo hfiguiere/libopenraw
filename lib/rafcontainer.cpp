@@ -1,4 +1,4 @@
-/* -*- tab-width:4; c-basic-offset:4 -*- */
+/* -*- tab-width:4; c-basic-offset:4 indent-tabs-mode:t -*- */
 /*
  * libopenraw - rafcontainer.cpp
  *
@@ -124,14 +124,44 @@ bool RafContainer::_readHeader()
 
 	m_file->read(model, 32);
 	m_model = model;
-	readUInt32(m_file, m_version);
+	auto result = readUInt32(m_file);
+	if (result.empty()) {
+		return false;
+	}
+	m_version = result.unwrap();
+
 	m_file->seek(20, SEEK_CUR);
-	readUInt32(m_file, m_offsetDirectory.jpegOffset);
-	readUInt32(m_file, m_offsetDirectory.jpegLength);
-	readUInt32(m_file, m_offsetDirectory.metaOffset);
-	readUInt32(m_file, m_offsetDirectory.metaLength);
-	readUInt32(m_file, m_offsetDirectory.cfaOffset);
-	readUInt32(m_file, m_offsetDirectory.cfaLength);
+
+	result = readUInt32(m_file);
+	if (result.empty()) {
+		return false;
+	}
+	m_offsetDirectory.jpegOffset = result.unwrap();
+	result = readUInt32(m_file);
+	if (result.empty()) {
+		return false;
+	}
+	m_offsetDirectory.jpegLength = result.unwrap();
+	result = readUInt32(m_file);
+	if (result.empty()) {
+		return false;
+	}
+	m_offsetDirectory.metaOffset = result.unwrap();
+	result = readUInt32(m_file);
+	if (result.empty()) {
+		return false;
+	}
+	m_offsetDirectory.metaLength = result.unwrap();
+	result = readUInt32(m_file);
+	if (result.empty()) {
+		return false;
+	}
+	m_offsetDirectory.cfaOffset = result.unwrap();
+	result = readUInt32(m_file);
+	if (result.empty()) {
+		return false;
+	}
+	m_offsetDirectory.cfaLength = result.unwrap();
 
 	return true;
 }

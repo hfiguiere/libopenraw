@@ -2,7 +2,7 @@
 /*
  * libopenraw - rafcontainer.cpp
  *
- * Copyright (C) 2011-2016 Hubert Figuiere
+ * Copyright (C) 2011-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,6 +25,7 @@
 #include <string>
 #include <utility>
 
+#include "trace.hpp"
 #include "metavalue.hpp"
 #include "rafmetacontainer.hpp"
 #include "io/stream.hpp"
@@ -72,17 +73,31 @@ RafMetaValue::Ref RafMetaContainer::getValue(uint16_t tag)
 
 void RafMetaContainer::_read()
 {
-	readUInt32(m_file, m_count);
+	auto result = readUInt32(m_file);
+	if (result.empty()) {
+		LOGERR("Couldn't read RAF meta count\n");
+		return;
+	}
+	m_count = result.unwrap();
+
 	for(uint32_t i = 0; i < m_count; i++) {
-		uint16_t tag;
-		uint16_t size;
-		readUInt16(m_file, tag);
-		readUInt16(m_file, size);
+		auto result16 = readUInt16(m_file);
+		if (result16.empty()) {
+			return;
+		}
+		uint16_t tag = result16.unwrap();
+
+		result16 = readUInt16(m_file);
+		if (result16.empty()) {
+			return;
+		}
+		uint16_t size = result16.unwrap();
+
 		MetaValue::value_t v;
 		if(size == 4) {
-			uint32_t intVal;
-			if(readUInt32(m_file, intVal)) {
-				v = MetaValue::value_t(intVal);
+			auto result32 = readUInt32(m_file);
+			if(result32.ok()) {
+				v = MetaValue::value_t(result32.unwrap());
 			}
 		}
 		else {
@@ -94,10 +109,8 @@ void RafMetaContainer::_read()
 			free(content);
 		}
 
-		RafMetaValue::Ref value(new RafMetaValue(tag, size, MetaValue(v)));
+		RafMetaValue::Ref value = std::make_shared<RafMetaValue>(tag, size, MetaValue(v));
 		m_tags.insert(std::make_pair(tag, value));
-
-//		printf("RAF: tag %x of size %u\n", tag, size);
 	}
 }
 

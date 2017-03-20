@@ -30,6 +30,7 @@
 #include <vector>
 
 #include "io/stream.hpp"
+#include "option.hpp"
 #include "rawcontainer.hpp"
 
 #include "ifdfilecontainer.hpp"
@@ -78,19 +79,19 @@ public:
     /** Return a signed 8-bit quantity at offset bytes from the start of the
      * data block.
      */
-    int8_t int8_val(off_t offset);
+    Option<int8_t> int8_val(off_t offset);
 
     /** Return an unsigned 8-bit quantity at offset bytes from the start of the
      * data block.
      */
-    uint8_t uint8_val(off_t offset);
+    Option<uint8_t> uint8_val(off_t offset);
 
     /** Return an unsigned 16-bit quantity at offset bytes from the start of the
      * data block.
      */
-    uint16_t uint16_val(off_t offset);
+    Option<uint16_t> uint16_val(off_t offset);
 
-    std::string string_val(off_t offset);
+    Option<std::string> string_val(off_t offset);
 
     bool loaded() const { return m_loaded; }
 

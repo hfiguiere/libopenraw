@@ -122,11 +122,11 @@ size_t IfdFileContainer::getDirectoryDataSize()
     m_file->seek(begin, SEEK_SET);
     begin += 2;
 
-    int32_t nextIFD;
-    readInt32(m_file, nextIFD);
+    int32_t nextIFD = readInt32(m_file).unwrap_or(0);
     LOGDBG1("nextIFD = %d\n", nextIFD);
     if (nextIFD == 0) {
         // FIXME not good
+        // XXX we should check the Option<> from readInt32().
     }
     return nextIFD - begin;
 }
@@ -153,8 +153,7 @@ bool IfdFileContainer::_locateDirs(void)
         }
     }
     m_file->seek(m_offset + 4, SEEK_SET);
-    int32_t dir_offset = 0;
-    readInt32(m_file, dir_offset);
+    int32_t dir_offset = readInt32(m_file).unwrap_or(0);
     m_dirs.clear();
     do {
         if (dir_offset != 0) {

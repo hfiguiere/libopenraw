@@ -35,17 +35,45 @@ namespace CIFF {
 
 bool ImageSpec::readFrom(off_t offset, CIFFContainer *container)
 {
-    bool ret;
     auto file = container->file();
     file->seek(offset, SEEK_SET);
-    ret = container->readUInt32(file, imageWidth);
-    ret = container->readUInt32(file, imageHeight);
-    ret = container->readUInt32(file, pixelAspectRatio);
-    ret = container->readInt32(file, rotationAngle);
-    ret = container->readUInt32(file, componentBitDepth);
-    ret = container->readUInt32(file, colorBitDepth);
-    ret = container->readUInt32(file, colorBW);
-    return ret;
+
+    auto result_u32 = container->readUInt32(file);
+    if (result_u32.empty()) {
+        return false;
+    }
+    imageWidth = result_u32.unwrap();
+    result_u32 = container->readUInt32(file);
+    if (result_u32.empty()) {
+        return false;
+    }
+    imageHeight = result_u32.unwrap();
+    result_u32 = container->readUInt32(file);
+    if (result_u32.empty()) {
+        return false;
+    }
+    pixelAspectRatio = result_u32.unwrap();
+    auto result_32 = container->readInt32(file);
+    if (result_32.empty()) {
+        return false;
+    }
+    rotationAngle = result_32.unwrap();
+    result_u32 = container->readUInt32(file);
+    if (result_u32.empty()) {
+        return false;
+    }
+    componentBitDepth = result_u32.unwrap();
+    result_u32 = container->readUInt32(file);
+    if (result_u32.empty()) {
+        return false;
+    }
+    colorBitDepth = result_u32.unwrap();
+    result_u32 = container->readUInt32(file);
+    if (result_u32.empty()) {
+        return false;
+    }
+    colorBW = result_u32.unwrap();
+    return true;
 }
 
 int32_t ImageSpec::exifOrientation() const
@@ -75,12 +103,23 @@ RecordEntry::RecordEntry()
 
 bool RecordEntry::readFrom(CIFFContainer *container)
 {
-    bool ret;
     auto file = container->file();
-    ret = container->readUInt16(file, typeCode);
-    ret = container->readUInt32(file, length);
-    ret = container->readUInt32(file, offset);
-    return ret;
+    auto result_16 = container->readUInt16(file);
+    if (result_16.empty()) {
+        return false;
+    }
+    typeCode = result_16.unwrap();
+    auto result_32 = container->readUInt32(file);
+    if (result_32.empty()) {
+        return false;
+    }
+    length = result_32.unwrap();
+    result_32 = container->readUInt32(file);
+    if (result_32.empty()) {
+        return false;
+    }
+    offset = result_32.unwrap();
+    return true;
 }
 
 size_t RecordEntry::fetchData(Heap* heap, void* buf, size_t size) const
@@ -112,27 +151,30 @@ bool Heap::_loadRecords()
 {
     auto file = m_container->file();
     file->seek(m_start + m_length - 4, SEEK_SET);
-    int32_t record_offset;
-    bool ret = m_container->readInt32(file, record_offset);
 
-    if (ret) {
-        int16_t numRecords;
+    auto result = m_container->readInt32(file);
+
+    if (result.ok()) {
+        int32_t record_offset = result.unwrap();
 
         m_records.clear();
         file->seek(m_start + record_offset, SEEK_SET);
-        ret = m_container->readInt16(file, numRecords);
-        if (!ret) {
-            LOGDBG1("read failed: %d\n", ret);
+        auto result16 = m_container->readInt16(file);
+        if (result16.empty()) {
+            LOGDBG1("read numRecords failed\n");
+            return false;
         }
+        int16_t numRecords = result16.unwrap();
         LOGDBG2("numRecords %d\n", numRecords);
-        int16_t i;
+
         m_records.reserve(numRecords);
-        for (i = 0; i < numRecords; i++) {
+        for (int16_t i = 0; i < numRecords; i++) {
             m_records.push_back(RecordEntry());
             m_records.back().readFrom(m_container);
         }
+        return true;
     }
-    return ret;
+    return false;
 }
 
 
@@ -158,7 +200,11 @@ bool HeapFileHeader::readFrom(CIFFContainer *container)
             endian = RawContainer::ENDIAN_BIG;
         }
         container->setEndian(endian);
-        ret = container->readUInt32(file, headerLength);
+        auto result32 = container->readUInt32(file);
+        if (result32.ok()) {
+            headerLength = result32.unwrap();
+            ret = true;
+        }
         if (ret) {
             ret = (file->read(type, 4) == 4);
         }
@@ -166,7 +212,11 @@ bool HeapFileHeader::readFrom(CIFFContainer *container)
             ret = (file->read(subType, 4) == 4);
         }
         if (ret) {
-            ret = container->readUInt32(file, version);
+            result32 = container->readUInt32(file);
+            if (result32.ok()) {
+                version = result32.unwrap();
+                ret = true;
+            }
         }
     }
     return ret;

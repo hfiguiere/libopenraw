@@ -509,16 +509,18 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 
     uint16_t bpc = data.bpc();
     uint8_t header0, header1;
-    bool read = m_container->readUInt8(file, header0);
-    if(!read) {
+    auto result = m_container->readUInt8(file);
+    if(result.empty()) {
         LOGERR("Header not found\n");
         return false;
     }
-    read = m_container->readUInt8(file, header1);
-    if(!read) {
+    header0 = result.unwrap();
+    result = m_container->readUInt8(file);
+    if(result.empty()) {
         LOGERR("Header not found\n");
         return false;
     }
+    header1 = result.unwrap();
 
     if (header0 == 0x49) {
         // some interesting stuff at 2110
@@ -527,14 +529,14 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
         m_container->skip(2110);
     }
 
-    int16_t aux;
     for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
-            read = m_container->readInt16(file, aux);
-            if(!read) {
+            auto result16 = m_container->readInt16(file);
+            if(result16.empty()) {
+                LOGERR("Failed to read vpred (%d,%d)\n", i, j);
                 return false;
             }
-            c.vpred[i][j] = aux;
+            c.vpred[i][j] = result16.unwrap();
         }
     }
 
@@ -573,8 +575,7 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 
     // number of elements in the curve
     size_t nelems;
-    read = m_container->readInt16(file, aux);
-    nelems = aux;
+    nelems = m_container->readInt16(file).unwrap_or(0);
     LOGDBG1("Num elems %ld\n", nelems);
 
     uint32_t ceiling = 1 << bpc & 0x7fff;
@@ -586,12 +587,12 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 
     if (header0 == 0x44 && header1 == 0x20 && step > 0) {
         for (size_t i = 0; i < nelems; ++i) {
-            read = m_container->readInt16(file, aux);
-            if (!read) {
+            auto result16 = m_container->readInt16(file);
+            if (result16.empty()) {
                 LOGERR("NEF: short read\n");
                 return false;
             }
-            c.curve[i * step] = aux;
+            c.curve[i * step] = result16.unwrap();
         }
         for (size_t i = 0; i < ceiling; ++i) {
             c.curve[i] = (c.curve[i - i % step] * (step - i % step) +

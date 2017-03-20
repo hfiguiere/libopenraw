@@ -126,8 +126,12 @@ void MRWFile::_identifyId()
     const IfdDir::Ref & _mainIfd = mainIfd();
 
     if(_mainIfd && mc->prd) {
-        std::string version = mc->prd->string_val(MRW::PRD_VERSION);
-        _setTypeId(_typeIdFromModel("Minolta", version));
+        auto version = mc->prd->string_val(MRW::PRD_VERSION);
+        if (version.ok()) {
+            _setTypeId(_typeIdFromModel("Minolta", version.unwrap()));
+        } else {
+            LOGERR("Coudln't read Minolta version\n");
+        }
     }
 }
 
@@ -220,11 +224,11 @@ void MRWFile::_identifyId()
 		return OR_ERROR_NOT_FOUND;
 	}
 	/* Obtain sensor dimensions from PRD block. */
-	uint16_t y = mc->prd->uint16_val (MRW::PRD_SENSOR_LENGTH);
-	uint16_t x = mc->prd->uint16_val (MRW::PRD_SENSOR_WIDTH);
-	uint8_t bpc =  mc->prd->uint8_val (MRW::PRD_PIXEL_SIZE);
+	uint16_t y = mc->prd->uint16_val (MRW::PRD_SENSOR_LENGTH).unwrap_or(0);
+	uint16_t x = mc->prd->uint16_val (MRW::PRD_SENSOR_WIDTH).unwrap_or(0);
+	uint8_t bpc =  mc->prd->uint8_val (MRW::PRD_PIXEL_SIZE).unwrap_or(0);
 
-	bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE) == 0x59);
+	bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE).unwrap_or(0) == 0x59);
 	/* Allocate space for and retrieve pixel data.
 	 * Currently only for cameras that don't compress pixel data.
 	 */
@@ -289,7 +293,7 @@ void MRWFile::_identifyId()
 		LOGWARN("Fetched only %ld of %u: continuing anyway.\n", fetched,
 			datalen);
 	}
-	uint16_t bpat = mc->prd->uint16_val (MRW::PRD_BAYER_PATTERN);
+	uint16_t bpat = mc->prd->uint16_val (MRW::PRD_BAYER_PATTERN).unwrap_or(0);
 	or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
 	switch(bpat)
 	{

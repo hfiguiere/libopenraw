@@ -1,8 +1,8 @@
-/* -*- Mode: C++; c-basic-offset:4; tab-width:4; indent-tab-mode:nil -*- */
+/* -*- Mode: C++; c-basic-offset:4; tab-width:4; indent-tabs-mode:nil -*- */
 /*
  * libopenraw - rawcontainer.h
  *
- * Copyright (C) 2006-2017 Hubert Figuiere
+ * Copyright (C) 2006-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -29,6 +29,7 @@
 #include <vector>
 
 #include "io/stream.hpp"
+#include "option.hpp"
 
 namespace OpenRaw {
 
@@ -60,14 +61,14 @@ public:
     off_t offset() const { return m_offset; }
 
     bool skip(off_t offset);
-    bool readInt8(const IO::Stream::Ptr &f, int8_t &v);
-    bool readUInt8(const IO::Stream::Ptr &f, uint8_t &v);
+    Option<int8_t> readInt8(const IO::Stream::Ptr &f);
+    Option<uint8_t> readUInt8(const IO::Stream::Ptr &f);
     /** Read an int16 following the m_endian set */
-    bool readInt16(const IO::Stream::Ptr &f, int16_t &v);
+    Option<int16_t> readInt16(const IO::Stream::Ptr &f);
     /** Read an int32 following the m_endian set */
-    bool readInt32(const IO::Stream::Ptr &f, int32_t &v);
+    Option<int32_t> readInt32(const IO::Stream::Ptr &f);
     /** Read an uint16 following the m_endian set */
-    bool readUInt16(const IO::Stream::Ptr &f, uint16_t &v);
+    Option<uint16_t> readUInt16(const IO::Stream::Ptr &f);
     /** Read an array of uint16 following the m_endian set.
      * @param v the vector to fill. Will be resized if too small.
      * @param count the number of elements to read
@@ -75,7 +76,7 @@ public:
      */
     size_t readUInt16Array(const IO::Stream::Ptr &f, std::vector<uint16_t> &v, size_t count);
     /** Read an uint32 following the m_endian set */
-    bool readUInt32(const IO::Stream::Ptr &f, uint32_t &v);
+    Option<uint32_t> readUInt32(const IO::Stream::Ptr &f);
     /**
      * Fetch the data chunk from the file
      * @param buf the buffer to load into
@@ -86,8 +87,8 @@ public:
     size_t fetchData(void *buf, off_t offset, size_t buf_size);
 
 protected:
-    RawContainer(const RawContainer &);
-    RawContainer &operator=(const RawContainer &);
+    RawContainer(const RawContainer &) = delete;
+    RawContainer &operator=(const RawContainer &) = delete;
 
     void setEndian(EndianType _endian) { m_endian = _endian; }
 

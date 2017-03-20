@@ -43,56 +43,56 @@ DataBlock::DataBlock(off_t start, MRWContainer *_container)
         LOGWARN("  Error reading block name %ld\n", start);
         return;
     }
-    if (!m_container->readInt32(m_container->file(), m_length)) {
+    auto result = m_container->readInt32(m_container->file());
+    if (result.empty()) {
         // FIXME: Handle error
         LOGWARN("  Error reading block length %ld\n", start);
         return;
     }
+    m_length = result.unwrap();
     LOGDBG1("  DataBlock %s, length %d at %ld\n", name().c_str(), m_length, m_start);
     LOGDBG2("< DataBlock\n");
     m_loaded = true;
 }
 
-int8_t DataBlock::int8_val(off_t off)
+Option<int8_t>
+DataBlock::int8_val(off_t off)
 {
-    int8_t ret;
     MRWContainer *mc = m_container;
     mc->file()->seek(m_start + DataBlockHeaderLength + off, SEEK_SET);
-    mc->readInt8(mc->file(), ret);
-    return ret;
+    return mc->readInt8(mc->file());
 }
 
-uint8_t DataBlock::uint8_val(off_t off)
+Option<uint8_t>
+DataBlock::uint8_val(off_t off)
 {
-    uint8_t ret;
     MRWContainer *mc = m_container;
     mc->file()->seek(m_start + DataBlockHeaderLength + off, SEEK_SET);
-    mc->readUInt8(mc->file(), ret);
-    return ret;
+    return  mc->readUInt8(mc->file());
 }
 
-uint16_t DataBlock::uint16_val(off_t off)
+Option<uint16_t>
+DataBlock::uint16_val(off_t off)
 {
-    uint16_t ret;
     MRWContainer *mc = m_container;
     mc->file()->seek(m_start + DataBlockHeaderLength + off, SEEK_SET);
-    mc->readUInt16(mc->file(), ret);
-    return ret;
+    return mc->readUInt16(mc->file());
 }
 
-std::string DataBlock::string_val(off_t off)
+Option<std::string>
+DataBlock::string_val(off_t off)
 {
     char buf[9];
     size_t s;
     MRWContainer *mc = m_container;
     s = mc->fetchData(buf, m_start + DataBlockHeaderLength + off, 8);
-    if (s == 8) {
-        buf[8] = 0;
-    } else {
-        *buf = 0;
+    if (s != 8) {
+        return Option<std::string>();
     }
-    return buf;
+    buf[8] = 0;
+    return Option<std::string>(buf);
 }
+
 }
 
 MRWContainer::MRWContainer(const IO::Stream::Ptr &_file, off_t _offset)

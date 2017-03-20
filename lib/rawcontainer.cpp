@@ -1,4 +1,4 @@
-/* -*- Mode: C++; c-basic-offset:4; tab-width:4; indent-tab-mode:nil -*- */
+/* -*- Mode: C++; c-basic-offset:4; tab-width:4; indent-tabs-mode:nil -*- */
 /*
  * libopenraw - rawcontainer.cpp
  *
@@ -55,49 +55,47 @@ bool RawContainer::skip(off_t offset)
   return true;
 }
 
-bool RawContainer::readInt8(const IO::Stream::Ptr &f, int8_t & v)
+Option<int8_t>
+RawContainer::readInt8(const IO::Stream::Ptr &f)
 {
   unsigned char buf;
   int s = f->read(&buf, 1);
   if (s != 1) {
-    return false;
+    return Option<int8_t>();
   }
-  v = buf;
-  return true;
+  return Option<int8_t>(buf);
 }
 
-bool RawContainer::readUInt8(const IO::Stream::Ptr &f, uint8_t & v)
+Option<uint8_t>
+RawContainer::readUInt8(const IO::Stream::Ptr &f)
 {
   unsigned char buf;
   int s = f->read(&buf, 1);
   if (s != 1) {
-    return false;
+    return Option<uint8_t>();
   }
-  v = buf;
-  return true;
+  return Option<uint8_t>(buf);
 }
 
-bool
-RawContainer::readInt16(const IO::Stream::Ptr &f, int16_t & v)
+Option<int16_t>
+RawContainer::readInt16(const IO::Stream::Ptr &f)
 {
   if (m_endian == ENDIAN_NULL) {
 
     LOGERR("null endian\n");
 
-    return false;
+    return Option<int16_t>();
   }
   unsigned char buf[2];
   int s = f->read(buf, 2);
   if (s != 2) {
-    return false;
+    return Option<int16_t>();
   }
   if (m_endian == ENDIAN_LITTLE) {
-    v = EL16(buf);
+    return Option<int16_t>(EL16(buf));
+  } else {
+    return Option<int16_t>(BE16(buf));
   }
-  else {
-    v = BE16(buf);
-  }
-  return true;
 }
 
 
@@ -136,77 +134,69 @@ RawContainer::readUInt16Array(const IO::Stream::Ptr &f, std::vector<uint16_t> & 
 }
 
 
-bool
-RawContainer::readInt32(const IO::Stream::Ptr &f, int32_t & v)
+Option<int32_t>
+RawContainer::readInt32(const IO::Stream::Ptr &f)
 {
   if (m_endian == ENDIAN_NULL) {
     LOGERR("null endian\n");
-    return false;
+    return Option<int32_t>();
   }
   unsigned char buf[4];
   int s = f->read(buf, 4);
   if (s != 4) {
     LOGERR("read %d bytes\n", s);
-    return false;
+    return Option<int32_t>();
   }
 
   if (m_endian == ENDIAN_LITTLE) {
-    v = EL32(buf);
+    return Option<int32_t>(EL32(buf));
+  } else {
+    return Option<int32_t>(BE32(buf));
   }
-  else {
-    v = BE32(buf);
-  }
-
-  return true;
 }
 
 
-bool
-RawContainer::readUInt16(const IO::Stream::Ptr &f, uint16_t & v)
+Option<uint16_t>
+RawContainer::readUInt16(const IO::Stream::Ptr &f)
 {
   if (m_endian == ENDIAN_NULL) {
 
     LOGERR("null endian\n");
 
-    return false;
+    return Option<uint16_t>();
   }
   unsigned char buf[2];
   int s = f->read(buf, 2);
   if (s != 2) {
-    return false;
+    return Option<uint16_t>();
   }
   if (m_endian == ENDIAN_LITTLE) {
-    v = EL16(buf);
+    return Option<uint16_t>(EL16(buf));
+  } else {
+    return Option<uint16_t>(BE16(buf));
   }
-  else {
-    v = BE16(buf);
-  }
-  return true;
 }
 
 
-bool
-RawContainer::readUInt32(const IO::Stream::Ptr &f, uint32_t & v)
+Option<uint32_t>
+RawContainer::readUInt32(const IO::Stream::Ptr &f)
 {
   if (m_endian == ENDIAN_NULL) {
     LOGERR("null endian\n");
 
-    return false;
+    return Option<uint32_t>();
   }
   unsigned char buf[4];
   int s = f->read(buf, 4);
   if (s != 4) {
-    return false;
+    return Option<uint32_t>();
   }
 
   if (m_endian == ENDIAN_LITTLE) {
-    v = EL32(buf);
+    return Option<uint32_t>(EL32(buf));
+  } else {
+    return Option<uint32_t>(BE32(buf));
   }
-  else {
-    v = BE32(buf);
-  }
-
-  return true;
 }
 
 
