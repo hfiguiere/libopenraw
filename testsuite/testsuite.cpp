@@ -315,7 +315,7 @@ bool Test::testThumbSizes(const std::string & result)
         RETURN_FAIL("mismatch number of elements", result);
     }
     std::vector<uint32_t> v2;
-    for(const auto & s : v)
+    for (const auto & s : v)
     {
         try {
             v2.push_back(boost::lexical_cast<uint32_t>(s));
@@ -338,12 +338,11 @@ bool Test::testThumbFormats(const std::string & result)
     if(v.size() != thumbs.size()) {
         RETURN_FAIL("mismatch number of elements", result);
     }
-    for(auto thumbs_iter = thumbs.cbegin();
-        thumbs_iter != thumbs.cend(); thumbs_iter++, result_iter++)
-    {
+    for (const auto& thumb : thumbs) {
         Thumbnail t;
-        m_rawfile->getThumbnail(*thumbs_iter, t);
+        m_rawfile->getThumbnail(thumb, t);
         success &= equalDataType(*result_iter, t.dataType());
+        result_iter++;
     }
     RETURN_TEST(success, result);
 }
@@ -358,13 +357,12 @@ bool Test::testThumbDataSizes(const std::string & result)
     if(v.size() != thumbs.size()) {
         RETURN_FAIL("mismatch number of elements", result);
     }
-    for(auto thumbs_iter = thumbs.cbegin(); thumbs_iter != thumbs.cend();
-        thumbs_iter++, result_iter++)
-    {
+    for (const auto& thumb : thumbs) {
         Thumbnail t;
-        m_rawfile->getThumbnail(*thumbs_iter, t);
+        m_rawfile->getThumbnail(thumb, t);
         try {
             success &= (boost::lexical_cast<uint32_t>(*result_iter) == t.size());
+            result_iter++;
         }
         catch(...) {
             RETURN_FAIL("conversion failed", result);
@@ -395,16 +393,15 @@ bool Test::testThumbMd5(const std::string & result)
     if(v.size() != thumbs.size()) {
         RETURN_FAIL("mismatch number of elements", result);
     }
-    for(auto thumbs_iter = thumbs.cbegin(); thumbs_iter != thumbs.cend();
-        thumbs_iter++, result_iter++)
-    {
+    for (const auto& thumb : thumbs) {
         Thumbnail t;
-        m_rawfile->getThumbnail(*thumbs_iter, t);
+        m_rawfile->getThumbnail(thumb, t);
         try {
             bool succ = false;
             uint32_t crc = computeCrc(&t);
             CHECK_TEST_EQUALS(boost::lexical_cast<std::string>(crc), (*result_iter), succ);
             success &= succ;
+            result_iter++;
         }
         catch(...) {
             RETURN_FAIL("conversion failed", result);
