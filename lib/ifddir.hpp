@@ -99,11 +99,11 @@ public:
      * @return Ref to the new IfdDir if found
      */
     Ref getSubIFD(uint32_t idx = 0) const;
+
     /** get all SubIFDs
-     * @retval ifds the list of IFDs Ref
-     * @return true if found / success
+     * @return an option of ifds the list of IFDs Ref
      */
-    bool getSubIFDs(std::vector<IfdDir::Ref> &ifds);
+    Option<std::vector<IfdDir::Ref>> getSubIFDs();
 
     /** get the Exif IFD.
      * @return Ref to the new IfdDir if found

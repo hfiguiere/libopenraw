@@ -33,6 +33,7 @@ public:
 
   Option()
     : m_none(true)
+    , m_data()
   {
   }
   Option(T&& data)

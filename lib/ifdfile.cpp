@@ -109,7 +109,8 @@ void IfdFile::_identifyId()
 
 
 
-::or_error IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
+::or_error
+IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
   ::or_error err = OR_ERROR_NONE;
 
@@ -124,8 +125,9 @@ void IfdFile::_identifyId()
     if (ret == OR_ERROR_NONE) {
       LOGDBG1("Found %u pixels\n", list.back());
     }
-    std::vector<IfdDir::Ref> subdirs;
-    if(dir->getSubIFDs(subdirs)) {
+    auto result = dir->getSubIFDs();
+    if (result.ok()) {
+      std::vector<IfdDir::Ref> subdirs = result.unwrap();
       LOGDBG1("Iterating subdirs\n");
       for(auto dir2 : subdirs)
       {

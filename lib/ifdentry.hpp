@@ -1,5 +1,5 @@
 /*
- * libopenraw - ifdentry.h
+ * libopenraw - ifdentry.hpp
  *
  * Copyright (C) 2006-2017 Hubert Figuière
  *

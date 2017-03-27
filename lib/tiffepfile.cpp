@@ -1,7 +1,7 @@
 /*
  * libopenraw - tiffepfile.cpp
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2017 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -47,7 +47,6 @@ IfdDir::Ref  TiffEpFile::_locateCfaIfd()
 {
     const IfdDir::Ref & _mainIfd = mainIfd();
 
-    std::vector<IfdDir::Ref> subdirs;
     if (!_mainIfd) {
         LOGDBG1("couldn't find main ifd\n");
         return IfdDir::Ref();
@@ -55,17 +54,20 @@ IfdDir::Ref  TiffEpFile::_locateCfaIfd()
     if (_mainIfd->isPrimary()) {
         return _mainIfd;
     }
-    if (!_mainIfd->getSubIFDs(subdirs)) {
+    auto result = _mainIfd->getSubIFDs();
+    if (result.empty()) {
         // error
         LOGDBG1("couldn't find main ifd nor subifds\n");
         return IfdDir::Ref();
     }
-    auto i = find_if(subdirs.begin(),
-                     subdirs.end(),
+
+    std::vector<IfdDir::Ref> subdirs = result.unwrap();
+    auto i = find_if(subdirs.cbegin(),
+                     subdirs.cend(),
                      [] (const IfdDir::Ref& e) {
                          return e->isPrimary();
                      });
-    if (i != subdirs.end()) {
+    if (i != subdirs.cend()) {
         return *i;
     }
     LOGDBG1("couldn't find a primary subifd\n");

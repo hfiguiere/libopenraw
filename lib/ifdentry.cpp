@@ -140,8 +140,8 @@ bool IfdEntry::loadData(size_t unit_size)
 		}
 		_offset += m_container.exifOffsetCorrection();
 		m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
-		success = (m_container.fetchData(m_dataptr, 
-										 _offset, 
+		success = (m_container.fetchData(m_dataptr,
+										 _offset,
 										 data_size) == data_size);
 	}
 	return success;
@@ -150,7 +150,7 @@ bool IfdEntry::loadData(size_t unit_size)
 uint32_t IfdEntry::getIntegerArrayItem(int idx)
 {
     uint32_t v = 0;
-    
+
     try {
         switch(type())
         {
@@ -240,7 +240,9 @@ const size_t IfdTypeTrait<std::string>::size = 1;
   mode:c++
   c-file-style:"stroustrup"
   c-file-offsets:((innamespace . 0))
-  indent-tabs-mode:nil
+  tab-width:4
+  c-basic-offset:4
+  indent-tabs-mode:t
   fill-column:80
   End:
 */

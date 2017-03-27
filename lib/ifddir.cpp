@@ -147,26 +147,27 @@ IfdDir::Ref IfdDir::getSubIFD(uint32_t idx) const
     return Ref();
 }
 
-bool IfdDir::getSubIFDs(std::vector<IfdDir::Ref> &ifds)
+Option<std::vector<IfdDir::Ref>> IfdDir::getSubIFDs()
 {
     bool success = false;
+    std::vector<IfdDir::Ref> ifds;
     std::vector<uint32_t> offsets;
     IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_SUB_IFDS);
     if (e != nullptr) {
         try {
             e->getArray(offsets);
-            for (auto iter : offsets) {
-                Ref ifd(std::make_shared<IfdDir>(iter, m_container));
+            for (auto offset : offsets) {
+                Ref ifd = std::make_shared<IfdDir>(offset, m_container);
                 ifd->load();
                 ifds.push_back(ifd);
             }
-            success = true;
+            return Option<std::vector<IfdDir::Ref>>(std::move(ifds));
         }
         catch (const std::exception &ex) {
             LOGERR("Exception %s\n", ex.what());
         }
     }
-    return success;
+    return Option<std::vector<IfdDir::Ref>>();
 }
 
 /** The SubIFD is located at offset found in the field
@@ -185,7 +186,7 @@ IfdDir::Ref IfdDir::getExifIFD()
     val_offset += m_container.exifOffsetCorrection();
     LOGDBG1("Exif IFD offset = %u\n", val_offset);
 
-    Ref ref(std::make_shared<IfdDir>(val_offset, m_container));
+    Ref ref = std::make_shared<IfdDir>(val_offset, m_container);
     ref->load();
     return ref;
 }
