@@ -33,6 +33,7 @@
 #include <memory>
 
 #include "exception.hpp"
+#include "trace.hpp"
 #include "endianutils.hpp"
 #include "rawcontainer.hpp"
 #include "ifd.hpp"
@@ -209,18 +210,21 @@ public:
 	 * @throw whatever is thrown
 	 */
 	template <typename T>
-	void getArray(std::vector<T> & array) noexcept(false)
+	Option<std::vector<T>> getArray()
 		{
 			try {
+				std::vector<T> array;
 				array.reserve(m_count);
 				for (uint32_t i = 0; i < m_count; i++) {
 					array.push_back(IfdTypeTrait<T>::get(*this, i));
 				}
+				return Option<decltype(array)>(array);
 			}
-			catch(std::exception & e)
+			catch(const std::exception & e)
 			{
-				throw e;
+				LOGERR("Exception: %s\n", e.what());
 			}
+			return Option<std::vector<T>>();
 		}
 	uint32_t getIntegerArrayItem(int idx);
 

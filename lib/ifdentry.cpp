@@ -62,19 +62,23 @@ namespace {
 template <class T>
 void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
 {
-    std::vector<T> v;
-    e->getArray(v);
-    values.insert(values.end(), v.cbegin(), v.cend());
+    auto result = e->getArray<T>();
+    if (result.ok()) {
+        std::vector<T> v = result.unwrap();
+        values.insert(values.end(), v.cbegin(), v.cend());
+    }
 }
 
 // T is the Ifd primitive type. T2 is the target MetaValue type.
 template <class T, class T2>
 void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
 {
-    std::vector<T> v;
-    e->getArray(v);
-    for(const auto & elem : v) {
-        values.push_back(T2(elem));
+    auto result = e->getArray<T>();
+    if (result.ok()) {
+        std::vector<T> v = result.unwrap();
+        for(const auto & elem : v) {
+            values.push_back(T2(elem));
+        }
     }
 }
 

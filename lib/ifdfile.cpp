@@ -245,10 +245,10 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
         // See bug 72270 - some CR2 have 16 bpc RGB thumbnails.
         // by default it is RGB8. Unless stated otherwise.
         bool isRGB8 = true;
-        try {
-          IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
-          std::vector<uint16_t> arr;
-          entry->getArray(arr);
+        IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
+        auto result2 = entry->getArray<uint16_t>();
+        if (result2.ok()) {
+          std::vector<uint16_t> arr = result2.unwrap();
           for(auto bpc : arr) {
             isRGB8 = (bpc == 8);
             if (!isRGB8) {
@@ -256,9 +256,8 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
               break;
             }
           }
-        }
-        catch(const std::exception & e) {
-          LOGDBG1("Exception getting BPS %s\n", e.what());
+        } else {
+          LOGDBG1("Error getting BPS\n");
         }
         if (isRGB8) {
           _type = OR_DATA_TYPE_PIXMAP_8RGB;
@@ -443,13 +442,13 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
 /** convert the CFA Pattern as stored in the entry */
 ::or_cfa_pattern _convertCfaPattern(const IfdEntry::Ref & e)
 {
-  std::vector<uint8_t> cfaPattern;
   ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
 
-  e->getArray(cfaPattern);
-  if(!cfaPattern.empty()) {
-    cfa_pattern = _convertArrayToCfaPattern(cfaPattern);
+  auto result = e->getArray<uint8_t>();
+  if (result.ok()) {
+    cfa_pattern = _convertArrayToCfaPattern(result.unwrap());
   }
+
   return cfa_pattern;
 }
 
@@ -534,10 +533,12 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
       LOGDBG1("byte len not found\n");
       return OR_ERROR_NOT_FOUND;
     }
-    std::vector<uint32_t> counts;
-    e->getArray(counts);
-    LOGDBG1("counting tiles\n");
-    byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
+    auto result3 = e->getArray<uint32_t>();
+    if (result3.ok()) {
+      std::vector<uint32_t> counts = result3.unwrap();
+      LOGDBG1("counting tiles\n");
+      byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
+    }
   }
   else {
     // the tile are individual JPEGS....
@@ -547,22 +548,24 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
       LOGDBG1("tile offsets empty\n");
       return OR_ERROR_NOT_FOUND;
     }
-    std::vector<uint32_t> offsets;
-    e->getArray(offsets);
-    if(offsets.size() == 0) {
+    auto result3 = e->getArray<uint32_t>();
+    if (result3.empty()) {
       LOGDBG1("tile offsets not found\n");
       return OR_ERROR_NOT_FOUND;
     }
+    std::vector<uint32_t> offsets = result3.unwrap();
     offset = offsets[0];
     e = dir->getEntry(IFD::TIFF_TAG_TILE_BYTECOUNTS);
     if(!e) {
       LOGDBG1("tile byte counts not found\n");
       return OR_ERROR_NOT_FOUND;
     }
-    std::vector<uint32_t> counts;
-    e->getArray(counts);
-    LOGDBG1("counting tiles\n");
-    byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
+    result3 = e->getArray<uint32_t>();
+    if (result3.ok()) {
+      std::vector<uint32_t> counts = result3.unwrap();
+      LOGDBG1("counting tiles\n");
+      byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
+    }
   }
 
   result2 = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH);

@@ -1,3 +1,4 @@
+/* -*- mode:c++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil; -*- */
 /*
  * libopenraw - ifddir.cpp
  *
@@ -129,19 +130,19 @@ off_t IfdDir::nextIFD()
  */
 IfdDir::Ref IfdDir::getSubIFD(uint32_t idx) const
 {
-    std::vector<uint32_t> offsets;
     IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_SUB_IFDS);
+
     if (e != nullptr) {
-        try {
-            e->getArray(offsets);
+        auto result = e->getArray<uint32_t>();
+        if (result.ok()) {
+            std::vector<uint32_t> offsets = result.unwrap();
             if (idx >= offsets.size()) {
-                Ref ref(std::make_shared<IfdDir>(offsets[idx], m_container));
+                Ref ref = std::make_shared<IfdDir>(offsets[idx], m_container);
                 ref->load();
                 return ref;
             }
-        }
-        catch (const std::exception &ex) {
-            LOGERR("Exception %s\n", ex.what());
+        } else {
+            LOGERR("Can't get SubIFD offsets\n");
         }
     }
     return Ref();
@@ -149,22 +150,18 @@ IfdDir::Ref IfdDir::getSubIFD(uint32_t idx) const
 
 Option<std::vector<IfdDir::Ref>> IfdDir::getSubIFDs()
 {
-    bool success = false;
     std::vector<IfdDir::Ref> ifds;
-    std::vector<uint32_t> offsets;
     IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_SUB_IFDS);
     if (e != nullptr) {
-        try {
-            e->getArray(offsets);
+        auto result = e->getArray<uint32_t>();
+        if (result.ok()) {
+            std::vector<uint32_t> offsets = result.unwrap();
             for (auto offset : offsets) {
                 Ref ifd = std::make_shared<IfdDir>(offset, m_container);
                 ifd->load();
                 ifds.push_back(ifd);
             }
             return Option<std::vector<IfdDir::Ref>>(std::move(ifds));
-        }
-        catch (const std::exception &ex) {
-            LOGERR("Exception %s\n", ex.what());
         }
     }
     return Option<std::vector<IfdDir::Ref>>();

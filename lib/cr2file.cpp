@@ -1,3 +1,4 @@
+/* -*- mode:c++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil; -*- */
 /*
  * libopenraw - cr2file.cpp
  *
@@ -432,8 +433,11 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     std::vector<uint16_t> slices;
     IfdEntry::Ref e = _cfaIfd->getEntry(IFD::CR2_TAG_SLICE);
     if (e) {
-        e->getArray(slices);
-        LOGDBG1("Found slice entry count %ld\n", slices.size());
+        auto result2 = e->getArray<uint16_t>();
+        if (result2.ok()) {
+            slices = result2.unwrap();
+            LOGDBG1("Found slice entry count %ld\n", slices.size());
+        }
     }
 
     const IfdDir::Ref &_exifIfd = exifIfd();
@@ -490,20 +494,22 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     }
 
     // get the sensor info
-    std::vector<uint16_t> sensorInfo;
     const IfdDir::Ref &_makerNoteIfd = makerNoteIfd();
     e = _makerNoteIfd->getEntry(IFD::MNOTE_CANON_SENSORINFO);
     if (e) {
-      e->getArray(sensorInfo);
-      if (sensorInfo.size() > 8) {
-        uint32_t w = sensorInfo[7] - sensorInfo[5];
-        uint32_t h = sensorInfo[8] - sensorInfo[6];
-        data.setRoi(sensorInfo[5], sensorInfo[6], w, h);
-      }
-      else {
-        LOGWARN("sensorInfo is too small: %lu - skipping.\n",
-                sensorInfo.size());
-      }
+        auto result3 = e->getArray<uint16_t>();
+        if (result3.ok()) {
+            std::vector<uint16_t> sensorInfo = result3.unwrap();
+            if (sensorInfo.size() > 8) {
+                uint32_t w = sensorInfo[7] - sensorInfo[5];
+                uint32_t h = sensorInfo[8] - sensorInfo[6];
+                data.setRoi(sensorInfo[5], sensorInfo[6], w, h);
+            }
+            else {
+                LOGWARN("sensorInfo is too small: %lu - skipping.\n",
+                        sensorInfo.size());
+            }
+        }
     }
 
     return OR_ERROR_NONE;
