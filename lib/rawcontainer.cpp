@@ -199,17 +199,21 @@ RawContainer::readUInt32(const IO::Stream::Ptr &f)
   }
 }
 
-
 size_t
 RawContainer::fetchData(void *buf, off_t _offset,
                         size_t buf_size)
 {
-  size_t s;
+  size_t s = 0;
   m_file->seek(_offset, SEEK_SET);
   s = m_file->read(buf, buf_size);
   return s;
 }
 
+off_t
+RawContainer::size() const
+{
+  return m_file->filesize();
+}
 
 }
 }

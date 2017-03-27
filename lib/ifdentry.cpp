@@ -47,6 +47,13 @@ IfdEntry::IfdEntry(uint16_t _id, int16_t _type,
       m_loaded(false), m_dataptr(NULL),
       m_container(_container)
 {
+	auto container_size = m_container.size();
+	auto unit_size = type_unit_size(static_cast<IFD::ExifTagType>(m_type));
+	if ((m_count * unit_size) > static_cast<size_t>(container_size)) {
+		LOGERR("Trying to have %u items in a container of %ld bytes\n",
+			   m_count, container_size);
+		m_count = container_size / unit_size;
+	}
 }
 
 
@@ -84,6 +91,30 @@ void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
 
 }
 
+
+size_t IfdEntry::type_unit_size(IFD::ExifTagType _type)
+{
+	switch(_type) {
+    case IFD::EXIF_FORMAT_BYTE:
+    case IFD::EXIF_FORMAT_SBYTE:
+    case IFD::EXIF_FORMAT_ASCII:
+    case IFD::EXIF_FORMAT_UNDEFINED:
+		return 1;
+    case IFD::EXIF_FORMAT_SHORT:
+    case IFD::EXIF_FORMAT_SSHORT:
+		return 2;
+    case IFD::EXIF_FORMAT_LONG:
+    case IFD::EXIF_FORMAT_SLONG:
+    case IFD::EXIF_FORMAT_FLOAT:
+		return 4;
+    case IFD::EXIF_FORMAT_RATIONAL:
+    case IFD::EXIF_FORMAT_SRATIONAL:
+    case IFD::EXIF_FORMAT_DOUBLE:
+		return 8;
+	}
+
+	return 0;
+}
 MetaValue* IfdEntry::make_meta_value()
 {
     std::vector<MetaValue::value_t> values;

@@ -86,6 +86,10 @@ public:
      */
     size_t fetchData(void *buf, off_t offset, size_t buf_size);
 
+    /**
+     * Return the effective size of the container.
+     */
+    off_t size() const;
 protected:
     RawContainer(const RawContainer &) = delete;
     RawContainer &operator=(const RawContainer &) = delete;

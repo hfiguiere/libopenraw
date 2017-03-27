@@ -195,7 +195,10 @@ public:
 
 public:
   MetaValue* make_meta_value();
-
+	/**
+	 * Unit size for type
+	 */
+	static size_t type_unit_size(IFD::ExifTagType _type);
 	/** load the data for the entry
 	 * if all the data fits in m_data, it is a noop
 	 * @param unit_size the size of 1 unit of data
