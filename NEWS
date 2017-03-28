@@ -2,7 +2,24 @@ libopenraw 0.1.2 -
 
 New features:
 
+  Camera support:
+  [ a * denote that WB coefficients have been included ]
+
+  - Support for Canon 77D / 9000D.
+  - Added aliases Canon Rebel T1i / Kiss X3 for 500D, Rebel XSi for 450D,
+    Kiss Digital N for 350D.
+
 Bug fixes:
+
+  - Properly identify DNG converted files as generic DNG.
+  - Don't crash on some malformed files.
+
+Internal changes:
+
+  - Replace Debug::Trace with LOGXXX().
+  - Use Option<> whenever it is appropriate.
+  - Check when loading an IfdEntry that it doesn't got past
+    the container size.
 
 libopenraw 0.1.1 - 2017/03/18
 
