@@ -1,13 +1,15 @@
-libopenraw 0.1.2 -
+libopenraw 0.1.2 - 2017/04/17
 
 New features:
 
   Camera support:
   [ a * denote that WB coefficients have been included ]
 
-  - Support for Canon 77D / 9000D.
+  - Support for Canon 77D / 9000D, EOS-M6.
   - Added aliases Canon Rebel T1i / Kiss X3 for 500D, Rebel XSi for 450D,
     Kiss Digital N for 350D.
+  - Properly recognize Canon Rebel T7i.
+  - Support for Pentax KP (DNG).
 
 Bug fixes:
 
