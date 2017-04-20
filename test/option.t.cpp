@@ -35,7 +35,7 @@ int test_main( int, char *[] )             // note the name!
   BOOST_CHECK(result.empty());
   bool unwrapped = false;
   try {
-    result.unwrap();
+    result.value();
     unwrapped = true;
   } catch(std::runtime_error&) {
     BOOST_CHECK(true);
@@ -48,14 +48,14 @@ int test_main( int, char *[] )             // note the name!
   // Option with value
   result = Option<std::string>("hello world");
   BOOST_CHECK(!result.empty());
-  BOOST_CHECK(result.ok());
-  BOOST_CHECK(result.unwrap() == "hello world");
+  BOOST_CHECK(result);
+  BOOST_CHECK(result.value() == "hello world");
   BOOST_CHECK(result.empty());
-  BOOST_CHECK(!result.ok());
+  BOOST_CHECK(!result);
   // try unwrapping again
   unwrapped = false;
   try {
-    result.unwrap();
+    result.value();
     unwrapped = true;
   } catch(std::runtime_error&) {
     BOOST_CHECK(true);
@@ -64,7 +64,7 @@ int test_main( int, char *[] )             // note the name!
   }
   BOOST_CHECK(!unwrapped);
   BOOST_CHECK(result.empty());
-  BOOST_CHECK(result.unwrap_or("good bye") == "good bye");
+  BOOST_CHECK(result.value_or("good bye") == "good bye");
 
   return 0;
 }

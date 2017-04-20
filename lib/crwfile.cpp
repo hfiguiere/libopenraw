@@ -199,7 +199,7 @@ RawContainer* CRWFile::getContainer() const
         return OR_ERROR_NOT_FOUND;
     }
 
-    uint32_t decoderTable = result.unwrap();
+    uint32_t decoderTable = result.value();
     LOGDBG2("decoder table = %u\n", decoderTable);
 
     // locate the CFA info
@@ -246,7 +246,7 @@ RawContainer* CRWFile::getContainer() const
 
             CrwDecompressor decomp(s.get(), m_container);
 
-            decomp.setOutputDimensions(cfa_x.unwrap(), cfa_y.unwrap());
+            decomp.setOutputDimensions(cfa_x.value(), cfa_y.value());
             decomp.setDecoderTable(decoderTable);
             RawDataPtr dData = decomp.decompress();
             if (dData) {

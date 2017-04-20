@@ -1,4 +1,4 @@
-/* -*- mode: C++; tab-width: 4; c-basic-offset: 4; indent-tabs-mode:nil; -*- */
+/* -*- mode: C++; tab-width: 2; c-basic-offset: 2; indent-tabs-mode:nil; -*- */
 /*
  * libopenraw - option.hpp
  *
@@ -29,19 +29,19 @@ template<class T>
 class Option
 {
 public:
-  typedef T data_type;
+  typedef T value_type;
 
   Option()
     : m_none(true)
     , m_data()
   {
   }
-  Option(T&& data)
+  explicit Option(T&& data)
     : m_none(false)
     , m_data(data)
   {
   }
-  Option(const T& data)
+  explicit Option(const T& data)
     : m_none(false)
     , m_data(data)
   {
@@ -53,7 +53,7 @@ public:
   {
   }
 
-  T&& unwrap()
+  T&& value()
   {
     if (m_none) {
       throw std::runtime_error("none option value");
@@ -61,7 +61,7 @@ public:
     m_none = true;
     return std::move(m_data);
   }
-  T&& unwrap_or(T&& def)
+  T&& value_or(T&& def)
   {
     if (m_none) {
       return std::move(def);
@@ -69,9 +69,13 @@ public:
     m_none = true;
     return std::move(m_data);
   }
+
   bool empty() const
   { return m_none; }
-  bool ok() const
+
+  constexpr explicit operator bool() const
+  { return !m_none; }
+  constexpr bool has_value() const
   { return !m_none; }
 private:
   bool m_none;

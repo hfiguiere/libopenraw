@@ -514,13 +514,13 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
         LOGERR("Header not found\n");
         return false;
     }
-    header0 = result.unwrap();
+    header0 = result.value();
     result = m_container->readUInt8(file);
     if(result.empty()) {
         LOGERR("Header not found\n");
         return false;
     }
-    header1 = result.unwrap();
+    header1 = result.value();
 
     if (header0 == 0x49) {
         // some interesting stuff at 2110
@@ -536,7 +536,7 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
                 LOGERR("Failed to read vpred (%d,%d)\n", i, j);
                 return false;
             }
-            c.vpred[i][j] = result16.unwrap();
+            c.vpred[i][j] = result16.value();
         }
     }
 
@@ -575,7 +575,7 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 
     // number of elements in the curve
     size_t nelems;
-    nelems = m_container->readInt16(file).unwrap_or(0);
+    nelems = m_container->readInt16(file).value_or(0);
     LOGDBG1("Num elems %ld\n", nelems);
 
     uint32_t ceiling = 1 << bpc & 0x7fff;
@@ -592,7 +592,7 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
                 LOGERR("NEF: short read\n");
                 return false;
             }
-            c.curve[i * step] = result16.unwrap();
+            c.curve[i * step] = result16.value();
         }
         for (size_t i = 0; i < ceiling; ++i) {
             c.curve[i] = (c.curve[i - i % step] * (step - i % step) +

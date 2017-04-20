@@ -169,7 +169,7 @@ DngFile::~DngFile()
     }
 
     auto result = _cfaIfd->getValue<uint16_t>(IFD::EXIF_TAG_COMPRESSION);
-    if (result.ok() && (result.unwrap() == IFD::COMPRESS_LJPEG)) {
+    if (result && (result.value() == IFD::COMPRESS_LJPEG)) {
         // if the option is not set, decompress
         if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
             IO::Stream::Ptr s(
@@ -221,7 +221,7 @@ void DngFile::_identifyId()
 
         auto uniqueCameraModel =
             _mainIfd->getValue<std::string>(IFD::DNG_TAG_UNIQUE_CAMERA_MODEL);
-        if (uniqueCameraModel.ok()) {
+        if (uniqueCameraModel) {
             // set a generic DNG type if we found a
             // unique camera model
             _setTypeId(

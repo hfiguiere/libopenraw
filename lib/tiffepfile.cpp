@@ -55,13 +55,13 @@ IfdDir::Ref  TiffEpFile::_locateCfaIfd()
         return _mainIfd;
     }
     auto result = _mainIfd->getSubIFDs();
-    if (result.empty()) {
+    if (!result) {
         // error
         LOGDBG1("couldn't find main ifd nor subifds\n");
         return IfdDir::Ref();
     }
 
-    std::vector<IfdDir::Ref> subdirs = result.unwrap();
+    std::vector<IfdDir::Ref> subdirs = result.value();
     auto i = find_if(subdirs.cbegin(),
                      subdirs.cend(),
                      [] (const IfdDir::Ref& e) {

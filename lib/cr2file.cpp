@@ -427,22 +427,22 @@ IfdDir::Ref Cr2File::_locateMainIfd()
         LOGDBG1("offset not found\n");
         return OR_ERROR_NOT_FOUND;
     }
-    uint32_t offset = result.unwrap();
+    uint32_t offset = result.value();
 
     result = _cfaIfd->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
     if (result.empty()) {
         LOGDBG1("byte len not found\n");
         return OR_ERROR_NOT_FOUND;
     }
-    uint32_t byte_length = result.unwrap();
+    uint32_t byte_length = result.value();
 
     // get the "slicing", tag 0xc640 (3 SHORT)
     std::vector<uint16_t> slices;
     IfdEntry::Ref e = _cfaIfd->getEntry(IFD::CR2_TAG_SLICE);
     if (e) {
         auto result2 = e->getArray<uint16_t>();
-        if (result2.ok()) {
-            slices = result2.unwrap();
+        if (result2) {
+            slices = result2.value();
             LOGDBG1("Found slice entry count %ld\n", slices.size());
         }
     }
@@ -458,14 +458,14 @@ IfdDir::Ref Cr2File::_locateMainIfd()
         LOGDBG1("X not found\n");
         return OR_ERROR_NOT_FOUND;
     }
-    uint16_t x = result2.unwrap();
+    uint16_t x = result2.value();
 
     result2 = _exifIfd->getValue<uint16_t>(IFD::EXIF_TAG_PIXEL_Y_DIMENSION);
     if (result2.empty()) {
         LOGDBG1("Y not found\n");
         return OR_ERROR_NOT_FOUND;
     }
-    uint16_t y = result2.unwrap();
+    uint16_t y = result2.value();
 
     void *p = data.allocData(byte_length);
     size_t real_size = m_container->fetchData(p, offset, byte_length);
@@ -505,8 +505,8 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     e = _makerNoteIfd->getEntry(IFD::MNOTE_CANON_SENSORINFO);
     if (e) {
         auto result3 = e->getArray<uint16_t>();
-        if (result3.ok()) {
-            std::vector<uint16_t> sensorInfo = result3.unwrap();
+        if (result3) {
+            std::vector<uint16_t> sensorInfo = result3.value();
             if (sensorInfo.size() > 8) {
                 uint32_t w = sensorInfo[7] - sensorInfo[5];
                 uint32_t h = sensorInfo[8] - sensorInfo[6];

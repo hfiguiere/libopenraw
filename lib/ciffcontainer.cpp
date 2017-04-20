@@ -42,37 +42,37 @@ bool ImageSpec::readFrom(off_t offset, CIFFContainer *container)
     if (result_u32.empty()) {
         return false;
     }
-    imageWidth = result_u32.unwrap();
+    imageWidth = result_u32.value();
     result_u32 = container->readUInt32(file);
     if (result_u32.empty()) {
         return false;
     }
-    imageHeight = result_u32.unwrap();
+    imageHeight = result_u32.value();
     result_u32 = container->readUInt32(file);
     if (result_u32.empty()) {
         return false;
     }
-    pixelAspectRatio = result_u32.unwrap();
+    pixelAspectRatio = result_u32.value();
     auto result_32 = container->readInt32(file);
     if (result_32.empty()) {
         return false;
     }
-    rotationAngle = result_32.unwrap();
+    rotationAngle = result_32.value();
     result_u32 = container->readUInt32(file);
     if (result_u32.empty()) {
         return false;
     }
-    componentBitDepth = result_u32.unwrap();
+    componentBitDepth = result_u32.value();
     result_u32 = container->readUInt32(file);
     if (result_u32.empty()) {
         return false;
     }
-    colorBitDepth = result_u32.unwrap();
+    colorBitDepth = result_u32.value();
     result_u32 = container->readUInt32(file);
     if (result_u32.empty()) {
         return false;
     }
-    colorBW = result_u32.unwrap();
+    colorBW = result_u32.value();
     return true;
 }
 
@@ -108,17 +108,17 @@ bool RecordEntry::readFrom(CIFFContainer *container)
     if (result_16.empty()) {
         return false;
     }
-    typeCode = result_16.unwrap();
+    typeCode = result_16.value();
     auto result_32 = container->readUInt32(file);
     if (result_32.empty()) {
         return false;
     }
-    length = result_32.unwrap();
+    length = result_32.value();
     result_32 = container->readUInt32(file);
     if (result_32.empty()) {
         return false;
     }
-    offset = result_32.unwrap();
+    offset = result_32.value();
     return true;
 }
 
@@ -154,8 +154,8 @@ bool Heap::_loadRecords()
 
     auto result = m_container->readInt32(file);
 
-    if (result.ok()) {
-        int32_t record_offset = result.unwrap();
+    if (result) {
+        int32_t record_offset = result.value();
 
         m_records.clear();
         file->seek(m_start + record_offset, SEEK_SET);
@@ -164,7 +164,7 @@ bool Heap::_loadRecords()
             LOGDBG1("read numRecords failed\n");
             return false;
         }
-        int16_t numRecords = result16.unwrap();
+        int16_t numRecords = result16.value();
         LOGDBG2("numRecords %d\n", numRecords);
 
         m_records.reserve(numRecords);
@@ -201,8 +201,8 @@ bool HeapFileHeader::readFrom(CIFFContainer *container)
         }
         container->setEndian(endian);
         auto result32 = container->readUInt32(file);
-        if (result32.ok()) {
-            headerLength = result32.unwrap();
+        if (result32) {
+            headerLength = result32.value();
             ret = true;
         }
         if (ret) {
@@ -213,8 +213,8 @@ bool HeapFileHeader::readFrom(CIFFContainer *container)
         }
         if (ret) {
             result32 = container->readUInt32(file);
-            if (result32.ok()) {
-                version = result32.unwrap();
+            if (result32) {
+                version = result32.value();
                 ret = true;
             }
         }

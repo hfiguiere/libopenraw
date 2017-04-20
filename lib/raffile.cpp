@@ -262,10 +262,10 @@ RafFile::~RafFile()
     }
 
     auto result = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH);
-    if (result.ok()) {
-        x = result.unwrap();
+    if (result) {
+        x = result.value();
         result = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH);
-        y = result.unwrap_or(0);
+        y = result.value_or(0);
     }
 
     if (result.empty()) {
@@ -274,7 +274,7 @@ RafFile::~RafFile()
         if (result.empty()) {
             return ret;
         }
-        uint32_t jpeg_offset = result.unwrap();
+        uint32_t jpeg_offset = result.value();
 
         jpeg_offset += 12; // XXX magic number. eh?
                            // I need to re-read the Exif spec.
@@ -282,7 +282,7 @@ RafFile::~RafFile()
         if (result.empty()) {
             return ret;
         }
-        uint32_t jpeg_size = result.unwrap();
+        uint32_t jpeg_size = result.value();
 
         IO::Stream::Ptr s(std::make_shared<IO::StreamClone>(jpegPreview->file(),
                                                             jpeg_offset));

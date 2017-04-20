@@ -78,26 +78,26 @@ void RafMetaContainer::_read()
 		LOGERR("Couldn't read RAF meta count\n");
 		return;
 	}
-	m_count = result.unwrap();
+	m_count = result.value();
 
 	for(uint32_t i = 0; i < m_count; i++) {
 		auto result16 = readUInt16(m_file);
 		if (result16.empty()) {
 			return;
 		}
-		uint16_t tag = result16.unwrap();
+		uint16_t tag = result16.value();
 
 		result16 = readUInt16(m_file);
 		if (result16.empty()) {
 			return;
 		}
-		uint16_t size = result16.unwrap();
+		uint16_t size = result16.value();
 
 		MetaValue::value_t v;
 		if(size == 4) {
 			auto result32 = readUInt32(m_file);
-			if(result32.ok()) {
-				v = MetaValue::value_t(result32.unwrap());
+			if (result32) {
+				v = MetaValue::value_t(result32.value());
 			}
 		}
 		else {

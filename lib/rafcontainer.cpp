@@ -128,7 +128,7 @@ bool RafContainer::_readHeader()
 	if (result.empty()) {
 		return false;
 	}
-	m_version = result.unwrap();
+	m_version = result.value();
 
 	m_file->seek(20, SEEK_CUR);
 
@@ -136,32 +136,32 @@ bool RafContainer::_readHeader()
 	if (result.empty()) {
 		return false;
 	}
-	m_offsetDirectory.jpegOffset = result.unwrap();
+	m_offsetDirectory.jpegOffset = result.value();
 	result = readUInt32(m_file);
 	if (result.empty()) {
 		return false;
 	}
-	m_offsetDirectory.jpegLength = result.unwrap();
+	m_offsetDirectory.jpegLength = result.value();
 	result = readUInt32(m_file);
 	if (result.empty()) {
 		return false;
 	}
-	m_offsetDirectory.metaOffset = result.unwrap();
+	m_offsetDirectory.metaOffset = result.value();
 	result = readUInt32(m_file);
 	if (result.empty()) {
 		return false;
 	}
-	m_offsetDirectory.metaLength = result.unwrap();
+	m_offsetDirectory.metaLength = result.value();
 	result = readUInt32(m_file);
 	if (result.empty()) {
 		return false;
 	}
-	m_offsetDirectory.cfaOffset = result.unwrap();
+	m_offsetDirectory.cfaOffset = result.value();
 	result = readUInt32(m_file);
 	if (result.empty()) {
 		return false;
 	}
-	m_offsetDirectory.cfaLength = result.unwrap();
+	m_offsetDirectory.cfaLength = result.value();
 
 	return true;
 }

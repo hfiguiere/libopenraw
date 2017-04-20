@@ -38,13 +38,13 @@ namespace Internals {
 bool IfdDir::isPrimary() const
 {
     auto result = getValue<uint32_t>(IFD::EXIF_TAG_NEW_SUBFILE_TYPE);
-    return result.ok() && (result.unwrap() == 0);
+    return result && (result.value() == 0);
 }
 
 bool IfdDir::isThumbnail() const
 {
     auto result = getValue<uint32_t>(IFD::EXIF_TAG_NEW_SUBFILE_TYPE);
-    return result.ok() && (result.unwrap() == 1);
+    return result && (result.value() == 1);
 }
 
 IfdDir::IfdDir(off_t _offset, IfdFileContainer &_container)
@@ -64,7 +64,7 @@ bool IfdDir::load()
     m_entries.clear();
     file->seek(m_offset, SEEK_SET);
 
-    int16_t numEntries = m_container.readInt16(file).unwrap_or(0);
+    int16_t numEntries = m_container.readInt16(file).value_or(0);
     LOGDBG1("num entries %d\n", numEntries);
 
     for (int16_t i = 0; i < numEntries; i++) {
@@ -77,10 +77,10 @@ bool IfdDir::load()
           LOGERR("Failed to read entry %d\n", i);
           return false;
         }
-        uint16_t n_id = id.unwrap();
+        uint16_t n_id = id.value();
         IfdEntry::Ref entry =
-          std::make_shared<IfdEntry>(n_id, type.unwrap(),
-                                     count.unwrap(), data, m_container);
+          std::make_shared<IfdEntry>(n_id, type.value(),
+                                     count.value(), data, m_container);
         m_entries[n_id] = entry;
     }
 
@@ -114,7 +114,7 @@ off_t IfdDir::nextIFD()
 
     if (m_entries.size() == 0) {
         file->seek(m_offset, SEEK_SET);
-        numEntries = m_container.readInt16(file).unwrap_or(0);
+        numEntries = m_container.readInt16(file).value_or(0);
         LOGDBG1("numEntries =%d shifting %d bytes\n", numEntries, (numEntries * 12) + 2);
     } else {
         numEntries = m_entries.size();
@@ -122,7 +122,7 @@ off_t IfdDir::nextIFD()
 
     file->seek(m_offset + (numEntries * 12) + 2, SEEK_SET);
     // XXX how about we check the error. Even though 0 is not valid.
-    return m_container.readInt32(file).unwrap_or(0);
+    return m_container.readInt32(file).value_or(0);
 }
 
 /** The SubIFD is locate at offset found in the field
@@ -134,8 +134,8 @@ IfdDir::Ref IfdDir::getSubIFD(uint32_t idx) const
 
     if (e != nullptr) {
         auto result = e->getArray<uint32_t>();
-        if (result.ok()) {
-            std::vector<uint32_t> offsets = result.unwrap();
+        if (result) {
+            std::vector<uint32_t> offsets = result.value();
             if (idx >= offsets.size()) {
                 Ref ref = std::make_shared<IfdDir>(offsets[idx], m_container);
                 ref->load();
@@ -154,8 +154,8 @@ Option<std::vector<IfdDir::Ref>> IfdDir::getSubIFDs()
     IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_SUB_IFDS);
     if (e != nullptr) {
         auto result = e->getArray<uint32_t>();
-        if (result.ok()) {
-            std::vector<uint32_t> offsets = result.unwrap();
+        if (result) {
+            std::vector<uint32_t> offsets = result.value();
             for (auto offset : offsets) {
                 Ref ifd = std::make_shared<IfdDir>(offset, m_container);
                 ifd->load();
@@ -178,7 +178,7 @@ IfdDir::Ref IfdDir::getExifIFD()
         return Ref();
     }
 
-    uint32_t val_offset = result.unwrap();
+    uint32_t val_offset = result.value();
     LOGDBG1("Exif IFD offset (uncorrected) = %u\n", val_offset);
     val_offset += m_container.exifOffsetCorrection();
     LOGDBG1("Exif IFD offset = %u\n", val_offset);

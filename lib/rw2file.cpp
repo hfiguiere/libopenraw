@@ -360,8 +360,8 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 	uint32_t byte_length = 0;
 	// RW2 file
 	auto result = _cfaIfd->getIntegerValue(IFD::RW2_TAG_STRIP_OFFSETS);
-	if(result.ok()) {
-		offset = result.unwrap();
+	if(result) {
+		offset = result.value();
         byte_length = m_container->file()->filesize() - offset;
     }
     else {
@@ -371,13 +371,13 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
             LOGDBG1("offset not found\n");
             return OR_ERROR_NOT_FOUND;
         }
-		offset = result.unwrap();
+		offset = result.value();
         result = _cfaIfd->getIntegerValue(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
         if(result.empty()) {
             LOGDBG1("byte len not found\n");
             return OR_ERROR_NOT_FOUND;
         }
-		byte_length = result.unwrap();
+		byte_length = result.value();
     }
 
 	result = _cfaIfd->getIntegerValue(IFD::RW2_TAG_SENSOR_WIDTH);
@@ -385,14 +385,14 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 		LOGDBG1("X not found\n");
 		return OR_ERROR_NOT_FOUND;
 	}
-	uint32_t x = result.unwrap();
+	uint32_t x = result.value();
 
 	result = _cfaIfd->getIntegerValue(IFD::RW2_TAG_SENSOR_HEIGHT);
 	if(result.empty()) {
 		LOGDBG1("Y not found\n");
 		return OR_ERROR_NOT_FOUND;
 	}
-	uint32_t y = result.unwrap();
+	uint32_t y = result.value();
 
 	// this is were things are complicated. The real size of the raw data
 	// is whatever is read (if compressed)

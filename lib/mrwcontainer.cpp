@@ -49,7 +49,7 @@ DataBlock::DataBlock(off_t start, MRWContainer *_container)
         LOGWARN("  Error reading block length %ld\n", start);
         return;
     }
-    m_length = result.unwrap();
+    m_length = result.value();
     LOGDBG1("  DataBlock %s, length %d at %ld\n", name().c_str(), m_length, m_start);
     LOGDBG2("< DataBlock\n");
     m_loaded = true;

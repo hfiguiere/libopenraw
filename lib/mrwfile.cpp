@@ -127,8 +127,8 @@ void MRWFile::_identifyId()
 
     if(_mainIfd && mc->prd) {
         auto version = mc->prd->string_val(MRW::PRD_VERSION);
-        if (version.ok()) {
-            _setTypeId(_typeIdFromModel("Minolta", version.unwrap()));
+        if (version) {
+            _setTypeId(_typeIdFromModel("Minolta", version.value()));
         } else {
             LOGERR("Coudln't read Minolta version\n");
         }
@@ -185,14 +185,14 @@ void MRWFile::_identifyId()
             LOGWARN("thumbnail offset entry not found\n");
             return OR_ERROR_NOT_FOUND;
         }
-        tnail_offset = result.unwrap();
+        tnail_offset = result.value();
 
         result = ref->getValue<uint32_t>(MRW::MRWTAG_THUMBNAIL_LENGTH);
         if (result.empty()) {
             LOGWARN("thumbnail lenght entry not found\n");
             return OR_ERROR_NOT_FOUND;
         }
-        tnail_len = result.unwrap();
+        tnail_len = result.value();
     }
 
     LOGDBG1("thumbnail offset found, offset == %u count == %u\n",
@@ -224,11 +224,11 @@ void MRWFile::_identifyId()
 		return OR_ERROR_NOT_FOUND;
 	}
 	/* Obtain sensor dimensions from PRD block. */
-	uint16_t y = mc->prd->uint16_val (MRW::PRD_SENSOR_LENGTH).unwrap_or(0);
-	uint16_t x = mc->prd->uint16_val (MRW::PRD_SENSOR_WIDTH).unwrap_or(0);
-	uint8_t bpc =  mc->prd->uint8_val (MRW::PRD_PIXEL_SIZE).unwrap_or(0);
+	uint16_t y = mc->prd->uint16_val (MRW::PRD_SENSOR_LENGTH).value_or(0);
+	uint16_t x = mc->prd->uint16_val (MRW::PRD_SENSOR_WIDTH).value_or(0);
+	uint8_t bpc =  mc->prd->uint8_val (MRW::PRD_PIXEL_SIZE).value_or(0);
 
-	bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE).unwrap_or(0) == 0x59);
+	bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE).value_or(0) == 0x59);
 	/* Allocate space for and retrieve pixel data.
 	 * Currently only for cameras that don't compress pixel data.
 	 */
@@ -293,7 +293,7 @@ void MRWFile::_identifyId()
 		LOGWARN("Fetched only %ld of %u: continuing anyway.\n", fetched,
 			datalen);
 	}
-	uint16_t bpat = mc->prd->uint16_val (MRW::PRD_BAYER_PATTERN).unwrap_or(0);
+	uint16_t bpat = mc->prd->uint16_val (MRW::PRD_BAYER_PATTERN).value_or(0);
 	or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
 	switch(bpat)
 	{

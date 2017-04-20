@@ -102,8 +102,8 @@ void IfdFile::_identifyId()
 
   auto make = _mainIfd->getValue<std::string>(IFD::EXIF_TAG_MAKE);
   auto model = _mainIfd->getValue<std::string>(IFD::EXIF_TAG_MODEL);
-  if (make.ok() && model.ok()) {
-    _setTypeId(_typeIdFromModel(make.unwrap(), model.unwrap()));
+  if (make && model) {
+    _setTypeId(_typeIdFromModel(make.value(), model.value()));
   }
 }
 
@@ -126,8 +126,8 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
       LOGDBG1("Found %u pixels\n", list.back());
     }
     auto result = dir->getSubIFDs();
-    if (result.ok()) {
-      std::vector<IfdDir::Ref> subdirs = result.unwrap();
+    if (result) {
+      std::vector<IfdDir::Ref> subdirs = result.value();
       LOGDBG1("Iterating subdirs\n");
       for(auto dir2 : subdirs)
       {
@@ -167,35 +167,35 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
       subtype = 1;
     }
   } else {
-    subtype = result.unwrap();
+    subtype = result.value();
   }
   LOGDBG1("subtype %u\n", subtype);
   if (subtype == 1) {
 
     uint16_t photom_int =
-      dir->getValue<uint16_t>(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION).unwrap_or(IFD::EV_PI_RGB);
+      dir->getValue<uint16_t>(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION).value_or(IFD::EV_PI_RGB);
 
-    uint32_t x = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH).unwrap_or(0);
-    uint32_t y = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH).unwrap_or(0);
+    uint32_t x = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH).value_or(0);
+    uint32_t y = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH).value_or(0);
 
-    uint16_t compression = dir->getValue<uint16_t>(IFD::EXIF_TAG_COMPRESSION).unwrap_or(0);
+    uint16_t compression = dir->getValue<uint16_t>(IFD::EXIF_TAG_COMPRESSION).value_or(0);
 
     uint32_t offset = 0;
-    uint32_t byte_count = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_BYTE_COUNTS).unwrap_or(0);
+    uint32_t byte_count = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_BYTE_COUNTS).value_or(0);
 
     result = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_OFFSETS);
-    bool got_it = result.ok();
-    if (result.ok()) {
-      offset = result.unwrap();
+    bool got_it = result.has_value();
+    if (got_it) {
+      offset = result.value();
     }
     if (!got_it || (compression == 6) || (compression == 7)) {
       if (!got_it) {
         byte_count =
-          dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH).unwrap_or(0);
+          dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH).value_or(0);
         result = dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT);
-        got_it = result.ok();
+        got_it = result.has_value();
         if (got_it) {
-          offset = result.unwrap();
+          offset = result.value();
         }
       }
       if (got_it) {
@@ -247,8 +247,8 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
         bool isRGB8 = true;
         IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
         auto result2 = entry->getArray<uint16_t>();
-        if (result2.ok()) {
-          std::vector<uint16_t> arr = result2.unwrap();
+        if (result2) {
+          std::vector<uint16_t> arr = result2.value();
           for(auto bpc : arr) {
             isRGB8 = (bpc == 8);
             if (!isRGB8) {
@@ -285,14 +285,14 @@ RawContainer* IfdFile::getContainer() const
 uint32_t IfdFile::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & byte_length)
 {
   auto result = dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
-  if (result.ok()) {
-    byte_length = result.unwrap();
-    return dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT).unwrap_or(0);
+  if (result) {
+    byte_length = result.value();
+    return dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT).value_or(0);
   }
 
   // some case it is STRIP_OFFSETS for JPEG
-  byte_length = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_BYTE_COUNTS).unwrap_or(0);
-  return dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_OFFSETS).unwrap_or(0);
+  byte_length = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_BYTE_COUNTS).value_or(0);
+  return dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_OFFSETS).value_or(0);
 }
 
 
@@ -445,8 +445,8 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
   ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
 
   auto result = e->getArray<uint8_t>();
-  if (result.ok()) {
-    cfa_pattern = _convertArrayToCfaPattern(result.unwrap());
+  if (result) {
+    cfa_pattern = _convertArrayToCfaPattern(result.value());
   }
 
   return cfa_pattern;
@@ -523,19 +523,19 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   if(result.empty()) {
     LOGERR("unable to guess Bits per sample\n");
   }
-  uint16_t bpc = result.unwrap_or(0);
+  uint16_t bpc = result.value_or(0);
 
   auto result2 = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_OFFSETS);
-  if(result2.ok()) {
-    offset = result2.unwrap();
+  if(result2) {
+    offset = result2.value();
     IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_STRIP_BYTE_COUNTS);
     if(!e) {
       LOGDBG1("byte len not found\n");
       return OR_ERROR_NOT_FOUND;
     }
     auto result3 = e->getArray<uint32_t>();
-    if (result3.ok()) {
-      std::vector<uint32_t> counts = result3.unwrap();
+    if (result3) {
+      std::vector<uint32_t> counts = result3.value();
       LOGDBG1("counting tiles\n");
       byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
     }
@@ -549,11 +549,11 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
       return OR_ERROR_NOT_FOUND;
     }
     auto result3 = e->getArray<uint32_t>();
-    if (result3.empty()) {
+    if (!result3) {
       LOGDBG1("tile offsets not found\n");
       return OR_ERROR_NOT_FOUND;
     }
-    std::vector<uint32_t> offsets = result3.unwrap();
+    std::vector<uint32_t> offsets = result3.value();
     offset = offsets[0];
     e = dir->getEntry(IFD::TIFF_TAG_TILE_BYTECOUNTS);
     if(!e) {
@@ -561,8 +561,8 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
       return OR_ERROR_NOT_FOUND;
     }
     result3 = e->getArray<uint32_t>();
-    if (result3.ok()) {
-      std::vector<uint32_t> counts = result3.unwrap();
+    if (result3) {
+      std::vector<uint32_t> counts = result3.value();
       LOGDBG1("counting tiles\n");
       byte_length = std::accumulate(counts.cbegin(), counts.cend(), 0);
     }
@@ -573,27 +573,27 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     LOGDBG1("X not found\n");
     return OR_ERROR_NOT_FOUND;
   }
-  uint32_t x = result2.unwrap();
+  uint32_t x = result2.value();
 
   result2 = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH);
-  if(result2.empty()) {
+  if(!result2) {
     LOGDBG1("Y not found\n");
     return OR_ERROR_NOT_FOUND;
   }
-  uint32_t y = result2.unwrap();
+  uint32_t y = result2.value();
 
   uint32_t photo_int
     = dir->getIntegerValue(IFD::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
-    .unwrap_or(IFD::EV_PI_CFA);
+    .value_or(IFD::EV_PI_CFA);
 
   BitmapData::DataType data_type = OR_DATA_TYPE_NONE;
 
   result = dir->getValue<uint16_t>(IFD::EXIF_TAG_COMPRESSION);
-  if(result.empty()) {
+  if(!result) {
     LOGDBG1("Compression type not found\n");
   }
 	uint32_t compression = _translateCompressionType(
-    static_cast<IFD::TiffCompress>(result.unwrap_or(0)));
+    static_cast<IFD::TiffCompress>(result.value_or(0)));
 
   switch(compression)
   {

@@ -70,8 +70,8 @@ template <class T>
 void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
 {
     auto result = e->getArray<T>();
-    if (result.ok()) {
-        std::vector<T> v = result.unwrap();
+    if (result) {
+        std::vector<T> v = result.value();
         values.insert(values.end(), v.cbegin(), v.cend());
     }
 }
@@ -81,8 +81,8 @@ template <class T, class T2>
 void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
 {
     auto result = e->getArray<T>();
-    if (result.ok()) {
-        std::vector<T> v = result.unwrap();
+    if (result) {
+        std::vector<T> v = result.value();
         for(const auto & elem : v) {
             values.push_back(T2(elem));
         }
