@@ -445,6 +445,21 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
     return false;
 }
 
+bool NefFile::isNrw()
+{
+    MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
+    if(!_makerNoteIfd) {
+        LOGERR("makernote not found\n");
+        return false;
+    }
+    auto value = _makerNoteIfd->getValue<std::string>(IFD::MNOTE_NIKON_QUALITY);
+    if (value && value.value() == "NRW") {
+        LOGDBG1("NRW found");
+        return true;
+    }
+    return false;
+}
+
 ::or_error NefFile::_decompressNikonQuantized(RawData & data)
 {
     NEFCompressionInfo c;
@@ -489,7 +504,10 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
                                         uint32_t options)
 {
     uint32_t compression = data.compression();
-    if((options & OR_OPTIONS_DONT_DECOMPRESS) ||
+    if (isNrw()) {
+        LOGDBG1("NRW file found, currently not supported.");
+        return OR_ERROR_INVALID_FORMAT;
+    } else if((options & OR_OPTIONS_DONT_DECOMPRESS) ||
        compression == IFD::COMPRESS_NONE) {
         return OR_ERROR_NONE;
     } else if(compression == IFD::COMPRESS_NIKON_QUANTIZED) {

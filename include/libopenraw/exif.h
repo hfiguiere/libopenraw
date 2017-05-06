@@ -175,13 +175,14 @@ typedef	enum {
 	RW2_TAG_IMAGE_WIDTH = 0x0007,
 	RW2_TAG_JPEG_FROM_RAW = 0x002e,
 	RW2_TAG_STRIP_OFFSETS = 0x0118,
-	
+
 	/* Canon MakerNote tags */
 	MNOTE_CANON_SENSORINFO = 0x00e0,
-	
+
 	/* Nikon MakerNote tags */
+	MNOTE_NIKON_QUALITY = 0x04,
 	MNOTE_NIKON_NEFDECODETABLE2 = 0x96,
-	
+
 	_EXIF_TAG_LAST
 } ExifTag;
 

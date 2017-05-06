@@ -55,10 +55,11 @@ public:
     NefFile(const NefFile&) = delete;
     NefFile & operator=(const NefFile &) = delete;
 
-    /** hack because some (lot?) D100 do set as compressed even though 
+    /** hack because some (lot?) D100 do set as compressed even though
      *  it is not
      */
     static bool isCompressed(RawContainer & container, uint32_t offset);
+    bool isNrw();
 
     class NEFCompressionInfo {
     public:
