@@ -133,12 +133,11 @@ protected:
 
 private:
     IfdDir::Ref m_cfaIfd; /**< the IFD for the CFA */
-    IfdDir::Ref
-        m_mainIfd;                    /**< the IFD for the main image
-                                                                   * does not necessarily reference
-                                                                   * the CFA
-                                                                   */
-    IfdDir::Ref m_exifIfd;            /**< the Exif IFD */
+    IfdDir::Ref m_mainIfd; /**< the IFD for the main image
+                            * does not necessarily reference
+                            * the CFA
+                            */
+    IfdDir::Ref m_exifIfd; /**< the Exif IFD */
     MakerNoteDir::Ref m_makerNoteIfd; /**< the MakerNote IFD */
 
     IfdFile(const IfdFile &) = delete;

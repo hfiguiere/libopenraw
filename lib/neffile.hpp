@@ -71,9 +71,16 @@ public:
         const HuffmanNode* huffman;
     };
 
-private:
+protected:
 
+    virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression) override;
+    virtual ::or_error _unpackData(uint16_t bpc, uint32_t compression,
+                                   RawData &data, uint32_t x, uint32_t y,
+                                   uint32_t offset, uint32_t byte_length) override;
+
+private:
     static const IfdFile::camera_ids_t s_def[];
+
     bool _getCompressionCurve(RawData&, NEFCompressionInfo&);
     ::or_error _decompressNikonQuantized(RawData&);
     virtual ::or_error _decompressIfNeeded(RawData&, uint32_t) override;

@@ -460,6 +460,29 @@ bool NefFile::isNrw()
     return false;
 }
 
+::or_error
+NefFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data,
+                     uint32_t x, uint32_t y, uint32_t offset, uint32_t byte_length)
+{
+    if (typeId() == OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D100)) {
+        x += 6;
+    }
+    return TiffEpFile::_unpackData(bpc, compression, data, x, y, offset, byte_length);
+}
+
+
+uint32_t NefFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
+{
+    if (tiffCompression == IFD::COMPRESS_NIKON_QUANTIZED) {
+        // must check whether it is really compressed
+        // only for D100
+        if (typeId() == OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D100)) {
+            return IFD::COMPRESS_NIKON_PACK;
+        }
+    }
+    return TiffEpFile::_translateCompressionType(tiffCompression);
+}
+
 ::or_error NefFile::_decompressNikonQuantized(RawData & data)
 {
     NEFCompressionInfo c;

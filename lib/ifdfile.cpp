@@ -44,7 +44,6 @@
 #include "ifdfilecontainer.hpp"
 #include "jfifcontainer.hpp"
 #include "rawfile_private.hpp"
-#include "neffile.hpp" // I wonder if this is smart as it break the abstraction.
 #include "unpack.hpp"
 
 namespace OpenRaw {
@@ -603,19 +602,6 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   case IFD::COMPRESS_NIKON_PACK:
     data_type = OR_DATA_TYPE_RAW;
     break;
-  case IFD::COMPRESS_NIKON_QUANTIZED:
-    // must check whether it is really compressed
-    // only for D100
-    if (!NefFile::isCompressed(*m_container, offset)) {
-      compression = IFD::COMPRESS_NIKON_PACK;
-      data_type = OR_DATA_TYPE_RAW;
-      // this is a hack. we should check if
-      // we have a D100 instead, but that case is already
-      // a D100 corner case. WILL BREAK on compressed files.
-      // according to dcraw we must increase the size by 6.
-      x += 6;
-      break;
-    }
   default:
     data_type = OR_DATA_TYPE_COMPRESSED_RAW;
     break;
