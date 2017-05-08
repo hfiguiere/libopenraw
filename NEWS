@@ -2,6 +2,11 @@ libopenraw 0.1.3 -
 
 New features:
 
+  Camera support:
+  [ a * denote that WB coefficients have been included ]
+
+  - Support for Nikon Coolpix B700, P330*, P340*.
+
 Bug fixes:
 
 Internal changes:
