@@ -30,10 +30,10 @@ ccfa_SOURCES = ccfa.c
 ccfa_LDADD = $(LIBOPENRAW_LIBS)
 
 gdk_SOURCES = gdk.c
-gdk_LDADD = $(LIBOPENRAWGNOME_LIBS)
+gdk_LDADD = $(LIBOPENRAW_LIBS) $(LIBOPENRAWGNOME_LIBS)
 
 pixbufload_SOURCES = pixbufload.c
-pixbufload_LDADD = $(LIBOPENRAWGNOME_LIBS)
+pixbufload_LDADD = $(LIBOPENRAW_LIBS) $(LIBOPENRAWGNOME_LIBS)
 
 ppmload_SOURCES = ppmload.c
 ppmload_LDADD = $(LIBOPENRAW_LIBS)
