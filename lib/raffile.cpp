@@ -309,9 +309,9 @@ RawContainer *RafFile::getContainer() const
 }
 
 bool
-RafFile::isXTrans(RawFile::TypeId type) const
+RafFile::isXTrans(RawFile::TypeId type_) const
 {
-    switch (type) {
+    switch (type_) {
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO1):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XPRO2):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1):

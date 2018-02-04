@@ -91,25 +91,24 @@ void RafMetaContainer::_read()
 		if (result16.empty()) {
 			return;
 		}
-		uint16_t size = result16.value();
+		uint16_t sz = result16.value();
 
 		MetaValue::value_t v;
-		if(size == 4) {
+		if (sz == 4) {
 			auto result32 = readUInt32(m_file);
 			if (result32) {
 				v = MetaValue::value_t(result32.value());
 			}
-		}
-		else {
+		} else {
 			char *content;
-			content = (char*)calloc(1, size + 1);
-			content[size] = 0;
-			m_file->read(content, size);
+			content = (char*)calloc(1, sz + 1);
+			content[sz] = 0;
+			m_file->read(content, sz);
 			v = MetaValue::value_t(std::string(content));
 			free(content);
 		}
 
-		RafMetaValue::Ref value = std::make_shared<RafMetaValue>(tag, size, MetaValue(v));
+		RafMetaValue::Ref value = std::make_shared<RafMetaValue>(tag, sz, MetaValue(v));
 		m_tags.insert(std::make_pair(tag, value));
 	}
 }

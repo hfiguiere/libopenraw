@@ -49,9 +49,9 @@ RawContainer::~RawContainer()
   m_file->close();
 }
 
-bool RawContainer::skip(off_t offset)
+bool RawContainer::skip(off_t offset_)
 {
-  m_file->seek(offset, SEEK_CUR);
+  m_file->seek(offset_, SEEK_CUR);
   return true;
 }
 

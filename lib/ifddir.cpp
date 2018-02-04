@@ -156,8 +156,8 @@ Option<std::vector<IfdDir::Ref>> IfdDir::getSubIFDs()
         auto result = e->getArray<uint32_t>();
         if (result) {
             std::vector<uint32_t> offsets = result.value();
-            for (auto offset : offsets) {
-                Ref ifd = std::make_shared<IfdDir>(offset, m_container);
+            for (auto offset_ : offsets) {
+                Ref ifd = std::make_shared<IfdDir>(offset_, m_container);
                 ifd->load();
                 ifds.push_back(ifd);
             }
