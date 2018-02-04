@@ -203,9 +203,9 @@ bool equalDataType(const std::string & result, BitmapData::DataType t)
 }
 
 Test::Test()
-    : m_rawfile(nullptr),
-      m_rawdata(nullptr),
-      m_total(0), m_success(0), m_failure(0)
+    : m_total(0)
+    , m_success(0)
+    , m_failure(0)
 {
 }
 
@@ -482,9 +482,9 @@ bool Test::testRawDataDimensions(const std::string & result)
         y = boost::lexical_cast<uint32_t>(v[1]);
         bool succ = false;
         CHECK_TEST_EQUALS_N(m_rawdata->width(), x, succ);
-        success |= succ;
+        success &= succ;
         CHECK_TEST_EQUALS_N(m_rawdata->height(), y,  succ);
-        success |= succ;
+        success &= succ;
     }
     catch(...)
     {

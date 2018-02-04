@@ -195,7 +195,7 @@
       <thumbMd5>49492</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
-      <rawDataDimensions>3040 2024</rawDataDimensions>
+      <rawDataDimensions>3034 2024</rawDataDimensions>
       <rawCfaPattern>GRBG</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
