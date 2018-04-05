@@ -37,20 +37,21 @@ namespace MRW {
 DataBlock::DataBlock(off_t start, MRWContainer *_container)
     : m_start(start), m_container(_container), m_loaded(false)
 {
-    LOGDBG2("> DataBlock start == %ld\n", start);
+    LOGDBG2("> DataBlock start == %lld\n", (long long int)start);
     if (m_container->fetchData(m_name, m_start, 4) != 4) {
         // FIXME: Handle error
-        LOGWARN("  Error reading block name %ld\n", start);
+        LOGWARN("  Error reading block name %lld\n", (long long int)start);
         return;
     }
     auto result = m_container->readInt32(m_container->file());
     if (result.empty()) {
         // FIXME: Handle error
-        LOGWARN("  Error reading block length %ld\n", start);
+        LOGWARN("  Error reading block length %lld\n", (long long int)start);
         return;
     }
     m_length = result.value();
-    LOGDBG1("  DataBlock %s, length %d at %ld\n", name().c_str(), m_length, m_start);
+    LOGDBG1("  DataBlock %s, length %d at %lld\n", name().c_str(), m_length,
+            (long long int)m_start);
     LOGDBG2("< DataBlock\n");
     m_loaded = true;
 }
@@ -220,7 +221,7 @@ bool MRWContainer::locateDirsPreHook()
     // But it doesn't work.
     //  if((version[2] != '7') || (version[3] != '3')) {
     setExifOffsetCorrection(m_offset);
-    LOGDBG1("setting correction to %ld\n", m_offset);
+    LOGDBG1("setting correction to %lld\n", (long long int)m_offset);
     //  }
 
     m_file->seek(m_offset, SEEK_SET);

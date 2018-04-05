@@ -50,8 +50,8 @@ IfdEntry::IfdEntry(uint16_t _id, int16_t _type,
 	auto container_size = m_container.size();
 	auto unit_size = type_unit_size(static_cast<IFD::ExifTagType>(m_type));
 	if ((m_count * unit_size) > static_cast<size_t>(container_size)) {
-		LOGERR("Trying to have %u items in a container of %ld bytes\n",
-			   m_count, container_size);
+		LOGERR("Trying to have %u items in a container of %lld bytes\n",
+			   m_count, (long long int)container_size);
 		m_count = container_size / unit_size;
 	}
 }

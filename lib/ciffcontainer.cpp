@@ -135,7 +135,7 @@ Heap::Heap(off_t start, off_t length, CIFFContainer * _container)
       m_container(_container),
       m_records()
 {
-    LOGDBG2("Heap @ %ld length = %ld\n", start, m_length);
+    LOGDBG2("Heap @ %lld length = %lld\n", (long long int)start, (long long int)m_length);
 }
 
 std::vector<RecordEntry> & Heap::records()
@@ -254,7 +254,7 @@ bool CIFFContainer::_loadHeap()
     if (m_endian != ENDIAN_NULL) {
         off_t heapLength = m_file->filesize() - m_hdr.headerLength;
 
-        LOGDBG1("heap len %ld\n", heapLength);
+        LOGDBG1("heap len %lld\n", (long long int)heapLength);
         m_heap = std::make_shared<CIFF::Heap>(m_hdr.headerLength,
                                               heapLength, this);
 

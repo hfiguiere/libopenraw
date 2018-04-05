@@ -114,10 +114,11 @@ size_t IfdFileContainer::getDirectoryDataSize()
     LOGDBG1("getDirectoryDataSize()\n");
     off_t dir_offset = m_current_dir->offset();
     // FIXME check error
-    LOGDBG1("offset = %ld m_numTags = %d\n", dir_offset, m_current_dir->numTags());
+    LOGDBG1("offset = %lld m_numTags = %d\n", (long long int)dir_offset,
+            m_current_dir->numTags());
     off_t begin = dir_offset + 2 + (m_current_dir->numTags() * 12);
 
-    LOGDBG1("begin = %ld\n", begin);
+    LOGDBG1("begin = %lld\n", (long long int)begin);
 
     m_file->seek(begin, SEEK_SET);
     begin += 2;

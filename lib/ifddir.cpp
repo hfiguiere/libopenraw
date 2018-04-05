@@ -58,7 +58,7 @@ IfdDir::~IfdDir()
 
 bool IfdDir::load()
 {
-    LOGDBG1("IfdDir::load() m_offset =%ld\n", m_offset);
+    LOGDBG1("IfdDir::load() m_offset =%lld\n", (long long int)m_offset);
 
     auto file = m_container.file();
     m_entries.clear();

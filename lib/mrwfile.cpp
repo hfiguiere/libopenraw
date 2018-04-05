@@ -269,7 +269,7 @@ void MRWFile::_identifyId()
 		size_t outsize = finaldatalen;
 		size_t got;
 		do {
-			LOGDBG2("fetchData @offset %ld\n", offset);
+			LOGDBG2("fetchData @offset %lld\n", (long long int)offset);
 			got = m_container->fetchData (block.get(),
 										  offset, blocksize);
 			fetched += got;

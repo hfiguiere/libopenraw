@@ -189,7 +189,7 @@ RawContainer* CRWFile::getContainer() const
         return err;
     }
     LOGDBG2("length = %d\n", iter->length);
-    LOGDBG2("offset = %ld\n", exifProps.offset() + iter->offset);
+    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->offset));
     auto file = m_container->file();
     file->seek(exifProps.offset() + iter->offset, SEEK_SET);
 
@@ -211,7 +211,7 @@ RawContainer* CRWFile::getContainer() const
         return err;
     }
     LOGDBG2("length = %u\n", iter->length);
-    LOGDBG2("offset = %ld\n", exifProps.offset() + iter->offset);
+    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->offset));
 
     // go figure what the +2 is. looks like it is the byte #
     file->seek(exifProps.offset() + iter->offset + 2, SEEK_SET);
@@ -227,7 +227,7 @@ RawContainer* CRWFile::getContainer() const
     const CIFF::RecordEntry *entry = m_container->getRawDataRecord();
     if (entry) {
         CIFF::Heap::Ref heap = m_container->heap();
-        LOGDBG2("RAW @%ld\n", heap->offset() + entry->offset);
+        LOGDBG2("RAW @%lld\n", (long long int)(heap->offset() + entry->offset));
         size_t byte_size = entry->length;
         void *buf = data.allocData(byte_size);
         size_t real_size = entry->fetchData(heap.get(), buf, byte_size);
