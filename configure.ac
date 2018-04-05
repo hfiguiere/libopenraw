@@ -167,15 +167,45 @@ fi
 
 AM_CONDITIONAL(BUILD_GNOME_SUPPORT, test x$HAVE_GNOME = xyes)
 
-AX_CFLAGS_GCC_OPTION([-Wextra])
-AX_CXXFLAGS_GCC_OPTION([-Wextra  -Wsign-compare -Wpointer-arith -Wchar-subscripts -Wwrite-strings -Wunused -Wpointer-arith -Wsuggest-override])
+AC_LANG_CPLUSPLUS
+AC_LANG_COMPILER_REQUIRE
 
-CXXFLAGS="$CXXFLAGS -pedantic -g -Wall -Wshadow"
-CFLAGS="$CFLAGS -pedantic -g -Wall"
+AX_CHECK_COMPILE_FLAG([-Werror=unknown-warning-option], [
+        ax_compiler_flags_test="-Werror=unknown-warning-option"
+], [
+        ax_compiler_flags_test=""
+])
+AX_APPEND_COMPILE_FLAGS([ \
+   -Wchar-subscripts \
+   -Wcast-align \
+   -Wextra \
+   -Wexceptions \
+   -Wheader-guard \
+   -Wformat \
+   -Wformat-nonliteral \
+   -Wformat-security \
+   -Wno-gnu-zero-variadic-macro-arguments \
+   -Wlogical-not-parentheses \
+   -Wmisleading-indentation \
+   -Wmissing-noreturn \
+   -Woverloaded-virtual \
+   -Wpointer-arith \
+   -Wredundant-decls \
+   -Wpointer-bool-conversion \
+   -Wshadow \
+   -Wsign-compare \
+   -Wno-suggest-attribute=noreturn \
+   -Wsuggest-override \
+   -Wnull-conversion \
+   -Wunreachable-code \
+   -Wunused \
+   -Wwrite-strings \
+], [], [$ax_compiler_flags_test])
 
 AC_ARG_ENABLE(asan,[  --enable-asan    Turn on address sanitizer],[
-    AX_CFLAGS_GCC_OPTION([-fsanitize=address -fno-omit-frame-pointer])
-    AX_CXXFLAGS_GCC_OPTION([-fsanitize=address -fno-omit-frame-pointer])
+    AX_APPEND_COMPILE_FLAGS([-fsanitize=address -fno-omit-frame-pointer])
+    AC_LANG_C
+    AX_APPEND_COMPILE_FLAGS([-fsanitize=address -fno-omit-frame-pointer])
 ]
 ,
 [

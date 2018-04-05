@@ -1,7 +1,7 @@
 Copyright
 =========
 
-libopenraw is Copyright (c) 2005-2016 Hubert Figuiere and
+libopenraw is Copyright (c) 2005-2018 Hubert Figuiere and
 other contributors. See the respective files.
 It is licensed under LGPLv3 or later. See files COPYING
 and COPYING.LESSER
@@ -18,6 +18,7 @@ Prerequistes to build:
 If building from the git tree you also need:
 
     - automake/autoconf
+    - autoconf-archive
     - pkg-config for the associated m4 macros
 
 Optional Gnome support
