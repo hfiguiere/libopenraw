@@ -53,6 +53,8 @@ public:
     ~RafMetaValue();
 
     const MetaValue &get() const { return m_value; }
+    uint16_t tag() const { return m_tag; }
+    uint16_t size() const { return m_size; }
 
 private:
     uint16_t m_tag;

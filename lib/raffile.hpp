@@ -68,8 +68,8 @@ private:
 
     IO::Stream::Ptr m_io;      /**< the IO handle */
     RafContainer *m_container; /**< the real container */
-    uint32_t m_x;
-    uint32_t m_y;
+    // uint32_t m_x;
+    // uint32_t m_y;
 
     static const RawFile::camera_ids_t s_def[];
 };

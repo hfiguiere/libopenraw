@@ -48,7 +48,7 @@ public:
     virtual IfdFileContainer::EndianType isMagicHeader(const char *p, int len) override;
 
 private:
-    char subtype_;
+//    char subtype_;
 };
 }
 }
