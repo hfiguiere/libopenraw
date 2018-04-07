@@ -31,6 +31,14 @@ addons:
                 packages:
                         - libboost-test-dev
                         - libgdk-pixbuf2.0-dev
+before_install:
+	if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+		sudo apt-get -y install autoconf-archive
+	fi
+	if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then 
+		brew install autoconf-archive
+	fi
+
 script:
         - ./autogen.sh
         - make
