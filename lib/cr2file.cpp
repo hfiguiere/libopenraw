@@ -291,6 +291,11 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 9602, -3823, -937, -2984, 11495, 1675, -407, 1415, 5049 } },
+    // From DNG Converter 10.3
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G9XMKII),
+      0,
+      0,
+      { 10056, -4131, -944, -2576, 11143, 1625, -238, 1294, 5179} },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S90),
       0,
       0,
