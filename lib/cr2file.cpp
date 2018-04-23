@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2018 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -213,6 +213,11 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0x350f,
       { 6362, -823, -847, -4426, 12109, 2616, -743, 1857, 5635 } },
+    // Fron DNG Converter 10.3
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_77D),
+      0,
+      0,
+      { 7377, -742, -998, -4235, 11981, 2549, -673, 1918, 5538 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M),
       0,
       0,
