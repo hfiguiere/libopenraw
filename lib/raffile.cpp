@@ -172,6 +172,20 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 8458, -2451, -855, -4597, 12447, 2407, -1475, 2482, 6526 } },
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT10),
+      0,
+      0,
+      { 8458, -2451, -855, -4597, 12447, 2407, -1475, 2482, 6526 } },
+    // From DNG Converter 10.3
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT2),
+      0,
+      0,
+      { 11434, -4948, -1210, -3746, 12042, 1903, -666, 1479, 5235 } },
+    // From DNG Converter 10.3
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT20),
+      0,
+      0,
+      { 11434, -4948, -1210, -3746, 12042, 1903, -666, 1479, 5235 } },
     // From DNG Converter 7.1-rc
     { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XS1),
       0,
