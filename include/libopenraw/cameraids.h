@@ -1,7 +1,7 @@
 /*
  * libopenraw - cameraids.h
  *
- * Copyright (C) 2012-2017 Hubert Figuière
+ * Copyright (C) 2012-2018 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -546,6 +546,7 @@ enum {
     OR_TYPEID_FUJIFILM_XPRO2 = 34,
     OR_TYPEID_FUJIFILM_X100F = 35,
     OR_TYPEID_FUJIFILM_XT20 = 36,
+    OR_TYPEID_FUJIFILM_XE3 = 37,
     _OR_TYPEID_FUJIFILM_LAST
 };
 

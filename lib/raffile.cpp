@@ -2,7 +2,7 @@
 /*
  * libopenraw - raffile.cpp
  *
- * Copyright (C) 2011-2017 Hubert Figuière
+ * Copyright (C) 2011-2018 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -154,6 +154,11 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 11562, -5118, -961, -3022, 11007, 2311, -525, 1569, 6097 } },
+    // From DNG Converter 10.3
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE3),
+      0,
+      0,
+      { 11434, -4948, -1210, -3746, 12042, 1903, -666, 1479, 5235 } },
     { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XM1),
       0,
       0,
@@ -216,6 +221,7 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
     { "X100S", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100S) },
     { "X100T", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100T) },
     { "X100F", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100F) },
+    { "X-E3", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE3) },
 
     { nullptr, 0 }
 };
@@ -317,6 +323,7 @@ RafFile::isXTrans(RawFile::TypeId type_) const
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE2):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE2S):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE3):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XM1):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XQ1):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT1):
