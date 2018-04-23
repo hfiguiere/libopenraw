@@ -108,6 +108,11 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 10592, -4262, -1008, -3514, 11355, 2465, -870, 2025, 6386 } },
+    // From DNG Converter 10.3
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100F),
+      0,
+      0,
+      { 11434, -4948, -1210, -3746, 12042, 1903, -666, 1479, 5235 } },
     { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X10),
       0,
       0,
@@ -142,6 +147,11 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 10763, -4560, -917, -3346, 11311, 2322, -475, 1135, 5843 } },
+    // From DNG Converter 10.3
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XA3),
+      0,
+      0,
+      { 12407, -5222, -1086, -2971, 11116, 2120, -294, 1029, 5284 } },
     { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE1),
       0,
       0,
