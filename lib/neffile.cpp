@@ -255,7 +255,11 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 7842,-2320,-992,-8154,15718,2599,-1098,1342,7560 } },
-
+    // From DNG Converter 10.3
+    { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_COOLPIX_B700),
+      200,
+      0,
+      { 14387, -6014, -1299, -1357, 9975, 1616, 467, 1047, 4744 } },
     { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_COOLPIX_P330),
       200,
       0,
