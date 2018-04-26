@@ -6,6 +6,7 @@ Makefile.in
 *.la
 .libs
 .deps
+.dirstamp
 .AppleDouble
 :2e_*
 CMakeCache.txt
@@ -35,11 +36,18 @@ demo/gdk
 demo/extensions
 demo/pixbufload
 demo/ppmload
-lib/io/teststream
+lib/teststream
+lib/*.log
+lib/*.trs
 test/ljpegtest
 test/extensions
 test/testunpack
+test/testoption
+test/*.log
+test/*.trs
 testsuite/test_xmlhandler
 testsuite/testsuitetags.h
 testsuite/testsuitetags.cpp
 testsuite/testsuite
+testsuite/*.log
+testsuite/*.trs
