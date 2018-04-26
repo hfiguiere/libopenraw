@@ -20,6 +20,7 @@ noinst_HEADERS = \
 	tiffepfile.hpp \
 	rawfilefactory.hpp \
 	cr2file.hpp \
+	cr3file.hpp \
 	neffile.hpp \
 	orffile.hpp \
 	arwfile.hpp \
@@ -39,6 +40,7 @@ noinst_HEADERS = \
 	ifd.hpp \
 	ifdfilecontainer.hpp \
 	ifddir.hpp ifdentry.hpp \
+	isomediacontainer.hpp \
 	orfcontainer.hpp \
 	rw2container.hpp \
 	mrwcontainer.hpp \
@@ -98,6 +100,7 @@ libopenraw_la_SOURCES = \
 	tiffepfile.cpp \
 	rawfilefactory.cpp \
 	cr2file.cpp \
+	cr3file.cpp \
 	neffile.cpp \
 	orffile.cpp \
 	arwfile.cpp \
@@ -113,6 +116,7 @@ libopenraw_la_SOURCES = \
 	rawdata.cpp \
 	ifdfilecontainer.cpp \
 	ifddir.cpp ifdentry.cpp \
+	isomediacontainer.cpp \
 	makernotedir.hpp makernotedir.cpp \
 	rawcontainer.cpp \
 	orfcontainer.cpp \

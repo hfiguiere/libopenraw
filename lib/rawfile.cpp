@@ -51,6 +51,7 @@
 #include "rawcontainer.hpp"
 #include "tiffepfile.hpp"
 #include "cr2file.hpp"
+#include "cr3file.hpp"
 #include "neffile.hpp"
 #include "orffile.hpp"
 #include "arwfile.hpp"
@@ -121,6 +122,9 @@ void init(void)
     static RawFileFactory fctraf(OR_RAWFILE_TYPE_RAF,
                                  std::bind(&Internals::RafFile::factory, _1),
                                  "raf");
+    static RawFileFactory fctcr3(OR_RAWFILE_TYPE_CR3,
+                                 std::bind(&Internals::Cr3File::factory, _1),
+                                 "cr3");
 }
 
 class RawFile::Private
