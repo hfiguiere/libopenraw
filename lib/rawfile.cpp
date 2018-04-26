@@ -115,6 +115,9 @@ void init(void)
     static RawFileFactory fctrw2(OR_RAWFILE_TYPE_RW2,
                                  std::bind(&Internals::Rw2File::factory, _1),
                                  "rw2");
+    static RawFileFactory fctrwl(OR_RAWFILE_TYPE_RW2,
+                                 std::bind(&Internals::Rw2File::factory, _1),
+                                 "rwl");
     static RawFileFactory fctraf(OR_RAWFILE_TYPE_RAF,
                                  std::bind(&Internals::RafFile::factory, _1),
                                  "raf");
