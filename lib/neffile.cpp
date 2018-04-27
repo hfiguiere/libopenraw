@@ -171,7 +171,11 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 8821, -2938, -785, -4178, 12142, 2287, -824, 1651, 6860 } },
-
+    // From DNG Converter 10.3
+    { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D5600),
+      0,
+      0,
+      { 8821, -2938, -785, -4178, 12142, 2287, -824, 1651, 6860 } },
     { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D60),
       0,
       0,
