@@ -38,7 +38,7 @@ public:
     uint32_t count_tracks();
     /// Get track info.
     Option<Mp4parseTrackInfo> get_track(uint32_t index);
-    Option<Mp4parseTrackVideoInfo> get_video_track(uint32_t index);
+    Option<Mp4parseTrackRawInfo> get_raw_track(uint32_t index);
 private:
     /// Ensure the mp4 is parsed.
     /// @return true if it was.

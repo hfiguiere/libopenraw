@@ -91,15 +91,19 @@ RawContainer *Cr3File::getContainer() const
         if (!track || (*track).track_type != MP4PARSE_TRACK_TYPE_VIDEO ||
             (*track).codec != MP4PARSE_CODEC_CRAW) {
             LOGDBG1("%u Not a CRAW track\n", i);
+            if (track) {
+                LOGDBG1("type = %u codec = %u\n", (*track).track_type,
+                        (*track).codec != MP4PARSE_CODEC_CRAW);
+            }
             continue;
         }
-        auto video_track = m_container->get_video_track(i);
-        if (!video_track) {
+        auto raw_track = m_container->get_raw_track(i);
+        if (!raw_track) {
             LOGDBG1("%u not a video track\n", i);
             continue;
         }
-        auto dim = std::max((*video_track).image_width,
-                            (*video_track).image_height);
+        auto dim = std::max((*raw_track).image_width,
+                            (*raw_track).image_height);
         LOGDBG1("Dimension %u\n", dim);
         list.push_back(dim);
     }

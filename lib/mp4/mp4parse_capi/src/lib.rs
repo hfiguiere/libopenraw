@@ -200,6 +200,13 @@ pub struct Mp4parseTrackVideoInfo {
 
 #[repr(C)]
 #[derive(Default, Debug)]
+pub struct Mp4parseTrackRawInfo {
+    pub image_width: u16,
+    pub image_height: u16,
+}
+
+#[repr(C)]
+#[derive(Default, Debug)]
 pub struct Mp4parseFragmentInfo {
     pub fragment_duration: u64,
     // TODO:
@@ -438,6 +445,8 @@ pub unsafe extern fn mp4parse_get_track_info(parser: *mut Mp4parseParser, track_
             VideoCodecSpecific::ESDSConfig(_) => // MP4V (14496-2) video is unsupported.
                 Mp4parseCodec::Unknown,
         },
+        Some(SampleEntry::CanonCRAW(_)) =>
+            Mp4parseCodec::Craw,
         _ => Mp4parseCodec::Unknown,
     };
 
@@ -581,6 +590,46 @@ pub unsafe extern fn mp4parse_get_track_audio_info(parser: *mut Mp4parseParser, 
     }
 
     Mp4parseStatus::Ok
+}
+
+/// File the supplied `Mp4parseTrackRawInfo` with metadata for `track`.
+#[no_mangle]
+pub unsafe extern fn mp4parse_get_track_raw_info(parser: *mut Mp4parseParser, track_index: u32, info: *mut Mp4parseTrackRawInfo) -> Mp4parseStatus {
+    if parser.is_null() || info.is_null() || (*parser).poisoned() {
+        return Mp4parseStatus::BadArg;
+    }
+
+    // Initialize fields to default values to ensure all fields are always valid.
+    *info = Default::default();
+
+    let context = (*parser).context_mut();
+
+    if track_index as usize >= context.tracks.len() {
+        return Mp4parseStatus::BadArg;
+    }
+
+    let track = &context.tracks[track_index as usize];
+
+    match track.track_type {
+        TrackType::Video => {}
+        _ => return Mp4parseStatus::Invalid,
+    };
+
+    let video = match track.data {
+        Some(ref data) => data,
+        None => return Mp4parseStatus::Invalid,
+    };
+
+    let raw = match *video {
+        SampleEntry::CanonCRAW(ref x) => x,
+        _ => return Mp4parseStatus::Invalid,
+    };
+
+    (*info).image_width = raw.width;
+    (*info).image_height = raw.height;
+
+    Mp4parseStatus::Ok
+
 }
 
 /// Fill the supplied `Mp4parseTrackVideoInfo` with metadata for `track`.

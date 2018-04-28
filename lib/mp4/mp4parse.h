@@ -97,6 +97,11 @@ typedef struct {
 } Mp4parseTrackInfo;
 
 typedef struct {
+  uint16_t image_width;
+  uint16_t image_height;
+} Mp4parseTrackRawInfo;
+
+typedef struct {
   uint32_t display_width;
   uint32_t display_height;
   uint16_t image_width;
@@ -156,6 +161,13 @@ Mp4parseStatus mp4parse_get_track_count(const Mp4parseParser *parser, uint32_t *
 Mp4parseStatus mp4parse_get_track_info(Mp4parseParser *parser,
                                        uint32_t track_index,
                                        Mp4parseTrackInfo *info);
+
+/*
+ * File the supplied `Mp4parseTrackRawInfo` with metadata for `track`.
+ */
+Mp4parseStatus mp4parse_get_track_raw_info(Mp4parseParser *parser,
+                                           uint32_t track_index,
+                                           Mp4parseTrackRawInfo *info);
 
 /*
  * Fill the supplied `Mp4parseTrackVideoInfo` with metadata for `track`.

@@ -84,14 +84,14 @@ IsoMediaContainer::get_track(uint32_t index)
     return option_some(std::move(info));
 }
 
-Option<Mp4parseTrackVideoInfo>
-IsoMediaContainer::get_video_track(uint32_t index)
+Option<Mp4parseTrackRawInfo>
+IsoMediaContainer::get_raw_track(uint32_t index)
 {
     if (!ensure_parsed()) {
         return OptionNone();
     }
-    Mp4parseTrackVideoInfo info;
-    auto status = mp4parse_get_track_video_info(m_parser, index, &info);
+    Mp4parseTrackRawInfo info;
+    auto status = mp4parse_get_track_raw_info(m_parser, index, &info);
     if (status != MP4PARSE_STATUS_OK) {
         return OptionNone();
     }
