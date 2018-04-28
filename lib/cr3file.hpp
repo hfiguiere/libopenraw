@@ -34,6 +34,8 @@ class RawData;
 
 namespace Internals {
 
+class IsoMediaContainer;
+
 class Cr3File : public RawFile {
 public:
     static RawFile *factory(const IO::Stream::Ptr &s);
@@ -54,7 +56,7 @@ protected:
 
 private:
     IO::Stream::Ptr m_io; /**< the IO handle */
-    RawContainer *m_container;
+    IsoMediaContainer *m_container;
 
     static const RawFile::camera_ids_t s_def[];
 };

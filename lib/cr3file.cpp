@@ -85,7 +85,24 @@ RawContainer *Cr3File::getContainer() const
 ::or_error Cr3File::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
     auto err = OR_ERROR_NOT_FOUND;
-
+    auto track_count = m_container->count_tracks();
+    for (uint32_t i = 0; i < track_count; i++) {
+        auto track = m_container->get_track(i);
+        if (!track || (*track).track_type != MP4PARSE_TRACK_TYPE_VIDEO ||
+            (*track).codec != MP4PARSE_CODEC_CRAW) {
+            LOGDBG1("%u Not a CRAW track\n", i);
+            continue;
+        }
+        auto video_track = m_container->get_video_track(i);
+        if (!video_track) {
+            LOGDBG1("%u not a video track\n", i);
+            continue;
+        }
+        auto dim = std::max((*video_track).image_width,
+                            (*video_track).image_height);
+        LOGDBG1("Dimension %u\n", dim);
+        list.push_back(dim);
+    }
     return err;
 }
 

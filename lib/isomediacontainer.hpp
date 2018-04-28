@@ -1,4 +1,4 @@
-/* -*- tab-width:2; c-basic-offset:2; indent-tabs-mode:nil; -*- */
+/* -*- tab-width:4; c-basic-offset:4; indent-tabs-mode:nil; -*- */
 /*
  * libopenraw - isomediacontainer.hpp
  *
@@ -23,6 +23,8 @@
 
 #include "io/stream.hpp"
 #include "rawcontainer.hpp"
+#include "option.hpp"
+#include "mp4/mp4parse.h"
 
 namespace OpenRaw {
 namespace Internals {
@@ -30,6 +32,24 @@ namespace Internals {
 class IsoMediaContainer : public RawContainer {
 public:
     IsoMediaContainer(const IO::Stream::Ptr &file);
+    virtual ~IsoMediaContainer();
+
+    /// Count tracks in the iso container.
+    uint32_t count_tracks();
+    /// Get track info.
+    Option<Mp4parseTrackInfo> get_track(uint32_t index);
+    Option<Mp4parseTrackVideoInfo> get_video_track(uint32_t index);
+private:
+    /// Ensure the mp4 is parsed.
+    /// @return true if it was.
+    bool ensure_parsed();
+
+    /// Read callback for mp4 parse.
+    static intptr_t read_callback(uint8_t*, uintptr_t, void*);
+
+    bool m_parsed;
+    Mp4parseIo m_mp4io;
+    Mp4parseParser *m_parser;
 };
 }
 }
