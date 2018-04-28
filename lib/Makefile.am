@@ -65,7 +65,7 @@ libopenraw_la_LDFLAGS = \
 
 #	-export-symbols $(srcdir)/libopenraw.sym 
 
-libopenraw_la_LIBADD = -ljpeg
+libopenraw_la_LIBADD = -ljpeg -L@top_srcdir@/lib/mp4/target/debug -lmp4
 
 libopenraw_la_SOURCES = \
 	io/io.c io/posix_io.h \

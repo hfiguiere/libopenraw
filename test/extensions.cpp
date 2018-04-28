@@ -35,7 +35,7 @@ int test_main( int, char *[] )             // note the name!
         i++;
         exts++;
     }
-    if(i != 13) {
+    if(i != 15) {
         fprintf(stderr, "extension list has the wrong number: %d\n", i);
         return 1;
     }

@@ -37,8 +37,8 @@ cp _upstream/mp4parse/mp4parse_capi/src/*.rs mp4parse_capi/src/
 #mkdir -p mp4parse_fallible
 #cp _upstream/mp4parse_fallible/* mp4parse_fallible/
 
-#echo "Applying patches..."
-#patch -p4 < mp4parse-cargo.patch
+echo "Applying patches..."
+patch -p4 < mp4parse-cargo.patch
 
 echo "Cleaning up..."
 rm -rf _upstream
