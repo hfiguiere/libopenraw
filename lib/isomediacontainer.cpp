@@ -20,6 +20,7 @@
  */
 
 #include "isomediacontainer.hpp"
+#include "mp4/mp4parse.h"
 
 namespace OpenRaw {
 namespace Internals {
