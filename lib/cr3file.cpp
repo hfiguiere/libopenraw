@@ -69,7 +69,10 @@ Cr3File::Cr3File(const IO::Stream::Ptr &s)
     _setMatrices(s_matrices);
 }
 
-Cr3File::~Cr3File() {}
+Cr3File::~Cr3File()
+{
+    delete m_container;
+}
 
 RawContainer *Cr3File::getContainer() const
 {
