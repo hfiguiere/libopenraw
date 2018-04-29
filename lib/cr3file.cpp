@@ -94,14 +94,10 @@ RawContainer *Cr3File::getContainer() const
         if (!track || (*track).track_type != MP4PARSE_TRACK_TYPE_VIDEO ||
             (*track).codec != MP4PARSE_CODEC_CRAW) {
             LOGDBG1("%u Not a CRAW track\n", i);
-            if (track) {
-                LOGDBG1("type = %u codec = %u\n", (*track).track_type,
-                        (*track).codec != MP4PARSE_CODEC_CRAW);
-            }
             continue;
         }
         auto raw_track = m_container->get_raw_track(i);
-        if (!raw_track) {
+        if (!raw_track || !(*raw_track).is_jpeg) {
             LOGDBG1("%u not a video track\n", i);
             continue;
         }
@@ -109,6 +105,7 @@ RawContainer *Cr3File::getContainer() const
                             (*raw_track).image_height);
         LOGDBG1("Dimension %u\n", dim);
         list.push_back(dim);
+        err = OR_ERROR_NONE;
     }
     return err;
 }

@@ -140,10 +140,12 @@ box_database!(
     LPCMAudioSampleEntry              0x6C70636D, // "lpcm" - quicktime atom
     ALACSpecificBox                   0x616C6163, // "alac" - Also used by ALACSampleEntry
     QTJPEGAtom                        0x4a504547, // "JPEG"
+    FreeBox                           0x66726565, // "free"
 
     // All the Canon CR3 stuff.
     CanonCRAWEntry                    0x43524157, // "CRAW"
     CanonMetadataEntry                0x43544d44, // "CTMD"
     CanonCMP1                         0x434d5031, // "CMP1"
+    CanonCDI1                         0x43444931, // "CDI1"
     CanonPreview                      0x50525657, // "PRVW"
 );

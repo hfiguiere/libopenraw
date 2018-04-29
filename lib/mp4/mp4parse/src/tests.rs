@@ -692,7 +692,7 @@ fn avcc_limit() {
     });
     let mut iter = super::BoxIter::new(&mut stream);
     let mut stream = iter.next_box().unwrap().unwrap();
-    match super::read_video_sample_entry(&mut stream) {
+    match super::read_video_sample_entry(&mut stream, &FourCC::from("isom")) {
         Err(Error::InvalidData(s)) => assert_eq!(s, "read_buf size exceeds BUF_SIZE_LIMIT"),
         Ok(_) => panic!("expected an error result"),
         _ => panic!("expected a different error result"),
@@ -854,7 +854,7 @@ fn skip_padding_in_stsd() {
 
     let mut iter = super::BoxIter::new(&mut stream);
     let mut stream = iter.next_box().unwrap().unwrap();
-    super::read_stsd(&mut stream, &mut super::Track::new(0))
+    super::read_stsd(&mut stream, &mut super::Track::new(0), &FourCC::from("isom"))
           .expect("fail to skip padding: stsd");
 }
 
@@ -983,7 +983,7 @@ fn read_stsd_mp4v() {
     let mut iter = super::BoxIter::new(&mut stream);
     let mut stream = iter.next_box().unwrap().unwrap();
 
-    let (codec_type, sample_entry) = super::read_video_sample_entry(&mut stream).unwrap();
+    let (codec_type, sample_entry) = super::read_video_sample_entry(&mut stream, &FourCC::from("isom")).unwrap();
 
     assert_eq!(codec_type, super::CodecType::MP4V);
 
@@ -1101,7 +1101,7 @@ fn unknown_video_sample_entry() {
     });
     let mut iter = super::BoxIter::new(&mut stream);
     let mut stream = iter.next_box().unwrap().unwrap();
-    match super::read_video_sample_entry(&mut stream) {
+    match super::read_video_sample_entry(&mut stream, &FourCC::from("isom")) {
         Ok((super::CodecType::Unknown, super::SampleEntry::Unknown)) => (),
         _ => panic!("expected a different error result"),
     }
