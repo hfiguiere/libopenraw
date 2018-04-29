@@ -39,6 +39,11 @@ public:
     /// Get track info.
     Option<Mp4parseTrackInfo> get_track(uint32_t index);
     Option<Mp4parseTrackRawInfo> get_raw_track(uint32_t index);
+    Option<Mp4parseCrawHeader> get_craw_header();
+    Option<std::pair<uint64_t, uint64_t>> get_offsets_at(uint32_t index);
+
+    Option<uint16_t> get_preview_dimension();
+
 private:
     /// Ensure the mp4 is parsed.
     /// @return true if it was.

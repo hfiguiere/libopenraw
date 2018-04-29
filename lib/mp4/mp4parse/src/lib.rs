@@ -140,6 +140,8 @@ struct BoxHeader {
     size: u64,
     /// Offset to the start of the contained data (or header size).
     offset: u64,
+    /// Uuid for extended type.
+    uuid: Option<[u8; 16]>,
 }
 
 /// File type box 'ftyp'.
@@ -423,6 +425,22 @@ pub struct ProtectionSchemeInfoBox {
     pub tenc: Option<TrackEncryptionBox>,
 }
 
+/// Canon Thumbnail
+#[derive(Debug, Default)]
+pub struct CanonThumbnail {
+    pub width: u16,
+    pub height: u16,
+    pub data: Vec<u8>,
+}
+
+/// Canon CRAW data ('crx ' brand files)
+#[derive(Debug, Default)]
+pub struct CrawHeader {
+    pub cncv: Vec<u8>,
+    pub offsets: Vec<(u64, u64)>,
+    pub thumbnail: CanonThumbnail,
+}
+
 /// Internal data structures.
 #[derive(Debug, Default)]
 pub struct MediaContext {
@@ -431,7 +449,8 @@ pub struct MediaContext {
     /// Tracks found in the file.
     pub tracks: Vec<Track>,
     pub mvex: Option<MovieExtendsBox>,
-    pub psshs: Vec<ProtectionSystemSpecificHeaderBox>
+    pub psshs: Vec<ProtectionSystemSpecificHeaderBox>,
+    pub craw: Option<CrawHeader>,
 }
 
 impl MediaContext {
@@ -605,15 +624,31 @@ fn read_box_header<T: ReadBytesExt>(src: &mut T) -> Result<BoxHeader> {
         2...7 => return Err(Error::InvalidData("malformed size")),
         _ => size32 as u64,
     };
-    let offset = match size32 {
+    let mut offset = match size32 {
         1 => 4 + 4 + 8,
         _ => 4 + 4,
+    };
+    let uuid = if name == BoxType::UuidBox {
+        if size < offset + 16 {
+            return Err(Error::InvalidData("malformed size for uuid"));
+        }
+        let mut buffer = [0u8; 16];
+        let count = src.read(&mut buffer)?;
+        if count < 16 {
+            None
+        } else {
+            offset += 16;
+            Some(buffer)
+        }
+    } else {
+        None
     };
     assert!(offset <= size);
     Ok(BoxHeader {
         name: name,
         size: size,
         offset: offset,
+        uuid: uuid,
     })
 }
 
@@ -727,10 +762,68 @@ fn parse_mvhd<T: Read>(f: &mut BMFFBox<T>) -> Result<(MovieHeaderBox, Option<Med
     Ok((mvhd, timescale))
 }
 
+fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> Result<CrawHeader> {
+    let mut header = CrawHeader::default();
+    let mut iter = f.box_iter();
+    while let Some(mut b) = iter.next_box()? {
+        match b.head.name {
+            BoxType::CanonCompressorVersion => {
+                let size = (b.head.size - b.head.offset) as usize;
+                let data = read_buf(&mut b, size)?;
+                header.cncv = data;
+                skip_box_remain(&mut b)?;
+            }
+            BoxType::CanonTableOffset => {
+                let count = be_u32(&mut b)?;
+                for _i in 0..count {
+                    skip(&mut b, 4)?; // index. We do not care.
+                    let offset = be_u64(&mut b)?;
+                    let size = be_u64(&mut b)?;
+                    if offset == 0 || size == 0 {
+                        break;
+                    }
+                    header.offsets.push((offset, size));
+                }
+                skip_box_remain(&mut b)?;
+            }
+            BoxType::CanonThumbnail => {
+                skip(&mut b, 4)?;
+                let width = be_u16(&mut b)?;
+                let height = be_u16(&mut b)?;
+                let jpeg_size = be_u32(&mut b)?;
+                skip(&mut b, 4)?;
+                if (jpeg_size as u64) + b.head.offset + 16u64 > b.head.size {
+                    return Err(Error::InvalidData("short box size for JPEG data"));
+                }
+                let data = read_buf(&mut b, jpeg_size as usize)?;
+                header.thumbnail = CanonThumbnail { width: width,
+                                                    height: height,
+                                                    data: data };
+                skip_box_remain(&mut b)?;
+            }
+            _ => skip_box_content(&mut b)?
+        }
+    }
+
+//    skip_box_remain(&mut f)?;
+    debug!("{:?}", header);
+    Ok(header)
+}
+
+
 fn read_moov<T: Read>(f: &mut BMFFBox<T>, context: &mut MediaContext) -> Result<()> {
     let mut iter = f.box_iter();
     while let Some(mut b) = iter.next_box()? {
         match b.head.name {
+            BoxType::UuidBox => {
+                if context.brand == FourCC::from("crx ") {
+                    let crawheader = parse_craw_header(&mut b)?;
+                    context.craw = Some(crawheader);
+                } else {
+                    skip_box_content(&mut b)?;
+                }
+
+            }
             BoxType::MovieHeaderBox => {
                 let (mvhd, timescale) = parse_mvhd(&mut b)?;
                 context.timescale = timescale;

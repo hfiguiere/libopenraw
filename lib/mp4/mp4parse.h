@@ -50,10 +50,6 @@ typedef enum {
 typedef struct Mp4parseParser Mp4parseParser;
 
 typedef struct {
-  uint64_t fragment_duration;
-} Mp4parseFragmentInfo;
-
-typedef struct {
   uint64_t start_offset;
   uint64_t end_offset;
   int64_t start_composition;
@@ -67,6 +63,17 @@ typedef struct {
   const uint8_t *data;
   const Mp4parseIndice *indices;
 } Mp4parseByteData;
+
+typedef struct {
+  Mp4parseByteData cncv;
+  uint16_t thumb_w;
+  uint16_t thumb_h;
+  Mp4parseByteData thumbnail;
+} Mp4parseCrawHeader;
+
+typedef struct {
+  uint64_t fragment_duration;
+} Mp4parseFragmentInfo;
 
 typedef struct {
   Mp4parseByteData data;
@@ -123,6 +130,13 @@ typedef struct {
  * Free an `Mp4parseParser*` allocated by `mp4parse_new()`.
  */
 void mp4parse_free(Mp4parseParser *parser);
+
+Mp4parseStatus mp4parse_get_craw_header(Mp4parseParser *parser, Mp4parseCrawHeader *header);
+
+Mp4parseStatus mp4parse_get_craw_table_entry(Mp4parseParser *parser,
+                                             uintptr_t idx,
+                                             uint64_t *offset,
+                                             uint64_t *size);
 
 /*
  * Fill the supplied `Mp4parseFragmentInfo` with metadata from fragmented file.

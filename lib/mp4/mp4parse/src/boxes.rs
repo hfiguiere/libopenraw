@@ -141,6 +141,7 @@ box_database!(
     ALACSpecificBox                   0x616C6163, // "alac" - Also used by ALACSampleEntry
     QTJPEGAtom                        0x4a504547, // "JPEG"
     FreeBox                           0x66726565, // "free"
+    UuidBox                           0x75756964, // "uuid"
 
     // All the Canon CR3 stuff.
     CanonCRAWEntry                    0x43524157, // "CRAW"
@@ -148,4 +149,7 @@ box_database!(
     CanonCMP1                         0x434d5031, // "CMP1"
     CanonCDI1                         0x43444931, // "CDI1"
     CanonPreview                      0x50525657, // "PRVW"
+    CanonCompressorVersion            0x434e4356, // "CNCV"
+    CanonThumbnail                    0x54484d42, // "THMB"
+    CanonTableOffset                  0x4354424f, // "CTBO"
 );

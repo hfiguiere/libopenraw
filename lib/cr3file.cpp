@@ -88,6 +88,14 @@ RawContainer *Cr3File::getContainer() const
 ::or_error Cr3File::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
     auto err = OR_ERROR_NOT_FOUND;
+    auto craw_header = m_container->get_craw_header();
+    if (craw_header) {
+        auto dim = std::max((*craw_header).thumb_w, (*craw_header).thumb_h);
+        if (dim) {
+            list.push_back(dim);
+            err = OR_ERROR_NONE;
+        }
+    }
     auto track_count = m_container->count_tracks();
     for (uint32_t i = 0; i < track_count; i++) {
         auto track = m_container->get_track(i);
@@ -107,6 +115,13 @@ RawContainer *Cr3File::getContainer() const
         list.push_back(dim);
         err = OR_ERROR_NONE;
     }
+
+    auto dim = m_container->get_preview_dimension();
+    if (dim) {
+        list.push_back(*dim);
+        err = OR_ERROR_NONE;
+    }
+
     return err;
 }
 
