@@ -25,7 +25,6 @@ test_xmlhandler_LDADD = @LIBXML_LIBS@
 testsuite_SOURCES =  testsuitetags.cpp testsuite.h \
 	testsuite.cpp testsuitehandler.h testsuitehandler.cpp \
 	xmlhandler.cpp xmlhandler.h
-testsuite_LDFLAGS = -static
 testsuite_LDADD = $(OPENRAW_LIB) @LIBXML_LIBS@ @CURL_LIBS@
 
 $(srcdir)/testsuitetags.cpp: testsuitetags.pl testsuitetags.txt
