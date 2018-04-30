@@ -46,7 +46,7 @@ public:
   }
   explicit Option(T&& data)
     : m_none(false)
-    , m_data(data)
+    , m_data(std::move(data))
   {
   }
   explicit Option(const T& data)

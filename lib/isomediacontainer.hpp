@@ -23,6 +23,7 @@
 
 #include "io/stream.hpp"
 #include "rawcontainer.hpp"
+#include "rawfile_private.hpp"
 #include "option.hpp"
 #include "ifdfilecontainer.hpp"
 #include "mp4/mp4parse.h"
@@ -43,7 +44,7 @@ public:
     Option<Mp4parseCrawHeader> get_craw_header();
     Option<std::pair<uint64_t, uint64_t>> get_offsets_at(uint32_t index);
 
-    Option<uint16_t> get_preview_dimension();
+    Option<ThumbDesc> get_preview_desc();
     std::shared_ptr<IfdFileContainer> get_metadata_block(uint32_t idx);
 
 private:

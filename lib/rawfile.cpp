@@ -2,7 +2,7 @@
  * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -423,37 +423,42 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
  */
 ::or_error RawFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
 {
-  ::or_error ret = OR_ERROR_NOT_FOUND;
-  auto iter = d->m_thumbLocations.find(size);
-  if(iter != d->m_thumbLocations.end())
-  {
-    const Internals::ThumbDesc & desc = iter->second;
-    thumbnail.setDataType(desc.type);
-    uint32_t byte_length= desc.length; /**< of the buffer */
-    uint32_t offset = desc.offset;
+    ::or_error ret = OR_ERROR_NOT_FOUND;
+    auto iter = d->m_thumbLocations.find(size);
+    if(iter != d->m_thumbLocations.end())
+    {
+        const Internals::ThumbDesc & desc = iter->second;
+        thumbnail.setDataType(desc.type);
+        thumbnail.setDimensions(desc.x, desc.y);
+        if (desc.data) {
+            auto byte_length = desc.data->size();
+            void *p = thumbnail.allocData(byte_length);
+            ::memcpy(p, desc.data->data(), byte_length);
+        } else {
+            uint32_t byte_length = desc.length; /**< of the buffer */
+            uint32_t offset = desc.offset;
 
-    LOGDBG1("Thumbnail at %u of %u bytes.\n", offset, byte_length);
+            LOGDBG1("Thumbnail at %u of %u bytes.\n", offset, byte_length);
 
-    if (byte_length != 0) {
-      void *p = thumbnail.allocData(byte_length);
-      size_t real_size = getContainer()->fetchData(p, offset,
-                                                byte_length);
-      if (real_size < byte_length) {
-        LOGWARN("Size mismatch for data: got %lu expected %u ignoring.\n",
-                real_size, byte_length);
-      }
-
-      thumbnail.setDimensions(desc.x, desc.y);
-      ret = OR_ERROR_NONE;
+            if (byte_length != 0) {
+                void *p = thumbnail.allocData(byte_length);
+                size_t real_size = getContainer()->fetchData(p, offset,
+                                                             byte_length);
+                if (real_size < byte_length) {
+                    LOGWARN("Size mismatch for data: got %lu expected %u ignoring.\n",
+                            real_size, byte_length);
+                }
+            }
+        }
+        ret = OR_ERROR_NONE;
     }
-  }
 
-  return ret;
+    return ret;
 }
 
-void RawFile::_addThumbnail(uint32_t size, const Internals::ThumbDesc& desc)
+void RawFile::_addThumbnail(uint32_t size, Internals::ThumbDesc&& desc)
 {
-    d->m_thumbLocations[size] = desc;
+    d->m_thumbLocations[size] = std::move(desc);
 }
 
 ::or_error RawFile::getRawData(RawData & rawdata, uint32_t options)

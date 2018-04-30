@@ -130,8 +130,8 @@ IsoMediaContainer::get_offsets_at(uint32_t index)
     return option_some(std::move(entry));
 }
 
-Option<uint16_t>
-IsoMediaContainer::get_preview_dimension()
+Option<ThumbDesc>
+IsoMediaContainer::get_preview_desc()
 {
     auto preview_offset = get_offsets_at(1);
     if (preview_offset) {
@@ -143,8 +143,12 @@ IsoMediaContainer::get_preview_dimension()
         m_file->seek(offset, SEEK_SET);
         auto width = readUInt16(m_file);
         auto height = readUInt16(m_file);
-        if (width && height) {
-            return Option<uint16_t>(std::max(*width, *height));
+        skip(2);
+        auto jpeg_size = readUInt32(m_file);
+        if (width && height && jpeg_size) {
+            return option_some(
+                std::move(ThumbDesc(*width, *height, OR_DATA_TYPE_JPEG,
+                                    offset + 10, *jpeg_size)));
         }
     }
     return OptionNone();

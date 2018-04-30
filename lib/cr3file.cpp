@@ -31,6 +31,7 @@
 #include "cr3file.hpp"
 #include "isomediacontainer.hpp"
 #include "rawfile_private.hpp"
+#include "bitmapdata.hpp"
 #include "trace.hpp"
 
 using namespace Debug;
@@ -90,9 +91,17 @@ RawContainer *Cr3File::getContainer() const
     auto err = OR_ERROR_NOT_FOUND;
     auto craw_header = m_container->get_craw_header();
     if (craw_header) {
-        auto dim = std::max((*craw_header).thumb_w, (*craw_header).thumb_h);
+        uint32_t x = (*craw_header).thumb_w;
+        uint32_t y = (*craw_header).thumb_h;
+        auto dim = std::max(x, y);
         if (dim) {
             list.push_back(dim);
+            std::unique_ptr<BitmapData> data(new BitmapData);
+            data->setDimensions(x, y);
+            data->setDataType(OR_DATA_TYPE_JPEG);
+            void* p = data->allocData((*craw_header).thumbnail.length);
+            ::memcpy(p, (*craw_header).thumbnail.data, (*craw_header).thumbnail.length);
+            _addThumbnail(dim, ThumbDesc(x, y, OR_DATA_TYPE_JPEG, std::move(data)));
             err = OR_ERROR_NONE;
         }
     }
@@ -116,9 +125,11 @@ RawContainer *Cr3File::getContainer() const
         err = OR_ERROR_NONE;
     }
 
-    auto dim = m_container->get_preview_dimension();
-    if (dim) {
-        list.push_back(*dim);
+    auto desc = m_container->get_preview_desc();
+    if (desc) {
+        auto dim = std::max((*desc).x, (*desc).y);
+        list.push_back(dim);
+        _addThumbnail(dim, desc.value());
         err = OR_ERROR_NONE;
     }
 

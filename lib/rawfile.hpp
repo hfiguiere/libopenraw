@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawfile.h
  *
- * Copyright (C) 2005-2016 Hubert Figuière
+ * Copyright (C) 2005-2018 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,10 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
-#ifndef LIBOPENRAWPP_RAWFILE_H_
-#define LIBOPENRAWPP_RAWFILE_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -56,7 +53,7 @@ public:
     RawFile(const RawFile&) = delete;
     RawFile & operator=(const RawFile &) = delete;
 
-    /** return a NULL terminated list of file extensions 
+    /** return a NULL terminated list of file extensions
      * that the library handle. This is purely informational.
      * @return a pointer the list, NULL terminated. The pointer is
      * owned by the library.
@@ -68,16 +65,16 @@ public:
      * @param _typeHint a hint on the type. Use UNKNOWN_TYPE
      * if you want to let the library detect it for you.
      */
-    static RawFile *newRawFile(const char*_filename, 
+    static RawFile *newRawFile(const char*_filename,
                                Type _typeHint = OR_RAWFILE_TYPE_UNKNOWN);
-    /** factory method to create the proper RawFile instance 
-     *  from content 
+    /** factory method to create the proper RawFile instance
+     *  from content
      * @param buffer the buffer to examine.
      * @param len the number of bytes in the length.
      * @param _typeHint a hint on the type. Use UNKNOWN_TYPE
      * if you want to let the library detect it for you.
      */
-    static RawFile *newRawFileFromMemory(const uint8_t *buffer, uint32_t len, 
+    static RawFile *newRawFileFromMemory(const uint8_t *buffer, uint32_t len,
                                          Type _typeHint = OR_RAWFILE_TYPE_UNKNOWN);
 
     /** Destructor */
@@ -85,7 +82,7 @@ public:
     /** Accessor for the type */
     Type type() const;
 
-    /** The RAW file type ID. Identify it if needed. 
+    /** The RAW file type ID. Identify it if needed.
      *  @todo figure how to make this const.
      */
     TypeId typeId();
@@ -96,14 +93,14 @@ public:
     /** list the available thumbnail sizes
      */
     const std::vector<uint32_t> & listThumbnailSizes(void);
-    /** Get the thumbnail from the raw file 
+    /** Get the thumbnail from the raw file
      * @param size the square size in px
      * @param thumbnail the thumbnail to extract into
      * @return the error code
      */
     ::or_error getThumbnail(uint32_t size, Thumbnail & thumbnail);
 
-    /** Get the RAW data 
+    /** Get the RAW data
      * @param rawdata the RawData to put the data into
      * @param options the option bits defined by %or_options
      * @return the error code
@@ -115,7 +112,7 @@ public:
      * @param options the option bits. Pass 0 for now.
      * @return the error code
      */
-    ::or_error getRenderedImage(BitmapData & bitmapdata, uint32_t options);    
+    ::or_error getRenderedImage(BitmapData & bitmapdata, uint32_t options);
 
     /** Get the orientation of the image, using Exif enums.
      */
@@ -129,7 +126,7 @@ public:
     /** Get colour matrix
      * @param index The matrix index.
      * @param [out] matrix an array of %size double.
-     * @param size the size of the buffer. On out the actual size. If it is too 
+     * @param size the size of the buffer. On out the actual size. If it is too
      * small the size is adjusted and an error %OR_ERROR_BUF_TOO_SMALL returned.
      * @return an error code.
      */
@@ -164,13 +161,13 @@ protected:
     /** Get the container. */
     virtual Internals::RawContainer* getContainer() const = 0;
 
-    /** enumerate the thumbnail sizes. 
+    /** enumerate the thumbnail sizes.
      * @param list the list to enumerate into
      * @return OR_ERROR_NONE if success
      */
     virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) = 0;
-		
-    /** get the thumbnail of exact size. 
+
+    /** get the thumbnail of exact size.
      * @param size the size in pixel of the square
      * @retval thumbnail the thumbnail to load
      * @return OR_ERROR_NONE if success
@@ -178,9 +175,9 @@ protected:
      * available
      */
     virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
-    void _addThumbnail(uint32_t size, const Internals::ThumbDesc& desc);
+    void _addThumbnail(uint32_t size, Internals::ThumbDesc&& desc);
 
-    /** get the RAW data 
+    /** get the RAW data
      * @param data the RAW data
      * @param option the option bits
      * @return OR_ERROR_NONE if success
@@ -235,8 +232,9 @@ private:
   mode:c++
   c-file-style:"stroustrup"
   c-file-offsets:((innamespace . 0))
+  c-basic-offset: 4
+  tab-width: 4
   indent-tabs-mode:nil
   fill-column:80
   End:
 */
-#endif
