@@ -170,6 +170,9 @@ public:
             case OR_RAWFILE_TYPE_NEF:
                 return "Nikon NEF";
                 break;
+            case OR_RAWFILE_TYPE_NRW:
+                return "Nikon NRW";
+                break;
             case OR_RAWFILE_TYPE_MRW:
                 return "Minolta MRW";
                 break;
@@ -193,6 +196,9 @@ public:
                 break;
             case OR_RAWFILE_TYPE_RAF:
                 return "FujiFilm RAF";
+                break;
+            case OR_RAWFILE_TYPE_TIFF:
+                return "TIFF";
                 break;
             }
             return "Unknown";

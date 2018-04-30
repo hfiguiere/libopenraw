@@ -67,7 +67,6 @@ typedef enum {
     OR_RAWFILE_TYPE_RW2,         /**< Panasonic RAW and RW2 */
     OR_RAWFILE_TYPE_RAF,         /**< FujiFilm RAF */
     OR_RAWFILE_TYPE_CR3,         /**< Canon CR3 */
-    _OR_RAWFILE_TYPE_LAST
 } or_rawfile_type;
 
 typedef enum {
