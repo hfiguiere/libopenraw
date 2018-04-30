@@ -161,6 +161,9 @@ public:
             case OR_RAWFILE_TYPE_CR2:
                 return "Canon CR2";
                 break;
+            case OR_RAWFILE_TYPE_CR3:
+                return "Canon CR3";
+                break;
             case OR_RAWFILE_TYPE_CRW:
                 return "Canon CRW";
                 break;
@@ -190,8 +193,6 @@ public:
                 break;
             case OR_RAWFILE_TYPE_RAF:
                 return "FujiFilm RAF";
-                break;
-            default:
                 break;
             }
             return "Unknown";
