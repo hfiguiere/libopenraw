@@ -257,7 +257,11 @@ RawFile::Type RawFile::identify(const char*_filename)
         _type = OR_RAWFILE_TYPE_MRW;
         return OR_ERROR_NONE;
     }
-    if(memcmp(buff, "II\x1a\0\0\0HEAPCCDR", 14) == 0) {
+    if (len >= 12 && (memcmp(buff + 4, "ftypcrx ", 8) == 0)) {
+        _type = OR_RAWFILE_TYPE_CR3;
+        return OR_ERROR_NONE;
+    }
+    if (len >= 14 && memcmp(buff, "II\x1a\0\0\0HEAPCCDR", 14) == 0) {
         _type = OR_RAWFILE_TYPE_CRW;
         return OR_ERROR_NONE;
     }
@@ -269,7 +273,7 @@ RawFile::Type RawFile::identify(const char*_filename)
         _type = OR_RAWFILE_TYPE_RW2;
         return OR_ERROR_NONE;
     }
-    if(memcmp(buff, RAF_MAGIC, RAF_MAGIC_LEN) == 0) {
+    if (len >= RAF_MAGIC_LEN && memcmp(buff, RAF_MAGIC, RAF_MAGIC_LEN) == 0) {
         _type = OR_RAWFILE_TYPE_RAF;
         return OR_ERROR_NONE;
     }
