@@ -438,6 +438,10 @@ pub struct CanonThumbnail {
 pub struct CrawHeader {
     pub cncv: Vec<u8>,
     pub offsets: Vec<(u64, u64)>,
+    pub meta1: Option<Vec<u8>>,
+    pub meta2: Option<Vec<u8>>,
+    pub meta3: Option<Vec<u8>>,
+    pub meta4: Option<Vec<u8>>,
     pub thumbnail: CanonThumbnail,
 }
 
@@ -785,6 +789,24 @@ fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> Result<CrawHeader> {
                     header.offsets.push((offset, size));
                 }
                 skip_box_remain(&mut b)?;
+            }
+            BoxType::CanonMeta1 |
+            BoxType::CanonMeta2 |
+            BoxType::CanonMeta3 |
+            BoxType::CanonMeta4 => {
+                let len = b.head.size - b.head.offset;
+                let data = read_buf(&mut b, len as usize)?;
+                match b.head.name {
+                    BoxType::CanonMeta1 =>
+                        header.meta1 = Some(data),
+                    BoxType::CanonMeta2 =>
+                        header.meta2 = Some(data),
+                    BoxType::CanonMeta3 =>
+                        header.meta3 = Some(data),
+                    BoxType::CanonMeta4 =>
+                        header.meta4 = Some(data),
+                    _ => unreachable!()
+                }
             }
             BoxType::CanonThumbnail => {
                 skip(&mut b, 4)?;

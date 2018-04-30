@@ -33,7 +33,7 @@ using namespace Debug;
 namespace OpenRaw {
 namespace IO {
 
-MemStream::MemStream(void *ptr, size_t s)
+MemStream::MemStream(const void *ptr, size_t s)
   : Stream(""),
     m_ptr(ptr),
     m_size(s),

@@ -24,6 +24,7 @@
 #include "io/stream.hpp"
 #include "rawcontainer.hpp"
 #include "option.hpp"
+#include "ifdfilecontainer.hpp"
 #include "mp4/mp4parse.h"
 
 namespace OpenRaw {
@@ -43,6 +44,7 @@ public:
     Option<std::pair<uint64_t, uint64_t>> get_offsets_at(uint32_t index);
 
     Option<uint16_t> get_preview_dimension();
+    std::shared_ptr<IfdFileContainer> get_metadata_block(uint32_t idx);
 
 private:
     /// Ensure the mp4 is parsed.
@@ -55,6 +57,7 @@ private:
     bool m_parsed;
     Mp4parseIo m_mp4io;
     Mp4parseParser *m_parser;
+    std::vector<std::shared_ptr<IfdFileContainer>> m_meta_ifd;
 };
 }
 }

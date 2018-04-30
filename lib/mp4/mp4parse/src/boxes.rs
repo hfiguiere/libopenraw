@@ -152,4 +152,8 @@ box_database!(
     CanonCompressorVersion            0x434e4356, // "CNCV"
     CanonThumbnail                    0x54484d42, // "THMB"
     CanonTableOffset                  0x4354424f, // "CTBO"
+    CanonMeta1                        0x434d5431, // "CMT1"
+    CanonMeta2                        0x434d5432, // "CMT2"
+    CanonMeta3                        0x434d5433, // "CMT3"
+    CanonMeta4                        0x434d5434, // "CMT4"
 );

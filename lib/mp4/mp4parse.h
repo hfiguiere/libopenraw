@@ -69,6 +69,10 @@ typedef struct {
   uint16_t thumb_w;
   uint16_t thumb_h;
   Mp4parseByteData thumbnail;
+  Mp4parseByteData meta1;
+  Mp4parseByteData meta2;
+  Mp4parseByteData meta3;
+  Mp4parseByteData meta4;
 } Mp4parseCrawHeader;
 
 typedef struct {

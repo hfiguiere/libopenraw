@@ -133,7 +133,30 @@ MetaValue *Cr3File::_getMetaValue(int32_t meta_index)
 
 void Cr3File::_identifyId()
 {
-    LOGERR("Not implemented\n");
+    auto ifd = m_container->get_metadata_block(0);
+    if (!ifd) {
+        LOGERR("cr3: can't find meta block 0\n");
+        return;
+    }
+    auto dirs = ifd->directories();
+    if (dirs.empty()) {
+        LOGERR("cr3: meta block 0 has no IFD\n");
+        return;
+    }
+    const auto& mainIfd = dirs[0];
+    if (!mainIfd) {
+        LOGERR("cr3: IFD 0 isn't available\n");
+        return;
+    }
+    mainIfd->load();
+    auto make = mainIfd->getValue<std::string>(IFD::EXIF_TAG_MAKE);
+    auto model = mainIfd->getValue<std::string>(IFD::EXIF_TAG_MODEL);
+    if (make && model) {
+        _setTypeId(_typeIdFromModel(make.value(), model.value()));
+    } else {
+        LOGERR("make or model not found\n");
+    }
 }
+
 }
 }

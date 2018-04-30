@@ -21,6 +21,7 @@
 
 #include "isomediacontainer.hpp"
 #include "trace.hpp"
+#include "io/memstream.hpp"
 
 namespace OpenRaw {
 namespace Internals {
@@ -147,6 +148,55 @@ IsoMediaContainer::get_preview_dimension()
         }
     }
     return OptionNone();
+}
+
+std::shared_ptr<IfdFileContainer>
+IsoMediaContainer::get_metadata_block(uint32_t idx)
+{
+    if (m_meta_ifd.empty()) {
+        auto craw = get_craw_header();
+        if (!craw) {
+            return std::shared_ptr<IfdFileContainer>();
+        }
+
+        m_meta_ifd.resize(4);
+        if ((*craw).meta1.length) {
+            auto mem = std::make_shared<IO::MemStream>(
+                static_cast<const void*>((*craw).meta1.data),
+                (*craw).meta1.length);
+            m_meta_ifd[0] = std::make_shared<IfdFileContainer>(mem, 0);
+        } else {
+            m_meta_ifd[0] = std::shared_ptr<IfdFileContainer>();
+        }
+        if ((*craw).meta2.length) {
+            auto mem = std::make_shared<IO::MemStream>(
+                static_cast<const void*>((*craw).meta2.data),
+                (*craw).meta2.length);
+            m_meta_ifd[1] = std::make_shared<IfdFileContainer>(mem, 0);
+        } else {
+            m_meta_ifd[1] = std::shared_ptr<IfdFileContainer>();
+        }
+        if ((*craw).meta3.length) {
+            auto mem = std::make_shared<IO::MemStream>(
+                static_cast<const void*>((*craw).meta3.data),
+                (*craw).meta3.length);
+            m_meta_ifd[2] = std::make_shared<IfdFileContainer>(mem, 0);
+        } else {
+            m_meta_ifd[2] = std::shared_ptr<IfdFileContainer>();
+        }
+        if ((*craw).meta4.length) {
+            auto mem = std::make_shared<IO::MemStream>(
+                static_cast<const void*>((*craw).meta4.data),
+                (*craw).meta4.length);
+            m_meta_ifd[3] = std::make_shared<IfdFileContainer>(mem, 0);
+        } else {
+            m_meta_ifd[3] = std::shared_ptr<IfdFileContainer>();
+        }
+    }
+    if (idx < m_meta_ifd.size()) {
+        return m_meta_ifd.at(idx);
+    }
+    return std::shared_ptr<IfdFileContainer>();
 }
 
 intptr_t

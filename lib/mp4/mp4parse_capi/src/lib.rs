@@ -221,6 +221,10 @@ pub struct Mp4parseCrawHeader {
     pub thumb_w: u16,
     pub thumb_h: u16,
     pub thumbnail: Mp4parseByteData,
+    pub meta1: Mp4parseByteData,
+    pub meta2: Mp4parseByteData,
+    pub meta3: Mp4parseByteData,
+    pub meta4: Mp4parseByteData,
 }
 
 pub struct Mp4parseParser {
@@ -1203,6 +1207,18 @@ pub unsafe extern fn mp4parse_get_craw_header(parser: *mut Mp4parseParser, heade
     header.thumb_w = craw.thumbnail.width;
     header.thumb_h = craw.thumbnail.height;
     header.thumbnail.set_data(&craw.thumbnail.data);
+    if let Some(ref meta) = craw.meta1 {
+        header.meta1.set_data(meta);
+    }
+    if let Some(ref meta) = craw.meta2 {
+        header.meta2.set_data(meta);
+    }
+    if let Some(ref meta) = craw.meta3 {
+        header.meta3.set_data(meta);
+    }
+    if let Some(ref meta) = craw.meta4 {
+        header.meta4.set_data(meta);
+    }
 
     Mp4parseStatus::Ok
 }
