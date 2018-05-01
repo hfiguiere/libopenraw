@@ -111,6 +111,8 @@ typedef struct {
   uint16_t image_width;
   uint16_t image_height;
   bool is_jpeg;
+  uint64_t offset;
+  uint64_t size;
 } Mp4parseTrackRawInfo;
 
 typedef struct {

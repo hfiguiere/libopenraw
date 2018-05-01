@@ -122,6 +122,10 @@ RawContainer *Cr3File::getContainer() const
                             (*raw_track).image_height);
         LOGDBG1("Dimension %u\n", dim);
         list.push_back(dim);
+        _addThumbnail(dim, ThumbDesc((*raw_track).image_width,
+                                     (*raw_track).image_height,
+                                     OR_DATA_TYPE_JPEG, (*raw_track).offset,
+                                     (*raw_track).size));
         err = OR_ERROR_NONE;
     }
 

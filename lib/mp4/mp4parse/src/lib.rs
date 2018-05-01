@@ -28,6 +28,8 @@ use mp4parse_fallible::FallibleVec;
 mod boxes;
 use boxes::{BoxType, FourCC};
 
+mod craw;
+
 // Unit tests.
 #[cfg(test)]
 mod tests;
@@ -838,13 +840,16 @@ fn read_moov<T: Read>(f: &mut BMFFBox<T>, context: &mut MediaContext) -> Result<
     while let Some(mut b) = iter.next_box()? {
         match b.head.name {
             BoxType::UuidBox => {
-                if context.brand == FourCC::from("crx ") {
-                    let crawheader = parse_craw_header(&mut b)?;
-                    context.craw = Some(crawheader);
-                } else {
-                    skip_box_content(&mut b)?;
-                }
-
+                debug!("{:?}", b.head);
+                if context.brand == FourCC::from("crx ") &&
+                    b.head.uuid == Some(craw::HEADER_UUID) {
+                        let crawheader = parse_craw_header(&mut b)?;
+                        context.craw = Some(crawheader);
+                    } else {
+                        debug!("Unknown UUID box {:?} (skipping)",
+                               b.head.uuid.as_ref().unwrap());
+                        skip_box_content(&mut b)?;
+                    }
             }
             BoxType::MovieHeaderBox => {
                 let (mvhd, timescale) = parse_mvhd(&mut b)?;
