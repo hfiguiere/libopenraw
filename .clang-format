@@ -20,6 +20,7 @@ ColumnLimit:     80
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 DerivePointerAlignment: true
 ExperimentalAutoDetectBinPacking: false
+FixNamespaceComments: false
 IndentCaseLabels: false
 IndentWrappedFunctionNames: false
 IndentFunctionDeclarationAfterType: false
