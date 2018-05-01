@@ -6,15 +6,17 @@ New features:
   [ a * denote that WB coefficients have been included ]
 
   - Support for Nikon Coolpix B700*, P330*, P340*.
-  - Support for Fujifilm X-A5*, X-E3* and X-H1*.
-  - Support for Canon EOS M100*, 6DMkII*.
-  - Support for Panasonic GX9*, GX800*, TZ202*.
+  - Support for Fujifilm X-A5*, X-E3*, XQ2* and X-H1*.
+  - Support for Canon EOS M100*, 6DMkII*, Rebel SL2/200D*, G1X MarkIII*,
+    EOS 5DS*.
+  - Support for Panasonic G9*, GX9*, GX800*, TZ110*, TZ202*.
   - Support for Olympus E-PL9*.
   - Support for Leica D-LUX (Typ109)*, V-LUX 4* and Leica CL.
-  - Coefficients for Fujifilm X-T10, X-T2, X-T20, X-100F, X-A3.
-  - Coefficients for Canon EOS-M5, G7X MkII, G9X MkII, 77D, 800D.
+  - Coefficients for Fujifilm X-T10, X-T2, X-T20, X-100F, X-A3, XQ1.
+  - Coefficients for Canon EOS-M5, G7X MkII, G9X MkII, 77D, 800D and EOS 5DS R.
   - Coefficients for Panasonic GX80/GX85, FZ2500.
   - Coefficients for Olympus E-PL8.
+  - Coefficients for Nikon D5600.
 
 Bug fixes:
 
