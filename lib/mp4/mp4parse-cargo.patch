@@ -1,8 +1,14 @@
-diff --git a/media/libstagefright/binding/mp4parse/Cargo.toml b/media/libstagefright/binding/mp4parse/Cargo.toml
-index ff9422c..814c4c6 100644
---- a/media/libstagefright/binding/mp4parse/Cargo.toml
-+++ b/media/libstagefright/binding/mp4parse/Cargo.toml
-@@ -19,13 +19,9 @@
+commit c6293098c5538ff9ba7272b61eeb7410fb22462b
+Author: Hubert Figuière <hub@figuiere.net>
+Date:   Wed May 2 00:03:21 2018 -0400
+
+    cargo-patch
+
+diff --git a/mp4parse/Cargo.toml b/mp4parse/Cargo.toml
+index ad74383..c62182f 100644
+--- a/mp4parse/Cargo.toml
++++ b/mp4parse/Cargo.toml
+@@ -19,13 +19,9 @@ exclude = [
    "*.mp4",
  ]
  
@@ -16,19 +22,19 @@ index ff9422c..814c4c6 100644
  bitreader = { version = "0.3.0" }
  num-traits = "0.2.0"
  mp4parse_fallible = { version = "0.0.1", optional = true }
-@@ -33,6 +29,3 @@
- 
- [dev-dependencies]
+@@ -35,5 +31,4 @@ log = "0.4"
  test-assembler = "0.1.2"
--
--[features]
+ 
+ [features]
 -fuzz = ["afl", "abort_on_panic"]
-
-diff --git a/media/libstagefright/binding/mp4parse_capi/Cargo.toml b/media/libstagefright/binding/mp4parse_capi/Cargo.toml
-index a30e045..a965f06 100644
---- a/media/libstagefright/binding/mp4parse_capi/Cargo.toml
-+++ b/media/libstagefright/binding/mp4parse_capi/Cargo.toml
-@@ -18,23 +18,16 @@
+-craw = []
+\ No newline at end of file
++craw = []
+diff --git a/mp4parse_capi/Cargo.toml b/mp4parse_capi/Cargo.toml
+index b1e2690..ec37951 100644
+--- a/mp4parse_capi/Cargo.toml
++++ b/mp4parse_capi/Cargo.toml
+@@ -18,8 +18,7 @@ exclude = [
    "*.mp4",
  ]
  
@@ -38,19 +44,15 @@ index a30e045..a965f06 100644
  
  [dependencies]
  byteorder = "1.2.1"
- log = "0.4"
- 
- # To enable fallible memory allocation, add 'features = ["mp4parse_fallible"]'
- # in mp4parse brace.
- mp4parse = {version = "0.10.1", path = "../mp4parse"}
- num-traits = "0.2.0"
- 
+@@ -33,9 +32,5 @@ num-traits = "0.2.0"
  [dev-dependencies]
  env_logger = "0.5.3"
--
+ 
 -[build-dependencies]
 -cbindgen = "0.5.2"
 -
--[features]
+ [features]
 -fuzz = ["mp4parse/fuzz"]
-
+-craw = ["mp4parse/craw"]
+\ No newline at end of file
++craw = ["mp4parse/craw"]

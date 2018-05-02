@@ -28,6 +28,7 @@ use mp4parse_fallible::FallibleVec;
 mod boxes;
 use boxes::{BoxType, FourCC};
 
+#[cfg(feature = "craw")]
 mod craw;
 
 // Unit tests.
@@ -768,6 +769,8 @@ fn parse_mvhd<T: Read>(f: &mut BMFFBox<T>) -> Result<(MovieHeaderBox, Option<Med
     Ok((mvhd, timescale))
 }
 
+#[cfg(feature = "craw")]
+/// Parse the header box in a 'crx ' Canon RAW file.
 fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> Result<CrawHeader> {
     let mut header = CrawHeader::default();
     let mut iter = f.box_iter();
@@ -834,22 +837,25 @@ fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> Result<CrawHeader> {
     Ok(header)
 }
 
-
 fn read_moov<T: Read>(f: &mut BMFFBox<T>, context: &mut MediaContext) -> Result<()> {
     let mut iter = f.box_iter();
     while let Some(mut b) = iter.next_box()? {
         match b.head.name {
             BoxType::UuidBox => {
                 debug!("{:?}", b.head);
-                if context.brand == FourCC::from("crx ") &&
-                    b.head.uuid == Some(craw::HEADER_UUID) {
-                        let crawheader = parse_craw_header(&mut b)?;
-                        context.craw = Some(crawheader);
+
+                #[cfg(feature = "craw")]
+                {
+                    if context.brand == FourCC::from("crx ") &&
+                        b.head.uuid == Some(craw::HEADER_UUID) {
+                            let crawheader = parse_craw_header(&mut b)?;
+                            context.craw = Some(crawheader);
                     } else {
                         debug!("Unknown UUID box {:?} (skipping)",
                                b.head.uuid.as_ref().unwrap());
                         skip_box_content(&mut b)?;
                     }
+                }
             }
             BoxType::MovieHeaderBox => {
                 let (mvhd, timescale) = parse_mvhd(&mut b)?;
@@ -1897,35 +1903,39 @@ fn read_video_sample_entry<T: Read>(src: &mut BMFFBox<T>, brand: &FourCC) -> Res
     let width = be_u16(src)?;
     let height = be_u16(src)?;
 
-    if codec_type == CodecType::CRAW {
-        skip(src, 54)?;
-        let mut is_jpeg = false;
-        {
-            let mut iter = src.box_iter();
-            while let Some(mut b) = iter.next_box()? {
-                debug!("Box size {}", b.head.size);
-                match b.head.name {
-                    BoxType::QTJPEGAtom => {
-                        is_jpeg = true;
+    #[cfg(feature = "craw")]
+    {
+        if codec_type == CodecType::CRAW {
+            skip(src, 54)?;
+            let mut is_jpeg = false;
+            {
+                let mut iter = src.box_iter();
+                while let Some(mut b) = iter.next_box()? {
+                    debug!("Box size {}", b.head.size);
+                    match b.head.name {
+                        BoxType::QTJPEGAtom => {
+                            is_jpeg = true;
+                        }
+                        BoxType::CanonCMP1 => {
+                        }
+                        _ => {
+                            debug!("Unsupported box '{:?}' in CRAW",
+                                   b.head.name);
+                        }
                     }
-                    BoxType::CanonCMP1 => {
-                    }
-                    _ => {
-                        debug!("Unsupported box '{:?}' in CRAW", b.head.name);
-                    }
+                    skip_box_remain(&mut b)?;
                 }
-                skip_box_remain(&mut b)?;
             }
-        }
-        skip_box_remain(src)?;
-        check_parser_state!(src.content);
+            skip_box_remain(src)?;
+            check_parser_state!(src.content);
 
-        return Ok((codec_type, SampleEntry::CanonCRAW(CanonCRAWEntry {
-            data_reference_index: data_reference_index,
-            width: width,
-            height: height,
-            is_jpeg: is_jpeg,
-        })));
+            return Ok((codec_type, SampleEntry::CanonCRAW(CanonCRAWEntry {
+                data_reference_index: data_reference_index,
+                width: width,
+                height: height,
+                is_jpeg: is_jpeg,
+            })));
+        }
     }
 
     // Skip uninteresting fields.

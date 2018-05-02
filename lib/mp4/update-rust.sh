@@ -4,7 +4,7 @@
 #  https://hg.mozilla.org/mozilla-central/raw-file/tip/media/mp4parse-rust/update-rust.sh
 
 # Default version.
-VER="d028680f256f16a0a1d79901bf0c83f2dd242589"
+VER="38303c138679903891a2983be002bf577cd7eb6c"
 
 # Accept version or commit from the command line.
 if test -n "$1"; then
@@ -18,7 +18,7 @@ git clone https://github.com/hfiguiere/mp4parse-rust _upstream/mp4parse
 pushd _upstream/mp4parse
 git checkout ${VER}
 echo "Verifying sources..."
-cargo test
+cargo test --features craw
 popd
 rm -rf mp4parse
 mkdir -p mp4parse/src
@@ -38,7 +38,7 @@ cp _upstream/mp4parse/mp4parse_capi/src/*.rs mp4parse_capi/src/
 #cp _upstream/mp4parse_fallible/* mp4parse_fallible/
 
 echo "Applying patches..."
-patch -p4 < mp4parse-cargo.patch
+patch -p1 < mp4parse-cargo.patch
 
 echo "Cleaning up..."
 rm -rf _upstream

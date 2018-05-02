@@ -198,6 +198,7 @@ pub struct Mp4parseTrackVideoInfo {
     pub protected_data: Mp4parseSinfInfo,
 }
 
+#[cfg(feature = "craw")]
 #[repr(C)]
 #[derive(Default, Debug)]
 pub struct Mp4parseTrackRawInfo {
@@ -216,6 +217,7 @@ pub struct Mp4parseFragmentInfo {
     // info in trex box.
 }
 
+#[cfg(feature = "craw")]
 #[repr(C)]
 #[derive(Default)]
 pub struct Mp4parseCrawHeader {
@@ -609,6 +611,7 @@ pub unsafe extern fn mp4parse_get_track_audio_info(parser: *mut Mp4parseParser, 
 }
 
 /// File the supplied `Mp4parseTrackRawInfo` with metadata for `track`.
+#[cfg(feature = "craw")]
 #[no_mangle]
 pub unsafe extern fn mp4parse_get_track_raw_info(parser: *mut Mp4parseParser, track_index: u32, info: *mut Mp4parseTrackRawInfo) -> Mp4parseStatus {
     if parser.is_null() || info.is_null() || (*parser).poisoned() {
@@ -1198,6 +1201,7 @@ pub unsafe extern fn mp4parse_get_pssh_info(parser: *mut Mp4parseParser, info: *
     Mp4parseStatus::Ok
 }
 
+#[cfg(feature = "craw")]
 #[no_mangle]
 pub unsafe extern fn mp4parse_get_craw_header(parser: *mut Mp4parseParser, header: *mut Mp4parseCrawHeader) -> Mp4parseStatus {
     if parser.is_null() || header.is_null() || (*parser).poisoned() {
@@ -1235,6 +1239,7 @@ pub unsafe extern fn mp4parse_get_craw_header(parser: *mut Mp4parseParser, heade
     Mp4parseStatus::Ok
 }
 
+#[cfg(feature = "craw")]
 #[no_mangle]
 pub unsafe extern fn mp4parse_get_craw_table_entry(parser: *mut Mp4parseParser, idx: usize, offset: *mut u64, size: *mut u64) -> Mp4parseStatus {
     if parser.is_null() || offset.is_null() || size.is_null()

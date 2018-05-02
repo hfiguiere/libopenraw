@@ -31,3 +31,6 @@ num-traits = "0.2.0"
 
 [dev-dependencies]
 env_logger = "0.5.3"
+
+[features]
+craw = ["mp4parse/craw"]

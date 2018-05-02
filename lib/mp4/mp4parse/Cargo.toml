@@ -29,3 +29,6 @@ log = "0.4"
 
 [dev-dependencies]
 test-assembler = "0.1.2"
+
+[features]
+craw = []
