@@ -140,32 +140,74 @@ RawContainer *Cr3File::getContainer() const
     return err;
 }
 
-MetaValue *Cr3File::_getMetaValue(int32_t meta_index)
+
+IfdDir::Ref Cr3File::findIfd(uint32_t idx)
+{
+    if (idx >= m_ifds.size()) {
+        LOGERR("Invalid ifd index %u\n", idx);
+        return IfdDir::Ref();
+    }
+
+    auto ifd = m_ifds[idx];
+
+    if (!ifd) {
+        ifd = m_container->get_metadata_block(idx);
+        if (!ifd) {
+            LOGERR("cr3: can't find meta block 0\n");
+            return IfdDir::Ref();
+        }
+    }
+
+    return ifd->setDirectory(0);
+}
+
+IfdDir::Ref Cr3File::mainIfd()
+{
+    return findIfd(0);
+}
+
+
+IfdDir::Ref Cr3File::exifIfd()
+{
+    return findIfd(1);
+}
+
+
+IfdDir::Ref Cr3File::makerNoteIfd()
+{
+    return findIfd(2);
+}
+
+MetaValue* Cr3File::_getMetaValue(int32_t meta_index)
 {
     MetaValue *val = nullptr;
+    IfdDir::Ref ifd;
+    // I wish I had an HaveIFD "trait" for this.
+    // This is almost IfdFile::_getMetaValue()
+    if (META_INDEX_MASKOUT(meta_index) == META_NS_TIFF) {
+        ifd = mainIfd();
+    } else if (META_INDEX_MASKOUT(meta_index) == META_NS_EXIF) {
+        ifd = exifIfd();
+    } else {
+        LOGERR("Unknown Meta Namespace\n");
+    }
+    if(ifd) {
+        LOGDBG1("Meta value for %u\n", META_NS_MASKOUT(meta_index));
+
+        IfdEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
+        if(e) {
+            val = e->make_meta_value();
+        }
+    }
+
     return val;
 }
 
 void Cr3File::_identifyId()
 {
-    auto ifd = m_container->get_metadata_block(0);
-    if (!ifd) {
-        LOGERR("cr3: can't find meta block 0\n");
-        return;
-    }
-    auto dirs = ifd->directories();
-    if (dirs.empty()) {
-        LOGERR("cr3: meta block 0 has no IFD\n");
-        return;
-    }
-    const auto& mainIfd = dirs[0];
-    if (!mainIfd) {
-        LOGERR("cr3: IFD 0 isn't available\n");
-        return;
-    }
-    mainIfd->load();
-    auto make = mainIfd->getValue<std::string>(IFD::EXIF_TAG_MAKE);
-    auto model = mainIfd->getValue<std::string>(IFD::EXIF_TAG_MODEL);
+    const auto ifd = mainIfd();
+    auto make = ifd->getValue<std::string>(IFD::EXIF_TAG_MAKE);
+    auto model = ifd->getValue<std::string>(IFD::EXIF_TAG_MODEL);
     if (make && model) {
         _setTypeId(_typeIdFromModel(make.value(), model.value()));
     } else {
