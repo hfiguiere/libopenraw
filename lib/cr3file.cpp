@@ -30,6 +30,8 @@
 
 #include "cr3file.hpp"
 #include "isomediacontainer.hpp"
+#include "canon.hpp"
+#include "rawdata.hpp"
 #include "rawfile_private.hpp"
 #include "bitmapdata.hpp"
 #include "trace.hpp"
@@ -82,8 +84,40 @@ RawContainer *Cr3File::getContainer() const
 
 ::or_error Cr3File::_getRawData(RawData &data, uint32_t options)
 {
-    LOGDBG1("Unimplemented\n");
-    return OR_ERROR_NOT_FOUND;
+    auto track = m_container->get_track(2);
+    if (!track || (*track).track_type != MP4PARSE_TRACK_TYPE_VIDEO ||
+        (*track).codec != MP4PARSE_CODEC_CRAW) {
+        LOGERR("%u Not a CRAW track\n", 2);
+        return OR_ERROR_NOT_FOUND;
+    }
+    auto raw_track = m_container->get_raw_track(2);
+    if (!raw_track || (*raw_track).is_jpeg) {
+        LOGERR("%u not the RAW data track\n", 2);
+        return OR_ERROR_NOT_FOUND;
+    }
+
+    if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
+        LOGWARN("Can't provide decompressed data yet. Ignoring.\n");
+    }
+
+    data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
+    data.setDimensions((*raw_track).image_width, (*raw_track).image_height);
+    // get the sensor info
+    const IfdDir::Ref &_makerNoteIfd = makerNoteIfd();
+    auto sensorInfo = canon_get_sensorinfo(_makerNoteIfd);
+    if (sensorInfo) {
+        data.setRoi((*sensorInfo)[0], (*sensorInfo)[1],
+                    (*sensorInfo)[2], (*sensorInfo)[3]);
+    }
+
+    auto byte_length = (*raw_track).size;
+    void* p = data.allocData(byte_length);
+    size_t real_size = m_container->fetchData(p, (*raw_track).offset,
+                                              byte_length);
+    if (real_size < byte_length) {
+        LOGWARN("Size mismatch for data: ignoring.\n");
+    }
+    return OR_ERROR_NONE;
 }
 
 ::or_error Cr3File::_enumThumbnailSizes(std::vector<uint32_t> &list)
