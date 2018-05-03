@@ -167,6 +167,20 @@ fi
 
 AM_CONDITIONAL(BUILD_GNOME_SUPPORT, test x$HAVE_GNOME = xyes)
 
+AC_ARG_ENABLE(debug,[  --enable-debug    Turn on debugging],[
+        case "${enableval}" in
+           yes) debug=true ;
+                DEBUG_CFLAGS="-DDEBUG -g" ;
+                OPTIMIZE_CFLAGS="" ;;
+            no) debug=false ;
+                DEBUG_CFLAGS="-DNDEBUG" ;;
+             *) AC_MSG_ERROR(bad value ${enableval} for --enable-debug) ;;
+        esac
+],[     debug=false
+        DEBUG_CFLAGS="-DNDEBUG"
+])
+AM_CONDITIONAL(DEBUG, test x$debug = xtrue)
+
 AC_LANG_CPLUSPLUS
 AC_LANG_COMPILER_REQUIRE
 
@@ -211,6 +225,23 @@ AC_ARG_ENABLE(asan,[  --enable-asan    Turn on address sanitizer],[
 [
 
 ])
+
+AC_CHECK_PROG(CARGO, [cargo], [yes], [no])
+AS_IF(test x$CARGO = xno,
+    AC_MSG_ERROR([cargo is required])
+)
+AC_CHECK_PROG(RUSTC, [rustc], [yes], [no])
+AS_IF(test x$RUSTC = xno,
+    AC_MSG_ERROR([rustc is required])
+)
+
+dnl Release build we do.
+if test x$debug = xtrue; then
+CARGO_TARGET_SUBDIR=debug
+else
+CARGO_TARGET_SUBDIR=release
+fi
+AC_SUBST(CARGO_TARGET_SUBDIR)
 
 dnl we need to disable gdk pixbuf for distcheck
 DISTCHECK_CONFIGURE_FLAGS="--disable-gnome"
