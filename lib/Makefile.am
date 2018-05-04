@@ -71,11 +71,11 @@ CARGO_TARGET_DIR=@abs_top_builddir@/lib/mp4/target
 RUST_LIB=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@/libmp4.a
 
 $(RUST_LIB):
-	cd mp4 && \
+	cd $(srcdir)/mp4 && \
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
 
 clean-local:
-	cd mp4 && \
+	cd $(srcdir)/mp4 && \
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo clean $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
 
 libopenraw_la_LDFLAGS = \
