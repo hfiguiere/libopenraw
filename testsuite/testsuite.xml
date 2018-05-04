@@ -130,6 +130,32 @@
     </results>
   </test>
   <test>
+    <name>CR3-test EOS M50</name>
+    <file>/home/hub/samples/cr3/EOS_M50/Canon - EOS M50 - 3:2.cr3</file>
+    <source>https://raw.pixls.us/getfile.php/2543/nice/Canon%20-%20EOS%20M50%20-%203:2.cr3</source>
+    <results>
+      <rawType>CR3</rawType>
+      <rawTypeId>65617</rawTypeId>
+      <makerNoteCount>47</makerNoteCount>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon EOS M50</exifModel>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 6000 1620</thumbSizes>
+      <thumbFormats>JPEG JPEG JPEG</thumbFormats>
+      <thumbDataSizes>17687 1999953 376690</thumbDataSizes>
+      <thumbMd5>2148 1575 41470</thumbMd5>
+      <rawDataType>COMP_RAW</rawDataType>
+      <rawDataSize>25238720</rawDataSize>
+      <rawDataDimensions>6288 4056</rawDataDimensions>
+      <rawDataRoi>276 48 5999 3999</rawDataRoi>
+      <rawCfaPattern>NONE</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>0</rawMaxValue>
+      <rawMd5>1969</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>CRW-test 300D</name>
     <file>/home/hub/samples/crw/300D/crw_1852.crw</file>
     <source>http://launchpadlibrarian.net/4704665/CRW_1852.CRW</source>
