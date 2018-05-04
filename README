@@ -14,6 +14,7 @@ Prerequistes to build:
     - libjpeg
     - libxml > 2.5.0 (for the test suite)
     - libcurl (option for the test suite bootstrap)
+    - Rust to support CR3.
 
 If building from the git tree you also need:
 
@@ -32,6 +33,7 @@ Here are the supported file formats. For details per-camera, see
 below:
 
     - Canon CR2
+    - Canon CR3
     - Canon CRW (not those coming from CHDK firmware like A610)
     - Nikon NEF
     - Olympus ORF
@@ -111,6 +113,9 @@ Canon CR2                Y Y Y Y Y Y Y Y
  S90                     T T T T T T T
  S95                     T T T T T T T
  S100
+
+Canon CR3                Y         Y   Y
+ EOS M50                 T         T
 
 Canon CRW                Y Y Y Y Y Y N Y
  300D                    T T T T T T

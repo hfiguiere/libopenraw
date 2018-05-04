@@ -161,11 +161,17 @@ public:
             case OR_RAWFILE_TYPE_CR2:
                 return "Canon CR2";
                 break;
+            case OR_RAWFILE_TYPE_CR3:
+                return "Canon CR3";
+                break;
             case OR_RAWFILE_TYPE_CRW:
                 return "Canon CRW";
                 break;
             case OR_RAWFILE_TYPE_NEF:
                 return "Nikon NEF";
+                break;
+            case OR_RAWFILE_TYPE_NRW:
+                return "Nikon NRW";
                 break;
             case OR_RAWFILE_TYPE_MRW:
                 return "Minolta MRW";
@@ -191,7 +197,8 @@ public:
             case OR_RAWFILE_TYPE_RAF:
                 return "FujiFilm RAF";
                 break;
-            default:
+            case OR_RAWFILE_TYPE_TIFF:
+                return "TIFF";
                 break;
             }
             return "Unknown";

@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile_private.h
  *
- * Copyright (C) 2012-2016 Hubert Figuiere
+ * Copyright (C) 2012-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,6 +26,7 @@
 #include <map>
 
 #include "rawfile.hpp"
+#include "bitmapdata.hpp"
 
 namespace OpenRaw {
 namespace Internals {
@@ -45,18 +46,26 @@ struct BuiltinColourMatrix
 class ThumbDesc
 {
 public:
+  ThumbDesc(uint32_t _x, uint32_t _y, ::or_data_type t,
+            std::unique_ptr<BitmapData>&& d)
+    : x(_x), y(_y), type(t)
+    , offset(0), length(0)
+    , data(std::move(d))
+    {
+    }
   ThumbDesc(uint32_t _x, uint32_t _y, ::or_data_type _type,
             size_t _offset, size_t _length)
     : x(_x), y(_y), type(_type)
     , offset(_offset), length(_length)
-		{
+    , data(nullptr)
+    {
 #ifdef DEBUG
       assert(_length);
 #endif
-		}
+    }
   ThumbDesc()
     : x(0), y(0), type(OR_DATA_TYPE_NONE)
-    , offset(0), length(0)
+    , offset(0), length(0), data(nullptr)
     {
     }
   uint32_t x;    /**< x size. Can be 0 */
@@ -64,6 +73,7 @@ public:
   ::or_data_type type; /**< the data type format */
   size_t   offset; /**< offset if the thumbnail data */
   size_t   length;
+  std::unique_ptr<BitmapData> data; /**< Data for the thumbnail. */
 };
 
 typedef std::map<uint32_t, ThumbDesc> ThumbLocations;

@@ -41,6 +41,7 @@
 #include "jfifcontainer.hpp"
 #include "ljpegdecompressor.hpp"
 #include "rawfile_private.hpp"
+#include "canon.hpp"
 
 using namespace Debug;
 
@@ -562,21 +563,10 @@ IfdDir::Ref Cr2File::_locateMainIfd()
 
     // get the sensor info
     const IfdDir::Ref &_makerNoteIfd = makerNoteIfd();
-    e = _makerNoteIfd->getEntry(IFD::MNOTE_CANON_SENSORINFO);
-    if (e) {
-        auto result3 = e->getArray<uint16_t>();
-        if (result3) {
-            std::vector<uint16_t> sensorInfo = result3.value();
-            if (sensorInfo.size() > 8) {
-                uint32_t w = sensorInfo[7] - sensorInfo[5];
-                uint32_t h = sensorInfo[8] - sensorInfo[6];
-                data.setRoi(sensorInfo[5], sensorInfo[6], w, h);
-            }
-            else {
-                LOGWARN("sensorInfo is too small: %lu - skipping.\n",
-                        sensorInfo.size());
-            }
-        }
+    auto sensorInfo = canon_get_sensorinfo(_makerNoteIfd);
+    if (sensorInfo) {
+        data.setRoi((*sensorInfo)[0], (*sensorInfo)[1],
+                    (*sensorInfo)[2], (*sensorInfo)[3]);
     }
 
     return OR_ERROR_NONE;

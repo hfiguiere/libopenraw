@@ -2,7 +2,7 @@
  * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -51,6 +51,7 @@
 #include "rawcontainer.hpp"
 #include "tiffepfile.hpp"
 #include "cr2file.hpp"
+#include "cr3file.hpp"
 #include "neffile.hpp"
 #include "orffile.hpp"
 #include "arwfile.hpp"
@@ -121,6 +122,9 @@ void init(void)
     static RawFileFactory fctraf(OR_RAWFILE_TYPE_RAF,
                                  std::bind(&Internals::RafFile::factory, _1),
                                  "raf");
+    static RawFileFactory fctcr3(OR_RAWFILE_TYPE_CR3,
+                                 std::bind(&Internals::Cr3File::factory, _1),
+                                 "cr3");
 }
 
 class RawFile::Private
@@ -253,7 +257,11 @@ RawFile::Type RawFile::identify(const char*_filename)
         _type = OR_RAWFILE_TYPE_MRW;
         return OR_ERROR_NONE;
     }
-    if(memcmp(buff, "II\x1a\0\0\0HEAPCCDR", 14) == 0) {
+    if (len >= 12 && (memcmp(buff + 4, "ftypcrx ", 8) == 0)) {
+        _type = OR_RAWFILE_TYPE_CR3;
+        return OR_ERROR_NONE;
+    }
+    if (len >= 14 && memcmp(buff, "II\x1a\0\0\0HEAPCCDR", 14) == 0) {
         _type = OR_RAWFILE_TYPE_CRW;
         return OR_ERROR_NONE;
     }
@@ -265,7 +273,7 @@ RawFile::Type RawFile::identify(const char*_filename)
         _type = OR_RAWFILE_TYPE_RW2;
         return OR_ERROR_NONE;
     }
-    if(memcmp(buff, RAF_MAGIC, RAF_MAGIC_LEN) == 0) {
+    if (len >= RAF_MAGIC_LEN && memcmp(buff, RAF_MAGIC, RAF_MAGIC_LEN) == 0) {
         _type = OR_RAWFILE_TYPE_RAF;
         return OR_ERROR_NONE;
     }
@@ -415,37 +423,42 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
  */
 ::or_error RawFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
 {
-  ::or_error ret = OR_ERROR_NOT_FOUND;
-  auto iter = d->m_thumbLocations.find(size);
-  if(iter != d->m_thumbLocations.end())
-  {
-    const Internals::ThumbDesc & desc = iter->second;
-    thumbnail.setDataType(desc.type);
-    uint32_t byte_length= desc.length; /**< of the buffer */
-    uint32_t offset = desc.offset;
+    ::or_error ret = OR_ERROR_NOT_FOUND;
+    auto iter = d->m_thumbLocations.find(size);
+    if(iter != d->m_thumbLocations.end())
+    {
+        const Internals::ThumbDesc & desc = iter->second;
+        thumbnail.setDataType(desc.type);
+        thumbnail.setDimensions(desc.x, desc.y);
+        if (desc.data) {
+            auto byte_length = desc.data->size();
+            void *p = thumbnail.allocData(byte_length);
+            ::memcpy(p, desc.data->data(), byte_length);
+        } else {
+            uint32_t byte_length = desc.length; /**< of the buffer */
+            uint32_t offset = desc.offset;
 
-    LOGDBG1("Thumbnail at %u of %u bytes.\n", offset, byte_length);
+            LOGDBG1("Thumbnail at %u of %u bytes.\n", offset, byte_length);
 
-    if (byte_length != 0) {
-      void *p = thumbnail.allocData(byte_length);
-      size_t real_size = getContainer()->fetchData(p, offset,
-                                                byte_length);
-      if (real_size < byte_length) {
-        LOGWARN("Size mismatch for data: got %lu expected %u ignoring.\n",
-                real_size, byte_length);
-      }
-
-      thumbnail.setDimensions(desc.x, desc.y);
-      ret = OR_ERROR_NONE;
+            if (byte_length != 0) {
+                void *p = thumbnail.allocData(byte_length);
+                size_t real_size = getContainer()->fetchData(p, offset,
+                                                             byte_length);
+                if (real_size < byte_length) {
+                    LOGWARN("Size mismatch for data: got %lu expected %u ignoring.\n",
+                            real_size, byte_length);
+                }
+            }
+        }
+        ret = OR_ERROR_NONE;
     }
-  }
 
-  return ret;
+    return ret;
 }
 
-void RawFile::_addThumbnail(uint32_t size, const Internals::ThumbDesc& desc)
+void RawFile::_addThumbnail(uint32_t size, Internals::ThumbDesc&& desc)
 {
-    d->m_thumbLocations[size] = desc;
+    d->m_thumbLocations[size] = std::move(desc);
 }
 
 ::or_error RawFile::getRawData(RawData & rawdata, uint32_t options)
@@ -581,6 +594,11 @@ ExifLightsourceValue RawFile::_getCalibrationIlluminant(uint16_t index)
         return (index == 1) ? EV_LIGHTSOURCE_D65 : EV_LIGHTSOURCE_UNKNOWN;
     }
     return (ExifLightsourceValue)meta->getInteger(0);
+}
+
+Internals::IfdDir::Ref RawFile::getMakerNoteIfd()
+{
+    return _getMakerNoteIfd();
 }
 
 const MetaValue *RawFile::getMetaValue(int32_t meta_index)

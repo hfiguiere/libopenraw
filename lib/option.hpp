@@ -25,6 +25,9 @@
 
 #include <stdexcept>
 
+class OptionNone {
+};
+
 template<class T>
 class Option
 {
@@ -36,9 +39,14 @@ public:
     , m_data()
   {
   }
+  Option(OptionNone)
+    : m_none(true)
+    , m_data()
+  {
+  }
   explicit Option(T&& data)
     : m_none(false)
-    , m_data(data)
+    , m_data(std::move(data))
   {
   }
   explicit Option(const T& data)
@@ -70,6 +78,21 @@ public:
     return std::move(m_data);
   }
 
+  T& operator*()
+  {
+    if (m_none) {
+      throw std::runtime_error("none option value");
+    }
+    return m_data;
+  }
+  const T& operator*() const
+  {
+    if (m_none) {
+      throw std::runtime_error("none option value");
+    }
+    return m_data;
+  }
+
   bool empty() const
   { return m_none; }
 
@@ -81,3 +104,9 @@ private:
   bool m_none;
   T m_data;
 };
+
+template<class T> Option<T>
+option_some(T&& value)
+{
+  return Option<T>(std::move(value));
+}

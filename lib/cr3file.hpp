@@ -1,8 +1,8 @@
-/* -*- Mode: C++ ; tab-width:4; c-basic-offset:4 -*- */
+/* -*- mode:c++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil; -*- */
 /*
- * libopenraw - raffile.h
+ * libopenraw - cr3file.hpp
  *
- * Copyright (C) 2011-2017 Hubert Figuière
+ * Copyright (C) 2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,63 +19,58 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_RAFFILE_H_
-#define OR_INTERNALS_RAFFILE_H_
+#pragma once
 
 #include <stdint.h>
-#include <vector>
+
+#include <array>
+#include <memory>
 
 #include <libopenraw/consts.h>
 
-#include "rawfile.hpp"
-#include "rawcontainer.hpp"
 #include "io/stream.hpp"
-
-#define RAF_MAGIC "FUJIFILMCCD-RAW "
-#define RAF_MAGIC_LEN 16
+#include "rawfile.hpp"
+#include "ifdfilecontainer.hpp"
+#include "makernotedir.hpp"
 
 namespace OpenRaw {
 
 class RawData;
-class MetaValue;
 
 namespace Internals {
 
-class RafContainer;
+class IsoMediaContainer;
 
-class RafFile : public OpenRaw::RawFile {
+class Cr3File : public RawFile {
 public:
     static RawFile *factory(const IO::Stream::Ptr &s);
-    RafFile(const IO::Stream::Ptr &s);
-    virtual ~RafFile();
+    Cr3File(const IO::Stream::Ptr &s);
+    virtual ~Cr3File();
 
-    RafFile(const RafFile &) = delete;
-    RafFile &operator=(const RafFile &) = delete;
+    Cr3File(const Cr3File &) = delete;
+    Cr3File &operator=(const Cr3File &) = delete;
 
 protected:
-    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
-
-    virtual RawContainer *getContainer() const override;
-
+    virtual ::or_error _enumThumbnailSizes(
+        std::vector<uint32_t> &list) override;
+    virtual RawContainer* getContainer() const override;
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
 
-    virtual IfdDir::Ref _getMakerNoteIfd() override
-        { return IfdDir::Ref(); }
-    virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) override;
+    virtual IfdDir::Ref _getMakerNoteIfd() override;
+    virtual MetaValue* _getMetaValue(int32_t /*meta_index*/) override;
 
     virtual void _identifyId() override;
 
 private:
-    bool isXTrans(RawFile::TypeId type) const;
+    IfdDir::Ref findIfd(uint32_t idx);
+    IfdDir::Ref mainIfd();
+    IfdDir::Ref exifIfd();
 
-    IO::Stream::Ptr m_io;      /**< the IO handle */
-    RafContainer *m_container; /**< the real container */
-    // uint32_t m_x;
-    // uint32_t m_y;
+    IO::Stream::Ptr m_io; /**< the IO handle */
+    IsoMediaContainer *m_container;
+    std::array<std::shared_ptr<IfdFileContainer>, 4> m_ifds;
 
     static const RawFile::camera_ids_t s_def[];
 };
 }
 }
-
-#endif

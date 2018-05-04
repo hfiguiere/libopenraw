@@ -20,6 +20,7 @@ noinst_HEADERS = \
 	tiffepfile.hpp \
 	rawfilefactory.hpp \
 	cr2file.hpp \
+	cr3file.hpp \
 	neffile.hpp \
 	orffile.hpp \
 	arwfile.hpp \
@@ -39,6 +40,7 @@ noinst_HEADERS = \
 	ifd.hpp \
 	ifdfilecontainer.hpp \
 	ifddir.hpp ifdentry.hpp \
+	isomediacontainer.hpp \
 	orfcontainer.hpp \
 	rw2container.hpp \
 	mrwcontainer.hpp \
@@ -51,6 +53,7 @@ noinst_HEADERS = \
 	ljpegdecompressor_priv.hpp \
 	crwdecompressor.hpp \
 	olympusdecompressor.hpp \
+	canon.hpp \
 	exception.hpp \
 	endianutils.hpp \
 	unpack.hpp \
@@ -58,13 +61,26 @@ noinst_HEADERS = \
 
 lib_LTLIBRARIES = libopenraw.la
 
+if DEBUG
+CARGO_RELEASE_ARGS=
+else
+CARGO_RELEASE_ARGS=--release
+endif
+
+CARGO_TARGET_DIR=@abs_top_builddir@/lib/mp4/target
+RUST_LIB=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@/libmp4.a
+
+$(RUST_LIB):
+	cd $(srcdir)/mp4 && \
+	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
+
+clean-local:
+	cd $(srcdir)/mp4 && \
+	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo clean $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
+
 libopenraw_la_LDFLAGS = \
 	-version-info @LIBOPENRAW_VERSION_INFO@
-
-#	-export-symbols $(srcdir)/libopenraw.sym 
-
-libopenraw_la_LIBADD = -ljpeg
-
+libopenraw_la_LIBADD = -ljpeg $(RUST_LIB)
 libopenraw_la_SOURCES = \
 	io/io.c io/posix_io.h \
 	io/posix_io.c io/posix_io.h \
@@ -98,6 +114,7 @@ libopenraw_la_SOURCES = \
 	tiffepfile.cpp \
 	rawfilefactory.cpp \
 	cr2file.cpp \
+	cr3file.cpp \
 	neffile.cpp \
 	orffile.cpp \
 	arwfile.cpp \
@@ -113,6 +130,7 @@ libopenraw_la_SOURCES = \
 	rawdata.cpp \
 	ifdfilecontainer.cpp \
 	ifddir.cpp ifdentry.cpp \
+	isomediacontainer.cpp \
 	makernotedir.hpp makernotedir.cpp \
 	rawcontainer.cpp \
 	orfcontainer.cpp \
@@ -126,6 +144,7 @@ libopenraw_la_SOURCES = \
 	ljpegdecompressor.cpp \
 	crwdecompressor.cpp \
 	olympusdecompressor.cpp \
+	canon.cpp \
 	metavalue.cpp \
 	unpack.cpp \
 	render/bimedian_demosaic.cpp render/bimedian_demosaic.hpp \

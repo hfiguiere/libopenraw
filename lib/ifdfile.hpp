@@ -98,6 +98,7 @@ protected:
 
     virtual void _identifyId() override;
 
+    virtual IfdDir::Ref _getMakerNoteIfd() override;
     virtual MetaValue *_getMetaValue(int32_t meta_index) override;
 
     /** Translate the compression type from the tiff type (16MSB)

@@ -1,0 +1,18 @@
+[package]
+name = "mp4"
+version = "0.1.0"
+license = "LPGPL-3.0"
+description = "mp4 container parsing"
+
+[dependencies]
+mp4parse_capi = { path = "mp4parse_capi", features = [ "craw" ] }
+
+[lib]
+path = "lib.rs"
+crate-type = ["staticlib"]
+test = false
+doctest = false
+bench = false
+doc = false
+plugin = false
+harness = false

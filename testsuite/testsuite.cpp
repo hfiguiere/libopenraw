@@ -247,6 +247,9 @@ bool Test::testRawType(const std::string & result)
     case OR_RAWFILE_TYPE_CR2:
         RETURN_TEST(result == "CR2", result);
         break;
+    case OR_RAWFILE_TYPE_CR3:
+        RETURN_TEST(result == "CR3", result);
+        break;
     case OR_RAWFILE_TYPE_CRW:
         RETURN_TEST(result == "CRW", result);
         break;
@@ -306,10 +309,10 @@ bool Test::testThumbNum(const std::string & result)
     RETURN_FAIL("conversion failed", result);
 }
 
-bool Test::testThumbSizes(const std::string & result)
+bool Test::testThumbSizes(const std::string& result)
 {
     std::vector<uint32_t> thumbs = m_rawfile->listThumbnailSizes();
-    std::vector< std::string > v;
+    std::vector<std::string> v;
     boost::split(v, result, boost::is_any_of(" "));
     if(v.size() != thumbs.size()) {
         RETURN_FAIL("mismatch number of elements", result);
@@ -325,7 +328,15 @@ bool Test::testThumbSizes(const std::string & result)
             RETURN_FAIL("conversion failed", result);
         }
     }
-    RETURN_TEST(std::equal(thumbs.cbegin(), thumbs.cend(), v2.cbegin()), result);
+    bool success = true;
+    for (size_t i = 0; i < thumbs.size(); i++) {
+        bool test = false;
+        CHECK_TEST_EQUALS_N(thumbs[i], v2[i], test);
+        if (!test) {
+            success = false;
+        }
+    }
+    return success;
 }
 
 bool Test::testThumbFormats(const std::string & result)
@@ -632,12 +643,9 @@ bool Test::testExifString(int32_t meta_index, const std::string & result)
 bool Test::testMakerNoteCount(const std::string & result)
 {
     try {
-        OpenRaw::Internals::IfdFile & ifd_file =
-            dynamic_cast<OpenRaw::Internals::IfdFile &>(*m_rawfile.get());
-        auto exif = ifd_file.exifIfd();
-        auto maker_note = exif->getMakerNoteIfd();
+        auto maker_note = m_rawfile->getMakerNoteIfd();
         if (!maker_note) {
-            RETURN_FAIL("no maker not found", result);
+            RETURN_FAIL("no MakeNote found", result);
         }
         RETURN_TEST_EQUALS_N(maker_note->numTags(),
                              boost::lexical_cast<int32_t>(result));

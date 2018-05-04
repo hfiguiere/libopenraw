@@ -36,7 +36,7 @@ class MemStream
   : public Stream
 {
 public:
-  MemStream(void *ptr, size_t s);
+  MemStream(const void *ptr, size_t s);
 
   virtual ~MemStream()
     {}
@@ -52,7 +52,7 @@ public:
 
 
 private:
-  void * m_ptr;
+  const void * m_ptr;
   size_t m_size;
   unsigned char * m_current;
 };

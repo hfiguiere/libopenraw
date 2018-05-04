@@ -364,6 +364,10 @@ const MakerNoteDir::Ref & IfdFile::makerNoteIfd()
 	return m_makerNoteIfd;
 }
 
+Internals::IfdDir::Ref IfdFile::_getMakerNoteIfd()
+{
+	return makerNoteIfd();
+}
 
 namespace {
 
