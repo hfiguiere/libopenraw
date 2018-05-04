@@ -1,4 +1,4 @@
-libopenraw 0.1.3 -
+libopenraw 0.1.3 - 2018/05/03
 
 New features:
 
@@ -20,7 +20,12 @@ New features:
 
 Bug fixes:
 
+  - Stop statically linking binaries
+      https://github.com/hfiguiere/libopenraw/pull/1
+
 Internal changes:
+
+  - Fixes for TravisCI.
 
 libopenraw 0.1.2 - 2017/04/17
 
