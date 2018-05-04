@@ -632,12 +632,9 @@ bool Test::testExifString(int32_t meta_index, const std::string & result)
 bool Test::testMakerNoteCount(const std::string & result)
 {
     try {
-        OpenRaw::Internals::IfdFile & ifd_file =
-            dynamic_cast<OpenRaw::Internals::IfdFile &>(*m_rawfile.get());
-        auto exif = ifd_file.exifIfd();
-        auto maker_note = exif->getMakerNoteIfd();
+        auto maker_note = m_rawfile->getMakerNoteIfd();
         if (!maker_note) {
-            RETURN_FAIL("no maker not found", result);
+            RETURN_FAIL("no MakeNote found", result);
         }
         RETURN_TEST_EQUALS_N(maker_note->numTags(),
                              boost::lexical_cast<int32_t>(result));

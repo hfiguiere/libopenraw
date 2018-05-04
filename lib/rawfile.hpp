@@ -26,6 +26,8 @@
 
 #include <libopenraw/rawfile.h>
 
+#include "ifddir.hpp"
+
 namespace OpenRaw {
 
 namespace IO {
@@ -139,6 +141,7 @@ public:
     ExifLightsourceValue getCalibrationIlluminant1();
     ExifLightsourceValue getCalibrationIlluminant2();
 
+    Internals::IfdDir::Ref getMakerNoteIfd();
     const MetaValue *getMetaValue(int32_t meta_index);
 protected:
     struct camera_ids_t {
@@ -190,6 +193,7 @@ protected:
      */
     virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
     virtual ExifLightsourceValue _getCalibrationIlluminant(uint16_t index);
+    virtual Internals::IfdDir::Ref _getMakerNoteIfd() = 0;
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 
     TypeId _typeIdFromModel(const std::string& make, const std::string & model);

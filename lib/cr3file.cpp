@@ -103,8 +103,8 @@ RawContainer *Cr3File::getContainer() const
     data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
     data.setDimensions((*raw_track).image_width, (*raw_track).image_height);
     // get the sensor info
-    const IfdDir::Ref &_makerNoteIfd = makerNoteIfd();
-    auto sensorInfo = canon_get_sensorinfo(_makerNoteIfd);
+    const IfdDir::Ref &makerNoteIfd = _getMakerNoteIfd();
+    auto sensorInfo = canon_get_sensorinfo(makerNoteIfd);
     if (sensorInfo) {
         data.setRoi((*sensorInfo)[0], (*sensorInfo)[1],
                     (*sensorInfo)[2], (*sensorInfo)[3]);
@@ -207,7 +207,7 @@ IfdDir::Ref Cr3File::exifIfd()
 }
 
 
-IfdDir::Ref Cr3File::makerNoteIfd()
+IfdDir::Ref Cr3File::_getMakerNoteIfd()
 {
     return findIfd(2);
 }

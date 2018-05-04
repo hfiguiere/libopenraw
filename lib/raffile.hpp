@@ -59,6 +59,8 @@ protected:
 
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
 
+    virtual IfdDir::Ref _getMakerNoteIfd() override
+        { return IfdDir::Ref(); }
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) override;
 
     virtual void _identifyId() override;

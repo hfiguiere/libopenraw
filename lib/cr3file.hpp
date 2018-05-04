@@ -55,6 +55,8 @@ protected:
         std::vector<uint32_t> &list) override;
     virtual RawContainer* getContainer() const override;
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
+
+    virtual IfdDir::Ref _getMakerNoteIfd() override;
     virtual MetaValue* _getMetaValue(int32_t /*meta_index*/) override;
 
     virtual void _identifyId() override;
@@ -63,7 +65,6 @@ private:
     IfdDir::Ref findIfd(uint32_t idx);
     IfdDir::Ref mainIfd();
     IfdDir::Ref exifIfd();
-    IfdDir::Ref makerNoteIfd();
 
     IO::Stream::Ptr m_io; /**< the IO handle */
     IsoMediaContainer *m_container;

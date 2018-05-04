@@ -596,6 +596,11 @@ ExifLightsourceValue RawFile::_getCalibrationIlluminant(uint16_t index)
     return (ExifLightsourceValue)meta->getInteger(0);
 }
 
+Internals::IfdDir::Ref RawFile::getMakerNoteIfd()
+{
+    return _getMakerNoteIfd();
+}
+
 const MetaValue *RawFile::getMetaValue(int32_t meta_index)
 {
     MetaValue *val = NULL;
