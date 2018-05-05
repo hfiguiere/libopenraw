@@ -2,9 +2,23 @@ libopenraw 0.2.0 -
 
 New features:
 
+  - Support for Canon CR3.
+
+  Camera support:
+  [ a * denote that WB coefficients have been included ]
+
+  - Support for Canon EOS M50*.
+
 Bug fixes:
 
+  - Missing RAW type in ordiag.
+
 Internal changes:
+
+  - Requires Rust to build CR3 support.
+  - Add an API to get the MakerNote from the RAW file.
+  - Refactor some Canon code that can be shared between formats.
+  - Don't link test statically.
 
 libopenraw 0.1.3 - 2018/05/03
 
