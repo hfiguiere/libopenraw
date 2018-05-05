@@ -1,8 +1,8 @@
-/* -*- Mode: C++ -*- */
+/* -*- Mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil; -*- */
 /*
- * libopenraw - cr2file.h
+ * libopenraw - cr2file.hpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_CR2FILE_H_
-#define OR_INTERNALS_CR2FILE_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -50,6 +49,8 @@ public:
 protected:
     virtual IfdDir::Ref  _locateCfaIfd() override;
     virtual IfdDir::Ref  _locateMainIfd() override;
+    virtual void _identifyId() override;
+
 private:
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
 
@@ -58,5 +59,3 @@ private:
 
 }
 }
-
-#endif

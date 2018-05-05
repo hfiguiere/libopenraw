@@ -23,11 +23,16 @@
 
 #include <array>
 
+#include <libopenraw/cameraids.h>
+
+#include "rawfile.hpp"
 #include "ifddir.hpp"
 #include "option.hpp"
 
 namespace OpenRaw {
 namespace Internals {
+
+RawFile::TypeId canon_modelid_to_typeid(uint32_t model_id);
 
 Option<std::array<uint32_t, 4>> canon_get_sensorinfo(const IfdDir::Ref& ifddir);
 

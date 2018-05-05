@@ -177,6 +177,7 @@ typedef	enum {
 	RW2_TAG_STRIP_OFFSETS = 0x0118,
 
 	/* Canon MakerNote tags */
+	MNOTE_CANON_MODEL_ID = 0x0010,
 	MNOTE_CANON_SENSORINFO = 0x00e0,
 
 	/* Nikon MakerNote tags */

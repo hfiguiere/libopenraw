@@ -106,8 +106,6 @@ void IfdFile::_identifyId()
   }
 }
 
-
-
 ::or_error
 IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {

@@ -571,6 +571,26 @@ IfdDir::Ref Cr2File::_locateMainIfd()
 
     return OR_ERROR_NONE;
 }
+
+void Cr2File::_identifyId()
+{
+    // There is a camera model ID in the MakerNote tag 0x0010.
+    // Use this at first.
+    auto mn = getMakerNoteIfd();
+    if (mn) {
+        auto id = mn->getValue<uint32_t>(IFD::MNOTE_CANON_MODEL_ID);
+        if (id) {
+            auto type_id = canon_modelid_to_typeid(id.value());
+            if (type_id != 0) {
+                _setTypeId(type_id);
+                return;
+            }
+        }
+    }
+
+    LOGERR("model ID not found\n");
+}
+
 }
 }
 
