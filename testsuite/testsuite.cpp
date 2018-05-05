@@ -1,7 +1,7 @@
 /*
  * libopenraw - testsuite.cpp
  *
- * Copyright (C) 2008-2016 Hubert Figuiere
+ * Copyright (C) 2008-2018 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -165,8 +165,8 @@ std::string cfaPatternToString(::or_cfa_pattern t)
     case OR_CFA_PATTERN_GRBG:
         return "GRBG";
 
-    default:
-        break;
+    case _OR_CFA_PATTERN_INVALID:
+        return "INVALID";
     }
     return "";
 }
@@ -176,8 +176,17 @@ bool equalDataType(const std::string & result, BitmapData::DataType t)
 {
     bool equal = false;
     switch(t) {
+    case OR_DATA_TYPE_NONE:
+        equal = (result == "NONE");
+        break;
+    case OR_DATA_TYPE_UNKNOWN:
+        equal = (result == "UNKNOWN");
+        break;
     case OR_DATA_TYPE_PIXMAP_8RGB:
         equal = (result == "8RGB");
+        break;
+    case OR_DATA_TYPE_PIXMAP_16RGB:
+        equal = (result == "16RGB");
         break;
     case OR_DATA_TYPE_JPEG:
         equal = (result == "JPEG");
@@ -193,8 +202,6 @@ bool equalDataType(const std::string & result, BitmapData::DataType t)
         break;
     case OR_DATA_TYPE_COMPRESSED_RAW:
         equal = (result == "COMP_RAW");
-        break;
-    default:
         break;
     }
     return equal;
@@ -283,7 +290,11 @@ bool Test::testRawType(const std::string & result)
     case OR_RAWFILE_TYPE_RAF:
         RETURN_TEST(result == "RAF", result);
         break;
-    default:
+    case OR_RAWFILE_TYPE_TIFF:
+        RETURN_TEST(result == "TIFF", result);
+        break;
+    case OR_RAWFILE_TYPE_UNKNOWN:
+        RETURN_TEST(result == "UNKNOWN", result);
         break;
     }
     RETURN_TEST(false, result);
