@@ -102,6 +102,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0x3e00,
       { 10646, -3593, -1158, -3329, 11699, 1831, -667, 2874, 6287 } },
+    { OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645Z_PEF),
+      0,
+      0x3fff,
+      { 9519, -3591, -664, -4074, 11725, 2671, -624, 1501, 6653 } },
 
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
@@ -124,6 +128,7 @@ const struct IfdFile::camera_ids_t PEFFile::s_def[] = {
     { "PENTAX K-S2        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KS2_PEF) },
     { "PENTAX K-x         ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KX_PEF) },
     { "PENTAX 645D        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645D_PEF) },
+    { "PENTAX 645Z        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645Z_PEF) },
     { 0, 0 }
 };
 

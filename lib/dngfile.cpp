@@ -43,6 +43,10 @@ namespace OpenRaw {
 namespace Internals {
 
 const IfdFile::camera_ids_t DngFile::s_def[] = {
+    { "PENTAX 645Z        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
+                                                 OR_TYPEID_PENTAX_645Z_DNG) },
+    { "PENTAX 645D        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
+                                                 OR_TYPEID_PENTAX_645D_DNG) },
     { "PENTAX K10D        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_K10D_DNG) },
     { "PENTAX Q           ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
