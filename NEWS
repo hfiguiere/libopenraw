@@ -7,7 +7,12 @@ New features:
   Camera support:
   [ a * denote that WB coefficients have been included ]
 
-  - Support for Canon EOS M50*.
+  - Support for Canon EOS M50*, SX1 IS*, SX60 HS*, S120*.
+  - Support for Pentax 645Z DNG and PEF*, 645D DNG
+  - Support for Sony RX0*, RX10M4*, A5100* A7M3* and A7RM3*
+  - Added alias for Rebel XTi (400D)
+  - Coefficients for Sony RX10, A6500
+  - Added alias for Sony A3500 (A3000)
 
 Bug fixes:
 
@@ -19,6 +24,7 @@ Internal changes:
   - Add an API to get the MakerNote from the RAW file.
   - Refactor some Canon code that can be shared between formats.
   - Don't link test statically.
+  - Canon CR2: use Model ID to recognize files.
 
 libopenraw 0.1.3 - 2018/05/03
 
