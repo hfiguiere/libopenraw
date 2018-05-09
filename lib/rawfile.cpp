@@ -310,7 +310,8 @@ RawFile::Type RawFile::identify(const char*_filename)
                 else if(makes == "PENTAX Corporation ") {
                     _type = OR_RAWFILE_TYPE_PEF;
                 }
-                else if(makes == "SONY           ") {
+                else if (makes == "SONY           " ||
+                         makes == "SONY") {
                     _type = OR_RAWFILE_TYPE_ARW;
                 }
                 else if(makes == "Canon") {
