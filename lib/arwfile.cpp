@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuiere
+ * Copyright (C) 2006-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,11 +18,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
 #include <libopenraw/cameraids.h>
 
-#include "ifdfilecontainer.hpp"
 #include "arwfile.hpp"
+#include "ifdfilecontainer.hpp"
 #include "rawfile_private.hpp"
 
 using namespace Debug;
@@ -33,65 +32,115 @@ class RawData;
 
 namespace Internals {
 
-#define OR_MAKE_SONY_TYPEID(camid) \
-    OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY,camid)
+#define OR_MAKE_SONY_TYPEID(camid)                                             \
+    OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY, camid)
 
 /* taken from dcraw, by default */
 static const BuiltinColourMatrix s_matrices[] = {
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A100), 0, 0xfeb,
-      { 9437,-2811,-774,-8405,16215,2290,-710,596,7181 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A200), 0, 0,
-      { 9847,-3091,-928,-8485,16345,2225,-715,595,7103 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A380), 0, 0,
-      { 6038,-1484,-579,-9145,16746,2512,-875,746,7218 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A390), 0, 0,
-      { 6038,-1484,-579,-9145,16746,2512,-875,746,7218 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A550), 128, 0xfeb,
-      { 4950,-580,-103,-5228,12542,3029,-709,1435,7371 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A560), 128, 0xfeb,
-      { 4950,-580,-103,-5228,12542,3029,-709,1435,7371 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A700), 126, 0,
-      { 5775,-805,-359,-8574,16295,2391,-1943,2341,7249 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A850), 128, 0,
-      { 5413,-1162,-365,-5665,13098,2866,-608,1179,8440 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A900), 128, 0,
-      { 5209,-1072,-397,-8845,16120,2919,-1618,1803,8654 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA33), 128, 0,
-      { 6069,-1221,-366,-5221,12779,2734,-1024,2066,6834 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA35), 128, 0,
-      { 5986,-1618,-415,-4557,11820,3120,-681,1404,6971 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA55), 128, 0,
-      { 5932,-1492,-411,-4813,12285,2856,-741,1524,6739 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA57), 128, 0,
-      { 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA58), 128, 0,
-      { 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA65), 128, 0,
-      { 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA77), 128, 0,
-      { 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A100),
+      0,
+      0xfeb,
+      { 9437, -2811, -774, -8405, 16215, 2290, -710, 596, 7181 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A200),
+      0,
+      0,
+      { 9847, -3091, -928, -8485, 16345, 2225, -715, 595, 7103 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A380),
+      0,
+      0,
+      { 6038, -1484, -579, -9145, 16746, 2512, -875, 746, 7218 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A390),
+      0,
+      0,
+      { 6038, -1484, -579, -9145, 16746, 2512, -875, 746, 7218 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A550),
+      128,
+      0xfeb,
+      { 4950, -580, -103, -5228, 12542, 3029, -709, 1435, 7371 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A560),
+      128,
+      0xfeb,
+      { 4950, -580, -103, -5228, 12542, 3029, -709, 1435, 7371 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A700),
+      126,
+      0,
+      { 5775, -805, -359, -8574, 16295, 2391, -1943, 2341, 7249 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A850),
+      128,
+      0,
+      { 5413, -1162, -365, -5665, 13098, 2866, -608, 1179, 8440 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A900),
+      128,
+      0,
+      { 5209, -1072, -397, -8845, 16120, 2919, -1618, 1803, 8654 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA33),
+      128,
+      0,
+      { 6069, -1221, -366, -5221, 12779, 2734, -1024, 2066, 6834 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA35),
+      128,
+      0,
+      { 5986, -1618, -415, -4557, 11820, 3120, -681, 1404, 6971 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA55),
+      128,
+      0,
+      { 5932, -1492, -411, -4813, 12285, 2856, -741, 1524, 6739 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA57),
+      128,
+      0,
+      { 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA58),
+      128,
+      0,
+      { 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA65),
+      128,
+      0,
+      { 5491, -1192, -363, -4951, 12342, 2948, -911, 1722, 7192 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA77),
+      128,
+      0,
+      { 5491, -1192, -363, -4951, 12342, 2948, -911, 1722, 7192 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_SLTA99),
       0,
       0,
       { 6344, -1612, -462, -4863, 12477, 2681, -865, 1786, 6899 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX3), 128, 0,	/* Adobe */
-      { 6549,-1550,-436,-4880,12435,2753,-854,1868,6976 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5), 128, 0,	/* Adobe */
-      { 6549,-1550,-436,-4880,12435,2753,-854,1868,6976 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5N), 128, 0,
-      { 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5R), 128, 0,
-      { 6129,-1545,-418,-4930,12490,2743,-977,1693,6615 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5T), 128, 0,
-      { 6129,-1545,-418,-4930,12490,2743,-977,1693,6615 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEXC3), 128, 0,
-      { 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEXF3), 128, 0,
-      { 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX6), 128, 0,
-      { 6129,-1545,-418,-4930,12490,2743,-977,1693,6615 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX7), 128, 0,
-      { 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX3),
+      128,
+      0, /* Adobe */
+      { 6549, -1550, -436, -4880, 12435, 2753, -854, 1868, 6976 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5),
+      128,
+      0, /* Adobe */
+      { 6549, -1550, -436, -4880, 12435, 2753, -854, 1868, 6976 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5N),
+      128,
+      0,
+      { 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5R),
+      128,
+      0,
+      { 6129, -1545, -418, -4930, 12490, 2743, -977, 1693, 6615 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX5T),
+      128,
+      0,
+      { 6129, -1545, -418, -4930, 12490, 2743, -977, 1693, 6615 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEXC3),
+      128,
+      0,
+      { 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEXF3),
+      128,
+      0,
+      { 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX6),
+      128,
+      0,
+      { 6129, -1545, -418, -4930, 12490, 2743, -977, 1693, 6615 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX7),
+      128,
+      0,
+      { 5491, -1192, -363, -4951, 12342, 2948, -911, 1722, 7192 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX100),
       0,
       0,
@@ -140,9 +189,11 @@ static const BuiltinColourMatrix s_matrices[] = {
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A5100),
       128,
       0,
-      { 5991, -1456, -455, -4764, 12135, 2980,- 707, 1425, 6701 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A6000), 128, 0,
-      { 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
+      { 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A6000),
+      128,
+      0,
+      { 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A6300),
       0,
       0,
@@ -151,14 +202,18 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 5973, -1695, -419, -3826, 11797, 2293, -639, 1398, 5789 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7), 128, 0,
-      { 5271,-712,-347,-6153,13653,2763,-1601,2366,7242 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7),
+      128,
+      0,
+      { 5271, -712, -347, -6153, 13653, 2763, -1601, 2366, 7242 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7M3),
       128,
       0,
       { 7374, -2389, -551, -5435, 13162, 2519, -1006, 1795, 6552 } },
-    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7R), 128, 0,
-      { 4913,-541,-202,-6130,13513,2906,-1564,2151,7183 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7R),
+      128,
+      0,
+      { 4913, -541, -202, -6130, 13513, 2906, -1564, 2151, 7183 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7RM2),
       0,
       0,
@@ -229,8 +284,7 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { 0, 0 }
 };
 
-
-RawFile *ArwFile::factory(const IO::Stream::Ptr & s)
+RawFile *ArwFile::factory(const IO::Stream::Ptr &s)
 {
     return new ArwFile(s);
 }
@@ -246,31 +300,27 @@ ArwFile::~ArwFile()
 {
 }
 
-IfdDir::Ref  ArwFile::_locateCfaIfd()
+IfdDir::Ref ArwFile::_locateCfaIfd()
 {
-    if(!isA100())
-    {
+    if (!isA100()) {
         return TiffEpFile::_locateCfaIfd();
     }
     return mainIfd();
 }
 
-
-IfdDir::Ref  ArwFile::_locateMainIfd()
+IfdDir::Ref ArwFile::_locateMainIfd()
 {
     return m_container->setDirectory(0);
 }
 
-::or_error ArwFile::_getRawData(RawData & data, uint32_t options)
+::or_error ArwFile::_getRawData(RawData &data, uint32_t options)
 {
-    if(isA100())
-    {
+    if (isA100()) {
         // TODO implement for A100
         return OR_ERROR_NOT_FOUND;
     }
     return TiffEpFile::_getRawData(data, options);
 }
-
 }
 }
 /*
