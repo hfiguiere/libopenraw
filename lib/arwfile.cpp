@@ -238,6 +238,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       128,
       0,
       { 5271, -712, -347, -6153, 13653, 2763, -1601, 2366, 7242 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7M2),
+      128,
+      0,
+      { 5271, -712, -347, -6153, 13653, 2763, -1601, 2366, 7242 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7M3),
       128,
       0,
@@ -254,6 +258,18 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 6640, -1847, -503, -5238, 13010, 2474, -993, 1673, 6527 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7S),
+      128,
+      0,
+      { 5838, -1430, -246, -3497, 11477, 2297, -748, 1885, 5778 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7SM2),
+      128,
+      0,
+      { 5838, -1430, -246, -3497, 11477, 2297, -748, 1885, 5778 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A9),
+      128,
+      0,
+      { 6389, -1703, -378, -4562, 12265, 2587, -670, 1489, 6550 } },
 
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
@@ -318,10 +334,14 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { "ILCE-6300", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A6300) },
     { "ILCE-6500", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A6500) },
     { "ILCE-7", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7) },
+    { "ILCE-7M2", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7M2) },
     { "ILCE-7M3", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7M3) },
     { "ILCE-7R", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7R) },
     { "ILCE-7RM2", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7RM2) },
     { "ILCE-7RM3", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7RM3) },
+    { "ILCE-7S", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7S) },
+    { "ILCE-7SM2", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A7SM2) },
+    { "ILCE-9", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_A9) },
     { 0, 0 }
 };
 
