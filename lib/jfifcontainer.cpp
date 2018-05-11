@@ -175,6 +175,7 @@ int JfifContainer::_loadHeader()
 
 namespace {
 
+__attribute__((noreturn))
 void j_error_exit(j_common_ptr cinfo)
 {
   (*cinfo->err->output_message) (cinfo);
