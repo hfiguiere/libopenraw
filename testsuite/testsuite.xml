@@ -2,7 +2,7 @@
   <test>
     <name>CR2-test 20D</name>
     <file>/home/hub/samples/cr2/20D/img_0620.cr2</file>
-    <source>http://libopenraw.freedesktop.org/samples/cr2/20D/img_0620.cr2</source>
+    <source>https://libopenraw.freedesktop.org/samples/cr2/20D/img_0620.cr2</source>
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65537</rawTypeId>
@@ -80,7 +80,7 @@
   <test>
     <name>CR2-test 5DMkII</name>
     <file>/home/hub/samples/cr2/5DMkII/IMG_0001.CR2</file>
-    <source>http://libopenraw.freedesktop.org/samples/cr2/5DMkII/IMG_0001.CR2</source>
+    <source>https://libopenraw.freedesktop.org/samples/cr2/5DMkII/IMG_0001.CR2</source>
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65568</rawTypeId>
@@ -206,7 +206,7 @@
   <test>
     <name>NEF-test D100</name>
     <file>/home/hub/samples/nef/D100/dsc_0007.nef</file>
-    <source>http://libopenraw.freedesktop.org/samples/nef/D100/dsc_0007.nef</source>
+    <source>https://libopenraw.freedesktop.org/samples/nef/D100/dsc_0007.nef</source>
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131076</rawTypeId>
@@ -386,7 +386,7 @@
   <test>
     <name>ERF-test R-D1</name>
     <file>/home/hub/samples/erf/Epson_RD1/_eps8447.erf</file>
-    <source>http://libopenraw.freedesktop.org/samples/erf/_eps8447.erf</source>
+    <source>https://libopenraw.freedesktop.org/samples/erf/_eps8447.erf</source>
     <results>
       <rawType>ERF</rawType>
       <rawTypeId>327681</rawTypeId>
@@ -628,7 +628,7 @@
   <test>
     <name>MRW-test Dimage5</name>
     <file>/home/hub/samples/mrw/Dimage5/dimage5.mrw</file>
-    <source>http://libopenraw.freedesktop.org/samples/mrw/dimage5.mrw</source>
+    <source>https://libopenraw.freedesktop.org/samples/mrw/dimage5.mrw</source>
     <results>
       <rawType>MRW</rawType>
       <rawTypeId>393219</rawTypeId>
@@ -769,7 +769,7 @@
   <test>
     <name>RW2-test GH4</name>
     <file>/home/hub/samples/rw2/Panasonic_GH4/P9490010.RW2</file>
-    <source>http://www.dpreview.com/reviews/image-comparison/download-image?s3Key=ec839aaa3c8544f1a8b8190d6008881c.rw2</source>
+    <source>https://www.dpreview.com/reviews/image-comparison/download-image?s3Key=ec839aaa3c8544f1a8b8190d6008881c.rw2</source>
     <results>
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
