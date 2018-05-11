@@ -1,7 +1,8 @@
+/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
  * libopenraw - xmlhandler.cpp
  *
- * Copyright (C) 2008-2015 Hubert Figuiere
+ * Copyright (C) 2008-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,38 +29,48 @@
 
 namespace xml {
 
-bool LtString::operator()(const xmlChar *s1, const xmlChar *s2) const {
+bool LtString::operator()(const xmlChar *s1, const xmlChar *s2) const
+{
     return strcmp((const char *)s1, (const char *)s2) < 0;
 }
 
-Context::Context(const HandlerPtr &handler) : m_handler(handler) {
+Context::Context(const HandlerPtr &handler)
+    : m_handler(handler)
+{
 }
 
-Context::~Context() {
+Context::~Context()
+{
 }
 
-ContextPtr Context::startElement(const int32_t /*element*/) {
+ContextPtr Context::startElement(const int32_t /*element*/)
+{
     return shared_from_this();
 }
 
-void Context::endElement(const int32_t /*element*/) {
+void Context::endElement(const int32_t /*element*/)
+{
 }
 
-void Context::appendText(const xmlChar * /*content*/) {
+void Context::appendText(const xmlChar * /*content*/)
+{
 }
 
 Handler::Handler(const std::string &filename)
     : Context(HandlerPtr())
-    , m_reader(xmlNewTextReaderFilename(filename.c_str())) {
+    , m_reader(xmlNewTextReaderFilename(filename.c_str()))
+{
 }
 
-Handler::~Handler() {
+Handler::~Handler()
+{
     if (m_reader != NULL) {
         xmlFreeTextReader(m_reader);
     }
 }
 
-void Handler::mapTags(const tag_map_definition_t *map) {
+void Handler::mapTags(const tag_map_definition_t *map)
+{
     m_tag_map.clear();
     const tag_map_definition_t *ptag = map;
     while (ptag->first != 0) {
@@ -69,7 +80,8 @@ void Handler::mapTags(const tag_map_definition_t *map) {
     }
 }
 
-int32_t Handler::getTagId(const xmlChar *tag) {
+int32_t Handler::getTagId(const xmlChar *tag)
+{
     if (tag == NULL) {
         return 0;
     }
@@ -81,7 +93,23 @@ int32_t Handler::getTagId(const xmlChar *tag) {
     return iter->second;
 }
 
-bool Handler::process() {
+Option<std::string> Handler::getAttribute(const char* name)
+{
+    if (!m_reader) {
+        fprintf(stderr, "m_reader is NULL\n");
+        return OptionNone();
+    }
+    xmlChar* attr = xmlTextReaderGetAttribute(m_reader, (const xmlChar*)name);
+    if (attr == NULL) {
+        return OptionNone();
+    }
+    std::string sattr(reinterpret_cast<const char*>(attr));
+    xmlFree(attr);
+    return option_some(std::move(sattr));
+}
+
+bool Handler::process()
+{
     if (m_reader == NULL) {
         return false;
     }
@@ -122,10 +150,13 @@ bool Handler::process() {
 
 SimpleElementContext::SimpleElementContext(const HandlerPtr &handler,
                                            std::string &content)
-    : Context(handler), m_content(content) {
+    : Context(handler)
+    , m_content(content)
+{
 }
 
-void SimpleElementContext::appendText(const xmlChar *content) {
+void SimpleElementContext::appendText(const xmlChar *content)
+{
     m_content += (const char *)content;
 }
 }

@@ -54,7 +54,7 @@
   <test>
     <name>CR2-test 7D</name>
     <file>/home/hub/samples/cr2/7D/canon7d_iso100.CR2</file>
-    <source compress="zip">http://movies.dpreview.com.s3.amazonaws.com/canoneos7d/studio_iso100.zip</source>
+    <source compress="zip" disabled="1">http://movies.dpreview.com.s3.amazonaws.com/canoneos7d/studio_iso100.zip</source>
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65564</rawTypeId>
@@ -74,6 +74,32 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>16383</rawMaxValue>
       <rawMd5>21909</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>CR2-test 7D - 2</name>
+    <file>/home/hub/samples/cr2/7D/Canon%20-%20EOS%207D%20-%20RAW%20(3:2).CR2</file>
+    <source>https://raw.pixls.us/getfile.php/131/nice/Canon%20-%20EOS%207D%20-%20RAW%20(3:2).CR2</source>
+    <results>
+      <rawType>CR2</rawType>
+      <rawTypeId>65564</rawTypeId>
+      <makerNoteCount>41</makerNoteCount>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon EOS 7D</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>5184 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>2344660 16860</thumbDataSizes>
+      <thumbMd5>29050 25386</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>37691520</rawDataSize>
+      <rawDataDimensions>5360 3516</rawDataDimensions>
+      <rawDataRoi>168 56 5183 3455</rawDataRoi>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>16383</rawMaxValue>
+      <rawMd5>9987</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -106,7 +132,7 @@
   <test>
     <name>CR2-test G11</name>
     <file>/home/hub/samples/cr2/G11/canong11_studio_ISO80.CR2</file>
-    <source compress="zip">http://movies.dpreview.com.s3.amazonaws.com/canong11/studio_ISO80.zip</source>
+    <source compress="zip" disabled="1">http://movies.dpreview.com.s3.amazonaws.com/canong11/studio_ISO80.zip</source>
     <results>
       <rawType>CR2</rawType>
       <rawTypeId>65565</rawTypeId>
@@ -126,6 +152,32 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
       <rawMd5>37727</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>CR2-test G11 - 2</name>
+    <file>/home/hub/samples/cr2/G11/Canon%20-%20PowerShot%20G11%20-%20RAW%20(4:3).CR2</file>
+    <source>https://raw.pixls.us/getfile.php/188/nice/Canon%20-%20PowerShot%20G11%20-%20RAW%20(4:3).CR2</source>
+    <results>
+      <rawType>CR2</rawType>
+      <rawTypeId>65565</rawTypeId>
+      <makerNoteCount>28</makerNoteCount>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon PowerShot G11</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>1600 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>1116470 7334</thumbDataSizes>
+      <thumbMd5>65444 45566</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>20846592</rawDataSize>
+      <rawDataDimensions>3744 2784</rawDataDimensions>
+      <rawDataRoi>24 28 3647 2735</rawDataRoi>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>41705</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -283,7 +335,7 @@
   <test>
     <name>NEF-test D90</name>
     <file>/home/hub/samples/nef/D90/D90hMULTII0100.NEF</file>
-    <source>http://216.18.212.226/PRODS/D90/FULLRES/D90hMULTII0100.NEF</source>
+    <source disabled="1">http://216.18.212.226/PRODS/D90/FULLRES/D90hMULTII0100.NEF</source>
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131106</rawTypeId>
@@ -303,6 +355,32 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
       <rawMd5>9593</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>NEF-test D90 - 2</name>
+    <file>/home/hub/samples/nef/D90/Nikon%20-%20D90%20-%2012bit%20compressed%20(Lossy%20(type%202))%20(3:2).NEF</file>
+    <source>https://raw.pixls.us/getfile.php/1325/nice/Nikon%20-%20D90%20-%2012bit%20compressed%20(Lossy%20(type%202))%20(3:2).NEF</source>
+    <results>
+      <rawType>NEF</rawType>
+      <rawTypeId>131106</rawTypeId>
+      <makerNoteCount>54</makerNoteCount>
+      <makerNoteId>Nikon</makerNoteId>
+      <exifMake>NIKON CORPORATION</exifMake>
+      <exifModel>NIKON D90</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 4288</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 1647803</thumbDataSizes>
+      <thumbMd5>59338 49015</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>24957336</rawDataSize>
+      <rawDataDimensions>4351 2868</rawDataDimensions>
+      <rawCfaPattern>GBRG</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>23283</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -559,7 +637,7 @@
   <test>
     <name>ORF-test E330</name>
     <file>/home/hub/samples/orf/Olympus_E330/300mm_f5.6.ORF</file>
-    <source>http://raw.fotosite.pl/download-Olympus_E-330_Sigma_135-400_f4.5-5.6/300mm_f5.6.ORF</source>
+    <source disabled="1">http://raw.fotosite.pl/download-Olympus_E-330_Sigma_135-400_f4.5-5.6/300mm_f5.6.ORF</source>
     <results>
       <rawType>ORF</rawType>
       <rawTypeId>458757</rawTypeId>
@@ -570,6 +648,29 @@
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>11074</thumbDataSizes>
       <thumbMd5>64168</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>16072000</rawDataSize>
+      <rawDataDimensions>3280 2450</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>ORF-test E330 - 2</name>
+    <file>/home/hub/samples/orf/Olympus_E330/Olympus%20-%20E-330.ORF</file>
+    <source>https://raw.pixls.us/getfile.php/257/nice/Olympus%20-%20E-330.ORF</source>
+    <results>
+      <rawType>ORF</rawType>
+      <rawTypeId>458757</rawTypeId>
+      <makerNoteCount>27</makerNoteCount>
+      <makerNoteId>Olympus</makerNoteId>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>10176</thumbDataSizes>
+      <thumbMd5>750</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16072000</rawDataSize>
       <rawDataDimensions>3280 2450</rawDataDimensions>
@@ -706,7 +807,7 @@
   <test>
     <name>ARW-test Sony A100</name>
     <file>/home/hub/samples/arw/Sony-A100/DSC00028.ARW</file>
-    <source>http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/VERTICAL/DSC00028.ARW</source>
+    <source disabled="1">http://digikam3rdparty.free.fr/TEST_IMAGES/RAW/VERTICAL/DSC00028.ARW</source>
     <results>
       <rawType>ARW</rawType>
       <rawTypeId>524289</rawTypeId>
@@ -721,7 +822,7 @@
   <test>
     <name>RAF-test X100</name>
     <file>/home/hub/samples/raf/Finepix-X100/fujifilm_finepix_x100_02.raf</file>
-    <source>http://img.photographyblog.com/reviews/fujifilm_finepix_x100/sample_images/fujifilm_finepix_x100_02.raf</source>
+    <source referer="http://www.photographyblog.com/reviews/fujifilm_finepix_x100_review/sample_images/">http://img.photographyblog.com/reviews/fujifilm_finepix_x100/sample_images/fujifilm_finepix_x100_02.raf</source>
     <results>
       <rawType>RAF</rawType>
       <rawTypeId>917505</rawTypeId>
@@ -769,7 +870,7 @@
   <test>
     <name>RW2-test GH4</name>
     <file>/home/hub/samples/rw2/Panasonic_GH4/P9490010.RW2</file>
-    <source>https://www.dpreview.com/reviews/image-comparison/download-image?s3Key=ec839aaa3c8544f1a8b8190d6008881c.rw2</source>
+    <source disabled="1">https://www.dpreview.com/reviews/image-comparison/download-image?s3Key=ec839aaa3c8544f1a8b8190d6008881c.rw2</source>
     <results>
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>

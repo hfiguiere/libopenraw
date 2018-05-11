@@ -1,3 +1,4 @@
+/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
  * libopenraw - testsuite.cpp
  *
@@ -210,7 +211,8 @@ bool equalDataType(const std::string & result, BitmapData::DataType t)
 }
 
 Test::Test()
-    : m_total(0)
+    : m_download_disabled(false)
+    , m_total(0)
     , m_success(0)
     , m_failure(0)
 {
@@ -877,8 +879,9 @@ void set_file_override(xmlNode *test, const std::string & path)
 
 
 #if HAVE_CURL
-int download(const std::string & source, CURL* handle,
-                     const std::string & download_dir, std::string & dest)
+int download(const std::string & source, const std::string& referer,
+             CURL* handle,
+             const std::string & download_dir, std::string & dest)
 {
     dest = "";
     FILE *fp = NULL;
@@ -896,6 +899,7 @@ int download(const std::string & source, CURL* handle,
 
         if(stat(dest.c_str(), &f_stat) == -1) {
             CURLcode error;
+            struct curl_slist* hlist = NULL;
             std::cout << "Downloading " << source
                       << " to " << dest << std::endl;
 
@@ -907,8 +911,20 @@ int download(const std::string & source, CURL* handle,
                 return -1;
             }
             curl_easy_setopt(handle, CURLOPT_WRITEDATA, fp);
+            if (!referer.empty()) {
+                std::string header("Referer: ");
+                header += referer;
+                hlist = curl_slist_append(hlist, header.c_str());
+                curl_easy_setopt(handle, CURLOPT_HTTPHEADER, hlist);
+
+                std::cout << "Set HTTP header " << header << std::endl;
+            }
             curl_easy_setopt(handle, CURLOPT_URL, source.c_str());
+            curl_easy_setopt(handle, CURLOPT_FAILONERROR, 1L);
             error = curl_easy_perform(handle);
+            if (hlist) {
+                curl_slist_free_all(hlist);
+            }
             fclose(fp);
 
             if(!error) {
@@ -954,23 +970,27 @@ void TestSuite::walk_tests(xmlNode * testsuite, CURL* handle,
         test = test->next;
     }
 
-    for(const auto & elem : m_tests) {
+    for (const auto & elem : m_tests) {
         std::string n = elem.first;
         std::string dest;
-        int ret = download(elem.second->source(), handle, download_dir, dest);
-
-        if(ret == 0 && !dest.empty()) {
+        if (elem.second->download_disabled()) {
+            fprintf(stderr, "Skipping source %s\n",
+                    elem.second->source().c_str());
+            continue;
+        }
+        int ret = download(elem.second->source(), elem.second->referer(),
+                           handle, download_dir, dest);
+        if (ret == 0 && !dest.empty()) {
             xmlNode * test2 = NULL;
             auto iter2 = overrides.find(n);
             if (iter2 != overrides.cend()) {
                 test2 = iter2->second;
-            }
-            else {
+            } else {
                 test2 = xmlNewNode(NULL, (const xmlChar*)"test");
                 xmlAddChild(testsuite, test2);
-                xmlNode *name_node = xmlNewTextChild(test2, NULL,
-                                                     (const xmlChar*)"name",
-                                                     (const xmlChar*)n.c_str());
+                xmlNode *name_node = xmlNewTextChild(
+                    test2, NULL, (const xmlChar*)"name",
+                    (const xmlChar*)n.c_str());
                 xmlAddChild(test2, name_node);
             }
             set_file_override(test2, dest);

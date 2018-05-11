@@ -1,8 +1,8 @@
-/* -*- Mode: C++ -*- */
+/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
  * libopenraw - testsuite.cpp
  *
- * Copyright (C) 2008-2015 Hubert Figuiere
+ * Copyright (C) 2008-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _TEST_TESTSUITE_H_
-#define _TEST_TESTSUITE_H_
+#pragma once
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -31,6 +30,8 @@
 #if HAVE_CURL
 #include <curl/curl.h>
 #endif
+
+#include <libxml/tree.h>
 
 #include <string>
 #include <map>
@@ -51,6 +52,14 @@ public:
     std::string& name() { return m_name; }
     std::string& file() { return m_file; }
     std::string& source() { return m_source; }
+    bool download_disabled() const
+        { return m_download_disabled; }
+    bool& download_disabled()
+        { return m_download_disabled; }
+    std::string& referer()
+        { return m_referer; }
+    const std::string& referer() const
+        { return m_referer; }
     std::map<int, std::string>& results() { return m_results; }
     /** return 0 the test ran perfectly */
     int run();
@@ -83,6 +92,8 @@ private:
     std::string m_name;
     std::string m_file;
     std::string m_source;
+    bool m_download_disabled;
+    std::string m_referer;
     std::map<int, std::string> m_results;
     // runtime data
     std::unique_ptr<OpenRaw::RawFile> m_rawfile;
@@ -113,5 +124,3 @@ private:
     TestSuite(const TestSuite&) = delete;
     TestSuite & operator=(const TestSuite&) = delete;
 };
-
-#endif
