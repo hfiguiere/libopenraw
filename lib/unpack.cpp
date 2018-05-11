@@ -55,7 +55,7 @@ size_t Unpack::block_size()
  * the output is always 16-bits values in native (host) byte order.
  * the source must correspond to an image row.
  */
-or_error Unpack::unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *src,
+or_error Unpack::unpack_be12to16(uint16_t *dest, size_t destsize, const uint8_t *src,
                                  size_t size, size_t & out)
 {
   or_error err = OR_ERROR_NONE;
@@ -82,12 +82,12 @@ or_error Unpack::unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *
 
   for (size_t i = 0; i < n + 1; i++) {
     size_t m = (i == n) ? rest / 3 : 5;
-    if((reinterpret_cast<uint8_t *>(dest16) - dest) + (m * 4) >  destsize) {
+    if ((dest16 - dest) + (m * 4) >  destsize) {
       err = OR_ERROR_DECOMPRESSION;
       LOGERR("overflow !\n");
       break;
     }
-    for(size_t j = 0; j < m; j++) {
+    for (size_t j = 0; j < m; j++) {
       /* Read 3 bytes */
       uint32_t t = *src++;
       t <<= 8;

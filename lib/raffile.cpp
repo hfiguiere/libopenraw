@@ -446,7 +446,7 @@ RafFile::isXTrans(RawFile::TypeId type_) const
         Unpack unpack(w, IFD::COMPRESS_NONE);
         size_t blocksize = unpack.block_size();
         std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
-        uint8_t *outdata = (uint8_t *)data.data();
+        uint16_t *outdata = (uint16_t *)data.data();
         size_t outsize = finaldatalen;
         size_t got;
         do {
@@ -458,7 +458,7 @@ RafFile::isXTrans(RawFile::TypeId type_) const
                 size_t out;
                 or_error err = unpack.unpack_be12to16(outdata, outsize,
                                                       block.get(), got, out);
-                outdata += out;
+                outdata += out / 2;
                 outsize -= out;
                 if (err != OR_ERROR_NONE) {
                     LOGDBG2("error is %d\n", static_cast<int>(err));

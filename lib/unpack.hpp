@@ -40,7 +40,7 @@ namespace OpenRaw {	namespace Internals {
 		Unpack & operator=(const Unpack&) = delete;
 
 		size_t block_size();
-		or_error unpack_be12to16(uint8_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & outsize);
+		or_error unpack_be12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & outsize);
 	private:
 		uint32_t m_w;
 		uint32_t m_type;

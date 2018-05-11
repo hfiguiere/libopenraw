@@ -1,7 +1,7 @@
-/* -*- tab-width:4; indent-tabs-mode:'t c-file-style:"stroustrup" -*- */
+/* -*- tab-width:4; indent-tabs-mode:nil; c-basic-offset:4; -*- */
 /*
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2009-2016 Hubert Figuiere
+ * Copyright (C) 2009-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -37,7 +37,7 @@ int test_unpack()
 		unpack(32, OpenRaw::Internals::IFD::COMPRESS_NIKON_PACK);
 
 	size_t s;
-	or_error err = unpack.unpack_be12to16((uint8_t*)unpacked, 40, packed,
+	or_error err = unpack.unpack_be12to16(unpacked, 40, packed,
 									  sizeof(packed), s);
 	BOOST_CHECK(s = size_t(sizeof(unpacked)));
 	BOOST_CHECK(err == OR_ERROR_NONE);
@@ -65,7 +65,7 @@ int test_unpack2()
 									  OpenRaw::Internals::IFD::COMPRESS_NONE);
 
 	size_t s;
-	or_error err = unpack.unpack_be12to16((uint8_t*)unpacked, 4, packed,
+	or_error err = unpack.unpack_be12to16(unpacked, 4, packed,
 									  sizeof(packed), s);
 	BOOST_CHECK(s == size_t(sizeof(unpacked)));
 	BOOST_CHECK(err == OR_ERROR_NONE);

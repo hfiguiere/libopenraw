@@ -672,7 +672,7 @@ IfdFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data,
   LOGDBG1("dimensions (x, y) %u, %u\n", x, y);
   std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
   size_t outsize = x * y * 2;
-  uint8_t * outdata = (uint8_t*)data.allocData(outsize);
+  uint16_t* outdata = (uint16_t*)data.allocData(outsize);
   size_t got;
   LOGDBG1("offset of RAW data = %u\n", current_offset);
   do {
@@ -681,23 +681,20 @@ IfdFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data,
     fetched += got;
     offset += got;
     current_offset += got;
-    if(got) {
-      if(bpc == 12) {
+    if (got) {
+      if (bpc == 12) {
         size_t out;
         ret = unpack.unpack_be12to16(outdata, outsize,
                                      block.get(),
                                      got, out);
-        outdata += out;
+        outdata += out / 2;
         outsize -= out;
-        if(ret != OR_ERROR_NONE) {
+        if (ret != OR_ERROR_NONE) {
           break;
         }
-      }
-      else {
-        // outdata point to uint16_t
-        std::copy(block.get(), block.get()+got,
-                  (uint16_t*)outdata);
-        outdata += (got << 1);
+      } else {
+        std::copy(block.get(), block.get() + got, outdata);
+        outdata += got;
       }
     }
   } while((got != 0) && (fetched < byte_length));

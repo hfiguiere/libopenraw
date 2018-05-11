@@ -265,7 +265,7 @@ void MRWFile::_identifyId()
 		Unpack unpack(x, IFD::COMPRESS_NONE);
 		size_t blocksize = unpack.block_size();
 		std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
-		uint8_t * outdata = (uint8_t*)data.data();
+		uint16_t* outdata = (uint16_t*)data.data();
 		size_t outsize = finaldatalen;
 		size_t got;
 		do {
@@ -279,7 +279,7 @@ void MRWFile::_identifyId()
 				size_t out;
                                 or_error err = unpack.unpack_be12to16(outdata, outsize,
 									block.get(), got, out);
-				outdata += out;
+				outdata += out / 2;
 				outsize -= out;
 				LOGDBG2("unpacked %ld bytes from %ld\n", out, got);
                                 if(err != OR_ERROR_NONE) {
