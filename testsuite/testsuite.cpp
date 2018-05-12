@@ -385,7 +385,9 @@ bool Test::testThumbDataSizes(const std::string & result)
         Thumbnail t;
         m_rawfile->getThumbnail(thumb, t);
         try {
-            success &= (boost::lexical_cast<uint32_t>(*result_iter) == t.size());
+            bool succ = false;
+            CHECK_TEST_EQUALS_N(t.size(), boost::lexical_cast<uint32_t>(*result_iter), succ);
+            success &= succ;
             result_iter++;
         }
         catch(...) {
