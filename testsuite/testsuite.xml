@@ -635,6 +635,29 @@
     </results>
   </test>
   <test>
+    <name>ORF-test E300 - 2</name>
+    <file>/home/hub/samples/orf/Olympus_E300/Olympus%20-%20E-300.ORF</file>
+    <source>https://raw.pixls.us/getfile.php/263/nice/Olympus%20-%20E-300.ORF</source>
+    <results>
+      <rawType>ORF</rawType>
+      <rawTypeId>458756</rawTypeId>
+      <makerNoteCount>27</makerNoteCount>
+      <makerNoteId>Olympus</makerNoteId>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>10689</thumbDataSizes>
+      <thumbMd5>64692</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>16826880</rawDataSize>
+      <rawDataDimensions>3360 2504</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>ORF-test E330</name>
     <file>/home/hub/samples/orf/Olympus_E330/300mm_f5.6.ORF</file>
     <source disabled="1">http://raw.fotosite.pl/download-Olympus_E-330_Sigma_135-400_f4.5-5.6/300mm_f5.6.ORF</source>
@@ -704,6 +727,30 @@
     </results>
   </test>
   <test>
+    <name>ORF-test E-P1 - 2</name>
+    <file>/home/hub/samples/orf/Olympus_E-P1/Olympus%20-%20E-P1.ORF</file>
+    <source>https://raw.pixls.us/getfile.php/261/nice/Olympus%20-%20E-P1.ORF</source>
+    <results>
+      <rawType>ORF</rawType>
+      <rawTypeId>458766</rawTypeId>
+      <makerNoteCount>8</makerNoteCount>
+      <makerNoteId>Olympus2</makerNoteId>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>5047</thumbDataSizes>
+      <thumbMd5>39027</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>25288800</rawDataSize>
+      <rawDataDimensions>4100 3084</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>49207</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>ORF-test E-410</name>
     <file>/home/hub/samples/orf/Olympus_E410/p1013308.orf</file>
     <results>
@@ -723,6 +770,30 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
       <rawMd5>15791</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>ORF-test E-410 - 2</name>
+    <file>/home/hub/samples/orf/Olympus_E410/Olympus%20-%20E-410%20-%2016bit%20(4:3).ORF</file>
+    <source>https://raw.pixls.us/getfile.php/1173/nice/Olympus%20-%20E-410%20-%2016bit%20(4:3).ORF</source>
+    <results>
+      <rawType>ORF</rawType>
+      <rawTypeId>458759</rawTypeId>
+      <makerNoteCount>8</makerNoteCount>
+      <makerNoteId>Olympus2</makerNoteId>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>6217</thumbDataSizes>
+      <thumbMd5>16699</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>20832000</rawDataSize>
+      <rawDataDimensions>3720 2800</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>16536</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -820,6 +891,21 @@
     </results>
   </test>
   <test>
+    <name>ARW-test Sony A100 - 2</name>
+    <file>/home/hub/samples/arw/Sony-A100/Sony%20-%20DSLR-A100%20-%20compressed%20(3:2).ARW</file>
+    <source>https://raw.pixls.us/getfile.php/2346/nice/Sony%20-%20DSLR-A100%20-%20compressed%20(3:2).ARW</source>
+    <results>
+      <rawType>ARW</rawType>
+      <rawTypeId>524289</rawTypeId>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>3872 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>42850 4071</thumbDataSizes>
+      <thumbMd5>34033 14547</thumbMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>RAF-test X100</name>
     <file>/home/hub/samples/raf/Finepix-X100/fujifilm_finepix_x100_02.raf</file>
     <source referer="http://www.photographyblog.com/reviews/fujifilm_finepix_x100_review/sample_images/">http://img.photographyblog.com/reviews/fujifilm_finepix_x100/sample_images/fujifilm_finepix_x100_02.raf</source>
@@ -886,6 +972,28 @@
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>
       <rawMd5>3877</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>RW2-test GH4 - 2</name>
+    <file>/home/hub/samples/rw2/Panasonic_GH4/Panasonic%20-%20DMC-GH4%20-%204:3.RW2</file>
+    <source>https://raw.pixls.us/getfile.php/2571/nice/Panasonic%20-%20DMC-GH4%20-%204:3.RW2</source>
+    <results>
+      <rawType>RW2</rawType>
+      <rawTypeId>720926</rawTypeId>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>1920</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>462848</thumbDataSizes>
+      <thumbMd5>37053</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>19120128</rawDataSize>
+      <rawDataDimensions>4816 3472</rawDataDimensions>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>0</rawMaxValue>
+      <rawMd5>39462</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
