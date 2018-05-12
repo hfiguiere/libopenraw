@@ -362,3 +362,25 @@ machine.
 TODO2: provide a better description of the test file.
 
 TODO3: fix ordiag to allow outputting a test case in XML.
+
+Running the testsuite
+---------------------
+
+$ make check
+
+This will run it automatically.
+
+If you need to bootstrap the testsuite, you can go as follow:
+
+WARNING: The bootstrap will download "random" files from the
+internet. They currently aren't validated.
+
+$ make
+$ cd testsuite
+$ ./testsuite -b -d directory
+
+Here directory is the existing directory where files will be
+downloded.  If you build in a different directory than the source
+directory, you need to set the `srcdir` environment to the path where
+the testsuite binary is build.
+
