@@ -137,10 +137,10 @@ using std::unique_ptr;
         return _success;                 \
     }
 
-#define RETURN_FAIL(message,expected)    \
+#define RETURN_FAIL(message)    \
     {                                    \
-        fprintf(stderr, "FAILED: %s with '%s', expected '%s'\n", \
-                __FUNCTION__, message, expected.c_str()); \
+        fprintf(stderr, "FAILED: %s with '%s'\n", \
+                __FUNCTION__, message); \
         return false;                    \
     }
 
@@ -231,8 +231,9 @@ bool Test::testRawType(const std::string & result)
     OpenRaw::IO::File f(m_file.c_str());
     ::or_error err = f.open();
     if(err != OR_ERROR_NONE) {
-        RETURN_FAIL("failed to open",
-                    boost::lexical_cast<std::string>(err));
+        std::string message("failed to open ");
+        message += boost::lexical_cast<std::string>(err);
+        RETURN_FAIL(message.c_str());
     }
     off_t len = f.filesize();
     unique_ptr<uint8_t[]> buff(new uint8_t[len]);
@@ -240,16 +241,17 @@ bool Test::testRawType(const std::string & result)
     if(res == len) {
         unique_ptr<RawFile> r2(RawFile::newRawFileFromMemory(buff.get(), len));
         if(!r2) {
-            RETURN_FAIL("failed to load from memory", std::string());
+            RETURN_FAIL("failed to load from memory");
         }
         t2 = r2->type();
         if(t2 != t) {
-            RETURN_FAIL("type mismatch", result);
+            RETURN_FAIL("type mismatch");
         }
     }
     else {
-        RETURN_FAIL("failed to load into buffer",
-                    boost::lexical_cast<std::string>(res));
+        std::string message("failed to load into buffer ");
+        message += boost::lexical_cast<std::string>(res);
+        RETURN_FAIL(message.c_str());
     }
 
     switch(t) {
@@ -319,7 +321,7 @@ bool Test::testThumbNum(const std::string & result)
     catch(...)
     {
     }
-    RETURN_FAIL("conversion failed", result);
+    RETURN_FAIL("conversion failed");
 }
 
 bool Test::testThumbSizes(const std::string& result)
@@ -328,7 +330,7 @@ bool Test::testThumbSizes(const std::string& result)
     std::vector<std::string> v;
     boost::split(v, result, boost::is_any_of(" "));
     if(v.size() != thumbs.size()) {
-        RETURN_FAIL("mismatch number of elements", result);
+        RETURN_FAIL("mismatch number of elements");
     }
     std::vector<uint32_t> v2;
     for (const auto & s : v)
@@ -338,7 +340,7 @@ bool Test::testThumbSizes(const std::string& result)
         }
         catch(...)
         {
-            RETURN_FAIL("conversion failed", result);
+            RETURN_FAIL("conversion failed");
         }
     }
     bool success = true;
@@ -360,7 +362,7 @@ bool Test::testThumbFormats(const std::string & result)
     boost::split(v, result, boost::is_any_of(" "));
     auto result_iter = v.cbegin();
     if(v.size() != thumbs.size()) {
-        RETURN_FAIL("mismatch number of elements", result);
+        RETURN_FAIL("mismatch number of elements");
     }
     for (const auto& thumb : thumbs) {
         Thumbnail t;
@@ -379,7 +381,7 @@ bool Test::testThumbDataSizes(const std::string & result)
     boost::split(v, result, boost::is_any_of(" "));
     auto result_iter = v.cbegin();
     if(v.size() != thumbs.size()) {
-        RETURN_FAIL("mismatch number of elements", result);
+        RETURN_FAIL("mismatch number of elements");
     }
     for (const auto& thumb : thumbs) {
         Thumbnail t;
@@ -391,7 +393,7 @@ bool Test::testThumbDataSizes(const std::string & result)
             result_iter++;
         }
         catch(...) {
-            RETURN_FAIL("conversion failed", result);
+            RETURN_FAIL("conversion failed");
         }
     }
     RETURN_TEST(success, result);
@@ -417,7 +419,7 @@ bool Test::testThumbMd5(const std::string & result)
     boost::split(v, result, boost::is_any_of(" "));
     auto result_iter = v.cbegin();
     if(v.size() != thumbs.size()) {
-        RETURN_FAIL("mismatch number of elements", result);
+        RETURN_FAIL("mismatch number of elements");
     }
     for (const auto& thumb : thumbs) {
         Thumbnail t;
@@ -430,7 +432,7 @@ bool Test::testThumbMd5(const std::string & result)
             result_iter++;
         }
         catch(...) {
-            RETURN_FAIL("conversion failed", result);
+            RETURN_FAIL("conversion failed");
         }
     }
     RETURN_TEST(success, result);
@@ -465,7 +467,7 @@ bool Test::testRawDataType(const std::string & result)
     if(m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
         if(m_rawdata == NULL) {
-            RETURN_FAIL("failed to get rawData", result);
+            RETURN_FAIL("failed to get rawData");
         }
     }
     RETURN_TEST(equalDataType(result, m_rawdata->dataType()), result);
@@ -477,7 +479,7 @@ bool Test::testRawDataSize(const std::string & result)
     if(m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
         if(m_rawdata == NULL) {
-            RETURN_FAIL("failed to get rawData", result);
+            RETURN_FAIL("failed to get rawData");
         }
     }
     try {
@@ -485,7 +487,7 @@ bool Test::testRawDataSize(const std::string & result)
     }
     catch(...) {
     }
-    RETURN_FAIL("conversion failed", result);
+    RETURN_FAIL("conversion failed");
 }
 
 bool Test::testRawDataDimensions(const std::string & result)
@@ -493,13 +495,13 @@ bool Test::testRawDataDimensions(const std::string & result)
     if(m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
         if(m_rawdata == NULL) {
-            RETURN_FAIL("failed to get rawData", result);
+            RETURN_FAIL("failed to get rawData");
         }
     }
     std::vector< std::string > v;
     boost::split(v, result, boost::is_any_of(" "));
     if(v.size() != 2) {
-        RETURN_FAIL("mismatch number of elements from expected result", result);
+        RETURN_FAIL("mismatch number of elements from expected result");
     }
     uint32_t x, y;
     bool success = true;
@@ -514,7 +516,7 @@ bool Test::testRawDataDimensions(const std::string & result)
     }
     catch(...)
     {
-        RETURN_FAIL("conversion failed", result);
+        RETURN_FAIL("conversion failed");
     }
     RETURN_TEST(success, result)
 }
@@ -524,13 +526,13 @@ bool Test::testRawDataRoi(const std::string & result)
     if(m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
         if(m_rawdata == NULL) {
-            RETURN_FAIL("failed to get rawData", result);
+            RETURN_FAIL("failed to get rawData");
         }
     }
     std::vector< std::string > v;
     boost::split(v, result, boost::is_any_of(" "));
     if(v.size() != 4) {
-        RETURN_FAIL("mismatch number of elements from expected result", result);
+        RETURN_FAIL("mismatch number of elements from expected result");
     }
     uint32_t x, y, w, h;
     try {
@@ -541,7 +543,7 @@ bool Test::testRawDataRoi(const std::string & result)
     }
     catch(...)
     {
-        RETURN_FAIL("conversion failed", result);
+        RETURN_FAIL("conversion failed");
     }
     RETURN_TEST(x == m_rawdata->roi_x() && y == m_rawdata->roi_y()
         && w == m_rawdata->roi_width() && h == m_rawdata->roi_height(),
@@ -553,7 +555,7 @@ bool Test::testRawCfaPattern(const std::string & result)
     if(m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
         if(m_rawdata == NULL) {
-            RETURN_FAIL("failed to get rawData", result);
+            RETURN_FAIL("failed to get rawData");
         }
     }
     bool succ = false;
@@ -568,7 +570,7 @@ bool Test::testRawMinValue(const std::string & result)
     if(m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
         if(m_rawdata == NULL) {
-            RETURN_FAIL("failed to get rawData", result);
+            RETURN_FAIL("failed to get rawData");
         }
     }
     uint16_t expected;
@@ -577,7 +579,7 @@ bool Test::testRawMinValue(const std::string & result)
     }
     catch(...)
     {
-        RETURN_FAIL("conversion failed", result);
+        RETURN_FAIL("conversion failed");
     }
     RETURN_TEST_EQUALS_N(m_rawdata->blackLevel(), expected);
 }
@@ -588,7 +590,7 @@ bool Test::testRawMaxValue(const std::string & result)
     if(m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
         if(m_rawdata == NULL) {
-            RETURN_FAIL("failed to get rawData", result);
+            RETURN_FAIL("failed to get rawData");
         }
     }
     uint16_t expected;
@@ -597,7 +599,7 @@ bool Test::testRawMaxValue(const std::string & result)
     }
     catch(...)
     {
-        RETURN_FAIL("conversion failed", result);
+        RETURN_FAIL("conversion failed");
     }
     RETURN_TEST_EQUALS_N(m_rawdata->whiteLevel(), expected);
 }
@@ -607,7 +609,7 @@ bool Test::testRawMd5(const std::string & result)
     if(m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
         if(m_rawdata == NULL) {
-            RETURN_FAIL("failed to get rawData", result);
+            RETURN_FAIL("failed to get rawData");
         }
     }
 
@@ -619,18 +621,18 @@ bool Test::testRawMd5(const std::string & result)
     }
     catch(...)
     {
-        RETURN_FAIL("conversion failed", result);
+        RETURN_FAIL("conversion failed");
     }
     RETURN_TEST_EQUALS_N(crc, expected);
 }
 
 
-bool Test::testRawDecompressedMd5(const std::string & result)
+bool Test::testRawDecompressedMd5(const std::string &)
 {
     if(m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
         if(m_rawdata == NULL) {
-            RETURN_FAIL("failed to get rawData", result);
+            RETURN_FAIL("failed to get rawData");
         }
     }
     return false;
@@ -652,7 +654,7 @@ bool Test::testExifString(int32_t meta_index, const std::string & result)
         auto stringVal = val->getString(0);
         RETURN_TEST_EQUALS(stringVal, result);
     }
-    RETURN_FAIL("meta data not found", result);
+    RETURN_FAIL("meta data not found");
 }
 
 bool Test::testMakerNoteCount(const std::string & result)
@@ -660,16 +662,16 @@ bool Test::testMakerNoteCount(const std::string & result)
     try {
         auto maker_note = m_rawfile->getMakerNoteIfd();
         if (!maker_note) {
-            RETURN_FAIL("no MakeNote found", result);
+            RETURN_FAIL("no MakeNote found");
         }
         RETURN_TEST_EQUALS_N(maker_note->numTags(),
                              boost::lexical_cast<int32_t>(result));
     }
     catch(const std::bad_cast & e) {
-        RETURN_FAIL("not an IFD file", result);
+        RETURN_FAIL("not an IFD file");
     }
     catch(...) {
-        RETURN_FAIL("unknown exception", result);
+        RETURN_FAIL("unknown exception");
     }
 }
 
@@ -679,25 +681,25 @@ bool Test::testMakerNoteId(const std::string & result)
         auto ifd_file =
             dynamic_cast<OpenRaw::Internals::IfdFile*>(m_rawfile.get());
         if (ifd_file == nullptr) {
-            RETURN_FAIL("not an IFD file", result);
+            RETURN_FAIL("not an IFD file");
         }
         auto exif = ifd_file->exifIfd();
         if (!exif) {
-            RETURN_FAIL("not an exif", result);
+            RETURN_FAIL("not an exif");
         }
         auto maker_note =
             std::dynamic_pointer_cast<OpenRaw::Internals::MakerNoteDir>(
                 exif->getMakerNoteIfd());
         if (!maker_note) {
-            RETURN_FAIL("no MakerNote found", result);
+            RETURN_FAIL("no MakerNote found");
         }
         RETURN_TEST_EQUALS(maker_note->getId(), result);
     }
     catch(const std::bad_cast & e) {
-        RETURN_FAIL("not an IFD file", result);
+        RETURN_FAIL("not an IFD file");
     }
     catch(...) {
-        RETURN_FAIL("unknown exception", result);
+        RETURN_FAIL("unknown exception");
     }
 }
 
@@ -719,7 +721,7 @@ int Test::run()
     m_rawfile.reset(RawFile::newRawFile(m_file.c_str()));
 
     if(m_rawfile == NULL) {
-        RETURN_FAIL("m_rawfile == NULL", std::string("not NULL"));
+        RETURN_FAIL("m_rawfile == NULL");
     }
 
     for(const auto & elem : m_results) {
