@@ -672,14 +672,20 @@ bool Test::testMakerNoteCount(const std::string & result)
 bool Test::testMakerNoteId(const std::string & result)
 {
     try {
-        OpenRaw::Internals::IfdFile& ifd_file =
-            dynamic_cast<OpenRaw::Internals::IfdFile&>(*m_rawfile.get());
-        auto exif = ifd_file.exifIfd();
+        auto ifd_file =
+            dynamic_cast<OpenRaw::Internals::IfdFile*>(m_rawfile.get());
+        if (ifd_file == nullptr) {
+            RETURN_FAIL("not an IFD file", result);
+        }
+        auto exif = ifd_file->exifIfd();
+        if (!exif) {
+            RETURN_FAIL("not an exif", result);
+        }
         auto maker_note =
             std::dynamic_pointer_cast<OpenRaw::Internals::MakerNoteDir>(
                 exif->getMakerNoteIfd());
         if (!maker_note) {
-            RETURN_FAIL("no maker not found", result);
+            RETURN_FAIL("no MakerNote found", result);
         }
         RETURN_TEST_EQUALS(maker_note->getId(), result);
     }
