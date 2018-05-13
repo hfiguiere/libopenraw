@@ -1,7 +1,21 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/include @BOOST_CPPFLAGS@
 
-EXTRA_DIST = libopenraw.sym io/testfile.tmp
+RUST_FILES = mp4/Cargo.lock \
+	mp4/Cargo.toml \
+	mp4/lib.rs \
+	mp4/mp4parse_capi/src/lib.rs \
+	mp4/mp4parse_capi/build.rs \
+	mp4/mp4parse_capi/Cargo.toml \
+	mp4/mp4parse/src/boxes.rs \
+	mp4/mp4parse/src/lib.rs \
+	mp4/mp4parse/src/tests.rs \
+	mp4/mp4parse/src/craw.rs \
+	mp4/mp4parse/Cargo.toml \
+	$(NULL)
+
+EXTRA_DIST = libopenraw.sym io/testfile.tmp \
+	$(RUST_FILES)
 
 pkgconfig_DATA = libopenraw-0.1.pc
 
@@ -96,6 +110,7 @@ libopenraw_la_SOURCES = \
 	capi/bitmapdata.cpp \
 	capi/cfapattern.cpp \
 	capi/metadata.cpp \
+	mp4/mp4parse.h \
 	trace.cpp \
 	bititerator.hpp \
 	bititerator.cpp \
