@@ -17,7 +17,7 @@ RUST_FILES = mp4/Cargo.lock \
 EXTRA_DIST = libopenraw.sym io/testfile.tmp \
 	$(RUST_FILES)
 
-pkgconfig_DATA = libopenraw-0.1.pc
+pkgconfig_DATA = libopenraw-0.2.pc
 
 TESTS = teststream
 

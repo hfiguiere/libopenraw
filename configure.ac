@@ -58,7 +58,7 @@ LIBOPENRAW_MAJOR_VERSION=$LIBOPENRAW_CURRENT_MIN.0
 AC_SUBST(LIBOPENRAW_MAJOR_VERSION)
 
 dnl the path where includes are installed
-LIBOPENRAW_INCLUDE_BASE=libopenraw-0.1
+LIBOPENRAW_INCLUDE_BASE=libopenraw-0.2
 AC_SUBST(LIBOPENRAW_INCLUDE_BASE)
 
 
@@ -122,7 +122,7 @@ AC_CHECK_FUNCS_ONCE(get_current_dir_name)
 #
 dnl do we want GNOME ?
 #
-AC_ARG_ENABLE([gnome],	
+AC_ARG_ENABLE([gnome],
               [AC_HELP_STRING([--disable-gnome],[disable support for Gnome])],,
               [enable_gnome=yes])
 #
@@ -131,7 +131,7 @@ AC_ARG_ENABLE([gnome],
 if test x$enable_gnome = xyes ; then
    #
    # Checks for libglib-2.0
-   # 
+   #
    HAVE_LIBGLIB=no
    PKG_CHECK_MODULES(LIBGLIB, glib-2.0 >= $LIBGLIB_REQUIRED,
                     [AC_DEFINE(HAVE_LIBGLIB, 1, [Define to 1 to enable libglib support])
@@ -254,9 +254,9 @@ include/Makefile
 include/libopenraw/Makefile
 include/libopenraw++/Makefile
 lib/Makefile
-lib/libopenraw-0.1.pc
+lib/libopenraw-0.2.pc
 gnome/Makefile
-gnome/libopenraw-gnome-0.1.pc
+gnome/libopenraw-gnome-0.2.pc
 gnome/include/Makefile
 gnome/include/libopenraw-gnome/Makefile
 doc/Makefile
