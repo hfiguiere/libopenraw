@@ -2,6 +2,7 @@ libopenraw 0.2.0 -
 
 New features:
 
+  - API: the package name is libopenraw-0.2
   - Support for Canon CR3.
 
   Camera support:
@@ -27,6 +28,12 @@ Internal changes:
   - Refactor some Canon code that can be shared between formats.
   - Don't link test statically.
   - Canon CR2: use Model ID to recognize files.
+  - Unpack now uses uint16_t* for its destination buffer.
+  - testsuite fixes
+    - handle HTTP errors
+    - allow disabling tests
+    - allow setting a referer
+    - replace some samples that can no longer be bootstrapped
 
 libopenraw 0.1.3 - 2018/05/03
 
