@@ -1,7 +1,7 @@
 /*
- * libopenraw - rawfilefactory.h
+ * libopenraw - rawfilefactory.hpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,35 +21,33 @@
 #ifndef OR_INTERNALS_RAWFILEFACTORY_H_
 #define OR_INTERNALS_RAWFILEFACTORY_H_
 
-#include <string>
-#include <map>
 #include <functional>
+#include <map>
+#include <string>
 
-#include "rawfile.hpp"
 #include "io/stream.hpp"
+#include "rawfile.hpp"
 
 namespace OpenRaw {
 namespace Internals {
 
-class RawFileFactory
-{
+class RawFileFactory {
 public:
-    typedef std::function<RawFile*(const IO::Stream::Ptr&)> raw_file_factory_t;
+    typedef std::function<RawFile *(const IO::Stream::Ptr &)>
+        raw_file_factory_t;
     /** the factory type for raw files
      * key is the extension. file is factory method
      */
-    typedef
-    std::map<RawFile::Type, raw_file_factory_t> Table;
-    typedef
-    std::map<std::string, RawFile::Type> Extensions;
+    typedef std::map<RawFile::Type, raw_file_factory_t> Table;
+    typedef std::map<std::string, RawFile::Type> Extensions;
 
     RawFileFactory() = delete;
     ~RawFileFactory() = delete;
 
     /** access the table. Ensure that it has been constructed. */
-    static Table & table();
+    static Table &table();
     /** access the extensions table. Ensure that it has been constructed. */
-    static Extensions & extensions();
+    static Extensions &extensions();
 
     /** access the the list of file extenstions registered. */
     static const char **fileExtensions();
@@ -61,31 +59,27 @@ public:
      * @note it is safe to call this method with the same
      * fn and type to register a different extension
      */
-    static void registerType(RawFile::Type type,
-                             const raw_file_factory_t & fn,
-                             const char * ext);
+    static void registerType(RawFile::Type type, const raw_file_factory_t &fn,
+                             const char *ext);
     static void unRegisterType(RawFile::Type type);
 };
-
-
 
 /** accessor. This make sure the instance has been
  * constructed when needed
  */
-inline RawFileFactory::Table & RawFileFactory::table()
+inline RawFileFactory::Table &RawFileFactory::table()
 {
     /** the factory table */
     static Table rawFactoryTable;
     return rawFactoryTable;
 }
 
-inline RawFileFactory::Extensions & RawFileFactory::extensions()
+inline RawFileFactory::Extensions &RawFileFactory::extensions()
 {
     /** the factory table */
     static Extensions rawExtensionsTable;
     return rawExtensionsTable;
 }
-
 }
 }
 

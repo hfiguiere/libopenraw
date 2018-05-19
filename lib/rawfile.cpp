@@ -19,15 +19,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
 #include <stddef.h>
 #include <stdint.h>
 
 #include <cstring>
-#include <map>
-#include <string>
 #include <functional>
+#include <map>
 #include <memory>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -35,35 +34,35 @@
 
 #include "trace.hpp"
 
-#include <libopenraw/metadata.h>
 #include <libopenraw/cameraids.h>
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
+#include <libopenraw/metadata.h>
 
-#include "rawfile.hpp"
-#include "rawdata.hpp"
-#include "thumbnail.hpp"
 #include "metavalue.hpp"
+#include "rawdata.hpp"
+#include "rawfile.hpp"
+#include "thumbnail.hpp"
 
-#include "io/stream.hpp"
-#include "io/file.hpp"
-#include "io/memstream.hpp"
-#include "rawcontainer.hpp"
-#include "tiffepfile.hpp"
+#include "arwfile.hpp"
 #include "cr2file.hpp"
 #include "cr3file.hpp"
+#include "crwfile.hpp"
+#include "dngfile.hpp"
+#include "erffile.hpp"
+#include "exception.hpp"
+#include "io/file.hpp"
+#include "io/memstream.hpp"
+#include "io/stream.hpp"
+#include "mrwfile.hpp"
 #include "neffile.hpp"
 #include "orffile.hpp"
-#include "arwfile.hpp"
 #include "peffile.hpp"
-#include "crwfile.hpp"
-#include "erffile.hpp"
-#include "dngfile.hpp"
-#include "mrwfile.hpp"
-#include "rw2file.hpp"
 #include "raffile.hpp"
-#include "exception.hpp"
+#include "rawcontainer.hpp"
 #include "rawfile_private.hpp"
+#include "rw2file.hpp"
+#include "tiffepfile.hpp"
 
 #include "rawfilefactory.hpp"
 
@@ -127,48 +126,45 @@ void init(void)
                                  "cr3");
 }
 
-class RawFile::Private
-{
+class RawFile::Private {
 public:
     Private(Type t)
-        : m_type(t),
-          m_type_id(OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NONE, OR_TYPEID_UNKNOWN)),
-          m_sizes(),
-          m_cam_ids(NULL),
-          m_matrices(NULL)
-        {
-        }
+        : m_type(t)
+        , m_type_id(
+              OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NONE, OR_TYPEID_UNKNOWN))
+        , m_sizes()
+        , m_cam_ids(NULL)
+        , m_matrices(NULL)
+    {
+    }
     ~Private()
-        {
-            for(auto value : m_metadata)
-            {
-                if(value.second) {
-                    delete value.second;
-                }
+    {
+        for (auto value : m_metadata) {
+            if (value.second) {
+                delete value.second;
             }
         }
+    }
     /** the real type of the raw file */
     Type m_type;
     /** the raw file type id */
     TypeId m_type_id;
     /** list of thumbnail sizes */
     std::vector<uint32_t> m_sizes;
-    Internals::ThumbLocations    m_thumbLocations;
+    Internals::ThumbLocations m_thumbLocations;
     std::map<int32_t, MetaValue*> m_metadata;
-    const camera_ids_t *m_cam_ids;
+    const camera_ids_t* m_cam_ids;
     const Internals::BuiltinColourMatrix* m_matrices;
 };
 
-
-const char **RawFile::fileExtensions()
+const char** RawFile::fileExtensions()
 {
     init();
 
     return RawFileFactory::fileExtensions();
 }
 
-
-RawFile *RawFile::newRawFile(const char*_filename, RawFile::Type _typeHint)
+RawFile* RawFile::newRawFile(const char* _filename, RawFile::Type _typeHint)
 {
     init();
 
@@ -193,15 +189,14 @@ RawFile *RawFile::newRawFile(const char*_filename, RawFile::Type _typeHint)
     return iter->second(f);
 }
 
-RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer,
-                                       uint32_t len,
+RawFile* RawFile::newRawFileFromMemory(const uint8_t* buffer, uint32_t len,
                                        RawFile::Type _typeHint)
 {
     init();
     Type type;
     if (_typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
         ::or_error err = identifyBuffer(buffer, len, type);
-        if(err != OR_ERROR_NONE) {
+        if (err != OR_ERROR_NONE) {
             LOGERR("error identifying buffer\n");
             return NULL;
         }
@@ -222,10 +217,9 @@ RawFile *RawFile::newRawFileFromMemory(const uint8_t *buffer,
     return iter->second(f);
 }
 
-
-RawFile::Type RawFile::identify(const char*_filename)
+RawFile::Type RawFile::identify(const char* _filename)
 {
-    const char *e = ::strrchr(_filename, '.');
+    const char* e = ::strrchr(_filename, '.');
     if (e == NULL) {
         LOGDBG1("Extension not found\n");
         return OR_RAWFILE_TYPE_UNKNOWN;
@@ -237,23 +231,22 @@ RawFile::Type RawFile::identify(const char*_filename)
 
     boost::to_lower(extension);
 
-    RawFileFactory::Extensions & extensions = RawFileFactory::extensions();
+    RawFileFactory::Extensions& extensions = RawFileFactory::extensions();
     auto iter = extensions.find(extension);
-    if (iter == extensions.end())
-    {
+    if (iter == extensions.end()) {
         return OR_RAWFILE_TYPE_UNKNOWN;
     }
     return iter->second;
 }
 
 ::or_error RawFile::identifyBuffer(const uint8_t* buff, size_t len,
-                                   RawFile::Type &_type)
+                                   RawFile::Type& _type)
 {
     _type = OR_RAWFILE_TYPE_UNKNOWN;
-    if(len <= 4) {
+    if (len <= 4) {
         return OR_ERROR_BUF_TOO_SMALL;
     }
-    if(memcmp(buff, "\0MRM", 4) == 0) {
+    if (memcmp(buff, "\0MRM", 4) == 0) {
         _type = OR_RAWFILE_TYPE_MRW;
         return OR_ERROR_NONE;
     }
@@ -265,11 +258,11 @@ RawFile::Type RawFile::identify(const char*_filename)
         _type = OR_RAWFILE_TYPE_CRW;
         return OR_ERROR_NONE;
     }
-    if(memcmp(buff, "IIRO", 4) == 0) {
+    if (memcmp(buff, "IIRO", 4) == 0) {
         _type = OR_RAWFILE_TYPE_ORF;
         return OR_ERROR_NONE;
     }
-    if(memcmp(buff, "IIU\0", 4) == 0) {
+    if (memcmp(buff, "IIU\0", 4) == 0) {
         _type = OR_RAWFILE_TYPE_RW2;
         return OR_ERROR_NONE;
     }
@@ -277,49 +270,50 @@ RawFile::Type RawFile::identify(const char*_filename)
         _type = OR_RAWFILE_TYPE_RAF;
         return OR_ERROR_NONE;
     }
-    if((memcmp(buff, "II\x2a\0", 4) == 0)
-       || (memcmp(buff, "MM\0\x2a", 4) == 0)) {
+    if ((memcmp(buff, "II\x2a\0", 4) == 0) ||
+        (memcmp(buff, "MM\0\x2a", 4) == 0)) {
         // TIFF based format
-        if(len >=12 ) {
-            if(memcmp(buff + 8, "CR\x2", 3) == 0) {
+        if (len >= 12) {
+            if (memcmp(buff + 8, "CR\x2", 3) == 0) {
                 _type = OR_RAWFILE_TYPE_CR2;
                 return OR_ERROR_NONE;
             }
         }
-        if(len >= 8) {
+        if (len >= 8) {
             IO::Stream::Ptr s(new IO::MemStream((void*)buff, len));
-            std::unique_ptr<Internals::TiffEpFile> f(new Internals::TiffEpFile(s, OR_RAWFILE_TYPE_TIFF));
+            std::unique_ptr<Internals::TiffEpFile> f(
+                new Internals::TiffEpFile(s, OR_RAWFILE_TYPE_TIFF));
 
             // Take into account DNG by checking the DNGVersion tag
-            const MetaValue *dng_version = f->getMetaValue(META_NS_TIFF | TIFF_TAG_DNG_VERSION);
-            if(dng_version) {
+            const MetaValue* dng_version =
+                f->getMetaValue(META_NS_TIFF | TIFF_TAG_DNG_VERSION);
+            if (dng_version) {
                 LOGDBG1("found DNG versions\n");
                 _type = OR_RAWFILE_TYPE_DNG;
                 return OR_ERROR_NONE;
             }
 
-            const MetaValue *makev = f->getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
-            if(makev){
+            const MetaValue* makev =
+                f->getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
+            if (makev) {
                 std::string makes = makev->getString(0);
-                if(makes == "NIKON CORPORATION") {
+                if (makes == "NIKON CORPORATION") {
                     _type = OR_RAWFILE_TYPE_NEF;
                 }
-                else if(makes == "SEIKO EPSON CORP."){
+                else if (makes == "SEIKO EPSON CORP.") {
                     _type = OR_RAWFILE_TYPE_ERF;
                 }
-                else if(makes == "PENTAX Corporation ") {
+                else if (makes == "PENTAX Corporation ") {
                     _type = OR_RAWFILE_TYPE_PEF;
                 }
-                else if (makes == "SONY           " ||
-                         makes == "SONY") {
+                else if (makes == "SONY           " || makes == "SONY") {
                     _type = OR_RAWFILE_TYPE_ARW;
                 }
-                else if(makes == "Canon") {
+                else if (makes == "Canon") {
                     _type = OR_RAWFILE_TYPE_CR2;
                 }
             }
         }
-
     }
     return OR_ERROR_NONE;
 }
@@ -329,12 +323,10 @@ RawFile::RawFile(RawFile::Type _type)
 {
 }
 
-
 RawFile::~RawFile()
 {
     delete d;
 }
-
 
 RawFile::Type RawFile::type() const
 {
@@ -343,7 +335,7 @@ RawFile::Type RawFile::type() const
 
 RawFile::TypeId RawFile::typeId()
 {
-    if(d->m_type_id == 0) {
+    if (d->m_type_id == 0) {
         _identifyId();
     }
     return d->m_type_id;
@@ -359,7 +351,7 @@ void RawFile::_setTypeId(RawFile::TypeId _type_id)
     d->m_type_id = _type_id;
 }
 
-const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
+const std::vector<uint32_t>& RawFile::listThumbnailSizes(void)
 {
     if (d->m_sizes.empty()) {
         LOGDBG1("_enumThumbnailSizes init\n");
@@ -371,8 +363,7 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
     return d->m_sizes;
 }
 
-
-::or_error RawFile::getThumbnail(uint32_t tsize, Thumbnail & thumbnail)
+::or_error RawFile::getThumbnail(uint32_t tsize, Thumbnail& thumbnail)
 {
     ::or_error ret = OR_ERROR_NOT_FOUND;
     uint32_t smallest_bigger = 0xffffffff;
@@ -390,8 +381,8 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
                 biggest_smaller = s;
             }
         }
-        else if(s > tsize) {
-            if(s < smallest_bigger) {
+        else if (s > tsize) {
+            if (s < smallest_bigger) {
                 smallest_bigger = s;
             }
         }
@@ -402,8 +393,8 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
     }
 
     if (found_size == 0) {
-        found_size = (smallest_bigger != 0xffffffff ?
-                      smallest_bigger : biggest_smaller);
+        found_size =
+            (smallest_bigger != 0xffffffff ? smallest_bigger : biggest_smaller);
     }
 
     if (found_size != 0) {
@@ -422,31 +413,32 @@ const std::vector<uint32_t> & RawFile::listThumbnailSizes(void)
 /**
  * Internal implementation of getThumbnail. The size must match.
  */
-::or_error RawFile::_getThumbnail(uint32_t size, Thumbnail & thumbnail)
+::or_error RawFile::_getThumbnail(uint32_t size, Thumbnail& thumbnail)
 {
     ::or_error ret = OR_ERROR_NOT_FOUND;
     auto iter = d->m_thumbLocations.find(size);
-    if(iter != d->m_thumbLocations.end())
-    {
-        const Internals::ThumbDesc & desc = iter->second;
+    if (iter != d->m_thumbLocations.end()) {
+        const Internals::ThumbDesc& desc = iter->second;
         thumbnail.setDataType(desc.type);
         thumbnail.setDimensions(desc.x, desc.y);
         if (desc.data) {
             auto byte_length = desc.data->size();
-            void *p = thumbnail.allocData(byte_length);
+            void* p = thumbnail.allocData(byte_length);
             ::memcpy(p, desc.data->data(), byte_length);
-        } else {
+        }
+        else {
             uint32_t byte_length = desc.length; /**< of the buffer */
             uint32_t offset = desc.offset;
 
             LOGDBG1("Thumbnail at %u of %u bytes.\n", offset, byte_length);
 
             if (byte_length != 0) {
-                void *p = thumbnail.allocData(byte_length);
-                size_t real_size = getContainer()->fetchData(p, offset,
-                                                             byte_length);
+                void* p = thumbnail.allocData(byte_length);
+                size_t real_size =
+                    getContainer()->fetchData(p, offset, byte_length);
                 if (real_size < byte_length) {
-                    LOGWARN("Size mismatch for data: got %lu expected %u ignoring.\n",
+                    LOGWARN("Size mismatch for data: got %lu expected %u "
+                            "ignoring.\n",
                             real_size, byte_length);
                 }
             }
@@ -462,7 +454,7 @@ void RawFile::_addThumbnail(uint32_t size, Internals::ThumbDesc&& desc)
     d->m_thumbLocations[size] = std::move(desc);
 }
 
-::or_error RawFile::getRawData(RawData & rawdata, uint32_t options)
+::or_error RawFile::getRawData(RawData& rawdata, uint32_t options)
 {
     LOGDBG1("getRawData()\n");
     ::or_error ret = _getRawData(rawdata, options);
@@ -474,40 +466,38 @@ void RawFile::_addThumbnail(uint32_t size, Internals::ThumbDesc&& desc)
     uint32_t matrix_size = 0;
     if (!rawdata.getColourMatrix1(matrix_size) || !matrix_size) {
         matrix_size = colourMatrixSize();
-        double *matrix = new double[matrix_size];
+        double* matrix = new double[matrix_size];
         if (getColourMatrix1(matrix, matrix_size) == OR_ERROR_NONE) {
             rawdata.setColourMatrix1(matrix, matrix_size);
         }
-        delete [] matrix;
+        delete[] matrix;
     }
 
     return ret;
 }
 
-::or_error RawFile::getRenderedImage(BitmapData & bitmapdata, uint32_t options)
+::or_error RawFile::getRenderedImage(BitmapData& bitmapdata, uint32_t options)
 {
     RawData rawdata;
     LOGDBG1("options are %u\n", options);
     ::or_error ret = getRawData(rawdata, options);
-    if(ret == OR_ERROR_NONE) {
+    if (ret == OR_ERROR_NONE) {
         ret = rawdata.getRenderedImage(bitmapdata, options);
     }
     return ret;
 }
 
-
 int32_t RawFile::getOrientation()
 {
     int32_t idx = 0;
-    const MetaValue * value = getMetaValue(META_NS_TIFF
-                                           | EXIF_TAG_ORIENTATION);
-    if(value == NULL) {
+    const MetaValue* value = getMetaValue(META_NS_TIFF | EXIF_TAG_ORIENTATION);
+    if (value == NULL) {
         return 0;
     }
     try {
         idx = value->getInteger(0);
     }
-    catch(const Internals::BadTypeException & e)	{
+    catch (const Internals::BadTypeException& e) {
         LOGDBG1("wrong type - %s\n", e.what());
     }
     return idx;
@@ -518,20 +508,21 @@ uint32_t RawFile::colourMatrixSize()
     return 9;
 }
 
-::or_error RawFile::getColourMatrix1(double* matrix, uint32_t & size)
+::or_error RawFile::getColourMatrix1(double* matrix, uint32_t& size)
 {
     return _getColourMatrix(1, matrix, size);
 }
 
-::or_error RawFile::getColourMatrix2(double* matrix, uint32_t & size)
+::or_error RawFile::getColourMatrix2(double* matrix, uint32_t& size)
 {
     return _getColourMatrix(2, matrix, size);
 }
 
-::or_error RawFile::_getColourMatrix(uint32_t index, double* matrix, uint32_t & size)
+::or_error RawFile::_getColourMatrix(uint32_t index, double* matrix,
+                                     uint32_t& size)
 {
     int32_t meta_index = 0;
-    switch(index) {
+    switch (index) {
     case 1:
         meta_index = META_NS_TIFF | DNG_TAG_COLORMATRIX1;
         break;
@@ -544,7 +535,7 @@ uint32_t RawFile::colourMatrixSize()
     }
     const MetaValue* meta = getMetaValue(meta_index);
 
-    if(!meta) {
+    if (!meta) {
         if (index != 1) {
             size = 0;
             return OR_ERROR_INVALID_PARAM;
@@ -552,13 +543,13 @@ uint32_t RawFile::colourMatrixSize()
         return _getBuiltinColourMatrix(d->m_matrices, typeId(), matrix, size);
     }
     uint32_t count = meta->getCount();
-    if(size < count) {
+    if (size < count) {
         // return the expected size
         size = count;
         return OR_ERROR_BUF_TOO_SMALL;
     }
 
-    for(uint32_t i = 0; i < count; i++) {
+    for (uint32_t i = 0; i < count; i++) {
         matrix[i] = meta->getDouble(i);
     }
     size = count;
@@ -579,7 +570,7 @@ ExifLightsourceValue RawFile::getCalibrationIlluminant2()
 ExifLightsourceValue RawFile::_getCalibrationIlluminant(uint16_t index)
 {
     int32_t meta_index = 0;
-    switch(index) {
+    switch (index) {
     case 1:
         meta_index = META_NS_TIFF | DNG_TAG_CALIBRATION_ILLUMINANT1;
         break;
@@ -591,7 +582,7 @@ ExifLightsourceValue RawFile::_getCalibrationIlluminant(uint16_t index)
     }
     const MetaValue* meta = getMetaValue(meta_index);
 
-    if(!meta) {
+    if (!meta) {
         return (index == 1) ? EV_LIGHTSOURCE_D65 : EV_LIGHTSOURCE_UNKNOWN;
     }
     return (ExifLightsourceValue)meta->getInteger(0);
@@ -602,13 +593,13 @@ Internals::IfdDir::Ref RawFile::getMakerNoteIfd()
     return _getMakerNoteIfd();
 }
 
-const MetaValue *RawFile::getMetaValue(int32_t meta_index)
+const MetaValue* RawFile::getMetaValue(int32_t meta_index)
 {
-    MetaValue *val = NULL;
+    MetaValue* val = NULL;
     auto iter = d->m_metadata.find(meta_index);
-    if(iter == d->m_metadata.end()) {
+    if (iter == d->m_metadata.end()) {
         val = _getMetaValue(meta_index);
-        if(val != NULL) {
+        if (val != NULL) {
             d->m_metadata[meta_index] = val;
         }
     }
@@ -618,16 +609,15 @@ const MetaValue *RawFile::getMetaValue(int32_t meta_index)
     return val;
 }
 
-
-const RawFile::camera_ids_t*
-RawFile::_lookupCameraId(const camera_ids_t * map, const std::string& value)
+const RawFile::camera_ids_t* RawFile::_lookupCameraId(const camera_ids_t* map,
+                                                      const std::string& value)
 {
-    const camera_ids_t * p = map;
-    if(!p) {
+    const camera_ids_t* p = map;
+    if (!p) {
         return NULL;
     }
-    while(p->model) {
-        if(value == p->model) {
+    while (p->model) {
+        if (value == p->model) {
             return p;
         }
         p++;
@@ -635,10 +625,10 @@ RawFile::_lookupCameraId(const camera_ids_t * map, const std::string& value)
     return NULL;
 }
 
-RawFile::TypeId RawFile::_typeIdFromModel(const std::string & make,
-                                          const std::string & model)
+RawFile::TypeId RawFile::_typeIdFromModel(const std::string& make,
+                                          const std::string& model)
 {
-    const camera_ids_t * p = _lookupCameraId(d->m_cam_ids, model);
+    const camera_ids_t* p = _lookupCameraId(d->m_cam_ids, model);
     if (!p) {
         return _typeIdFromMake(make);
     }
@@ -648,7 +638,8 @@ RawFile::TypeId RawFile::_typeIdFromModel(const std::string & make,
 const RawFile::camera_ids_t RawFile::s_make[] = {
     { "Canon", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 0) },
     { "NIKON CORPORATION", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 0) },
-    { "LEICA CAMERA AG        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
+    { "LEICA CAMERA AG        ",
+      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
     { "Leica Camera AG", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
     { "Panasonic", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC, 0) },
     // Hardcoded
@@ -657,24 +648,21 @@ const RawFile::camera_ids_t RawFile::s_make[] = {
     { NULL, 0 }
 };
 
-
-RawFile::TypeId
-RawFile::_typeIdFromMake(const std::string& make)
+RawFile::TypeId RawFile::_typeIdFromMake(const std::string& make)
 {
-    const camera_ids_t * p = _lookupCameraId(s_make, make);
+    const camera_ids_t* p = _lookupCameraId(s_make, make);
     if (!p) {
         return 0;
     }
     return p->type_id;
 }
 
-void RawFile::_setIdMap(const camera_ids_t *map)
+void RawFile::_setIdMap(const camera_ids_t* map)
 {
     d->m_cam_ids = map;
 }
 
-const Internals::BuiltinColourMatrix*
-RawFile::_getMatrices() const
+const Internals::BuiltinColourMatrix* RawFile::_getMatrices() const
 {
     return d->m_matrices;
 }
@@ -684,16 +672,15 @@ void RawFile::_setMatrices(const Internals::BuiltinColourMatrix* matrices)
     d->m_matrices = matrices;
 }
 
-::or_error
-RawFile::_getBuiltinLevels(const Internals::BuiltinColourMatrix* m,
-                           TypeId type_id,
-                           uint16_t & black, uint16_t & white)
+::or_error RawFile::_getBuiltinLevels(const Internals::BuiltinColourMatrix* m,
+                                      TypeId type_id, uint16_t& black,
+                                      uint16_t& white)
 {
-    if(!m) {
+    if (!m) {
         return OR_ERROR_NOT_FOUND;
     }
-    while(m->camera) {
-        if(m->camera == type_id) {
+    while (m->camera) {
+        if (m->camera == type_id) {
             black = m->black;
             white = m->white;
             return OR_ERROR_NONE;
@@ -703,22 +690,20 @@ RawFile::_getBuiltinLevels(const Internals::BuiltinColourMatrix* m,
     return OR_ERROR_NOT_FOUND;
 }
 
-::or_error
-RawFile::_getBuiltinColourMatrix(const Internals::BuiltinColourMatrix* m, 
-                                 TypeId type_id,
-                                 double* matrix,
-                                 uint32_t & size)
+::or_error RawFile::_getBuiltinColourMatrix(
+    const Internals::BuiltinColourMatrix* m, TypeId type_id, double* matrix,
+    uint32_t& size)
 {
-    if(!m) {
+    if (!m) {
         return OR_ERROR_NOT_FOUND;
     }
-    if(size < 9) {
+    if (size < 9) {
         return OR_ERROR_BUF_TOO_SMALL;
     }
 
-    while(m->camera) {
-        if(m->camera == type_id) {
-            for(int i = 0; i < 9; i++) {
+    while (m->camera) {
+        if (m->camera == type_id) {
+            for (int i = 0; i < 9; i++) {
                 matrix[i] = static_cast<double>(m->matrix[i]) / 10000.0;
             }
             size = 9;
@@ -729,7 +714,6 @@ RawFile::_getBuiltinColourMatrix(const Internals::BuiltinColourMatrix* m,
     size = 0;
     return OR_ERROR_NOT_FOUND;
 }
-
 }
 
 /*
@@ -741,4 +725,3 @@ RawFile::_getBuiltinColourMatrix(const Internals::BuiltinColourMatrix* m,
   fill-column:80
   End:
 */
-

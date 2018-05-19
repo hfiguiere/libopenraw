@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfilefactory.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2018 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,11 +18,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
 #include <stddef.h>
+#include <stdlib.h>
 
-#include <utility>
 #include <cassert>
+#include <utility>
 
 #include <libopenraw/debug.h>
 
@@ -77,4 +77,3 @@ const char **RawFileFactory::fileExtensions()
 }
 }
 }
-
