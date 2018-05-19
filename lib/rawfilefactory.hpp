@@ -43,16 +43,8 @@ public:
     typedef
     std::map<std::string, RawFile::Type> Extensions;
 
-    /** register a filetype with the factory
-     * @param type the type of file
-     * @param fn the factory method
-     * @param ext the extension associated
-     * @note it is safe to call this method with the same
-     * fn and type to register a different extension
-     */
-    RawFileFactory(RawFile::Type type,
-                   const raw_file_factory_t & fn,
-                   const char * ext);
+    RawFileFactory() = delete;
+    ~RawFileFactory() = delete;
 
     /** access the table. Ensure that it has been constructed. */
     static Table & table();
@@ -62,6 +54,13 @@ public:
     /** access the the list of file extenstions registered. */
     static const char **fileExtensions();
 
+    /** register a filetype with the factory
+     * @param type the type of file
+     * @param fn the factory method
+     * @param ext the extension associated
+     * @note it is safe to call this method with the same
+     * fn and type to register a different extension
+     */
     static void registerType(RawFile::Type type,
                              const raw_file_factory_t & fn,
                              const char * ext);

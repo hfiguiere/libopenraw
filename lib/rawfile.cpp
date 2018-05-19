@@ -80,49 +80,49 @@ void init(void)
 {
     using namespace std::placeholders;
 
-    static RawFileFactory fctcr2(OR_RAWFILE_TYPE_CR2,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_CR2,
                                  std::bind(&Internals::Cr2File::factory, _1),
                                  "cr2");
-    static RawFileFactory fctnef(OR_RAWFILE_TYPE_NEF,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_NEF,
                                  std::bind(&Internals::NefFile::factory, _1),
                                  "nef");
-    static RawFileFactory fctnrw(OR_RAWFILE_TYPE_NRW,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_NRW,
                                  std::bind(&Internals::NefFile::factory, _1),
                                  "nrw");
-    static RawFileFactory fctarw(OR_RAWFILE_TYPE_ARW,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_ARW,
                                  std::bind(&Internals::ArwFile::factory, _1),
                                  "arw");
-    static RawFileFactory fctorf(OR_RAWFILE_TYPE_ORF,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_ORF,
                                  std::bind(&Internals::OrfFile::factory, _1),
                                  "orf");
-    static RawFileFactory fctdng(OR_RAWFILE_TYPE_DNG,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_DNG,
                                  std::bind(&Internals::DngFile::factory, _1),
                                  "dng");
-    static RawFileFactory fctpef(OR_RAWFILE_TYPE_PEF,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_PEF,
                                  std::bind(&Internals::PEFFile::factory, _1),
                                  "pef");
-    static RawFileFactory fctcrw(OR_RAWFILE_TYPE_CRW,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_CRW,
                                  std::bind(&Internals::CRWFile::factory, _1),
                                  "crw");
-    static RawFileFactory fcterf(OR_RAWFILE_TYPE_ERF,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_ERF,
                                  std::bind(&Internals::ERFFile::factory, _1),
                                  "erf");
-    static RawFileFactory fctmrw(OR_RAWFILE_TYPE_MRW,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_MRW,
                                  std::bind(&Internals::MRWFile::factory, _1),
                                  "mrw");
-    static RawFileFactory fctraw(OR_RAWFILE_TYPE_RW2,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_RW2,
                                  std::bind(&Internals::Rw2File::factory, _1),
                                  "raw");
-    static RawFileFactory fctrw2(OR_RAWFILE_TYPE_RW2,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_RW2,
                                  std::bind(&Internals::Rw2File::factory, _1),
                                  "rw2");
-    static RawFileFactory fctrwl(OR_RAWFILE_TYPE_RW2,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_RW2,
                                  std::bind(&Internals::Rw2File::factory, _1),
                                  "rwl");
-    static RawFileFactory fctraf(OR_RAWFILE_TYPE_RAF,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_RAF,
                                  std::bind(&Internals::RafFile::factory, _1),
                                  "raf");
-    static RawFileFactory fctcr3(OR_RAWFILE_TYPE_CR3,
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_CR3,
                                  std::bind(&Internals::Cr3File::factory, _1),
                                  "cr3");
 }

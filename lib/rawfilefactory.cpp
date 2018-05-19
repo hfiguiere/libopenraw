@@ -36,14 +36,6 @@ namespace OpenRaw {
 
 namespace Internals {
 
-RawFileFactory::RawFileFactory(RawFile::Type type,
-                               const RawFileFactory::raw_file_factory_t &fn,
-                               const char *ext)
-{
-    LOGDBG1("registering type %d\n", (int)type);
-    registerType(type, fn, ext);
-}
-
 void RawFileFactory::registerType(RawFile::Type type,
                                   const RawFileFactory::raw_file_factory_t &fn,
                                   const char *ext)
