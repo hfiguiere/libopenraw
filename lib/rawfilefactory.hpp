@@ -18,8 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_RAWFILEFACTORY_H_
-#define OR_INTERNALS_RAWFILEFACTORY_H_
+#pragma once
 
 #include <functional>
 #include <map>
@@ -82,8 +81,6 @@ inline RawFileFactory::Extensions &RawFileFactory::extensions()
 }
 }
 }
-
-#endif
 /*
   Local Variables:
   mode:c++
