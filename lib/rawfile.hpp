@@ -1,6 +1,6 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - rawfile.h
+ * libopenraw - rawfile.hpp
  *
  * Copyright (C) 2005-2018 Hubert Figuière
  *
@@ -88,6 +88,7 @@ public:
      *  @todo figure how to make this const.
      */
     TypeId typeId();
+    TypeId vendorId();
 
     // standard api, like get thumbnail
     // and get exif.

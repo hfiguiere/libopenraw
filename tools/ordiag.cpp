@@ -414,6 +414,13 @@ public:
                           % OR_GET_FILE_TYPEID_VENDOR(fileTypeId)
                           % OR_GET_FILE_TYPEID_CAMERA(fileTypeId));
                 m_out << boost::format("\tType ID = %1%\n") % typeId;
+                or_rawfile_typeid vendorId = or_rawfile_get_vendorid(rf);
+                if (vendorId != OR_GET_FILE_TYPEID_VENDOR(fileTypeId)) {
+                    m_out <<
+                        boost::format(
+                            "\t*ERROR*: mistmatch vendor id, got %1%\n")
+                        % vendorId;
+                }
 
                 ORConstMetaValueRef make
                     = or_rawfile_get_metavalue(rf, META_NS_TIFF | EXIF_TAG_MAKE);

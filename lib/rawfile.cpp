@@ -341,6 +341,17 @@ RawFile::TypeId RawFile::typeId()
     return d->m_type_id;
 }
 
+RawFile::TypeId RawFile::vendorId()
+{
+    const MetaValue* makev =
+        getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
+    if (makev) {
+        std::string make = makev->getString(0);
+        return _typeIdFromMake(make) >> 16;
+    }
+    return OR_TYPEID_VENDOR_NONE;
+}
+
 RawFile::TypeId RawFile::_typeId() const
 {
     return d->m_type_id;
@@ -637,14 +648,34 @@ RawFile::TypeId RawFile::_typeIdFromModel(const std::string& make,
 
 const RawFile::camera_ids_t RawFile::s_make[] = {
     { "Canon", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 0) },
+    { "NIKON", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 0) },
     { "NIKON CORPORATION", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 0) },
+    { "LEICA", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
+    { "LEICA CAMERA AG", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
     { "LEICA CAMERA AG        ",
       OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
     { "Leica Camera AG", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
     { "Panasonic", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC, 0) },
-    // Hardcoded
-    { "Minolta", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA, 0) },
-    { "FujiFilm", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM, 0) },
+    { "SONY", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY, 0) },
+    { "SONY ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY, 0) },
+    { "SONY           ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY, 0) },
+    { "OLYMPUS IMAGING CORP.  ",
+      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 0) },
+    { "OLYMPUS OPTICAL CO.,LTD",
+      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 0) },
+    { "OLYMPUS CORPORATION    ",
+      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 0) },
+    { "PENTAX Corporation ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 0) },
+    { "PENTAX             ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 0) },
+    { "RICOH      ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
+    { "RICOH IMAGING COMPANY, LTD.  ",
+      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
+    { "RICOH IMAGING COMPANY, LTD.",
+      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
+    { "SAMSUNG TECHWIN Co.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG, 0) },
+    { "SEIKO EPSON CORP.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON, 0) },
+    { "Minolta Co., Ltd.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA, 0) },
+    { "FUJIFILM", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM, 0) },
     { NULL, 0 }
 };
 

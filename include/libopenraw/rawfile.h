@@ -56,6 +56,12 @@ or_rawfile_get_type(ORRawFileRef rawfile);
 or_rawfile_typeid
 or_rawfile_get_typeid(ORRawFileRef rawfile);
 
+/** return the typeid to identify the vendor type
+ * Use the constants value.
+ */
+or_rawfile_typeid
+or_rawfile_get_vendorid(ORRawFileRef rawfile);
+
 /** return an array of thumbnail sizes.
  * @param rawfile
  * @param size the size of the array is returned

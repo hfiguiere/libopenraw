@@ -128,7 +128,7 @@ void MRWFile::_identifyId()
     if(_mainIfd && mc->prd) {
         auto version = mc->prd->string_val(MRW::PRD_VERSION);
         if (version) {
-            _setTypeId(_typeIdFromModel("Minolta", version.value()));
+            _setTypeId(_typeIdFromModel("Minolta Co., Ltd.", version.value()));
         } else {
             LOGERR("Coudln't read Minolta version\n");
         }

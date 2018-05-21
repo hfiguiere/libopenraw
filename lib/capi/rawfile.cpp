@@ -91,6 +91,13 @@ or_rawfile_typeid or_rawfile_get_typeid(ORRawFileRef rawfile)
     return prawfile->typeId();
 }
 
+or_rawfile_typeid or_rawfile_get_vendorid(ORRawFileRef rawfile)
+{
+    CHECK_PTR(rawfile, OR_RAWFILE_TYPE_UNKNOWN);
+    RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
+    return prawfile->vendorId();
+}
+
 const uint32_t *
 or_rawfile_get_thumbnail_sizes(ORRawFileRef  rawfile,
                                size_t       *size)

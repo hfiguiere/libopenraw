@@ -306,8 +306,16 @@ bool Test::testRawType(const std::string & result)
 
 bool Test::testRawTypeId(const std::string & result)
 {
-    RETURN_TEST_EQUALS_N(m_rawfile->typeId(),
-                         boost::lexical_cast<uint32_t>(result));
+    auto type_id = m_rawfile->typeId();
+    auto vendor_id = m_rawfile->vendorId();
+    bool test = false;
+    CHECK_TEST_EQUALS_N(OR_GET_FILE_TYPEID_VENDOR(type_id), vendor_id, test);
+    if (!test) {
+        return test;
+    }
+    CHECK_TEST_EQUALS_N(type_id, boost::lexical_cast<uint32_t>(result), test);
+
+    return test;
 }
 
 
