@@ -181,7 +181,7 @@ DngFile::~DngFile()
         // if the option is not set, decompress
         if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
             IO::Stream::Ptr s(
-                std::make_shared<IO::MemStream>(data.data(),
+                std::make_shared<IO::MemStream>((const uint8_t*)data.data(),
                                                 data.size()));
             s->open(); // TODO check success
             std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));

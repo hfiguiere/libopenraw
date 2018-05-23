@@ -222,7 +222,7 @@ RawFile* RawFile::newRawFileFromMemory(const uint8_t* buffer, uint32_t len,
         LOGWARN("factory is NULL\n");
         return NULL;
     }
-    IO::Stream::Ptr f(new IO::MemStream((void*)buffer, len));
+    IO::Stream::Ptr f(new IO::MemStream(buffer, len));
     return iter->second(f);
 }
 

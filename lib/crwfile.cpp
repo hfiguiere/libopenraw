@@ -240,8 +240,8 @@ RawContainer* CRWFile::getContainer() const
 
         // decompress if we need
         if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-            std::unique_ptr<IO::Stream> s(new IO::MemStream(data.data(),
-                                                            data.size()));
+            std::unique_ptr<IO::Stream> s(
+                new IO::MemStream((const uint8_t*)data.data(), data.size()));
             s->open(); // TODO check success
 
             CrwDecompressor decomp(s.get(), m_container);

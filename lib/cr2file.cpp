@@ -556,7 +556,8 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     LOGDBG1("In size is %dx%d\n", data.width(), data.height());
     // decompress if we need
     if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-      IO::Stream::Ptr s(new IO::MemStream(data.data(), data.size()));
+      IO::Stream::Ptr s(new IO::MemStream((const uint8_t*)data.data(),
+                                          data.size()));
       s->open(); // TODO check success
       std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
       LJpegDecompressor decomp(s.get(), jfif.get());

@@ -2,7 +2,7 @@
 /*
  * libopenraw - memstream.h
  *
- * Copyright (C) 2007-2016 Hubert Figuière
+ * Copyright (C) 2007-2018 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_IO_MEMSTREAM_H_
-#define OR_INTERNALS_IO_MEMSTREAM_H_
+#pragma once
 
 #include <stddef.h>
 #include <sys/types.h>
@@ -36,7 +35,7 @@ class MemStream
   : public Stream
 {
 public:
-  MemStream(const void *ptr, size_t s);
+  MemStream(const uint8_t* ptr, size_t s);
 
   virtual ~MemStream()
     {}
@@ -52,12 +51,10 @@ public:
 
 
 private:
-  const void * m_ptr;
+  const uint8_t* m_ptr;
   size_t m_size;
-  unsigned char * m_current;
+  const uint8_t* m_current;
 };
 
 }
 }
-
-#endif
