@@ -171,6 +171,15 @@ RawFile* RawFile::newRawFile(const char* filename, RawFile::Type typeHint)
     Type type;
     if (typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
         type = identify(filename);
+        if (type == OR_RAWFILE_TYPE_UNKNOWN) {
+            IO::Stream::Ptr f(new IO::File(filename));
+            f->open();
+            auto err = identifyIOBuffer(f, type);
+            if (err != OR_ERROR_NONE) {
+                LOGERR("identifyIOBuffer returned %u\n", err);
+                return nullptr;
+            }
+        }
     }
     else {
         type = typeHint;
@@ -239,9 +248,25 @@ RawFile::Type RawFile::identify(const char* _filename)
     return iter->second;
 }
 
-::or_error RawFile::identifyBuffer(const uint8_t* buff, size_t len,
-                                   RawFile::Type& _type)
+::or_error
+RawFile::identifyBuffer(const uint8_t* buff, size_t len, RawFile::Type& _type)
 {
+    IO::Stream::Ptr stream(new IO::MemStream(buff, len));
+    stream->open();
+    return identifyIOBuffer(stream, _type);
+}
+
+::or_error
+RawFile::identifyIOBuffer(IO::Stream::Ptr& stream, RawFile::Type& _type)
+{
+    off_t len = stream->filesize();
+
+    constexpr size_t buffer_size = 16; // std::max(14, RAF_MAGIC_LEN)
+    uint8_t buff[buffer_size];
+
+    // XXX check for error
+    stream->read(buff, buffer_size);
+
     _type = OR_RAWFILE_TYPE_UNKNOWN;
     if (len <= 4) {
         return OR_ERROR_BUF_TOO_SMALL;
@@ -280,9 +305,9 @@ RawFile::Type RawFile::identify(const char* _filename)
             }
         }
         if (len >= 8) {
-            IO::Stream::Ptr s(new IO::MemStream((void*)buff, len));
+            stream->seek(0, SEEK_SET);
             std::unique_ptr<Internals::TiffEpFile> f(
-                new Internals::TiffEpFile(s, OR_RAWFILE_TYPE_TIFF));
+                new Internals::TiffEpFile(stream, OR_RAWFILE_TYPE_TIFF));
 
             // Take into account DNG by checking the DNGVersion tag
             const MetaValue* dng_version =

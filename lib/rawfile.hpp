@@ -215,6 +215,8 @@ private:
     static Type identify(const char*_filename);
     static ::or_error identifyBuffer(const uint8_t* buff, size_t len,
                                      Type &_type);
+    static ::or_error identifyIOBuffer(IO::Stream::Ptr& stream,
+                                       RawFile::Type& _type);
     static const camera_ids_t s_make[];
     static const camera_ids_t* _lookupCameraId(const camera_ids_t * map,
                                                const std::string& value);
