@@ -297,7 +297,7 @@ RawFile::Type RawFile::identify(const char* _filename)
                 f->getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
             if (makev) {
                 std::string makes = makev->getString(0);
-                if (makes == "NIKON CORPORATION") {
+                if (makes.find("NIKON") == 0) {
                     _type = OR_RAWFILE_TYPE_NEF;
                 }
                 else if (makes == "SEIKO EPSON CORP.") {
@@ -306,7 +306,7 @@ RawFile::Type RawFile::identify(const char* _filename)
                 else if (makes == "PENTAX Corporation ") {
                     _type = OR_RAWFILE_TYPE_PEF;
                 }
-                else if (makes == "SONY           " || makes == "SONY") {
+                else if (makes.find("SONY") == 0) {
                     _type = OR_RAWFILE_TYPE_ARW;
                 }
                 else if (makes == "Canon") {
