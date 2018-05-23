@@ -30,9 +30,6 @@
 
 namespace OpenRaw {
 
-namespace IO {
-class Stream;
-}
 class Thumbnail;
 class RawData;
 class BitmapData;
@@ -68,7 +65,7 @@ public:
      * if you want to let the library detect it for you.
      */
     static RawFile *newRawFile(const char*_filename,
-                               Type _typeHint = OR_RAWFILE_TYPE_UNKNOWN);
+                               Type typeHint = OR_RAWFILE_TYPE_UNKNOWN);
     /** factory method to create the proper RawFile instance
      *  from content
      * @param buffer the buffer to examine.
@@ -77,7 +74,7 @@ public:
      * if you want to let the library detect it for you.
      */
     static RawFile *newRawFileFromMemory(const uint8_t *buffer, uint32_t len,
-                                         Type _typeHint = OR_RAWFILE_TYPE_UNKNOWN);
+                                         Type typeHint = OR_RAWFILE_TYPE_UNKNOWN);
 
     /** Destructor */
     virtual ~RawFile();

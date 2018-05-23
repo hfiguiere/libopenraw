@@ -164,16 +164,16 @@ const char** RawFile::fileExtensions()
     return RawFileFactory::fileExtensions();
 }
 
-RawFile* RawFile::newRawFile(const char* _filename, RawFile::Type _typeHint)
+RawFile* RawFile::newRawFile(const char* filename, RawFile::Type typeHint)
 {
     init();
 
     Type type;
-    if (_typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
-        type = identify(_filename);
+    if (typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
+        type = identify(filename);
     }
     else {
-        type = _typeHint;
+        type = typeHint;
     }
     LOGDBG1("factory size %ld\n", RawFileFactory::table().size());
     auto iter = RawFileFactory::table().find(type);
@@ -185,16 +185,16 @@ RawFile* RawFile::newRawFile(const char* _filename, RawFile::Type _typeHint)
         LOGWARN("factory is NULL\n");
         return NULL;
     }
-    IO::Stream::Ptr f(new IO::File(_filename));
+    IO::Stream::Ptr f(new IO::File(filename));
     return iter->second(f);
 }
 
 RawFile* RawFile::newRawFileFromMemory(const uint8_t* buffer, uint32_t len,
-                                       RawFile::Type _typeHint)
+                                       RawFile::Type typeHint)
 {
     init();
     Type type;
-    if (_typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
+    if (typeHint == OR_RAWFILE_TYPE_UNKNOWN) {
         ::or_error err = identifyBuffer(buffer, len, type);
         if (err != OR_ERROR_NONE) {
             LOGERR("error identifying buffer\n");
@@ -202,7 +202,7 @@ RawFile* RawFile::newRawFileFromMemory(const uint8_t* buffer, uint32_t len,
         }
     }
     else {
-        type = _typeHint;
+        type = typeHint;
     }
     auto iter = RawFileFactory::table().find(type);
     if (iter == RawFileFactory::table().end()) {
