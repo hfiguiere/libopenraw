@@ -1,8 +1,11 @@
 libopenraw 0.2.0 -
 
+The enclosed RELEASE_NOTES file give a higher-level overview of what's new.
+
 New features:
 
   - API: the package name is libopenraw-0.2
+  - API: or_rawfile_get_vendorid() to get the vendor id.
   - Support for Canon CR3.
 
   Camera support:
@@ -13,13 +16,20 @@ New features:
   - Support for Sony RX0*, RX10M4*, A5000*, A5100*, A7M2*, A7M3*, A7S*,
     A7SM2*, A7RM3*, A9*, NEX-3N*, DSLR-A230*, DSLR-A330*, DSLR-A450*,
     DSLR-A500*, SLT-A37*, ILCA-68*, ILCA-77M2*.
-  - Added alias for Rebel XTi (400D)
-  - Added alias for Sony A3500 (A3000)
-  - Coefficients for Sony RX10, A6500
+  - Support for Panasonic FZ45.
+  - Support for Ricoh GX200.
+  - Added alias for Rebel XTi (400D).
+  - Added alias for Sony A3500 (A3000).
+  - Coefficients for Sony RX10, A6500.
+  - Coefficients for Panasonic GH5.
+
+  - ordiag will check the consistency of vendor id.
+  - If the extension isn't found, identify by content.
 
 Bug fixes:
 
   - Missing RAW type in ordiag.
+  - Fixed inconsistencies identifying vendor id.
 
 Internal changes:
 

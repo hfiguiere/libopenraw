@@ -1,0 +1,25 @@
+What's (visibly) new in 0.2.0
+=============================
+
+This release break ABI. Recompiling your code should be enough.
+
+- The new pkgconfig package name is libopenraw-0.2.
+
+- libopenraw now requires Rust to build.
+
+It adds the following API:
+
+- or_rawfile_get_vendorid(): Use this to get the vendor ID for the RAW
+file. While this is the same as the vendor part of the type ID that
+you'd obtain with the macro OR_GET_FILE_TYPEID_VENDOR(), it is
+obtained differently, and might be much slower. `ordiag` will check
+the consistency. The testsuite will fail if inconsistent.
+
+It adds support for a certain number of cameras:
+
+(list in the NEWS file)
+
+- libopenraw now support parsing Canon new CR3 files.
+
+or_raw_file_new() will now detect content if it can't guess the type
+from the extension.
