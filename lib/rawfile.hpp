@@ -220,7 +220,8 @@ private:
     static const camera_ids_t s_make[];
     static const camera_ids_t* _lookupCameraId(const camera_ids_t * map,
                                                const std::string& value);
-
+    static const camera_ids_t* lookupVendorId(const camera_ids_t * map,
+                                              const std::string& value);
 
     class Private;
 

@@ -368,9 +368,11 @@ RawFile::TypeId RawFile::typeId()
 
 RawFile::TypeId RawFile::vendorId()
 {
-    const MetaValue* makev =
-        getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
-    if (makev) {
+    const MetaValue* makev = getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
+    if (makev == nullptr) {
+        makev = getMetaValue(META_NS_TIFF | DNG_TAG_UNIQUE_CAMERA_MODEL);
+    }
+    if (makev !=  nullptr) {
         std::string make = makev->getString(0);
         return _typeIdFromMake(make) >> 16;
     }
@@ -661,6 +663,25 @@ const RawFile::camera_ids_t* RawFile::_lookupCameraId(const camera_ids_t* map,
     return NULL;
 }
 
+/**! lookup vendor. The difference with camera is that it check for the begining
+ * of the string
+ */
+const RawFile::camera_ids_t* RawFile::lookupVendorId(const camera_ids_t* map,
+                                                      const std::string& value)
+{
+    const camera_ids_t* p = map;
+    if (!p) {
+        return NULL;
+    }
+    while (p->model) {
+        if (value.find(p->model) == 0) {
+            return p;
+        }
+        p++;
+    }
+    return NULL;
+}
+
 RawFile::TypeId RawFile::_typeIdFromModel(const std::string& make,
                                           const std::string& model)
 {
@@ -674,39 +695,24 @@ RawFile::TypeId RawFile::_typeIdFromModel(const std::string& make,
 const RawFile::camera_ids_t RawFile::s_make[] = {
     { "Canon", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 0) },
     { "NIKON", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 0) },
-    { "NIKON CORPORATION", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 0) },
     { "LEICA", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
-    { "LEICA CAMERA AG", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
-    { "LEICA CAMERA AG        ",
-      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
-    { "Leica Camera AG", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
+    { "Leica", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
     { "Panasonic", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PANASONIC, 0) },
     { "SONY", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY, 0) },
-    { "SONY ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY, 0) },
-    { "SONY           ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY, 0) },
-    { "OLYMPUS IMAGING CORP.  ",
-      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 0) },
-    { "OLYMPUS OPTICAL CO.,LTD",
-      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 0) },
-    { "OLYMPUS CORPORATION    ",
-      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 0) },
-    { "PENTAX Corporation ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 0) },
-    { "PENTAX             ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 0) },
-    { "RICOH      ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
-    { "RICOH IMAGING COMPANY, LTD.  ",
-      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
-    { "RICOH IMAGING COMPANY, LTD.",
-      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
+    { "OLYMPUS", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 0) },
+    { "PENTAX", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 0) },
+    { "RICOH", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
     { "SAMSUNG TECHWIN Co.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG, 0) },
     { "SEIKO EPSON CORP.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON, 0) },
     { "Minolta Co., Ltd.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA, 0) },
     { "FUJIFILM", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM, 0) },
+    { "Blackmagic", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_BLACKMAGIC, 0) },
     { NULL, 0 }
 };
 
 RawFile::TypeId RawFile::_typeIdFromMake(const std::string& make)
 {
-    const camera_ids_t* p = _lookupCameraId(s_make, make);
+    const camera_ids_t* p = lookupVendorId(s_make, make);
     if (!p) {
         return 0;
     }
