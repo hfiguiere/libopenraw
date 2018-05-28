@@ -101,6 +101,12 @@ void IfdFile::_identifyId()
 
   auto make = _mainIfd->getValue<std::string>(IFD::EXIF_TAG_MAKE);
   auto model = _mainIfd->getValue<std::string>(IFD::EXIF_TAG_MODEL);
+  if (!model) {
+    model = _mainIfd->getValue<std::string>(IFD::DNG_TAG_UNIQUE_CAMERA_MODEL);
+    if (!make) {
+      make = model;
+    }
+  }
   if (make && model) {
     _setTypeId(_typeIdFromModel(make.value(), model.value()));
   }
