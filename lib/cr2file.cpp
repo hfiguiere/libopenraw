@@ -594,15 +594,18 @@ void Cr2File::_identifyId()
     if (mn) {
         auto id = mn->getValue<uint32_t>(IFD::MNOTE_CANON_MODEL_ID);
         if (id) {
-            auto type_id = canon_modelid_to_typeid(id.value());
+            uint32_t id_value = id.value();
+            auto type_id = canon_modelid_to_typeid(id_value);
             if (type_id != 0) {
                 _setTypeId(type_id);
                 return;
             }
+            LOGERR("unknown model ID 0x%x\n", id_value);
         }
+    } else {
+        LOGERR("model ID not found\n");
     }
-
-    LOGERR("model ID not found\n");
+    IfdFile::_identifyId();
 }
 
 }
