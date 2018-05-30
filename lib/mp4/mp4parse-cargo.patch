@@ -27,9 +27,7 @@ index ad74383..c62182f 100644
  
  [features]
 -fuzz = ["afl", "abort_on_panic"]
--craw = []
-\ No newline at end of file
-+craw = []
+ craw = []
 diff --git a/mp4parse_capi/Cargo.toml b/mp4parse_capi/Cargo.toml
 index b1e2690..ec37951 100644
 --- a/mp4parse_capi/Cargo.toml
@@ -53,6 +51,8 @@ index b1e2690..ec37951 100644
 -
  [features]
 -fuzz = ["mp4parse/fuzz"]
--craw = ["mp4parse/craw"]
-\ No newline at end of file
-+craw = ["mp4parse/craw"]
+ craw = ["mp4parse/craw"]
+ # Enable mp4parse_fallible to use fallible memory allocation rather than
+ # panicking on OOM.  Note that this is only safe within Gecko where the system
+ # allocator has been globally overridden (see BMO 1457359).
+ mp4parse_fallible = ["mp4parse/mp4parse_fallible"]

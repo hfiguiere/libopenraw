@@ -25,6 +25,9 @@ extern crate mp4parse_fallible;
 #[cfg(feature = "mp4parse_fallible")]
 use mp4parse_fallible::FallibleVec;
 
+#[macro_use]
+mod macros;
+
 mod boxes;
 use boxes::{BoxType, FourCC};
 
@@ -285,7 +288,8 @@ struct SampleDescriptionBox {
 pub enum SampleEntry {
     Audio(AudioSampleEntry),
     Video(VideoSampleEntry),
-    CanonCRAW(CanonCRAWEntry),
+    #[cfg(feature = "craw")]
+    CanonCRAW(craw::CanonCRAWEntry),
     Unknown,
 }
 
@@ -335,14 +339,6 @@ pub struct VideoSampleEntry {
     pub height: u16,
     pub codec_specific: VideoCodecSpecific,
     pub protection_info: Vec<ProtectionSchemeInfoBox>,
-}
-
-#[derive(Debug, Clone)]
-pub struct CanonCRAWEntry {
-    data_reference_index: u16,
-    pub width: u16,
-    pub height: u16,
-    pub is_jpeg: bool,
 }
 
 /// Represent a Video Partition Codec Configuration 'vpcC' box (aka vp9).
@@ -428,26 +424,6 @@ pub struct ProtectionSchemeInfoBox {
     pub tenc: Option<TrackEncryptionBox>,
 }
 
-/// Canon Thumbnail
-#[derive(Debug, Default)]
-pub struct CanonThumbnail {
-    pub width: u16,
-    pub height: u16,
-    pub data: Vec<u8>,
-}
-
-/// Canon CRAW data ('crx ' brand files)
-#[derive(Debug, Default)]
-pub struct CrawHeader {
-    pub cncv: Vec<u8>,
-    pub offsets: Vec<(u64, u64)>,
-    pub meta1: Option<Vec<u8>>,
-    pub meta2: Option<Vec<u8>>,
-    pub meta3: Option<Vec<u8>>,
-    pub meta4: Option<Vec<u8>>,
-    pub thumbnail: CanonThumbnail,
-}
-
 /// Internal data structures.
 #[derive(Debug, Default)]
 pub struct MediaContext {
@@ -457,7 +433,8 @@ pub struct MediaContext {
     pub tracks: Vec<Track>,
     pub mvex: Option<MovieExtendsBox>,
     pub psshs: Vec<ProtectionSystemSpecificHeaderBox>,
-    pub craw: Option<CrawHeader>,
+    #[cfg(feature = "craw")]
+    pub craw: Option<craw::CrawHeader>,
 }
 
 impl MediaContext {
@@ -553,7 +530,7 @@ impl Track {
     }
 }
 
-struct BMFFBox<'a, T: 'a + Read> {
+pub struct BMFFBox<'a, T: 'a + Read> {
     head: BoxHeader,
     content: Take<&'a mut T>,
 }
@@ -636,16 +613,19 @@ fn read_box_header<T: ReadBytesExt>(src: &mut T) -> Result<BoxHeader> {
         _ => 4 + 4,
     };
     let uuid = if name == BoxType::UuidBox {
-        if size < offset + 16 {
-            return Err(Error::InvalidData("malformed size for uuid"));
-        }
-        let mut buffer = [0u8; 16];
-        let count = src.read(&mut buffer)?;
-        if count < 16 {
-            None
+        if size >= offset + 16 {
+            let mut buffer = [0u8; 16];
+            let count = src.read(&mut buffer)?;
+            offset += count as u64;
+            if count == 16 {
+                Some(buffer)
+            } else {
+                debug!("malformed uuid (short read), skipping");
+                None
+            }
         } else {
-            offset += 16;
-            Some(buffer)
+            debug!("malformed uuid, skipping");
+            None
         }
     } else {
         None
@@ -690,15 +670,6 @@ fn skip_box_remain<T: Read>(src: &mut BMFFBox<T>) -> Result<()> {
         len
     };
     skip(src, remain)
-}
-
-macro_rules! check_parser_state {
-    ( $src:expr ) => {
-        if $src.limit() > 0 {
-            debug!("bad parser state: {} content bytes left", $src.limit());
-            return Err(Error::InvalidData("unread box content or bad parser sync"));
-        }
-    }
 }
 
 /// Read the contents of a box, including sub boxes.
@@ -769,92 +740,26 @@ fn parse_mvhd<T: Read>(f: &mut BMFFBox<T>) -> Result<(MovieHeaderBox, Option<Med
     Ok((mvhd, timescale))
 }
 
-#[cfg(feature = "craw")]
-/// Parse the header box in a 'crx ' Canon RAW file.
-fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> Result<CrawHeader> {
-    let mut header = CrawHeader::default();
-    let mut iter = f.box_iter();
-    while let Some(mut b) = iter.next_box()? {
-        match b.head.name {
-            BoxType::CanonCompressorVersion => {
-                let size = (b.head.size - b.head.offset) as usize;
-                let data = read_buf(&mut b, size)?;
-                header.cncv = data;
-                skip_box_remain(&mut b)?;
-            }
-            BoxType::CanonTableOffset => {
-                let count = be_u32(&mut b)?;
-                for _i in 0..count {
-                    skip(&mut b, 4)?; // index. We do not care.
-                    let offset = be_u64(&mut b)?;
-                    let size = be_u64(&mut b)?;
-                    if offset == 0 || size == 0 {
-                        break;
-                    }
-                    header.offsets.push((offset, size));
-                }
-                skip_box_remain(&mut b)?;
-            }
-            BoxType::CanonMeta1 |
-            BoxType::CanonMeta2 |
-            BoxType::CanonMeta3 |
-            BoxType::CanonMeta4 => {
-                let len = b.head.size - b.head.offset;
-                let data = read_buf(&mut b, len as usize)?;
-                match b.head.name {
-                    BoxType::CanonMeta1 =>
-                        header.meta1 = Some(data),
-                    BoxType::CanonMeta2 =>
-                        header.meta2 = Some(data),
-                    BoxType::CanonMeta3 =>
-                        header.meta3 = Some(data),
-                    BoxType::CanonMeta4 =>
-                        header.meta4 = Some(data),
-                    _ => unreachable!()
-                }
-            }
-            BoxType::CanonThumbnail => {
-                skip(&mut b, 4)?;
-                let width = be_u16(&mut b)?;
-                let height = be_u16(&mut b)?;
-                let jpeg_size = be_u32(&mut b)?;
-                skip(&mut b, 4)?;
-                if (jpeg_size as u64) + b.head.offset + 16u64 > b.head.size {
-                    return Err(Error::InvalidData("short box size for JPEG data"));
-                }
-                let data = read_buf(&mut b, jpeg_size as usize)?;
-                header.thumbnail = CanonThumbnail { width: width,
-                                                    height: height,
-                                                    data: data };
-                skip_box_remain(&mut b)?;
-            }
-            _ => skip_box_content(&mut b)?
-        }
-    }
-
-//    skip_box_remain(&mut f)?;
-    debug!("{:?}", header);
-    Ok(header)
-}
-
 fn read_moov<T: Read>(f: &mut BMFFBox<T>, context: &mut MediaContext) -> Result<()> {
     let mut iter = f.box_iter();
     while let Some(mut b) = iter.next_box()? {
         match b.head.name {
             BoxType::UuidBox => {
                 debug!("{:?}", b.head);
-
+                let mut box_known = false;
                 #[cfg(feature = "craw")]
                 {
                     if context.brand == FourCC::from("crx ") &&
                         b.head.uuid == Some(craw::HEADER_UUID) {
-                            let crawheader = parse_craw_header(&mut b)?;
+                            let crawheader = craw::parse_craw_header(&mut b)?;
                             context.craw = Some(crawheader);
-                    } else {
-                        debug!("Unknown UUID box {:?} (skipping)",
-                               b.head.uuid.as_ref().unwrap());
-                        skip_box_content(&mut b)?;
-                    }
+                            box_known = true;
+                        }
+                }
+                if !box_known {
+                    debug!("Unknown UUID box {:?} (skipping)",
+                           b.head.uuid.as_ref().unwrap());
+                    skip_box_content(&mut b)?;
                 }
             }
             BoxType::MovieHeaderBox => {
@@ -974,24 +879,30 @@ fn read_edts<T: Read>(f: &mut BMFFBox<T>, track: &mut Track) -> Result<()> {
         match b.head.name {
             BoxType::EditListBox => {
                 let elst = read_elst(&mut b)?;
+                if elst.edits.len() < 1 {
+                    debug!("empty edit list");
+                    continue;
+                }
                 let mut empty_duration = 0;
                 let mut idx = 0;
-                if elst.edits.len() > 2 {
-                    return Err(Error::Unsupported("more than two edits"));
-                }
                 if elst.edits[idx].media_time == -1 {
-                    empty_duration = elst.edits[idx].segment_duration;
                     if elst.edits.len() < 2 {
-                        return Err(Error::InvalidData("expected additional edit"));
+                        debug!("expected additional edit, ignoring edit list");
+                        continue;
                     }
+                    empty_duration = elst.edits[idx].segment_duration;
                     idx += 1;
                 }
                 track.empty_duration = Some(MediaScaledTime(empty_duration));
-                if elst.edits[idx].media_time < 0 {
-                    return Err(Error::InvalidData("unexpected negative media time in edit"));
+                let media_time = elst.edits[idx].media_time;
+                if media_time < 0 {
+                    debug!("unexpected negative media time in edit");
                 }
-                track.media_time = Some(TrackScaledTime::<u64>(elst.edits[idx].media_time as u64,
+                track.media_time = Some(TrackScaledTime::<u64>(std::cmp::max(0, media_time) as u64,
                                                         track.id));
+                if elst.edits.len() > 2 {
+                    debug!("ignoring edit list with {} entries", elst.edits.len());
+                }
                 debug!("{:?}", elst);
             }
             _ => skip_box_content(&mut b)?,
@@ -1208,9 +1119,6 @@ fn read_tkhd<T: Read>(src: &mut BMFFBox<T>) -> Result<TrackHeaderBox> {
 fn read_elst<T: Read>(src: &mut BMFFBox<T>) -> Result<EditListBox> {
     let (version, _) = read_fullbox_extra(src)?;
     let edit_count = be_u32_with_limit(src)?;
-    if edit_count == 0 {
-        return Err(Error::InvalidData("invalid edit count"));
-    }
     let mut edits = Vec::new();
     for _ in 0..edit_count {
         let (segment_duration, media_time) = match version {
@@ -1233,6 +1141,9 @@ fn read_elst<T: Read>(src: &mut BMFFBox<T>) -> Result<EditListBox> {
             media_rate_fraction: media_rate_fraction,
         })?;
     }
+
+    // Padding could be added in some contents.
+    skip_box_remain(src)?;
 
     Ok(EditListBox {
         edits: edits,
@@ -1906,35 +1817,7 @@ fn read_video_sample_entry<T: Read>(src: &mut BMFFBox<T>, brand: &FourCC) -> Res
     #[cfg(feature = "craw")]
     {
         if codec_type == CodecType::CRAW {
-            skip(src, 54)?;
-            let mut is_jpeg = false;
-            {
-                let mut iter = src.box_iter();
-                while let Some(mut b) = iter.next_box()? {
-                    debug!("Box size {}", b.head.size);
-                    match b.head.name {
-                        BoxType::QTJPEGAtom => {
-                            is_jpeg = true;
-                        }
-                        BoxType::CanonCMP1 => {
-                        }
-                        _ => {
-                            debug!("Unsupported box '{:?}' in CRAW",
-                                   b.head.name);
-                        }
-                    }
-                    skip_box_remain(&mut b)?;
-                }
-            }
-            skip_box_remain(src)?;
-            check_parser_state!(src.content);
-
-            return Ok((codec_type, SampleEntry::CanonCRAW(CanonCRAWEntry {
-                data_reference_index: data_reference_index,
-                width: width,
-                height: height,
-                is_jpeg: is_jpeg,
-            })));
+            return craw::read_craw_entry(src, codec_type, width, height, data_reference_index);
         }
     }
 

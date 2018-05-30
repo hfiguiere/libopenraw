@@ -139,9 +139,9 @@ box_database!(
     CompositionOffsetBox              0x63747473, // "ctts"
     LPCMAudioSampleEntry              0x6C70636D, // "lpcm" - quicktime atom
     ALACSpecificBox                   0x616C6163, // "alac" - Also used by ALACSampleEntry
+    UuidBox                           0x75756964, // "uuid"
     QTJPEGAtom                        0x4a504547, // "JPEG"
     FreeBox                           0x66726565, // "free"
-    UuidBox                           0x75756964, // "uuid"
 
     // All the Canon CR3 stuff.
     CanonCRAWEntry                    0x43524157, // "CRAW"

@@ -463,6 +463,7 @@ pub unsafe extern fn mp4parse_get_track_info(parser: *mut Mp4parseParser, track_
             VideoCodecSpecific::ESDSConfig(_) => // MP4V (14496-2) video is unsupported.
                 Mp4parseCodec::Unknown,
         },
+        #[cfg(feature = "craw")]
         Some(SampleEntry::CanonCRAW(_)) =>
             Mp4parseCodec::Craw,
         _ => Mp4parseCodec::Unknown,

@@ -39,6 +39,7 @@ demo/ppmload
 lib/teststream
 lib/*.log
 lib/*.trs
+lib/mp4/target
 test/ljpegtest
 test/extensions
 test/testunpack

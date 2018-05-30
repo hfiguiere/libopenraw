@@ -110,7 +110,8 @@ fn public_api() {
                 assert!(a.samplesize > 0);
                 assert!(a.samplerate > 0.0);
             }
-            Some(mp4::SampleEntry::CanonCRAW(_)) |
+            #[cfg(feature = "craw")]
+            Some(mp4::SampleEntry::CanonCRAW(_)) => {}
             Some(mp4::SampleEntry::Unknown) | None => {}
         }
     }
