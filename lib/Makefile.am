@@ -84,7 +84,7 @@ endif
 CARGO_TARGET_DIR=@abs_top_builddir@/lib/mp4/target
 RUST_LIB=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@/libmp4.a
 
-$(RUST_LIB):
+$(RUST_LIB): $(RUST_FILES)
 	cd $(srcdir)/mp4 && \
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
 
