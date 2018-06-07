@@ -294,6 +294,9 @@ bool Test::testRawType(const std::string & result)
     case OR_RAWFILE_TYPE_RAF:
         RETURN_TEST(result == "RAF", result);
         break;
+    case OR_RAWFILE_TYPE_GPR:
+        RETURN_TEST(result == "GPR", result);
+        break;
     case OR_RAWFILE_TYPE_TIFF:
         RETURN_TEST(result == "TIFF", result);
         break;

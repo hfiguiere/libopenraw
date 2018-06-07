@@ -97,6 +97,9 @@ void init(void)
     RawFileFactory::registerType(OR_RAWFILE_TYPE_DNG,
                                  std::bind(&Internals::DngFile::factory, _1),
                                  "dng");
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_GPR,
+                                 std::bind(&Internals::DngFile::factory, _1),
+                                 "gpr");
     RawFileFactory::registerType(OR_RAWFILE_TYPE_PEF,
                                  std::bind(&Internals::PEFFile::factory, _1),
                                  "pef");

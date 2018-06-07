@@ -200,6 +200,9 @@ public:
             case OR_RAWFILE_TYPE_TIFF:
                 return "TIFF";
                 break;
+            case OR_RAWFILE_TYPE_GPR:
+                return "GoPro GPR";
+                break;
             }
             return "Unknown";
         }

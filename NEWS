@@ -7,6 +7,7 @@ New features:
   - API: the package name is libopenraw-0.2
   - API: or_rawfile_get_vendorid() to get the vendor id.
   - Support for Canon CR3.
+  - Support for GoPro GPR.
 
   Camera support:
   [ a * denote that WB coefficients have been included ]

@@ -40,6 +40,7 @@ below:
     - Pentax PEF
     - Epson ERF
     - DNG
+    - GoPro GPR
     - Sony ARW
     - Minolta MRW
     - Panasonic RAW and RW2
@@ -227,6 +228,8 @@ Adobe DNG                Y Y B Y Y Y Y Y
  Ricoh GR-2              T T X T T T
  Ricoh GRX               T T X T T T
  Ricoh GX100
+
+GoPro GPR                Y Y N Y Y Y Y Y
 
 Sony ARW                 Y Y N Y N Y N Y
  A-100                   T N   T   T
