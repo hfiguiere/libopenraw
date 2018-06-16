@@ -262,6 +262,10 @@ static const BuiltinColourMatrix s_matrices[] = {
     0,
     0,
     { 8112, -2563, -740, -3730, 11784, 2197, -941, 2075, 4933 } },
+  { OR_MAKE_LEICA_TYPEID(OR_TYPEID_LEICA_VLUX_TYP114),
+    0,
+    0,
+    { 7830, -2696, -763, -3325, 11667, 1866, -641, 1712, 4824 } },
 
   { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
@@ -327,6 +331,7 @@ const IfdFile::camera_ids_t Rw2File::s_def[] = {
 	{ "V-LUX 1", OR_MAKE_LEICA_TYPEID(OR_TYPEID_LEICA_VLUX_1) },
 	{ "D-LUX (Typ 109)", OR_MAKE_LEICA_TYPEID(OR_TYPEID_LEICA_DLUX_TYP109) },
 	{ "V-LUX 4", OR_MAKE_LEICA_TYPEID(OR_TYPEID_LEICA_VLUX_4) },
+	{ "V-LUX (Typ 114)", OR_MAKE_LEICA_TYPEID(OR_TYPEID_LEICA_VLUX_TYP114) },
 
 	{ 0, 0 }
 };
