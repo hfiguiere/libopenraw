@@ -284,6 +284,7 @@ enum {
     OR_TYPEID_LEICA_CL = 20,
     /* RWL (Panasonic RAW) */
     OR_TYPEID_LEICA_VLUX_TYP114 = 21,
+    OR_TYPEID_LEICA_CLUX = 22,
     _OR_TYPEID_LEICA_LAST
 };
 
