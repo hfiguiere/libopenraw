@@ -1,6 +1,11 @@
 What's (visibly) new in 0.2.0
 =============================
 
+Contributors to this project agree to the Freedesktop.org Code of
+Conduct:
+
+  https://www.freedesktop.org/wiki/CodeOfConduct/
+
 This release break ABI. Recompiling your code should be enough.
 
 - The new pkgconfig package name is libopenraw-0.2.
