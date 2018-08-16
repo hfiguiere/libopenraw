@@ -20,13 +20,13 @@ New features:
   - Support for Canon EOS M50*, SX1 IS*, SX60 HS*, S120*, 2000D/Rebel T7*.
   - Support for Fujifilm HS30EXR*.
   - Support for Olympus Stylus1,1s.
-  - Support for Panasonic FZ45, FZ150*, GH5S*, LX1*.
+  - Support for Panasonic FZ45, FZ35*, FZ150*, GH5S*, LX1*.
   - Support for Pentax 645Z DNG and PEF*, 645D DNG.
   - Support for Ricoh GX200, GR II.
   - Support for Sony RX0*, RX10M4*, A5000*, A5100*, A7M2*, A7M3*, A7S*,
     A7SM2*, A7RM3*, A9*, NEX-3N*, DSLR-A230*, DSLR-A330*, DSLR-A450*,
     DSLR-A500*, SLT-A37*, ILCA-68*, ILCA-77M2*.
-  - Support for Leica V-LUX (Typ 114)*.
+  - Support for Leica V-LUX (Typ 114)*, C-LUX*.
   - Added alias for Canon Rebel XTi (400D).
   - Added alias for Sony A3500 (A3000).
   - Coefficients for Panasonic GH5.
