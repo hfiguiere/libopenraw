@@ -12,13 +12,15 @@ This release break ABI. Recompiling your code should be enough.
 
 - libopenraw now requires Rust to build.
 
-It adds the following API:
+It adds or change the following API:
 
-- or_rawfile_get_vendorid(): Use this to get the vendor ID for the RAW
-file. While this is the same as the vendor part of the type ID that
-you'd obtain with the macro OR_GET_FILE_TYPEID_VENDOR(), it is
+- NEW or_rawfile_get_vendorid(): Use this to get the vendor ID for the
+RAW file. While this is the same as the vendor part of the type ID
+that you'd obtain with the macro OR_GET_FILE_TYPEID_VENDOR(), it is
 obtained differently, and might be much slower. `ordiag` will check
 the consistency. The testsuite will fail if inconsistent.
+
+- Some camera IDs have been changed. Name and value.
 
 It adds support for a certain number of cameras:
 
