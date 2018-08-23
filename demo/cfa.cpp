@@ -1,7 +1,7 @@
 /*
  * libopenraw - cfa.cpp
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2018 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 #include <stdlib.h>
 
 #include <iostream>
+#include <memory>
 #include <libopenraw/libopenraw.h>
 #include <libopenraw/debug.h>
 
@@ -29,10 +30,7 @@
 #include "rawfile.hpp"
 #include "rawdata.hpp"
 
-#include <boost/scoped_ptr.hpp>
-
 using OpenRaw::Thumbnail;
-using boost::scoped_ptr;
 
 int
 main(int argc, char** argv)
@@ -58,7 +56,7 @@ main(int argc, char** argv)
     FILE * f;
     size_t written_size;
     
-    scoped_ptr<OpenRaw::RawFile> raw_file(OpenRaw::RawFile::newRawFile(argv[optind]));
+    std::unique_ptr<OpenRaw::RawFile> raw_file(OpenRaw::RawFile::newRawFile(argv[optind]));
     
     OpenRaw::RawData rdata;
     uint32_t options = (keepCompressed ? OR_OPTIONS_DONT_DECOMPRESS : 0);

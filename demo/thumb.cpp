@@ -1,5 +1,5 @@
 /*
- * libopenraw - thumbcpp
+ * libopenraw - thumb.cpp
  *
  * Copyright (C) 2006-2016 Hubert Figuiere
  *
@@ -22,13 +22,12 @@
 #include <stdio.h>
 
 #include <iostream>
+#include <memory>
 #include <libopenraw/libopenraw.h>
 #include <libopenraw/debug.h>
 
 #include "thumbnail.hpp"
 #include "rawfile.hpp"
-
-#include <boost/scoped_ptr.hpp>
 
 using OpenRaw::Thumbnail;
 
