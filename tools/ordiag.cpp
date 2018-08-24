@@ -313,7 +313,7 @@ public:
                     % x % y;
                 uint32_t roi_x, roi_y, roi_width, roi_height;
                 or_rawdata_get_roi(rd, &roi_x, &roi_y, &roi_width, &roi_height);
-                m_out << boost::format("\t\tROI: %1% %2% %3% %4%\n")
+                m_out << boost::format("\t\tROI (x,y,w,h): %1% %2% %3% %4%\n")
                     % roi_x % roi_y % roi_width % roi_height;
                 ORCfaPatternRef pattern = or_rawdata_get_cfa_pattern(rd);
                 ::or_cfa_pattern patternType
