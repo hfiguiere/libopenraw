@@ -138,8 +138,18 @@ Option<std::array<uint32_t, 4>> canon_get_sensorinfo(const IfdDir::Ref& ifddir)
             std::array<uint32_t, 4> result;
             result[0] = sensorInfo[5];
             result[1] = sensorInfo[6];
-            result[2] = sensorInfo[7] - sensorInfo[5];
-            result[3] = sensorInfo[8] - sensorInfo[6];
+            uint32_t w = sensorInfo[7] - sensorInfo[5];
+            // it seems that this could lead to an odd number. Make it even.
+            if (w % 2) {
+                w++;
+            }
+            result[2] = w;
+            uint32_t h = sensorInfo[8] - sensorInfo[6];
+            // same as for width
+            if (h % 2) {
+                h++;
+            }
+            result[3] = h;
             return option_some(std::move(result));
         }
         else {
