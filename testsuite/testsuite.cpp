@@ -532,7 +532,7 @@ bool Test::testRawDataDimensions(const std::string & result)
     RETURN_TEST(success, result)
 }
 
-bool Test::testRawDataRoi(const std::string & result)
+bool Test::testRawDataActiveArea(const std::string & result)
 {
     if(m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
@@ -556,9 +556,10 @@ bool Test::testRawDataRoi(const std::string & result)
     {
         RETURN_FAIL("conversion failed");
     }
-    RETURN_TEST(x == m_rawdata->roi_x() && y == m_rawdata->roi_y()
-        && w == m_rawdata->roi_width() && h == m_rawdata->roi_height(),
-        result)
+    RETURN_TEST(x == m_rawdata->activeAreaX() && y == m_rawdata->activeAreaY()
+                && w == m_rawdata->activeAreaWidth()
+                && h == m_rawdata->activeAreaHeight(),
+                result);
 }
 
 bool Test::testRawCfaPattern(const std::string & result)
@@ -769,8 +770,8 @@ int Test::run()
         case XML_rawDataDimensions:
             pass = testRawDataDimensions(elem.second);
             break;
-        case XML_rawDataRoi:
-            pass = testRawDataRoi(elem.second);
+        case XML_rawDataActiveArea:
+            pass = testRawDataActiveArea(elem.second);
             break;
         case XML_rawCfaPattern:
             pass = testRawCfaPattern(elem.second);

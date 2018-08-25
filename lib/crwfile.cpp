@@ -266,8 +266,8 @@ RawContainer* CRWFile::getContainer() const
                 data.swap(*dData);
             }
         }
-        data.setRoi((*active_area)[0], (*active_area)[1],
-                    (*active_area)[2], (*active_area)[3]);
+        data.setActiveArea((*active_area)[0], (*active_area)[1],
+                           (*active_area)[2], (*active_area)[3]);
         err = OR_ERROR_NONE;
     }
     return err;

@@ -524,7 +524,7 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & le
 	e = _cfaIfd->getEntry(IFD::RW2_TAG_IMAGE_WIDTH);
 	uint32_t w = e->getIntegerArrayItem(0);
 
-	data.setRoi(x, y, w, h);
+	data.setActiveArea(x, y, w, h);
 
 	return ret;
 }

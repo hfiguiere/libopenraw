@@ -585,8 +585,8 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     const IfdDir::Ref &_makerNoteIfd = makerNoteIfd();
     auto sensorInfo = canon_get_sensorinfo(_makerNoteIfd);
     if (sensorInfo) {
-        data.setRoi((*sensorInfo)[0], (*sensorInfo)[1],
-                    (*sensorInfo)[2], (*sensorInfo)[3]);
+        data.setActiveArea((*sensorInfo)[0], (*sensorInfo)[1],
+                           (*sensorInfo)[2], (*sensorInfo)[3]);
     }
 
     return OR_ERROR_NONE;

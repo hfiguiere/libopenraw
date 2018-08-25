@@ -106,8 +106,8 @@ RawContainer *Cr3File::getContainer() const
     const IfdDir::Ref &makerNoteIfd = _getMakerNoteIfd();
     auto sensorInfo = canon_get_sensorinfo(makerNoteIfd);
     if (sensorInfo) {
-        data.setRoi((*sensorInfo)[0], (*sensorInfo)[1],
-                    (*sensorInfo)[2], (*sensorInfo)[3]);
+        data.setActiveArea((*sensorInfo)[0], (*sensorInfo)[1],
+                           (*sensorInfo)[2], (*sensorInfo)[3]);
     }
 
     auto byte_length = (*raw_track).size;

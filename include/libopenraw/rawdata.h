@@ -61,11 +61,13 @@ extern "C" {
 	void
 	or_rawdata_dimensions(ORRawDataRef rawdata, 
 						  uint32_t *x, uint32_t *y);
-	
-	void
-	or_rawdata_get_roi(ORRawDataRef rawdata, 
-				   uint32_t *x, uint32_t *y,
-				   uint32_t *width, uint32_t *height);	
+
+	/** Return the active area for the raw data.
+	 */
+	or_error
+	or_rawdata_get_active_area(ORRawDataRef rawdata,
+							   uint32_t *x, uint32_t *y,
+							   uint32_t *width, uint32_t *height);
 
 	uint32_t
 	or_rawdata_bpc(ORRawDataRef rawdata);

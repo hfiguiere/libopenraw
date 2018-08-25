@@ -97,22 +97,23 @@ void or_rawdata_dimensions(ORRawDataRef rawdata, uint32_t *width,
     }
 }
 
-void or_rawdata_get_roi(ORRawDataRef rawdata, uint32_t *x, uint32_t *y,
-                        uint32_t *width, uint32_t *height)
+or_error or_rawdata_get_active_area(ORRawDataRef rawdata, uint32_t *x, uint32_t *y,
+                                uint32_t *width, uint32_t *height)
 {
     RawData *t = reinterpret_cast<RawData *>(rawdata);
     if (x != NULL) {
-        *x = t->roi_x();
+        *x = t->activeAreaX();
     }
     if (y != NULL) {
-        *y = t->roi_y();
+        *y = t->activeAreaY();
     }
     if (width != NULL) {
-        *width = t->roi_width();
+        *width = t->activeAreaWidth();
     }
     if (height != NULL) {
-        *height = t->roi_height();
+        *height = t->activeAreaHeight();
     }
+    return OR_ERROR_NONE;
 }
 
 uint32_t or_rawdata_bpc(ORRawDataRef rawdata)

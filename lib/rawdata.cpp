@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.cpp
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2018 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -45,6 +45,11 @@ class RawData::Private {
 public:
     RawData *self;
     uint16_t blackLevel, whiteLevel;
+    /** Active Area */
+    uint32_t activeAreaX;
+    uint32_t activeAreaY;
+    uint32_t activeAreaW;
+    uint32_t activeAreaH;
     ExifPhotometricInterpretation photometricInterpretation;
     const CfaPattern* cfa_pattern; // IMMUTABLE
     uint32_t compression;
@@ -63,17 +68,18 @@ public:
     uint32_t colourMatrix2Count;
 
     Private(RawData *_self)
-        : self(_self),
-          blackLevel(0), whiteLevel(0),
-          photometricInterpretation(EV_PI_CFA),
-          cfa_pattern(CfaPattern::twoByTwoPattern(OR_CFA_PATTERN_NONE)),
-          compression(0),
-          pos(NULL), offset(0),
-          row_offset(0),
-          slice(0), sliceWidth(0),
-          sliceOffset(0), slices(),
-          colourMatrixCount(0),
-          colourMatrix2Count(0)
+        : self(_self)
+        , blackLevel(0), whiteLevel(0)
+        , activeAreaX(0), activeAreaY(0), activeAreaW(0), activeAreaH(0)
+        , photometricInterpretation(EV_PI_CFA)
+        , cfa_pattern(CfaPattern::twoByTwoPattern(OR_CFA_PATTERN_NONE))
+        , compression(0)
+        , pos(NULL), offset(0)
+        , row_offset(0)
+        , slice(0), sliceWidth(0)
+        , sliceOffset(0), slices()
+        , colourMatrixCount(0)
+        , colourMatrix2Count(0)
         {
             memset(colourMatrix, 0, sizeof(colourMatrix));
             memset(colourMatrix2, 0, sizeof(colourMatrix2));
@@ -197,6 +203,34 @@ void RawData::setWhiteLevel(uint16_t m)
     d->whiteLevel = m;
 }
 
+uint32_t RawData::activeAreaX() const
+{
+    return d->activeAreaX;
+}
+
+uint32_t RawData::activeAreaY() const
+{
+    return d->activeAreaY;
+}
+
+uint32_t RawData::activeAreaWidth() const
+{
+    return d->activeAreaW;
+}
+
+uint32_t RawData::activeAreaHeight() const
+{
+    return d->activeAreaH;
+}
+
+void RawData::setActiveArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+{
+    d->activeAreaX = x;
+    d->activeAreaY = y;
+    d->activeAreaW = w;
+    d->activeAreaH = h;
+}
+
 void RawData::setPhotometricInterpretation(ExifPhotometricInterpretation pi)
 {
     d->photometricInterpretation = pi;
@@ -257,14 +291,20 @@ void * RawData::allocData(const size_t s)
 }
 
 
-void RawData::setDimensions(uint32_t _x, uint32_t _y)
+void RawData::setDimensions(uint32_t x, uint32_t y)
 {
-    BitmapData::setDimensions(_x, _y);
-    if(d->slices.size()) {
+    BitmapData::setDimensions(x, y);
+    if (d->activeAreaW == 0) {
+        d->activeAreaW = x;
+    }
+    if (d->activeAreaH == 0) {
+        d->activeAreaH = y;
+    }
+    if (d->slices.size()) {
         d->sliceWidth = d->slices[0];
     }
     else {
-        d->sliceWidth = _x;
+        d->sliceWidth = x;
     }
 }
 

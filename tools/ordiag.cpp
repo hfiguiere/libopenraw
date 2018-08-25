@@ -311,10 +311,16 @@ public:
                 or_rawdata_dimensions(rd, &x, &y);
                 m_out << boost::format("\t\tDimensions: width = %1% height = %2%\n")
                     % x % y;
-                uint32_t roi_x, roi_y, roi_width, roi_height;
-                or_rawdata_get_roi(rd, &roi_x, &roi_y, &roi_width, &roi_height);
-                m_out << boost::format("\t\tROI (x,y,w,h): %1% %2% %3% %4%\n")
-                    % roi_x % roi_y % roi_width % roi_height;
+
+                // Active Area
+                uint32_t aa_x, aa_y, aa_width, aa_height;
+                or_rawdata_get_active_area(rd, &aa_x, &aa_y,
+                                           &aa_width, &aa_height);
+                m_out <<
+                    boost::format("\t\tActive Area (x,y,w,h): %1% %2% %3% %4%\n")
+                    % aa_x % aa_y % aa_width % aa_height;
+
+                // CFA
                 ORCfaPatternRef pattern = or_rawdata_get_cfa_pattern(rd);
                 ::or_cfa_pattern patternType
                       = pattern ? or_cfapattern_get_type(pattern)

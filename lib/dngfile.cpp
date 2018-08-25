@@ -202,6 +202,21 @@ DngFile::~DngFile()
         data.setDataType(OR_DATA_TYPE_RAW);
     }
     uint32_t crop_x, crop_y, crop_w, crop_h;
+    auto e = _cfaIfd->getEntry(IFD::DNG_TAG_ACTIVE_AREA);
+    if (e) {
+        crop_x = e->getIntegerArrayItem(0);
+        crop_y = e->getIntegerArrayItem(1);
+        crop_w = e->getIntegerArrayItem(2);
+        crop_h = e->getIntegerArrayItem(3);
+    } else {
+        crop_x = crop_y = 0;
+        crop_w = data.width();
+        crop_h = data.height();
+    }
+
+    data.setActiveArea(crop_x, crop_y, crop_w, crop_h);
+
+#if 0
     IfdEntry::Ref e = _cfaIfd->getEntry(IFD::DNG_TAG_DEFAULT_CROP_ORIGIN);
     if(e) {
         crop_x = e->getIntegerArrayItem(0);
@@ -219,7 +234,7 @@ DngFile::~DngFile()
         crop_w = data.width();
         crop_h = data.height();
     }
-    data.setRoi(crop_x, crop_y, crop_w, crop_h);
+#endif
 
     return ret;
 }

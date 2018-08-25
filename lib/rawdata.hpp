@@ -59,6 +59,16 @@ public:
     void setBlackLevel(uint16_t _m);
     void setWhiteLevel(uint16_t _m);
 
+    /** retrieve the active area within the data
+     *  the only guarantee is that if the width or height is 0
+     *  when setting the dimensions the first time
+     *  they'll be set to width() and height()
+     */
+    uint32_t activeAreaX() const;
+    uint32_t activeAreaY() const;
+    uint32_t activeAreaWidth() const;
+    uint32_t activeAreaHeight() const;
+    void setActiveArea(uint32_t x, uint32_t y, uint32_t w, uint32_t h);
 
     /**
      */

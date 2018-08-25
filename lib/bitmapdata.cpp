@@ -1,7 +1,7 @@
 /*
  * libopenraw - bitmapdata.cpp
  *
- * Copyright (C) 2007-2017 Hubert Figuière
+ * Copyright (C) 2007-2018 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -47,11 +47,6 @@ public:
     uint32_t height;
     /** bpc bit per channel. 0 is not a valid value */
     uint32_t bpc;
-    /** region of interest */
-    uint32_t roi_x;
-    uint32_t roi_y;
-    uint32_t roi_w;
-    uint32_t roi_h;
 
     Private()
         : data(nullptr)
@@ -60,10 +55,6 @@ public:
         , width(0)
         , height(0)
         , bpc(0)
-        , roi_x(0)
-        , roi_y(0)
-        , roi_w(0)
-        , roi_h(0)
     {
     }
 
@@ -170,39 +161,6 @@ void BitmapData::setDimensions(uint32_t _width, uint32_t _height)
 {
     d->width = _width;
     d->height = _height;
-    if (d->roi_w == 0) {
-        d->roi_w = _width;
-    }
-    if (d->roi_h == 0) {
-        d->roi_h = _height;
-    }
 }
 
-uint32_t BitmapData::roi_x() const
-{
-    return d->roi_x;
-}
-
-uint32_t BitmapData::roi_y() const
-{
-    return d->roi_y;
-}
-
-uint32_t BitmapData::roi_width() const
-{
-    return d->roi_w;
-}
-
-uint32_t BitmapData::roi_height() const
-{
-    return d->roi_h;
-}
-
-void BitmapData::setRoi(uint32_t _x, uint32_t _y, uint32_t w, uint32_t h)
-{
-    d->roi_x = _x;
-    d->roi_y = _y;
-    d->roi_w = w;
-    d->roi_h = h;
-}
 }

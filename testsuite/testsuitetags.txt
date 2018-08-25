@@ -14,7 +14,7 @@ thumbMd5
 rawDataType
 rawDataSize
 rawDataDimensions
-rawDataRoi
+rawDataActiveArea
 rawCfaPattern
 rawMinValue
 rawMaxValue

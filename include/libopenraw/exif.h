@@ -159,6 +159,7 @@ typedef	enum {
 	DNG_TAG_REDUCTION_MATRIX2                = 0xc626,
 	DNG_TAG_CALIBRATION_ILLUMINANT1          = 0xc65a,
 	DNG_TAG_CALIBRATION_ILLUMINANT2          = 0xc65b,
+	DNG_TAG_ACTIVE_AREA                      = 0xc68d,
 
 	/* CR2 tags */
 	CR2_TAG_c5d9 = 0xc5d9,

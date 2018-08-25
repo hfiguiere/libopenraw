@@ -63,16 +63,6 @@ public:
 	/** set the pixel dimensions of the bitmap */
 	virtual void setDimensions(uint32_t x, uint32_t y);
 
-	/** retrieve the region of interest within the data 
-	 *  the only guarantee is that if the width or height is 0 
-	 *  when setting the dimensions the first time
-	 *  they'll be set to width() and height()
-	 */
-	uint32_t roi_x() const;
-	uint32_t roi_y() const;
-	uint32_t roi_width() const;
-	uint32_t roi_height() const;
-	void setRoi(uint32_t x, uint32_t y, uint32_t w, uint32_t h);
 private:
 	class Private;
 	BitmapData::Private *d;

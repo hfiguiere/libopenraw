@@ -17,7 +17,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16973120</rawDataSize>
       <rawDataDimensions>3596 2360</rawDataDimensions>
-      <rawDataRoi>84 19 3504 2336</rawDataRoi>
+      <rawDataActiveArea>84 19 3504 2336</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
@@ -43,7 +43,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>24802624</rawDataSize>
       <rawDataDimensions>4312 2876</rawDataDimensions>
-      <rawDataRoi>32 23 4272 2848</rawDataRoi>
+      <rawDataActiveArea>32 23 4272 2848</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>16383</rawMaxValue>
@@ -69,7 +69,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>37691520</rawDataSize>
       <rawDataDimensions>5360 3516</rawDataDimensions>
-      <rawDataRoi>168 56 5184 3456</rawDataRoi>
+      <rawDataActiveArea>168 56 5184 3456</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>16383</rawMaxValue>
@@ -95,7 +95,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>37691520</rawDataSize>
       <rawDataDimensions>5360 3516</rawDataDimensions>
-      <rawDataRoi>168 56 5184 3456</rawDataRoi>
+      <rawDataActiveArea>168 56 5184 3456</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>16383</rawMaxValue>
@@ -121,7 +121,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>44065536</rawDataSize>
       <rawDataDimensions>5792 3804</rawDataDimensions>
-      <rawDataRoi>168 56 5616 3744</rawDataRoi>
+      <rawDataActiveArea>168 56 5616 3744</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>16383</rawMaxValue>
@@ -147,7 +147,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20846592</rawDataSize>
       <rawDataDimensions>3744 2784</rawDataDimensions>
-      <rawDataRoi>24 28 3648 2736</rawDataRoi>
+      <rawDataActiveArea>24 28 3648 2736</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
@@ -173,7 +173,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20846592</rawDataSize>
       <rawDataDimensions>3744 2784</rawDataDimensions>
-      <rawDataRoi>24 28 3648 2736</rawDataRoi>
+      <rawDataActiveArea>24 28 3648 2736</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
@@ -199,7 +199,7 @@
       <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>25238720</rawDataSize>
       <rawDataDimensions>6288 4056</rawDataDimensions>
-      <rawDataRoi>276 48 6000 4000</rawDataRoi>
+      <rawDataActiveArea>276 48 6000 4000</rawDataActiveArea>
       <rawCfaPattern>NONE</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>
@@ -224,7 +224,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>13036672</rawDataSize>
       <rawDataDimensions>3152 2068</rawDataDimensions>
-      <rawDataRoi>72 16 3072 2048</rawDataRoi>
+      <rawDataActiveArea>72 16 3072 2048</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>1023</rawMaxValue>
@@ -249,7 +249,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>13036672</rawDataSize>
       <rawDataDimensions>3152 2068</rawDataDimensions>
-      <rawDataRoi>72 16 3072 2048</rawDataRoi>
+      <rawDataActiveArea>72 16 3072 2048</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>1023</rawMaxValue>
@@ -545,6 +545,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20656128</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
+      <rawDataActiveArea>0 0 3936 2624</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
@@ -590,6 +591,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20681920</rawDataSize>
       <rawDataDimensions>3920 2638</rawDataDimensions>
+      <rawDataActiveArea>0 0 3920 2638</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>255</rawMaxValue>
