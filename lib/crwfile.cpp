@@ -42,6 +42,7 @@
 #include "jfifcontainer.hpp"
 #include "crwdecompressor.hpp"
 #include "rawfile_private.hpp"
+#include "canon.hpp"
 
 using namespace Debug;
 
@@ -213,16 +214,26 @@ RawContainer* CRWFile::getContainer() const
     LOGDBG2("length = %u\n", iter->length);
     LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->offset));
 
-    // go figure what the +2 is. looks like it is the byte #
-    file->seek(exifProps.offset() + iter->offset + 2, SEEK_SET);
+    // This is the SensorInfo tag
+    // https://sno.phy.queensu.ca/%7Ephil/exiftool/TagNames/Canon.html#SensorInfo
+    file->seek(exifProps.offset() + iter->offset, SEEK_SET);
 
-    auto cfa_x = m_container->readUInt16(file);
-    auto cfa_y = m_container->readUInt16(file);
-    if(cfa_x.empty() || cfa_y.empty()) {
-        LOGERR("Couldn't find the sensor size.\n");
+    std::vector<uint16_t> sensor_info;
+    auto count_read = m_container->readUInt16Array(file, sensor_info, 9);
+    if (count_read != 9) {
+        LOGERR("SensorInfo short read %lu.\n", count_read);
         return OR_ERROR_NOT_FOUND;
     }
+    LOGDBG1("read sensor info %ld\n", count_read);
+    auto cfa_x = sensor_info[1];
+    auto cfa_y = sensor_info[2];
+    LOGDBG2("cfa, x %u, y %u\n", cfa_x, cfa_y);
 
+    auto active_area = canon_parse_sensorinfo(sensor_info);
+    if (!active_area) {
+        LOGERR("SensorInfo: couldn't get active area.\n");
+        return OR_ERROR_NOT_FOUND;
+    }
 
     const CIFF::RecordEntry *entry = m_container->getRawDataRecord();
     if (entry) {
@@ -246,7 +257,7 @@ RawContainer* CRWFile::getContainer() const
 
             CrwDecompressor decomp(s.get(), m_container);
 
-            decomp.setOutputDimensions(cfa_x.value(), cfa_y.value());
+            decomp.setOutputDimensions(cfa_x, cfa_y);
             decomp.setDecoderTable(decoderTable);
             RawDataPtr dData = decomp.decompress();
             if (dData) {
@@ -255,6 +266,8 @@ RawContainer* CRWFile::getContainer() const
                 data.swap(*dData);
             }
         }
+        data.setRoi((*active_area)[0], (*active_area)[1],
+                    (*active_area)[2], (*active_area)[3]);
         err = OR_ERROR_NONE;
     }
     return err;

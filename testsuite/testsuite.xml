@@ -224,6 +224,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>13036672</rawDataSize>
       <rawDataDimensions>3152 2068</rawDataDimensions>
+      <rawDataRoi>72 16 3072 2048</rawDataRoi>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>1023</rawMaxValue>
@@ -248,6 +249,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>13036672</rawDataSize>
       <rawDataDimensions>3152 2068</rawDataDimensions>
+      <rawDataRoi>72 16 3072 2048</rawDataRoi>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>1023</rawMaxValue>

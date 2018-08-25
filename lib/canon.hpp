@@ -34,7 +34,16 @@ namespace Internals {
 
 RawFile::TypeId canon_modelid_to_typeid(uint32_t model_id);
 
-Option<std::array<uint32_t, 4>> canon_get_sensorinfo(const IfdDir::Ref& ifddir);
+/**
+ * Parse the sensor info from a buffer of uint16_t
+ */
+Option<std::array<uint32_t, 4>>
+canon_parse_sensorinfo(const std::vector<uint16_t>& sensor_info);
+/**
+ * Get the sensor info from and IfdDir
+ */
+Option<std::array<uint32_t, 4>>
+canon_get_sensorinfo(const IfdDir::Ref& ifddir);
 
 }
 }

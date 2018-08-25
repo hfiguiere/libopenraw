@@ -125,37 +125,53 @@ RawFile::TypeId canon_modelid_to_typeid(uint32_t model_id)
     return 0;
 }
 
+Option<std::array<uint32_t, 4>>
+canon_parse_sensorinfo(const std::vector<uint16_t>& sensor_info)
+{
+    if (sensor_info.size() > 8) {
+        std::array<uint32_t, 4> result;
+        result[0] = sensor_info[5];
+        result[1] = sensor_info[6];
+        if (sensor_info[7] <= sensor_info[5]) {
+            LOGWARN("sensor_info: bottom %u <= top %u\n",
+                    sensor_info[7], sensor_info[5]);
+            return OptionNone();
+        }
+        uint32_t w = sensor_info[7] - sensor_info[5];
+        // it seems that this could lead to an odd number. Make it even.
+        if (w % 2) {
+            w++;
+        }
+        result[2] = w;
+        if (sensor_info[8] <= sensor_info[6]) {
+            LOGWARN("sensor_info: right %u <= left %u\n",
+                    sensor_info[8], sensor_info[6]);
+            return OptionNone();
+        }
+        uint32_t h = sensor_info[8] - sensor_info[6];
+        // same as for width
+        if (h % 2) {
+            h++;
+        }
+        result[3] = h;
+        return option_some(std::move(result));
+    }
+    else {
+        LOGWARN("SensorInfo is too small: %lu - skipping.\n",
+                sensor_info.size());
+    }
+    return OptionNone();
+}
+
 Option<std::array<uint32_t, 4>> canon_get_sensorinfo(const IfdDir::Ref& ifddir)
 {
     auto e = ifddir->getEntry(IFD::MNOTE_CANON_SENSORINFO);
     if (!e) {
         return OptionNone();
     }
-    auto result3 = e->getArray<uint16_t>();
-    if (result3) {
-        std::vector<uint16_t> sensorInfo = result3.value();
-        if (sensorInfo.size() > 8) {
-            std::array<uint32_t, 4> result;
-            result[0] = sensorInfo[5];
-            result[1] = sensorInfo[6];
-            uint32_t w = sensorInfo[7] - sensorInfo[5];
-            // it seems that this could lead to an odd number. Make it even.
-            if (w % 2) {
-                w++;
-            }
-            result[2] = w;
-            uint32_t h = sensorInfo[8] - sensorInfo[6];
-            // same as for width
-            if (h % 2) {
-                h++;
-            }
-            result[3] = h;
-            return option_some(std::move(result));
-        }
-        else {
-            LOGWARN("sensorInfo is too small: %lu - skipping.\n",
-                    sensorInfo.size());
-        }
+    auto result = e->getArray<uint16_t>();
+    if (result) {
+        return canon_parse_sensorinfo(result.value());
     }
     return OptionNone();
 }
