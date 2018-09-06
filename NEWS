@@ -7,11 +7,15 @@ Conduct:
 
   https://www.freedesktop.org/wiki/CodeOfConduct/
 
-New features:
+Changes:
 
   - API: the package name is libopenraw-0.2
-  - API: or_rawfile_get_vendorid() to get the vendor id.
   - API: some camera ID have been renamed or value changed.
+  - API: or_rawdata_get_roi() renamed to or_rawdata_get_active_area().
+
+New features:
+
+  - API: or_rawfile_get_vendorid() to get the vendor id.
   - Support for Canon CR3.
   - Support for GoPro GPR.
 
@@ -20,22 +24,25 @@ New features:
 
   - Support for Canon EOS M50*, SX1 IS*, SX60 HS*, S120*, 2000D/Rebel T7*.
   - Support for Fujifilm S5000*, HS30EXR*, X-T100*.
-  - Support for Olympus Stylus1,1s.
+  - Support for Olympus Stylus1,1s, E-M10 Mark III*.
   - Support for Panasonic FZ45, FZ35*, FZ80/FZ82*, FZ150*, GH5S*, LX1*,
     LX10/LX15*.
-  - Support for Pentax 645Z DNG and PEF*, 645D DNG.
+  - Support for Pentax 645Z DNG and PEF*, 645D DNG, K1 Mk II DNG and PEF*.
   - Support for Ricoh GX200, GR II.
   - Support for Sony RX0*, RX10M4*, A5000*, A5100*, A7M2*, A7M3*, A7S*,
     A7SM2*, A7RM3*, A9*, NEX-3N*, DSLR-A230*, DSLR-A290*, DSLR-A330*,
-    DSLR-A450*, DSLR-A500*, SLT-A37*, ILCA-68*, ILCA-77M2*, RX100M6.
+    DSLR-A450*, DSLR-A500*, SLT-A37*, ILCA-68*, ILCA-77M2*, RX100M6*.
   - Support for Leica V-LUX (Typ 114)*, C-LUX*.
+  - Support for Nikon Z 6 and Z 7 (partial).
   - Added alias for Canon Rebel XTi (400D).
   - Added alias for Sony A3500 (A3000).
   - Coefficients for Panasonic GH5.
-  - Coefficients for Sony RX10, A6500.
+  - Coefficients for Sony RX10, RX100M5, A6500.
+  - Coefficients for Olympus E-M1 MarkII.
 
   - ordiag will check the consistency of vendor id.
   - If the extension isn't found, identify by content.
+  - Support active area for Canon CRW.
 
 Bug fixes:
 
