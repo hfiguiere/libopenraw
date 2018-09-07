@@ -55,6 +55,7 @@ static const BuiltinColourMatrix s_matrices[] = {
 
 const RawFile::camera_ids_t Cr3File::s_def[] = {
     { "Canon EOS M50", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M50) },
+    { "Canon EOS R", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R) },
     { 0, 0 }
 };
 
@@ -245,15 +246,19 @@ void Cr3File::_identifyId()
     if (mn) {
         auto id = mn->getValue<uint32_t>(IFD::MNOTE_CANON_MODEL_ID);
         if (id) {
-            auto type_id = canon_modelid_to_typeid(id.value());
+            auto id_value = id.value();
+            auto type_id = canon_modelid_to_typeid(id_value);
             if (type_id != 0) {
                 _setTypeId(type_id);
                 return;
             }
+            LOGERR("model ID %x not found\n", id_value);
+        } else {
+            LOGERR("model ID not found\n");
         }
+    } else {
+        LOGERR("model ID not found (missing MakerNote)\n");
     }
-
-    LOGERR("model ID not found\n");
 }
 
 }
