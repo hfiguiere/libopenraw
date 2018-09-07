@@ -26,7 +26,7 @@ New features:
   - Support for Fujifilm S5000*, HS30EXR*, X-T100*.
   - Support for Olympus Stylus1,1s, E-M10 Mark III*.
   - Support for Panasonic FZ45, FZ35*, FZ80/FZ82*, FZ150*, GH5S*, LX1*,
-    LX10/LX15*.
+    LX10/LX15*, ZS200.
   - Support for Pentax 645Z DNG and PEF*, 645D DNG, K1 Mk II DNG and PEF*.
   - Support for Ricoh GX200, GR II.
   - Support for Sony RX0*, RX10M4*, A5000*, A5100*, A7M2*, A7M3*, A7S*,
@@ -36,8 +36,8 @@ New features:
   - Support for Nikon Z 6 and Z 7 (partial).
   - Added alias for Canon Rebel XTi (400D).
   - Added alias for Sony A3500 (A3000).
-  - Coefficients for Panasonic GH5.
-  - Coefficients for Sony RX10, RX100M5, A6500.
+  - Coefficients for Panasonic GH5, ZS100.
+  - Coefficients for Sony RX10, RX10M2, RX10M3, RX100M5, A6500.
   - Coefficients for Olympus E-M1 MarkII.
 
   - ordiag will check the consistency of vendor id.
