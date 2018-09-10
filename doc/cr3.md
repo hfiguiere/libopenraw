@@ -154,13 +154,35 @@ Track 1 of type video is for the JPEG render of the image.
 | | + 'free'
 | | | (u16) 0 #
 
-## Track 2
+## Track 2 & 3
 
-Track 2 of type video is for the small RGB preview
+Track 2 of type video is for the small RGB preview.
+Track 3 of type video is for the RAW image.
 
-## Track 3
+These two track are very similar in content.
 
-Track 3 of type video is for the RAW image
+| + 'CRAW'
+| | [...] # see above for the fields
+| | + 'CMP1'
+| | | (u32) 0 #
+| | + 'CDI1'
+| | | + 'IAD1'
+| | | | (u32) 0
+| | | | (u16) # width
+| | | | (u16) # height
+| | | | (u16) 1
+| | | | (u16) 0
+| | | | (u16) 1
+| | | | (u32) 1
+| | | | (u16) 0
+| | | | (u16) # w?
+| | | | (u16) # h?
+| | | | (u32) 0
+| | | | (u16) # w?
+| | | | (u16) # h?
+| | + 'free'
+| | | (u16) 0 #
+
 
 ## Track 4
 
