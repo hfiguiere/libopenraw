@@ -22,7 +22,8 @@ New features:
   Camera support:
   [ a * denote that WB coefficients have been included ]
 
-  - Support for Canon EOS M50*, SX1 IS*, SX60 HS*, S120*, 2000D/Rebel T7*.
+  - Support for Canon EOS M50*, EOS R, SX1 IS*, SX60 HS*, S120*,
+    2000D/Rebel T7*.
   - Support for Fujifilm S5000*, HS30EXR*, X-T100*.
   - Support for Olympus Stylus1,1s, E-M10 Mark III*.
   - Support for Panasonic FZ45, FZ35*, FZ80/FZ82*, FZ150*, GH5S*, LX1*,
