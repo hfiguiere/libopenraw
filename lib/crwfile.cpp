@@ -90,7 +90,8 @@ const RawFile::camera_ids_t CRWFile::s_def[] = {
     { "Canon PowerShot G3", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G3) },
     { "Canon PowerShot G5", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G5) },
     { "Canon PowerShot G6", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G6) },
-    { "Canon PowerShot G7", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7) },
+// G7 is CHDK, So remove from the list from now.
+//    { "Canon PowerShot G7", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7) },
     { "Canon PowerShot Pro1", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_PRO1) },
     { 0, 0 }
 };
