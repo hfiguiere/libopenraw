@@ -24,8 +24,9 @@ New features:
 
   - Support for Canon EOS M50*, EOS R, SX1 IS*, SX60 HS*, S120*,
     2000D/Rebel T7*.
+  - Removed PowerShot G7 as it doesn't have RAW.
   - Support for Fujifilm S5000*, HS30EXR*, X-T100*.
-  - Support for Olympus Stylus1,1s, E-M10 Mark III*.
+  - Support for Olympus Stylus1,1s, TG-5*, E-M10 Mark III*.
   - Support for Panasonic FZ45, FZ35*, FZ80/FZ82*, FZ150*, GH5S*, LX1*,
     LX10/LX15*, ZS200.
   - Support for Pentax 645Z DNG and PEF*, 645D DNG, K1 Mk II DNG and PEF*.
@@ -37,8 +38,12 @@ New features:
   - Support for Nikon Z 6 and Z 7 (partial).
   - Added alias for Canon Rebel XTi (400D).
   - Added alias for Sony A3500 (A3000).
-  - Coefficients for Panasonic GH5, ZS100.
-  - Coefficients for Sony RX10, RX10M2, RX10M3, RX100M5, A6500.
+  - Coefficients for EOS M6.
+  - Coefficients for Fujifilm GFX 50S.
+  - Coefficients for Nikon D3400.
+  - Coefficients for Panasonic GH5, GM5, GX850, ZS100.
+  - Coefficients for Pentax K-70.
+  - Coefficients for Sony RX10, RX10M2, RX10M3, RX100M5, A6500, A580 and A99M2.
   - Coefficients for Olympus E-M1 MarkII.
 
   - ordiag will check the consistency of vendor id.
@@ -63,6 +68,8 @@ Internal changes:
     - allow disabling tests
     - allow setting a referer
     - replace some samples that can no longer be bootstrapped
+  - Added `missingcoefficients` test program to list cameras without
+    coefficients.
 
 libopenraw 0.1.3 - 2018/05/03
 
