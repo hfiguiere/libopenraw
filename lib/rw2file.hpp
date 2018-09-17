@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - rw2file.h
+ * libopenraw - rw2file.hpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,12 +35,15 @@
 namespace OpenRaw {
 
 class RawData;
-	
+
 namespace Internals {
-		
+
 class Rw2File
 	: public IfdFile
 {
+  template<typename T>
+  friend void audit_coefficients();
+
 public:
 	static RawFile *factory(const IO::Stream::Ptr & s);
 	Rw2File(const IO::Stream::Ptr & s);

@@ -10,7 +10,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/lib
 
 check_PROGRAMS = fileio testoption ciffcontainertest ljpegtest testunpack\
-	extensions
+	extensions missingcoefficients
 
 EXTRA_DIST = ljpegtest1.jpg
 
@@ -33,3 +33,6 @@ ljpegtest_LDADD = $(OPENRAW_LIB) @BOOST_UNIT_TEST_FRAMEWORK_LIBS@
 testunpack_SOURCES = testunpack.cpp
 testunpack_LDFLAGS = @BOOST_UNIT_TEST_FRAMEWORK_LDFLAGS@
 testunpack_LDADD = $(OPENRAW_LIB) @BOOST_UNIT_TEST_FRAMEWORK_LIBS@
+
+missingcoefficients_SOURCES = missingcoefficients.cpp
+missingcoefficients_LDADD = $(OPENRAW_LIB)

@@ -42,6 +42,9 @@ namespace Internals {
 class IsoMediaContainer;
 
 class Cr3File : public RawFile {
+    template<typename T>
+    friend void audit_coefficients();
+
 public:
     static RawFile *factory(const IO::Stream::Ptr &s);
     Cr3File(const IO::Stream::Ptr &s);

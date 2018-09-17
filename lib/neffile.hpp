@@ -47,6 +47,9 @@ struct HuffmanNode;
 class NefFile
     : public TiffEpFile
 {
+    template<typename T>
+    friend void audit_coefficients();
+
 public:
     static RawFile *factory(const IO::Stream::Ptr & _f);
     NefFile(const IO::Stream::Ptr & _f);

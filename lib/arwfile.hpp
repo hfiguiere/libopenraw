@@ -1,8 +1,8 @@
-/* -*- Mode: C++ -*- */
+/* -*- Mode: C++; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * libopenraw - arwfile.h
+ * libopenraw - arwfile.hpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -40,6 +40,9 @@ namespace Internals {
 class ArwFile
     : public TiffEpFile
 {
+    template<typename T>
+    friend void audit_coefficients();
+
 public:
     static RawFile *factory(const IO::Stream::Ptr & s);
     ArwFile(const IO::Stream::Ptr & s);

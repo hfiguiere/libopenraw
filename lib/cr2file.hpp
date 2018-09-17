@@ -39,6 +39,8 @@ namespace Internals {
 class Cr2File
     : public IfdFile
 {
+    template<typename T>
+    friend void audit_coefficients();
 public:
     static RawFile *factory(const IO::Stream::Ptr &s);
     Cr2File(const IO::Stream::Ptr &s);

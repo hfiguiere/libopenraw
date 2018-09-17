@@ -1,7 +1,7 @@
 /*
- * libopenraw - mrwfile.h
+ * libopenraw - mrwfile.hpp
  *
- * Copyright (C) 2006-2016 Hubert Figuière
+ * Copyright (C) 2006-2018 Hubert Figuière
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -41,6 +41,9 @@ namespace Internals {
 class MRWFile
     : public IfdFile
 {
+    template<typename T>
+    friend void audit_coefficients();
+
 public:
     static RawFile *factory(const IO::Stream::Ptr&);
     MRWFile(const IO::Stream::Ptr &);

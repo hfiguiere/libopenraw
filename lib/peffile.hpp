@@ -40,6 +40,9 @@ namespace Internals {
 class PEFFile
     : public IfdFile
 {
+    template<typename T>
+    friend void audit_coefficients();
+
 public:
     static RawFile *factory(const IO::Stream::Ptr &s);
     PEFFile(const IO::Stream::Ptr &);

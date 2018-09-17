@@ -39,12 +39,17 @@ namespace Internals {
 class RawContainer;
 class ThumbDesc;
 struct BuiltinColourMatrix;
+template<typename T>
+void audit_coefficients();
 }
 
 void init();
 
 class RawFile
 {
+    template<typename T>
+    friend void Internals::audit_coefficients();
+
 public:
     typedef ::or_rawfile_type Type;
     typedef ::or_rawfile_typeid TypeId;

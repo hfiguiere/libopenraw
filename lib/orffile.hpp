@@ -1,4 +1,4 @@
-/* -*- Mode: C++ -*- */
+/* -*- Mode: C++; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * libopenraw - orffile.h
  *
@@ -41,6 +41,9 @@ class RawData;
 namespace Internals {
 
 class OrfFile : public IfdFile {
+    template<typename T>
+    friend void audit_coefficients();
+
 public:
     static RawFile *factory(const IO::Stream::Ptr &);
     OrfFile(const IO::Stream::Ptr &);

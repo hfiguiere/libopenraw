@@ -44,6 +44,9 @@ namespace Internals {
 class RafContainer;
 
 class RafFile : public OpenRaw::RawFile {
+    template<typename T>
+    friend void audit_coefficients();
+
 public:
     static RawFile *factory(const IO::Stream::Ptr &s);
     RafFile(const IO::Stream::Ptr &s);

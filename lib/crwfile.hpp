@@ -44,6 +44,9 @@ class CIFFContainer;
 class CRWFile
     : public OpenRaw::RawFile
 {
+    template<typename T>
+    friend void audit_coefficients();
+
 public:
     static RawFile *factory(const IO::Stream::Ptr &);
     CRWFile(const IO::Stream::Ptr &);
