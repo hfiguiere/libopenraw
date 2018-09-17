@@ -236,6 +236,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       512,
       0x3fff,
       { 11401, -4498, -1312, -5088, 12751, 2613, -838, 1568, 5941 } },
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_GFX50S),
+      0,
+      0,
+      { 11756, -4754, -874, -3056, 11045, 2305, -381, 1457, 6006 } },
 
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
