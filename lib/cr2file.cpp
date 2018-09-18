@@ -183,6 +183,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 8532, -701, -1167, -4095, 11879, 2508, -797, 2424, 7010 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_3000D), // 4000D, Rebel T100
+      0,
+      0,
+      { 6939, -1016, -866, -4428, 12473, 2177, -1175, 2178, 6162 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_5D),
       0,
       0xe6c,
