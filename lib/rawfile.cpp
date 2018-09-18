@@ -507,11 +507,10 @@ void RawFile::_addThumbnail(uint32_t size, Internals::ThumbDesc&& desc)
     uint32_t matrix_size = 0;
     if (!rawdata.getColourMatrix1(matrix_size) || !matrix_size) {
         matrix_size = colourMatrixSize();
-        double* matrix = new double[matrix_size];
-        if (getColourMatrix1(matrix, matrix_size) == OR_ERROR_NONE) {
-            rawdata.setColourMatrix1(matrix, matrix_size);
+        std::unique_ptr<double[]> matrix(new double[matrix_size]);
+        if (getColourMatrix1(matrix.get(), matrix_size) == OR_ERROR_NONE) {
+            rawdata.setColourMatrix1(matrix.get(), matrix_size);
         }
-        delete[] matrix;
     }
 
     return ret;
@@ -737,12 +736,16 @@ void RawFile::_setMatrices(const Internals::BuiltinColourMatrix* matrices)
     d->m_matrices = matrices;
 }
 
+/*
+ * Will return OR_ERROR_NOT_IMPLEMENTED if the builtin levels
+ * aren't found.
+ */
 ::or_error RawFile::_getBuiltinLevels(const Internals::BuiltinColourMatrix* m,
                                       TypeId type_id, uint16_t& black,
                                       uint16_t& white)
 {
     if (!m) {
-        return OR_ERROR_NOT_FOUND;
+        return OR_ERROR_NOT_IMPLEMENTED;
     }
     while (m->camera) {
         if (m->camera == type_id) {
@@ -752,15 +755,19 @@ void RawFile::_setMatrices(const Internals::BuiltinColourMatrix* matrices)
         }
         ++m;
     }
-    return OR_ERROR_NOT_FOUND;
+    return OR_ERROR_NOT_IMPLEMENTED;
 }
 
+/*
+ * Will return OR_ERROR_NOT_IMPLEMENTED if the builtin matrix
+ * isn't found.
+ */
 ::or_error RawFile::_getBuiltinColourMatrix(
     const Internals::BuiltinColourMatrix* m, TypeId type_id, double* matrix,
     uint32_t& size)
 {
     if (!m) {
-        return OR_ERROR_NOT_FOUND;
+        return OR_ERROR_NOT_IMPLEMENTED;
     }
     if (size < 9) {
         return OR_ERROR_BUF_TOO_SMALL;
@@ -777,7 +784,7 @@ void RawFile::_setMatrices(const Internals::BuiltinColourMatrix* matrices)
         ++m;
     }
     size = 0;
-    return OR_ERROR_NOT_FOUND;
+    return OR_ERROR_NOT_IMPLEMENTED;
 }
 }
 

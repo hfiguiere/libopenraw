@@ -45,6 +45,7 @@ typedef enum {
     OR_ERROR_INVALID_PARAM = 6,
     OR_ERROR_INVALID_FORMAT = 7, /**< invalid format */
     OR_ERROR_DECOMPRESSION = 8,  /**< decompression error */
+    OR_ERROR_NOT_IMPLEMENTED = 9, /**< function is not implemented */
     OR_ERROR_UNKNOWN = 42,
     OR_ERROR_LAST_
 } or_error;

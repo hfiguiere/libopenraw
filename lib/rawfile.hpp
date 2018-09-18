@@ -130,13 +130,13 @@ public:
 
     /** Get colour matrix
      * @param index The matrix index.
-     * @param [out] matrix an array of %size double.
+     * @param [out] matrix pointer to array of %size double.
      * @param size the size of the buffer. On out the actual size. If it is too
      * small the size is adjusted and an error %OR_ERROR_BUF_TOO_SMALL returned.
      * @return an error code.
      */
-    ::or_error getColourMatrix1(double* matrix, uint32_t & size);
-    ::or_error getColourMatrix2(double* matrix, uint32_t & size);
+    ::or_error getColourMatrix1(double* matrix, uint32_t& size);
+    ::or_error getColourMatrix2(double* matrix, uint32_t& size);
 
     /** Get calibration illuminant that match the colour matrix.
      * @return the Exif value. 0 = unknown. Likely not found.
