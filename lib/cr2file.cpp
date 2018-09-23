@@ -59,6 +59,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0xe80,
       { 6264, -582, -724, -8312, 15948, 2504, -1744, 1919, 8664 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_1DMKIIN),
+      0,
+      0xe80,
+      { 6240, -466, -822, -8180, 15825, 2500, -1801, 1938, 8042 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_1DMKIII),
       0,
       0xe80,
@@ -370,8 +374,6 @@ static const BuiltinColourMatrix s_matrices[] = {
       { 6578, -259, -502, -5974, 13030, 3309, -308, 1058, 4970 } },
 
     /*
-    { "Canon EOS-1D Mark II N", 0, 0xe80,
-        { 6240,-466,-822,-8180,15825,2500,-1801,1938,8042 } },
     { "Canon EOS-1DS", 0, 0xe20,
         { 4374,3631,-1743,-7520,15212,2472,-2892,3632,8161 } },
     { "Canon EOS-1D", 0, 0xe20,
