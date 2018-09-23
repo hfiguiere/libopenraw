@@ -40,69 +40,72 @@ int
 main(int argc, char **argv)
 {
     const char *filename;
-    
-    if(argc < 2) {
+
+    if (argc < 2) {
         return 1;
     }
-    
+
     filename = argv[1];
-    
+
     or_debug_set_level(DEBUG2);
-    
-    if(filename && *filename) {
-        ORRawFileRef raw_file = or_rawfile_new(filename, OR_RAWFILE_TYPE_UNKNOWN);
-	
-        if(raw_file) {
-            or_error err;
-            ORBitmapDataRef bitmapdata = or_bitmapdata_new();
-            err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
-            if(err == OR_ERROR_NONE) {
-                uint32_t x, y;
-                FILE * f;
-                size_t size, written_size, i;
-                uint16_t* data;		
-                or_data_type format = or_bitmapdata_format(bitmapdata);
-                size_t componentsize = (format == OR_DATA_TYPE_PIXMAP_16RGB) ? 2 : 1;
 
-                or_bitmapdata_dimensions(bitmapdata, &x, &y);
-                printf(" --- dimensions x = %d, y = %d\n", x, y);
-                f = fopen("image.ppm", "wb");
-                fprintf(f, "P6\n");
-                fprintf(f, "%d %d\n", x, y);
-                fprintf(f, "%d\n", (componentsize == 2) ? 0xffff : 0xff);
-                
-                size = or_bitmapdata_data_size(bitmapdata);
-                printf(" --- size = %ld\n", (long)size);
-                data = (uint16_t*)or_bitmapdata_data(bitmapdata);
-
-                if(componentsize == 2) {
-                    written_size = 0;
-                    for(i = 0; i < size; i+=2) {
-                        uint16_t value = htobe16(data[i/2]);
-                        written_size += fwrite(&value, 1, sizeof(value), f);
-                    }
-                }
-                else {
-                    written_size = fwrite(or_bitmapdata_data(bitmapdata), 1, size, f);
-                }
-                if(written_size != size) {
-                    printf("short read\n");
-                }
-                fclose(f);
-            }
-            or_bitmapdata_release(bitmapdata);
-            or_rawfile_release(raw_file);
-        }
-    }
-    else {
+    if (!filename || !*filename) {
         printf("No input file name\n");
+        return 1;
     }
-    
+
+    ORRawFileRef raw_file = or_rawfile_new(filename, OR_RAWFILE_TYPE_UNKNOWN);
+
+    if (!raw_file) {
+        printf("Couldn't open %s\n", filename);
+        return 1;
+    }
+    or_error err;
+    ORBitmapDataRef bitmapdata = or_bitmapdata_new();
+    err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
+    if (err == OR_ERROR_NONE) {
+        uint32_t x, y;
+        FILE * f;
+        size_t size, written_size, i;
+        uint16_t* data;
+        or_data_type format = or_bitmapdata_format(bitmapdata);
+        size_t componentsize = (format == OR_DATA_TYPE_PIXMAP_16RGB) ? 2 : 1;
+
+        or_bitmapdata_dimensions(bitmapdata, &x, &y);
+        printf(" --- dimensions x = %d, y = %d\n", x, y);
+        f = fopen("image.ppm", "wb");
+        fprintf(f, "P6\n");
+        fprintf(f, "%d %d\n", x, y);
+        fprintf(f, "%d\n", (componentsize == 2) ? 0xffff : 0xff);
+
+        size = or_bitmapdata_data_size(bitmapdata);
+        printf(" --- size = %ld\n", (long)size);
+        data = (uint16_t*)or_bitmapdata_data(bitmapdata);
+
+        if (componentsize == 2) {
+            written_size = 0;
+            for (i = 0; i < size; i+=2) {
+                uint16_t value = htobe16(data[i/2]);
+                written_size += fwrite(&value, 1, sizeof(value), f);
+            }
+        } else {
+            written_size = fwrite(or_bitmapdata_data(bitmapdata), 1, size, f);
+        }
+        if (written_size != size) {
+            printf("short read\n");
+        }
+        fclose(f);
+    }
+    or_bitmapdata_release(bitmapdata);
+    or_rawfile_release(raw_file);
+
     return 0;
 }
 /*
   Local Variables:
   mode:c++
+  c-basic-offset: 4
+  tab-width:4
   c-file-style:"stroustrup"
   c-file-offsets:((innamespace . 0))
   indent-tabs-mode:nil
