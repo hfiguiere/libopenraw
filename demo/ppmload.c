@@ -67,7 +67,6 @@ main(int argc, char **argv)
         uint32_t x, y;
         FILE * f;
         size_t size, written_size, i;
-        uint16_t* data;
         or_data_type format = or_bitmapdata_format(bitmapdata);
         size_t componentsize = (format == OR_DATA_TYPE_PIXMAP_16RGB) ? 2 : 1;
 
@@ -80,9 +79,9 @@ main(int argc, char **argv)
 
         size = or_bitmapdata_data_size(bitmapdata);
         printf(" --- size = %ld\n", (long)size);
-        data = (uint16_t*)or_bitmapdata_data(bitmapdata);
 
         if (componentsize == 2) {
+            uint16_t* data = (uint16_t*)or_bitmapdata_data(bitmapdata);
             written_size = 0;
             for (i = 0; i < size; i+=2) {
                 uint16_t value = htobe16(data[i/2]);

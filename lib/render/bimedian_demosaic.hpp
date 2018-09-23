@@ -1,7 +1,7 @@
-/* 
- * libopenraw - bimedian_demosaic.h
+/*
+ * libopenraw - bimedian_demosaic.hpp
  *
- * Copyright 2010 Hubert Figuiere <hub@figuiere.net>
+ * Copyright 2010-2018 Hubert Figuiere <hub@figuiere.net>
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,15 +19,13 @@
  *
  */
 
-#ifndef OR_INTERNALS_RENDER_BIMEDIAN_DEMOSAIC_H_
-#define OR_INTERNALS_RENDER_BIMEDIAN_DEMOSAIC_H_
+#pragma once
 
 #include <stdint.h>
 
 #include <libopenraw/consts.h>
 
 or_error
-bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-		   or_cfa_pattern pattern, uint8_t *dst, uint32_t &out_x, uint32_t &out_y);
-
-#endif
+bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
+		   or_cfa_pattern pattern, uint16_t *dst,
+                   uint32_t &out_x, uint32_t &out_y);

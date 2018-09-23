@@ -78,8 +78,9 @@ m4 (double a, double b, double c, double d)
  * of dst_extent.
  */
 or_error
-bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-             or_cfa_pattern pattern, uint8_t *dst, uint32_t &out_x, uint32_t &out_y)
+bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
+                   or_cfa_pattern pattern, uint16_t *dst,
+                   uint32_t &out_x, uint32_t &out_y)
 {
     uint32_t x,y;
     uint32_t offset, doffset;
@@ -167,9 +168,9 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
                 }
             }
 			
-            dst_buf [doffset*3+0] = red / 16.0;
-            dst_buf [doffset*3+1] = green / 16.0;
-            dst_buf [doffset*3+2] = blue / 16.0;
+            dst_buf [doffset*3+0] = red;
+            dst_buf [doffset*3+1] = green;
+            dst_buf [doffset*3+2] = blue;
 			
             offset++;
             doffset++;

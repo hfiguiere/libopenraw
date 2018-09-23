@@ -161,8 +161,8 @@ RawData::~RawData()
         if (d->photometricInterpretation == EV_PI_CFA) {
             /* figure out how the demosaic can be plugged for a different
              * algorithm */
-            bitmapdata.setDataType(OR_DATA_TYPE_PIXMAP_8RGB);
-            uint8_t *dst = (uint8_t *)bitmapdata.allocData(sizeof(uint8_t) * 3 * _x * _y);
+            bitmapdata.setDataType(OR_DATA_TYPE_PIXMAP_16RGB);
+            uint16_t *dst = (uint16_t *)bitmapdata.allocData(sizeof(uint16_t) * 3 * _x * _y);
             err = bimedian_demosaic(src, _x, _y, pattern, dst, out_x, out_y);
             bitmapdata.setDimensions(out_x, out_y);
 
