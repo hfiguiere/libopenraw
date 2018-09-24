@@ -1,7 +1,7 @@
 /*
- * libopenraw - stream.h
+ * libopenraw - stream.hpp
  *
- * Copyright (C) 2006-2015 Hubert Figuière
+ * Copyright (C) 2006-2018 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  */
 
 
-#ifndef OR_INTERNALS_IO_STREAM_H_
-#define OR_INTERNALS_IO_STREAM_H_
+#pragma once
 
 #include <sys/types.h>
 #include <stddef.h>
@@ -34,20 +33,23 @@
 
 namespace OpenRaw {
 namespace IO {
-    
-/** 
+
+/**
  * @brief base virtual class for IO
  */
 class Stream
 {
 public:
   typedef std::shared_ptr<Stream> Ptr;
-  /** Construct the file 
+  /** Construct the file
    * @param filename the full uri for the file
    */
   Stream(const char *filename);
   virtual ~Stream();
-			
+
+  Stream(const Stream& f) = delete;
+  Stream & operator=(const Stream&) = delete;
+
   /** Error type.
    * @see or_error
    */
@@ -85,11 +87,6 @@ protected:
     }
 
 private:
-  /** private copy constructor to make sure it is not called */
-  Stream(const Stream& f);
-  /** private = operator to make sure it is never called */
-  Stream & operator=(const Stream&);
-			
   /** the file name (full path) */
   std::string m_fileName;
   Error m_error;
@@ -98,8 +95,6 @@ private:
 }
 }
 
-
-#endif
 /*
   Local Variables:
   mode:c++
