@@ -208,10 +208,10 @@ DngFile::~DngFile()
     uint32_t crop_x, crop_y, crop_w, crop_h;
     auto e = _cfaIfd->getEntry(IFD::DNG_TAG_ACTIVE_AREA);
     if (e) {
-        crop_x = e->getIntegerArrayItem(0);
-        crop_y = e->getIntegerArrayItem(1);
-        crop_w = e->getIntegerArrayItem(2);
-        crop_h = e->getIntegerArrayItem(3);
+        crop_y = e->getIntegerArrayItem(0);
+        crop_x = e->getIntegerArrayItem(1);
+        crop_h = e->getIntegerArrayItem(2);
+        crop_w = e->getIntegerArrayItem(3);
     } else {
         crop_x = crop_y = 0;
         crop_w = data.width();
