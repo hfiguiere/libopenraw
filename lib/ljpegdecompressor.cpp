@@ -1553,8 +1553,7 @@ RawDataPtr LJpegDecompressor::decompress()
         LOGDBG1("dc width = %d dc height = %d\n", dcInfo.imageWidth,
                 dcInfo.imageHeight);
         /* consistently the real width is the JPEG width * numComponent
-         * at least with all the Canon.
-         * @todo check that this is valid with DNG too.
+         * On CR2 and DNG.
          */
         uint32_t width = dcInfo.imageWidth * dcInfo.numComponents;
         m_output->setDimensions(width, dcInfo.imageHeight);

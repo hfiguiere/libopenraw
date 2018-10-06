@@ -1,3 +1,4 @@
+/* -*- mode:c++; tab-width:4; c-basic-offset:4; indent-tabs-mode:t; -*- */
 /*
  * libopenraw - exif.h
  *
@@ -28,7 +29,7 @@ extern "C" {
 #endif
 
 
-/** IFD Exif Tag 
+/** IFD Exif Tag
  * Taken from libexif
  */
 typedef	enum {
@@ -179,6 +180,8 @@ typedef	enum {
 
 	/* Canon MakerNote tags */
 	MNOTE_CANON_MODEL_ID = 0x0010,
+	MNOTE_CANON_RAW_DATA_OFFSET = 0x0081,
+	MNOTE_CANON_RAW_DATA_LENGTH = 0x0082,
 	MNOTE_CANON_SENSORINFO = 0x00e0,
 
 	/* Nikon MakerNote tags */

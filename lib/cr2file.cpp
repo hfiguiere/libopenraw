@@ -498,6 +498,9 @@ Cr2File::~Cr2File()
 
 IfdDir::Ref Cr2File::_locateCfaIfd()
 {
+    if (!isCr2()) {
+        return makerNoteIfd();
+    }
     return m_container->setDirectory(3);
 }
 
@@ -506,7 +509,138 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     return m_container->setDirectory(0);
 }
 
-::or_error Cr2File::_getRawData(RawData &data, uint32_t options)
+::or_error Cr2File::_locateThumbnail(const IfdDir::Ref & dir,
+                                     std::vector<uint32_t> &list)
+{
+    if (isCr2()) {
+        return IfdFile::_locateThumbnail(dir, list);
+    }
+    ::or_error ret = OR_ERROR_NOT_FOUND;
+    ::or_data_type _type = OR_DATA_TYPE_NONE;
+    uint32_t x = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH).value_or(0);
+    uint32_t y = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_LENGTH).value_or(0);
+    uint32_t offset = 0;
+    uint32_t byte_count = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_BYTE_COUNTS).value_or(0);
+
+    auto result = dir->getValue<uint32_t>(IFD::EXIF_TAG_STRIP_OFFSETS);
+    bool got_it = result.has_value();
+    if (got_it) {
+        offset = result.value();
+    }
+
+    if (x != 0 && y != 0) {
+        // See bug 72270 - some CR2 have 16 bpc RGB thumbnails.
+        // by default it is RGB8. Unless stated otherwise.
+        bool isRGB8 = true;
+        IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
+        auto result2 = entry->getArray<uint16_t>();
+        if (result2) {
+          std::vector<uint16_t> arr = result2.value();
+          for(auto bpc : arr) {
+            isRGB8 = (bpc == 8);
+            if (!isRGB8) {
+              LOGDBG1("bpc != 8, not RGB8 %u\n", bpc);
+              break;
+            }
+          }
+        } else {
+          LOGDBG1("Error getting BPS\n");
+        }
+        if (isRGB8) {
+          _type = OR_DATA_TYPE_PIXMAP_8RGB;
+        }
+      }
+
+    if(_type != OR_DATA_TYPE_NONE) {
+      uint32_t dim = std::max(x, y);
+      offset += dir->container().offset();
+      _addThumbnail(dim, ThumbDesc(x, y, _type,
+                                   offset, byte_count));
+      list.push_back(dim);
+      ret = OR_ERROR_NONE;
+    }
+    return ret;
+}
+
+::or_error Cr2File::getRawDataTif(RawData &data, uint32_t options)
+{
+    const IfdDir::Ref &_cfaIfd = cfaIfd();
+    if (!_cfaIfd) {
+        LOGDBG1("cfa IFD not found\n");
+        return OR_ERROR_NOT_FOUND;
+    }
+
+    auto result = _cfaIfd->getValue<uint32_t>(IFD::MNOTE_CANON_RAW_DATA_OFFSET);
+    if (result.empty()) {
+        LOGDBG1("offset not found\n");
+        return OR_ERROR_NOT_FOUND;
+    }
+    uint32_t offset = result.value();
+    uint32_t byte_length = 0;
+
+    result = _cfaIfd->getValue<uint32_t>(IFD::MNOTE_CANON_RAW_DATA_LENGTH);
+    if (!result.empty()) {
+        byte_length = result.value();
+    } else {
+        LOGDBG1("byte len not found\n");
+        auto len = std::min<off_t>(
+            m_container->size(), std::numeric_limits<uint32_t>::max());
+        byte_length = len - offset;
+    }
+
+    std::vector<uint16_t> slices;
+
+    getRawBytes(data, offset, byte_length, 0, 0, slices, options);
+    return OR_ERROR_NONE;
+}
+
+void Cr2File::getRawBytes(RawData &data, uint32_t offset, uint32_t byte_length,
+                          uint16_t x, uint16_t y,
+                          const std::vector<uint16_t>& slices,
+                          uint32_t options)
+{
+    void *p = data.allocData(byte_length);
+    size_t real_size = m_container->fetchData(p, offset, byte_length);
+    if (real_size < byte_length) {
+        LOGWARN("Size mismatch for data: ignoring.\n");
+    }
+    // they are not all RGGB.
+    // but I don't seem to see where this is encoded.
+    //
+    data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
+    data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
+    data.setDimensions(x, y);
+
+    LOGDBG1("In size is %dx%d\n", data.width(), data.height());
+    // decompress if we need
+    if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
+      IO::Stream::Ptr s(new IO::MemStream((const uint8_t*)data.data(),
+                                          data.size()));
+      s->open(); // TODO check success
+      std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+      LJpegDecompressor decomp(s.get(), jfif.get());
+      // in fact on Canon CR2 files slices either do not exists
+      // or is 3.
+      if (slices.size() > 1) {
+        decomp.setSlices(slices);
+      }
+      RawDataPtr dData = decomp.decompress();
+      if (dData) {
+        LOGDBG1("Out size is %dx%d\n", dData->width(), dData->height());
+        // must re-set the cfaPattern
+        dData->setCfaPatternType(data.cfaPattern()->patternType());
+        data.swap(*dData);
+        if (!isCr2()) {
+            // In TIF the raw image width needs to be divided by two
+            uint16_t w = data.width();
+            uint16_t h = data.height();
+            data.setDimensions(w / 2, h);
+        }
+      }
+    }
+}
+
+::or_error Cr2File::getRawDataCr2(RawData &data, uint32_t options)
 {
     const IfdDir::Ref &_cfaIfd = cfaIfd();
     if (!_cfaIfd) {
@@ -561,39 +695,7 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     }
     uint16_t y = result2.value();
 
-    void *p = data.allocData(byte_length);
-    size_t real_size = m_container->fetchData(p, offset, byte_length);
-    if (real_size < byte_length) {
-        LOGWARN("Size mismatch for data: ignoring.\n");
-    }
-    // they are not all RGGB.
-    // but I don't seem to see where this is encoded.
-    //
-    data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
-    data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
-    data.setDimensions(x, y);
-
-    LOGDBG1("In size is %dx%d\n", data.width(), data.height());
-    // decompress if we need
-    if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-      IO::Stream::Ptr s(new IO::MemStream((const uint8_t*)data.data(),
-                                          data.size()));
-      s->open(); // TODO check success
-      std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
-      LJpegDecompressor decomp(s.get(), jfif.get());
-      // in fact on Canon CR2 files slices either do not exists
-      // or is 3.
-      if (slices.size() > 1) {
-        decomp.setSlices(slices);
-      }
-      RawDataPtr dData = decomp.decompress();
-      if (dData) {
-        LOGDBG1("Out size is %dx%d\n", dData->width(), dData->height());
-        // must re-set the cfaPattern
-        dData->setCfaPatternType(data.cfaPattern()->patternType());
-        data.swap(*dData);
-      }
-    }
+    getRawBytes(data, offset, byte_length, x, y, slices, options);
 
     // get the sensor info
     const IfdDir::Ref &_makerNoteIfd = makerNoteIfd();
@@ -604,6 +706,14 @@ IfdDir::Ref Cr2File::_locateMainIfd()
     }
 
     return OR_ERROR_NONE;
+}
+
+::or_error Cr2File::_getRawData(RawData &data, uint32_t options)
+{
+    if (!isCr2()) {
+        return getRawDataTif(data, options);
+    }
+    return getRawDataCr2(data, options);
 }
 
 void Cr2File::_identifyId()
@@ -626,6 +736,12 @@ void Cr2File::_identifyId()
         LOGERR("model ID not found\n");
     }
     IfdFile::_identifyId();
+}
+
+bool Cr2File::isCr2()
+{
+    return ((OR_GET_FILE_TYPEID_CAMERA(typeId()) != OR_TYPEID_CANON_1D)
+            && (OR_GET_FILE_TYPEID_CAMERA(typeId()) != OR_TYPEID_CANON_1DS));
 }
 
 }

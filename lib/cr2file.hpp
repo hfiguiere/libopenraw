@@ -52,8 +52,18 @@ protected:
     virtual IfdDir::Ref  _locateCfaIfd() override;
     virtual IfdDir::Ref  _locateMainIfd() override;
     virtual void _identifyId() override;
+    virtual ::or_error _locateThumbnail(const IfdDir::Ref & dir,
+                                        std::vector<uint32_t> &list) override;
 
 private:
+    // Return true unless it is a 1D or 1DS (TIF)
+    bool isCr2();
+    ::or_error getRawDataTif(RawData &data, uint32_t options);
+    ::or_error getRawDataCr2(RawData &data, uint32_t options);
+    void getRawBytes(RawData &data, uint32_t offset, uint32_t byte_length,
+                     uint16_t x, uint16_t y,
+                     const std::vector<uint16_t>& slices, uint32_t options);
+
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
 
     static const IfdFile::camera_ids_t s_def[];

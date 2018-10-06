@@ -294,11 +294,16 @@ void * RawData::allocData(const size_t s)
 void RawData::setDimensions(uint32_t x, uint32_t y)
 {
     BitmapData::setDimensions(x, y);
+    // set activate area if not set, of if the new dimensions are smaller.
     if (d->activeAreaW == 0) {
         d->activeAreaW = x;
+    } else if (d->activeAreaW + d->activeAreaX > x) {
+        d->activeAreaW = x - d->activeAreaX;
     }
     if (d->activeAreaH == 0) {
         d->activeAreaH = y;
+    } else if (d->activeAreaH + d->activeAreaY > y) {
+        d->activeAreaH = y - d->activeAreaY;
     }
     if (d->slices.size()) {
         d->sliceWidth = d->slices[0];
