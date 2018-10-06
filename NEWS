@@ -23,12 +23,12 @@ New features:
   [ a * denote that WB coefficients have been included ]
 
   - Support for Canon EOS M50*, EOS R, SX1 IS*, SX60 HS*, S120*,
-    2000D/Rebel T7*, 3000D/4000D/Rebel T100*, 1D MarkII N*.
+    2000D/Rebel T7*, 3000D/4000D/Rebel T100*, 1D MarkII N*, 1D*, 1Ds*.
   - Removed PowerShot G7 as it doesn't have RAW.
-  - Support for Fujifilm S5000*, HS30EXR*, X-T100*.
+  - Support for Fujifilm S5000*, HS30EXR*, X-T100*, GFX 50R*
   - Support for Olympus Stylus1,1s, TG-5*, E-M10 Mark III*.
-  - Support for Panasonic FZ45, FZ35*, FZ80/FZ82*, FZ150*, GH5S*, LX1*,
-    LX10/LX15*, ZS200.
+  - Support for Panasonic FZ45, FZ35*, FZ80/FZ82*, FZ150*, GX7MK2*, GH5S*,
+    LX1*, LX10/LX15*, ZS200, LX100M2.
   - Support for Pentax 645Z DNG and PEF*, 645D DNG, K1 Mk II DNG and PEF*,
     K10D DNG.
   - Support for Ricoh GX200, GR II.
