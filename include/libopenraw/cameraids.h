@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 /**
- * @brief the libopenraw public consts types
+ * @brief the libopenraw list of camera id.
  * @author Hubert Figuière <hub@figuiere.net>
  */
 
@@ -371,7 +371,8 @@ enum {
     OR_TYPEID_MINOLTA_DIMAGE7HI,
     OR_TYPEID_MINOLTA_MAXXUM_5D,
     OR_TYPEID_MINOLTA_MAXXUM_7D,
-    OR_TYPEID_MINOLTA_A200
+    OR_TYPEID_MINOLTA_A200,
+    _OR_TYPEID_MINOLTA_LAST
 };
 
 enum {
@@ -426,7 +427,8 @@ enum {
 enum {
     OR_TYPEID_SAMSUNG_UNKNOWN = 0,
     OR_TYPEID_SAMSUNG_GX10,
-    OR_TYPEID_SAMSUNG_PRO815
+    OR_TYPEID_SAMSUNG_PRO815,
+    _OR_TYPEID_SAMSUNG_LAST
 };
 
 enum {

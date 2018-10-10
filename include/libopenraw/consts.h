@@ -65,10 +65,10 @@ typedef enum {
     OR_RAWFILE_TYPE_ERF,         /**< Epson ERF */
     OR_RAWFILE_TYPE_TIFF,        /**< Generic TIFF */
     OR_RAWFILE_TYPE_NRW,         /**< Nikon NRW */
-    OR_RAWFILE_TYPE_RW2,         /**< Panasonic RAW and RW2 */
+    OR_RAWFILE_TYPE_RW2,         /**< Panasonic RAW, RW2 and RWL */
     OR_RAWFILE_TYPE_RAF,         /**< FujiFilm RAF */
     OR_RAWFILE_TYPE_CR3,         /**< Canon CR3 */
-    OR_RAWFILE_TYPE_GPR,         /**< GoPro GPR (DNG) */
+    OR_RAWFILE_TYPE_GPR,         /**< GoPro GPR (DNG-variation) */
 } or_rawfile_type;
 
 typedef enum {

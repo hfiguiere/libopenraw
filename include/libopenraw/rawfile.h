@@ -104,10 +104,10 @@ or_rawfile_get_orientation(ORRawFileRef rawfile);
  *  @param size The size of the %matrix array. On output the actual size of the matrix.
  *  @return error code.
  */
-or_error 
+or_error
 or_rawfile_get_colourmatrix1(ORRawFileRef rawfile, double* matrix, uint32_t* size);
 
-or_error 
+or_error
 or_rawfile_get_colourmatrix2(ORRawFileRef rawfile, double* matrix, uint32_t* size);
 
 /** Get calibration illuminant that match the colour matrix.
