@@ -2,7 +2,7 @@
 /*
  * libopenraw - neffile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2018 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -272,6 +272,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       200,
       0,
       { 14387, -6014, -1299, -1357, 9975, 1616, 467, 1047, 4744 } },
+    { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_COOLPIX_P1000),
+      0,
+      0,
+      { 14294, -6116, -1333, -1628, 10219, 1637, -14, 1158, 5022 } },
     { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_COOLPIX_P330),
       200,
       0,
