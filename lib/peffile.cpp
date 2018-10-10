@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuiere
+ * Copyright (C) 2006-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -106,6 +106,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 8662, -3280, -798, -3928, 11771, 2444, -586, 1232, 6054 } },
+    { OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KP_PEF),
+      0,
+      0,
+      { 8617, -3228, -1034, -4674, 12821, 2044, -803, 1577, 5728 } },
     { OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645D_PEF),
       0,
       0x3e00,
@@ -136,6 +140,7 @@ const struct IfdFile::camera_ids_t PEFFile::s_def[] = {
     { "PENTAX K-70        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K70_PEF) },
     { "PENTAX K-S2        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KS2_PEF) },
     { "PENTAX K-x         ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KX_PEF) },
+    { "PENTAX KP          ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KP_PEF) },
     { "PENTAX 645D        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645D_PEF) },
     { "PENTAX 645Z        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645Z_PEF) },
     { 0, 0 }
