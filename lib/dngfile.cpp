@@ -119,6 +119,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                OR_TYPEID_LEICA_SL_TYP601) },
     { "LEICA T (Typ 701)", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                                OR_TYPEID_LEICA_T_TYP701) },
+    { "LEICA TL2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+                                               OR_TYPEID_LEICA_TL2) },
     { "LEICA Q (Typ 116)", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                                OR_TYPEID_LEICA_Q_TYP116) },
     { "LEICA CL", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
