@@ -2,7 +2,7 @@
 /*
  * libopenraw - exif.h
  *
- * Copyright (C) 2007-2013 Hubert Figuiere
+ * Copyright (C) 2007-2018 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -157,8 +157,11 @@ typedef	enum {
 	DNG_TAG_CAMERA_CALIBRATION1              = 0xc623,
 	DNG_TAG_CAMERA_CALIBRATION2              = 0xc624,
 	DNG_TAG_REDUCTION_MATRIX1                = 0xc625,
-	DNG_TAG_REDUCTION_MATRIX2                = 0xc626,
-	DNG_TAG_CALIBRATION_ILLUMINANT1          = 0xc65a,
+	DNG_TAG_REDUCTION_MATRIX2		 = 0xc626,
+	DNG_TAG_ANALOG_BALANCE			 = 0xc627,
+	DNG_TAG_AS_SHOT_NEUTRAL			 = 0xc628,
+	DNG_TAG_AS_SHOT_WHITE_XY		 = 0xc629,
+	DNG_TAG_CALIBRATION_ILLUMINANT1		 = 0xc65a,
 	DNG_TAG_CALIBRATION_ILLUMINANT2          = 0xc65b,
 	DNG_TAG_ACTIVE_AREA                      = 0xc68d,
 
