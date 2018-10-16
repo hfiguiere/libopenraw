@@ -297,6 +297,8 @@ enum {
     /* DNG */
     OR_TYPEID_LEICA_M10P = 23,
     OR_TYPEID_LEICA_TL2 = 24,
+    /* RWL */
+    OR_TYPEID_LEICA_DLUX_5 = 25,
     _OR_TYPEID_LEICA_LAST
 };
 
