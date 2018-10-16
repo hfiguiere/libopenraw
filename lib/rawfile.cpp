@@ -607,6 +607,11 @@ ExifLightsourceValue RawFile::getCalibrationIlluminant2()
     return _getCalibrationIlluminant(2);
 }
 
+or_colour_matrix_origin RawFile::getColourMatrixOrigin() const
+{
+    return OR_COLOUR_MATRIX_BUILTIN;
+}
+
 ExifLightsourceValue RawFile::_getCalibrationIlluminant(uint16_t index)
 {
     int32_t meta_index = 0;

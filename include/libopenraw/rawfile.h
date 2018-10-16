@@ -116,6 +116,15 @@ or_rawfile_get_colourmatrix2(ORRawFileRef rawfile, double* matrix, uint32_t* siz
 ExifLightsourceValue or_rawfile_get_calibration_illuminant1(ORRawFileRef rawfile);
 ExifLightsourceValue or_rawfile_get_calibration_illuminant2(ORRawFileRef rawfile);
 
+/** Get the colour matrix origin for file
+ *  This allow to determine if it is provided by the file or as a hardcoded
+ *  value in the library.
+ *  @param rawfile the RAW file object
+ *  @return the colour matrix origin
+ */
+or_colour_matrix_origin
+or_rawfile_get_colour_matrix_origin(ORRawFileRef rawfile);
+
 /** Get the metadata value
  * @param rawfile the RAW file object.
  * @param meta_index the index value which is NS | index

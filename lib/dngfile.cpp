@@ -171,6 +171,12 @@ DngFile::~DngFile()
 {
 }
 
+or_colour_matrix_origin
+DngFile::getColourMatrixOrigin() const
+{
+    return OR_COLOUR_MATRIX_PROVIDED;
+}
+
 ::or_error DngFile::_getRawData(RawData & data, uint32_t options)
 {
     ::or_error ret = OR_ERROR_NONE;

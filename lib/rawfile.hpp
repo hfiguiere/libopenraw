@@ -144,6 +144,12 @@ public:
     ExifLightsourceValue getCalibrationIlluminant1();
     ExifLightsourceValue getCalibrationIlluminant2();
 
+    /**
+     * Get the origin of the colour matrix for the RAW file
+     * @return value of `or_colour_matrix_origin`
+     */
+    virtual or_colour_matrix_origin getColourMatrixOrigin() const;
+
     Internals::IfdDir::Ref getMakerNoteIfd();
     const MetaValue *getMetaValue(int32_t meta_index);
 protected:

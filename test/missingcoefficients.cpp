@@ -35,6 +35,7 @@
 #include "../lib/cr2file.hpp"
 #include "../lib/cr3file.hpp"
 #include "../lib/crwfile.hpp"
+#include "../lib/dngfile.hpp"
 #include "../lib/erffile.hpp"
 #include "../lib/mrwfile.hpp"
 #include "../lib/neffile.hpp"
@@ -57,6 +58,9 @@ void audit_coefficients()
   IO::Stream::Ptr s = std::make_shared<IO::MemStream>(nullptr, 0);
   T t(s);
   const BuiltinColourMatrix* matrices = t._getMatrices();
+  if (t.getColourMatrixOrigin() == OR_COLOUR_MATRIX_PROVIDED) {
+    return;
+  }
   const RawFile::camera_ids_t* def = T::s_def;
   for (auto current = def; current->model; current++) {
     bool found = false;
@@ -82,6 +86,7 @@ int main(int, char**)
   OpenRaw::Internals::audit_coefficients<Cr2File>();
   OpenRaw::Internals::audit_coefficients<Cr3File>();
   OpenRaw::Internals::audit_coefficients<CRWFile>();
+  OpenRaw::Internals::audit_coefficients<DngFile>();
   OpenRaw::Internals::audit_coefficients<ERFFile>();
   OpenRaw::Internals::audit_coefficients<MRWFile>();
   OpenRaw::Internals::audit_coefficients<NefFile>();

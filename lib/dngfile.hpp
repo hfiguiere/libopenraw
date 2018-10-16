@@ -40,6 +40,8 @@ namespace Internals {
 class DngFile
     : public TiffEpFile
 {
+    template<typename T>
+    friend void audit_coefficients();
 public:
     static RawFile *factory(const IO::Stream::Ptr &);
 
@@ -49,6 +51,8 @@ public:
     DngFile(const DngFile&) = delete;
     DngFile & operator=(const DngFile&) = delete;
 
+
+    virtual or_colour_matrix_origin getColourMatrixOrigin() const override;
 
     /** DNG specific for now: check if file is Cinema DNG. */
     bool isCinema() const;

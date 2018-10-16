@@ -368,6 +368,22 @@ public:
             double matrix[9];
             uint32_t size = 9;
 
+
+            auto origin = or_rawfile_get_colour_matrix_origin(rf);
+            std::string os;
+            switch (origin) {
+            case OR_COLOUR_MATRIX_BUILTIN:
+                os = "Built-in";
+                break;
+            case OR_COLOUR_MATRIX_PROVIDED:
+                os = "Provided";
+                break;
+            default:
+                os = "Unknown";
+            }
+            m_out << boost::format("\t\tColour Matrix Origin: %1%\n")
+                % os;
+
             ExifLightsourceValue calIll;
             calIll = or_rawfile_get_calibration_illuminant1(rf);
             m_out << boost::format("\t\tCalibration Illuminant 1: %1%\n")

@@ -106,6 +106,15 @@ typedef enum {
 
 } or_options;
 
+/** Where the colour matrix comes from
+ * Typically DNG is provided. The others are built-in.
+ */
+typedef enum {
+    OR_COLOUR_MATRIX_UNKNOWN = 0,
+    OR_COLOUR_MATRIX_BUILTIN = 1, /**< Colour matrix in library */
+    OR_COLOUR_MATRIX_PROVIDED = 2, /**< Colour matrix provided by file */
+} or_colour_matrix_origin;
+
 /** this is the type ID, a combination of vendor model
  *  It maps a specific camera. Only for the NATIVE file format.
  */

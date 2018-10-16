@@ -183,6 +183,14 @@ ExifLightsourceValue or_rawfile_get_calibration_illuminant2(ORRawFileRef rawfile
     return prawfile->getCalibrationIlluminant2();
 }
 
+or_colour_matrix_origin
+or_rawfile_get_colour_matrix_origin(ORRawFileRef rawfile)
+{
+    RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
+    CHECK_PTR(rawfile, OR_COLOUR_MATRIX_UNKNOWN);
+    return prawfile->getColourMatrixOrigin();
+}
+
 ORConstMetaValueRef
 or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index)
 {
