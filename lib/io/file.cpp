@@ -1,7 +1,8 @@
+/* -*- mode:c++; tab-width:4; c-basic-offset:4; indent-tabs-mode:t; -*- */
 /*
  * libopenraw - file.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuière
+ * Copyright (C) 2006-2018 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -24,12 +25,13 @@
 #include "libopenraw/consts.h"
 #include "libopenraw/io.h"
 
+#include "trace.hpp"
 #include "io/stream.hpp"
 #include "file.hpp"
 
 namespace OpenRaw {
 	namespace IO {
-	
+
 		File::File(const char *filename)
 			: OpenRaw::IO::Stream(filename),
 				m_methods(::get_default_io_methods()),
@@ -43,9 +45,13 @@ namespace OpenRaw {
 				close();
 			}
 		}
-	
+
 		File::Error File::open()
 		{
+			if (m_ioRef) {
+				LOGDBG1("Already open\n");
+				return OR_ERROR_ALREADY_OPEN;
+			}
 			m_ioRef = ::raw_open(m_methods, get_path().c_str(), O_RDONLY);
 			if (m_ioRef == NULL) {
 				return OR_ERROR_CANT_OPEN;

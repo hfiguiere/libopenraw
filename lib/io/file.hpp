@@ -45,7 +45,11 @@ public:
     File &operator=(const File &) = delete;
 
     // file APIs
-    /** open the file */
+    /** open the file.
+     *
+     * Return OR_ERROR_ALREADY_OPEN if it is already open.
+     * The stream is still usable after that.
+     */
     virtual Error open() override;
     /** close the file */
     virtual int close() override;
