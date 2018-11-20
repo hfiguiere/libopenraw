@@ -149,6 +149,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       128,
       0, /* Adobe */
       { 6549, -1550, -436, -4880, 12435, 2753, -854, 1868, 6976 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_HX99),
+      0,
+      0,
+      { 13076, -5686, -1481, -4027, 12851, 1251, -167, 725, 4937 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX3N),
       128,
       0,
