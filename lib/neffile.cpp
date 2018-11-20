@@ -252,6 +252,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0xf00,
       { 7309,-1403,-519,-8474,16008,2622,-2434,2826,8064 } },
 
+    { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_Z6),
+      0,
+      0,
+      { 8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464 } },
     { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_Z7),
       0,
       0,
