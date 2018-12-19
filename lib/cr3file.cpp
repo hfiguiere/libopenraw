@@ -54,12 +54,17 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 6446, -366, -864, -4436, 12204, 2513, -952, 2496, 6348 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_SX70_HS),
+      0,
+      0,
+      { 18285, -8907, -1951, -1845, 10688, 1323, 364, 1101, 5139 } },
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
 
 const RawFile::camera_ids_t Cr3File::s_def[] = {
     { "Canon EOS M50", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M50) },
     { "Canon EOS R", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R) },
+    { "Canon PowerShot SX70 HS", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_SX70_HS) },
     { 0, 0 }
 };
 
