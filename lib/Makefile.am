@@ -9,6 +9,7 @@ RUST_FILES = mp4/Cargo.lock \
 	mp4/mp4parse_capi/Cargo.toml \
 	mp4/mp4parse/src/boxes.rs \
 	mp4/mp4parse/src/lib.rs \
+	mp4/mp4parse/src/macros.rs \
 	mp4/mp4parse/src/tests.rs \
 	mp4/mp4parse/src/craw.rs \
 	mp4/mp4parse/Cargo.toml \
@@ -82,7 +83,9 @@ CARGO_RELEASE_ARGS=--release
 endif
 
 CARGO_TARGET_DIR=@abs_top_builddir@/lib/mp4/target
-RUST_LIB=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@/libmp4.a
+RUST_PATH=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@
+RUST_LIB=$(RUST_PATH)/libmp4.a
+RUST_LIBADD=-L$(RUST_PATH) -lmp4
 
 $(RUST_LIB): $(RUST_FILES)
 	cd $(srcdir)/mp4 && \
@@ -91,10 +94,12 @@ $(RUST_LIB): $(RUST_FILES)
 clean-local:
 	cd $(srcdir)/mp4 && \
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo clean $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
+	rm -f $(CARGO_TARGET_DIR)/.rustc_info.json
 
 libopenraw_la_LDFLAGS = \
 	-version-info @LIBOPENRAW_VERSION_INFO@
-libopenraw_la_LIBADD = -ljpeg $(RUST_LIB)
+libopenraw_la_LIBADD = -ljpeg $(RUST_LIBADD)
+libopenraw_la_DEPENDENCIES = $(RUST_LIB)
 libopenraw_la_SOURCES = \
 	io/io.c io/posix_io.h \
 	io/posix_io.c io/posix_io.h \
