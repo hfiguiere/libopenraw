@@ -97,7 +97,8 @@ clean-local:
 	rm -f $(CARGO_TARGET_DIR)/.rustc_info.json
 
 libopenraw_la_LDFLAGS = \
-	-version-info @LIBOPENRAW_VERSION_INFO@
+	-version-info @LIBOPENRAW_VERSION_INFO@ \
+	-pthread -ldl
 libopenraw_la_LIBADD = -ljpeg $(RUST_LIBADD)
 libopenraw_la_DEPENDENCIES = $(RUST_LIB)
 libopenraw_la_SOURCES = \
