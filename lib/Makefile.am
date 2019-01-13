@@ -98,7 +98,7 @@ clean-local:
 
 libopenraw_la_LDFLAGS = \
 	-version-info @LIBOPENRAW_VERSION_INFO@ \
-	-pthread -ldl
+	-lpthread -ldl
 libopenraw_la_LIBADD = -ljpeg $(RUST_LIBADD)
 libopenraw_la_DEPENDENCIES = $(RUST_LIB)
 libopenraw_la_SOURCES = \
