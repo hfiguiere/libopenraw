@@ -25,6 +25,7 @@ TESTS = teststream
 check_PROGRAMS = teststream
 
 teststream_SOURCES = io/teststream.cpp
+teststream_LDFLAGS = -static
 teststream_LDADD = libopenraw.la
 
 noinst_HEADERS = \
@@ -109,6 +110,7 @@ libopenraw_la_SOURCES = \
 	io/memstream.cpp io/memstream.hpp \
 	io/file.cpp io/file.hpp \
 	io/io_private.h \
+	capi/capi.h \
 	capi/capi.cpp \
 	capi/debug.cpp \
 	capi/rawdata.cpp \
@@ -116,6 +118,7 @@ libopenraw_la_SOURCES = \
 	capi/bitmapdata.cpp \
 	capi/cfapattern.cpp \
 	capi/metadata.cpp \
+	capi/ifd.cpp \
 	mp4/mp4parse.h \
 	trace.cpp \
 	bititerator.hpp \

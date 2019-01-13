@@ -10,4 +10,5 @@ libopenraw_HEADERS = libopenraw.h \
 	rawfile.h exif.h metadata.h \
 	demosaic.h bitmapdata.h \
 	cfapattern.h \
+	ifd.h \
 	$(NULL)

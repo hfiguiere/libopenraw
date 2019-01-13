@@ -1,3 +1,4 @@
+/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
  * libopenraw - rawdata.cpp
  *
@@ -27,6 +28,7 @@
 #include <libopenraw/consts.h>
 #include <libopenraw/types.h>
 
+#include "capi.h"
 #include "rawdata.hpp"
 #include "cfapattern.hpp"
 
@@ -45,6 +47,7 @@ extern "C" {
         return r;                                                              \
     }
 
+API_EXPORT
 or_error or_get_extract_rawdata(const char *filename, uint32_t options,
                                 ORRawDataRef *rawdata)
 {
@@ -55,12 +58,14 @@ or_error or_get_extract_rawdata(const char *filename, uint32_t options,
     return ret;
 }
 
+API_EXPORT
 ORRawDataRef or_rawdata_new(void)
 {
     RawData *rawdata = new RawData();
     return reinterpret_cast<ORRawDataRef>(rawdata);
 }
 
+API_EXPORT
 or_error or_rawdata_release(ORRawDataRef rawdata)
 {
     if (rawdata == NULL) {
@@ -70,21 +75,25 @@ or_error or_rawdata_release(ORRawDataRef rawdata)
     return OR_ERROR_NONE;
 }
 
+API_EXPORT
 or_data_type or_rawdata_format(ORRawDataRef rawdata)
 {
     return reinterpret_cast<RawData *>(rawdata)->dataType();
 }
 
+API_EXPORT
 void *or_rawdata_data(ORRawDataRef rawdata)
 {
     return reinterpret_cast<RawData *>(rawdata)->data();
 }
 
+API_EXPORT
 size_t or_rawdata_data_size(ORRawDataRef rawdata)
 {
     return reinterpret_cast<RawData *>(rawdata)->size();
 }
 
+API_EXPORT
 void or_rawdata_dimensions(ORRawDataRef rawdata, uint32_t *width,
                            uint32_t *height)
 {
@@ -97,6 +106,7 @@ void or_rawdata_dimensions(ORRawDataRef rawdata, uint32_t *width,
     }
 }
 
+API_EXPORT
 or_error or_rawdata_get_active_area(ORRawDataRef rawdata, uint32_t *x, uint32_t *y,
                                 uint32_t *width, uint32_t *height)
 {
@@ -116,26 +126,31 @@ or_error or_rawdata_get_active_area(ORRawDataRef rawdata, uint32_t *x, uint32_t 
     return OR_ERROR_NONE;
 }
 
+API_EXPORT
 uint32_t or_rawdata_bpc(ORRawDataRef rawdata)
 {
     return reinterpret_cast<RawData *>(rawdata)->bpc();
 }
 
+API_EXPORT
 or_cfa_pattern or_rawdata_get_cfa_pattern_type(ORRawDataRef rawdata)
 {
     return reinterpret_cast<RawData *>(rawdata)->cfaPattern()->patternType();
 }
 
+API_EXPORT
 ORCfaPatternRef or_rawdata_get_cfa_pattern(ORRawDataRef rawdata)
 {
     return reinterpret_cast<ORCfaPatternRef>(reinterpret_cast<RawData *>(rawdata)->cfaPattern());
 }
 
+API_EXPORT
 uint32_t or_rawdata_get_compression(ORRawDataRef rawdata)
 {
   return reinterpret_cast<RawData *>(rawdata)->compression();
 }
 
+API_EXPORT
 or_error or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
                                uint16_t *white)
 {
@@ -149,6 +164,7 @@ or_error or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
     return OR_ERROR_NONE;
 }
 
+API_EXPORT
 const double *or_rawdata_get_colour_matrix(ORRawDataRef rawdata, uint32_t index,
                                            uint32_t *size)
 {
@@ -180,6 +196,7 @@ const double *or_rawdata_get_colour_matrix(ORRawDataRef rawdata, uint32_t index,
     return matrix;
 }
 
+API_EXPORT
 or_error or_rawdata_get_rendered_image(ORRawDataRef rawdata,
                                        ORBitmapDataRef bitmapdata,
                                        uint32_t options)

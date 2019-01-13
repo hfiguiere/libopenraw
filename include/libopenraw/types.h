@@ -1,7 +1,7 @@
 /*
  * libopenraw - types.h
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2019 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -27,5 +27,7 @@
 typedef struct _RawFile *ORRawFileRef;
 typedef struct _RawData *ORRawDataRef;
 typedef struct _BitmapData *ORBitmapDataRef;
+typedef struct _Thumbnail *ORThumbnailRef;
+typedef struct _IfdDir *ORIfdDirRef;
 
 #endif

@@ -128,6 +128,15 @@ typedef uint32_t or_rawfile_typeid;
 /** get the camera from the %or_rawfile_typeid */
 #define OR_GET_FILE_TYPEID_CAMERA(ftypeid) (ftypeid & 0xffff)
 
+/** Index for the Ifd inside a RAW file.
+ */
+typedef enum {
+    OR_IFD_MAIN = 0,
+    OR_IFD_CFA = 1,
+    OR_IFD_EXIF = 2,
+    OR_IFD_MAKERNOTE = 3,
+} or_ifd_index;
+
 #ifdef __cplusplus
 }
 #endif

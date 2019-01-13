@@ -185,6 +185,8 @@ AM_CONDITIONAL(DEBUG, test x$debug = xtrue)
 AC_LANG_CPLUSPLUS
 AC_LANG_COMPILER_REQUIRE
 
+AX_APPEND_COMPILE_FLAGS([-fvisibility=hidden])
+
 AX_CHECK_COMPILE_FLAG([-Werror=unknown-warning-option], [
         ax_compiler_flags_test="-Werror=unknown-warning-option"
 ], [

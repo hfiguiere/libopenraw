@@ -1,7 +1,7 @@
 /*
  * libopenraw - bitmapdata.cpp
  *
- * Copyright (C) 2007-2015 Hubert Figuiere
+ * Copyright (C) 2007-2019 Hubert Figuiere
  * Copyright (C) 2008 Novell Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -27,18 +27,21 @@
 #include <libopenraw/types.h>
 #include <libopenraw/consts.h>
 
+#include "capi.h"
 #include "bitmapdata.hpp"
 
 using OpenRaw::BitmapData;
 
 extern "C" {
 
+API_EXPORT
 ORBitmapDataRef or_bitmapdata_new(void)
 {
     BitmapData *bitmapdata = new BitmapData();
     return reinterpret_cast<ORBitmapDataRef>(bitmapdata);
 }
 
+API_EXPORT
 or_error or_bitmapdata_release(ORBitmapDataRef bitmapdata)
 {
     if (bitmapdata == NULL) {
@@ -48,21 +51,25 @@ or_error or_bitmapdata_release(ORBitmapDataRef bitmapdata)
     return OR_ERROR_NONE;
 }
 
+API_EXPORT
 or_data_type or_bitmapdata_format(ORBitmapDataRef bitmapdata)
 {
     return reinterpret_cast<BitmapData *>(bitmapdata)->dataType();
 }
 
+API_EXPORT
 void *or_bitmapdata_data(ORBitmapDataRef bitmapdata)
 {
     return reinterpret_cast<BitmapData *>(bitmapdata)->data();
 }
 
+API_EXPORT
 size_t or_bitmapdata_data_size(ORBitmapDataRef bitmapdata)
 {
     return reinterpret_cast<BitmapData *>(bitmapdata)->size();
 }
 
+API_EXPORT
 void or_bitmapdata_dimensions(ORBitmapDataRef bitmapdata, uint32_t *x,
                               uint32_t *y)
 {
@@ -75,6 +82,7 @@ void or_bitmapdata_dimensions(ORBitmapDataRef bitmapdata, uint32_t *x,
     }
 }
 
+API_EXPORT
 uint32_t or_bitmapdata_bpc(ORBitmapDataRef bitmapdata)
 {
     return reinterpret_cast<BitmapData *>(bitmapdata)->bpc();

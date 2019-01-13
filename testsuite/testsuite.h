@@ -37,10 +37,28 @@
 #include <map>
 #include <memory>
 
-namespace OpenRaw {
-class RawFile;
-class RawData;
-}
+#include <libopenraw/libopenraw.h>
+
+struct ThumbnailDeleter
+{
+    void operator()(ORThumbnailRef p) const {
+        or_thumbnail_release(p);
+    }
+};
+
+struct RawDataDeleter
+{
+    void operator()(ORRawDataRef p) const {
+        or_rawdata_release(p);
+    }
+};
+
+struct RawFileDeleter
+{
+    void operator()(ORRawFileRef p) const {
+        or_rawfile_release(p);
+    }
+};
 
 class Test {
 public:
@@ -96,8 +114,8 @@ private:
     std::string m_referer;
     std::map<int, std::string> m_results;
     // runtime data
-    std::unique_ptr<OpenRaw::RawFile> m_rawfile;
-    std::unique_ptr<OpenRaw::RawData> m_rawdata;
+    std::unique_ptr<_RawFile, RawFileDeleter> m_rawfile;
+    std::unique_ptr<_RawData, RawDataDeleter> m_rawdata;
     int m_total, m_success, m_failure;
 };
 

@@ -35,8 +35,6 @@
 extern "C" {
 #endif
 
-	typedef struct _Thumbnail *ORThumbnailRef;
-
 	/** Extract thumbnail for raw file
 	 *	@param filename the file name to extract from
 	 *	@param preferred_size preferred thumnail size

@@ -1,7 +1,8 @@
+/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
  * libopenraw - rawfile.cpp
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2019 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -29,7 +30,9 @@
 #include <libopenraw/thumbnails.h>
 #include <libopenraw/types.h>
 
+#include "capi.h"
 #include "rawfile.hpp"
+#include "ifddir.hpp"
 
 namespace OpenRaw {
 class BitmapData;
@@ -41,6 +44,7 @@ using OpenRaw::RawFile;
 using OpenRaw::RawData;
 using OpenRaw::BitmapData;
 using OpenRaw::Thumbnail;
+using OpenRaw::Internals::IfdDir;
 
 extern "C" {
 
@@ -50,11 +54,13 @@ extern "C" {
         return r;                                                              \
     }
 
+API_EXPORT
 const char **or_get_file_extensions()
 {
     return RawFile::fileExtensions();
 }
 
+API_EXPORT
 ORRawFileRef or_rawfile_new(const char *filename, or_rawfile_type type)
 {
     CHECK_PTR(filename, NULL);
@@ -62,6 +68,7 @@ ORRawFileRef or_rawfile_new(const char *filename, or_rawfile_type type)
     return reinterpret_cast<ORRawFileRef>(rawfile);
 }
 
+API_EXPORT
 ORRawFileRef or_rawfile_new_from_memory(const uint8_t *buffer, uint32_t len,
                                         or_rawfile_type type)
 {
@@ -70,6 +77,7 @@ ORRawFileRef or_rawfile_new_from_memory(const uint8_t *buffer, uint32_t len,
     return reinterpret_cast<ORRawFileRef>(rawfile);
 }
 
+API_EXPORT
 or_error or_rawfile_release(ORRawFileRef rawfile)
 {
     CHECK_PTR(rawfile, OR_ERROR_NOTAREF);
@@ -77,6 +85,7 @@ or_error or_rawfile_release(ORRawFileRef rawfile)
     return OR_ERROR_NONE;
 }
 
+API_EXPORT
 or_rawfile_type or_rawfile_get_type(ORRawFileRef rawfile)
 {
     CHECK_PTR(rawfile, OR_RAWFILE_TYPE_UNKNOWN);
@@ -84,6 +93,7 @@ or_rawfile_type or_rawfile_get_type(ORRawFileRef rawfile)
     return prawfile->type();
 }
 
+API_EXPORT
 or_rawfile_typeid or_rawfile_get_typeid(ORRawFileRef rawfile)
 {
     CHECK_PTR(rawfile, OR_RAWFILE_TYPE_UNKNOWN);
@@ -91,6 +101,7 @@ or_rawfile_typeid or_rawfile_get_typeid(ORRawFileRef rawfile)
     return prawfile->typeId();
 }
 
+API_EXPORT
 or_rawfile_typeid or_rawfile_get_vendorid(ORRawFileRef rawfile)
 {
     CHECK_PTR(rawfile, OR_RAWFILE_TYPE_UNKNOWN);
@@ -98,7 +109,7 @@ or_rawfile_typeid or_rawfile_get_vendorid(ORRawFileRef rawfile)
     return prawfile->vendorId();
 }
 
-const uint32_t *
+API_EXPORT const uint32_t *
 or_rawfile_get_thumbnail_sizes(ORRawFileRef  rawfile,
                                size_t       *size)
 {
@@ -116,6 +127,7 @@ or_rawfile_get_thumbnail_sizes(ORRawFileRef  rawfile,
     return &(*v.begin());
 }
 
+API_EXPORT
 or_error or_rawfile_get_thumbnail(ORRawFileRef rawfile,
                                   uint32_t _preferred_size,
                                   ORThumbnailRef thumb)
@@ -126,6 +138,7 @@ or_error or_rawfile_get_thumbnail(ORRawFileRef rawfile,
                                   *reinterpret_cast<Thumbnail *>(thumb));
 }
 
+API_EXPORT
 or_error or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata,
                                 uint32_t options)
 {
@@ -134,6 +147,7 @@ or_error or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata,
     return prawfile->getRawData(*reinterpret_cast<RawData *>(rawdata), options);
 }
 
+API_EXPORT
 or_error or_rawfile_get_rendered_image(ORRawFileRef rawfile,
                                        ORBitmapDataRef bitmapdata,
                                        uint32_t options)
@@ -144,6 +158,7 @@ or_error or_rawfile_get_rendered_image(ORRawFileRef rawfile,
         *reinterpret_cast<BitmapData *>(bitmapdata), options);
 }
 
+API_EXPORT
 int32_t or_rawfile_get_orientation(ORRawFileRef rawfile)
 {
     RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
@@ -151,6 +166,7 @@ int32_t or_rawfile_get_orientation(ORRawFileRef rawfile)
     return prawfile->getOrientation();
 }
 
+API_EXPORT
 or_error or_rawfile_get_colourmatrix1(ORRawFileRef rawfile, double *matrix,
                                       uint32_t *size)
 {
@@ -160,6 +176,7 @@ or_error or_rawfile_get_colourmatrix1(ORRawFileRef rawfile, double *matrix,
     return prawfile->getColourMatrix1(matrix, *size);
 }
 
+API_EXPORT
 or_error or_rawfile_get_colourmatrix2(ORRawFileRef rawfile, double *matrix,
                                       uint32_t *size)
 {
@@ -169,6 +186,7 @@ or_error or_rawfile_get_colourmatrix2(ORRawFileRef rawfile, double *matrix,
     return prawfile->getColourMatrix2(matrix, *size);
 }
 
+API_EXPORT
 ExifLightsourceValue or_rawfile_get_calibration_illuminant1(ORRawFileRef rawfile)
 {
     RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
@@ -176,6 +194,7 @@ ExifLightsourceValue or_rawfile_get_calibration_illuminant1(ORRawFileRef rawfile
     return prawfile->getCalibrationIlluminant1();
 }
 
+API_EXPORT
 ExifLightsourceValue or_rawfile_get_calibration_illuminant2(ORRawFileRef rawfile)
 {
     RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
@@ -183,7 +202,7 @@ ExifLightsourceValue or_rawfile_get_calibration_illuminant2(ORRawFileRef rawfile
     return prawfile->getCalibrationIlluminant2();
 }
 
-or_colour_matrix_origin
+API_EXPORT or_colour_matrix_origin
 or_rawfile_get_colour_matrix_origin(ORRawFileRef rawfile)
 {
     RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
@@ -191,12 +210,29 @@ or_rawfile_get_colour_matrix_origin(ORRawFileRef rawfile)
     return prawfile->getColourMatrixOrigin();
 }
 
-ORConstMetaValueRef
+API_EXPORT ORConstMetaValueRef
 or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index)
 {
     RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
     CHECK_PTR(rawfile, nullptr);
     return reinterpret_cast<ORConstMetaValueRef>(prawfile->getMetaValue(meta_index));
+}
+
+API_EXPORT ORIfdDirRef
+or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd)
+{
+    RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
+    CHECK_PTR(rawfile, nullptr);
+    IfdDir::Ref dir;
+    switch (ifd) {
+    case OR_IFD_MAKERNOTE:
+        dir = prawfile->getMakerNoteIfd();
+        break;
+    }
+    if (!dir) {
+        return nullptr;
+    }
+    return reinterpret_cast<ORIfdDirRef>(dir.get());
 }
 
 }

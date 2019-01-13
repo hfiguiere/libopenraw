@@ -1,7 +1,8 @@
+/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
  * libopenraw - capi.cpp
  *
- * Copyright (C) 2005-2015 Hubert Figuiere
+ * Copyright (C) 2005-2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,75 +29,72 @@
 #include <libopenraw/consts.h>
 #include <libopenraw/thumbnails.h>
 
+#include "capi.h"
 #include "thumbnail.hpp"
 
 using OpenRaw::Thumbnail;
 
 extern "C" {
 
-//	typedef struct Thumbnail _Thumbnail;
+API_EXPORT
+or_error or_get_extract_thumbnail(const char* _filename,
+                                  uint32_t _preferred_size,
+                                  ORThumbnailRef *_thumb)
+{
+    or_error ret = OR_ERROR_NONE;
 
-	or_error or_get_extract_thumbnail(const char* _filename,
-					 uint32_t _preferred_size,
-					 ORThumbnailRef *_thumb)
-	{
-		or_error ret = OR_ERROR_NONE;
+    Thumbnail ** pThumbnail = reinterpret_cast<Thumbnail **>(_thumb);
+    *pThumbnail = Thumbnail::getAndExtractThumbnail(_filename,
+                                                    _preferred_size, ret);
+    return ret;
+}
 
-		Thumbnail ** pThumbnail = reinterpret_cast<Thumbnail **>(_thumb);
-		*pThumbnail = Thumbnail::getAndExtractThumbnail(_filename,
-																										_preferred_size, ret);
-		return ret;
-	}
+API_EXPORT
+ORThumbnailRef or_thumbnail_new(void)
+{
+    Thumbnail *thumb = new Thumbnail();
+    return reinterpret_cast<ORThumbnailRef>(thumb);
+}
 
+API_EXPORT or_error
+or_thumbnail_release(ORThumbnailRef thumb)
+{
+    if (thumb == nullptr) {
+        return OR_ERROR_NOTAREF;
+    }
+    delete reinterpret_cast<Thumbnail *>(thumb);
+    return OR_ERROR_NONE;
+}
 
-	ORThumbnailRef or_thumbnail_new(void)
-	{
-		Thumbnail *thumb = new Thumbnail();
-		return reinterpret_cast<ORThumbnailRef>(thumb);
-	}
+API_EXPORT or_data_type
+or_thumbnail_format(ORThumbnailRef thumb)
+{
+    return reinterpret_cast<Thumbnail *>(thumb)->dataType();
+}
 
+API_EXPORT void *
+or_thumbnail_data(ORThumbnailRef thumb)
+{
+    return reinterpret_cast<Thumbnail *>(thumb)->data();
+}
 
-	or_error 
-	or_thumbnail_release(ORThumbnailRef thumb)
-	{
-		if (thumb == NULL) {
-			return OR_ERROR_NOTAREF;
-		}
-		delete reinterpret_cast<Thumbnail *>(thumb);
-		return OR_ERROR_NONE;
-	}
+API_EXPORT size_t
+or_thumbnail_data_size(ORThumbnailRef thumb)
+{
+    return reinterpret_cast<Thumbnail *>(thumb)->size();
+}
 
-
-	or_data_type 
-	or_thumbnail_format(ORThumbnailRef thumb)
-	{
-		return reinterpret_cast<Thumbnail *>(thumb)->dataType();		
-	}
-
-
-	void *
-	or_thumbnail_data(ORThumbnailRef thumb)
-	{
-		return reinterpret_cast<Thumbnail *>(thumb)->data();		
-	}
-
-	size_t
-	or_thumbnail_data_size(ORThumbnailRef thumb)
-	{
-		return reinterpret_cast<Thumbnail *>(thumb)->size();		
-	}
-
-	void
-	or_thumbnail_dimensions(ORThumbnailRef thumb, uint32_t *width, uint32_t *height)
-	{
-		Thumbnail* t = reinterpret_cast<Thumbnail *>(thumb);
-		if (width != NULL) {
-			*width = t->width();
-		}
-		if (height != NULL) {
-			*height = t->height();
-		}
-	}
+API_EXPORT void
+or_thumbnail_dimensions(ORThumbnailRef thumb, uint32_t *width, uint32_t *height)
+{
+    Thumbnail* t = reinterpret_cast<Thumbnail *>(thumb);
+    if (width != nullptr) {
+        *width = t->width();
+    }
+    if (height != nullptr) {
+        *height = t->height();
+    }
+}
 
 
 }

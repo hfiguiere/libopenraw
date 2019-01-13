@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.h
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -131,6 +131,9 @@ or_rawfile_get_colour_matrix_origin(ORRawFileRef rawfile);
  */
 ORConstMetaValueRef
 or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index);
+
+ORIfdDirRef
+or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd);
 
 #if 0
 /** Get the metadata out of the raw file as XMP

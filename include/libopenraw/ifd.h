@@ -1,7 +1,8 @@
+/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
- * libopenraw - metadata.cpp
+ * libopenraw - ifd.h
  *
- * Copyright (C) 2016-2019 Hubert Figuiere
+ * Copyright (C) 2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,18 +19,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <libopenraw/metadata.h>
+#pragma once
 
-#include "capi.h"
-#include "metavalue.hpp"
+#include <libopenraw/types.h>
+#include <libopenraw/consts.h>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
-API_EXPORT const char*
-or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx)
-{
-  // TODO validate parameters
-  return reinterpret_cast<const OpenRaw::MetaValue*>(value)->getString(idx).c_str();
-}
+/** Count the number of tags in the ifd
+ */
+int32_t
+or_ifd_count_tags(ORIfdDirRef rawfile);
 
+const char*
+or_ifd_get_makernote_id(ORIfdDirRef ifd);
+
+#ifdef __cplusplus
 }
+#endif

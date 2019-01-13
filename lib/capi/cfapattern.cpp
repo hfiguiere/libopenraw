@@ -1,7 +1,8 @@
+/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
  * libopenraw - cfapattern.cpp
  *
- * Copyright (C) 2016 Hubert Figuiere
+ * Copyright (C) 2016-2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,22 +21,23 @@
 
 #include <libopenraw/cfapattern.h>
 
+#include "capi.h"
 #include "cfapattern.hpp"
 
 extern "C" {
 
-or_cfa_pattern
+API_EXPORT or_cfa_pattern
 or_cfapattern_get_type(ORCfaPatternRef pattern)
 {
-  return reinterpret_cast<const OpenRaw::CfaPattern*>(pattern)->patternType();
+    return reinterpret_cast<const OpenRaw::CfaPattern*>(pattern)->patternType();
 }
 
-const uint8_t *
+API_EXPORT const uint8_t *
 or_cfapattern_get_pattern(ORCfaPatternRef pattern, uint16_t *count)
 {
-  // TODO check parameters.
-  auto pat = reinterpret_cast<const OpenRaw::CfaPattern*>(pattern);
-  return pat->patternPattern(*count);
+    // TODO check parameters.
+    auto pat = reinterpret_cast<const OpenRaw::CfaPattern*>(pattern);
+    return pat->patternPattern(*count);
 }
 
 }

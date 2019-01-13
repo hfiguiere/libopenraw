@@ -1,7 +1,8 @@
+/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
- * libopenraw - debug.h
+ * libopenraw - debug.cpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,21 +22,20 @@
  * @brief C API for Debug
  */
 
-
-
 #include <libopenraw/debug.h>
+
+#include "capi.h"
 #include "trace.hpp"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	
-	
-	void or_debug_set_level(debug_level lvl)
-	{
-		Debug::Trace::setDebugLevel(lvl);
-	}
+API_EXPORT
+void or_debug_set_level(debug_level lvl)
+{
+    Debug::Trace::setDebugLevel(lvl);
+}
 
 
 #ifdef __cplusplus

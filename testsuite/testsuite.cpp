@@ -2,7 +2,7 @@
 /*
  * libopenraw - testsuite.cpp
  *
- * Copyright (C) 2008-2018 Hubert Figuiere
+ * Copyright (C) 2008-2019 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -55,6 +55,7 @@
 #define IN_TESTSUITE
 #include <libopenraw/debug.h>
 #include <libopenraw/consts.h>
+#include <libopenraw/ifd.h>
 #include <libopenraw/metadata.h>
 
 #include "rawfile.hpp"
@@ -81,6 +82,10 @@ using OpenRaw::RawData;
 using OpenRaw::Thumbnail;
 
 using std::unique_ptr;
+
+ThumbnailDeleter td;
+RawDataDeleter rd;
+RawFileDeleter rfd;
 
 #define RETURN_TEST_EQUALS(a,b) \
     {                               \
@@ -224,27 +229,29 @@ Test::~Test()
 
 bool Test::testRawType(const std::string & result)
 {
-    RawFile::Type t = m_rawfile->type();
+    or_rawfile_type t = or_rawfile_get_type(m_rawfile.get());
 
     // test the detection by content....
-    RawFile::Type t2;
-    OpenRaw::IO::File f(m_file.c_str());
-    ::or_error err = f.open();
-    if(err != OR_ERROR_NONE) {
+    or_rawfile_type t2;
+    FILE* f = fopen(m_file.c_str(), "rb");
+    if (!f) {
         std::string message("failed to open ");
-        message += boost::lexical_cast<std::string>(err);
+        message += boost::lexical_cast<std::string>(errno);
         RETURN_FAIL(message.c_str());
     }
-    off_t len = f.filesize();
+    fseek(f, 0, SEEK_END);
+    off_t len = ftell(f);
+    fseek(f, 0, SEEK_SET);
     unique_ptr<uint8_t[]> buff(new uint8_t[len]);
-    int res = f.read(buff.get(), len);
-    if(res == len) {
-        unique_ptr<RawFile> r2(RawFile::newRawFileFromMemory(buff.get(), len));
-        if(!r2) {
+    int res = fread(buff.get(), 1, len, f);
+    fclose(f);
+    if (res == len) {
+        unique_ptr<_RawFile, RawFileDeleter> r2(or_rawfile_new_from_memory(buff.get(), len, OR_RAWFILE_TYPE_UNKNOWN), rfd);
+        if (!r2) {
             RETURN_FAIL("failed to load from memory");
         }
-        t2 = r2->type();
-        if(t2 != t) {
+        t2 = or_rawfile_get_type(r2.get());
+        if (t2 != t) {
             RETURN_FAIL("type mismatch");
         }
     }
@@ -309,8 +316,8 @@ bool Test::testRawType(const std::string & result)
 
 bool Test::testRawTypeId(const std::string & result)
 {
-    auto type_id = m_rawfile->typeId();
-    auto vendor_id = m_rawfile->vendorId();
+    auto type_id = or_rawfile_get_typeid(m_rawfile.get());
+    auto vendor_id = or_rawfile_get_vendorid(m_rawfile.get());
     bool test = false;
     CHECK_TEST_EQUALS_N(OR_GET_FILE_TYPEID_VENDOR(type_id), vendor_id, test);
     if (!test) {
@@ -324,10 +331,10 @@ bool Test::testRawTypeId(const std::string & result)
 
 bool Test::testThumbNum(const std::string & result)
 {
-    const std::vector<uint32_t> & thumbs = m_rawfile->listThumbnailSizes();
-    int num = thumbs.size();
+    size_t num = 0;
+    /*auto thumbs =*/ or_rawfile_get_thumbnail_sizes(m_rawfile.get(), &num);
     try {
-        RETURN_TEST_EQUALS_N(num, boost::lexical_cast<int>(result));
+        RETURN_TEST_EQUALS_N(num, boost::lexical_cast<size_t>(result));
     }
     catch(...)
     {
@@ -337,10 +344,11 @@ bool Test::testThumbNum(const std::string & result)
 
 bool Test::testThumbSizes(const std::string& result)
 {
-    std::vector<uint32_t> thumbs = m_rawfile->listThumbnailSizes();
+    size_t num = 0;
+    auto thumbs = or_rawfile_get_thumbnail_sizes(m_rawfile.get(), &num);
     std::vector<std::string> v;
     boost::split(v, result, boost::is_any_of(" "));
-    if(v.size() != thumbs.size()) {
+    if (v.size() != num) {
         RETURN_FAIL("mismatch number of elements");
     }
     std::vector<uint32_t> v2;
@@ -355,7 +363,7 @@ bool Test::testThumbSizes(const std::string& result)
         }
     }
     bool success = true;
-    for (size_t i = 0; i < thumbs.size(); i++) {
+    for (size_t i = 0; i < num; i++) {
         bool test = false;
         CHECK_TEST_EQUALS_N(thumbs[i], v2[i], test);
         if (!test) {
@@ -368,17 +376,18 @@ bool Test::testThumbSizes(const std::string& result)
 bool Test::testThumbFormats(const std::string & result)
 {
     bool success = true;
-    auto thumbs = m_rawfile->listThumbnailSizes();
+    size_t num = 0;
+    auto thumbs = or_rawfile_get_thumbnail_sizes(m_rawfile.get(), &num);
     std::vector< std::string > v;
     boost::split(v, result, boost::is_any_of(" "));
     auto result_iter = v.cbegin();
-    if(v.size() != thumbs.size()) {
+    if (v.size() != num) {
         RETURN_FAIL("mismatch number of elements");
     }
-    for (const auto& thumb : thumbs) {
-        Thumbnail t;
-        m_rawfile->getThumbnail(thumb, t);
-        success &= equalDataType(*result_iter, t.dataType());
+    for (size_t i = 0; i < num; i++) {
+        unique_ptr<_Thumbnail, ThumbnailDeleter> t(or_thumbnail_new(), td);
+        or_rawfile_get_thumbnail(m_rawfile.get(), thumbs[i], t.get());
+        success &= equalDataType(*result_iter, or_thumbnail_format(t.get()));
         result_iter++;
     }
     RETURN_TEST(success, result);
@@ -387,19 +396,20 @@ bool Test::testThumbFormats(const std::string & result)
 bool Test::testThumbDataSizes(const std::string & result)
 {
     bool success = true;
-    auto thumbs = m_rawfile->listThumbnailSizes();
+    size_t num = 0;
+    auto thumbs = or_rawfile_get_thumbnail_sizes(m_rawfile.get(), &num);
     std::vector< std::string > v;
     boost::split(v, result, boost::is_any_of(" "));
     auto result_iter = v.cbegin();
-    if(v.size() != thumbs.size()) {
+    if (v.size() != num) {
         RETURN_FAIL("mismatch number of elements");
     }
-    for (const auto& thumb : thumbs) {
-        Thumbnail t;
-        m_rawfile->getThumbnail(thumb, t);
+    for (size_t i = 0; i < num; i++) {
+        unique_ptr<_Thumbnail, ThumbnailDeleter> t(or_thumbnail_new(), td);
+        or_rawfile_get_thumbnail(m_rawfile.get(), thumbs[i], t.get());
         try {
             bool succ = false;
-            CHECK_TEST_EQUALS_N(t.size(), boost::lexical_cast<uint32_t>(*result_iter), succ);
+            CHECK_TEST_EQUALS_N(or_thumbnail_data_size(t.get()), boost::lexical_cast<uint32_t>(*result_iter), succ);
             success &= succ;
             result_iter++;
         }
@@ -411,13 +421,13 @@ bool Test::testThumbDataSizes(const std::string & result)
 }
 
 namespace {
-uint32_t computeCrc(const Thumbnail * thumb)
+uint32_t computeCrc(ORThumbnailRef thumb)
 {
     boost::crc_optimal<16, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
 
-    const uint8_t * data = static_cast<uint8_t *>(thumb->data());
-    size_t data_len = thumb->size();
-    crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
+    const uint8_t * data = static_cast<uint8_t *>(or_thumbnail_data(thumb));
+    size_t data_len = or_thumbnail_data_size(thumb);
+    crc_ccitt2 = std::for_each(data, data + data_len, crc_ccitt2);
     return crc_ccitt2();
 }
 }
@@ -425,19 +435,20 @@ uint32_t computeCrc(const Thumbnail * thumb)
 bool Test::testThumbMd5(const std::string & result)
 {
     bool success = true;
-    auto thumbs = m_rawfile->listThumbnailSizes();
+    size_t num = 0;
+    auto thumbs = or_rawfile_get_thumbnail_sizes(m_rawfile.get(), &num);
     std::vector< std::string > v;
     boost::split(v, result, boost::is_any_of(" "));
     auto result_iter = v.cbegin();
-    if(v.size() != thumbs.size()) {
+    if (v.size() != num) {
         RETURN_FAIL("mismatch number of elements");
     }
-    for (const auto& thumb : thumbs) {
-        Thumbnail t;
-        m_rawfile->getThumbnail(thumb, t);
+    for (size_t i = 0; i < num; i++) {
+        unique_ptr<_Thumbnail, ThumbnailDeleter> t(or_thumbnail_new(), td);
+        or_rawfile_get_thumbnail(m_rawfile.get(), thumbs[i], t.get());
         try {
             bool succ = false;
-            uint32_t crc = computeCrc(&t);
+            uint32_t crc = computeCrc(t.get());
             CHECK_TEST_EQUALS(boost::lexical_cast<std::string>(crc), (*result_iter), succ);
             success &= succ;
             result_iter++;
@@ -450,23 +461,23 @@ bool Test::testThumbMd5(const std::string & result)
 }
 
 namespace {
-unique_ptr<RawData> loadRawData(const unique_ptr<RawFile> & file)
+unique_ptr<_RawData, RawDataDeleter> loadRawData(const unique_ptr<_RawFile, RawFileDeleter> & file)
 {
-    unique_ptr<RawData> rawdata(new RawData());
+    unique_ptr<_RawData, RawDataDeleter> rawdata(or_rawdata_new(), rd);
     ::or_error err;
-    err = file->getRawData(*rawdata, OR_OPTIONS_NONE);
-    if(OR_ERROR_NONE != err) {
+    err = or_rawfile_get_rawdata(file.get(), rawdata.get(), OR_OPTIONS_NONE);
+    if (OR_ERROR_NONE != err) {
         rawdata.reset();
     }
     return rawdata;
 }
 
-uint32_t computeCrc(const unique_ptr<RawData> & rawdata)
+uint32_t computeCrc(_RawData* rawdata)
 {
     boost::crc_optimal<16, 0x1021, 0xFFFF, 0, false, false>  crc_ccitt2;
 
-    auto data = static_cast<const uint8_t *>(rawdata->data());
-    size_t data_len = rawdata->size();
+    auto data = static_cast<const uint8_t *>(or_rawdata_data(rawdata));
+    size_t data_len = or_rawdata_data_size(rawdata);
     crc_ccitt2 = std::for_each( data, data + data_len, crc_ccitt2 );
     return crc_ccitt2();
 }
@@ -475,26 +486,26 @@ uint32_t computeCrc(const unique_ptr<RawData> & rawdata)
 
 bool Test::testRawDataType(const std::string & result)
 {
-    if(m_rawdata == NULL) {
+    if (!m_rawdata) {
         m_rawdata = loadRawData(m_rawfile);
-        if(m_rawdata == NULL) {
+        if (!m_rawdata) {
             RETURN_FAIL("failed to get rawData");
         }
     }
-    RETURN_TEST(equalDataType(result, m_rawdata->dataType()), result);
+    RETURN_TEST(equalDataType(result, or_rawdata_format(m_rawdata.get())), result);
 }
 
 
 bool Test::testRawDataSize(const std::string & result)
 {
-    if(m_rawdata == NULL) {
+    if (!m_rawdata) {
         m_rawdata = loadRawData(m_rawfile);
-        if(m_rawdata == NULL) {
+        if (!m_rawdata) {
             RETURN_FAIL("failed to get rawData");
         }
     }
     try {
-        RETURN_TEST_EQUALS_N(m_rawdata->size(), boost::lexical_cast<uint32_t>(result));
+        RETURN_TEST_EQUALS_N(or_rawdata_data_size(m_rawdata.get()), boost::lexical_cast<uint32_t>(result));
     }
     catch(...) {
     }
@@ -503,9 +514,9 @@ bool Test::testRawDataSize(const std::string & result)
 
 bool Test::testRawDataDimensions(const std::string & result)
 {
-    if(m_rawdata == NULL) {
+    if (!m_rawdata) {
         m_rawdata = loadRawData(m_rawfile);
-        if(m_rawdata == NULL) {
+        if (!m_rawdata) {
             RETURN_FAIL("failed to get rawData");
         }
     }
@@ -520,9 +531,12 @@ bool Test::testRawDataDimensions(const std::string & result)
         x = boost::lexical_cast<uint32_t>(v[0]);
         y = boost::lexical_cast<uint32_t>(v[1]);
         bool succ = false;
-        CHECK_TEST_EQUALS_N(m_rawdata->width(), x, succ);
+        uint32_t rx, ry;
+        rx = ry = 0;
+        or_rawdata_dimensions(m_rawdata.get(), &rx, &ry);
+        CHECK_TEST_EQUALS_N(rx, x, succ);
         success &= succ;
-        CHECK_TEST_EQUALS_N(m_rawdata->height(), y,  succ);
+        CHECK_TEST_EQUALS_N(ry, y,  succ);
         success &= succ;
     }
     catch(...)
@@ -556,10 +570,10 @@ bool Test::testRawDataActiveArea(const std::string & result)
     {
         RETURN_FAIL("conversion failed");
     }
-    RETURN_TEST(x == m_rawdata->activeAreaX() && y == m_rawdata->activeAreaY()
-                && w == m_rawdata->activeAreaWidth()
-                && h == m_rawdata->activeAreaHeight(),
-                result);
+    uint32_t rx, ry, rw, rh;
+    rx = ry = rw = rh = 0;
+    or_rawdata_get_active_area(m_rawdata.get(), &rx, &ry, &rw, &rh);
+    RETURN_TEST(x == rx && y == ry && w == rw && h == rh, result);
 }
 
 bool Test::testRawCfaPattern(const std::string & result)
@@ -571,8 +585,7 @@ bool Test::testRawCfaPattern(const std::string & result)
         }
     }
     bool succ = false;
-    CHECK_TEST_EQUALS(cfaPatternToString(
-                          m_rawdata->cfaPattern()->patternType()),
+    CHECK_TEST_EQUALS(cfaPatternToString(or_rawdata_get_cfa_pattern_type(m_rawdata.get())),
                       result, succ);
     return succ;
 }
@@ -593,7 +606,10 @@ bool Test::testRawMinValue(const std::string & result)
     {
         RETURN_FAIL("conversion failed");
     }
-    RETURN_TEST_EQUALS_N(m_rawdata->blackLevel(), expected);
+    uint16_t black, white;
+    black = white = 0;
+    or_rawdata_get_levels(m_rawdata.get(), &black, &white);
+    RETURN_TEST_EQUALS_N(black, expected);
 }
 
 
@@ -613,7 +629,10 @@ bool Test::testRawMaxValue(const std::string & result)
     {
         RETURN_FAIL("conversion failed");
     }
-    RETURN_TEST_EQUALS_N(m_rawdata->whiteLevel(), expected);
+    uint16_t black, white;
+    black = white = 0;
+    or_rawdata_get_levels(m_rawdata.get(), &black, &white);
+    RETURN_TEST_EQUALS_N(white, expected);
 }
 
 bool Test::testRawMd5(const std::string & result)
@@ -625,7 +644,7 @@ bool Test::testRawMd5(const std::string & result)
         }
     }
 
-    uint32_t crc = computeCrc(m_rawdata);
+    uint32_t crc = computeCrc(m_rawdata.get());
 
     uint32_t expected = 0;
     try {
@@ -653,17 +672,17 @@ bool Test::testRawDecompressedMd5(const std::string &)
 
 bool Test::testMetaOrientation(const std::string & result)
 {
-    int32_t orientation = m_rawfile->getOrientation();
+    int32_t orientation = or_rawfile_get_orientation(m_rawfile.get());
     RETURN_TEST_EQUALS_N(orientation, boost::lexical_cast<int32_t>(result));
 }
 
 
 bool Test::testExifString(int32_t meta_index, const std::string & result)
 {
-    auto val = m_rawfile->getMetaValue(meta_index);
+    auto val = or_rawfile_get_metavalue(m_rawfile.get(), meta_index);
     if (val) {
         //
-        auto stringVal = val->getString(0);
+        auto stringVal = std::string(or_metavalue_get_string(val, 0));
         RETURN_TEST_EQUALS(stringVal, result);
     }
     RETURN_FAIL("meta data not found");
@@ -672,11 +691,9 @@ bool Test::testExifString(int32_t meta_index, const std::string & result)
 bool Test::testMakerNoteCount(const std::string & result)
 {
     try {
-        auto maker_note = m_rawfile->getMakerNoteIfd();
-        if (!maker_note) {
-            RETURN_FAIL("no MakeNote found");
-        }
-        RETURN_TEST_EQUALS_N(maker_note->numTags(),
+        auto ifd = or_rawfile_get_ifd(m_rawfile.get(), OR_IFD_MAKERNOTE);
+        auto numTags = or_ifd_count_tags(ifd);
+        RETURN_TEST_EQUALS_N(numTags,
                              boost::lexical_cast<int32_t>(result));
     }
     catch(const std::bad_cast & e) {
@@ -689,30 +706,15 @@ bool Test::testMakerNoteCount(const std::string & result)
 
 bool Test::testMakerNoteId(const std::string & result)
 {
-    try {
-        auto ifd_file =
-            dynamic_cast<OpenRaw::Internals::IfdFile*>(m_rawfile.get());
-        if (ifd_file == nullptr) {
-            RETURN_FAIL("not an IFD file");
-        }
-        auto exif = ifd_file->exifIfd();
-        if (!exif) {
-            RETURN_FAIL("not an exif");
-        }
-        auto maker_note =
-            std::dynamic_pointer_cast<OpenRaw::Internals::MakerNoteDir>(
-                exif->getMakerNoteIfd());
-        if (!maker_note) {
-            RETURN_FAIL("no MakerNote found");
-        }
-        RETURN_TEST_EQUALS(maker_note->getId(), result);
+    auto ifd = or_rawfile_get_ifd(m_rawfile.get(), OR_IFD_MAKERNOTE);
+    if (!ifd) {
+        RETURN_FAIL("no MakerNote found");
     }
-    catch(const std::bad_cast & e) {
-        RETURN_FAIL("not an IFD file");
+    auto makernote_id = or_ifd_get_makernote_id(ifd);
+    if (!makernote_id) {
+        RETURN_FAIL("no MakeNote id");
     }
-    catch(...) {
-        RETURN_FAIL("unknown exception");
-    }
+    RETURN_TEST_EQUALS(std::string(makernote_id), result);
 }
 
 
@@ -730,7 +732,7 @@ int Test::run()
         fprintf(stderr, "File not found, skipping. (%d)\n", errno);
         return 0;
     }
-    m_rawfile.reset(RawFile::newRawFile(m_file.c_str()));
+    m_rawfile.reset(or_rawfile_new(m_file.c_str(), OR_RAWFILE_TYPE_UNKNOWN));
 
     if(m_rawfile == NULL) {
         RETURN_FAIL("m_rawfile == NULL");
