@@ -304,6 +304,7 @@ enum {
     OR_TYPEID_LEICA_TL2 = 25,
     /* RWL */
     OR_TYPEID_LEICA_DLUX_5 = 26,
+    OR_TYPEID_LEICA_DLUX_7 = 27,
     _OR_TYPEID_LEICA_LAST
 };
 
