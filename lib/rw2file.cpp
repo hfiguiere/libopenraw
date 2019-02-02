@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2file.cpp
  *
- * Copyright (C) 2011-2018 Hubert Figuiere
+ * Copyright (C) 2011-2019 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -388,6 +388,8 @@ const IfdFile::camera_ids_t Rw2File::s_def[] = {
 	{ "DC-LX100M2", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_LX100M2) },
 	{ "DMC-L1", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_L1) },
 	{ "DMC-L10", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_L10) },
+	{ "DC-S1", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_DC_S1) },
+	{ "DC-S1R", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_DC_S1R) },
 	{ "DMC-TZ100", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_TZ100) },
 	{ "DMC-TZ110", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_TZ110) },
 	{ "DC-TZ202", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_TZ202) },
