@@ -64,6 +64,7 @@ static const BuiltinColourMatrix s_matrices[] = {
 const RawFile::camera_ids_t Cr3File::s_def[] = {
     { "Canon EOS M50", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M50) },
     { "Canon EOS R", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R) },
+    { "Canon EOS RP", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_RP) },
     { "Canon PowerShot SX70 HS", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_SX70_HS) },
     { 0, 0 }
 };
