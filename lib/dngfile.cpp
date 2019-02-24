@@ -135,6 +135,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
     { "GR II                                                          ",
       OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
                           OR_TYPEID_RICOH_GRII) },
+    { "RICOH GR III       ",
+      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, OR_TYPEID_RICOH_GRIII) },
     { "GXR            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
                                              OR_TYPEID_RICOH_GXR) },
     { "GXR A16                                                        ",
