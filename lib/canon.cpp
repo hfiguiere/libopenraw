@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon.cpp
  *
- * Copyright (C) 2018 Hubert Figuiere
+ * Copyright (C) 2018-2019 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

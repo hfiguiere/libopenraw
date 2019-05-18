@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr3file.cpp
  *
- * Copyright (C) 2018 Hubert Figuière
+ * Copyright (C) 2018-2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -62,6 +62,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 18285, -8907, -1951, -1845, 10688, 1323, 364, 1101, 5139 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_250D),
+      0,
+      0,
+      { 9079, -1923, -1236, -4677, 12454, 2492, -922, 2319, 5565 } },
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
 
@@ -69,6 +73,7 @@ const RawFile::camera_ids_t Cr3File::s_def[] = {
     { "Canon EOS M50", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M50) },
     { "Canon EOS R", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R) },
     { "Canon EOS RP", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_RP) },
+    { "Canon EOS Rebel SL3", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_250D) },
     { "Canon PowerShot SX70 HS", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_SX70_HS) },
     { 0, 0 }
 };
