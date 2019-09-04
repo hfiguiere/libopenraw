@@ -22,25 +22,27 @@ New features:
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
-  - Support for Canon EOS M50/KISS M*, EOS R*, EOS RP*, SX1 IS*, SX60 HS*,
-    SX70 HS*, S120*, 2000D/Rebel T7/Kiss X90*, 3000D/4000D/Rebel T100*,
-    250D/Rebel SL3/Kiss X10*, 1D MarkII N*, 1D*, 1Ds*.
+  - Support for Canon EOS M50/KISS M*, M6 MkII*, EOS R*, EOS RP*, SX1 IS*,
+    SX60 HS*, SX70 HS*, S120*, 2000D/Rebel T7/Kiss X90*,
+    3000D/4000D/Rebel T100*, 250D/Rebel SL3/Kiss X10*, 1D MarkII N*, 1D*, 1Ds*,
+    90D*, G5XMkII*, G7XMkIII*.
   - Removed PowerShot G7 as it doesn't have RAW.
-  - Support for Fujifilm S5000*, HS30EXR*, X-T100*, GFX 50R*, X-T3*, X-T30*
-  - Support for Olympus Stylus1,1s, TG-5*, E-M10 Mark III*, E-M1X*.
+  - Support for Fujifilm S5000*, HS30EXR*, X-T100*, GFX 50R*, GFX-100*, X-T3*,
+    X-T30*
+  - Support for Olympus Stylus1,1s, TG-5*, TG-6*, E-M10 Mark III*, E-M1X*.
   - Support for Panasonic DC-FZ45, DMC-FZ35*, DMC-FZ45*, DC-FZ80/FZ82*,
     DMC-FZ150*, DMC-GX7MK2*, DC-GH5S*, DMC-LX1*, DMC-LX10/LX15*, DC-ZS200*,
-    DC-LX100M2*, DC-S1*, DC-S1R*, DC-G95*, DC-Zs80*, DMC-FZ1000*
+    DC-LX100M2*, DC-S1*, DC-S1R*, DC-G95*, DC-ZS80/DC-TZ95*, DMC-FZ1000*
     and DC-FZ1000 II*.
   - Support for Pentax 645Z DNG and PEF*, 645D DNG, K1 Mk II DNG and PEF*,
     K10D DNG, KP PEF*.
   - Support for Ricoh GX200, GR II, GR III.
-  - Support for Sony RX0*, RX10M4*, A5000*, A5100*, A7M2*, A7M3*, A7S*,
-    A7SM2*, A7RM3*, A9*, NEX-3N*, DSLR-A230*, DSLR-A290*, DSLR-A330*,
-    DSLR-A450*, DSLR-A500*, SLT-A37*, ILCA-68*, ILCA-77M2*, RX100M6*,
-    A6400*.
+  - Support for Sony RX0*, RX0M2, RX10M4*, A5000*, A5100*, A7M2*, A7M3*, A7S*,
+    A7SM2*, A7RM3*, A7RM4*, A9*, NEX-3N*, DSLR-A230*, DSLR-A290*, DSLR-A330*,
+    DSLR-A450*, DSLR-A500*, SLT-A37*, ILCA-68*, ILCA-77M2*, RX100M6*, RX100M7*,
+    A6400*, A6100, A6600.
   - Support for Leica V-LUX (Typ 114)*, C-LUX*, D_Lux 7*, Leica M10-P, TL2,
-    C (Typ 112)*.
+    C (Typ 112)*, V-Lux 5*.
   - Support for Nikon Z 6 and Z 7* (partial), Coolpix P1000*, Coolpix E8800*,
     Coolpix A1000*.
   - Added aliases for Canon Rebel XTi and Kiss Digital X (400D),
