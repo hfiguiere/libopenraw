@@ -50,6 +50,14 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 8532, -701, -1167, -4095, 11879, 2508, -797, 2424, 7010 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M6MKII),
+      0,
+      0,
+      { 11498, -3759, -1516, -5073, 12954, 2349, -892, 1867, 6118 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_90D),
+      0,
+      0,
+      { 11498, -3759, -1516, -5073, 12954, 2349, -892, 1867, 6118 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R),
       0,
       0,
@@ -66,6 +74,14 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 9079, -1923, -1236, -4677, 12454, 2492, -922, 2319, 5565 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G5XMKII),
+      0,
+      0,
+      { 11629, -5713, -914, -2706, 11090, 1842, -206, 1225, 5515 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7XMKIII),
+      0,
+      0,
+      { 11629, -5713, -914, -2706, 11090, 1842, -206, 1225, 5515 } },
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
 
@@ -73,8 +89,13 @@ const RawFile::camera_ids_t Cr3File::s_def[] = {
     { "Canon EOS M50", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M50) },
     { "Canon EOS R", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R) },
     { "Canon EOS RP", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_RP) },
+    { "Canon EOS 250D", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_250D) },
     { "Canon EOS Rebel SL3", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_250D) },
     { "Canon PowerShot SX70 HS", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_SX70_HS) },
+    { "Canon PowerShot G5 X Mark II", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G5XMKII) },
+    { "Canon PowerShot G7 X Mark III", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7XMKIII) },
+    { "Canon EOS M6 Mark II", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M6MKII) },
+    { "Canon EOS 90D", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_90D) },
     { 0, 0 }
 };
 
