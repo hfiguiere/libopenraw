@@ -234,6 +234,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 10899, -3833, -1082, -2112, 10736, 1575, -267, 1452, 5269 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_TG6),
+      0,
+      0,
+      { 10899, -3833, -1082, -2112, 10736, 1575, -267, 1452, 5269 } },
 
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 
@@ -285,6 +289,7 @@ const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
     { "SH-2            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_SH2) },
     { "TG-4            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_TG4) },
     { "TG-5            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_TG5) },
+    { "TG-6            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_TG6) },
     { 0, 0 }
 };
 
