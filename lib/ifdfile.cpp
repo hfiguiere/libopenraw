@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2019 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -45,6 +45,7 @@
 #include "jfifcontainer.hpp"
 #include "rawfile_private.hpp"
 #include "unpack.hpp"
+#include "xtranspattern.hpp"
 
 namespace OpenRaw {
 
@@ -375,14 +376,17 @@ Internals::IfdDir::Ref IfdFile::_getMakerNoteIfd()
 
 namespace {
 
-::or_cfa_pattern
+const MosaicInfo *
 _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
 {
   ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
   if(cfaPattern.size() != 4) {
-    LOGWARN("Unsupported bayer pattern\n");
-  }
-  else {
+    if (cfaPattern.size() == 36) {
+      // XXX don't assume this is X-Trans
+      return XTransPattern::xtransPattern();
+    }
+    LOGWARN("Unsupported bayer pattern of size %ld\n", cfaPattern.size());
+  } else {
     LOGDBG2("pattern is = %d, %d, %d, %d\n", cfaPattern[0],
             cfaPattern[1], cfaPattern[2], cfaPattern[3]);
     switch(cfaPattern[0]) {
@@ -418,65 +422,66 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
       break;
     }
     //
+    return MosaicInfo::twoByTwoPattern(cfa_pattern);
   }
-  return cfa_pattern;
+  return nullptr;
 }
 
-::or_cfa_pattern _convertNewCfaPattern(const IfdEntry::Ref & e)
+const MosaicInfo *_convertNewCfaPattern(const IfdEntry::Ref & e)
 {
-  ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
   if(!e || (e->count() < 4)) {
-    return cfa_pattern;
+    return nullptr;
   }
 
   uint16_t hdim = IfdTypeTrait<uint16_t>::get(*e, 0, true);
   uint16_t vdim = IfdTypeTrait<uint16_t>::get(*e, 1, true);
   if(hdim != 2 && vdim != 2) {
-    cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
-  }
-  else {
+    // cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
+    if (hdim != 6 && vdim != 6) {
+      LOGWARN("CFA pattern dimension %dx%d are incompatible", hdim, vdim);
+      return nullptr;
+    }
+    return XTransPattern::xtransPattern();
+  } else {
     std::vector<uint8_t> cfaPattern;
     cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 4, true));
     cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 5, true));
     cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 6, true));
     cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 7, true));
-    cfa_pattern = _convertArrayToCfaPattern(cfaPattern);
+    return _convertArrayToCfaPattern(cfaPattern);
   }
-  return cfa_pattern;
 }
 
 
-/** convert the CFA Pattern as stored in the entry */
-::or_cfa_pattern _convertCfaPattern(const IfdEntry::Ref & e)
-{
-  ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
-
-  auto result = e->getArray<uint8_t>();
-  if (result) {
-    cfa_pattern = _convertArrayToCfaPattern(result.value());
-  }
-
-  return cfa_pattern;
-}
-
-/** get the CFA Pattern out of the directory
- * @param dir the directory
- * @return the cfa_pattern value. %OR_CFA_PATTERN_NONE mean that
- * nothing has been found.
- */
-static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
+/** Extract the MosaicInfo from the entry */
+const MosaicInfo *_convertCfaPattern(const IfdEntry::Ref & e)
 {
   LOGDBG1("%s\n", __FUNCTION__);
-  ::or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
+  auto result = e->getArray<uint8_t>();
+  if (result) {
+    return _convertArrayToCfaPattern(result.value());
+  }
+
+  return nullptr;
+}
+
+/** get the mosaic info out of the directory
+ * @param dir the directory
+ * @return the %MosaicInfo* value. %nullptr mean that
+ * nothing has been found.
+ */
+const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
+{
+  LOGDBG1("%s\n", __FUNCTION__);
+  const MosaicInfo *mosaic_info = nullptr;
   try {
     IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
-    if(e) {
-      cfa_pattern = _convertCfaPattern(e);
-    }
-    else {
+    if (e) {
+      mosaic_info = _convertCfaPattern(e);
+    } else {
       e = dir->getEntry(IFD::EXIF_TAG_NEW_CFA_PATTERN);
-      if(e)  {
-        cfa_pattern = _convertNewCfaPattern(e);
+      if (e)  {
+        mosaic_info = _convertNewCfaPattern(e);
       }
     }
   }
@@ -484,7 +489,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   {
     LOGERR("Exception in _getCfaPattern().\n");
   }
-  return cfa_pattern;
+  return mosaic_info;
 }
 
 } // end anon namespace
@@ -618,13 +623,13 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
   LOGDBG1("RAW Compression is %u\n", compression);
   LOGDBG1("bpc is %u\n", bpc);
 
-  ::or_cfa_pattern cfa_pattern = _getCfaPattern(dir);
-  if(cfa_pattern == OR_CFA_PATTERN_NONE) {
+  const MosaicInfo *mosaic_info = _getMosaicInfo(dir);
+  if (!mosaic_info) {
     // some file have it in the exif IFD instead.
     if(!m_exifIfd) {
       m_exifIfd = _locateExifIfd();
     }
-    cfa_pattern = _getCfaPattern(m_exifIfd);
+    mosaic_info = _getMosaicInfo(m_exifIfd);
   }
 
 
@@ -650,7 +655,7 @@ static ::or_cfa_pattern _getCfaPattern(const IfdDir::Ref & dir)
     LOGERR("Unsupported bpc %u\n", bpc);
     return OR_ERROR_INVALID_FORMAT;
   }
-  data.setCfaPatternType(cfa_pattern);
+  data.setMosaicInfo(mosaic_info);
   data.setDataType(data_type);
   data.setBpc(bpc);
   data.setCompression(data_type == OR_DATA_TYPE_COMPRESSED_RAW
