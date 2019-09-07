@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawdata.h
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2019 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -29,7 +29,7 @@
 
 #include <libopenraw/consts.h>
 #include <libopenraw/types.h>
-#include <libopenraw/cfapattern.h>
+#include <libopenraw/mosaicinfo.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -78,8 +78,8 @@ extern "C" {
 	or_cfa_pattern
 	or_rawdata_get_cfa_pattern_type(ORRawDataRef rawdata);
 
-	ORCfaPatternRef
-	or_rawdata_get_cfa_pattern(ORRawDataRef rawdata);
+	ORMosaicInfoRef
+	or_rawdata_get_mosaicinfo(ORRawDataRef rawdata);
 
 	/** Return the compression type for the RawData.
 	 * @return the numerical value.

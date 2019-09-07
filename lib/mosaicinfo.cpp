@@ -1,7 +1,7 @@
 /*
- * libopenraw - cfapattern.cpp
+ * libopenraw - mosaicinfo.cpp
  *
- * Copyright (C) 2012 Hubert Figuière
+ * Copyright (C) 2012-2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -27,7 +27,7 @@
 
 #include <libopenraw/consts.h>
 
-#include "cfapattern.hpp"
+#include "mosaicinfo.hpp"
 
 namespace OpenRaw {
 
@@ -44,11 +44,11 @@ static const uint8_t BGGR_PATTERN[] = { BLUE, GREEN, GREEN, RED };
 static const uint8_t GRBG_PATTERN[] = { GREEN, RED, BLUE, GREEN };
 
 class Cfa2x2RgbPattern
-  : public CfaPattern
+  : public MosaicInfo
 {
 public:
   Cfa2x2RgbPattern(::or_cfa_pattern pattern)
-    : CfaPattern(pattern, 2, 2)
+    : MosaicInfo(pattern, 2, 2)
     {
       switch(pattern) {
       case OR_CFA_PATTERN_RGGB:
@@ -73,10 +73,10 @@ public:
 
 }
 
-const CfaPattern*
-CfaPattern::twoByTwoPattern(::or_cfa_pattern pattern)
+const MosaicInfo*
+MosaicInfo::twoByTwoPattern(::or_cfa_pattern pattern)
 {
-  static std::array<CfaPattern*, _OR_CFA_PATTERN_INVALID> s_patterns
+  static std::array<MosaicInfo*, _OR_CFA_PATTERN_INVALID> s_patterns
     = { { NULL, NULL, NULL, NULL, NULL, NULL } };
   // this should be updated if we change the enum
   BOOST_STATIC_ASSERT(_OR_CFA_PATTERN_INVALID == 6);
@@ -86,7 +86,7 @@ CfaPattern::twoByTwoPattern(::or_cfa_pattern pattern)
     return NULL;
   }
 
-  CfaPattern* pat = s_patterns[pattern];
+  MosaicInfo* pat = s_patterns[pattern];
   if(!pat) {
     pat = new Internals::Cfa2x2RgbPattern(pattern);
     s_patterns[pattern] = pat;
@@ -96,7 +96,7 @@ CfaPattern::twoByTwoPattern(::or_cfa_pattern pattern)
 }
 
 
-class CfaPattern::Private
+class MosaicInfo::Private
 {
 public:
   friend class Internals::Cfa2x2RgbPattern;
@@ -114,25 +114,25 @@ public:
   const uint8_t* pattern;
 };
 
-CfaPattern::CfaPattern()
-  : d(new CfaPattern::Private)
+MosaicInfo::MosaicInfo()
+  : d(new MosaicInfo::Private)
 {
 }
 
-CfaPattern::CfaPattern(::or_cfa_pattern pattern,
+MosaicInfo::MosaicInfo(::or_cfa_pattern pattern,
                        uint16_t width, uint16_t height)
-  : d(new CfaPattern::Private)
+  : d(new MosaicInfo::Private)
 {
   setSize(width, height);
   setPatternType(pattern);
 }
 
-CfaPattern::~CfaPattern()
+MosaicInfo::~MosaicInfo()
 {
   delete d;
 }
 
-void CfaPattern::setSize(uint16_t x, uint16_t y)
+void MosaicInfo::setSize(uint16_t x, uint16_t y)
 {
   d->x = x;
   d->y = y;
@@ -144,14 +144,20 @@ void CfaPattern::setSize(uint16_t x, uint16_t y)
   }
 }
 
-bool CfaPattern::is2by2Rgb() const
+void MosaicInfo::getSize(uint16_t &x, uint16_t &y) const
+{
+  x = d->y;
+  y = d->y;
+}
+
+bool MosaicInfo::is2by2Rgb() const
 {
   return (d->pattern_type != OR_CFA_PATTERN_NONE)
     && (d->pattern_type != OR_CFA_PATTERN_NON_RGB22);
 }
 
 void
-CfaPattern::setPatternPattern(const uint8_t* pattern, uint16_t count)
+MosaicInfo::setPatternPattern(const uint8_t* pattern, uint16_t count)
 {
   if(count != d->x * d->y) {
     d->pattern = NULL;
@@ -162,18 +168,18 @@ CfaPattern::setPatternPattern(const uint8_t* pattern, uint16_t count)
 }
 
 const uint8_t*
-CfaPattern::patternPattern(uint16_t& count) const
+MosaicInfo::patternPattern(uint16_t& count) const
 {
   if(d->pattern) {
     count = d->x * d->y;
     return d->pattern;
   }
-  
+
   count = 0;
   return NULL;
 }
 
-void CfaPattern::setPatternType(::or_cfa_pattern pattern)
+void MosaicInfo::setPatternType(::or_cfa_pattern pattern)
 {
   d->pattern_type = pattern;
   if(is2by2Rgb()) {
@@ -183,7 +189,7 @@ void CfaPattern::setPatternType(::or_cfa_pattern pattern)
 }
 
 ::or_cfa_pattern
-CfaPattern::patternType() const
+MosaicInfo::patternType() const
 {
   return d->pattern_type;
 }

@@ -1,6 +1,5 @@
-/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
- * libopenraw - cfapattern.cpp
+ * libopenraw - mosaicinfo.h
  *
  * Copyright (C) 2016-2019 Hubert Figuière
  *
@@ -19,26 +18,33 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <libopenraw/cfapattern.h>
 
-#include "capi.h"
-#include "cfapattern.hpp"
+#ifndef LIBOPENRAW_CFAPATTERN_H_
+#define LIBOPENRAW_CFAPATTERN_H_
 
+#include <stdint.h>
+
+#include <libopenraw/consts.h>
+
+#ifdef __cplusplus
 extern "C" {
+#endif
 
-API_EXPORT or_cfa_pattern
-or_cfapattern_get_type(ORCfaPatternRef pattern)
-{
-    return reinterpret_cast<const OpenRaw::CfaPattern*>(pattern)->patternType();
-}
+typedef const struct _MosaicInfo *ORMosaicInfoRef;
 
-API_EXPORT const uint8_t *
-or_cfapattern_get_pattern(ORCfaPatternRef pattern, uint16_t *count)
-{
-    // TODO check parameters.
-    auto pat = reinterpret_cast<const OpenRaw::CfaPattern*>(pattern);
-    return pat->patternPattern(*count);
-}
+void or_mosaicinfo_set_size(ORMosaicInfoRef pattern, uint16_t x, uint16_t y);
+void or_mosaicinfo_get_size(ORMosaicInfoRef pattern, uint16_t *x, uint16_t *y);
 
+or_cfa_pattern or_mosaicinfo_get_type(ORMosaicInfoRef);
+
+const uint8_t *or_mosaicinfo_get_pattern(ORMosaicInfoRef pattern, uint16_t * count);
+
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif
+
+
 

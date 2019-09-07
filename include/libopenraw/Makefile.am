@@ -9,6 +9,6 @@ libopenraw_HEADERS = libopenraw.h \
 	thumbnails.h rawdata.h \
 	rawfile.h exif.h metadata.h \
 	demosaic.h bitmapdata.h \
-	cfapattern.h \
+	mosaicinfo.h \
 	ifd.h \
 	$(NULL)

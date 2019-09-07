@@ -63,7 +63,7 @@
 #include "thumbnail.hpp"
 #include "bitmapdata.hpp"
 #include "metavalue.hpp"
-#include "cfapattern.hpp"
+#include "mosaicinfo.hpp"
 
 #include "xmlhandler.h"
 #include "testsuite.h"

@@ -1,7 +1,7 @@
 /*
  * libopenraw - xtranspattern.h
  *
- * Copyright (C) 2012 Hubert Figuière
+ * Copyright (C) 2012-2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,10 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_XTRANSPATTERN_H_
-#define OR_INTERNALS_XTRANSPATTERN_H_
+#pragma once
 
-#include "cfapattern.hpp"
+#include "mosaicinfo.hpp"
 
 namespace OpenRaw {
 namespace Internals {
@@ -30,7 +29,7 @@ namespace Internals {
  * The X-Trans CMOS 6x6 pattern for the Fuji X-Pro1.
  */
 class XTransPattern
-	: public CfaPattern
+	: public MosaicInfo
 {
 public:
   static const XTransPattern* xtransPattern();
@@ -41,7 +40,6 @@ protected:
 
 }
 }
-#endif
 /*
   Local Variables:
   mode:c++

@@ -22,7 +22,6 @@
 
 #include <libopenraw/consts.h>
 
-#include "cfapattern.hpp"
 #include "xtranspattern.hpp"
 
 namespace OpenRaw {
@@ -36,7 +35,7 @@ static const uint8_t BLUE = OR_PATTERN_COLOUR_BLUE;
 /** X-Trans CMOS pattern guess from marketing brochure:
  * http://www.fujifilm.com/products/digital_cameras/x/fujifilm_x_pro1/features/
  */
-static const uint8_t XTRANS_PATTERN[] = { 
+static const uint8_t XTRANS_PATTERN[] = {
   GREEN, BLUE,  GREEN, GREEN, RED,   GREEN,
   RED,   GREEN, RED,   BLUE,  GREEN, BLUE,
   GREEN, BLUE,  GREEN, GREEN, RED,   GREEN,
@@ -46,7 +45,7 @@ static const uint8_t XTRANS_PATTERN[] = {
 };
 
 XTransPattern::XTransPattern()
-  : CfaPattern(OR_CFA_PATTERN_NON_RGB22, 6, 6)
+  : MosaicInfo(OR_CFA_PATTERN_NON_RGB22, 6, 6)
 {
   setPatternPattern(XTRANS_PATTERN, 36);
 }

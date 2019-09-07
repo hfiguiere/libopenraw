@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawdata.cpp
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2019 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,7 +30,7 @@
 
 #include "capi.h"
 #include "rawdata.hpp"
-#include "cfapattern.hpp"
+#include "mosaicinfo.hpp"
 
 namespace OpenRaw {
 class BitmapData;
@@ -135,13 +135,13 @@ uint32_t or_rawdata_bpc(ORRawDataRef rawdata)
 API_EXPORT
 or_cfa_pattern or_rawdata_get_cfa_pattern_type(ORRawDataRef rawdata)
 {
-    return reinterpret_cast<RawData *>(rawdata)->cfaPattern()->patternType();
+    return reinterpret_cast<RawData *>(rawdata)->mosaicInfo()->patternType();
 }
 
 API_EXPORT
-ORCfaPatternRef or_rawdata_get_cfa_pattern(ORRawDataRef rawdata)
+ORMosaicInfoRef or_rawdata_get_mosaicinfo(ORRawDataRef rawdata)
 {
-    return reinterpret_cast<ORCfaPatternRef>(reinterpret_cast<RawData *>(rawdata)->cfaPattern());
+    return reinterpret_cast<ORMosaicInfoRef>(reinterpret_cast<RawData *>(rawdata)->mosaicInfo());
 }
 
 API_EXPORT

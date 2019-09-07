@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.cpp
  *
- * Copyright (C) 2006-2018 Hubert Figuière
+ * Copyright (C) 2006-2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,7 +26,7 @@
 #include <libopenraw/cameraids.h>
 #include <libopenraw/consts.h>
 
-#include "cfapattern.hpp"
+#include "mosaicinfo.hpp"
 #include "rawdata.hpp"
 #include "rawfile.hpp"
 
@@ -395,7 +395,7 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
                                            data.size(), m_container, x, y);
                 RawDataPtr dData = decomp.decompress();
                 if (dData) {
-                    dData->setCfaPatternType(data.cfaPattern()->patternType());
+                    dData->setCfaPatternType(data.mosaicInfo()->patternType());
                     data.swap(*dData);
                     data.setDataType(OR_DATA_TYPE_RAW);
                     data.setDimensions(x, y);

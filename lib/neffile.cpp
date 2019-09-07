@@ -2,7 +2,7 @@
 /*
  * libopenraw - neffile.cpp
  *
- * Copyright (C) 2006-2018 Hubert Figuière
+ * Copyright (C) 2006-2019 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -32,7 +32,7 @@
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
 
-#include "cfapattern.hpp"
+#include "mosaicinfo.hpp"
 #include "rawdata.hpp"
 #include "rawfile.hpp"
 
@@ -561,7 +561,7 @@ uint32_t NefFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
     uint16_t bpc = data.bpc();
     newData.setBpc(bpc);
     newData.setWhiteLevel((1 << bpc) - 1);
-    newData.setCfaPatternType(data.cfaPattern()->patternType());
+    newData.setCfaPatternType(data.mosaicInfo()->patternType());
 
     for (unsigned int i = 0; i < rows; i++) {
         for (unsigned int j = 0; j < raw_columns; j++) {

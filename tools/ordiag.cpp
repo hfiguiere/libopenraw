@@ -59,7 +59,7 @@ public:
             }
         }
 
-    std::string cfaPatternToString(ORCfaPatternRef pattern)
+    std::string cfaPatternToString(ORMosaicInfoRef pattern)
         {
             if(pattern == NULL) {
                 return "(null)";
@@ -68,7 +68,7 @@ public:
             std::string out;
             uint16_t size = 0;
             const uint8_t* patternPattern
-              = or_cfapattern_get_pattern(pattern, &size);
+                = or_mosaicinfo_get_pattern(pattern, &size);
 
             for(uint16_t i = 0; i < size; ++i) {
                 switch(patternPattern[i]) {
@@ -321,9 +321,9 @@ public:
                     % aa_x % aa_y % aa_width % aa_height;
 
                 // CFA
-                ORCfaPatternRef pattern = or_rawdata_get_cfa_pattern(rd);
+                ORMosaicInfoRef pattern = or_rawdata_get_mosaicinfo(rd);
                 ::or_cfa_pattern patternType
-                      = pattern ? or_cfapattern_get_type(pattern)
+                      = pattern ? or_mosaicinfo_get_type(pattern)
                       : OR_CFA_PATTERN_NON_RGB22;
                 m_out << boost::format("\t\tBayer Type: %1%\n")
                     % cfaPatternToString(patternType);

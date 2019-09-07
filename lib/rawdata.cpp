@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawdata.cpp
  *
- * Copyright (C) 2007-2018 Hubert Figuiere
+ * Copyright (C) 2007-2019 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -31,7 +31,7 @@
 
 #include "bitmapdata.hpp"
 #include "rawdata.hpp"
-#include "cfapattern.hpp"
+#include "mosaicinfo.hpp"
 #include "rawfile.hpp"
 #include "render/bimedian_demosaic.hpp"
 #include "render/grayscale.hpp"
@@ -51,7 +51,7 @@ public:
     uint32_t activeAreaW;
     uint32_t activeAreaH;
     ExifPhotometricInterpretation photometricInterpretation;
-    const CfaPattern* cfa_pattern; // IMMUTABLE
+    const MosaicInfo* mosaic_info; // IMMUTABLE
     uint32_t compression;
     uint8_t *pos;
     size_t offset;
@@ -72,7 +72,7 @@ public:
         , blackLevel(0), whiteLevel(0)
         , activeAreaX(0), activeAreaY(0), activeAreaW(0), activeAreaH(0)
         , photometricInterpretation(EV_PI_CFA)
-        , cfa_pattern(CfaPattern::twoByTwoPattern(OR_CFA_PATTERN_NONE))
+        , mosaic_info(MosaicInfo::twoByTwoPattern(OR_CFA_PATTERN_NONE))
         , compression(0)
         , pos(NULL), offset(0)
         , row_offset(0)
@@ -144,7 +144,7 @@ RawData::~RawData()
         }
 
 	or_cfa_pattern pattern;
-	pattern = cfaPattern()->patternType();
+	pattern = mosaicInfo()->patternType();
 	_x = width();
 	_y = height();
 
@@ -326,17 +326,17 @@ void RawData::setSlices(const std::vector<uint16_t> & slices)
 
 void RawData::setCfaPatternType(or_cfa_pattern t)
 {
-    d->cfa_pattern = CfaPattern::twoByTwoPattern(t);
+    d->mosaic_info = MosaicInfo::twoByTwoPattern(t);
 }
 
-const CfaPattern* RawData::cfaPattern() const
+const MosaicInfo* RawData::mosaicInfo() const
 {
-    return d->cfa_pattern;
+    return d->mosaic_info;
 }
 
-void RawData::setCfaPattern(const CfaPattern* pattern)
+void RawData::setMosaicInfo(const MosaicInfo* mosaic_info)
 {
-    d->cfa_pattern = pattern;
+    d->mosaic_info = mosaic_info;
 }
 
 void RawData::setCompression(uint32_t t)

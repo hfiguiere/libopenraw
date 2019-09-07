@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2019 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -213,7 +213,7 @@ DngFile::getColourMatrixOrigin() const
             LJpegDecompressor decomp(s.get(), jfif.get());
             RawDataPtr dData = decomp.decompress();
             if (dData) {
-                dData->setCfaPattern(data.cfaPattern());
+                dData->setMosaicInfo(data.mosaicInfo());
                 data.swap(*dData);
             }
         }

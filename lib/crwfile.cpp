@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2019 Hubert Figuière
  * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 #include "rawdata.hpp"
 #include "metavalue.hpp"
-#include "cfapattern.hpp"
+#include "mosaicinfo.hpp"
 #include "rawfile.hpp"
 #include "trace.hpp"
 #include "io/streamclone.hpp"
@@ -263,7 +263,7 @@ RawContainer* CRWFile::getContainer() const
             RawDataPtr dData = decomp.decompress();
             if (dData) {
                 LOGDBG1("Out size is %dx%d\n", dData->width(), dData->height());
-                dData->setCfaPatternType(data.cfaPattern()->patternType());
+                dData->setCfaPatternType(data.mosaicInfo()->patternType());
                 data.swap(*dData);
             }
         }

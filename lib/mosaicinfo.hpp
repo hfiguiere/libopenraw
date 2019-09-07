@@ -1,7 +1,7 @@
 /*
- * libopenraw - cfapattern.h
+ * libopenraw - mosaicinfo.h
  *
- * Copyright (C) 2012 Hubert Figuière
+ * Copyright (C) 2012-2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,64 +18,64 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBOPENRAWPP_CFA_PATTERN_H_
-#define LIBOPENRAWPP_CFA_PATTERN_H_
+#pragma once
 
 #include <stdint.h>
 #include <libopenraw/consts.h>
 
 namespace OpenRaw {
 
-class CfaPattern
+class MosaicInfo
 {
 public:
-  virtual ~CfaPattern();
+  virtual ~MosaicInfo();
 
   /** Set the pattern size */
   void setSize(uint16_t x, uint16_t y);
+  /** Get the pattern size */
+  void getSize(uint16_t &x, uint16_t &y) const;
+
+  /** Return of the mosaic is a Color Filter Array */
+  bool isCFA() const;
 
   /** Return if the pattern is 2x2 RGB */
   bool is2by2Rgb() const;
 
-  /** 
+  /**
    * @return the pattern type. Be cautious as this does not cover
    * non 2x2 RGB.
    */
   ::or_cfa_pattern patternType() const;
   const uint8_t* patternPattern(uint16_t& count) const;
 
-  /** factory to return a singleton instance of the right pattern 
-   *  @return a const CfaPattern. Never delete it. MAY BE NULL.
+  /** factory to return a singleton instance of the right pattern
+   *  @return a const MosaicInfo. Never delete it. MAY BE NULL.
    */
-  static const CfaPattern* twoByTwoPattern(::or_cfa_pattern);
+  static const MosaicInfo* twoByTwoPattern(::or_cfa_pattern);
 
 protected:
-  CfaPattern();
-  CfaPattern(::or_cfa_pattern pattern, uint16_t width, uint16_t height);
+  MosaicInfo();
+  MosaicInfo(::or_cfa_pattern pattern, uint16_t width, uint16_t height);
 
   /** Set the pattern pattern.
-   * @param pattern the actual pattern sequence left to right, 
+   * @param pattern the actual pattern sequence left to right,
    *  top to bottom
    * @param count the number of element. Should be width x height
    */
   void setPatternPattern(const uint8_t* pattern, uint16_t count);
 
-private:
-  // no copy allowed
-  CfaPattern(const CfaPattern &);
-  CfaPattern& operator=(const CfaPattern&);
+  MosaicInfo(const MosaicInfo &) = delete;
+  MosaicInfo& operator=(const MosaicInfo&) = delete;
 
   void setPatternType(::or_cfa_pattern pattern);
 
   class Private;
-  
+
   Private *d;
 };
 
 
 }
-
-#endif
 /*
   Local Variables:
   mode:c++

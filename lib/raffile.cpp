@@ -2,7 +2,7 @@
 /*
  * libopenraw - raffile.cpp
  *
- * Copyright (C) 2011-2018 Hubert Figuière
+ * Copyright (C) 2011-2019 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -470,7 +470,7 @@ RafFile::isXTrans(RawFile::TypeId type_) const
     data.setDataType(OR_DATA_TYPE_RAW);
     data.setDimensions(w, h);
     if (isXTrans(typeId())) {
-        data.setCfaPattern(XTransPattern::xtransPattern());
+        data.setMosaicInfo(XTransPattern::xtransPattern());
     } else {
         data.setCfaPatternType(OR_CFA_PATTERN_GBRG);
     }

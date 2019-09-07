@@ -28,7 +28,7 @@
 
 #include <libopenraw/metadata.h>
 #include "bitmapdata.hpp"
-#include "cfapattern.hpp"
+#include "mosaicinfo.hpp"
 
 namespace OpenRaw {
 
@@ -101,8 +101,8 @@ public:
     /**
      * @return the const CfaPattern*.
      */
-    const CfaPattern* cfaPattern() const;
-    void setCfaPattern(const CfaPattern* pattern);
+    const MosaicInfo* mosaicInfo() const;
+    void setMosaicInfo(const MosaicInfo* mosaic_info);
 
     uint32_t compression() const;
     void setCompression(uint32_t c);

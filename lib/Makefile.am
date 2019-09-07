@@ -51,7 +51,7 @@ noinst_HEADERS = \
 	bitmapdata.hpp \
 	thumbnail.hpp \
 	rawdata.hpp \
-	cfapattern.hpp \
+	mosaicinfo.hpp \
 	metavalue.hpp \
 	ifd.hpp \
 	ifdfilecontainer.hpp \
@@ -116,14 +116,14 @@ libopenraw_la_SOURCES = \
 	capi/rawdata.cpp \
 	capi/rawfile.cpp \
 	capi/bitmapdata.cpp \
-	capi/cfapattern.cpp \
+	capi/mosaicinfo.cpp \
 	capi/metadata.cpp \
 	capi/ifd.cpp \
 	mp4/mp4parse.h \
 	trace.cpp \
 	bititerator.hpp \
 	bititerator.cpp \
-	cfapattern.cpp \
+	mosaicinfo.cpp \
 	xtranspattern.hpp \
 	xtranspattern.cpp \
 	huffman.hpp \

@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2018 Hubert Figuière
+ * Copyright (C) 2006-2019 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -31,7 +31,7 @@
 
 #include "rawdata.hpp"
 #include "rawfile.hpp"
-#include "cfapattern.hpp"
+#include "mosaicinfo.hpp"
 #include "trace.hpp"
 #include "io/memstream.hpp"
 #include "ifdfilecontainer.hpp"
@@ -628,7 +628,7 @@ void Cr2File::getRawBytes(RawData &data, uint32_t offset, uint32_t byte_length,
       if (dData) {
         LOGDBG1("Out size is %dx%d\n", dData->width(), dData->height());
         // must re-set the cfaPattern
-        dData->setCfaPatternType(data.cfaPattern()->patternType());
+        dData->setCfaPatternType(data.mosaicInfo()->patternType());
         data.swap(*dData);
         if (!isCr2()) {
             // In TIF the raw image width needs to be divided by two
