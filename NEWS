@@ -12,6 +12,7 @@ Changes:
   - API: the package name is libopenraw-0.2
   - API: some camera ID have been renamed or value changed.
   - API: or_rawdata_get_roi() renamed to or_rawdata_get_active_area().
+  - API: cfa_pattern renamed to mosaicinfo.
 
 New features:
 
@@ -68,6 +69,7 @@ Bug fixes:
 
   - Missing RAW type in ordiag.
   - Fixed inconsistencies identifying vendor id.
+  - Recognize X-Trans CFA patterns in DNG files.
 
 Internal changes:
 
