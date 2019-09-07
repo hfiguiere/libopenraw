@@ -405,7 +405,7 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
           cfa_pattern = OR_CFA_PATTERN_GRBG;
         }
         break;
-      case 2:
+      case IFD::CFA_BLUE:
         if ((cfaPattern[2] == IFD::CFA_RED)
             && (cfaPattern[3] == IFD::CFA_GREEN)) {
           cfa_pattern = OR_CFA_PATTERN_GBRG;
