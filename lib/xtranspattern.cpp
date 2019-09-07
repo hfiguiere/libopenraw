@@ -32,16 +32,23 @@ static const uint8_t RED = OR_PATTERN_COLOUR_RED;
 static const uint8_t GREEN = OR_PATTERN_COLOUR_GREEN;
 static const uint8_t BLUE = OR_PATTERN_COLOUR_BLUE;
 
-/** X-Trans CMOS pattern guess from marketing brochure:
- * http://www.fujifilm.com/products/digital_cameras/x/fujifilm_x_pro1/features/
+/** X-Trans CMOS pattern
+ *
+ * RBGBRG
+ * GGRGGB
+ * GGBGGR
+ * BRGRBG
+ * GGBGGR
+ * GGRGGB
+ *
  */
 static const uint8_t XTRANS_PATTERN[] = {
-  GREEN, BLUE,  GREEN, GREEN, RED,   GREEN,
-  RED,   GREEN, RED,   BLUE,  GREEN, BLUE,
-  GREEN, BLUE,  GREEN, GREEN, RED,   GREEN,
-  GREEN, RED,   GREEN, GREEN, BLUE,  GREEN,
-  BLUE,  GREEN, BLUE,  RED,   GREEN, RED,
-  GREEN, RED,   GREEN, GREEN, BLUE,  GREEN
+  RED,   BLUE,  GREEN, BLUE,  RED,   GREEN,
+  GREEN, GREEN, RED,   GREEN, GREEN, BLUE,
+  GREEN, GREEN, BLUE,  GREEN, GREEN, RED,
+  BLUE,  RED,   GREEN, RED,   BLUE,  GREEN,
+  GREEN, GREEN, BLUE,  GREEN, GREEN, RED,
+  GREEN, GREEN, RED,   GREEN, GREEN, BLUE
 };
 
 XTransPattern::XTransPattern()
