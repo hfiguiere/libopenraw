@@ -32,7 +32,6 @@ namespace Internals {
 
 class NefCfaIterator {
 	NefDiffIterator m_diffs;
-	size_t m_rows;
 	size_t m_columns;
 	unsigned int m_row;
 	unsigned int m_column;
@@ -41,7 +40,7 @@ class NefCfaIterator {
 
 public:
 
-	NefCfaIterator (const NefDiffIterator&, size_t, size_t,
+	NefCfaIterator (const NefDiffIterator&, size_t,
 					const uint16_t(*)[2]);
 	uint16_t get();
 };

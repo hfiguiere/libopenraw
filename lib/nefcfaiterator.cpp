@@ -24,9 +24,9 @@
 namespace OpenRaw {
 namespace Internals {
 
-NefCfaIterator::NefCfaIterator(const NefDiffIterator& diffs, size_t rows,
+NefCfaIterator::NefCfaIterator(const NefDiffIterator& diffs,
 							   size_t columns, const uint16_t init[2][2])
-	: m_diffs(diffs), m_rows(rows),
+	: m_diffs(diffs),
 	  m_columns(columns), m_row(0),
 	  m_column(0)
 {

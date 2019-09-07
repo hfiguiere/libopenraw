@@ -218,8 +218,8 @@ or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index)
     return reinterpret_cast<ORConstMetaValueRef>(prawfile->getMetaValue(meta_index));
 }
 
-API_EXPORT ORIfdDirRef
-or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd)
+API_EXPORT
+ORIfdDirRef or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd)
 {
     RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
     CHECK_PTR(rawfile, nullptr);
@@ -227,6 +227,8 @@ or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd)
     switch (ifd) {
     case OR_IFD_MAKERNOTE:
         dir = prawfile->getMakerNoteIfd();
+        break;
+    default:
         break;
     }
     if (!dir) {

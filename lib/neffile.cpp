@@ -546,14 +546,14 @@ uint32_t NefFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
     }
     const uint32_t rows = data.height();
     const uint32_t raw_columns = data.width();
-    
+
     //FIXME: not always true
     const uint32_t columns = raw_columns - 1;
-    
+
     NefDiffIterator
         diffs(c.huffman, static_cast<uint8_t*>(data.data()), data.size());
-    NefCfaIterator iter(diffs, rows, raw_columns, c.vpred);
-    
+    NefCfaIterator iter(diffs, raw_columns, c.vpred);
+
     RawData newData;
     uint16_t *p = (uint16_t *) newData.allocData(rows * columns * 2);
     newData.setDimensions(columns, rows);
