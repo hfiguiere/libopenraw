@@ -166,6 +166,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 11673, -476, -1041, -3988, 12058, 2166, -771, 1417, 5569 } },
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XA7),
+      0,
+      0,
+      { 15055, -7391, -1274, -4062, 12071, 2238, -610, 1217, 6147 } },
     // From DNG Converter 10.3
     { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XQ1),
       0,
