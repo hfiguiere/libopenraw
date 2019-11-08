@@ -443,7 +443,7 @@ public:
                 if (vendorId != OR_GET_FILE_TYPEID_VENDOR(fileTypeId)) {
                     m_out <<
                         boost::format(
-                            "\t*ERROR*: mistmatch vendor id, got %1%\n")
+                            "\t*ERROR*: mismatched vendor id, got %1%\n")
                         % vendorId;
                 }
 
