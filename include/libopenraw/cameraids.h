@@ -53,6 +53,7 @@ enum {
     OR_TYPEID_VENDOR_BLACKMAGIC = 15,
     OR_TYPEID_VENDOR_XIAOYI = 16,
     OR_TYPEID_VENDOR_APPLE = 17,
+    OR_TYPEID_VENDOR_SIGMA = 18,
 
     _OR_TYPEID_VENDOR_LAST
 };
@@ -336,6 +337,7 @@ enum {
     OR_TYPEID_LEICA_VLUX_5 = 29,
     /* DNG */
     OR_TYPEID_LEICA_Q2 = 30,
+    OR_TYPEID_LEICA_SL2 = 31,
     _OR_TYPEID_LEICA_LAST
 };
 
@@ -733,6 +735,11 @@ enum {
     _OR_TYPEID_APPLE_LAST
 };
 
+enum {
+    OR_TYPEID_SIGMA_UNKNOWN = 0,
+    OR_TYPEID_SIGMA_FP = 1,
+    _OR_TYPEID_SIGMA_LAST
+};
 #ifdef __cplusplus
 }
 #endif

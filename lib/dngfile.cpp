@@ -119,6 +119,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                OR_TYPEID_LEICA_X_TYP113) },
     { "LEICA SL (Typ 601)", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                                OR_TYPEID_LEICA_SL_TYP601) },
+    { "LEICA SL2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+                                       OR_TYPEID_LEICA_SL2) },
     { "LEICA T (Typ 701)", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                                OR_TYPEID_LEICA_T_TYP701) },
     { "LEICA TL2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
@@ -157,6 +159,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                          OR_TYPEID_APPLE_IPHONE_7PLUS) },
     { "Blackmagic Pocket Cinema Camera", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_BLACKMAGIC,
                                          OR_TYPEID_BLACKMAGIC_POCKET_CINEMA) },
+    { "SIGMA fp", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SIGMA,
+                                      OR_TYPEID_SIGMA_FP) },
     { 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE,
                              OR_TYPEID_ADOBE_DNG_GENERIC) }
 };
