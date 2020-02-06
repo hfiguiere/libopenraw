@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr3file.cpp
  *
- * Copyright (C) 2018-2019 Hubert Figuière
+ * Copyright (C) 2018-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -46,6 +46,10 @@ namespace Internals {
 
 /* all relative to the D65 calibration illuminant */
 static const BuiltinColourMatrix s_matrices[] = {
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M200),
+      0,
+      0,
+      { 10463, -2173, -1437, -4856, 12635, 2482, -1216, 2915, 7237 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M50),
       0,
       0,
