@@ -2,7 +2,7 @@
 /*
  * libopenraw - neffile.cpp
  *
- * Copyright (C) 2006-2019 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -268,6 +268,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 10405, -3755, -1270, -5461, 13787, 1793, -1040, 2015, 6785 } },
+    { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_Z50),
+      0,
+      0,
+      { 11640, -4829, -1079, -5107, 13006, 2325, -972, 1711, 7380 } },
 
     { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_DF),
       0,
@@ -427,6 +431,7 @@ const IfdFile::camera_ids_t NefFile::s_def[] = {
     { "NIKON D7100", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D7100) },
     { "NIKON D7200", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D7200) },
     { "NIKON D750", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D750) },
+    { "NIKON D780", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D780) },
     { "NIKON D80", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D80) },
     { "NIKON D800", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D800) },
     { "NIKON D800E", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D800E) },
@@ -435,6 +440,7 @@ const IfdFile::camera_ids_t NefFile::s_def[] = {
     { "NIKON Df", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_DF) },
     { "NIKON Z 6", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_Z6) },
     { "NIKON Z 7", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_Z7) },
+    { "NIKON Z 50", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_Z50) },
     { "E5400", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_E5400) },
     { "E5700", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_E5700) },
     { "E8400", OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_E8400) },

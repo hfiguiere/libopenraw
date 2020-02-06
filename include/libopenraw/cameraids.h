@@ -1,7 +1,7 @@
 /*
  * libopenraw - cameraids.h
  *
- * Copyright (C) 2012-2018 Hubert Figuière
+ * Copyright (C) 2012-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -292,6 +292,8 @@ enum {
     OR_TYPEID_NIKON_D2HS,
     OR_TYPEID_NIKON_D2XS,
     OR_TYPEID_NIKON_COOLPIX_A1000,
+    OR_TYPEID_NIKON_D780,
+    OR_TYPEID_NIKON_Z50,
     _OR_TYPEID_NIKON_LAST
 };
 
