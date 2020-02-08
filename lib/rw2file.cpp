@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2file.cpp
  *
- * Copyright (C) 2011-2019 Hubert Figuiere
+ * Copyright (C) 2011-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -305,6 +305,10 @@ static const BuiltinColourMatrix s_matrices[] = {
     0,
     0,
     { 11822, -5321, -1249, -5958, 15114, 766, -614, 1264, 7043 } },
+  { OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_DC_S1H),
+    0,
+    0,
+    { 9397, -3719, -805, -5425, 13326, 2309, -972, 1715, 6034 } },
   { OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_DC_ZS80),
     0,
     0,
@@ -429,6 +433,7 @@ const IfdFile::camera_ids_t Rw2File::s_def[] = {
 	{ "DMC-L10", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_L10) },
 	{ "DC-S1", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_DC_S1) },
 	{ "DC-S1R", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_DC_S1R) },
+	{ "DC-S1H", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_DC_S1H) },
 	{ "DMC-TZ70", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_TZ70) },
 	{ "DMC-ZS60", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_ZS60) },
 	// Aliases to DMC-ZS60
