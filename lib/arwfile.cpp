@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.cpp
  *
- * Copyright (C) 2006-2018 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -334,6 +334,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       128,
       0,
       { 6389, -1703, -378, -4562, 12265, 2587, -670, 1489, 6550 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE9M2),
+      128,
+      0,
+      { 6389, -1703, -378, -4562, 12265, 2587, -670, 1489, 6550 } },
 
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
@@ -418,6 +422,7 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { "ILCE-7S", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7S) },
     { "ILCE-7SM2", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7SM2) },
     { "ILCE-9", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE9) },
+    { "ILCE-9M2", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE9M2) },
     { 0, 0 }
 };
 
