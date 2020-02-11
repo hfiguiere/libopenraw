@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.cpp
  *
- * Copyright (C) 2006-2019 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -162,6 +162,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0xfcb,
       { 8380, -2630, -639, -2887, 10725, 2496, -627, 1427, 5438 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPL10),
+      0,
+      0xfcb,
+      { 9197, -3190, -659, -2606, 10830, 2039, -458, 1250, 5458 } },
     { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPM1),
       0,
       0,
@@ -279,6 +283,7 @@ const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
     { "E-PL7           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPL7) },
     { "E-PL8           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPL8) },
     { "E-PL9           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPL9) },
+    { "E-PL10          ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPL10) },
     { "E-PM1           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPM1) },
     { "E-PM2           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPM2) },
     { "XZ-1            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_XZ1) },
