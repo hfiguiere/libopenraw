@@ -86,6 +86,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 11629, -5713, -914, -2706, 11090, 1842, -206, 1225, 5515 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_1DXMKIII),
+      0,
+      0,
+      { 8971, -2022, -1242, -5405, 13249, 2380, -1280, 2483, 6072 } },
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
 
@@ -99,6 +103,7 @@ const RawFile::camera_ids_t Cr3File::s_def[] = {
     { "Canon PowerShot SX70 HS", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_SX70_HS) },
     { "Canon PowerShot G5 X Mark II", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G5XMKII) },
     { "Canon PowerShot G7 X Mark III", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7XMKIII) },
+    { "Canon EOS-1D X Mark III", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_1DXMKIII) },
     { "Canon EOS M6 Mark II", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M6MKII) },
     { "Canon EOS 90D", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_90D) },
     { 0, 0 }

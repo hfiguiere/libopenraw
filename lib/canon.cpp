@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon.cpp
  *
- * Copyright (C) 2018-2019 Hubert Figuiere
+ * Copyright (C) 2018-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -125,6 +125,7 @@ const std::map<uint32_t, RawFile::TypeId> type_map = {
     { 0x80000437, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_90D) },
     { 0x00000811, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M6MKII) },
     { 0x00000812, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M200) },
+    { 0x80000428, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_1DXMKIII) },
 };
 
 }
