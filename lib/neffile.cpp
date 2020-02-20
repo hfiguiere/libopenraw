@@ -235,6 +235,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 9020, -2890, -715, -4535, 12436, 2348, -934, 1919, 7086 } },
+    { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D780),
+      0,
+      0,
+      { 9943, -3269, -839, -5323, 13269, 2259, -1198, 2083, 7557 } },
 
     { OR_MAKE_NIKON_TYPEID(OR_TYPEID_NIKON_D80),
       0,
