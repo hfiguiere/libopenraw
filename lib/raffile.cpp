@@ -2,7 +2,7 @@
 /*
  * libopenraw - raffile.cpp
  *
- * Copyright (C) 2011-2019 Hubert Figuière
+ * Copyright (C) 2011-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -122,6 +122,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 11434, -4948, -1210, -3746, 12042, 1903, -666, 1479, 5235 } },
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100V),
+      0,
+      0,
+      { 13426, -6334, -1177, -4244, 12136, 2371, -580, 1303, 5980 } },
     { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X10),
       0,
       0,
@@ -232,6 +236,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 11434, -4948, -1210, -3746, 12042, 1903, -666, 1479, 5235 } },
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT200),
+      0,
+      0,
+      { 15055, -7391, -1274, -4062, 12071, 2238, -610, 1217, 6147 } },
     { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT3),
       0,
       0,
@@ -317,6 +325,7 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
     { "X-T100", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT100) },
     { "X-T2", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT2) },
     { "X-T20", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT20) },
+    { "X-T200", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT200) },
     { "X-T3", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT3) },
     { "X-T30", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XT30) },
     { "XF1", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XF1) },
@@ -324,6 +333,7 @@ const RawFile::camera_ids_t RafFile::s_def[] = {
     { "X100S", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100S) },
     { "X100T", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100T) },
     { "X100F", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100F) },
+    { "X100V", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100V) },
     { "X-E3", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XE3) },
     { "X-H1", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_XH1) },
 
@@ -441,6 +451,7 @@ RafFile::isXTrans(RawFile::TypeId type_) const
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100S):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100T):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100F):
+    case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X100V):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X20):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X30):
     case OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_X70):
