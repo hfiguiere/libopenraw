@@ -31,5 +31,7 @@ It adds support for a certain number of cameras:
 
 - libopenraw now support parsing Canon new CR3 files.
 
+- libopenraw now support parsing GoPro GPR files.
+
 or_raw_file_new() will now detect content if it can't guess the type
 from the extension.
