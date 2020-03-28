@@ -42,7 +42,7 @@ static void decompressOlympus(const uint8_t* buffer, size_t size, uint8_t* data,
     int nbits, sign, low, high, i, wo0, n, nw0, wo1, nw1;
     int acarry0[3], acarry1[3], pred, diff;
 
-    int pitch = w * 2; //(((w * 2/*bpp*/) + 15) / 16) * 16; // TODO make that
+    const uint32_t pitch = w * 2; //(((w * 2/*bpp*/) + 15) / 16) * 16; // TODO make that
                        //part of the outer datas
 
     /* Build a table to quickly look up "high" value */
@@ -64,7 +64,7 @@ static void decompressOlympus(const uint8_t* buffer, size_t size, uint8_t* data,
     for (uint32_t y = 0; y < h; y++) {
         memset(acarry0, 0, sizeof acarry0);
         memset(acarry1, 0, sizeof acarry1);
-        uint16_t* dest = (uint16_t*)&data[y * pitch];
+        uint16_t *const dest = (uint16_t*)&data[y * pitch];
         for (uint32_t x = 0; x < w; x++) {
             //			bits.checkPos();
             //			bits.fill();

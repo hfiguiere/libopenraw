@@ -8,6 +8,7 @@ RUST_FILES = mp4/Cargo.lock \
 	mp4/mp4parse_capi/build.rs \
 	mp4/mp4parse_capi/Cargo.toml \
 	mp4/mp4parse/src/boxes.rs \
+	mp4/mp4parse/src/fallible.rs \
 	mp4/mp4parse/src/lib.rs \
 	mp4/mp4parse/src/macros.rs \
 	mp4/mp4parse/src/tests.rs \
@@ -73,6 +74,7 @@ noinst_HEADERS = \
 	exception.hpp \
 	endianutils.hpp \
 	unpack.hpp \
+	mp4/mp4parse.h \
 	$(NULL)
 
 lib_LTLIBRARIES = libopenraw.la

@@ -2,7 +2,7 @@
 /*
  * libopenraw - isomediacontainer.cpp
  *
- * Copyright (C) 2018 Hubert Figuiere
+ * Copyright (C) 2018-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -29,12 +29,15 @@ namespace Internals {
 
 IsoMediaContainer::IsoMediaContainer(const IO::Stream::Ptr &file)
     : RawContainer(file, 0)
-    , m_parsed(false)
     , m_mp4io{ &IsoMediaContainer::read_callback, static_cast<void*>(file.get()) }
     , m_parser(nullptr)
 {
     setEndian(ENDIAN_BIG);
-    m_parser = mp4parse_new(&m_mp4io);
+    m_file->seek(0, SEEK_SET);
+    auto status = mp4parse_new(&m_mp4io, &m_parser);
+    if (status != MP4PARSE_STATUS_OK) {
+        LOGERR("IsoM: failed to create parser: %d\n", status);
+    }
 }
 
 IsoMediaContainer::~IsoMediaContainer()
@@ -44,25 +47,8 @@ IsoMediaContainer::~IsoMediaContainer()
     }
 }
 
-bool IsoMediaContainer::ensure_parsed()
-{
-    if (!m_parsed) {
-        m_file->seek(0, SEEK_SET);
-        auto status = mp4parse_read(m_parser);
-        if (status == MP4PARSE_STATUS_OK) {
-            m_parsed = true;
-        } else {
-            LOGERR("IsoM: read failed %d\n", status);
-        }
-    }
-    return m_parsed;
-}
-
 uint32_t IsoMediaContainer::count_tracks()
 {
-    if (!ensure_parsed()) {
-        return 0;
-    }
     uint32_t count = 0;
     auto status = mp4parse_get_track_count(m_parser, &count);
     if (status != MP4PARSE_STATUS_OK) {
@@ -76,9 +62,6 @@ uint32_t IsoMediaContainer::count_tracks()
 Option<Mp4parseTrackInfo>
 IsoMediaContainer::get_track(uint32_t index)
 {
-    if (!ensure_parsed()) {
-        return OptionNone();
-    }
     Mp4parseTrackInfo info;
     auto status = mp4parse_get_track_info(m_parser, index, &info);
     if (status != MP4PARSE_STATUS_OK) {
@@ -90,9 +73,6 @@ IsoMediaContainer::get_track(uint32_t index)
 Option<Mp4parseTrackRawInfo>
 IsoMediaContainer::get_raw_track(uint32_t index)
 {
-    if (!ensure_parsed()) {
-        return OptionNone();
-    }
     Mp4parseTrackRawInfo info;
     auto status = mp4parse_get_track_raw_info(m_parser, index, &info);
     if (status != MP4PARSE_STATUS_OK) {
@@ -104,9 +84,6 @@ IsoMediaContainer::get_raw_track(uint32_t index)
 Option<Mp4parseCrawHeader>
 IsoMediaContainer::get_craw_header()
 {
-    if (!ensure_parsed()) {
-        return OptionNone();
-    }
     Mp4parseCrawHeader header;
     auto status = mp4parse_get_craw_header(m_parser, &header);
     if (status != MP4PARSE_STATUS_OK) {
@@ -118,9 +95,6 @@ IsoMediaContainer::get_craw_header()
 Option<std::pair<uint64_t, uint64_t>>
 IsoMediaContainer::get_offsets_at(uint32_t index)
 {
-    if (!ensure_parsed()) {
-        return OptionNone();
-    }
     std::pair<uint64_t, uint64_t> entry;
     auto status = mp4parse_get_craw_table_entry(m_parser, index,
                                                 &entry.first, &entry.second);

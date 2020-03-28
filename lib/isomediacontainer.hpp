@@ -2,7 +2,7 @@
 /*
  * libopenraw - isomediacontainer.hpp
  *
- * Copyright (C) 2018 Hubert Figuiere
+ * Copyright (C) 2018-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -48,14 +48,9 @@ public:
     std::shared_ptr<IfdFileContainer> get_metadata_block(uint32_t idx);
 
 private:
-    /// Ensure the mp4 is parsed.
-    /// @return true if it was.
-    bool ensure_parsed();
-
     /// Read callback for mp4 parse.
     static intptr_t read_callback(uint8_t*, uintptr_t, void*);
 
-    bool m_parsed;
     Mp4parseIo m_mp4io;
     Mp4parseParser *m_parser;
     std::vector<std::shared_ptr<IfdFileContainer>> m_meta_ifd;

@@ -136,9 +136,8 @@ RawContainer *Cr3File::getContainer() const
 ::or_error Cr3File::_getRawData(RawData &data, uint32_t options)
 {
     auto track = m_container->get_track(2);
-    if (!track || (*track).track_type != MP4PARSE_TRACK_TYPE_VIDEO ||
-        (*track).codec != MP4PARSE_CODEC_CRAW) {
-        LOGERR("%u Not a CRAW track\n", 2);
+    if (!track || (*track).track_type != MP4PARSE_TRACK_TYPE_VIDEO) {
+        LOGERR("%u Not a video track\n", 2);
         return OR_ERROR_NOT_FOUND;
     }
     auto raw_track = m_container->get_raw_track(2);
@@ -193,14 +192,13 @@ RawContainer *Cr3File::getContainer() const
     auto track_count = m_container->count_tracks();
     for (uint32_t i = 0; i < track_count; i++) {
         auto track = m_container->get_track(i);
-        if (!track || (*track).track_type != MP4PARSE_TRACK_TYPE_VIDEO ||
-            (*track).codec != MP4PARSE_CODEC_CRAW) {
-            LOGDBG1("%u Not a CRAW track\n", i);
+        if (!track || (*track).track_type != MP4PARSE_TRACK_TYPE_VIDEO) {
+            LOGDBG1("%u Not a video track\n", i);
             continue;
         }
         auto raw_track = m_container->get_raw_track(i);
         if (!raw_track || !(*raw_track).is_jpeg) {
-            LOGDBG1("%u not a video track\n", i);
+            LOGDBG1("%u not a RAW data track\n", i);
             continue;
         }
         auto dim = std::max((*raw_track).image_width,

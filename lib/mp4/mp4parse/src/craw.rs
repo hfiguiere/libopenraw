@@ -62,9 +62,9 @@ pub struct CanonCRAWEntry {
 }
 
 /// Parse the CRAW entry inside the video sample entry.
-pub fn read_craw_entry<T: Read>(src: &mut BMFFBox<T>, codec_type: super::CodecType,
+pub fn read_craw_entry<T: Read>(src: &mut BMFFBox<T>,
                             width: u16, height: u16,
-                            data_reference_index: u16) -> super::Result<(super::CodecType, super::SampleEntry)> {
+                            data_reference_index: u16) -> super::Result<super::SampleEntry> {
     skip(src, 54)?;
     let mut is_jpeg = false;
     {
@@ -87,12 +87,12 @@ pub fn read_craw_entry<T: Read>(src: &mut BMFFBox<T>, codec_type: super::CodecTy
     skip_box_remain(src)?;
     check_parser_state!(src.content);
 
-    Ok((codec_type, super::SampleEntry::CanonCRAW(CanonCRAWEntry {
+    Ok(super::SampleEntry::CanonCRAW(CanonCRAWEntry {
         data_reference_index: data_reference_index,
         width: width,
         height: height,
         is_jpeg: is_jpeg,
-    })))
+    }))
 }
 
 pub fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> super::Result<CrawHeader> {
@@ -101,9 +101,9 @@ pub fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> super::Result<CrawHeade
     while let Some(mut b) = iter.next_box()? {
         match b.head.name {
             BoxType::CanonCompressorVersion => {
-                let size = (b.head.size - b.head.offset) as usize;
+                let size = b.head.size - b.head.offset;
                 let data = read_buf(&mut b, size)?;
-                header.cncv = data;
+                header.cncv = data.to_vec();
                 skip_box_remain(&mut b)?;
             }
             BoxType::CanonTableOffset => {
@@ -124,7 +124,8 @@ pub fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> super::Result<CrawHeade
             BoxType::CanonMeta3 |
             BoxType::CanonMeta4 => {
                 let len = b.head.size - b.head.offset;
-                let data = read_buf(&mut b, len as usize)?;
+                let data = read_buf(&mut b, len)?;
+                let data = data.to_vec();
                 match b.head.name {
                     BoxType::CanonMeta1 =>
                         header.meta1 = Some(data),
@@ -146,10 +147,10 @@ pub fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> super::Result<CrawHeade
                 if (jpeg_size as u64) + b.head.offset + 16u64 > b.head.size {
                     return Err(Error::InvalidData("short box size for JPEG data"));
                 }
-                let data = read_buf(&mut b, jpeg_size as usize)?;
+                let data = read_buf(&mut b, jpeg_size as u64)?;
                 header.thumbnail = CanonThumbnail { width: width,
                                                     height: height,
-                                                    data: data };
+                                                    data: data.to_vec() };
                 skip_box_remain(&mut b)?;
             }
             _ => skip_box_content(&mut b)?
