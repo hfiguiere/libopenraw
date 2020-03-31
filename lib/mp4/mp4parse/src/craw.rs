@@ -5,33 +5,25 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use std::io::Read;
+use super::{
+    be_u16, be_u32, be_u64, read_buf, skip, skip_box_content, skip_box_remain, BMFFBox, Error,
+};
 use boxes::BoxType;
-use super::{be_u16, be_u32, be_u64, read_buf, skip, skip_box_content, skip_box_remain, BMFFBox, Error};
+use std::io::Read;
 
 pub const HEADER_UUID: [u8; 16] = [
-    0x85, 0xc0, 0xb6,0x87,
-    0x82, 0x0f,
-    0x11, 0xe0,
-    0x81, 0x11,
-    0xf4, 0xce, 0x46, 0x2b, 0x6a, 0x48 ];
+    0x85, 0xc0, 0xb6, 0x87, 0x82, 0x0f, 0x11, 0xe0, 0x81, 0x11, 0xf4, 0xce, 0x46, 0x2b, 0x6a, 0x48,
+];
 
 #[allow(dead_code)]
 pub const XPACKET_UUID: [u8; 16] = [
-    0xbe, 0x7a, 0xcf, 0xcb,
-    0x97, 0xa9,
-    0x42, 0xe8,
-    0x9c, 0x71,
-    0x99, 0x94, 0x91, 0xe3, 0xaf, 0xac ];
+    0xbe, 0x7a, 0xcf, 0xcb, 0x97, 0xa9, 0x42, 0xe8, 0x9c, 0x71, 0x99, 0x94, 0x91, 0xe3, 0xaf, 0xac,
+];
 
 #[allow(dead_code)]
 pub const PREVIEW_UUID: [u8; 16] = [
-    0xea, 0xf4, 0x2b, 0x5e,
-    0x1c, 0x98,
-    0x4b, 0x88,
-    0xb9, 0xfb,
-    0xb7, 0xdc, 0x40, 0x6e, 0x4d, 0x16 ];
-
+    0xea, 0xf4, 0x2b, 0x5e, 0x1c, 0x98, 0x4b, 0x88, 0xb9, 0xfb, 0xb7, 0xdc, 0x40, 0x6e, 0x4d, 0x16,
+];
 
 /// Canon Thumbnail
 #[derive(Debug, Default)]
@@ -62,9 +54,12 @@ pub struct CanonCRAWEntry {
 }
 
 /// Parse the CRAW entry inside the video sample entry.
-pub fn read_craw_entry<T: Read>(src: &mut BMFFBox<T>,
-                            width: u16, height: u16,
-                            data_reference_index: u16) -> super::Result<super::SampleEntry> {
+pub fn read_craw_entry<T: Read>(
+    src: &mut BMFFBox<T>,
+    width: u16,
+    height: u16,
+    data_reference_index: u16,
+) -> super::Result<super::SampleEntry> {
     skip(src, 54)?;
     let mut is_jpeg = false;
     {
@@ -75,8 +70,7 @@ pub fn read_craw_entry<T: Read>(src: &mut BMFFBox<T>,
                 BoxType::QTJPEGAtom => {
                     is_jpeg = true;
                 }
-                BoxType::CanonCMP1 => {
-                }
+                BoxType::CanonCMP1 => {}
                 _ => {
                     debug!("Unsupported box '{:?}' in CRAW", b.head.name);
                 }
@@ -119,23 +113,19 @@ pub fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> super::Result<CrawHeade
                 }
                 skip_box_remain(&mut b)?;
             }
-            BoxType::CanonMeta1 |
-            BoxType::CanonMeta2 |
-            BoxType::CanonMeta3 |
-            BoxType::CanonMeta4 => {
+            BoxType::CanonMeta1
+            | BoxType::CanonMeta2
+            | BoxType::CanonMeta3
+            | BoxType::CanonMeta4 => {
                 let len = b.head.size - b.head.offset;
                 let data = read_buf(&mut b, len)?;
                 let data = data.to_vec();
                 match b.head.name {
-                    BoxType::CanonMeta1 =>
-                        header.meta1 = Some(data),
-                    BoxType::CanonMeta2 =>
-                        header.meta2 = Some(data),
-                    BoxType::CanonMeta3 =>
-                        header.meta3 = Some(data),
-                    BoxType::CanonMeta4 =>
-                        header.meta4 = Some(data),
-                    _ => unreachable!()
+                    BoxType::CanonMeta1 => header.meta1 = Some(data),
+                    BoxType::CanonMeta2 => header.meta2 = Some(data),
+                    BoxType::CanonMeta3 => header.meta3 = Some(data),
+                    BoxType::CanonMeta4 => header.meta4 = Some(data),
+                    _ => unreachable!(),
                 }
             }
             BoxType::CanonThumbnail => {
@@ -148,12 +138,14 @@ pub fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> super::Result<CrawHeade
                     return Err(Error::InvalidData("short box size for JPEG data"));
                 }
                 let data = read_buf(&mut b, jpeg_size as u64)?;
-                header.thumbnail = CanonThumbnail { width: width,
-                                                    height: height,
-                                                    data: data.to_vec() };
+                header.thumbnail = CanonThumbnail {
+                    width: width,
+                    height: height,
+                    data: data.to_vec(),
+                };
                 skip_box_remain(&mut b)?;
             }
-            _ => skip_box_content(&mut b)?
+            _ => skip_box_content(&mut b)?,
         }
     }
 

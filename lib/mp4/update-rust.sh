@@ -4,7 +4,7 @@
 #  https://hg.mozilla.org/mozilla-central/raw-file/tip/media/mp4parse-rust/update-rust.sh
 
 # Default version.
-VER="786fe74cd0ea480effdcc469ac45584fba328382"
+VER="558c68474b3367c8876cc04ac10a8f056f7cf68b"
 
 # Accept version or commit from the command line.
 if test -n "$1"; then

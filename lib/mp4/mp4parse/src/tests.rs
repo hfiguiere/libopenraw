@@ -898,7 +898,12 @@ fn skip_padding_in_stsd() {
 
     let mut iter = super::BoxIter::new(&mut stream);
     let mut stream = iter.next_box().unwrap().unwrap();
-    super::read_stsd(&mut stream, &mut super::Track::new(0), &FourCC::from(*b"isom")).expect("fail to skip padding: stsd");
+    super::read_stsd(
+        &mut stream,
+        &mut super::Track::new(0),
+        &FourCC::from(*b"isom"),
+    )
+    .expect("fail to skip padding: stsd");
 }
 
 #[test]
@@ -1050,7 +1055,8 @@ fn read_stsd_mp4v() {
     let mut iter = super::BoxIter::new(&mut stream);
     let mut stream = iter.next_box().unwrap().unwrap();
 
-    let sample_entry = super::read_video_sample_entry(&mut stream, &FourCC::from(*b"isom")).unwrap();
+    let sample_entry =
+        super::read_video_sample_entry(&mut stream, &FourCC::from(*b"isom")).unwrap();
 
     match sample_entry {
         super::SampleEntry::Video(v) => {

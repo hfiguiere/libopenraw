@@ -209,7 +209,7 @@ box_database!(
     CanonCRAWEntry                    0x4352_4157, // "CRAW"
     CanonMetadataEntry                0x4354_4d44, // "CTMD"
     CanonCMP1                         0x434d_5031, // "CMP1"
-    CanonCDI1                         0x43444931, // "CDI1"
+    CanonCDI1                         0x4344_4931, // "CDI1"
     CanonPreview                      0x5052_5657, // "PRVW"
     CanonCompressorVersion            0x434e_4356, // "CNCV"
     CanonThumbnail                    0x5448_4d42, // "THMB"

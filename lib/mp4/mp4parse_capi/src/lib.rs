@@ -117,7 +117,7 @@ pub enum Mp4parseCodec {
     Ac3,
     Ec3,
     Alac,
-    Craw,   // Canon RAW
+    Craw, // Canon RAW
 }
 
 impl Default for Mp4parseCodec {
@@ -911,7 +911,11 @@ fn get_track_audio_info(
 /// File the supplied `Mp4parseTrackRawInfo` with metadata for `track`.
 #[cfg(feature = "craw")]
 #[no_mangle]
-pub unsafe extern fn mp4parse_get_track_raw_info(parser: *mut Mp4parseParser, track_index: u32, info: *mut Mp4parseTrackRawInfo) -> Mp4parseStatus {
+pub unsafe extern "C" fn mp4parse_get_track_raw_info(
+    parser: *mut Mp4parseParser,
+    track_index: u32,
+    info: *mut Mp4parseTrackRawInfo,
+) -> Mp4parseStatus {
     if parser.is_null() || info.is_null() {
         return Mp4parseStatus::BadArg;
     }
@@ -1684,7 +1688,10 @@ fn get_pssh_info(
 
 #[cfg(feature = "craw")]
 #[no_mangle]
-pub unsafe extern fn mp4parse_get_craw_header(parser: *mut Mp4parseParser, header: *mut Mp4parseCrawHeader) -> Mp4parseStatus {
+pub unsafe extern "C" fn mp4parse_get_craw_header(
+    parser: *mut Mp4parseParser,
+    header: *mut Mp4parseCrawHeader,
+) -> Mp4parseStatus {
     if parser.is_null() || header.is_null() {
         return Mp4parseStatus::BadArg;
     }
@@ -1722,9 +1729,14 @@ pub unsafe extern fn mp4parse_get_craw_header(parser: *mut Mp4parseParser, heade
 
 #[cfg(feature = "craw")]
 #[no_mangle]
-pub unsafe extern fn mp4parse_get_craw_table_entry(parser: *mut Mp4parseParser, idx: usize, offset: *mut u64, size: *mut u64) -> Mp4parseStatus {
+pub unsafe extern "C" fn mp4parse_get_craw_table_entry(
+    parser: *mut Mp4parseParser,
+    idx: usize,
+    offset: *mut u64,
+    size: *mut u64,
+) -> Mp4parseStatus {
     if parser.is_null() || offset.is_null() || size.is_null() {
-            return Mp4parseStatus::BadArg;
+        return Mp4parseStatus::BadArg;
     }
     *offset = 0;
     *size = 0;

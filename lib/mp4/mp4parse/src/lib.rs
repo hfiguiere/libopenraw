@@ -25,7 +25,6 @@ mod macros;
 mod boxes;
 use boxes::{BoxType, FourCC};
 
-
 mod fallible;
 
 #[cfg(feature = "craw")]
@@ -952,7 +951,7 @@ pub enum CodecType {
     EncryptedAudio,
     LPCM, // QT
     ALAC,
-    CRAW,   // Canon CRAW
+    CRAW, // Canon CRAW
 }
 
 impl Default for CodecType {
@@ -1683,16 +1682,19 @@ fn read_moov<T: Read>(f: &mut BMFFBox<T>, context: &mut MediaContext) -> Result<
                 let mut box_known = false;
                 #[cfg(feature = "craw")]
                 {
-                    if context.brand == FourCC::from(*b"crx ") &&
-                        b.head.uuid == Some(craw::HEADER_UUID) {
-                            let crawheader = craw::parse_craw_header(&mut b)?;
-                            context.craw = Some(crawheader);
-                            box_known = true;
-                        }
+                    if context.brand == FourCC::from(*b"crx ")
+                        && b.head.uuid == Some(craw::HEADER_UUID)
+                    {
+                        let crawheader = craw::parse_craw_header(&mut b)?;
+                        context.craw = Some(crawheader);
+                        box_known = true;
+                    }
                 }
                 if !box_known {
-                    debug!("Unknown UUID box {:?} (skipping)",
-                           b.head.uuid.as_ref().unwrap());
+                    debug!(
+                        "Unknown UUID box {:?} (skipping)",
+                        b.head.uuid.as_ref().unwrap()
+                    );
                     skip_box_content(&mut b)?;
                 }
             }
@@ -3159,7 +3161,11 @@ fn read_audio_sample_entry<T: Read>(src: &mut BMFFBox<T>) -> Result<SampleEntry>
 }
 
 /// Parse a stsd box.
-fn read_stsd<T: Read>(src: &mut BMFFBox<T>, track: &mut Track, brand: & FourCC) -> Result<SampleDescriptionBox> {
+fn read_stsd<T: Read>(
+    src: &mut BMFFBox<T>,
+    track: &mut Track,
+    brand: &FourCC,
+) -> Result<SampleDescriptionBox> {
     let (_, _) = read_fullbox_extra(src)?;
 
     let description_count = be_u32(src)?;
