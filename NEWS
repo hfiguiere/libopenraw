@@ -1,6 +1,17 @@
 libopenraw 0.2.1 -
 
+New features:
 
+  Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Support for Nikon Coolpix P950*
+  - Support for Fujifilm F550EXR*
+  - Support for Sony ZV-1
+
+Internal Changes:
+
+   - Updated MP4 parser.
 
 libopenraw 0.2.0 - 2020/03/26
 
