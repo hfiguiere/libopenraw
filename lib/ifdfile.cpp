@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2019 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -334,7 +334,7 @@ uint32_t IfdFile::_translateCompressionType(IFD::TiffCompress tiff_compression)
 
 
 
-const IfdDir::Ref & IfdFile::cfaIfd()
+IfdDir::Ref IfdFile::cfaIfd()
 {
 	if(!m_cfaIfd) {
 		m_cfaIfd = _locateCfaIfd();
@@ -343,7 +343,7 @@ const IfdDir::Ref & IfdFile::cfaIfd()
 }
 
 
-const IfdDir::Ref & IfdFile::mainIfd()
+IfdDir::Ref IfdFile::mainIfd()
 {
 	if(!m_mainIfd) {
 		m_mainIfd = _locateMainIfd();
@@ -352,7 +352,7 @@ const IfdDir::Ref & IfdFile::mainIfd()
 }
 
 
-const IfdDir::Ref & IfdFile::exifIfd()
+IfdDir::Ref IfdFile::exifIfd()
 {
 	if(!m_exifIfd) {
 		m_exifIfd = _locateExifIfd();
@@ -361,17 +361,12 @@ const IfdDir::Ref & IfdFile::exifIfd()
 }
 
 
-const MakerNoteDir::Ref & IfdFile::makerNoteIfd()
+IfdDir::Ref IfdFile::makerNoteIfd()
 {
 	if(!m_makerNoteIfd) {
 		m_makerNoteIfd = _locateMakerNoteIfd();
 	}
 	return m_makerNoteIfd;
-}
-
-Internals::IfdDir::Ref IfdFile::_getMakerNoteIfd()
-{
-	return makerNoteIfd();
 }
 
 namespace {

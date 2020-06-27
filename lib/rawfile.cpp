@@ -2,7 +2,7 @@
  * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2006-2018 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -43,6 +43,7 @@
 #include "rawdata.hpp"
 #include "rawfile.hpp"
 #include "thumbnail.hpp"
+#include "metadata.hpp"
 
 #include "arwfile.hpp"
 #include "cr2file.hpp"
@@ -633,11 +634,6 @@ ExifLightsourceValue RawFile::_getCalibrationIlluminant(uint16_t index)
     return (ExifLightsourceValue)meta->getInteger(0);
 }
 
-Internals::IfdDir::Ref RawFile::getMakerNoteIfd()
-{
-    return _getMakerNoteIfd();
-}
-
 const MetaValue* RawFile::getMetaValue(int32_t meta_index)
 {
     MetaValue* val = NULL;
@@ -653,6 +649,14 @@ const MetaValue* RawFile::getMetaValue(int32_t meta_index)
     }
     return val;
 }
+
+MetadataIterator* RawFile::getMetadataIterator()
+{
+    auto iter = new MetadataIterator(*this);
+
+    return iter;
+}
+
 
 const RawFile::camera_ids_t* RawFile::_lookupCameraId(const camera_ids_t* map,
                                                       const std::string& value)

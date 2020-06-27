@@ -1,8 +1,8 @@
 /* -*- Mode: C++ ; tab-width:4; c-basic-offset:4 -*- */
 /*
- * libopenraw - raffile.h
+ * libopenraw - raffile.hpp
  *
- * Copyright (C) 2011-2017 Hubert Figuière
+ * Copyright (C) 2011-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_RAFFILE_H_
-#define OR_INTERNALS_RAFFILE_H_
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -62,8 +61,26 @@ protected:
 
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
 
-    virtual IfdDir::Ref _getMakerNoteIfd() override
-        { return IfdDir::Ref(); }
+    virtual IfdDir::Ref cfaIfd() override
+        {
+            LOGERR("not implemented\n");
+            return IfdDir::Ref();
+        }
+    virtual IfdDir::Ref mainIfd() override
+        {
+            LOGERR("not implemented\n");
+            return IfdDir::Ref();
+        }
+    virtual IfdDir::Ref exifIfd() override
+        {
+            LOGERR("not implemented\n");
+            return IfdDir::Ref();
+        }
+    virtual IfdDir::Ref makerNoteIfd() override
+        {
+            LOGERR("not implemented\n");
+            return IfdDir::Ref();
+        }
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) override;
 
     virtual void _identifyId() override;
@@ -80,5 +97,3 @@ private:
 };
 }
 }
-
-#endif

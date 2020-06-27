@@ -1,7 +1,7 @@
 /*
  * libopenraw - metadata.cpp
  *
- * Copyright (C) 2016-2019 Hubert Figuiere
+ * Copyright (C) 2016-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,14 +22,67 @@
 
 #include "capi.h"
 #include "metavalue.hpp"
+#include "metadata.hpp"
 
 extern "C" {
+
+/** check pointer validity */
+#define CHECK_PTR(p, r)                                                        \
+    if (p == nullptr) {                                                           \
+        return r;                                                              \
+    }
 
 API_EXPORT const char*
 or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx)
 {
   // TODO validate parameters
   return reinterpret_cast<const OpenRaw::MetaValue*>(value)->getString(idx).c_str();
+}
+
+API_EXPORT int
+or_metadata_iterator_next(ORMetadataIteratorRef iterator)
+{
+  CHECK_PTR(iterator, 0);
+  auto iter = reinterpret_cast<OpenRaw::MetadataIterator*>(iterator);
+  if (iter && iter->next()) {
+
+    return 1;
+  }
+  return 0;
+}
+
+API_EXPORT int
+or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id, uint16_t* type)
+{
+  CHECK_PTR(iterator, 0);
+  auto iter = reinterpret_cast<OpenRaw::MetadataIterator*>(iterator);
+  if (id) {
+    auto i = iter->getEntryId();
+    if (i) {
+      *id = *i;
+    } else {
+      return 0;
+    }
+  }
+  if (type) {
+    auto t = iter->getEntryType();
+    if (t) {
+      *type = *t;
+    } else {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+API_EXPORT void
+or_metadata_iterator_free(ORMetadataIteratorRef iterator)
+{
+  if (!iterator) {
+    return;
+  }
+  auto iter = reinterpret_cast<OpenRaw::MetadataIterator*>(iterator);
+  delete iter;
 }
 
 }

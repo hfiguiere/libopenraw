@@ -1,7 +1,7 @@
 /*
  * libopenraw - metadata.h
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  */
 
 
-#ifndef LIBOPENRAW_METADATA_H_
-#define LIBOPENRAW_METADATA_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -32,8 +31,10 @@
 extern "C" {
 #endif
 
-typedef struct _MetaValue *ORMetaValueRef;
-typedef const struct _MetaValue *ORConstMetaValueRef;
+typedef struct _MetadataIterator* ORMetadataIteratorRef;
+
+typedef struct _MetaValue* ORMetaValueRef;
+typedef const struct _MetaValue* ORConstMetaValueRef;
 
 /** The meta data namespaces, 16 high bits of the index */
 enum {
@@ -46,8 +47,26 @@ enum {
 
 const char* or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx);
 
+/** Get the next metadata value
+ * @param iterator The iterator.
+ * @return 0 if none
+ */
+int or_metadata_iterator_next(ORMetadataIteratorRef iterator);
+
+/** Get the metadata entry
+ * @param iterator The iterator.
+ * @param id Pointer to id (nullable)
+ * @param type Pointer to type (nullable)
+ * @return 0 if error. In that case none of the values is valid.
+ */
+int
+or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id, uint16_t* type);
+
+/** Free the iterator
+ * @param iterator The iterator.
+ */
+void or_metadata_iterator_free(ORMetadataIteratorRef iterator);
+
 #ifdef __cplusplus
 }
-#endif
-
 #endif

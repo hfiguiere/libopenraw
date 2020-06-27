@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawfile.cpp
  *
- * Copyright (C) 2007-2019 Hubert Figuiere
+ * Copyright (C) 2007-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -221,12 +221,13 @@ or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index)
 API_EXPORT
 ORIfdDirRef or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd)
 {
+    // XXX TODO this is bad, there is no guarantee that dir will stay alive
     RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
     CHECK_PTR(rawfile, nullptr);
     IfdDir::Ref dir;
     switch (ifd) {
     case OR_IFD_MAKERNOTE:
-        dir = prawfile->getMakerNoteIfd();
+        dir = prawfile->makerNoteIfd();
         break;
     default:
         break;
@@ -235,6 +236,14 @@ ORIfdDirRef or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd)
         return nullptr;
     }
     return reinterpret_cast<ORIfdDirRef>(dir.get());
+}
+
+API_EXPORT ORMetadataIteratorRef
+or_rawfile_get_metadata_iterator(ORRawFileRef rawfile)
+{
+    RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
+    CHECK_PTR(rawfile, nullptr);
+    return reinterpret_cast<ORMetadataIteratorRef>(prawfile->getMetadataIterator());
 }
 
 }

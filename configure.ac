@@ -46,10 +46,10 @@ dnl version 0.1.2 is 7.0.2
 dnl version 0.1.3 is 7.0.3
 dnl version 0.2.0 is 8.0.0
 dnl version 0.2.1 is 8.0.1
-dnl version 0.2.2 is 8.0.2
-AC_SUBST([LIBOPENRAW_REVISION], [2])
-AC_SUBST([LIBOPENRAW_AGE],      [0])
-AC_SUBST([LIBOPENRAW_CURRENT],  [8])
+dnl version 0.2.2 is 9.1.0
+AC_SUBST([LIBOPENRAW_REVISION], [0])
+AC_SUBST([LIBOPENRAW_AGE],      [1])
+AC_SUBST([LIBOPENRAW_CURRENT],  [9])
 AC_SUBST([LIBOPENRAW_CURRENT_MIN],
          [`expr $LIBOPENRAW_CURRENT - $LIBOPENRAW_AGE`])
 AC_SUBST([LIBOPENRAW_VERSION_INFO],

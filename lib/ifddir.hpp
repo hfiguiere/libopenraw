@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - ifddir.h
+ * libopenraw - ifddir.hpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_IFDDIR_H
-#define OR_INTERNALS_IFDDIR_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -43,8 +42,10 @@ class IfdFileContainer;
 
 class IfdDir {
 public:
+    typedef std::weak_ptr<IfdDir> WeakRef;
     typedef std::shared_ptr<IfdDir> Ref;
     typedef std::vector<Ref> RefVec;
+    typedef std::map<uint16_t, IfdEntry::Ref> Entries;
 
     IfdDir(off_t _offset, IfdFileContainer &_container);
     virtual ~IfdDir();
@@ -61,6 +62,11 @@ public:
     /** return the number of entries*/
     int numTags() { return m_entries.size(); }
     IfdEntry::Ref getEntry(uint16_t id) const;
+    /** Direct access to the entries */
+    const Entries& entries() const
+        {
+            return m_entries;
+        }
 
     /** Get a T value from an entry
      * @param id the IFD field id
@@ -118,9 +124,7 @@ public:
 private:
     off_t m_offset;
     IfdFileContainer &m_container;
-    std::map<uint16_t, IfdEntry::Ref> m_entries;
+    Entries m_entries;
 };
 }
 }
-
-#endif

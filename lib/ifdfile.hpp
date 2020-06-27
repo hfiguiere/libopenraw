@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - ifdfile.h
+ * libopenraw - ifdfile.hpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_IFD_FILE_H_
-#define OR_INTERNALS_IFD_FILE_H_
+#pragma once
 
 #include <stdint.h>
 #include <sys/types.h>
@@ -98,7 +97,6 @@ protected:
 
     virtual void _identifyId() override;
 
-    virtual IfdDir::Ref _getMakerNoteIfd() override;
     virtual MetaValue *_getMetaValue(int32_t meta_index) override;
 
     /** Translate the compression type from the tiff type (16MSB)
@@ -123,10 +121,10 @@ protected:
                                    uint32_t offset, uint32_t byte_length);
 
     /** access the corresponding IFD. Will locate them if needed */
-    const IfdDir::Ref &cfaIfd();
-    const IfdDir::Ref &mainIfd();
-    const IfdDir::Ref &exifIfd();
-    const MakerNoteDir::Ref &makerNoteIfd();
+    virtual IfdDir::Ref cfaIfd() override;
+    virtual IfdDir::Ref mainIfd() override;
+    virtual IfdDir::Ref exifIfd() override;
+    virtual IfdDir::Ref makerNoteIfd() override;
 
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
     // call to decrompress if needed from _getRawData()
@@ -158,4 +156,3 @@ private:
   fill-column:80
   End:
 */
-#endif

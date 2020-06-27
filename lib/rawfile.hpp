@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawfile.hpp
  *
- * Copyright (C) 2005-2018 Hubert Figuière
+ * Copyright (C) 2005-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -34,6 +34,7 @@ class Thumbnail;
 class RawData;
 class BitmapData;
 class MetaValue;
+class MetadataIterator;
 
 namespace Internals {
 class RawContainer;
@@ -150,8 +151,14 @@ public:
      */
     virtual or_colour_matrix_origin getColourMatrixOrigin() const;
 
-    Internals::IfdDir::Ref getMakerNoteIfd();
+    virtual Internals::IfdDir::Ref cfaIfd() = 0;
+    virtual Internals::IfdDir::Ref mainIfd() = 0;
+    virtual Internals::IfdDir::Ref exifIfd() = 0;
+    virtual Internals::IfdDir::Ref makerNoteIfd() = 0;
+
     const MetaValue *getMetaValue(int32_t meta_index);
+
+    MetadataIterator* getMetadataIterator();
 protected:
     struct camera_ids_t {
         const char * model;
@@ -202,7 +209,6 @@ protected:
      */
     virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
     virtual ExifLightsourceValue _getCalibrationIlluminant(uint16_t index);
-    virtual Internals::IfdDir::Ref _getMakerNoteIfd() = 0;
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 
     TypeId _typeIdFromModel(const std::string& make, const std::string & model);

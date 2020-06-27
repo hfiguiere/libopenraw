@@ -516,7 +516,7 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
 
 bool NefFile::isNrw()
 {
-    MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
+    IfdDir::Ref _makerNoteIfd = makerNoteIfd();
     if(!_makerNoteIfd) {
         LOGERR("makernote not found\n");
         return false;
@@ -612,7 +612,7 @@ uint32_t NefFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
 bool
 NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 {
-    MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
+    MakerNoteDir::Ref _makerNoteIfd = std::dynamic_pointer_cast<MakerNoteDir>(makerNoteIfd());
     if(!_makerNoteIfd) {
         LOGERR("makernote not found\n");
         return false;

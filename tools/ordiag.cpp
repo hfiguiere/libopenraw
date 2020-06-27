@@ -1,7 +1,7 @@
 /*
  * libopenraw - ordiag.cpp
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2020 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -33,6 +33,8 @@
 #include <boost/lexical_cast.hpp>
 
 #include <libopenraw/libopenraw.h>
+
+#include "dumputils.hpp"
 
 /**
  * Dump on RawFile. (functor)
@@ -151,61 +153,6 @@ public:
             return "Invalid";
         }
 
-    /** return a string for the raw file type
-     */
-    std::string typeToString(or_rawfile_type t)
-        {
-            switch(t) {
-            case OR_RAWFILE_TYPE_UNKNOWN:
-                break;
-            case OR_RAWFILE_TYPE_CR2:
-                return "Canon CR2";
-                break;
-            case OR_RAWFILE_TYPE_CR3:
-                return "Canon CR3";
-                break;
-            case OR_RAWFILE_TYPE_CRW:
-                return "Canon CRW";
-                break;
-            case OR_RAWFILE_TYPE_NEF:
-                return "Nikon NEF";
-                break;
-            case OR_RAWFILE_TYPE_NRW:
-                return "Nikon NRW";
-                break;
-            case OR_RAWFILE_TYPE_MRW:
-                return "Minolta MRW";
-                break;
-            case OR_RAWFILE_TYPE_ARW:
-                return "Sony ARW";
-                break;
-            case OR_RAWFILE_TYPE_DNG:
-                return "Adobe DNG";
-                break;
-            case OR_RAWFILE_TYPE_ORF:
-                return "Olympus ORF";
-                break;
-            case OR_RAWFILE_TYPE_PEF:
-                return "Pentax PEF";
-                break;
-            case OR_RAWFILE_TYPE_ERF:
-                return "Epson ERF";
-                break;
-            case OR_RAWFILE_TYPE_RW2:
-                return "Panasonic RAW";
-                break;
-            case OR_RAWFILE_TYPE_RAF:
-                return "FujiFilm RAF";
-                break;
-            case OR_RAWFILE_TYPE_TIFF:
-                return "TIFF";
-                break;
-            case OR_RAWFILE_TYPE_GPR:
-                return "GoPro GPR";
-                break;
-            }
-            return "Unknown";
-        }
 
     /** Extract thumbnail to a file
      */
@@ -430,42 +377,9 @@ public:
                 m_out << "unrecognized file\n";
             }
             else {
-                or_rawfile_type fileType = or_rawfile_get_type(rf);
-                m_out << boost::format("\tType = %1% (%2%)\n")
-                    % fileType % typeToString(fileType);
-                or_rawfile_typeid fileTypeId = or_rawfile_get_typeid(rf);
-                std::string typeId
-                    = str(boost::format("%1%, %2%")
-                          % OR_GET_FILE_TYPEID_VENDOR(fileTypeId)
-                          % OR_GET_FILE_TYPEID_CAMERA(fileTypeId));
-                m_out << boost::format("\tType ID = %1%\n") % typeId;
-                or_rawfile_typeid vendorId = or_rawfile_get_vendorid(rf);
-                if (vendorId != OR_GET_FILE_TYPEID_VENDOR(fileTypeId)) {
-                    m_out <<
-                        boost::format(
-                            "\t*ERROR*: mismatched vendor id, got %1%\n")
-                        % vendorId;
-                }
 
-                ORConstMetaValueRef make
-                    = or_rawfile_get_metavalue(rf, META_NS_TIFF | EXIF_TAG_MAKE);
-                if (make) {
-                    m_out << boost::format("\tMake = %1%\n")
-                        % or_metavalue_get_string(make, 0);
-                }
-                ORConstMetaValueRef model
-                    = or_rawfile_get_metavalue(rf, META_NS_TIFF | EXIF_TAG_MODEL);
-                if (model) {
-                    m_out << boost::format("\tModel = %1%\n")
-                        % or_metavalue_get_string(model, 0);
-                }
-                ORConstMetaValueRef uniqueCameraModel
-                    = or_rawfile_get_metavalue(rf, META_NS_TIFF
-                                       | DNG_TAG_UNIQUE_CAMERA_MODEL);
-                if (uniqueCameraModel) {
-                    m_out << boost::format("\tUnique Camera Model = %1%\n")
-                        % or_metavalue_get_string(uniqueCameraModel, 0);
-                }
+                dump_file_info(m_out, rf);
+
                 dumpPreviews(rf);
                 dumpRawData(rf);
                 dumpMetaData(rf);

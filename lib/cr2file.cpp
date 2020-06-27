@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2019 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -720,7 +720,7 @@ void Cr2File::_identifyId()
 {
     // There is a camera model ID in the MakerNote tag 0x0010.
     // Use this at first.
-    auto mn = getMakerNoteIfd();
+    auto mn = makerNoteIfd();
     if (mn) {
         auto id = mn->getValue<uint32_t>(IFD::MNOTE_CANON_MODEL_ID);
         if (id) {

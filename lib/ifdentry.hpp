@@ -169,6 +169,10 @@ public:
 			 IfdFileContainer &_container);
 	virtual ~IfdEntry();
 
+	int16_t id() const noexcept
+		{
+			return m_id;
+		}
 	int16_t type() const noexcept
 		{
 			return m_type;
