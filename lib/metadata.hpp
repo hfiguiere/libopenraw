@@ -44,7 +44,7 @@ public:
         }
 
     /// Get the type of the current entry
-    Option<uint16_t> getEntryType() const;
+    Option<ExifTagType> getEntryType() const;
     /// Get the ID of the current entry
     Option<uint16_t> getEntryId() const;
 

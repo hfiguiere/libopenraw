@@ -56,11 +56,11 @@ int or_metadata_iterator_next(ORMetadataIteratorRef iterator);
 /** Get the metadata entry
  * @param iterator The iterator.
  * @param id Pointer to id (nullable)
- * @param type Pointer to type (nullable)
+ * @param type Pointer to exif tag type (nullable)
  * @return 0 if error. In that case none of the values is valid.
  */
 int
-or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id, uint16_t* type);
+or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id, ExifTagType* type);
 
 /** Free the iterator
  * @param iterator The iterator.

@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifd.h
  *
- * Copyright (C) 2006-2007,2012 Hubert Figuiere
+ * Copyright (C) 2006-2007,2012-2020 Hubert Figuière
  *
  * Defintions taken from libexif:
  * Copyright (C) 2001 Lutz Müller <lutz@users.sourceforge.net>
@@ -25,8 +25,7 @@
  * @brief Define IFD values like fields ID and types
  */
 
-#ifndef OR_INTERNALS_IFD_H_
-#define OR_INTERNALS_IFD_H_
+#pragma once
 
 namespace OpenRaw {
 namespace Internals {
@@ -35,24 +34,6 @@ namespace IFD {
 #define INCLUDE_EXIF_
 #include "libopenraw/exif.h"
 #undef INCLUDE_EXIF_
-
-/** type for Exif field/tag
-    taken from libexif
-*/
-typedef enum {
-    EXIF_FORMAT_BYTE       =  1,
-    EXIF_FORMAT_ASCII      =  2,
-    EXIF_FORMAT_SHORT      =  3,
-    EXIF_FORMAT_LONG       =  4,
-    EXIF_FORMAT_RATIONAL   =  5,
-    EXIF_FORMAT_SBYTE      =  6,
-    EXIF_FORMAT_UNDEFINED  =  7,
-    EXIF_FORMAT_SSHORT     =  8,
-    EXIF_FORMAT_SLONG      =  9,
-    EXIF_FORMAT_SRATIONAL  = 10,
-    EXIF_FORMAT_FLOAT      = 11,
-    EXIF_FORMAT_DOUBLE     = 12
-} ExifTagType;
 
 typedef enum {
     CFA_RED = 0,
@@ -90,7 +71,6 @@ struct SRational {
 }
 }
 }
-#endif
 /*
   Local Variables:
   mode:c++

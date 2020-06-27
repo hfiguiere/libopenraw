@@ -2,7 +2,7 @@
 /*
  * libopenraw - exif.h
  *
- * Copyright (C) 2007-2018 Hubert Figuiere
+ * Copyright (C) 2007-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -218,6 +218,24 @@ typedef enum {
 	/* 23...254 reserved */
 	EV_LIGHTSOURCE_OTHER       = 255
 } ExifLightsourceValue;
+
+/** type for Exif field/tag
+    taken from libexif
+*/
+typedef enum {
+    EXIF_FORMAT_BYTE       =  1,
+    EXIF_FORMAT_ASCII      =  2,
+    EXIF_FORMAT_SHORT      =  3,
+    EXIF_FORMAT_LONG       =  4,
+    EXIF_FORMAT_RATIONAL   =  5,
+    EXIF_FORMAT_SBYTE      =  6,
+    EXIF_FORMAT_UNDEFINED  =  7,
+    EXIF_FORMAT_SSHORT     =  8,
+    EXIF_FORMAT_SLONG      =  9,
+    EXIF_FORMAT_SRATIONAL  = 10,
+    EXIF_FORMAT_FLOAT      = 11,
+    EXIF_FORMAT_DOUBLE     = 12
+} ExifTagType;
 
 
 #ifdef __cplusplus

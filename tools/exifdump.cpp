@@ -31,6 +31,38 @@
 
 #include "dumputils.hpp"
 
+const char* map_exif_type(ExifTagType type)
+{
+    switch(type) {
+    case EXIF_FORMAT_BYTE:
+        return "BYTE";
+    case EXIF_FORMAT_ASCII:
+        return "ASCII";
+    case EXIF_FORMAT_SHORT:
+        return "SHORT";
+    case EXIF_FORMAT_LONG:
+        return "LONG";
+    case EXIF_FORMAT_RATIONAL:
+        return "RATIONAL";
+    case EXIF_FORMAT_SBYTE:
+        return "SBYTE";
+    case EXIF_FORMAT_UNDEFINED:
+        return "UNDEFINED";
+    case EXIF_FORMAT_SSHORT:
+        return "SSHORT";
+    case EXIF_FORMAT_SLONG:
+        return "SLONG";
+    case EXIF_FORMAT_SRATIONAL:
+        return "SRATIONAL";
+    case EXIF_FORMAT_FLOAT:
+        return "FLOAT";
+    case EXIF_FORMAT_DOUBLE:
+        return "DOUBLE";
+    default:
+        return "INVALID";
+    }
+}
+
 class ExifDump
 {
 public:
@@ -54,9 +86,10 @@ public:
                 m_out << "EXIF metadata\n";
 
                 while (or_metadata_iterator_next(iter)) {
-                    uint16_t id, type;
+                    uint16_t id;
+                    ExifTagType type;
                     if (or_metadata_iterator_get_entry(iter, &id, &type)) {
-                        m_out << boost::format("\t%1% = %2%\n") % id % type;
+                        m_out << boost::format("\t0x%1$x = %2%\n") % id % map_exif_type(type);
                     }
                 }
 

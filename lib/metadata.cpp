@@ -77,12 +77,12 @@ bool MetadataIterator::next()
 }
 
 /// Get the type of the current entry
-Option<uint16_t> MetadataIterator::getEntryType() const
+Option<ExifTagType> MetadataIterator::getEntryType() const
 {
     if (!(isInitialized() && isValid())) {
         return OptionNone();
     }
-    return m_current_entry->second->type();
+    return static_cast<ExifTagType>(m_current_entry->second->type());
 }
 
 /// Get the ID of the current entry
