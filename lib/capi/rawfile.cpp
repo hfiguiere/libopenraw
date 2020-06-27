@@ -221,11 +221,19 @@ or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index)
 API_EXPORT
 ORIfdDirRef or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd)
 {
-    // XXX TODO this is bad, there is no guarantee that dir will stay alive
     RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
     CHECK_PTR(rawfile, nullptr);
     IfdDir::Ref dir;
     switch (ifd) {
+    case OR_IFD_CFA:
+        dir = prawfile->cfaIfd();
+        break;
+    case OR_IFD_MAIN:
+        dir = prawfile->mainIfd();
+        break;
+    case OR_IFD_EXIF:
+        dir = prawfile->exifIfd();
+        break;
     case OR_IFD_MAKERNOTE:
         dir = prawfile->makerNoteIfd();
         break;
@@ -235,7 +243,8 @@ ORIfdDirRef or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd)
     if (!dir) {
         return nullptr;
     }
-    return reinterpret_cast<ORIfdDirRef>(dir.get());
+    auto wrap = new WrappedPointer<IfdDir>(dir);
+    return reinterpret_cast<ORIfdDirRef>(wrap);
 }
 
 API_EXPORT ORMetadataIteratorRef

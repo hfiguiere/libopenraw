@@ -2,7 +2,7 @@
 /*
  * libopenraw - testsuite.cpp
  *
- * Copyright (C) 2008-2019 Hubert Figuière
+ * Copyright (C) 2008-2020 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -693,6 +693,7 @@ bool Test::testMakerNoteCount(const std::string & result)
     try {
         auto ifd = or_rawfile_get_ifd(m_rawfile.get(), OR_IFD_MAKERNOTE);
         auto numTags = or_ifd_count_tags(ifd);
+        or_ifd_release(ifd);
         RETURN_TEST_EQUALS_N(numTags,
                              boost::lexical_cast<int32_t>(result));
     }
@@ -711,6 +712,7 @@ bool Test::testMakerNoteId(const std::string & result)
         RETURN_FAIL("no MakerNote found");
     }
     auto makernote_id = or_ifd_get_makernote_id(ifd);
+    or_ifd_release(ifd);
     if (!makernote_id) {
         RETURN_FAIL("no MakeNote id");
     }

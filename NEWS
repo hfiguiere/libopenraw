@@ -1,4 +1,4 @@
-libopenraw 0.2.2 -
+libopenraw 0.3.0 -
 
 New features:
 
@@ -6,6 +6,11 @@ New features:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
 
+Changes:
+  - API: Added or_ifd_release()
+  - API: The ORIfdDirRef returned by or_rawfile_get_ifd() must
+    be released.
+  - API: or_rawfile_get_ifd() support more IFD types.
 
 libopenraw 0.2.1 - 2020/06/26
 
