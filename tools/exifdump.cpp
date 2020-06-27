@@ -88,8 +88,15 @@ public:
                 while (or_metadata_iterator_next(iter)) {
                     uint16_t id;
                     ExifTagType type;
-                    if (or_metadata_iterator_get_entry(iter, &id, &type)) {
+                    ORMetaValueRef value = nullptr;
+                    if (or_metadata_iterator_get_entry(iter, &id, &type, &value)) {
                         m_out << boost::format("\t0x%1$x = %2%\n") % id % map_exif_type(type);
+                        if (value) {
+                            if (type == EXIF_FORMAT_ASCII) {
+                                m_out << boost::format("\tvalue = %1%\n") % or_metavalue_get_string(value, 0);
+                            }
+                            or_metavalue_release(value);
+                        }
                     }
                 }
 

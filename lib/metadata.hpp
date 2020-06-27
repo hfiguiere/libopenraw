@@ -47,6 +47,7 @@ public:
     Option<ExifTagType> getEntryType() const;
     /// Get the ID of the current entry
     Option<uint16_t> getEntryId() const;
+    MetaValue* getMetaValue() const;
 
 private:
     Internals::IfdDir::Ref nextIfd();

@@ -94,4 +94,12 @@ Option<uint16_t> MetadataIterator::getEntryId() const
     return m_current_entry->first;
 }
 
+MetaValue* MetadataIterator::getMetaValue() const
+{
+    if (!(isInitialized() && isValid())) {
+        return nullptr;
+    }
+    return m_current_entry->second->make_meta_value();
+}
+
 }

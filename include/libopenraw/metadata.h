@@ -47,6 +47,8 @@ enum {
 
 const char* or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx);
 
+void or_metavalue_release(ORMetaValueRef value);
+
 /** Get the next metadata value
  * @param iterator The iterator.
  * @return 0 if none
@@ -57,10 +59,12 @@ int or_metadata_iterator_next(ORMetadataIteratorRef iterator);
  * @param iterator The iterator.
  * @param id Pointer to id (nullable)
  * @param type Pointer to exif tag type (nullable)
+ * @param value Pointer to store a newly allocated ORConstMetaValue (nullable)
  * @return 0 if error. In that case none of the values is valid.
  */
 int
-or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id, ExifTagType* type);
+or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id,
+                               ExifTagType* type, ORMetaValueRef* value);
 
 /** Free the iterator
  * @param iterator The iterator.

@@ -140,6 +140,11 @@ MetaValue* IfdEntry::make_meta_value()
         convert<uint32_t>(this, values);
         break;
     }
+    case Internals::IFD::EXIF_FORMAT_RATIONAL:
+    {
+        convert<Internals::IFD::Rational, double>(this, values);
+        break;
+    }
     case Internals::IFD::EXIF_FORMAT_SRATIONAL:
     {
         convert<Internals::IFD::SRational, double>(this, values);
@@ -147,7 +152,7 @@ MetaValue* IfdEntry::make_meta_value()
     }
     default:
         LOGDBG1("unhandled type %d\n", type());
-        return NULL;
+        return nullptr;
     }
     return new MetaValue(values);
 }

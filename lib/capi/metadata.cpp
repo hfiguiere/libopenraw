@@ -39,6 +39,17 @@ or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx)
   return reinterpret_cast<const OpenRaw::MetaValue*>(value)->getString(idx).c_str();
 }
 
+API_EXPORT void
+or_metavalue_release(ORMetaValueRef value)
+{
+  if (!value) {
+    return;
+  }
+  auto obj = reinterpret_cast<OpenRaw::MetaValue*>(value);
+  delete obj;
+}
+
+
 API_EXPORT int
 or_metadata_iterator_next(ORMetadataIteratorRef iterator)
 {
@@ -52,7 +63,8 @@ or_metadata_iterator_next(ORMetadataIteratorRef iterator)
 }
 
 API_EXPORT int
-or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id, ExifTagType* type)
+or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id,
+                               ExifTagType* type, ORMetaValueRef* value)
 {
   CHECK_PTR(iterator, 0);
   auto iter = reinterpret_cast<OpenRaw::MetadataIterator*>(iterator);
@@ -70,6 +82,15 @@ or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id, Exi
       *type = *t;
     } else {
       return 0;
+    }
+  }
+  if (value) {
+    auto v = iter->getMetaValue();
+    if (v) {
+      *value = reinterpret_cast<ORMetaValueRef>(v);
+    } else {
+      *value = nullptr;
+      LOGERR("Couldn't get value\n");
     }
   }
   return 1;
