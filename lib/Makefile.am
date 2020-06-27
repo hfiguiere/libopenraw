@@ -7,6 +7,7 @@ RUST_FILES = mp4/Cargo.lock \
 	mp4/mp4parse_capi/src/lib.rs \
 	mp4/mp4parse_capi/build.rs \
 	mp4/mp4parse_capi/Cargo.toml \
+	mp4/mp4parse_capi/Cargo.lock \
 	mp4/mp4parse/src/boxes.rs \
 	mp4/mp4parse/src/fallible.rs \
 	mp4/mp4parse/src/lib.rs \
@@ -28,6 +29,9 @@ check_PROGRAMS = teststream
 teststream_SOURCES = io/teststream.cpp
 teststream_LDFLAGS = -static
 teststream_LDADD = libopenraw.la
+
+BUILT_SOURCES = mp4/mp4parse.h
+CLEANFILES = mp4/mp4parse.h
 
 noinst_HEADERS = \
 	trace.hpp	\
@@ -74,7 +78,6 @@ noinst_HEADERS = \
 	exception.hpp \
 	endianutils.hpp \
 	unpack.hpp \
-	mp4/mp4parse.h \
 	$(NULL)
 
 lib_LTLIBRARIES = libopenraw.la
@@ -89,6 +92,8 @@ CARGO_TARGET_DIR=@abs_top_builddir@/lib/mp4/target
 RUST_PATH=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@
 RUST_LIB=$(RUST_PATH)/libmp4.a
 RUST_LIBADD=-L$(RUST_PATH) -lmp4
+
+mp4/mp4parse.h: $(RUST_LIB)
 
 $(RUST_LIB): $(RUST_FILES)
 	cd $(srcdir)/mp4 && \
@@ -121,7 +126,6 @@ libopenraw_la_SOURCES = \
 	capi/mosaicinfo.cpp \
 	capi/metadata.cpp \
 	capi/ifd.cpp \
-	mp4/mp4parse.h \
 	trace.cpp \
 	bititerator.hpp \
 	bititerator.cpp \

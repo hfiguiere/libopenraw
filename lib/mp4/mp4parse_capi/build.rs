@@ -40,7 +40,11 @@ extern "C" {
 
     // Generate mp4parse.h.
     let crate_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
+    let header_path = std::env::var("CARGO_TARGET_DIR").unwrap();
+    let mut header_path = std::path::PathBuf::from(header_path);
+    header_path.push("..");
+    header_path.push("mp4parse.h");
     cbindgen::generate_with_config(&crate_dir, config)
         .expect("Could not generate header")
-        .write_to_file("include/mp4parse.h");
+        .write_to_file(header_path);
 }
