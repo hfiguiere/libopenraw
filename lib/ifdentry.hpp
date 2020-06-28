@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.hpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,9 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef OR_INTERNALS_IFDENTRY_H
-#define OR_INTERNALS_IFDENTRY_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -198,11 +196,11 @@ public:
 	RawContainer::EndianType endian() const;
 
 public:
-  MetaValue* make_meta_value();
+  MetaValue* makeMetaValue();
 	/**
 	 * Unit size for type
 	 */
-	static size_t type_unit_size(IFD::ExifTagType _type);
+	static size_t typeUnitSize(IFD::ExifTagType _type);
 	/** load the data for the entry
 	 * if all the data fits in m_data, it is a noop
 	 * @param unit_size the size of 1 unit of data
@@ -302,8 +300,6 @@ T IfdTypeTrait<T>::get(IfdEntry & e, uint32_t idx, bool ignore_type)
 
 }
 }
-
-
 /*
   Local Variables:
   mode:c++
@@ -315,6 +311,3 @@ T IfdTypeTrait<T>::get(IfdEntry & e, uint32_t idx, bool ignore_type)
   fill-column:80
   End:
 */
-#endif
-
-

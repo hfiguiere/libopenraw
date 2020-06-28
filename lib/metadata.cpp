@@ -99,7 +99,7 @@ MetaValue* MetadataIterator::getMetaValue() const
     if (!(isInitialized() && isValid())) {
         return nullptr;
     }
-    return m_current_entry->second->make_meta_value();
+    return m_current_entry->second->makeMetaValue();
 }
 
 }

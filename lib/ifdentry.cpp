@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -48,7 +48,7 @@ IfdEntry::IfdEntry(uint16_t _id, int16_t _type,
       m_container(_container)
 {
 	auto container_size = m_container.size();
-	auto unit_size = type_unit_size(static_cast<IFD::ExifTagType>(m_type));
+	auto unit_size = typeUnitSize(static_cast<IFD::ExifTagType>(m_type));
 	if ((m_count * unit_size) > static_cast<size_t>(container_size)) {
 		LOGERR("Trying to have %u items in a container of %lld bytes\n",
 			   m_count, (long long int)container_size);
@@ -92,7 +92,7 @@ void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
 }
 
 
-size_t IfdEntry::type_unit_size(IFD::ExifTagType _type)
+size_t IfdEntry::typeUnitSize(IFD::ExifTagType _type)
 {
 	switch(_type) {
     case IFD::EXIF_FORMAT_BYTE:
@@ -115,7 +115,7 @@ size_t IfdEntry::type_unit_size(IFD::ExifTagType _type)
 
 	return 0;
 }
-MetaValue* IfdEntry::make_meta_value()
+MetaValue* IfdEntry::makeMetaValue()
 {
     std::vector<MetaValue::value_t> values;
 

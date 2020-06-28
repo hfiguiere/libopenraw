@@ -569,7 +569,7 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
         IfdDir::Ref dir = jpegPreview->mainIfd();
         IfdEntry::Ref e = dir->getEntry(META_NS_MASKOUT(meta_index));
         if (e) {
-            return e->make_meta_value();
+            return e->makeMetaValue();
         }
     }
 
