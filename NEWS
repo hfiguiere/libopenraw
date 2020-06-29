@@ -1,11 +1,10 @@
 libopenraw 0.2.2 -
 
-New features:
-
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
-
+  - Support for Panasonic DC-G100.
+  - Support for GoPro HERO5, HERO6, HERO7 and HERO8 (GPR files, DNG based).
 
 libopenraw 0.2.1 - 2020/06/26
 
@@ -14,9 +13,9 @@ New features:
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
-  - Support for Nikon Coolpix P950*
-  - Support for Fujifilm F550EXR*
-  - Support for Sony ZV-1
+  - Support for Nikon Coolpix P950*.
+  - Support for Fujifilm F550EXR*.
+  - Support for Sony ZV-1.
 
 Internal Changes:
 
@@ -64,7 +63,7 @@ New features:
     K10D DNG, KP PEF*.
   - Support for Ricoh GX200, GR II, GR III.
   - Support for Sigma fp.
-  - Support for Sony RX0*, RX0M2, RX10M4*, A5000*, A5100*, A7M2*, A7M3*, A7S*,
+  - Support for Sony RX0*, RX0M2*, RX10M4*, A5000*, A5100*, A7M2*, A7M3*, A7S*,
     A7SM2*, A7RM3*, A7RM4*, A9*, A9II*, NEX-3N*, DSLR-A230*, DSLR-A290*,
     DSLR-A330*, DSLR-A450*, DSLR-A500*, SLT-A37*, ILCA-68*, ILCA-77M2*,
     RX100M6*, RX100M7*, A6100*, A6400*, A6600*, HX95/99*.
