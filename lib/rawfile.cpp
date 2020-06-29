@@ -715,6 +715,7 @@ const RawFile::camera_ids_t RawFile::s_make[] = {
     { "FUJIFILM", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM, 0) },
     { "Blackmagic", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_BLACKMAGIC, 0) },
     { "SIGMA", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SIGMA, 0) },
+    { "GoPro", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_GOPRO, 0) },
     { NULL, 0 }
 };
 
