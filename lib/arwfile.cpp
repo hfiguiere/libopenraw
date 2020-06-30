@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.cpp
  *
- * Copyright (C) 2006-2020 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -189,6 +189,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       128,
       0,
       { 5491, -1192, -363, -4951, 12342, 2948, -911, 1722, 7192 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_R1),
+      0,
+      0,
+      { 8512, -2641, -694, -8041, 15670, 2526, -1820, 2117, 7414 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX100),
       0,
       0,
@@ -382,6 +386,7 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { "NEX-7", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_NEX7) },
     { "DSC-HX95", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_HX95) },
     { "DSC-HX99", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_HX99) },
+    { "DSC-R1", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_R1) },
     { "DSC-RX10", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX10) },
     { "DSC-RX10M2", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX10M2) },
     { "DSC-RX10M3", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_RX10M3) },

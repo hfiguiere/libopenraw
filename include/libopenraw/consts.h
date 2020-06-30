@@ -2,7 +2,7 @@
  * libopenraw - consts.h
  *
  * Copyright (c) 2008 Novell, Inc.
- * Copyright (C) 2005-2018 Hubert Figuiere
+ * Copyright (C) 2005-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -70,6 +70,7 @@ typedef enum {
     OR_RAWFILE_TYPE_RAF,         /**< FujiFilm RAF */
     OR_RAWFILE_TYPE_CR3,         /**< Canon CR3 */
     OR_RAWFILE_TYPE_GPR,         /**< GoPro GPR (DNG-variation) */
+    OR_RAWFILE_TYPE_SR2,         /**< Sony SR2 */
 } or_rawfile_type;
 
 typedef enum {

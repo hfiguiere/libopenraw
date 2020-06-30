@@ -2,7 +2,7 @@
  * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2006-2018 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -91,6 +91,9 @@ void init(void)
     RawFileFactory::registerType(OR_RAWFILE_TYPE_ARW,
                                  std::bind(&Internals::ArwFile::factory, _1),
                                  "arw");
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_SR2,
+                                 std::bind(&Internals::ArwFile::factory, _1),
+                                 "sr2");
     RawFileFactory::registerType(OR_RAWFILE_TYPE_ORF,
                                  std::bind(&Internals::OrfFile::factory, _1),
                                  "orf");
