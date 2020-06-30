@@ -3,8 +3,16 @@ libopenraw 0.2.2 -
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
+  - Support for Nikon D6*.
   - Support for Panasonic DC-G100.
   - Support for GoPro HERO5, HERO6, HERO7 and HERO8 (GPR files, DNG based).
+  - ordiag: Added a developer mode.
+
+  Bug fixes:
+
+  - Properly detect Canon Digital Rebel (aka 300D).
+  - Better detect Minolta and Ricoh vendors.
+  - Fix a crash in DNG on invalid files.
 
 libopenraw 0.2.1 - 2020/06/26
 
