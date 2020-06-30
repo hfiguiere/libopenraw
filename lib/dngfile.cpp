@@ -281,6 +281,11 @@ void DngFile::_identifyId()
     if (OR_GET_FILE_TYPEID_CAMERA(_typeId()) == 0) {
         const IfdDir::Ref & _mainIfd = mainIfd();
 
+        // It's an error to not find the mainIfd()
+        if (!_mainIfd) {
+            return;
+        }
+
         auto uniqueCameraModel =
             _mainIfd->getValue<std::string>(IFD::DNG_TAG_UNIQUE_CAMERA_MODEL);
         if (uniqueCameraModel) {
