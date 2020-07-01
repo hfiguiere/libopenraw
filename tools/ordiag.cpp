@@ -180,6 +180,9 @@ public:
             case OR_RAWFILE_TYPE_ARW:
                 return "Sony ARW";
                 break;
+            case OR_RAWFILE_TYPE_SR2:
+                return "Sony SR2";
+                break;
             case OR_RAWFILE_TYPE_DNG:
                 return "Adobe DNG";
                 break;
