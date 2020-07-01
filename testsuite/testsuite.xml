@@ -910,6 +910,20 @@
     </results>
   </test>
   <test>
+    <name>SR2-test Sony R1</name>
+    <source>https://raw.pixls.us/getfile.php/3221/nice/Sony%20-%20DSC-R1%20-%2014bit%20uncompressed%20(3:2).SR2</source>
+    <results>
+      <rawType>ARW</rawType>
+      <rawTypeId>524366</rawTypeId>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>640 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>145173 28372</thumbDataSizes>
+      <thumbMd5>15444 18470</thumbMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>RAF-test X100</name>
     <file>/home/hub/samples/raf/Finepix-X100/fujifilm_finepix_x100_02.raf</file>
     <source referer="http://www.photographyblog.com/reviews/fujifilm_finepix_x100_review/sample_images/">http://img.photographyblog.com/reviews/fujifilm_finepix_x100/sample_images/fujifilm_finepix_x100_02.raf</source>
