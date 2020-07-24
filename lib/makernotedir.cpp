@@ -1,7 +1,7 @@
 /*
  * libopenraw - makernotedir.cpp
  *
- * Copyright (C) Hubert Figuiere
+ * Copyright (C) 2010-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -92,7 +92,7 @@ MakerNoteDir::MakerNoteDir(const char* magic, size_t hlen,
                            IfdFileContainer & _container,
                            off_t mnote_offset,
                            const std::string & id)
-    : IfdDir(_offset, _container)
+    : IfdDir(_offset, _container, OR_IFD_MNOTE)
     , m_magic(magic ? magic : "")
     , m_hlen(hlen)
     , m_mnote_offset(mnote_offset)

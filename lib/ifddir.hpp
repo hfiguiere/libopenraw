@@ -38,6 +38,8 @@
 namespace OpenRaw {
 namespace Internals {
 
+typedef or_ifd_dir_type IfdDirType;
+
 class IfdFileContainer;
 
 class IfdDir {
@@ -47,8 +49,13 @@ public:
     typedef std::vector<Ref> RefVec;
     typedef std::map<uint16_t, IfdEntry::Ref> Entries;
 
-    IfdDir(off_t _offset, IfdFileContainer &_container);
+    IfdDir(off_t _offset, IfdFileContainer &_container, IfdDirType _type /*= OR_IFDDIR_OTHER */);
     virtual ~IfdDir();
+
+    IfdDirType type() const
+        { return m_type; }
+    void setType(IfdDirType type_)
+        { m_type = type_; }
 
     bool isPrimary() const;
     bool isThumbnail() const;
@@ -122,6 +129,7 @@ public:
     Ref getMakerNoteIfd();
 
 private:
+    IfdDirType m_type;
     off_t m_offset;
     IfdFileContainer &m_container;
     Entries m_entries;

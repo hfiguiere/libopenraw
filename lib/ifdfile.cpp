@@ -339,6 +339,7 @@ IfdDir::Ref IfdFile::cfaIfd()
 	if(!m_cfaIfd) {
 		m_cfaIfd = _locateCfaIfd();
 	}
+	LOGASSERT(m_cfaIfd->type() == OR_IFD_RAW);
 	return m_cfaIfd;
 }
 
@@ -348,6 +349,7 @@ IfdDir::Ref IfdFile::mainIfd()
 	if(!m_mainIfd) {
 		m_mainIfd = _locateMainIfd();
 	}
+	LOGASSERT(m_mainIfd->type() == OR_IFD_MAIN);
 	return m_mainIfd;
 }
 
@@ -357,6 +359,7 @@ IfdDir::Ref IfdFile::exifIfd()
 	if(!m_exifIfd) {
 		m_exifIfd = _locateExifIfd();
 	}
+	LOGASSERT(m_exifIfd->type() == OR_IFD_EXIF);
 	return m_exifIfd;
 }
 
@@ -366,6 +369,7 @@ IfdDir::Ref IfdFile::makerNoteIfd()
 	if(!m_makerNoteIfd) {
 		m_makerNoteIfd = _locateMakerNoteIfd();
 	}
+	LOGASSERT(!m_makerNoteIfd || m_makerNoteIfd->type() == OR_IFD_MNOTE);
 	return m_makerNoteIfd;
 }
 

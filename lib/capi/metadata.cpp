@@ -63,11 +63,20 @@ or_metadata_iterator_next(ORMetadataIteratorRef iterator)
 }
 
 API_EXPORT int
-or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id,
+or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator,
+                               or_ifd_dir_type* ifd_type, uint16_t* id,
                                ExifTagType* type, ORMetaValueRef* value)
 {
   CHECK_PTR(iterator, 0);
   auto iter = reinterpret_cast<OpenRaw::MetadataIterator*>(iterator);
+  if (ifd_type) {
+    auto t = iter->getIfdType();
+    if (t) {
+      *ifd_type = *t;
+    } else {
+      return 0;
+    }
+  }
   if (id) {
     auto i = iter->getEntryId();
     if (i) {

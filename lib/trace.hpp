@@ -38,6 +38,9 @@ void log(debug_level level, const char* fmt, ...)
     __attribute__ ((format (printf, 2, 3)));
 
 
+#define LOGASSERT(x) \
+  if (!(x)) Debug::log(ERROR, "ASSERT failed: %s\n", #x)
+
 #define LOGWARN(...) \
   Debug::log(WARNING, ## __VA_ARGS__)
 

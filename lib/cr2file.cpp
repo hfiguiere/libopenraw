@@ -501,12 +501,20 @@ IfdDir::Ref Cr2File::_locateCfaIfd()
     if (!isCr2()) {
         return makerNoteIfd();
     }
-    return m_container->setDirectory(3);
+    auto ifd = m_container->setDirectory(3);
+    if (ifd) {
+        ifd->setType(OR_IFD_RAW);
+    }
+    return ifd;
 }
 
 IfdDir::Ref Cr2File::_locateMainIfd()
 {
-    return m_container->setDirectory(0);
+    auto ifd = m_container->setDirectory(0);
+    if (ifd) {
+        ifd->setType(OR_IFD_MAIN);
+    }
+    return ifd;
 }
 
 ::or_error Cr2File::_locateThumbnail(const IfdDir::Ref & dir,

@@ -133,7 +133,7 @@ ORConstMetaValueRef
 or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index);
 
 ORIfdDirRef
-or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd);
+or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_dir_type ifd);
 
 /** Get a metadata iterator
  * @param rawfile the RAW file object.

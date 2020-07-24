@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -113,7 +113,11 @@ IfdDir::Ref  MRWFile::_locateCfaIfd()
 
 IfdDir::Ref  MRWFile::_locateMainIfd()
 {
-    return m_container->setDirectory(0);
+    auto ifd = m_container->setDirectory(0);
+    if (ifd) {
+        ifd->setType(OR_IFD_MAIN);
+    }
+    return ifd;
 }
 
 
@@ -170,7 +174,7 @@ void MRWFile::_identifyId()
     IfdDir::Ref ref(std::make_shared<IfdDir>(
                         mc->ttw->offset()
                         + MRW::DataBlockHeaderLength + off,
-                        *m_container));
+                        *m_container, OR_IFD_MNOTE));
     ref->load();
 
     uint32_t tnail_offset = 0;

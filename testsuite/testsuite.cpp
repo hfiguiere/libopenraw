@@ -691,7 +691,7 @@ bool Test::testExifString(int32_t meta_index, const std::string & result)
 bool Test::testMakerNoteCount(const std::string & result)
 {
     try {
-        auto ifd = or_rawfile_get_ifd(m_rawfile.get(), OR_IFD_MAKERNOTE);
+        auto ifd = or_rawfile_get_ifd(m_rawfile.get(), OR_IFD_MNOTE);
         auto numTags = or_ifd_count_tags(ifd);
         or_ifd_release(ifd);
         RETURN_TEST_EQUALS_N(numTags,
@@ -707,7 +707,7 @@ bool Test::testMakerNoteCount(const std::string & result)
 
 bool Test::testMakerNoteId(const std::string & result)
 {
-    auto ifd = or_rawfile_get_ifd(m_rawfile.get(), OR_IFD_MAKERNOTE);
+    auto ifd = or_rawfile_get_ifd(m_rawfile.get(), OR_IFD_MNOTE);
     if (!ifd) {
         RETURN_FAIL("no MakerNote found");
     }

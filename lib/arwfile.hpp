@@ -2,7 +2,7 @@
 /*
  * libopenraw - arwfile.hpp
  *
- * Copyright (C) 2006-2018 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_ARWFILE_H_
-#define OR_INTERNALS_ARWFILE_H_
+#pragma once
 
 #include <libopenraw/cameraids.h>
 #include <libopenraw/consts.h>
@@ -58,7 +57,6 @@ public:
 
 protected:
     virtual IfdDir::Ref  _locateCfaIfd() override;
-    virtual IfdDir::Ref  _locateMainIfd() override;
 
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
 private:
@@ -74,5 +72,3 @@ private:
 
 }
 }
-
-#endif

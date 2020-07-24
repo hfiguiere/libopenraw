@@ -29,7 +29,11 @@ MetadataIterator::MetadataIterator(RawFile& rf)
     , m_is_valid(true)
     , m_next_ifd(0)
 {
-    auto ifd = rf.exifIfd();
+    auto ifd = rf.mainIfd();
+    if (ifd) {
+        m_ifds.push_back(ifd);
+    }
+    ifd = rf.exifIfd();
     if (ifd) {
         m_ifds.push_back(ifd);
     }
@@ -74,6 +78,15 @@ bool MetadataIterator::next()
     }
 
     return true;
+}
+
+/// Get the IFD type for the current entry
+Option<Internals::IfdDirType> MetadataIterator::getIfdType() const
+{
+    if (!(isInitialized() && isValid())) {
+        return OptionNone();
+    }
+    return m_current_ifd->type();
 }
 
 /// Get the type of the current entry

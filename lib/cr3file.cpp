@@ -246,19 +246,31 @@ IfdDir::Ref Cr3File::findIfd(uint32_t idx)
 
 IfdDir::Ref Cr3File::mainIfd()
 {
-    return findIfd(0);
+    auto ifd = findIfd(0);
+    if (ifd) {
+        ifd->setType(OR_IFD_MAIN);
+    }
+    return ifd;
 }
 
 
 IfdDir::Ref Cr3File::exifIfd()
 {
-    return findIfd(1);
+    auto ifd = findIfd(1);
+    if (ifd) {
+        ifd->setType(OR_IFD_EXIF);
+    }
+    return ifd;
 }
 
 
 IfdDir::Ref Cr3File::makerNoteIfd()
 {
-    return findIfd(2);
+    auto ifd = findIfd(2);
+    if (ifd) {
+        ifd->setType(OR_IFD_MNOTE);
+    }
+    return ifd;
 }
 
 MetaValue* Cr3File::_getMetaValue(int32_t meta_index)

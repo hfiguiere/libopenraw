@@ -47,8 +47,9 @@ bool IfdDir::isThumbnail() const
     return result && (result.value() == 1);
 }
 
-IfdDir::IfdDir(off_t _offset, IfdFileContainer &_container)
-    : m_offset(_offset), m_container(_container), m_entries()
+IfdDir::IfdDir(off_t _offset, IfdFileContainer &_container, IfdDirType _type)
+    : m_type(_type)
+    , m_offset(_offset), m_container(_container), m_entries()
 {
 }
 
@@ -137,7 +138,7 @@ IfdDir::Ref IfdDir::getSubIFD(uint32_t idx) const
         if (result) {
             std::vector<uint32_t> offsets = result.value();
             if (idx >= offsets.size()) {
-                Ref ref = std::make_shared<IfdDir>(offsets[idx], m_container);
+                Ref ref = std::make_shared<IfdDir>(offsets[idx], m_container, OR_IFD_OTHER);
                 ref->load();
                 return ref;
             }
@@ -157,7 +158,7 @@ Option<std::vector<IfdDir::Ref>> IfdDir::getSubIFDs()
         if (result) {
             std::vector<uint32_t> offsets = result.value();
             for (auto offset_ : offsets) {
-                Ref ifd = std::make_shared<IfdDir>(offset_, m_container);
+                Ref ifd = std::make_shared<IfdDir>(offset_, m_container, OR_IFD_OTHER);
                 ifd->load();
                 ifds.push_back(ifd);
             }
@@ -183,7 +184,7 @@ IfdDir::Ref IfdDir::getExifIFD()
     val_offset += m_container.exifOffsetCorrection();
     LOGDBG1("Exif IFD offset = %u\n", val_offset);
 
-    Ref ref = std::make_shared<IfdDir>(val_offset, m_container);
+    Ref ref = std::make_shared<IfdDir>(val_offset, m_container, OR_IFD_EXIF);
     ref->load();
     return ref;
 }

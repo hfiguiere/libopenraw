@@ -27,6 +27,8 @@
 #include <libopenraw/exif.h>
 #undef INCLUDE_EXIF_
 
+#include <libopenraw/consts.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -63,7 +65,8 @@ int or_metadata_iterator_next(ORMetadataIteratorRef iterator);
  * @return 0 if error. In that case none of the values is valid.
  */
 int
-or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator, uint16_t* id,
+or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator,
+                               or_ifd_dir_type* ifd_type, uint16_t* id,
                                ExifTagType* type, ORMetaValueRef* value);
 
 /** Free the iterator

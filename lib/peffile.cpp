@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.cpp
  *
- * Copyright (C) 2006-2018 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -171,7 +171,11 @@ IfdDir::Ref  PEFFile::_locateCfaIfd()
 
 IfdDir::Ref  PEFFile::_locateMainIfd()
 {
-    return m_container->setDirectory(0);
+    auto ifd = m_container->setDirectory(0);
+    if (ifd) {
+        ifd->setType(OR_IFD_MAIN);
+    }
+    return ifd;
 }
 
 ::or_error PEFFile::_getRawData(RawData & data, uint32_t options)

@@ -485,13 +485,17 @@ Rw2File::~Rw2File()
 
 IfdDir::Ref  Rw2File::_locateCfaIfd()
 {
-	return mainIfd();
+    return mainIfd();
 }
 
 
 IfdDir::Ref  Rw2File::_locateMainIfd()
 {
-	return m_container->setDirectory(0);
+    auto ifd = m_container->setDirectory(0);
+    if (ifd) {
+        ifd->setType(OR_IFD_MAIN);
+    }
+    return ifd;
 }
 
 ::or_error Rw2File::_locateThumbnail(const IfdDir::Ref & dir,

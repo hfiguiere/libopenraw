@@ -451,11 +451,6 @@ IfdDir::Ref ArwFile::_locateCfaIfd()
     return mainIfd();
 }
 
-IfdDir::Ref ArwFile::_locateMainIfd()
-{
-    return m_container->setDirectory(0);
-}
-
 ::or_error ArwFile::_getRawData(RawData &data, uint32_t options)
 {
     if (isA100()) {

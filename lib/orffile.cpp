@@ -339,7 +339,11 @@ IfdDir::Ref  OrfFile::_locateCfaIfd()
 
 IfdDir::Ref  OrfFile::_locateMainIfd()
 {
-    return m_container->setDirectory(0);
+    auto ifd = m_container->setDirectory(0);
+    if (ifd) {
+        ifd->setType(OR_IFD_MAIN);
+    }
+    return ifd;
 }
 
 ::or_error OrfFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
