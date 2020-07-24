@@ -71,6 +71,17 @@ MakerNoteDir::createMakerNote(off_t offset,
             offset + 8, container, offset + 8, "Olympus");
     }
 
+    // Pentax Asahi Optical Corporation (pre Ricoh merger)
+    if (memcmp("AOC\0", data, 4) == 0) {
+        return std::make_shared<MakerNoteDir>(
+            offset + 6, container, offset + 6, "Pentax");
+    }
+    // Pentax post Ricoh merger
+    if (memcmp("PENTAX \0", data, 8) == 0) {
+        return std::make_shared<MakerNoteDir>(
+            offset + 10, container, offset, "Pentax");
+    }
+
     if (memcmp("MLT0", data + 10, 4) == 0) {
         return std::make_shared<MakerNoteDir>(
             offset, container, offset, "Minolta");
