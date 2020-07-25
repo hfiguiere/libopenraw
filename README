@@ -49,7 +49,7 @@ below:
     - Epson ERF
     - DNG
     - GoPro GPR
-    - Sony ARW
+    - Sony ARW and SR2
     - Minolta MRW
     - Panasonic RAW and RW2
     - Fujifilm RAF
@@ -239,6 +239,9 @@ Adobe DNG                Y Y B Y Y Y Y Y
 
 GoPro GPR                Y Y N Y Y Y Y Y
 
+Sony SR2                 Y Y N Y N Y N Y
+ R-1
+
 Sony ARW                 Y Y N Y N Y N Y
  A-100                   T N   T   T
  A-200                   # # # # # T #
@@ -295,9 +298,6 @@ Minolta MRW              Y Y B N Y Y N Y
  A200
 
 Sony SRF                 N N N N N N N N
-
-Sony SR2                 N N N N N N N N
- Sony R1
 
 Kodak DCR                N N N N N N N N
 

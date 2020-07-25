@@ -16,7 +16,7 @@ check_PROGRAMS = fileio testoption ciffcontainertest ljpegtest testunpack\
 
 EXTRA_DIST = ljpegtest1.jpg
 
-fileio_SOURCES = fileio.t.c
+fileio_SOURCES = fileio.t.cpp
 fileio_LDFLAGS = $(OPENRAW_LIB)
 
 testoption_SOURCES = option.t.cpp

@@ -51,6 +51,9 @@ std::string typeToString(or_rawfile_type t)
     case OR_RAWFILE_TYPE_ARW:
         return "Sony ARW";
         break;
+    case OR_RAWFILE_TYPE_SR2:
+        return "Sony SR2";
+        break;
     case OR_RAWFILE_TYPE_DNG:
         return "Adobe DNG";
         break;
@@ -80,7 +83,7 @@ std::string typeToString(or_rawfile_type t)
 }
 
 
-void dump_file_info(std::ostream& out, ORRawFileRef rf)
+void dump_file_info(std::ostream& out, ORRawFileRef rf, bool dev_mode)
 {
     or_rawfile_type fileType = or_rawfile_get_type(rf);
     out << boost::format("\tType = %1% (%2%)\n")
@@ -102,13 +105,15 @@ void dump_file_info(std::ostream& out, ORRawFileRef rf)
     ORConstMetaValueRef make
         = or_rawfile_get_metavalue(rf, META_NS_TIFF | EXIF_TAG_MAKE);
     if (make) {
-        out << boost::format("\tMake = %1%\n")
+        out << boost::format(dev_mode ?
+                             "\tMake = \"%1%\"\n" : "\tMake = %1%\n")
             % or_metavalue_get_string(make, 0);
     }
     ORConstMetaValueRef model
         = or_rawfile_get_metavalue(rf, META_NS_TIFF | EXIF_TAG_MODEL);
     if (model) {
-        out << boost::format("\tModel = %1%\n")
+        out << boost::format(dev_mode ?
+                               "\tModel = \"%1%\"\n" : "\tModel = %1%\n")
             % or_metavalue_get_string(model, 0);
     }
     ORConstMetaValueRef uniqueCameraModel

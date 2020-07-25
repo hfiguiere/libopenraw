@@ -45,9 +45,10 @@ public:
     /** constructor
      * @param out the output stream
      */
-    OrDiag(std::ostream & out, const std::string & extract_thumbs)
+    OrDiag(std::ostream & out, const std::string & extract_thumbs, bool dev_mode)
         : m_out(out)
         , m_extract_all_thumbs(false)
+        , m_dev_mode(dev_mode)
         {
             m_extract_all_thumbs = (extract_thumbs == "all");
             if (!m_extract_all_thumbs) {
@@ -152,7 +153,6 @@ public:
             }
             return "Invalid";
         }
-
 
     /** Extract thumbnail to a file
      */
@@ -338,11 +338,22 @@ public:
 
             ::or_error err = or_rawfile_get_colourmatrix1(rf, matrix, &size);
             if(err == OR_ERROR_NONE) {
-                m_out << boost::format("\t\tColour Matrix 1: %1%, %2%, %3%, "
-                                       "%4%, %5%, %6%, %7%, %8%, %9%\n")
-                    % matrix[0] % matrix[1] % matrix[2]
-                    % matrix[3] % matrix[4] % matrix[5]
-                    % matrix[6] % matrix[7] % matrix[8];
+                if (m_dev_mode) {
+                    std::vector<int64_t> int_matrix;
+                    std::transform(&matrix[0], &matrix[9], std::back_inserter(int_matrix),
+                                   [](double v) -> int64_t { return rintl(v * 10000.0); });
+                    m_out << boost::format("\t\tColour Matrix 1: %1%, %2%, %3%, "
+                                           "%4%, %5%, %6%, %7%, %8%, %9%\n")
+                        % int_matrix[0] % int_matrix[1] % int_matrix[2]
+                        % int_matrix[3] % int_matrix[4] % int_matrix[5]
+                        % int_matrix[6] % int_matrix[7] % int_matrix[8];
+                } else {
+                    m_out << boost::format("\t\tColour Matrix 1: %1%, %2%, %3%, "
+                                           "%4%, %5%, %6%, %7%, %8%, %9%\n")
+                        % matrix[0] % matrix[1] % matrix[2]
+                        % matrix[3] % matrix[4] % matrix[5]
+                        % matrix[6] % matrix[7] % matrix[8];
+                }
             }
             else {
                 m_out << "\t\tNo Colour Matrix 1\n";
@@ -355,11 +366,23 @@ public:
             size = 9;
             err = or_rawfile_get_colourmatrix2(rf, matrix, &size);
             if(err == OR_ERROR_NONE) {
-                m_out << boost::format("\t\tColour Matrix 2: %1%, %2%, %3%, "
-                                       "%4%, %5%, %6%, %7%, %8%, %9%\n")
-                    % matrix[0] % matrix[1] % matrix[2]
-                    % matrix[3] % matrix[4] % matrix[5]
-                    % matrix[6] % matrix[7] % matrix[8];
+                if (m_dev_mode) {
+                    std::vector<int64_t> int_matrix;
+                    std::transform(&matrix[0], &matrix[9], std::back_inserter(int_matrix),
+                                   [](double v) -> int64_t { return rintl(v * 10000.0); });
+                    m_out << boost::format("\t\tColour Matrix 2: %1%, %2%, %3%, "
+                                           "%4%, %5%, %6%, %7%, %8%, %9%\n")
+                        % int_matrix[0] % int_matrix[1] % int_matrix[2]
+                        % int_matrix[3] % int_matrix[4] % int_matrix[5]
+                        % int_matrix[6] % int_matrix[7] % int_matrix[8];
+
+                } else {
+                    m_out << boost::format("\t\tColour Matrix 2: %1%, %2%, %3%, "
+                                           "%4%, %5%, %6%, %7%, %8%, %9%\n")
+                        % matrix[0] % matrix[1] % matrix[2]
+                        % matrix[3] % matrix[4] % matrix[5]
+                        % matrix[6] % matrix[7] % matrix[8];
+                }
             }
             else {
                 m_out << "\t\tNo Colour Matrix 2\n";
@@ -377,8 +400,7 @@ public:
                 m_out << "unrecognized file\n";
             }
             else {
-
-                dump_file_info(m_out, rf);
+                dump_file_info(m_out, rf, m_dev_mode);
 
                 dumpPreviews(rf);
                 dumpRawData(rf);
@@ -389,6 +411,7 @@ public:
 private:
     std::ostream & m_out;
     bool m_extract_all_thumbs;
+    bool m_dev_mode;
     std::set<int> m_thumb_sizes;
 };
 
@@ -398,6 +421,7 @@ void print_help()
     std::cerr << "ordiag [-v] [-h] [-t all|<size>] [-d 0-9] [files...]\n";
     std::cerr << "Print libopenraw diagnostics\n";
     std::cerr << "\t-h: show this help\n";
+    std::cerr << "\t-D: developer mode: display some data a format suited for development\n";
     std::cerr << "\t-v: show version\n";
     std::cerr << "\t-d level: set debug / verbosity to level\n";
     std::cerr << "\t-t [all|<size>]: extract thumbnails. all or <size>.\n";
@@ -415,11 +439,12 @@ int main(int argc, char **argv)
 {
     int done = 0;
     int dbl = 0;
+    bool dev_mode = false;
     std::string extract_thumbs;
     std::vector<std::string> files;
 
     int o;
-    while((o = getopt(argc, argv, "hvdt:")) != -1) {
+    while((o = getopt(argc, argv, "hvdDt:")) != -1) {
         switch (o) {
         case 'h':
             print_help();
@@ -428,6 +453,9 @@ int main(int argc, char **argv)
         case 'v':
             print_version();
             done = 1;
+            break;
+        case 'D':
+            dev_mode = true;
             break;
         case 'd':
             dbl++;
@@ -467,7 +495,7 @@ int main(int argc, char **argv)
         or_debug_set_level(DEBUG2);
     }
     // do the business.
-    for_each(files.begin(), files.end(), OrDiag(std::cout, extract_thumbs));
+    for_each(files.begin(), files.end(), OrDiag(std::cout, extract_thumbs, dev_mode));
 
     return 0;
 }

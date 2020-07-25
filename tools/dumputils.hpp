@@ -26,4 +26,4 @@
 #include <libopenraw/libopenraw.h>
 
 std::string typeToString(or_rawfile_type t);
-void dump_file_info(std::ostream& out, ORRawFileRef rf);
+void dump_file_info(std::ostream& out, ORRawFileRef rf, bool dev_mode);

@@ -92,6 +92,9 @@ void init(void)
     RawFileFactory::registerType(OR_RAWFILE_TYPE_ARW,
                                  std::bind(&Internals::ArwFile::factory, _1),
                                  "arw");
+    RawFileFactory::registerType(OR_RAWFILE_TYPE_SR2,
+                                 std::bind(&Internals::ArwFile::factory, _1),
+                                 "sr2");
     RawFileFactory::registerType(OR_RAWFILE_TYPE_ORF,
                                  std::bind(&Internals::OrfFile::factory, _1),
                                  "orf");
@@ -712,13 +715,17 @@ const RawFile::camera_ids_t RawFile::s_make[] = {
     { "SONY", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY, 0) },
     { "OLYMPUS", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 0) },
     { "PENTAX", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 0) },
+    { "RICOH IMAGING COMPANY, LTD.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 0) },
     { "RICOH", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
     { "SAMSUNG TECHWIN Co.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG, 0) },
     { "SEIKO EPSON CORP.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON, 0) },
+    { "Konica Minolta Camera, Inc.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA, 0) },
     { "Minolta Co., Ltd.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA, 0) },
+    { "KONICA MINOLTA", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_MINOLTA, 0) },
     { "FUJIFILM", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_FUJIFILM, 0) },
     { "Blackmagic", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_BLACKMAGIC, 0) },
     { "SIGMA", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SIGMA, 0) },
+    { "GoPro", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_GOPRO, 0) },
     { NULL, 0 }
 };
 

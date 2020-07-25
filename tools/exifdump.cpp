@@ -141,7 +141,7 @@ public:
             if (rf == nullptr) {
                 m_out << "unrecognized file\n";
             } else {
-                dump_file_info(m_out, rf);
+                dump_file_info(m_out, rf, false);
 
                 or_rawfile_type file_type = or_rawfile_get_type(rf);
 
