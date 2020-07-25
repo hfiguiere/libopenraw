@@ -127,8 +127,9 @@ const char* map_exif_type(ExifTagType type)
 class ExifDump
 {
 public:
-    ExifDump(std::ostream& out)
+    ExifDump(std::ostream& out, bool dump_binaries)
         : m_out(out)
+        , m_dump_binaries(dump_binaries)
         {
         }
 
@@ -162,8 +163,16 @@ public:
                             get_name(file_type, ifd_type, id) %
                             map_exif_type(type);
                         if (value) {
-                            if (type == EXIF_FORMAT_ASCII) {
+                            switch (type) {
+                            case EXIF_FORMAT_ASCII:
                                 m_out << boost::format("\tvalue = %1%\n") % or_metavalue_get_string(value, 0);
+                                break;
+                            default:
+                                if (type != EXIF_FORMAT_UNDEFINED || m_dump_binaries) {
+                                    m_out << boost::format("\tvalue = %1%\n") % or_metavalue_get_as_string(value);
+                                } else {
+                                    m_out << "\tvalue output skipped, use -b to dump\n";
+                                }
                             }
                             or_metavalue_release(value);
                         }
@@ -177,12 +186,14 @@ public:
         }
 private:
     std::ostream & m_out;
+    bool m_dump_binaries;
 };
 
 void print_help()
 {
     std::cerr << "exifdump [-v] [-h] [-d 0-9] [files...]\n";
     std::cerr << "Dump EXIF from raw file\n";
+    std::cerr << "\t-b: dump binaries\n";
     std::cerr << "\t-h: show this help\n";
     std::cerr << "\t-v: show version\n";
     std::cerr << "\t-d level: set debug / verbosity to level\n";
@@ -198,6 +209,7 @@ int main(int argc, char **argv)
 {
     int done = 0;
     int dbg = 0;
+    bool dump_binaries = false;
     std::vector<std::string> files;
 
     int o;
@@ -206,6 +218,9 @@ int main(int argc, char **argv)
         case 'h':
             print_help();
             done = 1;
+            break;
+        case 'b':
+            dump_binaries = 1;
             break;
         case 'v':
             print_version();
@@ -242,6 +257,5 @@ int main(int argc, char **argv)
     }
 
     // do the business.
-    for_each(files.begin(), files.end(), ExifDump(std::cout));
-
+    for_each(files.begin(), files.end(), ExifDump(std::cout, dump_binaries));
 }

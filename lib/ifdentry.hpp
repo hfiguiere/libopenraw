@@ -71,6 +71,17 @@ inline uint8_t IfdTypeTrait<uint8_t>::BE(const uint8_t* b, size_t) noexcept
 	return *b;
 }
 
+template <>
+inline int8_t IfdTypeTrait<int8_t>::EL(const uint8_t* b, size_t) noexcept
+{
+	return *b;
+}
+
+template <>
+inline int8_t IfdTypeTrait<int8_t>::BE(const uint8_t* b, size_t) noexcept
+{
+	return *b;
+}
 
 template <>
 inline uint16_t IfdTypeTrait<uint16_t>::EL(const uint8_t* b, size_t) noexcept
@@ -85,6 +96,20 @@ inline uint16_t IfdTypeTrait<uint16_t>::BE(const uint8_t* b, size_t) noexcept
 }
 
 template <>
+inline int16_t IfdTypeTrait<int16_t>::EL(const uint8_t* b, size_t) noexcept
+{
+	uint16_t uns = EL16(b);
+	return *(int16_t*)&uns;
+}
+
+template <>
+inline int16_t IfdTypeTrait<int16_t>::BE(const uint8_t* b, size_t) noexcept
+{
+	uint16_t uns = BE16(b);
+	return *(int16_t*)&uns;
+}
+
+template <>
 inline uint32_t IfdTypeTrait<uint32_t>::EL(const uint8_t* b, size_t) noexcept
 {
 	return EL32(b);
@@ -92,6 +117,18 @@ inline uint32_t IfdTypeTrait<uint32_t>::EL(const uint8_t* b, size_t) noexcept
 
 template <>
 inline uint32_t IfdTypeTrait<uint32_t>::BE(const uint8_t* b, size_t) noexcept
+{
+	return BE32(b);
+}
+
+template <>
+inline int32_t IfdTypeTrait<int32_t>::EL(const uint8_t* b, size_t) noexcept
+{
+	return EL32(b);
+}
+
+template <>
+inline int32_t IfdTypeTrait<int32_t>::BE(const uint8_t* b, size_t) noexcept
 {
 	return BE32(b);
 }

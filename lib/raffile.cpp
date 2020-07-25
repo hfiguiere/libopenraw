@@ -488,12 +488,12 @@ RafFile::isXTrans(RawFile::TypeId type_) const
         // use this tag if the other is missing
         value = meta->getValue(RAF_TAG_IMG_HEIGHT_WIDTH);
     }
-    uint32_t dims = value->get().getInteger(0);
+    uint32_t dims = value->get().getUInteger(0);
     uint16_t h = (dims & 0xFFFF0000) >> 16;
     uint16_t w = (dims & 0x0000FFFF);
 
     value = meta->getValue(RAF_TAG_RAW_INFO);
-    uint32_t rawProps = value->get().getInteger(0);
+    uint32_t rawProps = value->get().getUInteger(0);
     // TODO re-enable if needed.
     // uint8_t layout = (rawProps & 0xFF000000) >> 24 >> 7; // MSBit in byte.
     uint8_t compressed = ((rawProps & 0xFF0000) >> 16) & 8; // 8 == compressed

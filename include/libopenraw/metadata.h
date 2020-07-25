@@ -48,6 +48,7 @@ enum {
 #define META_INDEX_MASKOUT(x) (x & (0xffff<<16))
 
 const char* or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx);
+const char* or_metavalue_get_as_string(ORConstMetaValueRef value);
 
 void or_metavalue_release(ORMetaValueRef value);
 

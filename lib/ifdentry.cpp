@@ -145,6 +145,26 @@ MetaValue* IfdEntry::makeMetaValue()
         convert<Internals::IFD::Rational, double>(this, values);
         break;
     }
+    case Internals::IFD::EXIF_FORMAT_SBYTE:
+    {
+        convert<int8_t, int32_t>(this, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_UNDEFINED:
+    {
+        convert<uint8_t>(this, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_SSHORT:
+    {
+        convert<int16_t, int32_t>(this, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_SLONG:
+    {
+        convert<int32_t>(this, values);
+        break;
+    }
     case Internals::IFD::EXIF_FORMAT_SRATIONAL:
     {
         convert<Internals::IFD::SRational, double>(this, values);
@@ -254,6 +274,16 @@ template <>
 const size_t IfdTypeTrait<uint16_t>::size = 2;
 
 template <>
+const uint16_t IfdTypeTrait<int8_t>::type = IFD::EXIF_FORMAT_SBYTE;
+template <>
+const size_t IfdTypeTrait<int8_t>::size = 1;
+
+template <>
+const uint16_t IfdTypeTrait<int16_t>::type = IFD::EXIF_FORMAT_SSHORT;
+template <>
+const size_t IfdTypeTrait<int16_t>::size = 2;
+
+template <>
 const uint16_t IfdTypeTrait<IFD::Rational>::type = IFD::EXIF_FORMAT_RATIONAL;
 template <>
 const size_t IfdTypeTrait<IFD::Rational>::size = 8;
@@ -263,16 +293,21 @@ const uint16_t IfdTypeTrait<IFD::SRational>::type = IFD::EXIF_FORMAT_SRATIONAL;
 template <>
 const size_t IfdTypeTrait<IFD::SRational>::size = 8;
 
-
 template <>
 const uint16_t IfdTypeTrait<uint32_t>::type = IFD::EXIF_FORMAT_LONG;
 template <>
 const size_t IfdTypeTrait<uint32_t>::size = 4;
 
 template <>
+const uint16_t IfdTypeTrait<int32_t>::type = IFD::EXIF_FORMAT_SLONG;
+template <>
+const size_t IfdTypeTrait<int32_t>::size = 4;
+
+template <>
 const uint16_t IfdTypeTrait<std::string>::type = IFD::EXIF_FORMAT_ASCII;
 template <>
 const size_t IfdTypeTrait<std::string>::size = 1;
+
 }
 }
 /*

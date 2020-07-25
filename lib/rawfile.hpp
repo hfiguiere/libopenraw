@@ -122,7 +122,7 @@ public:
 
     /** Get the orientation of the image, using Exif enums.
      */
-    int32_t getOrientation();
+    uint32_t getOrientation();
 
     /**
      * @return the number of items in the colour matrix.

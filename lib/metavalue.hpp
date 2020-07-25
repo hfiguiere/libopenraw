@@ -33,7 +33,7 @@ namespace OpenRaw {
 class MetaValue
 {
 public:
-    typedef boost::variant<std::string, uint32_t, double> value_t;
+    typedef boost::variant<std::string, uint8_t, uint32_t, int32_t, double> value_t;
 
     MetaValue(const MetaValue &);
     template <class T> MetaValue(const T &v)
@@ -52,9 +52,12 @@ public:
             return m_values.size();
         }
 
-    uint32_t getInteger(int idx) const;
+    uint32_t getUInteger(int idx) const;
+    int32_t getSInteger(int idx) const;
     const std::string & getString(int idx) const;
     double getDouble(int idx) const;
+    /// Convert to a string.
+    const std::string & getAsString() const;
 private:
     /// Return a copy of the value
     template<typename T> T get(int idx) const;
@@ -62,6 +65,7 @@ private:
     template<typename T> const T & getRef(int idx) const;
 
     std::vector<value_t> m_values;
+    mutable std::string m_as_str;
 };
 
 

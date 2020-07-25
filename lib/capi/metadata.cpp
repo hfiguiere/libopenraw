@@ -39,6 +39,13 @@ or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx)
   return reinterpret_cast<const OpenRaw::MetaValue*>(value)->getString(idx).c_str();
 }
 
+API_EXPORT const char*
+or_metavalue_get_as_string(ORConstMetaValueRef value)
+{
+  // TODO validate parameters
+  return reinterpret_cast<const OpenRaw::MetaValue*>(value)->getAsString().c_str();
+}
+
 API_EXPORT void
 or_metavalue_release(ORMetaValueRef value)
 {

@@ -531,20 +531,20 @@ void RawFile::_addThumbnail(uint32_t size, Internals::ThumbDesc&& desc)
     return ret;
 }
 
-int32_t RawFile::getOrientation()
+uint32_t RawFile::getOrientation()
 {
-    int32_t idx = 0;
+    uint32_t orientation = 0;
     const MetaValue* value = getMetaValue(META_NS_TIFF | EXIF_TAG_ORIENTATION);
     if (value == NULL) {
         return 0;
     }
     try {
-        idx = value->getInteger(0);
+        orientation = value->getUInteger(0);
     }
     catch (const Internals::BadTypeException& e) {
         LOGDBG1("wrong type - %s\n", e.what());
     }
-    return idx;
+    return orientation;
 }
 
 uint32_t RawFile::colourMatrixSize()
@@ -634,7 +634,7 @@ ExifLightsourceValue RawFile::_getCalibrationIlluminant(uint16_t index)
     if (!meta) {
         return (index == 1) ? EV_LIGHTSOURCE_D65 : EV_LIGHTSOURCE_UNKNOWN;
     }
-    return (ExifLightsourceValue)meta->getInteger(0);
+    return (ExifLightsourceValue)meta->getUInteger(0);
 }
 
 const MetaValue* RawFile::getMetaValue(int32_t meta_index)
