@@ -66,6 +66,9 @@ std::string get_name(or_rawfile_type file_type, or_ifd_dir_type type, uint32_t t
         case OR_RAWFILE_TYPE_RW2:
             map = &mnote_panasonic_tag_names;
             break;
+        case OR_RAWFILE_TYPE_NEF:
+            map = &mnote_nikon_tag_names;
+            break;
         case OR_RAWFILE_TYPE_PEF:
             map = &mnote_pentax_tag_names;
             break;
