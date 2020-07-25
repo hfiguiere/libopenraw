@@ -1,14 +1,19 @@
-libopenraw 0.2.2 -
+libopenraw 0.2.2 - 2020/07/24
+
+New features:
 
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
+  - Support for Canon EOS R5 and R6.
   - Support for Sony DSC-R1* (SR2).
   - Support for Nikon D6*.
   - Support for Panasonic DC-G100.
+  - Support for Leica M10-R.
   - Support for GoPro HERO5, HERO6, HERO7 and HERO8 (GPR files, DNG based).
   - Added Sony SR2 file support.
-  - ordiag: Added a developer mode.
+
+  - ordiag: Added a developer mode with `-D`.
 
   Bug fixes:
 
