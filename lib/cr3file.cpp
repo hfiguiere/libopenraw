@@ -270,7 +270,10 @@ IfdDir::Ref Cr3File::makerNoteIfd()
 {
     auto ifd = findIfd(2);
     if (ifd) {
+        // XXX this is dangerous as in many places we expect to have a
+        // MakerNoteDir, and this won't be.
         ifd->setType(OR_IFD_MNOTE);
+        ifd->setTagTable(mnote_canon_tag_names);
     }
     return ifd;
 }

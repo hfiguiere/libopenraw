@@ -31,7 +31,7 @@
 #include <libopenraw/libopenraw.h>
 
 #include "dumputils.hpp"
-#include "exif_tags.hpp"
+#include "exif/exif_tags.hpp"
 
 const char* map_ifd_type(or_ifd_dir_type type)
 {
@@ -48,52 +48,6 @@ const char* map_ifd_type(or_ifd_dir_type type)
         return "RAW Metadata";
     }
     return "INVALID";
-}
-
-// XXX move this somewhere to reuse.
-// XXX make a remapper with a state to not have to reset it every time
-std::string get_name(or_rawfile_type file_type, or_ifd_dir_type type, uint32_t tag)
-{
-    auto map = &exif_tag_names;
-
-    if (type == OR_IFD_MNOTE) {
-        switch (file_type) {
-        case OR_RAWFILE_TYPE_CR2:
-        case OR_RAWFILE_TYPE_CR3:
-        case OR_RAWFILE_TYPE_CRW:
-            map = &mnote_canon_tag_names;
-            break;
-        case OR_RAWFILE_TYPE_RW2:
-            map = &mnote_panasonic_tag_names;
-            break;
-        case OR_RAWFILE_TYPE_NEF:
-            map = &mnote_nikon_tag_names;
-            break;
-        case OR_RAWFILE_TYPE_PEF:
-            map = &mnote_pentax_tag_names;
-            break;
-        case OR_RAWFILE_TYPE_ERF: // EPSON uses Olympus.
-        case OR_RAWFILE_TYPE_ORF:
-            map = &mnote_olympus_tag_names;
-            break;
-        case OR_RAWFILE_TYPE_ARW:
-            map = &mnote_sony_tag_names;
-            break;
-        default:
-            map = nullptr;
-        }
-        if (!map) {
-            return str(boost::format("MNote 0x%1$x") % tag);
-        }
-    }
-    if (type == OR_IFD_MAIN && file_type == OR_RAWFILE_TYPE_RW2) {
-        map = &raw_panasonic_tag_names;
-    }
-    auto iter = map->find(tag);
-    if (iter != map->end()) {
-        return iter->second;
-    }
-    return str(boost::format("0x%1$x") % tag);
 }
 
 const char* map_exif_type(ExifTagType type)
@@ -147,23 +101,23 @@ public:
             } else {
                 dump_file_info(m_out, rf, false);
 
-                or_rawfile_type file_type = or_rawfile_get_type(rf);
-
                 ORMetadataIteratorRef iter = or_rawfile_get_metadata_iterator(rf);
                 or_ifd_dir_type last_ifd_type = OR_IFD_OTHER;
 
                 while (or_metadata_iterator_next(iter)) {
-                    or_ifd_dir_type ifd_type;
+                    ORIfdDirRef ifd = nullptr;
                     uint16_t id;
                     ExifTagType type;
                     ORMetaValueRef value = nullptr;
-                    if (or_metadata_iterator_get_entry(iter, &ifd_type, &id, &type, &value)) {
+                    if (or_metadata_iterator_get_entry(iter, &ifd, &id, &type, &value)) {
+                        or_ifd_dir_type ifd_type = or_ifd_get_type(ifd);
                         if (ifd_type != last_ifd_type) {
                             m_out << boost::format("%1%\n") % map_ifd_type(ifd_type);
                             last_ifd_type = ifd_type;
                         }
+                        const char* tagname = or_ifd_get_tag_name(ifd, id);
                         m_out << boost::format("\t%1% = %2%\n") %
-                            get_name(file_type, ifd_type, id) %
+                            (tagname ? std::string(tagname) : str(boost::format("0x%1$x") % id)) %
                             map_exif_type(type);
                         if (value) {
                             switch (type) {
@@ -179,6 +133,7 @@ public:
                             }
                             or_metavalue_release(value);
                         }
+                        or_ifd_release(ifd);
                     }
                 }
 

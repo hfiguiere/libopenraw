@@ -3,8 +3,10 @@
 #include <stdint.h>
 #include <map>
 
+#include "exif_tags.hpp"
 
-std::map<uint32_t, const char*> exif_tag_names = {
+
+const TagTable exif_tag_names = {
     { 0x1, "InteropIndex" },
     { 0x2, "InteropVersion" },
     { 0xb, "ProcessingSoftware" },
@@ -490,7 +492,7 @@ std::map<uint32_t, const char*> exif_tag_names = {
     { 0xfe58, "MoireFilter" },
 };
 
-std::map<uint32_t, const char*> mnote_canon_tag_names = {
+const TagTable mnote_canon_tag_names = {
     { 0x1, "CanonCameraSettings" },
     { 0x2, "CanonFocalLength" },
     { 0x3, "CanonFlashInfo" },
@@ -574,7 +576,7 @@ std::map<uint32_t, const char*> mnote_canon_tag_names = {
     { 0x403f, "RawBurstModeRoll" },
 };
 
-std::map<uint32_t, const char*> mnote_fujifilm_tag_names = {
+const TagTable mnote_fujifilm_tag_names = {
     { 0x0, "Version" },
     { 0x10, "InternalSerialNumber" },
     { 0x1000, "Quality" },
@@ -660,7 +662,39 @@ std::map<uint32_t, const char*> mnote_fujifilm_tag_names = {
     { 0xb211, "Parallax" },
 };
 
-std::map<uint32_t, const char*> mnote_nikon_tag_names = {
+const TagTable mnote_minolta_tag_names = {
+    { 0x0, "MakerNoteVersion" },
+    { 0x1, "MinoltaCameraSettingsOld" },
+    { 0x3, "MinoltaCameraSettings" },
+    { 0x4, "MinoltaCameraSettings7D" },
+    { 0x10, "CameraInfoA100" },
+    { 0x18, "ISInfoA100" },
+    { 0x20, "WBInfoA100" },
+    { 0x40, "CompressedImageSize" },
+    { 0x81, "PreviewImage" },
+    { 0x88, "PreviewImageStart" },
+    { 0x89, "PreviewImageLength" },
+    { 0x100, "SceneMode" },
+    { 0x101, "ColorMode" },
+    { 0x102, "MinoltaQuality" },
+    { 0x103, "MinoltaQuality" },
+    { 0x104, "FlashExposureComp" },
+    { 0x105, "Teleconverter" },
+    { 0x107, "ImageStabilization" },
+    { 0x109, "RawAndJpgRecording" },
+    { 0x10a, "ZoneMatching" },
+    { 0x10b, "ColorTemperature" },
+    { 0x10c, "LensType" },
+    { 0x111, "ColorCompensationFilter" },
+    { 0x112, "WhiteBalanceFineTune" },
+    { 0x113, "ImageStabilization" },
+    { 0x114, "MinoltaCameraSettings5D" },
+    { 0x115, "WhiteBalance" },
+    { 0xe00, "PrintIM" },
+    { 0xf00, "MinoltaCameraSettings2" },
+};
+
+const TagTable mnote_nikon_tag_names = {
     { 0x1, "MakerNoteVersion" },
     { 0x2, "ISO" },
     { 0x3, "ColorMode" },
@@ -767,7 +801,18 @@ std::map<uint32_t, const char*> mnote_nikon_tag_names = {
     { 0xe22, "NEFBitDepth" },
 };
 
-std::map<uint32_t, const char*> mnote_olympus_tag_names = {
+const TagTable mnote_nikon2_tag_names = {
+    { 0x3, "Quality" },
+    { 0x4, "ColorMode" },
+    { 0x5, "ImageAdjustment" },
+    { 0x6, "CCDSensitivity" },
+    { 0x7, "WhiteBalance" },
+    { 0x8, "Focus" },
+    { 0xa, "DigitalZoom" },
+    { 0xb, "Converter" },
+};
+
+const TagTable mnote_olympus_tag_names = {
     { 0x0, "MakerNoteVersion" },
     { 0x1, "MinoltaCameraSettingsOld" },
     { 0x3, "MinoltaCameraSettings" },
@@ -889,7 +934,7 @@ std::map<uint32_t, const char*> mnote_olympus_tag_names = {
     { 0x5000, "UnknownInfo" },
 };
 
-std::map<uint32_t, const char*> mnote_panasonic_tag_names = {
+const TagTable mnote_panasonic_tag_names = {
     { 0x1, "ImageQuality" },
     { 0x2, "FirmwareVersion" },
     { 0x3, "WhiteBalance" },
@@ -1015,7 +1060,7 @@ std::map<uint32_t, const char*> mnote_panasonic_tag_names = {
     { 0x8012, "Transform" },
 };
 
-std::map<uint32_t, const char*> mnote_pentax_tag_names = {
+const TagTable mnote_pentax_tag_names = {
     { 0x0, "PentaxVersion" },
     { 0x1, "PentaxModelType" },
     { 0x2, "PreviewImageSize" },
@@ -1169,7 +1214,7 @@ std::map<uint32_t, const char*> mnote_pentax_tag_names = {
     { 0xe00, "PrintIM" },
 };
 
-std::map<uint32_t, const char*> mnote_sony_tag_names = {
+const TagTable mnote_sony_tag_names = {
     { 0x10, "CameraInfo" },
     { 0x20, "FocusInfo" },
     { 0x102, "Quality" },
@@ -1275,7 +1320,7 @@ std::map<uint32_t, const char*> mnote_sony_tag_names = {
     { 0xb054, "WhiteBalance" },
 };
 
-std::map<uint32_t, const char*> raw_panasonic_tag_names = {
+const TagTable raw_panasonic_tag_names = {
     { 0x1, "PanasonicRawVersion" },
     { 0x2, "SensorWidth" },
     { 0x3, "SensorHeight" },

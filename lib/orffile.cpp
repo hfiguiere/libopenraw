@@ -357,7 +357,7 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
         return err;
     }
 
-    auto ifd = exif->getMakerNoteIfd();
+    auto ifd = exif->getMakerNoteIfd(type());
     if (!ifd) {
         return err;
     }

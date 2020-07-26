@@ -2,7 +2,7 @@
 /*
  * libopenraw - ifddir.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,6 +28,7 @@
 #include "ifdfilecontainer.hpp"
 #include "ifddir.hpp"
 #include "makernotedir.hpp"
+#include "exif/exif_tags.hpp"
 
 using namespace Debug;
 
@@ -47,9 +48,10 @@ bool IfdDir::isThumbnail() const
     return result && (result.value() == 1);
 }
 
-IfdDir::IfdDir(off_t _offset, IfdFileContainer &_container, IfdDirType _type)
+IfdDir::IfdDir(off_t _offset, const IfdFileContainer& _container, IfdDirType _type, const TagTable& tag_table)
     : m_type(_type)
     , m_offset(_offset), m_container(_container), m_entries()
+    , m_tag_table(&tag_table)
 {
 }
 
@@ -189,7 +191,7 @@ IfdDir::Ref IfdDir::getExifIFD()
     return ref;
 }
 
-IfdDir::Ref IfdDir::getMakerNoteIfd()
+IfdDir::Ref IfdDir::getMakerNoteIfd(or_rawfile_type file_type)
 {
     uint32_t val_offset = 0;
     IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_MAKER_NOTE);
@@ -202,12 +204,21 @@ IfdDir::Ref IfdDir::getMakerNoteIfd()
     val_offset += m_container.exifOffsetCorrection();
     LOGDBG1("MakerNote IFD offset = %u\n", val_offset);
 
-    auto ref = MakerNoteDir::createMakerNote(val_offset, m_container);
+    auto ref = MakerNoteDir::createMakerNote(val_offset, m_container, file_type);
     if (ref) {
         ref->load();
     }
 
     return ref;
+}
+
+const char* IfdDir::getTagName(uint32_t tag) const
+{
+    auto iter = m_tag_table->find(tag);
+    if (iter != m_tag_table->end()) {
+        return iter->second;
+    }
+    return nullptr;
 }
 
 }

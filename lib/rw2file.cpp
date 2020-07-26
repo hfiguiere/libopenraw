@@ -494,6 +494,7 @@ IfdDir::Ref  Rw2File::_locateMainIfd()
 {
     auto ifd = m_container->setDirectory(0);
     if (ifd) {
+        ifd->setTagTable(raw_panasonic_tag_names);
         ifd->setType(OR_IFD_MAIN);
     }
     return ifd;

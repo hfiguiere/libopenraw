@@ -201,7 +201,7 @@ public:
 
 	IfdEntry(uint16_t _id, int16_t _type, int32_t _count,
 			 uint32_t _data,
-			 IfdFileContainer &_container);
+			 const IfdFileContainer& _container);
 	virtual ~IfdEntry();
 
 	int16_t id() const noexcept
@@ -277,7 +277,7 @@ private:
 	uint32_t m_data; /**< raw data without endian conversion */
 	bool m_loaded;
 	uint8_t *m_dataptr;
-	IfdFileContainer & m_container;
+	const IfdFileContainer& m_container;
 	template <typename T> friend struct IfdTypeTrait;
 
 	/** private copy constructor to make sure it is not called */

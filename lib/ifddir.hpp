@@ -34,6 +34,7 @@
 #include "ifdentry.hpp"
 #include "trace.hpp"
 #include "option.hpp"
+#include "exif/exif_tags.hpp"
 
 namespace OpenRaw {
 namespace Internals {
@@ -49,7 +50,7 @@ public:
     typedef std::vector<Ref> RefVec;
     typedef std::map<uint16_t, IfdEntry::Ref> Entries;
 
-    IfdDir(off_t _offset, IfdFileContainer &_container, IfdDirType _type /*= OR_IFDDIR_OTHER */);
+    IfdDir(off_t _offset, const IfdFileContainer& _container, IfdDirType _type /*= OR_IFDDIR_OTHER */, const TagTable& tag_table = exif_tag_names);
     virtual ~IfdDir();
 
     IfdDirType type() const
@@ -124,15 +125,25 @@ public:
     Ref getExifIFD();
 
     /** get the MakerNote IFD.
+     * @param file_type the file type as a hint
      * @return Ref to the new MakerNoteDir if found
      */
-    Ref getMakerNoteIfd();
+    Ref getMakerNoteIfd(or_rawfile_type file_type);
 
+    void setTagTable(const TagTable& tag_table)
+        {
+            m_tag_table = &tag_table;
+        }
+    /** Return the tag name for tag
+     * @return a static string or nullptr if not found.
+     */
+    const char* getTagName(uint32_t tag) const;
 private:
     IfdDirType m_type;
     off_t m_offset;
-    IfdFileContainer &m_container;
+    const IfdFileContainer& m_container;
     Entries m_entries;
+    const TagTable* m_tag_table;
 };
 }
 }

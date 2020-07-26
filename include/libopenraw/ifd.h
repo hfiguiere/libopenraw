@@ -36,6 +36,12 @@ or_ifd_count_tags(ORIfdDirRef rawfile);
 const char*
 or_ifd_get_makernote_id(ORIfdDirRef ifd);
 
+const char*
+or_ifd_get_tag_name(ORIfdDirRef ifd, uint32_t tag);
+
+or_ifd_dir_type
+or_ifd_get_type(ORIfdDirRef ifd);
+
 void
 or_ifd_release(ORIfdDirRef ifd);
 

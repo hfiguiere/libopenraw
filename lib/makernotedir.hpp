@@ -1,7 +1,7 @@
 /*
  * libopenraw - makernotedir.h
  *
- * Copyright (C) 2010-2015 Hubert Figuiere
+ * Copyright (C) 2010-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  */
 
 
-#ifndef OR_INTERNALS_MAKERNOTEDIR_H_
-#define OR_INTERNALS_MAKERNOTEDIR_H_
+#pragma once
 
 #include <stddef.h>
 #include <sys/types.h>
@@ -42,10 +41,11 @@ public:
 
     /** Create the appropriate MakerNote at offset */
     static Ref createMakerNote(off_t offset,
-                               IfdFileContainer & container);
+                               const IfdFileContainer& container, or_rawfile_type file_type);
 
-    MakerNoteDir(off_t _offset, IfdFileContainer & _container,
-                 off_t mnote_offset, const std::string & id);
+    MakerNoteDir(off_t _offset, const IfdFileContainer& _container,
+                 off_t mnote_offset, const std::string & id,
+                 const TagTable& tag_table);
     virtual ~MakerNoteDir();
 
     off_t getMnoteOffset() const
@@ -56,9 +56,10 @@ public:
 protected:
     MakerNoteDir(const char* magic, size_t hlen,
                  off_t _offset,
-                 IfdFileContainer & _container,
+                 const IfdFileContainer& _container,
                  off_t mnote_offset,
-                 const std::string & id);
+                 const std::string & id,
+                 const TagTable& tag_table);
 
     std::string m_magic;
     size_t m_hlen;
@@ -78,6 +79,3 @@ protected:
   fill-column:80
   End:
 */
-
-
-#endif

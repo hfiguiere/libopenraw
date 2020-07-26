@@ -27,6 +27,7 @@
 #include <libopenraw/exif.h>
 #undef INCLUDE_EXIF_
 
+#include <libopenraw/types.h>
 #include <libopenraw/consts.h>
 
 #ifdef __cplusplus
@@ -60,6 +61,7 @@ int or_metadata_iterator_next(ORMetadataIteratorRef iterator);
 
 /** Get the metadata entry
  * @param iterator The iterator.
+ * @param ifd Pointer to the IfdDirRef.
  * @param id Pointer to id (nullable)
  * @param type Pointer to exif tag type (nullable)
  * @param value Pointer to store a newly allocated ORConstMetaValue (nullable)
@@ -67,7 +69,7 @@ int or_metadata_iterator_next(ORMetadataIteratorRef iterator);
  */
 int
 or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator,
-                               or_ifd_dir_type* ifd_type, uint16_t* id,
+                               ORIfdDirRef* ifd, uint16_t* id,
                                ExifTagType* type, ORMetaValueRef* value);
 
 /** Free the iterator

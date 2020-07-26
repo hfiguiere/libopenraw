@@ -56,7 +56,7 @@ bool RawContainer::skip(off_t offset_)
 }
 
 Option<int8_t>
-RawContainer::readInt8(const IO::Stream::Ptr &f)
+RawContainer::readInt8(const IO::Stream::Ptr& f) const
 {
   unsigned char buf;
   int s = f->read(&buf, 1);
@@ -67,7 +67,7 @@ RawContainer::readInt8(const IO::Stream::Ptr &f)
 }
 
 Option<uint8_t>
-RawContainer::readUInt8(const IO::Stream::Ptr &f)
+RawContainer::readUInt8(const IO::Stream::Ptr& f) const
 {
   unsigned char buf;
   int s = f->read(&buf, 1);
@@ -78,7 +78,7 @@ RawContainer::readUInt8(const IO::Stream::Ptr &f)
 }
 
 Option<int16_t>
-RawContainer::readInt16(const IO::Stream::Ptr &f)
+RawContainer::readInt16(const IO::Stream::Ptr& f) const
 {
   if (m_endian == ENDIAN_NULL) {
 
@@ -103,7 +103,7 @@ RawContainer::readInt16(const IO::Stream::Ptr &f)
  * Return the number of element read.
  */
 size_t
-RawContainer::readUInt16Array(const IO::Stream::Ptr &f, std::vector<uint16_t> & v, size_t count)
+RawContainer::readUInt16Array(const IO::Stream::Ptr& f, std::vector<uint16_t>& v, size_t count) const
 {
   if (m_endian == ENDIAN_NULL) {
     LOGERR("null endian\n");
@@ -135,7 +135,7 @@ RawContainer::readUInt16Array(const IO::Stream::Ptr &f, std::vector<uint16_t> & 
 
 
 Option<int32_t>
-RawContainer::readInt32(const IO::Stream::Ptr &f)
+RawContainer::readInt32(const IO::Stream::Ptr& f) const
 {
   if (m_endian == ENDIAN_NULL) {
     LOGERR("null endian\n");
@@ -157,7 +157,7 @@ RawContainer::readInt32(const IO::Stream::Ptr &f)
 
 
 Option<uint16_t>
-RawContainer::readUInt16(const IO::Stream::Ptr &f)
+RawContainer::readUInt16(const IO::Stream::Ptr& f) const
 {
   if (m_endian == ENDIAN_NULL) {
 
@@ -179,7 +179,7 @@ RawContainer::readUInt16(const IO::Stream::Ptr &f)
 
 
 Option<uint32_t>
-RawContainer::readUInt32(const IO::Stream::Ptr &f)
+RawContainer::readUInt32(const IO::Stream::Ptr& f) const
 {
   if (m_endian == ENDIAN_NULL) {
     LOGERR("null endian\n");
@@ -200,8 +200,8 @@ RawContainer::readUInt32(const IO::Stream::Ptr &f)
 }
 
 size_t
-RawContainer::fetchData(void *buf, off_t _offset,
-                        size_t buf_size)
+RawContainer::fetchData(void* buf, off_t _offset,
+                        size_t buf_size) const
 {
   size_t s = 0;
   m_file->seek(_offset, SEEK_SET);

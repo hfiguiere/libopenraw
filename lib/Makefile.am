@@ -18,7 +18,11 @@ RUST_FILES = mp4/Cargo.lock \
 	$(NULL)
 
 EXTRA_DIST = libopenraw.sym io/testfile.tmp \
+	exif/exif-tags.pl \
 	$(RUST_FILES)
+
+update_tags:
+	$(srcdir)/exif/exif-tags.pl > $(srcdir)/exif/exif_tags.cpp
 
 pkgconfig_DATA = libopenraw-0.2.pc
 
@@ -180,5 +184,6 @@ libopenraw_la_SOURCES = \
 	metadata.cpp \
 	unpack.cpp \
 	render/bimedian_demosaic.cpp render/bimedian_demosaic.hpp \
-	render/grayscale.hpp render/grayscale.cpp
+	render/grayscale.hpp render/grayscale.cpp \
+	exif/exif_tags.hpp exif/exif_tags.cpp \
 	$(NULL)

@@ -42,9 +42,8 @@ public:
         {
             return m_is_valid;
         }
-
-    /// Get the IFD type for the current entry
-    Option<Internals::IfdDirType> getIfdType() const;
+    /// Get the IFD for the current entry.
+    Internals::IfdDir::Ref getIfd() const;
     /// Get the type of the current entry
     Option<ExifTagType> getEntryType() const;
     /// Get the ID of the current entry

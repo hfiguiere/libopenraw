@@ -23,6 +23,9 @@
 #include "capi.h"
 #include "metavalue.hpp"
 #include "metadata.hpp"
+#include "ifddir.hpp"
+
+using OpenRaw::Internals::IfdDir;
 
 extern "C" {
 
@@ -71,15 +74,16 @@ or_metadata_iterator_next(ORMetadataIteratorRef iterator)
 
 API_EXPORT int
 or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator,
-                               or_ifd_dir_type* ifd_type, uint16_t* id,
+                               ORIfdDirRef* ifd, uint16_t* id,
                                ExifTagType* type, ORMetaValueRef* value)
 {
   CHECK_PTR(iterator, 0);
   auto iter = reinterpret_cast<OpenRaw::MetadataIterator*>(iterator);
-  if (ifd_type) {
-    auto t = iter->getIfdType();
+  if (ifd) {
+    auto t = iter->getIfd();
     if (t) {
-      *ifd_type = *t;
+      auto wrap = new WrappedPointer<IfdDir>(t);
+      *ifd = reinterpret_cast<ORIfdDirRef>(wrap);
     } else {
       return 0;
     }

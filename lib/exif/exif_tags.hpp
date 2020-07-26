@@ -18,19 +18,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#pragma once
+
 #include <stdint.h>
 #include <map>
 
-#pragma once
+typedef std::map<uint32_t, const char*> TagTable;
 
-extern std::map<uint32_t, const char*> exif_tag_names;
+extern const TagTable exif_tag_names;
 
-extern std::map<uint32_t, const char*> mnote_canon_tag_names;
-extern std::map<uint32_t, const char*> mnote_fujifilm_tag_names;
-extern std::map<uint32_t, const char*> mnote_nikon_tag_names;
-extern std::map<uint32_t, const char*> mnote_olympus_tag_names;
-extern std::map<uint32_t, const char*> mnote_panasonic_tag_names;
-extern std::map<uint32_t, const char*> mnote_pentax_tag_names;
-extern std::map<uint32_t, const char*> mnote_sony_tag_names;
+extern const TagTable mnote_canon_tag_names;
+extern const TagTable mnote_fujifilm_tag_names;
+extern const TagTable mnote_minolta_tag_names;
+extern const TagTable mnote_nikon_tag_names;
+extern const TagTable mnote_nikon2_tag_names;
+extern const TagTable mnote_olympus_tag_names;
+extern const TagTable mnote_panasonic_tag_names;
+extern const TagTable mnote_pentax_tag_names;
+extern const TagTable mnote_sony_tag_names;
 
-extern std::map<uint32_t, const char*> raw_panasonic_tag_names;
+extern const TagTable raw_panasonic_tag_names;

@@ -81,12 +81,12 @@ bool MetadataIterator::next()
 }
 
 /// Get the IFD type for the current entry
-Option<Internals::IfdDirType> MetadataIterator::getIfdType() const
+Internals::IfdDir::Ref MetadataIterator::getIfd() const
 {
     if (!(isInitialized() && isValid())) {
-        return OptionNone();
+        return Internals::IfdDir::Ref();
     }
-    return m_current_ifd->type();
+    return m_current_ifd;
 }
 
 /// Get the type of the current entry

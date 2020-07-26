@@ -41,7 +41,7 @@ namespace Internals {
 
 IfdEntry::IfdEntry(uint16_t _id, int16_t _type,
                    int32_t _count, uint32_t _data,
-                   IfdFileContainer &_container)
+                   const IfdFileContainer& _container)
     : m_id(_id), m_type(_type),
       m_count(_count), m_data(_data),
       m_loaded(false), m_dataptr(NULL),

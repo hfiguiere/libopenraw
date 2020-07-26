@@ -51,6 +51,24 @@ or_ifd_get_makernote_id(ORIfdDirRef ifd)
     return maker_note->getId().c_str();
 }
 
+API_EXPORT const char*
+or_ifd_get_tag_name(ORIfdDirRef ifd, uint32_t tag)
+{
+    CHECK_PTR(ifd, nullptr);
+    auto wrap = reinterpret_cast<WrappedPointer<OpenRaw::Internals::IfdDir>*>(ifd);
+    auto pifd = wrap->ptr();
+    return pifd->getTagName(tag);
+}
+
+API_EXPORT or_ifd_dir_type
+or_ifd_get_type(ORIfdDirRef ifd)
+{
+    CHECK_PTR(ifd, OR_IFD_INVALID);
+    auto wrap = reinterpret_cast<WrappedPointer<OpenRaw::Internals::IfdDir>*>(ifd);
+    auto pifd = wrap->ptr();
+    return pifd->type();
+}
+
 API_EXPORT void
 or_ifd_release(ORIfdDirRef ifd)
 {

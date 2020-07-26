@@ -87,7 +87,7 @@ MakerNoteDir::Ref  IfdFile::_locateMakerNoteIfd()
 	const IfdDir::Ref & _exifIfd = exifIfd();
 	if(_exifIfd) {
 		// to not have a recursive declaration, getMakerNoteIfd() return an IfdDir.
-		return std::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIfd());
+		return std::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIfd(type()));
 	}
 	return MakerNoteDir::Ref();
 }
