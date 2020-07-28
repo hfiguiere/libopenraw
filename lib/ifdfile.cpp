@@ -339,7 +339,7 @@ IfdDir::Ref IfdFile::cfaIfd()
 	if(!m_cfaIfd) {
 		m_cfaIfd = _locateCfaIfd();
 	}
-	LOGASSERT(m_cfaIfd->type() == OR_IFD_RAW);
+	LOGASSERT(m_cfaIfd->type() == OR_IFD_RAW || m_mainIfd->type() == OR_IFD_MAIN);
 	return m_cfaIfd;
 }
 
@@ -368,6 +368,7 @@ IfdDir::Ref IfdFile::makerNoteIfd()
 {
 	if(!m_makerNoteIfd) {
 		m_makerNoteIfd = _locateMakerNoteIfd();
+		LOGASSERT(m_makerNoteIfd);
 	}
 	LOGASSERT(!m_makerNoteIfd || m_makerNoteIfd->type() == OR_IFD_MNOTE);
 	return m_makerNoteIfd;
