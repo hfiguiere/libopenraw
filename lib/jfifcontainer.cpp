@@ -1,7 +1,7 @@
 /*
  * libopenraw - jfifcontainer.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -74,7 +74,7 @@ typedef struct {
 JfifContainer::JfifContainer(const IO::Stream::Ptr &_file, off_t _offset)
   : RawContainer(_file, _offset),
     m_cinfo(), m_jerr(),
-    m_headerLoaded(false)
+    m_headerLoaded(false), m_exif_offset(0)
 {
   setEndian(ENDIAN_BIG);
   /* this is a hack because jpeg_create_decompress is
@@ -240,10 +240,10 @@ std::unique_ptr<IfdFileContainer> & JfifContainer::ifdContainer()
     delim[6] = 0;
     m_file->read(delim, 6);
     if(memcmp(delim, "Exif\0\0", 6) == 0) {
-      size_t exif_offset = m_file->seek(0, SEEK_CUR);
+      m_exif_offset = m_file->seek(0, SEEK_CUR);
       m_ifd.reset(new IfdFileContainer(
         IO::Stream::Ptr(
-          std::make_shared<IO::StreamClone>(m_file, exif_offset)), 0));
+          std::make_shared<IO::StreamClone>(m_file, m_exif_offset)), 0));
     }
   }
   return m_ifd;

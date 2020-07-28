@@ -542,6 +542,31 @@ Rw2File::getJpegContainer(const IfdDir::Ref& dir, uint32_t& offset, uint32_t& si
         return OR_ERROR_NOT_FOUND;
     }
 
+    auto jdir = jfif->getIfdDirAt(1);
+    if (jdir) {
+        auto byte_count =
+            jdir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH).value_or(0);
+        auto result = jdir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT);
+        LOGDBG1("byte count %u\n", byte_count);
+        LOGASSERT(result.has_value());
+        if (result.has_value()) {
+            auto toffset = result.value();
+            LOGDBG1("toffset %u\n", toffset);
+            uint32_t tnail_offset = offset + toffset + jfif->exifOffset();
+            IO::Stream::Ptr s(std::make_shared<IO::StreamClone>(m_io, tnail_offset));
+            std::unique_ptr<JfifContainer> tnail(new JfifContainer(s, 0));
+
+            uint32_t x = 0;
+            uint32_t y = 0;
+            if (tnail->getDimensions(x, y)) {
+                uint32_t dim = std::max(x, y);
+                _addThumbnail(dim, ThumbDesc(x, y, OR_DATA_TYPE_JPEG, tnail_offset, byte_count));
+                list.push_back(dim);
+            }
+        }
+
+    }
+
     uint32_t x = 0;
     uint32_t y = 0;
     if (jfif->getDimensions(x,y)) {

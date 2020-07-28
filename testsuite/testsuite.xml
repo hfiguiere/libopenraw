@@ -964,11 +964,11 @@
     <results>
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>1920</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>764928</thumbDataSizes>
-      <thumbMd5>51492</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1920</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>9480 764928</thumbDataSizes>
+      <thumbMd5>28863 51492</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>
@@ -986,11 +986,11 @@
     <results>
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>1920</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>462848</thumbDataSizes>
-      <thumbMd5>37053</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1920</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>5203 462848</thumbDataSizes>
+      <thumbMd5>1722 37053</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>
