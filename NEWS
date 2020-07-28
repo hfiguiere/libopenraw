@@ -1,3 +1,13 @@
+libopenraw 0.2.3 -
+
+New features:
+
+  - Coefficients for Panasonic DC-G100, Sony ZV-1, Canon EOS R5 and EOS R6.
+
+Internal Changes:
+
+  - Added SR2 test case in the testsuite.
+
 libopenraw 0.2.2 - 2020/07/24
 
 New features:
