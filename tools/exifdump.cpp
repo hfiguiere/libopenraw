@@ -171,14 +171,14 @@ int main(int argc, char **argv)
     std::vector<std::string> files;
 
     int o;
-    while ((o = getopt(argc, argv, "hvd")) != -1) {
+    while ((o = getopt(argc, argv, "hvdb")) != -1) {
         switch (o) {
         case 'h':
             print_help();
             done = 1;
             break;
         case 'b':
-            dump_binaries = 1;
+            dump_binaries = true;
             break;
         case 'v':
             print_version();
