@@ -66,21 +66,10 @@ protected:
             LOGERR("not implemented\n");
             return IfdDir::Ref();
         }
-    virtual IfdDir::Ref mainIfd() override
-        {
-            LOGERR("not implemented\n");
-            return IfdDir::Ref();
-        }
-    virtual IfdDir::Ref exifIfd() override
-        {
-            LOGERR("not implemented\n");
-            return IfdDir::Ref();
-        }
-    virtual IfdDir::Ref makerNoteIfd() override
-        {
-            LOGERR("not implemented\n");
-            return IfdDir::Ref();
-        }
+    virtual IfdDir::Ref mainIfd() override;
+    virtual IfdDir::Ref exifIfd() override;
+    virtual IfdDir::Ref makerNoteIfd() override;
+
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) override;
 
     virtual void _identifyId() override;

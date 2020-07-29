@@ -113,6 +113,11 @@ MakerNoteDir::createMakerNote(off_t offset,
             offset + 12, container, offset + 12, "Panasonic", mnote_panasonic_tag_names);
     }
 
+    if (memcmp("FUJIFILM", data, 8) == 0) {
+        return std::make_shared<MakerNoteDir>(
+            offset + 12, container, offset, "Fujifilm", mnote_fujifilm_tag_names);
+    }
+
     if (memcmp("MLT0", data + 10, 4) == 0) {
         return std::make_shared<MakerNoteDir>(
             offset, container, offset, "Minolta", mnote_minolta_tag_names);

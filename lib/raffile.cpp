@@ -42,6 +42,7 @@
 #include "rafcontainer.hpp"
 #include "rafmetacontainer.hpp"
 #include "jfifcontainer.hpp"
+#include "makernotedir.hpp"
 #include "unpack.hpp"
 #include "trace.hpp"
 #include "io/streamclone.hpp"
@@ -367,6 +368,35 @@ RafFile::~RafFile()
     delete m_container;
 }
 
+IfdDir::Ref RafFile::mainIfd()
+{
+    JfifContainer *jpegPreview = m_container->getJpegPreview();
+    if (!jpegPreview) {
+        return IfdDir::Ref();
+    }
+    return jpegPreview->getIfdDirAt(0);
+}
+
+IfdDir::Ref RafFile::exifIfd()
+{
+	IfdDir::Ref _mainIfd = mainIfd();
+    if (!_mainIfd) {
+        LOGERR("RafFile::exifIfd() main IFD not found\n");
+        return IfdDir::Ref();
+    }
+    return _mainIfd->getExifIFD();
+}
+
+IfdDir::Ref RafFile::makerNoteIfd()
+{
+    IfdDir::Ref _exifIfd = exifIfd();
+    if (_exifIfd) {
+		// to not have a recursive declaration, getMakerNoteIfd() return an IfdDir.
+		return std::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIfd(type()));
+	}
+	return MakerNoteDir::Ref();
+}
+
 ::or_error RafFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
     or_error ret = OR_ERROR_NOT_FOUND;
@@ -391,6 +421,8 @@ RafFile::~RafFile()
         return ret;
     }
 
+    // XXX check why this as it appear that if true there won't be
+    // and thumbnail.
     auto result = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH);
     if (result) {
         x = result.value();
@@ -404,10 +436,8 @@ RafFile::~RafFile()
         if (result.empty()) {
             return ret;
         }
-        uint32_t jpeg_offset = result.value();
+        uint32_t jpeg_offset = result.value() + jpegPreview->exifOffset();
 
-        jpeg_offset += 12; // XXX magic number. eh?
-                           // I need to re-read the Exif spec.
         result = dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
         if (result.empty()) {
             return ret;
