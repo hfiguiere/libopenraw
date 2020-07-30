@@ -250,7 +250,7 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
         // by default it is RGB8. Unless stated otherwise.
         bool isRGB8 = true;
         IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
-        auto result2 = entry->getArray<uint16_t>();
+        auto result2 = dir->getEntryArrayValue<uint16_t>(*entry);
         if (result2) {
           std::vector<uint16_t> arr = result2.value();
           for(auto bpc : arr) {
@@ -318,8 +318,8 @@ MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
     LOGDBG1("Meta value for %u\n", META_NS_MASKOUT(meta_index));
 
     IfdEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
-    if(e) {
-      val = e->makeMetaValue();
+    if (e) {
+      val = ifd->makeMetaValue(*e);
     }
   }
   return val;
@@ -427,14 +427,14 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
   return nullptr;
 }
 
-const MosaicInfo *_convertNewCfaPattern(const IfdEntry::Ref & e)
+const MosaicInfo *_convertNewCfaPattern(const IfdDir::Ref& dir, IfdEntry& e)
 {
-  if(!e || (e->count() < 4)) {
+  if (e.count() < 4) {
     return nullptr;
   }
 
-  uint16_t hdim = IfdTypeTrait<uint16_t>::get(*e, 0, true);
-  uint16_t vdim = IfdTypeTrait<uint16_t>::get(*e, 1, true);
+  uint16_t hdim = dir->getEntryValue<uint16_t>(e, 0, true);
+  uint16_t vdim = dir->getEntryValue<uint16_t>(e, 1, true);
   if(hdim != 2 && vdim != 2) {
     // cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
     if (hdim != 6 && vdim != 6) {
@@ -444,20 +444,20 @@ const MosaicInfo *_convertNewCfaPattern(const IfdEntry::Ref & e)
     return XTransPattern::xtransPattern();
   } else {
     std::vector<uint8_t> cfaPattern;
-    cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 4, true));
-    cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 5, true));
-    cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 6, true));
-    cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 7, true));
+    cfaPattern.push_back(dir->getEntryValue<uint8_t>(e, 4, true));
+    cfaPattern.push_back(dir->getEntryValue<uint8_t>(e, 5, true));
+    cfaPattern.push_back(dir->getEntryValue<uint8_t>(e, 6, true));
+    cfaPattern.push_back(dir->getEntryValue<uint8_t>(e, 7, true));
     return _convertArrayToCfaPattern(cfaPattern);
   }
 }
 
 
 /** Extract the MosaicInfo from the entry */
-const MosaicInfo *_convertCfaPattern(const IfdEntry::Ref & e)
+const MosaicInfo *_convertCfaPattern(const IfdDir::Ref& dir, IfdEntry& e)
 {
   LOGDBG1("%s\n", __FUNCTION__);
-  auto result = e->getArray<uint8_t>();
+  auto result = dir->getEntryArrayValue<uint8_t>(e);
   if (result) {
     return _convertArrayToCfaPattern(result.value());
   }
@@ -477,11 +477,11 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
   try {
     IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
     if (e) {
-      mosaic_info = _convertCfaPattern(e);
+      mosaic_info = _convertCfaPattern(dir, *e);
     } else {
       e = dir->getEntry(IFD::EXIF_TAG_NEW_CFA_PATTERN);
       if (e)  {
-        mosaic_info = _convertNewCfaPattern(e);
+        mosaic_info = _convertNewCfaPattern(dir, *e);
       }
     }
   }
@@ -545,7 +545,7 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
       LOGDBG1("byte len not found\n");
       return OR_ERROR_NOT_FOUND;
     }
-    auto result3 = e->getArray<uint32_t>();
+    auto result3 = dir->getEntryArrayValue<uint32_t>(*e);
     if (result3) {
       std::vector<uint32_t> counts = result3.value();
       LOGDBG1("counting tiles\n");
@@ -560,7 +560,7 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
       LOGDBG1("tile offsets empty\n");
       return OR_ERROR_NOT_FOUND;
     }
-    auto result3 = e->getArray<uint32_t>();
+    auto result3 = dir->getEntryArrayValue<uint32_t>(*e);
     if (!result3) {
       LOGDBG1("tile offsets not found\n");
       return OR_ERROR_NOT_FOUND;
@@ -572,7 +572,7 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
       LOGDBG1("tile byte counts not found\n");
       return OR_ERROR_NOT_FOUND;
     }
-    result3 = e->getArray<uint32_t>();
+    result3 = dir->getEntryArrayValue<uint32_t>(*e);
     if (result3) {
       std::vector<uint32_t> counts = result3.value();
       LOGDBG1("counting tiles\n");

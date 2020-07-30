@@ -58,6 +58,11 @@ public:
     void setType(IfdDirType type_)
         { m_type = type_; }
 
+    off_t baseOffset() const
+        { return m_base_offset; }
+    void setBaseOffset(off_t base)
+        { m_base_offset = base; }
+
     bool isPrimary() const;
     bool isThumbnail() const;
 
@@ -86,7 +91,7 @@ public:
         IfdEntry::Ref e = getEntry(id);
         if (e != NULL) {
             try {
-                return Option<T>(IfdTypeTrait<T>::get(*e));
+                return Option<T>(getEntryValue<T>(*e));
             }
             catch (const std::exception &ex) {
                 LOGERR("Exception raised %s fetch value for %u\n", ex.what(), id);
@@ -138,12 +143,87 @@ public:
      * @return a static string or nullptr if not found.
      */
     const char* getTagName(uint32_t tag) const;
+
+    /** Get the entry value as an array */
+    template <typename T>
+    Option<std::vector<T>> getEntryArrayValue(IfdEntry& e) const;
+    /** Get the typed entry value */
+    template<typename T>
+    T getEntryValue(IfdEntry& e, uint32_t idx = 0, bool ignore_type = false) const;
+
+    uint32_t getEntryIntegerArrayItemValue(IfdEntry& e, int idx) const;
+
+    MetaValue* makeMetaValue(IfdEntry& e) const;
 private:
     IfdDirType m_type;
     off_t m_offset;
     const IfdFileContainer& m_container;
     Entries m_entries;
     const TagTable* m_tag_table;
+    off_t m_base_offset;
 };
+
+
+/** get the array values of type T
+ * @param T the type of the value needed
+ * @param array the storage
+ * @throw whatever is thrown
+ */
+template <typename T>
+Option<std::vector<T>> IfdDir::getEntryArrayValue(IfdEntry& entry) const
+{
+    try {
+        std::vector<T> array;
+        array.reserve(entry.count());
+        for (uint32_t i = 0; i < entry.count(); i++) {
+            array.push_back(getEntryValue<T>(entry, i));
+        }
+        return Option<decltype(array)>(array);
+    }
+    catch(const std::exception& e)
+    {
+        LOGERR("Exception: %s\n", e.what());
+    }
+    return OptionNone();
+}
+
+/** get the value of type T
+ * @param T the type of the value needed
+ * @param idx the index, by default 0
+ * @param ignore_type if true, don't check type. *DANGEROUS* Default is false.
+ * @return the value
+ * @throw BadTypeException in case of wrong typing.
+ * @throw OutOfRangeException in case of subscript out of range
+ */
+template <typename T>
+T IfdDir::getEntryValue(IfdEntry& e, uint32_t idx, bool ignore_type) const
+	noexcept(false)
+{
+    /* format undefined means that we don't check the type */
+    if(!ignore_type && (e.type() != IFD::EXIF_FORMAT_UNDEFINED)) {
+        if (e.type() != IfdTypeTrait<T>::type) {
+            throw BadTypeException();
+        }
+    }
+    if (idx + 1 > e.count()) {
+        throw OutOfRangeException();
+    }
+
+    if (!e.loadData(IfdTypeTrait<T>::size, m_base_offset)) {
+        throw TooBigException();
+    }
+
+    const uint8_t *data = e.dataptr();
+    data += (IfdTypeTrait<T>::size * idx);
+    T val;
+    if (e.endian() == RawContainer::ENDIAN_LITTLE) {
+        val = IfdTypeTrait<T>::EL(data, e.count() - idx);
+    } else {
+        val = IfdTypeTrait<T>::BE(data, e.count() - idx);
+    }
+    return val;
+}
+
+
 }
 }

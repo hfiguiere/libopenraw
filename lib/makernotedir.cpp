@@ -51,7 +51,7 @@ MakerNoteDir::createMakerNote(off_t offset,
         || file_type == OR_RAWFILE_TYPE_CRW) {
 
         return std::make_shared<MakerNoteDir>(
-            offset, container, offset, "Canon", mnote_canon_tag_names);
+            offset, container, 0, "Canon", mnote_canon_tag_names);
     }
 
     char data[18];
@@ -89,13 +89,13 @@ MakerNoteDir::createMakerNote(off_t offset,
     // XXX deal with endian.
     if (memcmp("EPSON\0", data, 6) == 0) {
         return std::make_shared<MakerNoteDir>(
-            offset + 8, container, offset + 8, "Olympus", mnote_olympus_tag_names);
+            offset + 8, container, 0, "Olympus", mnote_olympus_tag_names);
     }
 
     // Pentax Asahi Optical Corporation (pre Ricoh merger)
     if (memcmp("AOC\0", data, 4) == 0) {
         return std::make_shared<MakerNoteDir>(
-            offset + 6, container, offset + 6, "Pentax", mnote_pentax_tag_names);
+            offset + 6, container, 0, "Pentax", mnote_pentax_tag_names);
     }
     // Pentax post Ricoh merger
     if (memcmp("PENTAX \0", data, 8) == 0) {
@@ -110,7 +110,7 @@ MakerNoteDir::createMakerNote(off_t offset,
 
     if (memcmp("Panasonic\0", data, 10) == 0) {
         return std::make_shared<MakerNoteDir>(
-            offset + 12, container, offset + 12, "Panasonic", mnote_panasonic_tag_names);
+            offset + 12, container, 0, "Panasonic", mnote_panasonic_tag_names);
     }
 
     if (memcmp("FUJIFILM", data, 8) == 0) {
@@ -147,6 +147,7 @@ MakerNoteDir::MakerNoteDir(const char* magic, size_t hlen,
     , m_mnote_offset(mnote_offset)
     , m_id(id)
 {
+    setBaseOffset(mnote_offset);
 }
 
 MakerNoteDir::~MakerNoteDir()

@@ -28,6 +28,7 @@
 #include "ifdfilecontainer.hpp"
 #include "ifddir.hpp"
 #include "makernotedir.hpp"
+#include "metavalue.hpp"
 #include "exif/exif_tags.hpp"
 
 using namespace Debug;
@@ -52,6 +53,7 @@ IfdDir::IfdDir(off_t _offset, const IfdFileContainer& _container, IfdDirType _ty
     : m_type(_type)
     , m_offset(_offset), m_container(_container), m_entries()
     , m_tag_table(&tag_table)
+    , m_base_offset(0)
 {
 }
 
@@ -104,8 +106,8 @@ Option<uint32_t>
 IfdDir::getIntegerValue(uint16_t id)
 {
     IfdEntry::Ref e = getEntry(id);
-    if (e != nullptr) {
-        return Option<uint32_t>(e->getIntegerArrayItem(0));
+    if (e) {
+        return Option<uint32_t>(getEntryIntegerArrayItemValue(*e, 0));
     }
     return Option<uint32_t>();
 }
@@ -136,7 +138,7 @@ IfdDir::Ref IfdDir::getSubIFD(uint32_t idx) const
     IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_SUB_IFDS);
 
     if (e != nullptr) {
-        auto result = e->getArray<uint32_t>();
+        auto result = getEntryArrayValue<uint32_t>(*e);
         if (result) {
             std::vector<uint32_t> offsets = result.value();
             if (idx >= offsets.size()) {
@@ -156,7 +158,7 @@ Option<std::vector<IfdDir::Ref>> IfdDir::getSubIFDs()
     std::vector<IfdDir::Ref> ifds;
     IfdEntry::Ref e = getEntry(IFD::EXIF_TAG_SUB_IFDS);
     if (e != nullptr) {
-        auto result = e->getArray<uint32_t>();
+        auto result = getEntryArrayValue<uint32_t>(*e);
         if (result) {
             std::vector<uint32_t> offsets = result.value();
             for (auto offset_ : offsets) {
@@ -219,6 +221,131 @@ const char* IfdDir::getTagName(uint32_t tag) const
         return iter->second;
     }
     return nullptr;
+}
+
+uint32_t IfdDir::getEntryIntegerArrayItemValue(IfdEntry& e, int idx) const
+{
+    uint32_t v = 0;
+
+    try {
+        switch (e.type())
+        {
+        case IFD::EXIF_FORMAT_LONG:
+            v = getEntryValue<uint32_t>(e, idx);
+            break;
+        case IFD::EXIF_FORMAT_SHORT:
+            v = getEntryValue<uint16_t>(e, idx);
+            break;
+        case IFD::EXIF_FORMAT_RATIONAL:
+        {
+            IFD::Rational r = getEntryValue<IFD::Rational>(e, idx);
+            if (r.denom == 0) {
+                v = 0;
+            } else {
+                v = r.num / r.denom;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    catch (const std::exception & ex) {
+        LOGERR("Exception raised %s fetch integer value for %d\n", ex.what(), e.id());
+    }
+
+    return v;
+}
+
+namespace {
+
+template <class T>
+void convert(const IfdDir& dir, Internals::IfdEntry& e, std::vector<MetaValue::value_t>& values)
+{
+    auto result = dir.getEntryArrayValue<T>(e);
+    LOGASSERT(!!result);
+    if (result) {
+        std::vector<T> v = result.value();
+        values.insert(values.end(), v.cbegin(), v.cend());
+    }
+}
+
+// T is the Ifd primitive type. T2 is the target MetaValue type.
+template <class T, class T2>
+void convert(const IfdDir& dir, Internals::IfdEntry& e, std::vector<MetaValue::value_t>& values)
+{
+    auto result = dir.getEntryArrayValue<T>(e);
+    LOGASSERT(!!result);
+    if (result) {
+        std::vector<T> v = result.value();
+        for (const auto & elem : v) {
+            values.push_back(T2(elem));
+        }
+    }
+}
+
+}
+
+MetaValue* IfdDir::makeMetaValue(IfdEntry& entry) const
+{
+    std::vector<MetaValue::value_t> values;
+
+    switch (entry.type()) {
+    case Internals::IFD::EXIF_FORMAT_BYTE:
+    {
+        convert<uint8_t, uint32_t>(*this, entry, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_ASCII:
+    {
+        convert<std::string>(*this, entry, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_SHORT:
+    {
+        convert<uint16_t, uint32_t>(*this, entry, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_LONG:
+    {
+        convert<uint32_t>(*this, entry, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_RATIONAL:
+    {
+        convert<Internals::IFD::Rational, double>(*this, entry, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_SBYTE:
+    {
+        convert<int8_t, int32_t>(*this, entry, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_UNDEFINED:
+    {
+        convert<uint8_t>(*this, entry, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_SSHORT:
+    {
+        convert<int16_t, int32_t>(*this, entry, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_SLONG:
+    {
+        convert<int32_t>(*this, entry, values);
+        break;
+    }
+    case Internals::IFD::EXIF_FORMAT_SRATIONAL:
+    {
+        convert<Internals::IFD::SRational, double>(*this, entry, values);
+        break;
+    }
+    default:
+        LOGDBG1("unhandled type %d\n", type());
+        return nullptr;
+    }
+    return new MetaValue(values);
 }
 
 }

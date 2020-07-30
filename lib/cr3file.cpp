@@ -296,7 +296,7 @@ MetaValue* Cr3File::_getMetaValue(int32_t meta_index)
 
         IfdEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
         if(e) {
-            val = e->makeMetaValue();
+            val = ifd->makeMetaValue(*e);
         }
     }
 

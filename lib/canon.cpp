@@ -185,7 +185,7 @@ Option<std::array<uint32_t, 4>> canon_get_sensorinfo(const IfdDir::Ref& ifddir)
     if (!e) {
         return OptionNone();
     }
-    auto result = e->getArray<uint16_t>();
+    auto result = ifddir->getEntryArrayValue<uint16_t>(*e);
     if (result) {
         return canon_parse_sensorinfo(result.value());
     }

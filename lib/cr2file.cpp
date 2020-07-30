@@ -541,7 +541,7 @@ IfdDir::Ref Cr2File::_locateMainIfd()
         // by default it is RGB8. Unless stated otherwise.
         bool isRGB8 = true;
         IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
-        auto result2 = entry->getArray<uint16_t>();
+        auto result2 = dir->getEntryArrayValue<uint16_t>(*entry);
         if (result2) {
           std::vector<uint16_t> arr = result2.value();
           for(auto bpc : arr) {
@@ -676,7 +676,7 @@ void Cr2File::getRawBytes(RawData &data, uint32_t offset, uint32_t byte_length,
     std::vector<uint16_t> slices;
     IfdEntry::Ref e = _cfaIfd->getEntry(IFD::CR2_TAG_SLICE);
     if (e) {
-        auto result2 = e->getArray<uint16_t>();
+        auto result2 = _cfaIfd->getEntryArrayValue<uint16_t>(*e);
         if (result2) {
             slices = result2.value();
             LOGDBG1("Found slice entry count %ld\n", slices.size());

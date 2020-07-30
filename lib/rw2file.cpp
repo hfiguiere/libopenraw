@@ -668,13 +668,13 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref& dir, uint32_t & len
     // get the sensor info
     // XXX what if it is not found?
     IfdEntry::Ref e = _cfaIfd->getEntry(IFD::RW2_TAG_SENSOR_LEFTBORDER);
-    x = e->getIntegerArrayItem(0);
+    x = _cfaIfd->getEntryIntegerArrayItemValue(*e, 0);
     e = _cfaIfd->getEntry(IFD::RW2_TAG_SENSOR_TOPBORDER);
-    y = e->getIntegerArrayItem(0);
+    y = _cfaIfd->getEntryIntegerArrayItemValue(*e, 0);
     e = _cfaIfd->getEntry(IFD::RW2_TAG_IMAGE_HEIGHT);
-    uint32_t h = e->getIntegerArrayItem(0);
+    uint32_t h = _cfaIfd->getEntryIntegerArrayItemValue(*e, 0);
     e = _cfaIfd->getEntry(IFD::RW2_TAG_IMAGE_WIDTH);
-    uint32_t w = e->getIntegerArrayItem(0);
+    uint32_t w = _cfaIfd->getEntryIntegerArrayItemValue(*e, 0);
 
     data.setActiveArea(x, y, w, h);
 

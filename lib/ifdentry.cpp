@@ -27,7 +27,6 @@
 
 #include <libopenraw/debug.h>
 
-#include "metavalue.hpp"
 #include "trace.hpp"
 #include "ifdfilecontainer.hpp"
 #include "ifdentry.hpp"
@@ -64,34 +63,6 @@ IfdEntry::~IfdEntry()
     }
 }
 
-namespace {
-
-template <class T>
-void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
-{
-    auto result = e->getArray<T>();
-    if (result) {
-        std::vector<T> v = result.value();
-        values.insert(values.end(), v.cbegin(), v.cend());
-    }
-}
-
-// T is the Ifd primitive type. T2 is the target MetaValue type.
-template <class T, class T2>
-void convert(Internals::IfdEntry* e, std::vector<MetaValue::value_t> & values)
-{
-    auto result = e->getArray<T>();
-    if (result) {
-        std::vector<T> v = result.value();
-        for(const auto & elem : v) {
-            values.push_back(T2(elem));
-        }
-    }
-}
-
-}
-
-
 size_t IfdEntry::typeUnitSize(IFD::ExifTagType _type)
 {
 	switch(_type) {
@@ -115,67 +86,6 @@ size_t IfdEntry::typeUnitSize(IFD::ExifTagType _type)
 
 	return 0;
 }
-MetaValue* IfdEntry::makeMetaValue()
-{
-    std::vector<MetaValue::value_t> values;
-
-    switch(type()) {
-    case Internals::IFD::EXIF_FORMAT_BYTE:
-    {
-        convert<uint8_t, uint32_t>(this, values);
-        break;
-    }
-    case Internals::IFD::EXIF_FORMAT_ASCII:
-    {
-        convert<std::string>(this, values);
-        break;
-    }
-    case Internals::IFD::EXIF_FORMAT_SHORT:
-    {
-        convert<uint16_t, uint32_t>(this, values);
-        break;
-    }
-    case Internals::IFD::EXIF_FORMAT_LONG:
-    {
-        convert<uint32_t>(this, values);
-        break;
-    }
-    case Internals::IFD::EXIF_FORMAT_RATIONAL:
-    {
-        convert<Internals::IFD::Rational, double>(this, values);
-        break;
-    }
-    case Internals::IFD::EXIF_FORMAT_SBYTE:
-    {
-        convert<int8_t, int32_t>(this, values);
-        break;
-    }
-    case Internals::IFD::EXIF_FORMAT_UNDEFINED:
-    {
-        convert<uint8_t>(this, values);
-        break;
-    }
-    case Internals::IFD::EXIF_FORMAT_SSHORT:
-    {
-        convert<int16_t, int32_t>(this, values);
-        break;
-    }
-    case Internals::IFD::EXIF_FORMAT_SLONG:
-    {
-        convert<int32_t>(this, values);
-        break;
-    }
-    case Internals::IFD::EXIF_FORMAT_SRATIONAL:
-    {
-        convert<Internals::IFD::SRational, double>(this, values);
-        break;
-    }
-    default:
-        LOGDBG1("unhandled type %d\n", type());
-        return nullptr;
-    }
-    return new MetaValue(values);
-}
 
 RawContainer::EndianType IfdEntry::endian() const
 {
@@ -183,65 +93,30 @@ RawContainer::EndianType IfdEntry::endian() const
 }
 
 
-bool IfdEntry::loadData(size_t unit_size)
+bool IfdEntry::loadData(size_t unit_size, off_t offset)
 {
-	bool success = false;
-	size_t data_size = unit_size * m_count;
-	if (data_size <= 4) {
-		m_dataptr = NULL;
-		success = true;
-	}
-	else {
-		off_t _offset;
-		if (endian() == RawContainer::ENDIAN_LITTLE) {
-			_offset = IfdTypeTrait<uint32_t>::EL((uint8_t*)&m_data, sizeof(uint32_t));
+	if (!m_loaded) {
+		size_t data_size = unit_size * m_count;
+		if (data_size <= 4) {
+			m_dataptr = NULL;
+			m_loaded = true;
 		} else {
-			_offset = IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data, sizeof(uint32_t));
+			off_t _offset;
+			if (endian() == RawContainer::ENDIAN_LITTLE) {
+				_offset = IfdTypeTrait<uint32_t>::EL((uint8_t*)&m_data, sizeof(uint32_t));
+			} else {
+				_offset = IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data, sizeof(uint32_t));
+			}
+			_offset += m_container.exifOffsetCorrection() + offset;
+			LOGDBG1("loadData: offset %lu\n", _offset);
+			m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
+			m_loaded = (m_container.fetchData(m_dataptr,
+											  _offset,
+											  data_size) == data_size);
 		}
-		_offset += m_container.exifOffsetCorrection();
-		m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
-		success = (m_container.fetchData(m_dataptr,
-										 _offset,
-										 data_size) == data_size);
 	}
-	return success;
+	return m_loaded;
 }
-
-uint32_t IfdEntry::getIntegerArrayItem(int idx)
-{
-    uint32_t v = 0;
-
-    try {
-        switch(type())
-        {
-        case IFD::EXIF_FORMAT_LONG:
-            v = IfdTypeTrait<uint32_t>::get(*this, idx);
-            break;
-        case IFD::EXIF_FORMAT_SHORT:
-            v = IfdTypeTrait<uint16_t>::get(*this, idx);
-            break;
-        case IFD::EXIF_FORMAT_RATIONAL:
-        {
-            IFD::Rational r = IfdTypeTrait<IFD::Rational>::get(*this, idx);
-            if(r.denom == 0) {
-                v = 0;
-            }
-            else {
-                v = r.num / r.denom;
-            }
-            break;
-        }
-        default:
-            break;
-        }
-    }
-    catch(const std::exception & ex) {
-        LOGERR("Exception raised %s fetch integer value for %d\n", ex.what(), m_id);
-    }
-
-    return v;
-}
-
 
 namespace IFD {
 

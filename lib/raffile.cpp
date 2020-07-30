@@ -37,6 +37,7 @@
 #include "ifd.hpp"
 #include "ifddir.hpp"
 #include "ifdentry.hpp"
+#include "ifdfilecontainer.hpp"
 #include "rawfile_private.hpp"
 #include "raffile.hpp"
 #include "rafcontainer.hpp"
@@ -599,7 +600,7 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
         IfdDir::Ref dir = jpegPreview->mainIfd();
         IfdEntry::Ref e = dir->getEntry(META_NS_MASKOUT(meta_index));
         if (e) {
-            return e->makeMetaValue();
+            return dir->makeMetaValue(*e);
         }
     }
 

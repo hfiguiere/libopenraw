@@ -112,7 +112,7 @@ MetaValue* MetadataIterator::getMetaValue() const
     if (!(isInitialized() && isValid())) {
         return nullptr;
     }
-    return m_current_entry->second->makeMetaValue();
+    return m_current_ifd->makeMetaValue(*(m_current_entry->second));
 }
 
 }
