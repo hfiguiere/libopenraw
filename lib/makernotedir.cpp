@@ -46,12 +46,19 @@ MakerNoteDir::createMakerNote(off_t offset,
 {
     LOGDBG1("createMakerNote()\n");
 
+    // Canon MakerNote don't have an ID
     if (file_type == OR_RAWFILE_TYPE_CR2
         || file_type == OR_RAWFILE_TYPE_CR3
         || file_type == OR_RAWFILE_TYPE_CRW) {
 
         return std::make_shared<MakerNoteDir>(
             offset, container, 0, "Canon", mnote_canon_tag_names);
+    }
+
+    // Sony RAW MakerNote don't have an ID
+    if (file_type == OR_RAWFILE_TYPE_ARW) {
+        return std::make_shared<MakerNoteDir>(
+            offset, container, 0, "Sony5", mnote_sony_tag_names);
     }
 
     char data[18];
@@ -101,11 +108,6 @@ MakerNoteDir::createMakerNote(off_t offset,
     if (memcmp("PENTAX \0", data, 8) == 0) {
         return std::make_shared<MakerNoteDir>(
             offset + 10, container, offset, "Pentax", mnote_pentax_tag_names);
-    }
-
-    if (memcmp("SONY DSC \0", data, 10) == 0) {
-        return std::make_shared<MakerNoteDir>(
-            offset + 12, container, offset + 12, "Panasonic", mnote_panasonic_tag_names);
     }
 
     if (memcmp("Panasonic\0", data, 10) == 0) {
