@@ -110,7 +110,6 @@ IfdDir::Ref  MRWFile::_locateCfaIfd()
     return mainIfd();
 }
 
-
 IfdDir::Ref  MRWFile::_locateMainIfd()
 {
     auto ifd = m_container->setDirectory(0);
@@ -119,7 +118,6 @@ IfdDir::Ref  MRWFile::_locateMainIfd()
     }
     return ifd;
 }
-
 
 void MRWFile::_identifyId()
 {
@@ -144,7 +142,7 @@ void MRWFile::_identifyId()
 ::or_error MRWFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
     ::or_error err = OR_ERROR_NOT_FOUND;
-    list.push_back (640);
+    list.push_back(640);
     err = OR_ERROR_NONE;
     return err;
 }
@@ -152,46 +150,26 @@ void MRWFile::_identifyId()
 /* This code only knows about Dimage 5/7, in which the thumbnail position is special. */
 ::or_error MRWFile::_getThumbnail(uint32_t /*size*/, Thumbnail & thumbnail)
 {
-    IfdDir::Ref dir;
-    IfdEntry::Ref maker_ent;	/* Make note directory entry. */
     IfdEntry::Ref thumb_ent;	/* Thumbnail data directory entry. */
     MRWContainer *mc = (MRWContainer *)m_container;
 
-    dir = _locateExifIfd();
-    if (!dir) {
-        LOGWARN("EXIF dir not found\n");
-        return OR_ERROR_NOT_FOUND;
-    }
-
-    maker_ent = dir->getEntry(IFD::EXIF_TAG_MAKER_NOTE);
-    if (!maker_ent) {
-        LOGWARN("maker note offset entry not found\n");
-        return OR_ERROR_NOT_FOUND;
-    }
-    uint32_t off = 0;
-    off = maker_ent->offset();
-
-    IfdDir::Ref ref(std::make_shared<IfdDir>(
-                        mc->ttw->offset()
-                        + MRW::DataBlockHeaderLength + off,
-                        *m_container, OR_IFD_MNOTE));
-    ref->load();
+    auto mnote = makerNoteIfd();
 
     uint32_t tnail_offset = 0;
     uint32_t tnail_len = 0;
-    thumb_ent = ref->getEntry(MRW::MRWTAG_THUMBNAIL);
+    thumb_ent = mnote->getEntry(MRW::MRWTAG_THUMBNAIL);
     if (thumb_ent) {
         tnail_offset = thumb_ent->offset();
         tnail_len = thumb_ent->count();
     } else {
-        auto result = ref->getValue<uint32_t>(MRW::MRWTAG_THUMBNAIL_OFFSET);
+        auto result = mnote->getValue<uint32_t>(MRW::MRWTAG_THUMBNAIL_OFFSET);
         if (result.empty()) {
             LOGWARN("thumbnail offset entry not found\n");
             return OR_ERROR_NOT_FOUND;
         }
         tnail_offset = result.value();
 
-        result = ref->getValue<uint32_t>(MRW::MRWTAG_THUMBNAIL_LENGTH);
+        result = mnote->getValue<uint32_t>(MRW::MRWTAG_THUMBNAIL_LENGTH);
         if (result.empty()) {
             LOGWARN("thumbnail lenght entry not found\n");
             return OR_ERROR_NOT_FOUND;
@@ -201,7 +179,7 @@ void MRWFile::_identifyId()
 
     LOGDBG1("thumbnail offset found, offset == %u count == %u\n",
             tnail_offset, tnail_len);
-    void *p = thumbnail.allocData (tnail_len);
+    void *p = thumbnail.allocData(tnail_len);
     size_t fetched = m_container->fetchData(p, mc->ttw->offset()
                                             + MRW::DataBlockHeaderLength
                                             + tnail_offset,
@@ -213,107 +191,103 @@ void MRWFile::_identifyId()
     /* Need to patch first byte. */
     ((unsigned char *)p)[0] = 0xFF;
 
-    thumbnail.setDataType (OR_DATA_TYPE_JPEG);
-    thumbnail.setDimensions (640, 480);
+    thumbnail.setDataType(OR_DATA_TYPE_JPEG);
+    thumbnail.setDimensions(640, 480);
     return OR_ERROR_NONE;
 }
 
-
 ::or_error MRWFile::_getRawData(RawData & data, uint32_t options)
 {
-	or_error ret = OR_ERROR_NONE;
-	MRWContainer *mc = (MRWContainer *)m_container;
+    or_error ret = OR_ERROR_NONE;
+    MRWContainer *mc = (MRWContainer *)m_container;
 
-	if(!mc->prd) {
-		return OR_ERROR_NOT_FOUND;
-	}
-	/* Obtain sensor dimensions from PRD block. */
-	uint16_t y = mc->prd->uint16_val (MRW::PRD_SENSOR_LENGTH).value_or(0);
-	uint16_t x = mc->prd->uint16_val (MRW::PRD_SENSOR_WIDTH).value_or(0);
-	uint8_t bpc =  mc->prd->uint8_val (MRW::PRD_PIXEL_SIZE).value_or(0);
+    if (!mc->prd) {
+        return OR_ERROR_NOT_FOUND;
+    }
+    /* Obtain sensor dimensions from PRD block. */
+    uint16_t y = mc->prd->uint16_val(MRW::PRD_SENSOR_LENGTH).value_or(0);
+    uint16_t x = mc->prd->uint16_val(MRW::PRD_SENSOR_WIDTH).value_or(0);
+    uint8_t bpc = mc->prd->uint8_val(MRW::PRD_PIXEL_SIZE).value_or(0);
 
-	bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE).value_or(0) == 0x59);
-	/* Allocate space for and retrieve pixel data.
-	 * Currently only for cameras that don't compress pixel data.
-	 */
-	/* Set pixel array parameters. */
-	uint32_t finaldatalen = 2 * x * y;
-	uint32_t datalen =
-		(is_compressed ? x * y + ((x * y) >> 1) : finaldatalen);
+    bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE).value_or(0) == 0x59);
+    /* Allocate space for and retrieve pixel data.
+     * Currently only for cameras that don't compress pixel data.
+     */
+    /* Set pixel array parameters. */
+    uint32_t finaldatalen = 2 * x * y;
+    uint32_t datalen =
+        (is_compressed ? x * y + ((x * y) >> 1) : finaldatalen);
 
-	if(options & OR_OPTIONS_DONT_DECOMPRESS) {
-		finaldatalen = datalen;
-	}
-	if(is_compressed && (options & OR_OPTIONS_DONT_DECOMPRESS)) {
-		data.setDataType (OR_DATA_TYPE_COMPRESSED_RAW);
-	}
-	else {
-		data.setDataType (OR_DATA_TYPE_RAW);
-	}
-	data.setBpc(bpc);
-	// this seems to be the hardcoded value.
-	uint16_t black = 0;
-	uint16_t white = 0;
-	RawFile::_getBuiltinLevels(_getMatrices(), typeId(),
-				   black, white);
-	data.setBlackLevel(black);
-	data.setWhiteLevel(white);
-	LOGDBG1("datalen = %d final datalen = %u\n", datalen, finaldatalen);
-	void *p = data.allocData(finaldatalen);
-	size_t fetched = 0;
-	off_t offset = mc->pixelDataOffset();
-	if(!is_compressed || (options & OR_OPTIONS_DONT_DECOMPRESS)) {
-		fetched = m_container->fetchData (p, offset, datalen);
-	}
-	else {
-		Unpack unpack(x, IFD::COMPRESS_NONE);
-		size_t blocksize = unpack.block_size();
-		std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
-		uint16_t* outdata = (uint16_t*)data.data();
-		size_t outsize = finaldatalen;
-		size_t got;
-		do {
-			LOGDBG2("fetchData @offset %lld\n", (long long int)offset);
-			got = m_container->fetchData (block.get(),
-										  offset, blocksize);
-			fetched += got;
-			offset += got;
-			LOGDBG2("got %ld\n", got);
-			if(got) {
-				size_t out;
-                                or_error err = unpack.unpack_be12to16(outdata, outsize,
-									block.get(), got, out);
-				outdata += out / 2;
-				outsize -= out;
-				LOGDBG2("unpacked %ld bytes from %ld\n", out, got);
-                                if(err != OR_ERROR_NONE) {
-                                    ret = err;
-                                    break;
-                                }
-			}
-		} while((got != 0) && (fetched < datalen));
-	}
-	if (fetched < datalen) {
-		LOGWARN("Fetched only %ld of %u: continuing anyway.\n", fetched,
-			datalen);
-	}
-	uint16_t bpat = mc->prd->uint16_val (MRW::PRD_BAYER_PATTERN).value_or(0);
-	or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
-	switch(bpat)
-	{
-	case 0x0001:
-		cfa_pattern = OR_CFA_PATTERN_RGGB;
-		break;
-	case 0x0004:
-		cfa_pattern = OR_CFA_PATTERN_GBRG;
-		break;
-	default:
-		break;
-	}
-	data.setCfaPatternType(cfa_pattern);
-	data.setDimensions (x, y);
+    if (options & OR_OPTIONS_DONT_DECOMPRESS) {
+        finaldatalen = datalen;
+    }
+    if (is_compressed && (options & OR_OPTIONS_DONT_DECOMPRESS)) {
+        data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
+    } else {
+        data.setDataType(OR_DATA_TYPE_RAW);
+    }
+    data.setBpc(bpc);
+    // this seems to be the hardcoded value.
+    uint16_t black = 0;
+    uint16_t white = 0;
+    RawFile::_getBuiltinLevels(_getMatrices(), typeId(), black, white);
+    data.setBlackLevel(black);
+    data.setWhiteLevel(white);
+    LOGDBG1("datalen = %d final datalen = %u\n", datalen, finaldatalen);
+    void *p = data.allocData(finaldatalen);
+    size_t fetched = 0;
+    off_t offset = mc->pixelDataOffset();
+    if (!is_compressed || (options & OR_OPTIONS_DONT_DECOMPRESS)) {
+        fetched = m_container->fetchData(p, offset, datalen);
+    } else {
+        Unpack unpack(x, IFD::COMPRESS_NONE);
+        size_t blocksize = unpack.block_size();
+        std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
+        uint16_t* outdata = (uint16_t*)data.data();
+        size_t outsize = finaldatalen;
+        size_t got;
+        do {
+            LOGDBG2("fetchData @offset %lld\n", (long long int)offset);
+            got = m_container->fetchData(block.get(),
+                                         offset, blocksize);
+            fetched += got;
+            offset += got;
+            LOGDBG2("got %ld\n", got);
+            if (got) {
+                size_t out;
+                or_error err = unpack.unpack_be12to16(outdata, outsize,
+                                                      block.get(), got, out);
+                outdata += out / 2;
+                outsize -= out;
+                LOGDBG2("unpacked %ld bytes from %ld\n", out, got);
+                if (err != OR_ERROR_NONE) {
+                    ret = err;
+                    break;
+                }
+            }
+        } while ((got != 0) && (fetched < datalen));
+    }
+    if (fetched < datalen) {
+        LOGWARN("Fetched only %ld of %u: continuing anyway.\n", fetched,
+                datalen);
+    }
+    uint16_t bpat = mc->prd->uint16_val(MRW::PRD_BAYER_PATTERN).value_or(0);
+    or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
+    switch (bpat)
+    {
+    case 0x0001:
+        cfa_pattern = OR_CFA_PATTERN_RGGB;
+        break;
+    case 0x0004:
+        cfa_pattern = OR_CFA_PATTERN_GBRG;
+        break;
+    default:
+        break;
+    }
+    data.setCfaPatternType(cfa_pattern);
+    data.setDimensions(x, y);
 
-	return ret;
+    return ret;
 }
 
 }

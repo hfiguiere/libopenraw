@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.hpp
  *
- * Copyright (C) 2006-2018 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_MRWFILE_H_
-#define OR_INTERNALS_MRWFILE_H_
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -69,7 +68,6 @@ private:
 }
 }
 
-#endif
 /*
   Local Variables:
   mode:c++
