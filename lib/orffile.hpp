@@ -1,8 +1,8 @@
 /* -*- Mode: C++; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * libopenraw - orffile.h
+ * libopenraw - orffile.hpp
  *
- * Copyright (C) 2006-2016 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_ORFFILE_H_
-#define OR_INTERNALS_ORFFILE_H_
+#pragma once
 
 #include <stdint.h>
 #include <string>
@@ -64,11 +63,10 @@ protected:
         IFD::TiffCompress tiffCompression) override;
 
 private:
+    ::or_error addThumbnail(std::vector<uint32_t>& list, uint32_t offset, uint32_t len);
     static RawFile::TypeId _typeIdFromModel(const std::string &model);
 
     static const IfdFile::camera_ids_t s_def[];
 };
 }
 }
-
-#endif

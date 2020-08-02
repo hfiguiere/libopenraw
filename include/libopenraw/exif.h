@@ -168,6 +168,14 @@ typedef	enum {
 	/* ERF tags */
 	ERF_TAG_PREVIEW_IMAGE = 0x280,
 
+	/* ORF tags */
+	ORF_TAG_THUMBNAIL_IMAGE = 0x100,
+	ORF_TAG_CAMERA_SETTINGS = 0x2020,
+	/* Camera Settings */
+	ORF_TAG_CS_PREVIEW_IMAGE_VALID = 0x100,
+	ORF_TAG_CS_PREVIEW_IMAGE_START = 0x101,
+	ORF_TAG_CS_PREVIEW_IMAGE_LENGTH = 0x102,
+
 	/* CR2 tags */
 	CR2_TAG_c5d9 = 0xc5d9,
 	CR2_TAG_SLICE = 0xc640,    /**< Exif tag for CR2 RAW "slices" */

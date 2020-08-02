@@ -617,6 +617,30 @@
     </results>
   </test>
   <test>
+    <name>ORF-test E3</name>
+    <file>/home/hub/samples/orf/Olympus_E3/PB020085.ORF</file>
+    <source disabled="1">http://raw.fotosite.pl/download-Olympus_E-3_ZD_12-60_f2.8-4/PB020085.ORF</source>
+    <results>
+      <rawType>ORF</rawType>
+      <rawTypeId>458755</rawTypeId>
+      <makerNoteCount>8</makerNoteCount>
+      <makerNoteId>Olympus2</makerNoteId>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>7020 420545</thumbDataSizes>
+      <thumbMd5>59979 60872</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>20832000</rawDataSize>
+      <rawDataDimensions>3720 2800</rawDataDimensions>
+      <rawDataActiveArea>0 0 3720 2800</rawDataActiveArea>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>ORF-test E300</name>
     <file>/home/hub/samples/orf/Olympus_E300/P7080133.ORF</file>
     <results>
@@ -624,11 +648,11 @@
       <rawTypeId>458756</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>10614</thumbDataSizes>
-      <thumbMd5>55376</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>10614 441309</thumbDataSizes>
+      <thumbMd5>55376 54826</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16826880</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
@@ -647,11 +671,11 @@
       <rawTypeId>458756</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>10689</thumbDataSizes>
-      <thumbMd5>64692</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>10689 394468</thumbDataSizes>
+      <thumbMd5>64692 29983</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16826880</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
@@ -670,11 +694,11 @@
       <rawTypeId>458757</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>11074</thumbDataSizes>
-      <thumbMd5>64168</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>11074 430123</thumbDataSizes>
+      <thumbMd5>64168 40301</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16072000</rawDataSize>
       <rawDataDimensions>3280 2450</rawDataDimensions>
@@ -693,11 +717,11 @@
       <rawTypeId>458757</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>10176</thumbDataSizes>
-      <thumbMd5>750</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>10176 419949</thumbDataSizes>
+      <thumbMd5>750 14262</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16072000</rawDataSize>
       <rawDataDimensions>3280 2450</rawDataDimensions>
@@ -715,11 +739,11 @@
       <rawTypeId>458766</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>6312</thumbDataSizes>
-      <thumbMd5>10303</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3200</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>6312 1040786</thumbDataSizes>
+      <thumbMd5>10303 42519</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>25288800</rawDataSize>
       <rawDataDimensions>4100 3084</rawDataDimensions>
@@ -739,11 +763,11 @@
       <rawTypeId>458766</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>5047</thumbDataSizes>
-      <thumbMd5>39027</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3200</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>5047 969676</thumbDataSizes>
+      <thumbMd5>39027 22396</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>25288800</rawDataSize>
       <rawDataDimensions>4100 3084</rawDataDimensions>
@@ -762,11 +786,11 @@
       <rawTypeId>458759</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>3003</thumbDataSizes>
-      <thumbMd5>63133</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>3003 360861</thumbDataSizes>
+      <thumbMd5>63133 48427</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>
@@ -786,11 +810,11 @@
       <rawTypeId>458759</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>6217</thumbDataSizes>
-      <thumbMd5>16699</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>6217 388113</thumbDataSizes>
+      <thumbMd5>16699 3410</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>

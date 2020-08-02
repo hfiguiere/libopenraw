@@ -48,6 +48,10 @@ public:
                  const TagTable& tag_table);
     virtual ~MakerNoteDir();
 
+    /** Get an IFD from a MakerNote entry
+     */
+    IfdDir::Ref getIfdInEntry(uint16_t id);
+
     off_t getMnoteOffset() const
         { return m_mnote_offset; }
 

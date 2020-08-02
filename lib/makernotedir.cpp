@@ -90,7 +90,7 @@ MakerNoteDir::createMakerNote(off_t offset,
 
     if (memcmp("OLYMP\0", data, 6) == 0) {
         return std::make_shared<MakerNoteDir>(
-            offset + 8, container, offset + 8, "Olympus", mnote_olympus_tag_names);
+            offset + 8, container, 0, "Olympus", mnote_olympus_tag_names);
     }
     // EPSON R-D1, use Olympus
     // XXX deal with endian.
@@ -154,6 +154,31 @@ MakerNoteDir::MakerNoteDir(const char* magic, size_t hlen,
 
 MakerNoteDir::~MakerNoteDir()
 {
+}
+
+IfdDir::Ref MakerNoteDir::getIfdInEntry(uint16_t id)
+{
+    auto entry = getEntry(id);
+    if (!entry) {
+        LOGDBG1("Coudln't get entry %u\n", id);
+        return Ref();
+    }
+
+    uint32_t val_offset = 0;
+    // "INVALID" type entry  (13) for some Olympus MakerNote
+    if (entry->type() == 13) {
+        val_offset = getEntryValue<uint32_t>(*entry, 0, true);
+        LOGDBG1("Custom IFD offset (uncorrected) = %u\n", val_offset);
+        val_offset += container().exifOffsetCorrection() + getMnoteOffset();
+        LOGDBG1("Custom IFD offset = %u\n", val_offset);
+    } else {
+        // Type is likely "UNDEFINED"
+        val_offset = entry->offset();
+    }
+
+    auto ref = std::make_shared<IfdDir>(val_offset, container(), OR_IFD_OTHER);
+    ref->load();
+    return ref;
 }
 
 }
