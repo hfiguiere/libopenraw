@@ -252,6 +252,7 @@ public:
 	 * @return true m_loaded
 	 */
 	bool loadData(size_t unit_size, off_t offset);
+	size_t loadDataInto(uint8_t* dataptr, size_t data_size, off_t offset) const;
 
 private:
 	uint16_t m_id;

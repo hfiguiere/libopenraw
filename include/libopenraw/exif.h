@@ -165,6 +165,9 @@ typedef	enum {
 	DNG_TAG_CALIBRATION_ILLUMINANT2          = 0xc65b,
 	DNG_TAG_ACTIVE_AREA                      = 0xc68d,
 
+	/* ERF tags */
+	ERF_TAG_PREVIEW_IMAGE = 0x280,
+
 	/* CR2 tags */
 	CR2_TAG_c5d9 = 0xc5d9,
 	CR2_TAG_SLICE = 0xc640,    /**< Exif tag for CR2 RAW "slices" */

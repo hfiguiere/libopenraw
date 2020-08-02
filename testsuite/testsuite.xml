@@ -472,11 +472,11 @@
       <rawTypeId>327681</rawTypeId>
       <exifMake>SEIKO EPSON CORP.</exifMake>
       <exifModel>R-D1</exifModel>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>8RGB</thumbFormats>
-      <thumbDataSizes>57600</thumbDataSizes>
-      <thumbMd5>51254</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 640</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 173093</thumbDataSizes>
+      <thumbMd5>51254 18422</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>

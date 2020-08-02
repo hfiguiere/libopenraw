@@ -151,6 +151,14 @@ public:
     template<typename T>
     T getEntryValue(IfdEntry& e, uint32_t idx = 0, bool ignore_type = false) const;
 
+    /** copy the enty data. Endian is ignored. Suite for bytes, undefined, etc
+     * @param e the entry
+     * @param buffer the buffer
+     * @param buffersize the size of the buffer in bytes. Will copy at most this.
+     * @return the number of bytes copied
+     */
+    size_t getEntryData(IfdEntry& e, uint8_t* buffer, size_t buffersize) const;
+
     uint32_t getEntryIntegerArrayItemValue(IfdEntry& e, int idx) const;
 
     MetaValue* makeMetaValue(IfdEntry& e) const;

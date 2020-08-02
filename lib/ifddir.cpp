@@ -223,6 +223,12 @@ const char* IfdDir::getTagName(uint32_t tag) const
     return nullptr;
 }
 
+size_t IfdDir::getEntryData(IfdEntry& e, uint8_t* buffer, size_t buffersize) const
+{
+    auto loaded = e.loadDataInto(buffer, buffersize, m_base_offset);
+    return loaded;
+}
+
 uint32_t IfdDir::getEntryIntegerArrayItemValue(IfdEntry& e, int idx) const
 {
     uint32_t v = 0;

@@ -92,6 +92,18 @@ RawContainer::EndianType IfdEntry::endian() const
 	return m_container.endian();
 }
 
+size_t IfdEntry::loadDataInto(uint8_t* dataptr, size_t data_size, off_t offset) const
+{
+	off_t _offset;
+	if (endian() == RawContainer::ENDIAN_LITTLE) {
+		_offset = IfdTypeTrait<uint32_t>::EL((uint8_t*)&m_data, sizeof(uint32_t));
+	} else {
+		_offset = IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data, sizeof(uint32_t));
+	}
+	_offset += m_container.exifOffsetCorrection() + offset;
+	LOGDBG1("loadData: offset %lu\n", _offset);
+	return m_container.fetchData(dataptr, _offset, data_size);
+}
 
 bool IfdEntry::loadData(size_t unit_size, off_t offset)
 {
@@ -101,18 +113,8 @@ bool IfdEntry::loadData(size_t unit_size, off_t offset)
 			m_dataptr = NULL;
 			m_loaded = true;
 		} else {
-			off_t _offset;
-			if (endian() == RawContainer::ENDIAN_LITTLE) {
-				_offset = IfdTypeTrait<uint32_t>::EL((uint8_t*)&m_data, sizeof(uint32_t));
-			} else {
-				_offset = IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data, sizeof(uint32_t));
-			}
-			_offset += m_container.exifOffsetCorrection() + offset;
-			LOGDBG1("loadData: offset %lu\n", _offset);
 			m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
-			m_loaded = (m_container.fetchData(m_dataptr,
-											  _offset,
-											  data_size) == data_size);
+			m_loaded = loadDataInto(m_dataptr, data_size, offset) == data_size;
 		}
 	}
 	return m_loaded;
