@@ -4,6 +4,10 @@ New features:
 
   - Coefficients for Panasonic DC-G100, Sony ZV-1, Canon EOS R5 and EOS R6.
 
+Bug fixes:
+
+  - Fix preview for CR3 files.
+
 Internal Changes:
 
   - Added SR2 test case in the testsuite.
@@ -25,7 +29,7 @@ New features:
 
   - ordiag: Added a developer mode with `-D`.
 
-  Bug fixes:
+Bug fixes:
 
   - Properly detect Canon Digital Rebel (aka 300D).
   - Better detect Minolta and Ricoh vendors.
