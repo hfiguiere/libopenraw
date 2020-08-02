@@ -1,0 +1,27 @@
+commit 452fe8cac70bcd8672c9a33b94c5a43af845bd20
+Author: Hubert Figuière <hub@figuiere.net>
+Date:   Fri Jun 26 22:00:59 2020 -0400
+
+    Fix make distcheck:
+    
+    - the mp4parse.h is generated in the builddir
+    - the Cargo.lock for mp4parse_capi is disted
+    - mp4parse.h is not disted
+
+diff --git a/lib/mp4/mp4parse_capi/build.rs b/lib/mp4/mp4parse_capi/build.rs
+index b25eb1a..c785fca 100644
+--- a/lib/mp4/mp4parse_capi/build.rs
++++ b/lib/mp4/mp4parse_capi/build.rs
+@@ -40,7 +40,11 @@ extern "C" {
+ 
+     // Generate mp4parse.h.
+     let crate_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
++    let header_path = std::env::var("CARGO_TARGET_DIR").unwrap();
++    let mut header_path = std::path::PathBuf::from(header_path);
++    header_path.push("..");
++    header_path.push("mp4parse.h");
+     cbindgen::generate_with_config(&crate_dir, config)
+         .expect("Could not generate header")
+-        .write_to_file("include/mp4parse.h");
++        .write_to_file(header_path);
+ }

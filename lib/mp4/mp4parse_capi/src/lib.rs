@@ -952,7 +952,11 @@ pub unsafe extern "C" fn mp4parse_get_track_raw_info(
     (*info).is_jpeg = raw.is_jpeg;
     // assume there is an offset and samples size is constant
     (*info).size = if let Some(ref stsz) = track.stsz {
-        stsz.sample_size as u64
+        if stsz.sample_size > 0 {
+            stsz.sample_size as u64
+        } else {
+            stsz.sample_sizes[0] as u64
+        }
     } else {
         0
     };
