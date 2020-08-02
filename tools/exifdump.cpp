@@ -116,8 +116,8 @@ public:
                             last_ifd_type = ifd_type;
                         }
                         const char* tagname = or_ifd_get_tag_name(ifd, id);
-                        m_out << boost::format("\t%1% = %2%\n") %
-                            (tagname ? std::string(tagname) : str(boost::format("0x%1$x") % id)) %
+                        m_out << boost::format("\t0x%1$x %2% = %3%\n") % id %
+                            (tagname ? std::string(tagname) : "") %
                             map_exif_type(type);
                         if (value) {
                             switch (type) {
