@@ -27,6 +27,7 @@
 #include <libopenraw/rawfile.h>
 
 #include "ifddir.hpp"
+#include "makernotedir.hpp"
 
 namespace OpenRaw {
 
@@ -151,15 +152,20 @@ public:
      */
     virtual or_colour_matrix_origin getColourMatrixOrigin() const;
 
-    virtual Internals::IfdDir::Ref cfaIfd() = 0;
-    virtual Internals::IfdDir::Ref mainIfd() = 0;
-    virtual Internals::IfdDir::Ref exifIfd() = 0;
-    virtual Internals::IfdDir::Ref makerNoteIfd() = 0;
+    Internals::IfdDir::Ref cfaIfd();
+    Internals::IfdDir::Ref mainIfd();
+    Internals::IfdDir::Ref exifIfd();
+    Internals::MakerNoteDir::Ref makerNoteIfd();
 
     const MetaValue *getMetaValue(int32_t meta_index);
 
     MetadataIterator* getMetadataIterator();
 protected:
+    virtual Internals::IfdDir::Ref _locateCfaIfd() = 0;
+    virtual Internals::IfdDir::Ref _locateMainIfd() = 0;
+    virtual Internals::IfdDir::Ref _locateExifIfd();
+    virtual Internals::MakerNoteDir::Ref _locateMakerNoteIfd();
+
     struct camera_ids_t {
         const char * model;
         const uint32_t type_id;

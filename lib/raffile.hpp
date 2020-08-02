@@ -61,14 +61,12 @@ protected:
 
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
 
-    virtual IfdDir::Ref cfaIfd() override
+    virtual IfdDir::Ref _locateCfaIfd() override
         {
             LOGERR("not implemented\n");
             return IfdDir::Ref();
         }
-    virtual IfdDir::Ref mainIfd() override;
-    virtual IfdDir::Ref exifIfd() override;
-    virtual IfdDir::Ref makerNoteIfd() override;
+    virtual IfdDir::Ref _locateMainIfd() override;
 
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) override;
 

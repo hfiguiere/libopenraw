@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiffepfile.h
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2020 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -21,9 +21,7 @@
  */
 
 
-#ifndef OR_INTERNALS_TIFF_EP_FILE_H_
-#define OR_INTERNALS_TIFF_EP_FILE_H_
-
+#pragma once
 
 #include "ifddir.hpp"
 #include "ifdfile.hpp"
@@ -46,9 +44,7 @@ public:
 protected:
 
     virtual IfdDir::Ref  _locateCfaIfd() override;
-    virtual IfdDir::Ref  _locateMainIfd() override;
 };
 
 }
 }
-#endif

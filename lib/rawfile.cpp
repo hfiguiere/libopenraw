@@ -162,6 +162,13 @@ public:
     std::map<int32_t, MetaValue*> m_metadata;
     const camera_ids_t* m_cam_ids;
     const Internals::BuiltinColourMatrix* m_matrices;
+    Internals::IfdDir::Ref m_cfaIfd; /**< the IFD for the CFA */
+    Internals::IfdDir::Ref m_mainIfd; /**< the IFD for the main image
+                            * does not necessarily reference
+                            * the CFA
+                            */
+    Internals::IfdDir::Ref m_exifIfd; /**< the Exif IFD */
+    Internals::MakerNoteDir::Ref m_makerNoteIfd; /**< the MakerNote IFD */
 };
 
 const char** RawFile::fileExtensions()
@@ -635,6 +642,65 @@ ExifLightsourceValue RawFile::_getCalibrationIlluminant(uint16_t index)
         return (index == 1) ? EV_LIGHTSOURCE_D65 : EV_LIGHTSOURCE_UNKNOWN;
     }
     return (ExifLightsourceValue)meta->getUInteger(0);
+}
+
+// this one seems to be pretty much the same for all the
+// IFD based raw files
+Internals::IfdDir::Ref RawFile::_locateExifIfd()
+{
+    const Internals::IfdDir::Ref & _mainIfd = mainIfd();
+    if (!_mainIfd) {
+        LOGERR("IfdFile::_locateExifIfd() main IFD not found\n");
+        return Internals::IfdDir::Ref();
+    }
+    return _mainIfd->getExifIFD();
+}
+
+Internals::MakerNoteDir::Ref RawFile::_locateMakerNoteIfd()
+{
+    const Internals::IfdDir::Ref & _exifIfd = exifIfd();
+    if (_exifIfd) {
+        // to not have a recursive declaration, getMakerNoteIfd() return an IfdDir.
+        return std::dynamic_pointer_cast<Internals::MakerNoteDir>(_exifIfd->getMakerNoteIfd(type()));
+    }
+    return Internals::MakerNoteDir::Ref();
+}
+
+Internals::IfdDir::Ref RawFile::cfaIfd()
+{
+    if (!d->m_cfaIfd) {
+        d->m_cfaIfd = _locateCfaIfd();
+    }
+    LOGASSERT(d->m_cfaIfd->type() == OR_IFD_RAW || d->m_mainIfd->type() == OR_IFD_MAIN);
+    return d->m_cfaIfd;
+}
+
+Internals::IfdDir::Ref RawFile::mainIfd()
+{
+    if (!d->m_mainIfd) {
+        d->m_mainIfd = _locateMainIfd();
+    }
+    LOGASSERT(d->m_mainIfd->type() == OR_IFD_MAIN);
+    return d->m_mainIfd;
+}
+
+Internals::IfdDir::Ref RawFile::exifIfd()
+{
+    if (!d->m_exifIfd) {
+        d->m_exifIfd = _locateExifIfd();
+    }
+    LOGASSERT(d->m_exifIfd->type() == OR_IFD_EXIF);
+    return d->m_exifIfd;
+}
+
+Internals::MakerNoteDir::Ref RawFile::makerNoteIfd()
+{
+    if (!d->m_makerNoteIfd) {
+        d->m_makerNoteIfd = _locateMakerNoteIfd();
+        LOGASSERT(d->m_makerNoteIfd);
+    }
+    LOGASSERT(!d->m_makerNoteIfd || d->m_makerNoteIfd->type() == OR_IFD_MNOTE);
+    return d->m_makerNoteIfd;
 }
 
 const MetaValue* RawFile::getMetaValue(int32_t meta_index)

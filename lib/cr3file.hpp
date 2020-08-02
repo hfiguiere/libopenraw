@@ -63,14 +63,14 @@ protected:
 
     virtual void _identifyId() override;
 
-    virtual IfdDir::Ref cfaIfd() override
+    virtual IfdDir::Ref _locateCfaIfd() override
         {
             LOGERR("not implemented\n");
             return IfdDir::Ref();
         }
-    virtual IfdDir::Ref mainIfd() override;
-    virtual IfdDir::Ref exifIfd() override;
-    virtual IfdDir::Ref makerNoteIfd() override;
+    virtual IfdDir::Ref _locateMainIfd() override;
+    virtual IfdDir::Ref _locateExifIfd() override;
+    virtual MakerNoteDir::Ref _locateMakerNoteIfd() override;
 
 private:
     IfdDir::Ref findIfd(uint32_t idx);

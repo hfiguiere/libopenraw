@@ -330,22 +330,6 @@ OrfFile::~OrfFile()
 {
 }
 
-IfdDir::Ref  OrfFile::_locateCfaIfd()
-{
-    // in ORF the CFA IFD is the main IFD
-    return mainIfd();
-}
-
-
-IfdDir::Ref  OrfFile::_locateMainIfd()
-{
-    auto ifd = m_container->setDirectory(0);
-    if (ifd) {
-        ifd->setType(OR_IFD_MAIN);
-    }
-    return ifd;
-}
-
 /** Add the thumbnail at offset and len */
 ::or_error OrfFile::addThumbnail(std::vector<uint32_t>& list, uint32_t offset, uint32_t len)
 {

@@ -64,25 +64,25 @@ protected:
 //virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail) override;
 
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
-    virtual IfdDir::Ref cfaIfd() override
+    virtual IfdDir::Ref _locateCfaIfd() override
         {
             LOGERR("not implemented\n");
             return IfdDir::Ref();
         }
-    virtual IfdDir::Ref mainIfd() override
+    virtual IfdDir::Ref _locateMainIfd() override
         {
             LOGERR("not implemented\n");
             return IfdDir::Ref();
         }
-    virtual IfdDir::Ref exifIfd() override
+    virtual IfdDir::Ref _locateExifIfd() override
         {
             LOGERR("not implemented\n");
             return IfdDir::Ref();
         }
-    virtual IfdDir::Ref makerNoteIfd() override
+    virtual MakerNoteDir::Ref _locateMakerNoteIfd() override
         {
             LOGERR("not implemented\n");
-            return IfdDir::Ref();
+            return MakerNoteDir::Ref();
         }
     virtual MetaValue *_getMetaValue(int32_t meta_index) override;
 

@@ -70,26 +70,19 @@ IfdFile::~IfdFile()
   delete m_container;
 }
 
-// this one seems to be pretty much the same for all the
-// IFD based raw files
-IfdDir::Ref  IfdFile::_locateExifIfd()
+IfdDir::Ref IfdFile::_locateCfaIfd()
 {
-	const IfdDir::Ref & _mainIfd = mainIfd();
-  if (!_mainIfd) {
-    LOGERR("IfdFile::_locateExifIfd() main IFD not found\n");
-    return IfdDir::Ref();
-  }
-  return _mainIfd->getExifIFD();
+  // CFA IFD is the main IFD byt default
+  return mainIfd();
 }
 
-MakerNoteDir::Ref  IfdFile::_locateMakerNoteIfd()
+IfdDir::Ref IfdFile::_locateMainIfd()
 {
-	const IfdDir::Ref & _exifIfd = exifIfd();
-	if(_exifIfd) {
-		// to not have a recursive declaration, getMakerNoteIfd() return an IfdDir.
-		return std::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIfd(type()));
-	}
-	return MakerNoteDir::Ref();
+  auto ifd = m_container->setDirectory(0);
+  if (ifd) {
+    ifd->setType(OR_IFD_MAIN);
+  }
+  return ifd;
 }
 
 void IfdFile::_identifyId()
@@ -161,10 +154,7 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 
   auto result = dir->getValue<uint32_t>(IFD::EXIF_TAG_NEW_SUBFILE_TYPE);
   if (result.empty()) {
-    if(!m_cfaIfd) {
-      m_cfaIfd = _locateCfaIfd();
-    }
-    if(m_cfaIfd == dir) {
+    if (cfaIfd() == dir) {
       return OR_ERROR_NOT_FOUND;
     }
     else {
@@ -330,48 +320,6 @@ MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
 uint32_t IfdFile::_translateCompressionType(IFD::TiffCompress tiff_compression)
 {
 	return (uint32_t)tiff_compression;
-}
-
-
-
-IfdDir::Ref IfdFile::cfaIfd()
-{
-	if(!m_cfaIfd) {
-		m_cfaIfd = _locateCfaIfd();
-	}
-	LOGASSERT(m_cfaIfd->type() == OR_IFD_RAW || m_mainIfd->type() == OR_IFD_MAIN);
-	return m_cfaIfd;
-}
-
-
-IfdDir::Ref IfdFile::mainIfd()
-{
-	if(!m_mainIfd) {
-		m_mainIfd = _locateMainIfd();
-	}
-	LOGASSERT(m_mainIfd->type() == OR_IFD_MAIN);
-	return m_mainIfd;
-}
-
-
-IfdDir::Ref IfdFile::exifIfd()
-{
-	if(!m_exifIfd) {
-		m_exifIfd = _locateExifIfd();
-	}
-	LOGASSERT(m_exifIfd->type() == OR_IFD_EXIF);
-	return m_exifIfd;
-}
-
-
-IfdDir::Ref IfdFile::makerNoteIfd()
-{
-	if(!m_makerNoteIfd) {
-		m_makerNoteIfd = _locateMakerNoteIfd();
-		LOGASSERT(m_makerNoteIfd);
-	}
-	LOGASSERT(!m_makerNoteIfd || m_makerNoteIfd->type() == OR_IFD_MNOTE);
-	return m_makerNoteIfd;
 }
 
 namespace {
@@ -626,10 +574,7 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
   const MosaicInfo *mosaic_info = _getMosaicInfo(dir);
   if (!mosaic_info) {
     // some file have it in the exif IFD instead.
-    if(!m_exifIfd) {
-      m_exifIfd = _locateExifIfd();
-    }
-    mosaic_info = _getMosaicInfo(m_exifIfd);
+    mosaic_info = _getMosaicInfo(exifIfd());
   }
 
 

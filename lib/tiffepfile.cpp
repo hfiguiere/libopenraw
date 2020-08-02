@@ -73,15 +73,6 @@ IfdDir::Ref  TiffEpFile::_locateCfaIfd()
     return IfdDir::Ref();
 }
 
-IfdDir::Ref  TiffEpFile::_locateMainIfd()
-{
-    auto ifd = m_container->setDirectory(0);
-    if (ifd) {
-        ifd->setType(OR_IFD_MAIN);
-    }
-    return ifd;
-}
-
 }
 }
 /*

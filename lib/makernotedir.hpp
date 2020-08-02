@@ -43,6 +43,7 @@ public:
     static Ref createMakerNote(off_t offset,
                                const IfdFileContainer& container, or_rawfile_type file_type);
 
+    MakerNoteDir(IfdDir& ifd, const std::string& id, const TagTable& tag_table);
     MakerNoteDir(off_t _offset, const IfdFileContainer& _container,
                  off_t mnote_offset, const std::string & id,
                  const TagTable& tag_table);

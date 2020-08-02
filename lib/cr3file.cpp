@@ -246,7 +246,7 @@ IfdDir::Ref Cr3File::findIfd(uint32_t idx)
     return ifd->setDirectory(0);
 }
 
-IfdDir::Ref Cr3File::mainIfd()
+IfdDir::Ref Cr3File::_locateMainIfd()
 {
     auto ifd = findIfd(0);
     if (ifd) {
@@ -255,8 +255,7 @@ IfdDir::Ref Cr3File::mainIfd()
     return ifd;
 }
 
-
-IfdDir::Ref Cr3File::exifIfd()
+IfdDir::Ref Cr3File::_locateExifIfd()
 {
     auto ifd = findIfd(1);
     if (ifd) {
@@ -265,17 +264,15 @@ IfdDir::Ref Cr3File::exifIfd()
     return ifd;
 }
 
-
-IfdDir::Ref Cr3File::makerNoteIfd()
+MakerNoteDir::Ref Cr3File::_locateMakerNoteIfd()
 {
     auto ifd = findIfd(2);
     if (ifd) {
-        // XXX this is dangerous as in many places we expect to have a
-        // MakerNoteDir, and this won't be.
-        ifd->setType(OR_IFD_MNOTE);
-        ifd->setTagTable(mnote_canon_tag_names);
+        auto mnote = std::make_shared<MakerNoteDir>(*ifd, "Canon", mnote_canon_tag_names);
+        mnote->load();
+        return mnote;
     }
-    return ifd;
+    return std::dynamic_pointer_cast<MakerNoteDir>(ifd);
 }
 
 MetaValue* Cr3File::_getMetaValue(int32_t meta_index)

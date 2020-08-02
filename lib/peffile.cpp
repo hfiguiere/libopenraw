@@ -163,21 +163,6 @@ PEFFile::~PEFFile()
 {
 }
 
-IfdDir::Ref  PEFFile::_locateCfaIfd()
-{
-    // in PEF the CFA IFD is the main IFD
-    return mainIfd();
-}
-
-IfdDir::Ref  PEFFile::_locateMainIfd()
-{
-    auto ifd = m_container->setDirectory(0);
-    if (ifd) {
-        ifd->setType(OR_IFD_MAIN);
-    }
-    return ifd;
-}
-
 ::or_error PEFFile::_getRawData(RawData & data, uint32_t options)
 {
     ::or_error err;

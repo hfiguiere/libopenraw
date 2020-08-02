@@ -137,6 +137,12 @@ MakerNoteDir::MakerNoteDir(off_t _offset,
 {
 }
 
+MakerNoteDir::MakerNoteDir(IfdDir& ifd, const std::string& id, const TagTable& tag_table)
+    : MakerNoteDir(ifd.offset(), ifd.container(), ifd.offset(), id, tag_table)
+{
+    setBaseOffset(0);
+}
+
 MakerNoteDir::MakerNoteDir(const char* magic, size_t hlen,
                            off_t _offset,
                            const IfdFileContainer& _container,

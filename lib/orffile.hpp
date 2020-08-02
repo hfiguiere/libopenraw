@@ -54,9 +54,6 @@ public:
     enum { ORF_COMPRESSION = 0x10000 };
 
 protected:
-    virtual IfdDir::Ref _locateCfaIfd() override;
-    virtual IfdDir::Ref _locateMainIfd() override;
-
     ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
     virtual uint32_t _translateCompressionType(

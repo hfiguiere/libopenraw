@@ -90,10 +90,8 @@ protected:
 
     virtual RawContainer *getContainer() const override;
 
-    virtual IfdDir::Ref _locateCfaIfd() = 0;
-    virtual IfdDir::Ref _locateMainIfd() = 0;
-    virtual IfdDir::Ref _locateExifIfd();
-    virtual MakerNoteDir::Ref _locateMakerNoteIfd();
+    virtual IfdDir::Ref _locateCfaIfd() override;
+    virtual IfdDir::Ref _locateMainIfd() override;
 
     virtual void _identifyId() override;
 
@@ -120,24 +118,11 @@ protected:
                                    RawData &data, uint32_t x, uint32_t y,
                                    uint32_t offset, uint32_t byte_length);
 
-    /** access the corresponding IFD. Will locate them if needed */
-    virtual IfdDir::Ref cfaIfd() override;
-    virtual IfdDir::Ref mainIfd() override;
-    virtual IfdDir::Ref exifIfd() override;
-    virtual IfdDir::Ref makerNoteIfd() override;
-
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
     // call to decrompress if needed from _getRawData()
     virtual ::or_error _decompressIfNeeded(RawData &, uint32_t);
 
 private:
-    IfdDir::Ref m_cfaIfd; /**< the IFD for the CFA */
-    IfdDir::Ref m_mainIfd; /**< the IFD for the main image
-                            * does not necessarily reference
-                            * the CFA
-                            */
-    IfdDir::Ref m_exifIfd; /**< the Exif IFD */
-    MakerNoteDir::Ref m_makerNoteIfd; /**< the MakerNote IFD */
 
     IfdFile(const IfdFile &) = delete;
     IfdFile &operator=(const IfdFile &) = delete;
