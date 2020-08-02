@@ -1,7 +1,7 @@
 /*
  * libopenraw - trace.cpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,13 +23,49 @@
 
 #include <iostream>
 
+#include <boost/format.hpp>
+
 #include <libopenraw/debug.h>
 
 #include "trace.hpp"
+#include "ifddir.hpp"
 
 namespace Debug {
 
 int Trace::debugLevel = NOTICE;
+
+std::string dump_ifd(const OpenRaw::Internals::IfdDir& dir)
+{
+  std::string s;
+  s += str(boost::format("type %1%\n") % dir.type());
+  s += str(boost::format("offset %1%\n") % dir.offset());
+  for (auto entry : dir.entries()) {
+    s += str(boost::format("%x : %x\n") % entry.first % entry.second->type());
+  }
+  return s;
+}
+
+std::string ascii_to_string(const uint8_t* bytes, size_t len)
+{
+  std::string s;
+  for (size_t i = 0; i < len; i++) {
+    if (bytes[i] >= 32 && bytes[i] < 128) {
+      s += str(boost::format("%1%") % bytes[i]);
+    } else {
+      s += '.';
+    }
+  }
+  return s;
+}
+
+std::string bytes_to_string(const uint8_t* bytes, size_t len)
+{
+  std::string s;
+  for (size_t i = 0; i < len; i++) {
+    s += str(boost::format("%1x ") % (int)bytes[i]);
+  }
+  return s;
+}
 
 void log(debug_level level, const char *fmt, ...)
 {

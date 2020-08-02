@@ -65,7 +65,7 @@ MakerNoteDir::createMakerNote(off_t offset,
     auto file = container.file();
     file->seek(offset, SEEK_SET);
     file->read(&data, 18);
-    // LOGDBG1("data %s\n", Debug::bytes_to_string((uint8_t*)&data, 18).c_str());
+    // LOGDBG1("data %s\n", Debug::ascii_to_string((uint8_t*)&data, 18).c_str());
 
     if (memcmp("Nikon\0", data, 6) == 0) {
         if (data[6] == 1) {
