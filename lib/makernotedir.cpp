@@ -96,7 +96,7 @@ MakerNoteDir::createMakerNote(off_t offset,
     // XXX deal with endian.
     if (memcmp("EPSON\0", data, 6) == 0) {
         return std::make_shared<MakerNoteDir>(
-            offset + 8, container, 0, "Olympus", mnote_olympus_tag_names);
+            offset + 8, container, 0, "Epson", mnote_olympus_tag_names);
     }
 
     // Pentax Asahi Optical Corporation (pre Ricoh merger)

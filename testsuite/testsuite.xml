@@ -7,6 +7,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65537</rawTypeId>
       <makerNoteCount>24</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 20D</exifModel>
       <thumbNum>2</thumbNum>
@@ -33,6 +34,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65542</rawTypeId>
       <makerNoteCount>34</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 450D</exifModel>
       <thumbNum>2</thumbNum>
@@ -59,6 +61,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65564</rawTypeId>
       <makerNoteCount>41</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 7D</exifModel>
       <thumbNum>2</thumbNum>
@@ -85,6 +88,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65564</rawTypeId>
       <makerNoteCount>41</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 7D</exifModel>
       <thumbNum>2</thumbNum>
@@ -111,6 +115,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65568</rawTypeId>
       <makerNoteCount>39</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 5D Mark II</exifModel>
       <thumbNum>2</thumbNum>
@@ -137,6 +142,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65565</rawTypeId>
       <makerNoteCount>28</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon PowerShot G11</exifModel>
       <thumbNum>2</thumbNum>
@@ -163,6 +169,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65565</rawTypeId>
       <makerNoteCount>28</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon PowerShot G11</exifModel>
       <thumbNum>2</thumbNum>
@@ -470,6 +477,8 @@
     <results>
       <rawType>ERF</rawType>
       <rawTypeId>327681</rawTypeId>
+      <makerNoteCount>14</makerNoteCount>
+      <makerNoteId>Epson</makerNoteId>
       <exifMake>SEIKO EPSON CORP.</exifMake>
       <exifModel>R-D1</exifModel>
       <thumbNum>2</thumbNum>
@@ -496,6 +505,8 @@
       <rawTypeId>262145</rawTypeId>
       <exifMake>PENTAX Corporation </exifMake>
       <exifModel>PENTAX K10D        </exifModel>
+      <makerNoteCount>91</makerNoteCount>
+      <makerNoteId>Pentax</makerNoteId>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3872</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -517,6 +528,8 @@
       <rawTypeId>262147</rawTypeId>
       <exifMake>PENTAX Corporation </exifMake>
       <exifModel>PENTAX *ist D      </exifModel>
+      <makerNoteCount>78</makerNoteCount>
+      <makerNoteId>Pentax</makerNoteId>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3008</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -940,6 +953,8 @@
     <results>
       <rawType>RAF</rawType>
       <rawTypeId>917518</rawTypeId>
+      <makerNoteCount>42</makerNoteCount>
+      <makerNoteId>Fujifilm</makerNoteId>
       <exifMake>FUJIFILM</exifMake>
       <exifModel>FinePix X100</exifModel>
       <thumbNum>2</thumbNum>
@@ -964,6 +979,8 @@
     <results>
       <rawType>RAF</rawType>
       <rawTypeId>917526</rawTypeId>
+      <makerNoteCount>46</makerNoteCount>
+      <makerNoteId>Fujifilm</makerNoteId>
       <exifMake>FUJIFILM</exifMake>
       <exifModel>X-Pro1</exifModel>
       <thumbNum>2</thumbNum>
@@ -988,6 +1005,8 @@
     <results>
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
+      <exifMake>Panasonic</exifMake>
+      <exifModel>DMC-GH4</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 1920</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -1010,6 +1029,8 @@
     <results>
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
+      <exifMake>Panasonic</exifMake>
+      <exifModel>DMC-GH4</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 1920</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
