@@ -81,6 +81,9 @@ private:
     RafContainer *m_container; /**< the real container */
     // uint32_t m_x;
     // uint32_t m_y;
+    IfdDir::Ref m_mainIfd;
+    IfdDir::Ref m_exifIfd;
+    IfdDir::Ref m_makerNoteIfd;
 
     static const RawFile::camera_ids_t s_def[];
 };

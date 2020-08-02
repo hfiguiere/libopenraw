@@ -371,31 +371,40 @@ RafFile::~RafFile()
 
 IfdDir::Ref RafFile::mainIfd()
 {
-    JfifContainer *jpegPreview = m_container->getJpegPreview();
-    if (!jpegPreview) {
-        return IfdDir::Ref();
+    if (!m_mainIfd) {
+        JfifContainer *jpegPreview = m_container->getJpegPreview();
+        if (!jpegPreview) {
+            return IfdDir::Ref();
+        }
+        m_mainIfd = jpegPreview->getIfdDirAt(0);
     }
-    return jpegPreview->getIfdDirAt(0);
+    return m_mainIfd;
 }
 
 IfdDir::Ref RafFile::exifIfd()
 {
-	IfdDir::Ref _mainIfd = mainIfd();
-    if (!_mainIfd) {
-        LOGERR("RafFile::exifIfd() main IFD not found\n");
-        return IfdDir::Ref();
+    if (!m_exifIfd) {
+        IfdDir::Ref _mainIfd = mainIfd();
+        if (!_mainIfd) {
+            LOGERR("RafFile::exifIfd() main IFD not found\n");
+            return IfdDir::Ref();
+        }
+        m_exifIfd = _mainIfd->getExifIFD();
     }
-    return _mainIfd->getExifIFD();
+    return m_exifIfd;
 }
 
 IfdDir::Ref RafFile::makerNoteIfd()
 {
-    IfdDir::Ref _exifIfd = exifIfd();
-    if (_exifIfd) {
-		// to not have a recursive declaration, getMakerNoteIfd() return an IfdDir.
-		return std::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIfd(type()));
-	}
-	return MakerNoteDir::Ref();
+    if (!m_makerNoteIfd) {
+        IfdDir::Ref _exifIfd = exifIfd();
+        if (!_exifIfd) {
+            return MakerNoteDir::Ref();
+        }
+        // to not have a recursive declaration, getMakerNoteIfd() return an IfdDir.
+        m_makerNoteIfd = std::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIfd(type()));
+    }
+    return m_makerNoteIfd;
 }
 
 ::or_error RafFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
