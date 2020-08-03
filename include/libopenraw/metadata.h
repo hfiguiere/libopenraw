@@ -50,6 +50,7 @@ enum {
 
 const char* or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx);
 const char* or_metavalue_get_as_string(ORConstMetaValueRef value);
+uint32_t or_metavalue_get_count(ORMetaValueRef value);
 
 void or_metavalue_release(ORMetaValueRef value);
 

@@ -116,9 +116,10 @@ public:
                             last_ifd_type = ifd_type;
                         }
                         const char* tagname = or_ifd_get_tag_name(ifd, id);
-                        m_out << boost::format("\t0x%1$x %2% = %3%\n") % id %
+                        uint32_t count = or_metavalue_get_count(value);
+                        m_out << boost::format("\t0x%1$x %2% = %3% [ %4% ]\n") % id %
                             (tagname ? std::string(tagname) : "") %
-                            map_exif_type(type);
+                            map_exif_type(type) % count;
                         if (value) {
                             switch (type) {
                             case EXIF_FORMAT_ASCII:
