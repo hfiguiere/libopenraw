@@ -4,13 +4,27 @@ New features:
 
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
+  - Epson R-D1, R-D1s: extract the 640 pixel preview.
+  - Panasonic: extract the Exif thumbnail
+  - Olympus, Nikon, Pentax: extract the MakerNote preview.
 
 Changes:
 
-  - API: Added or_ifd_release()
+  - API: Added or_ifd_release(), or_ifd_get_name() and or_ifd_get_type().
   - API: The ORIfdDirRef returned by or_rawfile_get_ifd() must
     be released.
   - API: or_rawfile_get_ifd() support more IFD types.
+  - API: or_ifd_index is replaced by or_ifd_dir_type. OR_IFD_MAKERNOTE is replaced
+    by OR_IFD_MNOTE, OR_IFD_CFA is replaced by OR_IFD_RAW.
+  - API: or_iterator*() to iterate through the metadata tags.
+  - API: Added or_metavalue_get_count().
+  - Fix getting MakerNotes for Pentax, Panasonic.
+  - Get the Panasonic Exif thumbnail.
+  - Added tool `exifdump`.
+
+Internal Changes:
+
+  - Added LOGASSERT()
 
 libopenraw 0.2.2 - 2020/07/24
 
@@ -29,7 +43,7 @@ New features:
 
   - ordiag: Added a developer mode with `-D`.
 
-  Bug fixes:
+Bug fixes:
 
   - Properly detect Canon Digital Rebel (aka 300D).
   - Better detect Minolta and Ricoh vendors.
