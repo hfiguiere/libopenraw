@@ -508,11 +508,11 @@
       <exifModel>PENTAX K10D        </exifModel>
       <makerNoteCount>91</makerNoteCount>
       <makerNoteId>Pentax</makerNoteId>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 3872</thumbSizes>
-      <thumbFormats>JPEG JPEG</thumbFormats>
-      <thumbDataSizes>6696 1254388</thumbDataSizes>
-      <thumbMd5>47529 63340</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 3872 640</thumbSizes>
+      <thumbFormats>JPEG JPEG JPEG</thumbFormats>
+      <thumbDataSizes>6696 1254388 25279</thumbDataSizes>
+      <thumbMd5>47529 63340 11625</thumbMd5>
       <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>8025398</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
@@ -531,11 +531,11 @@
       <exifModel>PENTAX *ist D      </exifModel>
       <makerNoteCount>78</makerNoteCount>
       <makerNoteId>Pentax</makerNoteId>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 3008</thumbSizes>
-      <thumbFormats>JPEG JPEG</thumbFormats>
-      <thumbDataSizes>5308 1343392</thumbDataSizes>
-      <thumbMd5>2932 57924</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 3008 640</thumbSizes>
+      <thumbFormats>JPEG JPEG JPEG</thumbFormats>
+      <thumbDataSizes>5308 1343392 39507</thumbDataSizes>
+      <thumbMd5>2932 57924 4760</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>

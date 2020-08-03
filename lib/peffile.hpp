@@ -51,6 +51,7 @@ public:
     PEFFile & operator=(const PEFFile &) = delete;
 
 protected:
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
 private:
     static const IfdFile::camera_ids_t s_def[];

@@ -163,6 +163,34 @@ PEFFile::~PEFFile()
 {
 }
 
+::or_error PEFFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
+{
+    auto err = this->IfdFile::_enumThumbnailSizes(list);
+    auto makerNote = makerNoteIfd();
+    if (makerNote) {
+        auto e = makerNote->getEntry(MNOTE_PENTAX_PREVIEW_IMAGE_SIZE);
+        if (e) {
+            auto w = makerNote->getEntryValue<uint16_t>(*e, 0);
+            auto h = makerNote->getEntryValue<uint16_t>(*e, 1);
+            auto dim = std::max(w, h);
+            list.push_back(dim);
+
+            auto offset = makerNote->getIntegerValue(MNOTE_PENTAX_PREVIEW_IMAGE_START).value_or(0);
+            if (offset > 0) {
+                offset += makerNote->getMnoteOffset();
+            }
+            auto length = makerNote->getIntegerValue(MNOTE_PENTAX_PREVIEW_IMAGE_LENGTH).value_or(0);
+            if (offset != 0 && length != 0) {
+                _addThumbnail(dim, ThumbDesc(w, h, OR_DATA_TYPE_JPEG, offset, length));
+                err = OR_ERROR_NONE;
+            }
+        }
+
+    }
+
+    return err;
+}
+
 ::or_error PEFFile::_getRawData(RawData & data, uint32_t options)
 {
     ::or_error err;
