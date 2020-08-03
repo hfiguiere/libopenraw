@@ -205,7 +205,12 @@ typedef	enum {
 
 	/* Nikon MakerNote tags */
 	MNOTE_NIKON_QUALITY = 0x04,
+	MNOTE_NIKON_PREVIEW_IFD = 0x11,
 	MNOTE_NIKON_NEFDECODETABLE2 = 0x96,
+
+	/* Nikon MakerNote Preview IFD tags */
+	MNOTE_NIKON_PREVIEWIFD_START = 0x201,
+	MNOTE_NIKON_PREVIEWIFD_LENGTH = 0x202,
 
 	_EXIF_TAG_LAST
 } ExifTag;

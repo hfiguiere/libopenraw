@@ -276,11 +276,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D100 </exifModel>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>8RGB</thumbFormats>
-      <thumbDataSizes>57600</thumbDataSizes>
-      <thumbMd5>49492</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 570</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 125988</thumbDataSizes>
+      <thumbMd5>49492 8889</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3034 2024</rawDataDimensions>
@@ -301,11 +301,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D70</exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 3008</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 578350</thumbDataSizes>
-      <thumbMd5>37211 45287</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 3008 564</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 578350 27641</thumbDataSizes>
+      <thumbMd5>37211 45287 6693</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3039 2014</rawDataDimensions>
@@ -327,11 +327,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D70</exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 3008</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 820445</thumbDataSizes>
-      <thumbMd5>64842 45385</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 3008 564</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 820445 26582</thumbDataSizes>
+      <thumbMd5>64842 45385 31187</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3039 2014</rawDataDimensions>
@@ -353,11 +353,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D90</exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 4288</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 905419</thumbDataSizes>
-      <thumbMd5>13475 4145</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 4288 570</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 905419 120118</thumbDataSizes>
+      <thumbMd5>13475 4145 724</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>24957336</rawDataSize>
       <rawDataDimensions>4351 2868</rawDataDimensions>
@@ -379,11 +379,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D90</exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 4288</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 1647803</thumbDataSizes>
-      <thumbMd5>59338 49015</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 4288 570</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 1647803 112282</thumbDataSizes>
+      <thumbMd5>59338 49015 26926</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>24957336</rawDataSize>
       <rawDataDimensions>4351 2868</rawDataDimensions>
@@ -430,11 +430,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D2H</exifModel>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>8RGB</thumbFormats>
-      <thumbDataSizes>57600</thumbDataSizes>
-      <thumbMd5>20180</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 570</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 105452</thumbDataSizes>
+      <thumbMd5>20180 68</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>8223520</rawDataSize>
       <rawDataDimensions>2495 1648</rawDataDimensions>
@@ -456,11 +456,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D300</exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 4288</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 1092124</thumbDataSizes>
-      <thumbMd5>47314 48693</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 4288 570</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 1092124 107382</thumbDataSizes>
+      <thumbMd5>47314 48693 47371</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>24957336</rawDataSize>
       <rawDataDimensions>4351 2868</rawDataDimensions>

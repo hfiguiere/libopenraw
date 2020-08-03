@@ -172,15 +172,15 @@ IfdDir::Ref MakerNoteDir::getIfdInEntry(uint16_t id)
 
     uint32_t val_offset = 0;
     // "INVALID" type entry  (13) for some Olympus MakerNote
-    if (entry->type() == 13) {
+    if (entry->type() == 13 || entry->type() == IFD::EXIF_FORMAT_LONG) {
         val_offset = getEntryValue<uint32_t>(*entry, 0, true);
         LOGDBG1("Custom IFD offset (uncorrected) = %u\n", val_offset);
         val_offset += container().exifOffsetCorrection() + getMnoteOffset();
-        LOGDBG1("Custom IFD offset = %u\n", val_offset);
     } else {
         // Type is likely "UNDEFINED"
         val_offset = entry->offset();
     }
+    LOGDBG1("Custom IFD offset = %u\n", val_offset);
 
     auto ref = std::make_shared<IfdDir>(val_offset, container(), OR_IFD_OTHER);
     ref->load();

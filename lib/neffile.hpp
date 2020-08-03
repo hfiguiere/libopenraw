@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - neffile.h
+ * libopenraw - neffile.hpp
  *
- * Copyright (C) 2006-2017 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -20,8 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_NEFFILE_H_
-#define OR_INTERNALS_NEFFILE_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -76,6 +75,7 @@ public:
 
 protected:
 
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
     virtual uint32_t _translateCompressionType(IFD::TiffCompress tiffCompression) override;
     virtual ::or_error _unpackData(uint16_t bpc, uint32_t compression,
                                    RawData &data, uint32_t x, uint32_t y,
@@ -84,6 +84,7 @@ protected:
 private:
     static const IfdFile::camera_ids_t s_def[];
 
+    ::or_error addThumbnail(std::vector<uint32_t>& list, uint32_t offset, uint32_t len);
     bool _getCompressionCurve(RawData&, NEFCompressionInfo&);
     ::or_error _decompressNikonQuantized(RawData&);
     virtual ::or_error _decompressIfNeeded(RawData&, uint32_t) override;
@@ -91,5 +92,3 @@ private:
 
 }
 }
-
-#endif
