@@ -154,6 +154,10 @@ void MRWFile::_identifyId()
     MRWContainer *mc = (MRWContainer *)m_container;
 
     auto mnote = makerNoteIfd();
+    if (!mnote) {
+        LOGWARN("No MakerNote found\n");
+        return OR_ERROR_NOT_FOUND;
+    }
 
     uint32_t tnail_offset = 0;
     uint32_t tnail_len = 0;

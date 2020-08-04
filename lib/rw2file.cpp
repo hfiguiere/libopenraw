@@ -509,7 +509,10 @@ IfdDir::Ref Rw2File::_locateExifIfd()
     uint32_t offset = 0;
     uint32_t size = 0;
     auto& jfif = getJpegContainer(_mainIfd, offset, size);
-
+    if (!jfif) {
+        LOGERR("IfdFile::_locateExifIfd() JPEG container not found\n");
+        return IfdDir::Ref();
+    }
     return jfif->exifIfd();
 }
 

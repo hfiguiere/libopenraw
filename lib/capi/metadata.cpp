@@ -52,6 +52,7 @@ or_metavalue_get_as_string(ORConstMetaValueRef value)
 API_EXPORT uint32_t
 or_metavalue_get_count(ORMetaValueRef value)
 {
+  CHECK_PTR(value, 0);
   auto obj = reinterpret_cast<OpenRaw::MetaValue*>(value);
   return obj->getCount();
 }

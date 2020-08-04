@@ -671,7 +671,8 @@ Internals::IfdDir::Ref RawFile::cfaIfd()
     if (!d->m_cfaIfd) {
         d->m_cfaIfd = _locateCfaIfd();
     }
-    LOGASSERT(d->m_cfaIfd->type() == OR_IFD_RAW || d->m_mainIfd->type() == OR_IFD_MAIN);
+    LOGASSERT(d->m_cfaIfd && d->m_cfaIfd->type() == OR_IFD_RAW ||
+              d->m_mainIfd->type() == OR_IFD_MAIN);
     return d->m_cfaIfd;
 }
 
@@ -680,7 +681,7 @@ Internals::IfdDir::Ref RawFile::mainIfd()
     if (!d->m_mainIfd) {
         d->m_mainIfd = _locateMainIfd();
     }
-    LOGASSERT(d->m_mainIfd->type() == OR_IFD_MAIN);
+    LOGASSERT(d->m_mainIfd && d->m_mainIfd->type() == OR_IFD_MAIN);
     return d->m_mainIfd;
 }
 
@@ -689,7 +690,7 @@ Internals::IfdDir::Ref RawFile::exifIfd()
     if (!d->m_exifIfd) {
         d->m_exifIfd = _locateExifIfd();
     }
-    LOGASSERT(d->m_exifIfd->type() == OR_IFD_EXIF);
+    LOGASSERT(d->m_exifIfd && d->m_exifIfd->type() == OR_IFD_EXIF);
     return d->m_exifIfd;
 }
 
