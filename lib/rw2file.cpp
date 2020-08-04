@@ -510,7 +510,12 @@ IfdDir::Ref Rw2File::_locateExifIfd()
     uint32_t size = 0;
     auto& jfif = getJpegContainer(_mainIfd, offset, size);
     if (!jfif) {
-        LOGERR("IfdFile::_locateExifIfd() JPEG container not found\n");
+        LOGDBG1("IfdFile::_locateExifIfd() JPEG container not found\n");
+        // the fall back is the regular IFD. Older RAW file use that.
+        auto exifIfd = IfdFile::_locateExifIfd();
+        if (exifIfd) {
+            return exifIfd;
+        }
         return IfdDir::Ref();
     }
     return jfif->exifIfd();

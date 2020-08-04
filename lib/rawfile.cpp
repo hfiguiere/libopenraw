@@ -672,7 +672,7 @@ Internals::IfdDir::Ref RawFile::cfaIfd()
         d->m_cfaIfd = _locateCfaIfd();
     }
     LOGASSERT(d->m_cfaIfd && d->m_cfaIfd->type() == OR_IFD_RAW ||
-              d->m_mainIfd->type() == OR_IFD_MAIN);
+              d->m_mainIfd && d->m_mainIfd->type() == OR_IFD_MAIN);
     return d->m_cfaIfd;
 }
 

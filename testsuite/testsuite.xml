@@ -1000,12 +1000,61 @@
     </results>
   </test>
   <test>
+    <name>RAW-test Panasonic L1</name>
+    <file>/home/hub/samples/raw/Panasonic-L1/Panasonic - DMC-L1 - 4:3.RAW</file>
+    <source>https://raw.pixls.us/getfile.php/706/nice/Panasonic%20-%20DMC-L1%20-%204:3.RAW</source>
+    <results>
+      <rawType>RW2</rawType>
+      <rawTypeId>720909</rawTypeId>
+      <makerNoteCount>-1</makerNoteCount>
+      <exifMake>Panasonic</exifMake>
+      <exifModel>DMC-L1</exifModel>
+      <thumbNum>0</thumbNum>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>15039918</rawDataSize>
+      <rawDataDimensions>3177 2367</rawDataDimensions>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>0</rawMaxValue>
+      <rawMd5>28497</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>RAW-test Panasonic L10</name>
+    <file>/home/hub/samples/raw/Panasonic-L10/Panasonic - DMC-L10 - 4:3.RAW</file>
+    <source>https://raw.pixls.us/getfile.php/628/nice/Panasonic%20-%20DMC-L10%20-%204:3.RAW</source>
+    <results>
+      <rawType>RW2</rawType>
+      <rawTypeId>720912</rawTypeId>
+      <makerNoteCount>69</makerNoteCount>
+      <makerNoteId>Panasonic</makerNoteId>
+      <exifMake>Panasonic</exifMake>
+      <exifModel>DMC-L10</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1920</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>8210 720384</thumbDataSizes>
+      <thumbMd5>6490 9520</thumbMd5>
+      <rawDataType>COMP_RAW</rawDataType>
+      <rawDataSize>20412420</rawDataSize>
+      <rawDataDimensions>3710 2751</rawDataDimensions>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>0</rawMaxValue>
+      <rawMd5>55840</rawMd5>
+      <metaOrientation>8</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>RW2-test GH4</name>
     <file>/home/hub/samples/rw2/Panasonic_GH4/P9490010.RW2</file>
     <source disabled="1">https://www.dpreview.com/reviews/image-comparison/download-image?s3Key=ec839aaa3c8544f1a8b8190d6008881c.rw2</source>
     <results>
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
+      <makerNoteCount>143</makerNoteCount>
+      <makerNoteId>Panasonic</makerNoteId>
       <exifMake>Panasonic</exifMake>
       <exifModel>DMC-GH4</exifModel>
       <thumbNum>2</thumbNum>
@@ -1030,6 +1079,8 @@
     <results>
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
+      <makerNoteCount>146</makerNoteCount>
+      <makerNoteId>Panasonic</makerNoteId>
       <exifMake>Panasonic</exifMake>
       <exifModel>DMC-GH4</exifModel>
       <thumbNum>2</thumbNum>
