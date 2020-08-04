@@ -347,6 +347,13 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       { 8280, -2987, -703, -3531, 11645, 2133, -550, 1542, 5312 } },
 
+    /* The Hasselblad Lunar is like a Nex7 */
+    { OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_HASSELBLAD,
+                          OR_TYPEID_HASSELBLAD_LUNAR),
+      128,
+      0,
+      { 5491, -1192, -363, -4951, 12342, 2948, -911, 1722, 7192 } },
+
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
 
@@ -433,6 +440,9 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { "ILCE-9", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE9) },
     { "ILCE-9M2", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE9M2) },
     { "ZV-1", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZV1) },
+
+    { "Lunar", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_HASSELBLAD,
+                                   OR_TYPEID_HASSELBLAD_LUNAR) },
     { 0, 0 }
 };
 
