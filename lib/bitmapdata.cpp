@@ -1,7 +1,7 @@
 /*
  * libopenraw - bitmapdata.cpp
  *
- * Copyright (C) 2007-2018 Hubert Figuière
+ * Copyright (C) 2007-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -127,19 +127,9 @@ void *BitmapData::data() const
     return d->data;
 }
 
-uint32_t BitmapData::x() const
-{
-    return d->width;
-}
-
 uint32_t BitmapData::width() const
 {
     return d->width;
-}
-
-uint32_t BitmapData::y() const
-{
-    return d->height;
 }
 
 uint32_t BitmapData::height() const
