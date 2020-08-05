@@ -2,6 +2,10 @@ libopenraw 0.2.3 -
 
 New features:
 
+  Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+  - Added Hasselblad Lunar* (rebadged Sony NEX-7).
+
   - Coefficients for Panasonic DC-G100, Sony ZV-1, Canon EOS R5 and EOS R6.
 
 Bug fixes:
