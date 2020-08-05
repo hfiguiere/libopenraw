@@ -31,7 +31,7 @@ extern "C" {
 /** Count the number of tags in the ifd
  */
 int32_t
-or_ifd_count_tags(ORIfdDirRef rawfile);
+or_ifd_count_tags(ORIfdDirRef ifd);
 
 const char*
 or_ifd_get_makernote_id(ORIfdDirRef ifd);

@@ -112,7 +112,8 @@ public:
                     if (or_metadata_iterator_get_entry(iter, &ifd, &id, &type, &value)) {
                         or_ifd_dir_type ifd_type = or_ifd_get_type(ifd);
                         if (ifd_type != last_ifd_type) {
-                            m_out << boost::format("%1%\n") % map_ifd_type(ifd_type);
+                            m_out << boost::format("%1% - %2% entries\n") %
+                                map_ifd_type(ifd_type) % or_ifd_count_tags(ifd);
                             last_ifd_type = ifd_type;
                         }
                         const char* tagname = or_ifd_get_tag_name(ifd, id);
@@ -123,11 +124,13 @@ public:
                         if (value) {
                             switch (type) {
                             case EXIF_FORMAT_ASCII:
-                                m_out << boost::format("\tvalue = %1%\n") % or_metavalue_get_string(value, 0);
+                                m_out << boost::format("\tvalue = %1%\n") %
+                                    or_metavalue_get_string(value, 0);
                                 break;
                             default:
                                 if (type != EXIF_FORMAT_UNDEFINED || m_dump_binaries) {
-                                    m_out << boost::format("\tvalue = %1%\n") % or_metavalue_get_as_string(value);
+                                    m_out << boost::format("\tvalue = %1%\n") %
+                                        or_metavalue_get_as_string(value);
                                 } else {
                                     m_out << "\tvalue output skipped, use -b to dump\n";
                                 }
