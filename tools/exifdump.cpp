@@ -115,6 +115,10 @@ public:
                             m_out << boost::format("%1% - %2% entries\n") %
                                 map_ifd_type(ifd_type) % or_ifd_count_tags(ifd);
                             last_ifd_type = ifd_type;
+                            const char* makernote_id = or_ifd_get_makernote_id(ifd);
+                            if (makernote_id) {
+                                m_out << boost::format("MakerNote type %1%\n") % makernote_id;
+                            }
                         }
                         const char* tagname = or_ifd_get_tag_name(ifd, id);
                         uint32_t count = or_metavalue_get_count(value);
