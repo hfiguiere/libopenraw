@@ -48,7 +48,10 @@ or_ifd_get_makernote_id(ORIfdDirRef ifd)
     auto wrap = reinterpret_cast<WrappedPointer<OpenRaw::Internals::IfdDir>*>(ifd);
     auto pifd = wrap->ptr();
     auto maker_note = std::dynamic_pointer_cast<OpenRaw::Internals::MakerNoteDir>(pifd);
-    return maker_note->getId().c_str();
+    if (maker_note) {
+        return maker_note->getId().c_str();
+    }
+    return nullptr;
 }
 
 API_EXPORT const char*
