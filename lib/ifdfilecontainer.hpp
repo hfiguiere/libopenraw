@@ -84,7 +84,7 @@ public:
      Set the current directory
      @param dir the index of the directory to read, or one of the specific
      IFD index values that are < -1
-     @return NULL if no error, or return the reference to the current directory
+     @return NULL if not found, or return the reference to the current directory
   */
   IfdDir::Ref setDirectory(int dir);
   /**

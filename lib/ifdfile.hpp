@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - ifdfile.h
+ * libopenraw - ifdfile.hpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_IFD_FILE_H_
-#define OR_INTERNALS_IFD_FILE_H_
+#pragma once
 
 #include <stdint.h>
 #include <sys/types.h>
@@ -91,14 +90,11 @@ protected:
 
     virtual RawContainer *getContainer() const override;
 
-    virtual IfdDir::Ref _locateCfaIfd() = 0;
-    virtual IfdDir::Ref _locateMainIfd() = 0;
-    virtual IfdDir::Ref _locateExifIfd();
-    virtual MakerNoteDir::Ref _locateMakerNoteIfd();
+    virtual IfdDir::Ref _locateCfaIfd() override;
+    virtual IfdDir::Ref _locateMainIfd() override;
 
     virtual void _identifyId() override;
 
-    virtual IfdDir::Ref _getMakerNoteIfd() override;
     virtual MetaValue *_getMetaValue(int32_t meta_index) override;
 
     /** Translate the compression type from the tiff type (16MSB)
@@ -122,24 +118,11 @@ protected:
                                    RawData &data, uint32_t x, uint32_t y,
                                    uint32_t offset, uint32_t byte_length);
 
-    /** access the corresponding IFD. Will locate them if needed */
-    const IfdDir::Ref &cfaIfd();
-    const IfdDir::Ref &mainIfd();
-    const IfdDir::Ref &exifIfd();
-    const MakerNoteDir::Ref &makerNoteIfd();
-
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
     // call to decrompress if needed from _getRawData()
     virtual ::or_error _decompressIfNeeded(RawData &, uint32_t);
 
 private:
-    IfdDir::Ref m_cfaIfd; /**< the IFD for the CFA */
-    IfdDir::Ref m_mainIfd; /**< the IFD for the main image
-                            * does not necessarily reference
-                            * the CFA
-                            */
-    IfdDir::Ref m_exifIfd; /**< the Exif IFD */
-    MakerNoteDir::Ref m_makerNoteIfd; /**< the MakerNote IFD */
 
     IfdFile(const IfdFile &) = delete;
     IfdFile &operator=(const IfdFile &) = delete;
@@ -158,4 +141,3 @@ private:
   fill-column:80
   End:
 */
-#endif

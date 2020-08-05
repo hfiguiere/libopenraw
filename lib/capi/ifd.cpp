@@ -2,7 +2,7 @@
 /*
  * libopenraw - ifd.cpp
  *
- * Copyright (C) 2019 Hubert Figuière
+ * Copyright (C) 2019-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,18 +35,48 @@ extern "C" {
 API_EXPORT int32_t
 or_ifd_count_tags(ORIfdDirRef ifd)
 {
-    auto pifd = reinterpret_cast<OpenRaw::Internals::IfdDir*>(ifd);
     CHECK_PTR(ifd, -1);
+    auto wrap = reinterpret_cast<WrappedPointer<OpenRaw::Internals::IfdDir>*>(ifd);
+    auto pifd = wrap->ptr();
     return pifd->numTags();
 }
 
 API_EXPORT const char*
 or_ifd_get_makernote_id(ORIfdDirRef ifd)
 {
-    auto pifd = reinterpret_cast<OpenRaw::Internals::IfdDir*>(ifd);
     CHECK_PTR(ifd, nullptr);
-    auto maker_note = dynamic_cast<OpenRaw::Internals::MakerNoteDir*>(pifd);
+    auto wrap = reinterpret_cast<WrappedPointer<OpenRaw::Internals::IfdDir>*>(ifd);
+    auto pifd = wrap->ptr();
+    auto maker_note = std::dynamic_pointer_cast<OpenRaw::Internals::MakerNoteDir>(pifd);
     return maker_note->getId().c_str();
+}
+
+API_EXPORT const char*
+or_ifd_get_tag_name(ORIfdDirRef ifd, uint32_t tag)
+{
+    CHECK_PTR(ifd, nullptr);
+    auto wrap = reinterpret_cast<WrappedPointer<OpenRaw::Internals::IfdDir>*>(ifd);
+    auto pifd = wrap->ptr();
+    return pifd->getTagName(tag);
+}
+
+API_EXPORT or_ifd_dir_type
+or_ifd_get_type(ORIfdDirRef ifd)
+{
+    CHECK_PTR(ifd, OR_IFD_INVALID);
+    auto wrap = reinterpret_cast<WrappedPointer<OpenRaw::Internals::IfdDir>*>(ifd);
+    auto pifd = wrap->ptr();
+    return pifd->type();
+}
+
+API_EXPORT void
+or_ifd_release(ORIfdDirRef ifd)
+{
+    if (!ifd) {
+        return;
+    }
+    auto wrap = reinterpret_cast<WrappedPointer<OpenRaw::Internals::IfdDir>*>(ifd);
+    delete wrap;
 }
 
 }

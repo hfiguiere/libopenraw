@@ -2,7 +2,7 @@
 /*
  * libopenraw - erffile.hpp
  *
- * Copyright (C) 2007-2018 Hubert Figuiere
+ * Copyright (C) 2007-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_ERFFILE_H_
-#define OR_INTERNALS_ERFFILE_H_
+#pragma
 
 #include <stdint.h>
 
@@ -50,13 +49,14 @@ public:
     ERFFile & operator=(const ERFFile &) = delete;
 
 protected:
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t>& list) override;
+    virtual ::or_error _getThumbnail(uint32_t size, Thumbnail& thumbnail) override;
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
 private:
+    ::or_error getMakerNoteThumbnail(Thumbnail& thumbnail);
 
     static const IfdFile::camera_ids_t s_def[];
 };
 
 }
 }
-
-#endif

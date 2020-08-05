@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.cpp
  *
- * Copyright (C) 2006-2018 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -163,15 +163,32 @@ PEFFile::~PEFFile()
 {
 }
 
-IfdDir::Ref  PEFFile::_locateCfaIfd()
+::or_error PEFFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
-    // in PEF the CFA IFD is the main IFD
-    return mainIfd();
-}
+    auto err = this->IfdFile::_enumThumbnailSizes(list);
+    auto makerNote = makerNoteIfd();
+    if (makerNote) {
+        auto e = makerNote->getEntry(MNOTE_PENTAX_PREVIEW_IMAGE_SIZE);
+        if (e) {
+            auto w = makerNote->getEntryValue<uint16_t>(*e, 0);
+            auto h = makerNote->getEntryValue<uint16_t>(*e, 1);
+            auto dim = std::max(w, h);
+            list.push_back(dim);
 
-IfdDir::Ref  PEFFile::_locateMainIfd()
-{
-    return m_container->setDirectory(0);
+            auto offset = makerNote->getIntegerValue(MNOTE_PENTAX_PREVIEW_IMAGE_START).value_or(0);
+            if (offset > 0) {
+                offset += makerNote->getMnoteOffset();
+            }
+            auto length = makerNote->getIntegerValue(MNOTE_PENTAX_PREVIEW_IMAGE_LENGTH).value_or(0);
+            if (offset != 0 && length != 0) {
+                _addThumbnail(dim, ThumbDesc(w, h, OR_DATA_TYPE_JPEG, offset, length));
+                err = OR_ERROR_NONE;
+            }
+        }
+
+    }
+
+    return err;
 }
 
 ::or_error PEFFile::_getRawData(RawData & data, uint32_t options)

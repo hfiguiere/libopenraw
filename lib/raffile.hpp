@@ -1,8 +1,8 @@
 /* -*- Mode: C++ ; tab-width:4; c-basic-offset:4 -*- */
 /*
- * libopenraw - raffile.h
+ * libopenraw - raffile.hpp
  *
- * Copyright (C) 2011-2017 Hubert Figuière
+ * Copyright (C) 2011-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_RAFFILE_H_
-#define OR_INTERNALS_RAFFILE_H_
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -62,8 +61,13 @@ protected:
 
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
 
-    virtual IfdDir::Ref _getMakerNoteIfd() override
-        { return IfdDir::Ref(); }
+    virtual IfdDir::Ref _locateCfaIfd() override
+        {
+            LOGERR("not implemented\n");
+            return IfdDir::Ref();
+        }
+    virtual IfdDir::Ref _locateMainIfd() override;
+
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) override;
 
     virtual void _identifyId() override;
@@ -75,10 +79,11 @@ private:
     RafContainer *m_container; /**< the real container */
     // uint32_t m_x;
     // uint32_t m_y;
+    IfdDir::Ref m_mainIfd;
+    IfdDir::Ref m_exifIfd;
+    IfdDir::Ref m_makerNoteIfd;
 
     static const RawFile::camera_ids_t s_def[];
 };
 }
 }
-
-#endif

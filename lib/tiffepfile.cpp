@@ -1,7 +1,7 @@
 /*
  * libopenraw - tiffepfile.cpp
  *
- * Copyright (C) 2007-2017 Hubert Figuière
+ * Copyright (C) 2007-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -42,7 +42,6 @@ TiffEpFile::TiffEpFile(const IO::Stream::Ptr &s,
 {
 }
 
-
 IfdDir::Ref  TiffEpFile::_locateCfaIfd()
 {
     const IfdDir::Ref & _mainIfd = mainIfd();
@@ -72,11 +71,6 @@ IfdDir::Ref  TiffEpFile::_locateCfaIfd()
     }
     LOGDBG1("couldn't find a primary subifd\n");
     return IfdDir::Ref();
-}
-
-IfdDir::Ref  TiffEpFile::_locateMainIfd()
-{
-    return m_container->setDirectory(0);
 }
 
 }

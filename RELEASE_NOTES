@@ -1,7 +1,15 @@
-What's (visibly) new in 0.2.1
+What's (visibly) new in 0.3.0
 =============================
 
+New API.
 
+New tool.
+
+What's (visibly) new in 0.2.2
+=============================
+
+- ordiag now accept the flag `-D` to turn on a developer mode for the
+  output.
 
 What's (visibly) new in 0.2.0
 =============================

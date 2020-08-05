@@ -31,6 +31,7 @@
 #include <libopenraw/consts.h>
 #include <libopenraw/cameraids.h>
 #include <libopenraw/io.h>
+#include <libopenraw/ifd.h>
 #include <libopenraw/thumbnails.h>
 #include <libopenraw/rawdata.h>
 #include <libopenraw/bitmapdata.h>

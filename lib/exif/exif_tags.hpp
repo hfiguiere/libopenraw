@@ -1,8 +1,7 @@
-/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
- * libopenraw - ifd.h
+ * libopenraw - exif_tags.hpp
  *
- * Copyright (C) 2019-2020 Hubert Figuière
+ * Copyright (C) 2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,30 +20,21 @@
 
 #pragma once
 
-#include <libopenraw/types.h>
-#include <libopenraw/consts.h>
+#include <stdint.h>
+#include <map>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+typedef std::map<uint32_t, const char*> TagTable;
 
-/** Count the number of tags in the ifd
- */
-int32_t
-or_ifd_count_tags(ORIfdDirRef ifd);
+extern const TagTable exif_tag_names;
 
-const char*
-or_ifd_get_makernote_id(ORIfdDirRef ifd);
+extern const TagTable mnote_canon_tag_names;
+extern const TagTable mnote_fujifilm_tag_names;
+extern const TagTable mnote_minolta_tag_names;
+extern const TagTable mnote_nikon_tag_names;
+extern const TagTable mnote_nikon2_tag_names;
+extern const TagTable mnote_olympus_tag_names;
+extern const TagTable mnote_panasonic_tag_names;
+extern const TagTable mnote_pentax_tag_names;
+extern const TagTable mnote_sony_tag_names;
 
-const char*
-or_ifd_get_tag_name(ORIfdDirRef ifd, uint32_t tag);
-
-or_ifd_dir_type
-or_ifd_get_type(ORIfdDirRef ifd);
-
-void
-or_ifd_release(ORIfdDirRef ifd);
-
-#ifdef __cplusplus
-}
-#endif
+extern const TagTable raw_panasonic_tag_names;

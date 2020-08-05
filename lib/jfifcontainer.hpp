@@ -2,7 +2,7 @@
 /*
  * libopenraw - jfifcontainer.h
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,8 +23,7 @@
  * @brief a JPEG container
  */
 
-#ifndef OR_INTERNALS_JFIFCONTAINER_H_
-#define OR_INTERNALS_JFIFCONTAINER_H_
+#pragma once
 
 #include <stdint.h>
 #include <sys/types.h>
@@ -67,6 +66,10 @@ public:
   IfdDir::Ref exifIfd();
   /** Return the ifd container */
   std::unique_ptr<IfdFileContainer> & ifdContainer();
+  /** Return the exif offset to be added to any offset from the start of the JFIF */
+  size_t exifOffset() const {
+    return m_exif_offset;
+  }
 
   jmp_buf & jpegjmp() {
     return m_jpegjmp;
@@ -79,9 +82,8 @@ private:
   jmp_buf m_jpegjmp;
   bool m_headerLoaded;
   std::unique_ptr<IfdFileContainer> m_ifd;
+  size_t m_exif_offset;
 };
 
 }
 }
-
-#endif

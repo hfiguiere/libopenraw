@@ -32,10 +32,11 @@
 #include <libopenraw/consts.h>
 #include <libopenraw/debug.h>
 
+#include "io/streamclone.hpp"
+
 #include "mosaicinfo.hpp"
 #include "rawdata.hpp"
 #include "rawfile.hpp"
-
 
 #include "trace.hpp"
 #include "ifd.hpp"
@@ -46,6 +47,7 @@
 #include "nefcfaiterator.hpp"
 #include "neffile.hpp"
 #include "rawcontainer.hpp"
+#include "jfifcontainer.hpp"
 #include "rawfile_private.hpp"
 
 using namespace Debug;
@@ -521,7 +523,7 @@ bool NefFile::isCompressed(RawContainer & container, uint32_t offset)
 
 bool NefFile::isNrw()
 {
-    MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
+    IfdDir::Ref _makerNoteIfd = makerNoteIfd();
     if(!_makerNoteIfd) {
         LOGERR("makernote not found\n");
         return false;
@@ -544,6 +546,53 @@ NefFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data,
     return TiffEpFile::_unpackData(bpc, compression, data, x, y, offset, byte_length);
 }
 
+/** Add the thumbnail at offset and len */
+::or_error NefFile::addThumbnail(std::vector<uint32_t>& list, uint32_t offset, uint32_t len)
+{
+    auto err = OR_ERROR_NOT_FOUND;
+    LOGDBG1("fetching JPEG\n");
+    IO::Stream::Ptr s = std::make_shared<IO::StreamClone>(m_io, offset);
+    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+
+    uint32_t x, y;
+    x = y = 0;
+    jfif->getDimensions(x, y);
+    LOGDBG1("JPEG dimensions x=%d y=%d\n", x, y);
+
+    uint32_t dim = std::max(x, y);
+    // "Olympus" MakerNote carries a 160 px thubnail we might already have.
+    // We don't check it is the same.
+    if (dim && std::find(list.begin(), list.end(), dim) == list.end()) {
+        _addThumbnail(dim, ThumbDesc(x, y, OR_DATA_TYPE_JPEG, offset, len));
+        list.push_back(dim);
+        err = OR_ERROR_NONE;
+    }
+
+    return err;
+}
+
+::or_error NefFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
+{
+    or_error err = this->TiffEpFile::_enumThumbnailSizes(list);
+    auto makernote = makerNoteIfd();
+    if (makernote) {
+        auto ifd = makernote->getIfdInEntry(MNOTE_NIKON_PREVIEW_IFD);
+        if (ifd) {
+            auto start = ifd->getValue<uint32_t>(MNOTE_NIKON_PREVIEWIFD_START).value_or(0);
+            auto len = ifd->getValue<uint32_t>(MNOTE_NIKON_PREVIEWIFD_LENGTH).value_or(0);
+
+            // if either value is zero we consider it is wrong.
+            if (start != 0 && len != 0) {
+                start += makernote->getMnoteOffset();
+                err = addThumbnail(list, start, len);
+            } else {
+                err = OR_ERROR_NOT_FOUND;
+            }
+        }
+    }
+
+    return err;
+}
 
 uint32_t NefFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
 {
@@ -617,7 +666,7 @@ uint32_t NefFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
 bool
 NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 {
-    MakerNoteDir::Ref _makerNoteIfd = makerNoteIfd();
+    MakerNoteDir::Ref _makerNoteIfd = std::dynamic_pointer_cast<MakerNoteDir>(makerNoteIfd());
     if(!_makerNoteIfd) {
         LOGERR("makernote not found\n");
         return false;

@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2019 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -501,12 +501,20 @@ IfdDir::Ref Cr2File::_locateCfaIfd()
     if (!isCr2()) {
         return makerNoteIfd();
     }
-    return m_container->setDirectory(3);
+    auto ifd = m_container->setDirectory(3);
+    if (ifd) {
+        ifd->setType(OR_IFD_RAW);
+    }
+    return ifd;
 }
 
 IfdDir::Ref Cr2File::_locateMainIfd()
 {
-    return m_container->setDirectory(0);
+    auto ifd = m_container->setDirectory(0);
+    if (ifd) {
+        ifd->setType(OR_IFD_MAIN);
+    }
+    return ifd;
 }
 
 ::or_error Cr2File::_locateThumbnail(const IfdDir::Ref & dir,
@@ -533,7 +541,7 @@ IfdDir::Ref Cr2File::_locateMainIfd()
         // by default it is RGB8. Unless stated otherwise.
         bool isRGB8 = true;
         IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
-        auto result2 = entry->getArray<uint16_t>();
+        auto result2 = dir->getEntryArrayValue<uint16_t>(*entry);
         if (result2) {
           std::vector<uint16_t> arr = result2.value();
           for(auto bpc : arr) {
@@ -668,7 +676,7 @@ void Cr2File::getRawBytes(RawData &data, uint32_t offset, uint32_t byte_length,
     std::vector<uint16_t> slices;
     IfdEntry::Ref e = _cfaIfd->getEntry(IFD::CR2_TAG_SLICE);
     if (e) {
-        auto result2 = e->getArray<uint16_t>();
+        auto result2 = _cfaIfd->getEntryArrayValue<uint16_t>(*e);
         if (result2) {
             slices = result2.value();
             LOGDBG1("Found slice entry count %ld\n", slices.size());
@@ -720,7 +728,7 @@ void Cr2File::_identifyId()
 {
     // There is a camera model ID in the MakerNote tag 0x0010.
     // Use this at first.
-    auto mn = getMakerNoteIfd();
+    auto mn = makerNoteIfd();
     if (mn) {
         auto id = mn->getValue<uint32_t>(IFD::MNOTE_CANON_MODEL_ID);
         if (id) {

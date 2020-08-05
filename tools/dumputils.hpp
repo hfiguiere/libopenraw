@@ -1,8 +1,7 @@
-/* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
- * libopenraw - ifd.h
+ * libopenraw - dumputils.hpp
  *
- * Copyright (C) 2019-2020 Hubert Figuière
+ * Copyright (C) 2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,30 +20,10 @@
 
 #pragma once
 
-#include <libopenraw/types.h>
-#include <libopenraw/consts.h>
+#include <iostream>
+#include <string>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <libopenraw/libopenraw.h>
 
-/** Count the number of tags in the ifd
- */
-int32_t
-or_ifd_count_tags(ORIfdDirRef ifd);
-
-const char*
-or_ifd_get_makernote_id(ORIfdDirRef ifd);
-
-const char*
-or_ifd_get_tag_name(ORIfdDirRef ifd, uint32_t tag);
-
-or_ifd_dir_type
-or_ifd_get_type(ORIfdDirRef ifd);
-
-void
-or_ifd_release(ORIfdDirRef ifd);
-
-#ifdef __cplusplus
-}
-#endif
+std::string typeToString(or_rawfile_type t);
+void dump_file_info(std::ostream& out, ORRawFileRef rf, bool dev_mode);

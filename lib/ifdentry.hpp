@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdentry.hpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,9 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef OR_INTERNALS_IFDENTRY_H
-#define OR_INTERNALS_IFDENTRY_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -56,8 +54,6 @@ struct IfdTypeTrait
 	static const size_t   size; /**< the storage size unit in IFD*/
 	static T EL(const uint8_t* d, size_t len) noexcept;
 	static T BE(const uint8_t* d, size_t len) noexcept;
-	static T get(IfdEntry & e, uint32_t idx = 0, bool ignore_type = false)
-		noexcept(false);
 };
 
 
@@ -73,6 +69,17 @@ inline uint8_t IfdTypeTrait<uint8_t>::BE(const uint8_t* b, size_t) noexcept
 	return *b;
 }
 
+template <>
+inline int8_t IfdTypeTrait<int8_t>::EL(const uint8_t* b, size_t) noexcept
+{
+	return *b;
+}
+
+template <>
+inline int8_t IfdTypeTrait<int8_t>::BE(const uint8_t* b, size_t) noexcept
+{
+	return *b;
+}
 
 template <>
 inline uint16_t IfdTypeTrait<uint16_t>::EL(const uint8_t* b, size_t) noexcept
@@ -87,6 +94,20 @@ inline uint16_t IfdTypeTrait<uint16_t>::BE(const uint8_t* b, size_t) noexcept
 }
 
 template <>
+inline int16_t IfdTypeTrait<int16_t>::EL(const uint8_t* b, size_t) noexcept
+{
+	uint16_t uns = EL16(b);
+	return *(int16_t*)&uns;
+}
+
+template <>
+inline int16_t IfdTypeTrait<int16_t>::BE(const uint8_t* b, size_t) noexcept
+{
+	uint16_t uns = BE16(b);
+	return *(int16_t*)&uns;
+}
+
+template <>
 inline uint32_t IfdTypeTrait<uint32_t>::EL(const uint8_t* b, size_t) noexcept
 {
 	return EL32(b);
@@ -94,6 +115,18 @@ inline uint32_t IfdTypeTrait<uint32_t>::EL(const uint8_t* b, size_t) noexcept
 
 template <>
 inline uint32_t IfdTypeTrait<uint32_t>::BE(const uint8_t* b, size_t) noexcept
+{
+	return BE32(b);
+}
+
+template <>
+inline int32_t IfdTypeTrait<int32_t>::EL(const uint8_t* b, size_t) noexcept
+{
+	return EL32(b);
+}
+
+template <>
+inline int32_t IfdTypeTrait<int32_t>::BE(const uint8_t* b, size_t) noexcept
 {
 	return BE32(b);
 }
@@ -166,9 +199,13 @@ public:
 
 	IfdEntry(uint16_t _id, int16_t _type, int32_t _count,
 			 uint32_t _data,
-			 IfdFileContainer &_container);
+			 const IfdFileContainer& _container);
 	virtual ~IfdEntry();
 
+	int16_t id() const noexcept
+		{
+			return m_id;
+		}
 	int16_t type() const noexcept
 		{
 			return m_type;
@@ -193,43 +230,29 @@ public:
 
 	RawContainer::EndianType endian() const;
 
-public:
-  MetaValue* make_meta_value();
+	/** return the raw data pointer */
+	const uint8_t* dataptr() const
+		{
+			if (m_dataptr == nullptr) {
+				return (uint8_t*)&m_data;
+			} else {
+				return m_dataptr;
+			}
+		}
+
 	/**
 	 * Unit size for type
 	 */
-	static size_t type_unit_size(IFD::ExifTagType _type);
-	/** load the data for the entry
-	 * if all the data fits in m_data, it is a noop
+	static size_t typeUnitSize(IFD::ExifTagType _type);
+	/** load the data for the entry if m_loaded is false
+	 * if all the data fits in m_data, it will keep it there
+	 * it will set m_loaded in case of success.
 	 * @param unit_size the size of 1 unit of data
-	 * @return true if success.
+	 * @param offset offset from the begining of the container. Usually 0.
+	 * @return true m_loaded
 	 */
-	bool loadData(size_t unit_size);
-
-
-	/** get the array values of type T
-	 * @param T the type of the value needed
-	 * @param array the storage
-	 * @throw whatever is thrown
-	 */
-	template <typename T>
-	Option<std::vector<T>> getArray()
-		{
-			try {
-				std::vector<T> array;
-				array.reserve(m_count);
-				for (uint32_t i = 0; i < m_count; i++) {
-					array.push_back(IfdTypeTrait<T>::get(*this, i));
-				}
-				return Option<decltype(array)>(array);
-			}
-			catch(const std::exception & e)
-			{
-				LOGERR("Exception: %s\n", e.what());
-			}
-			return Option<std::vector<T>>();
-		}
-	uint32_t getIntegerArrayItem(int idx);
+	bool loadData(size_t unit_size, off_t offset);
+	size_t loadDataInto(uint8_t* dataptr, size_t data_size, off_t offset) const;
 
 private:
 	uint16_t m_id;
@@ -238,68 +261,16 @@ private:
 	uint32_t m_data; /**< raw data without endian conversion */
 	bool m_loaded;
 	uint8_t *m_dataptr;
-	IfdFileContainer & m_container;
+	const IfdFileContainer& m_container;
 	template <typename T> friend struct IfdTypeTrait;
 
-	/** private copy constructor to make sure it is not called */
-	IfdEntry(const IfdEntry& f);
-	/** private = operator to make sure it is never called */
-	IfdEntry & operator=(const IfdEntry&);
+	IfdEntry(const IfdEntry& f) = delete;
+	IfdEntry & operator=(const IfdEntry&) = delete;
 
 };
 
-
-
-/** get the value of type T
- * @param T the type of the value needed
- * @param idx the index, by default 0
- * @param ignore_type if true, don't check type. *DANGEROUS* Default is false.
- * @return the value
- * @throw BadTypeException in case of wrong typing.
- * @throw OutOfRangeException in case of subscript out of range
- */
-template <typename T>
-T IfdTypeTrait<T>::get(IfdEntry & e, uint32_t idx, bool ignore_type)
-	noexcept(false)
-{
-	/* format undefined means that we don't check the type */
-	if(!ignore_type && (e.m_type != IFD::EXIF_FORMAT_UNDEFINED)) {
-		if (e.m_type != IfdTypeTrait<T>::type) {
-			throw BadTypeException();
-		}
-	}
-	if (idx + 1 > e.m_count) {
-		throw OutOfRangeException();
-	}
-	if (!e.m_loaded) {
-		e.m_loaded = e.loadData(IfdTypeTrait<T>::size);
-		if (!e.m_loaded) {
-			throw TooBigException();
-		}
-	}
-	uint8_t *data;
-	if (e.m_dataptr == NULL) {
-		data = (uint8_t*)&e.m_data;
-	}
-	else {
-		data = e.m_dataptr;
-	}
-	data += (IfdTypeTrait<T>::size * idx);
-	T val;
-	if (e.endian() == RawContainer::ENDIAN_LITTLE) {
-		val = IfdTypeTrait<T>::EL(data, e.m_count - idx);
-	}
-	else {
-		val = IfdTypeTrait<T>::BE(data, e.m_count - idx);
-	}
-	return val;
-}
-
-
 }
 }
-
-
 /*
   Local Variables:
   mode:c++
@@ -311,6 +282,3 @@ T IfdTypeTrait<T>::get(IfdEntry & e, uint32_t idx, bool ignore_type)
   fill-column:80
   End:
 */
-#endif
-
-

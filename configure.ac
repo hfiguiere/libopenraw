@@ -2,7 +2,7 @@ dnl libopenraw configure
 dnl written by Hubert Figuiere
 
 AC_PREREQ(2.50)
-AC_INIT(libopenraw, 0.2.3)
+AC_INIT(libopenraw, 0.3.0)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2 dist-xz subdir-objects])
@@ -48,9 +48,10 @@ dnl version 0.2.0 is 8.0.0
 dnl version 0.2.1 is 8.0.1
 dnl version 0.2.2 is 8.0.2
 dnl version 0.2.3 is 8.0.3
-AC_SUBST([LIBOPENRAW_REVISION], [3])
+dnl version 0.3.0 is 9.0.0
+AC_SUBST([LIBOPENRAW_REVISION], [0])
 AC_SUBST([LIBOPENRAW_AGE],      [0])
-AC_SUBST([LIBOPENRAW_CURRENT],  [8])
+AC_SUBST([LIBOPENRAW_CURRENT],  [9])
 AC_SUBST([LIBOPENRAW_CURRENT_MIN],
          [`expr $LIBOPENRAW_CURRENT - $LIBOPENRAW_AGE`])
 AC_SUBST([LIBOPENRAW_VERSION_INFO],
@@ -61,7 +62,7 @@ LIBOPENRAW_MAJOR_VERSION=$LIBOPENRAW_CURRENT_MIN.0
 AC_SUBST(LIBOPENRAW_MAJOR_VERSION)
 
 dnl the path where includes are installed
-LIBOPENRAW_INCLUDE_BASE=libopenraw-0.2
+LIBOPENRAW_INCLUDE_BASE=libopenraw-0.3
 AC_SUBST(LIBOPENRAW_INCLUDE_BASE)
 
 
@@ -259,9 +260,9 @@ include/Makefile
 include/libopenraw/Makefile
 include/libopenraw++/Makefile
 lib/Makefile
-lib/libopenraw-0.2.pc
+lib/libopenraw-0.3.pc
 gnome/Makefile
-gnome/libopenraw-gnome-0.2.pc
+gnome/libopenraw-gnome-0.3.pc
 gnome/include/Makefile
 gnome/include/libopenraw-gnome/Makefile
 doc/Makefile

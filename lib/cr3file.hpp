@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr3file.hpp
  *
- * Copyright (C) 2018 Hubert Figuiere
+ * Copyright (C) 2018-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -59,15 +59,21 @@ protected:
     virtual RawContainer* getContainer() const override;
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
 
-    virtual IfdDir::Ref _getMakerNoteIfd() override;
     virtual MetaValue* _getMetaValue(int32_t /*meta_index*/) override;
 
     virtual void _identifyId() override;
 
+    virtual IfdDir::Ref _locateCfaIfd() override
+        {
+            LOGERR("not implemented\n");
+            return IfdDir::Ref();
+        }
+    virtual IfdDir::Ref _locateMainIfd() override;
+    virtual IfdDir::Ref _locateExifIfd() override;
+    virtual MakerNoteDir::Ref _locateMakerNoteIfd() override;
+
 private:
     IfdDir::Ref findIfd(uint32_t idx);
-    IfdDir::Ref mainIfd();
-    IfdDir::Ref exifIfd();
 
     IO::Stream::Ptr m_io; /**< the IO handle */
     IsoMediaContainer *m_container;

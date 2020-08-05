@@ -7,6 +7,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65537</rawTypeId>
       <makerNoteCount>24</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 20D</exifModel>
       <thumbNum>2</thumbNum>
@@ -33,6 +34,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65542</rawTypeId>
       <makerNoteCount>34</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 450D</exifModel>
       <thumbNum>2</thumbNum>
@@ -59,6 +61,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65564</rawTypeId>
       <makerNoteCount>41</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 7D</exifModel>
       <thumbNum>2</thumbNum>
@@ -85,6 +88,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65564</rawTypeId>
       <makerNoteCount>41</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 7D</exifModel>
       <thumbNum>2</thumbNum>
@@ -111,6 +115,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65568</rawTypeId>
       <makerNoteCount>39</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 5D Mark II</exifModel>
       <thumbNum>2</thumbNum>
@@ -137,6 +142,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65565</rawTypeId>
       <makerNoteCount>28</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon PowerShot G11</exifModel>
       <thumbNum>2</thumbNum>
@@ -163,6 +169,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65565</rawTypeId>
       <makerNoteCount>28</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon PowerShot G11</exifModel>
       <thumbNum>2</thumbNum>
@@ -189,6 +196,7 @@
       <rawType>CR3</rawType>
       <rawTypeId>65620</rawTypeId>
       <makerNoteCount>47</makerNoteCount>
+      <makerNoteId>Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS M50</exifModel>
       <thumbNum>3</thumbNum>
@@ -268,11 +276,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D100 </exifModel>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>8RGB</thumbFormats>
-      <thumbDataSizes>57600</thumbDataSizes>
-      <thumbMd5>49492</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 570</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 125988</thumbDataSizes>
+      <thumbMd5>49492 8889</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3034 2024</rawDataDimensions>
@@ -293,11 +301,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D70</exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 3008</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 578350</thumbDataSizes>
-      <thumbMd5>37211 45287</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 3008 564</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 578350 27641</thumbDataSizes>
+      <thumbMd5>37211 45287 6693</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3039 2014</rawDataDimensions>
@@ -319,11 +327,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D70</exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 3008</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 820445</thumbDataSizes>
-      <thumbMd5>64842 45385</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 3008 564</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 820445 26582</thumbDataSizes>
+      <thumbMd5>64842 45385 31187</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12241092</rawDataSize>
       <rawDataDimensions>3039 2014</rawDataDimensions>
@@ -345,11 +353,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D90</exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 4288</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 905419</thumbDataSizes>
-      <thumbMd5>13475 4145</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 4288 570</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 905419 120118</thumbDataSizes>
+      <thumbMd5>13475 4145 724</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>24957336</rawDataSize>
       <rawDataDimensions>4351 2868</rawDataDimensions>
@@ -371,11 +379,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D90</exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 4288</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 1647803</thumbDataSizes>
-      <thumbMd5>59338 49015</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 4288 570</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 1647803 112282</thumbDataSizes>
+      <thumbMd5>59338 49015 26926</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>24957336</rawDataSize>
       <rawDataDimensions>4351 2868</rawDataDimensions>
@@ -422,11 +430,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D2H</exifModel>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>8RGB</thumbFormats>
-      <thumbDataSizes>57600</thumbDataSizes>
-      <thumbMd5>20180</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 570</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 105452</thumbDataSizes>
+      <thumbMd5>20180 68</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>8223520</rawDataSize>
       <rawDataDimensions>2495 1648</rawDataDimensions>
@@ -448,11 +456,11 @@
       <makerNoteId>Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D300</exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 4288</thumbSizes>
-      <thumbFormats>8RGB JPEG</thumbFormats>
-      <thumbDataSizes>57600 1092124</thumbDataSizes>
-      <thumbMd5>47314 48693</thumbMd5>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 4288 570</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 1092124 107382</thumbDataSizes>
+      <thumbMd5>47314 48693 47371</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>24957336</rawDataSize>
       <rawDataDimensions>4351 2868</rawDataDimensions>
@@ -470,13 +478,15 @@
     <results>
       <rawType>ERF</rawType>
       <rawTypeId>327681</rawTypeId>
+      <makerNoteCount>14</makerNoteCount>
+      <makerNoteId>Epson</makerNoteId>
       <exifMake>SEIKO EPSON CORP.</exifMake>
       <exifModel>R-D1</exifModel>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>8RGB</thumbFormats>
-      <thumbDataSizes>57600</thumbDataSizes>
-      <thumbMd5>51254</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 640</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 173093</thumbDataSizes>
+      <thumbMd5>51254 18422</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
@@ -496,11 +506,13 @@
       <rawTypeId>262145</rawTypeId>
       <exifMake>PENTAX Corporation </exifMake>
       <exifModel>PENTAX K10D        </exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 3872</thumbSizes>
-      <thumbFormats>JPEG JPEG</thumbFormats>
-      <thumbDataSizes>6696 1254388</thumbDataSizes>
-      <thumbMd5>47529 63340</thumbMd5>
+      <makerNoteCount>91</makerNoteCount>
+      <makerNoteId>Pentax</makerNoteId>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 3872 640</thumbSizes>
+      <thumbFormats>JPEG JPEG JPEG</thumbFormats>
+      <thumbDataSizes>6696 1254388 25279</thumbDataSizes>
+      <thumbMd5>47529 63340 11625</thumbMd5>
       <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>8025398</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
@@ -517,11 +529,13 @@
       <rawTypeId>262147</rawTypeId>
       <exifMake>PENTAX Corporation </exifMake>
       <exifModel>PENTAX *ist D      </exifModel>
-      <thumbNum>2</thumbNum>
-      <thumbSizes>160 3008</thumbSizes>
-      <thumbFormats>JPEG JPEG</thumbFormats>
-      <thumbDataSizes>5308 1343392</thumbDataSizes>
-      <thumbMd5>2932 57924</thumbMd5>
+      <makerNoteCount>78</makerNoteCount>
+      <makerNoteId>Pentax</makerNoteId>
+      <thumbNum>3</thumbNum>
+      <thumbSizes>160 3008 640</thumbSizes>
+      <thumbFormats>JPEG JPEG JPEG</thumbFormats>
+      <thumbDataSizes>5308 1343392 39507</thumbDataSizes>
+      <thumbMd5>2932 57924 4760</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
@@ -617,6 +631,30 @@
     </results>
   </test>
   <test>
+    <name>ORF-test E3</name>
+    <file>/home/hub/samples/orf/Olympus_E3/PB020085.ORF</file>
+    <source disabled="1">http://raw.fotosite.pl/download-Olympus_E-3_ZD_12-60_f2.8-4/PB020085.ORF</source>
+    <results>
+      <rawType>ORF</rawType>
+      <rawTypeId>458755</rawTypeId>
+      <makerNoteCount>8</makerNoteCount>
+      <makerNoteId>Olympus2</makerNoteId>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>7020 420545</thumbDataSizes>
+      <thumbMd5>59979 60872</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>20832000</rawDataSize>
+      <rawDataDimensions>3720 2800</rawDataDimensions>
+      <rawDataActiveArea>0 0 3720 2800</rawDataActiveArea>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>ORF-test E300</name>
     <file>/home/hub/samples/orf/Olympus_E300/P7080133.ORF</file>
     <results>
@@ -624,11 +662,11 @@
       <rawTypeId>458756</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>10614</thumbDataSizes>
-      <thumbMd5>55376</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>10614 441309</thumbDataSizes>
+      <thumbMd5>55376 54826</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16826880</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
@@ -647,11 +685,11 @@
       <rawTypeId>458756</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>10689</thumbDataSizes>
-      <thumbMd5>64692</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>10689 394468</thumbDataSizes>
+      <thumbMd5>64692 29983</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16826880</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
@@ -670,11 +708,11 @@
       <rawTypeId>458757</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>11074</thumbDataSizes>
-      <thumbMd5>64168</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>11074 430123</thumbDataSizes>
+      <thumbMd5>64168 40301</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16072000</rawDataSize>
       <rawDataDimensions>3280 2450</rawDataDimensions>
@@ -693,11 +731,11 @@
       <rawTypeId>458757</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>10176</thumbDataSizes>
-      <thumbMd5>750</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>10176 419949</thumbDataSizes>
+      <thumbMd5>750 14262</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>16072000</rawDataSize>
       <rawDataDimensions>3280 2450</rawDataDimensions>
@@ -715,11 +753,11 @@
       <rawTypeId>458766</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>6312</thumbDataSizes>
-      <thumbMd5>10303</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3200</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>6312 1040786</thumbDataSizes>
+      <thumbMd5>10303 42519</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>25288800</rawDataSize>
       <rawDataDimensions>4100 3084</rawDataDimensions>
@@ -739,11 +777,11 @@
       <rawTypeId>458766</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>5047</thumbDataSizes>
-      <thumbMd5>39027</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3200</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>5047 969676</thumbDataSizes>
+      <thumbMd5>39027 22396</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>25288800</rawDataSize>
       <rawDataDimensions>4100 3084</rawDataDimensions>
@@ -762,11 +800,11 @@
       <rawTypeId>458759</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>3003</thumbDataSizes>
-      <thumbMd5>63133</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>3003 360861</thumbDataSizes>
+      <thumbMd5>63133 48427</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>
@@ -786,11 +824,11 @@
       <rawTypeId>458759</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>160</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>6217</thumbDataSizes>
-      <thumbMd5>16699</thumbMd5>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1600</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>6217 388113</thumbDataSizes>
+      <thumbMd5>16699 3410</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>
@@ -930,6 +968,8 @@
     <results>
       <rawType>RAF</rawType>
       <rawTypeId>917518</rawTypeId>
+      <makerNoteCount>42</makerNoteCount>
+      <makerNoteId>Fujifilm</makerNoteId>
       <exifMake>FUJIFILM</exifMake>
       <exifModel>FinePix X100</exifModel>
       <thumbNum>2</thumbNum>
@@ -954,6 +994,8 @@
     <results>
       <rawType>RAF</rawType>
       <rawTypeId>917526</rawTypeId>
+      <makerNoteCount>46</makerNoteCount>
+      <makerNoteId>Fujifilm</makerNoteId>
       <exifMake>FUJIFILM</exifMake>
       <exifModel>X-Pro1</exifModel>
       <thumbNum>2</thumbNum>
@@ -972,17 +1014,68 @@
     </results>
   </test>
   <test>
+    <name>RAW-test Panasonic L1</name>
+    <file>/home/hub/samples/raw/Panasonic-L1/Panasonic - DMC-L1 - 4:3.RAW</file>
+    <source>https://raw.pixls.us/getfile.php/706/nice/Panasonic%20-%20DMC-L1%20-%204:3.RAW</source>
+    <results>
+      <rawType>RW2</rawType>
+      <rawTypeId>720909</rawTypeId>
+      <makerNoteCount>-1</makerNoteCount>
+      <exifMake>Panasonic</exifMake>
+      <exifModel>DMC-L1</exifModel>
+      <thumbNum>0</thumbNum>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>15039918</rawDataSize>
+      <rawDataDimensions>3177 2367</rawDataDimensions>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>0</rawMaxValue>
+      <rawMd5>28497</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>RAW-test Panasonic L10</name>
+    <file>/home/hub/samples/raw/Panasonic-L10/Panasonic - DMC-L10 - 4:3.RAW</file>
+    <source>https://raw.pixls.us/getfile.php/628/nice/Panasonic%20-%20DMC-L10%20-%204:3.RAW</source>
+    <results>
+      <rawType>RW2</rawType>
+      <rawTypeId>720912</rawTypeId>
+      <makerNoteCount>69</makerNoteCount>
+      <makerNoteId>Panasonic</makerNoteId>
+      <exifMake>Panasonic</exifMake>
+      <exifModel>DMC-L10</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1920</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>8210 720384</thumbDataSizes>
+      <thumbMd5>6490 9520</thumbMd5>
+      <rawDataType>COMP_RAW</rawDataType>
+      <rawDataSize>20412420</rawDataSize>
+      <rawDataDimensions>3710 2751</rawDataDimensions>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>0</rawMaxValue>
+      <rawMd5>55840</rawMd5>
+      <metaOrientation>8</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>RW2-test GH4</name>
     <file>/home/hub/samples/rw2/Panasonic_GH4/P9490010.RW2</file>
     <source disabled="1">https://www.dpreview.com/reviews/image-comparison/download-image?s3Key=ec839aaa3c8544f1a8b8190d6008881c.rw2</source>
     <results>
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>1920</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>764928</thumbDataSizes>
-      <thumbMd5>51492</thumbMd5>
+      <makerNoteCount>143</makerNoteCount>
+      <makerNoteId>Panasonic</makerNoteId>
+      <exifMake>Panasonic</exifMake>
+      <exifModel>DMC-GH4</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1920</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>9480 764928</thumbDataSizes>
+      <thumbMd5>28863 51492</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>
@@ -1000,11 +1093,15 @@
     <results>
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
-      <thumbNum>1</thumbNum>
-      <thumbSizes>1920</thumbSizes>
-      <thumbFormats>JPEG</thumbFormats>
-      <thumbDataSizes>462848</thumbDataSizes>
-      <thumbMd5>37053</thumbMd5>
+      <makerNoteCount>146</makerNoteCount>
+      <makerNoteId>Panasonic</makerNoteId>
+      <exifMake>Panasonic</exifMake>
+      <exifModel>DMC-GH4</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1920</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>5203 462848</thumbDataSizes>
+      <thumbMd5>1722 37053</thumbMd5>
       <rawDataType>RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>

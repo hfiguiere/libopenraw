@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfilecontainer.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -163,7 +163,7 @@ bool IfdFileContainer::_locateDirs(void)
             // we assume the offset is relative to the begining of
             // the IFD.
             IfdDir::Ref dir(
-                std::make_shared<IfdDir>(m_offset + dir_offset, *this));
+                std::make_shared<IfdDir>(m_offset + dir_offset, *this, OR_IFD_OTHER));
             m_dirs.push_back(dir);
 
             dir_offset = dir->nextIFD();

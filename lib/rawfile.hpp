@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawfile.hpp
  *
- * Copyright (C) 2005-2018 Hubert Figuière
+ * Copyright (C) 2005-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -27,6 +27,7 @@
 #include <libopenraw/rawfile.h>
 
 #include "ifddir.hpp"
+#include "makernotedir.hpp"
 
 namespace OpenRaw {
 
@@ -34,6 +35,7 @@ class Thumbnail;
 class RawData;
 class BitmapData;
 class MetaValue;
+class MetadataIterator;
 
 namespace Internals {
 class RawContainer;
@@ -121,7 +123,7 @@ public:
 
     /** Get the orientation of the image, using Exif enums.
      */
-    int32_t getOrientation();
+    uint32_t getOrientation();
 
     /**
      * @return the number of items in the colour matrix.
@@ -150,9 +152,20 @@ public:
      */
     virtual or_colour_matrix_origin getColourMatrixOrigin() const;
 
-    Internals::IfdDir::Ref getMakerNoteIfd();
+    Internals::IfdDir::Ref cfaIfd();
+    Internals::IfdDir::Ref mainIfd();
+    Internals::IfdDir::Ref exifIfd();
+    Internals::MakerNoteDir::Ref makerNoteIfd();
+
     const MetaValue *getMetaValue(int32_t meta_index);
+
+    MetadataIterator* getMetadataIterator();
 protected:
+    virtual Internals::IfdDir::Ref _locateCfaIfd() = 0;
+    virtual Internals::IfdDir::Ref _locateMainIfd() = 0;
+    virtual Internals::IfdDir::Ref _locateExifIfd();
+    virtual Internals::MakerNoteDir::Ref _locateMakerNoteIfd();
+
     struct camera_ids_t {
         const char * model;
         const uint32_t type_id;
@@ -202,7 +215,6 @@ protected:
      */
     virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
     virtual ExifLightsourceValue _getCalibrationIlluminant(uint16_t index);
-    virtual Internals::IfdDir::Ref _getMakerNoteIfd() = 0;
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 
     TypeId _typeIdFromModel(const std::string& make, const std::string & model);

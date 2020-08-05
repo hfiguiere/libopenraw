@@ -163,8 +163,8 @@ RawContainer *Cr3File::getContainer() const
     data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
     data.setDimensions((*raw_track).image_width, (*raw_track).image_height);
     // get the sensor info
-    const IfdDir::Ref &makerNoteIfd = _getMakerNoteIfd();
-    auto sensorInfo = canon_get_sensorinfo(makerNoteIfd);
+    IfdDir::Ref makerNote = makerNoteIfd();
+    auto sensorInfo = canon_get_sensorinfo(makerNote);
     if (sensorInfo) {
         data.setActiveArea((*sensorInfo)[0], (*sensorInfo)[1],
                            (*sensorInfo)[2], (*sensorInfo)[3]);
@@ -254,21 +254,33 @@ IfdDir::Ref Cr3File::findIfd(uint32_t idx)
     return ifd->setDirectory(0);
 }
 
-IfdDir::Ref Cr3File::mainIfd()
+IfdDir::Ref Cr3File::_locateMainIfd()
 {
-    return findIfd(0);
+    auto ifd = findIfd(0);
+    if (ifd) {
+        ifd->setType(OR_IFD_MAIN);
+    }
+    return ifd;
 }
 
-
-IfdDir::Ref Cr3File::exifIfd()
+IfdDir::Ref Cr3File::_locateExifIfd()
 {
-    return findIfd(1);
+    auto ifd = findIfd(1);
+    if (ifd) {
+        ifd->setType(OR_IFD_EXIF);
+    }
+    return ifd;
 }
 
-
-IfdDir::Ref Cr3File::_getMakerNoteIfd()
+MakerNoteDir::Ref Cr3File::_locateMakerNoteIfd()
 {
-    return findIfd(2);
+    auto ifd = findIfd(2);
+    if (ifd) {
+        auto mnote = std::make_shared<MakerNoteDir>(*ifd, "Canon", mnote_canon_tag_names);
+        mnote->load();
+        return mnote;
+    }
+    return std::dynamic_pointer_cast<MakerNoteDir>(ifd);
 }
 
 MetaValue* Cr3File::_getMetaValue(int32_t meta_index)
@@ -289,7 +301,7 @@ MetaValue* Cr3File::_getMetaValue(int32_t meta_index)
 
         IfdEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
         if(e) {
-            val = e->make_meta_value();
+            val = ifd->makeMetaValue(*e);
         }
     }
 
@@ -298,9 +310,10 @@ MetaValue* Cr3File::_getMetaValue(int32_t meta_index)
 
 void Cr3File::_identifyId()
 {
+    // XXX TODO this code seems be very common with Cr2File
     // There is a camera model ID in the MakerNote tag 0x0010.
     // Use this at first.
-    auto mn = getMakerNoteIfd();
+    auto mn = makerNoteIfd();
     if (mn) {
         auto id = mn->getValue<uint32_t>(IFD::MNOTE_CANON_MODEL_ID);
         if (id) {

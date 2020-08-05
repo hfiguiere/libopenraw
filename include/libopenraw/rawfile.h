@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.h
  *
- * Copyright (C) 2007-2019 Hubert Figuière
+ * Copyright (C) 2007-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -133,7 +133,14 @@ ORConstMetaValueRef
 or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index);
 
 ORIfdDirRef
-or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd);
+or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_dir_type ifd);
+
+/** Get a metadata iterator
+ * @param rawfile the RAW file object.
+ * @return The metadata iterator.
+ */
+ORMetadataIteratorRef
+or_rawfile_get_metadata_iterator(ORRawFileRef rawfile);
 
 #if 0
 /** Get the metadata out of the raw file as XMP

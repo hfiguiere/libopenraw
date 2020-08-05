@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - ifddir.h
+ * libopenraw - ifddir.hpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_IFDDIR_H
-#define OR_INTERNALS_IFDDIR_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -35,19 +34,34 @@
 #include "ifdentry.hpp"
 #include "trace.hpp"
 #include "option.hpp"
+#include "exif/exif_tags.hpp"
 
 namespace OpenRaw {
 namespace Internals {
+
+typedef or_ifd_dir_type IfdDirType;
 
 class IfdFileContainer;
 
 class IfdDir {
 public:
+    typedef std::weak_ptr<IfdDir> WeakRef;
     typedef std::shared_ptr<IfdDir> Ref;
     typedef std::vector<Ref> RefVec;
+    typedef std::map<uint16_t, IfdEntry::Ref> Entries;
 
-    IfdDir(off_t _offset, IfdFileContainer &_container);
+    IfdDir(off_t _offset, const IfdFileContainer& _container, IfdDirType _type /*= OR_IFDDIR_OTHER */, const TagTable& tag_table = exif_tag_names);
     virtual ~IfdDir();
+
+    IfdDirType type() const
+        { return m_type; }
+    void setType(IfdDirType type_)
+        { m_type = type_; }
+
+    off_t baseOffset() const
+        { return m_base_offset; }
+    void setBaseOffset(off_t base)
+        { m_base_offset = base; }
 
     bool isPrimary() const;
     bool isThumbnail() const;
@@ -61,6 +75,11 @@ public:
     /** return the number of entries*/
     int numTags() { return m_entries.size(); }
     IfdEntry::Ref getEntry(uint16_t id) const;
+    /** Direct access to the entries */
+    const Entries& entries() const
+        {
+            return m_entries;
+        }
 
     /** Get a T value from an entry
      * @param id the IFD field id
@@ -72,7 +91,7 @@ public:
         IfdEntry::Ref e = getEntry(id);
         if (e != NULL) {
             try {
-                return Option<T>(IfdTypeTrait<T>::get(*e));
+                return Option<T>(getEntryValue<T>(*e));
             }
             catch (const std::exception &ex) {
                 LOGERR("Exception raised %s fetch value for %u\n", ex.what(), id);
@@ -111,16 +130,108 @@ public:
     Ref getExifIFD();
 
     /** get the MakerNote IFD.
+     * @param file_type the file type as a hint
      * @return Ref to the new MakerNoteDir if found
      */
-    Ref getMakerNoteIfd();
+    Ref getMakerNoteIfd(or_rawfile_type file_type);
 
+    void setTagTable(const TagTable& tag_table)
+        {
+            m_tag_table = &tag_table;
+        }
+    /** Return the tag name for tag
+     * @return a static string or nullptr if not found.
+     */
+    const char* getTagName(uint32_t tag) const;
+
+    /** Get the entry value as an array */
+    template <typename T>
+    Option<std::vector<T>> getEntryArrayValue(IfdEntry& e) const;
+    /** Get the typed entry value */
+    template<typename T>
+    T getEntryValue(IfdEntry& e, uint32_t idx = 0, bool ignore_type = false) const;
+
+    /** copy the enty data. Endian is ignored. Suite for bytes, undefined, etc
+     * @param e the entry
+     * @param buffer the buffer
+     * @param buffersize the size of the buffer in bytes. Will copy at most this.
+     * @return the number of bytes copied
+     */
+    size_t getEntryData(IfdEntry& e, uint8_t* buffer, size_t buffersize) const;
+
+    uint32_t getEntryIntegerArrayItemValue(IfdEntry& e, int idx) const;
+
+    MetaValue* makeMetaValue(IfdEntry& e) const;
 private:
+    IfdDirType m_type;
     off_t m_offset;
-    IfdFileContainer &m_container;
-    std::map<uint16_t, IfdEntry::Ref> m_entries;
+    const IfdFileContainer& m_container;
+    Entries m_entries;
+    const TagTable* m_tag_table;
+    off_t m_base_offset;
 };
-}
+
+
+/** get the array values of type T
+ * @param T the type of the value needed
+ * @param array the storage
+ * @throw whatever is thrown
+ */
+template <typename T>
+Option<std::vector<T>> IfdDir::getEntryArrayValue(IfdEntry& entry) const
+{
+    try {
+        std::vector<T> array;
+        array.reserve(entry.count());
+        for (uint32_t i = 0; i < entry.count(); i++) {
+            array.push_back(getEntryValue<T>(entry, i));
+        }
+        return Option<decltype(array)>(array);
+    }
+    catch(const std::exception& e)
+    {
+        LOGERR("Exception: %s\n", e.what());
+    }
+    return OptionNone();
 }
 
-#endif
+/** get the value of type T
+ * @param T the type of the value needed
+ * @param idx the index, by default 0
+ * @param ignore_type if true, don't check type. *DANGEROUS* Default is false.
+ * @return the value
+ * @throw BadTypeException in case of wrong typing.
+ * @throw OutOfRangeException in case of subscript out of range
+ */
+template <typename T>
+T IfdDir::getEntryValue(IfdEntry& e, uint32_t idx, bool ignore_type) const
+	noexcept(false)
+{
+    /* format undefined means that we don't check the type */
+    if(!ignore_type && (e.type() != IFD::EXIF_FORMAT_UNDEFINED)) {
+        if (e.type() != IfdTypeTrait<T>::type) {
+            throw BadTypeException();
+        }
+    }
+    if (idx + 1 > e.count()) {
+        throw OutOfRangeException();
+    }
+
+    if (!e.loadData(IfdTypeTrait<T>::size, m_base_offset)) {
+        throw TooBigException();
+    }
+
+    const uint8_t *data = e.dataptr();
+    data += (IfdTypeTrait<T>::size * idx);
+    T val;
+    if (e.endian() == RawContainer::ENDIAN_LITTLE) {
+        val = IfdTypeTrait<T>::EL(data, e.count() - idx);
+    } else {
+        val = IfdTypeTrait<T>::BE(data, e.count() - idx);
+    }
+    return val;
+}
+
+
+}
+}

@@ -37,11 +37,13 @@
 #include "ifd.hpp"
 #include "ifddir.hpp"
 #include "ifdentry.hpp"
+#include "ifdfilecontainer.hpp"
 #include "rawfile_private.hpp"
 #include "raffile.hpp"
 #include "rafcontainer.hpp"
 #include "rafmetacontainer.hpp"
 #include "jfifcontainer.hpp"
+#include "makernotedir.hpp"
 #include "unpack.hpp"
 #include "trace.hpp"
 #include "io/streamclone.hpp"
@@ -367,6 +369,18 @@ RafFile::~RafFile()
     delete m_container;
 }
 
+IfdDir::Ref RafFile::_locateMainIfd()
+{
+    if (!m_mainIfd) {
+        JfifContainer *jpegPreview = m_container->getJpegPreview();
+        if (!jpegPreview) {
+            return IfdDir::Ref();
+        }
+        m_mainIfd = jpegPreview->getIfdDirAt(0);
+    }
+    return m_mainIfd;
+}
+
 ::or_error RafFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
     or_error ret = OR_ERROR_NOT_FOUND;
@@ -391,6 +405,8 @@ RafFile::~RafFile()
         return ret;
     }
 
+    // XXX check why this as it appear that if true there won't be
+    // and thumbnail.
     auto result = dir->getIntegerValue(IFD::EXIF_TAG_IMAGE_WIDTH);
     if (result) {
         x = result.value();
@@ -404,10 +420,8 @@ RafFile::~RafFile()
         if (result.empty()) {
             return ret;
         }
-        uint32_t jpeg_offset = result.value();
+        uint32_t jpeg_offset = result.value() + jpegPreview->exifOffset();
 
-        jpeg_offset += 12; // XXX magic number. eh?
-                           // I need to re-read the Exif spec.
         result = dir->getValue<uint32_t>(IFD::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
         if (result.empty()) {
             return ret;
@@ -488,12 +502,12 @@ RafFile::isXTrans(RawFile::TypeId type_) const
         // use this tag if the other is missing
         value = meta->getValue(RAF_TAG_IMG_HEIGHT_WIDTH);
     }
-    uint32_t dims = value->get().getInteger(0);
+    uint32_t dims = value->get().getUInteger(0);
     uint16_t h = (dims & 0xFFFF0000) >> 16;
     uint16_t w = (dims & 0x0000FFFF);
 
     value = meta->getValue(RAF_TAG_RAW_INFO);
-    uint32_t rawProps = value->get().getInteger(0);
+    uint32_t rawProps = value->get().getUInteger(0);
     // TODO re-enable if needed.
     // uint8_t layout = (rawProps & 0xFF000000) >> 24 >> 7; // MSBit in byte.
     uint8_t compressed = ((rawProps & 0xFF0000) >> 16) & 8; // 8 == compressed
@@ -569,7 +583,7 @@ MetaValue *RafFile::_getMetaValue(int32_t meta_index)
         IfdDir::Ref dir = jpegPreview->mainIfd();
         IfdEntry::Ref e = dir->getEntry(META_NS_MASKOUT(meta_index));
         if (e) {
-            return e->make_meta_value();
+            return dir->makeMetaValue(*e);
         }
     }
 

@@ -2,7 +2,7 @@
 /*
  * libopenraw - rw2file.hpp
  *
- * Copyright (C) 2006-2018 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_RW2FILE_H_
-#define OR_INTERNALS_RW2FILE_H_
+#pragma once
 
 #include <stdint.h>
 #include <vector>
@@ -30,6 +29,7 @@
 #include "rawfile.hpp"
 #include "ifddir.hpp"
 #include "ifdfile.hpp"
+#include "jfifcontainer.hpp"
 #include "io/stream.hpp"
 
 namespace OpenRaw {
@@ -39,47 +39,51 @@ class RawData;
 namespace Internals {
 
 class Rw2File
-	: public IfdFile
+    : public IfdFile
 {
   template<typename T>
   friend void audit_coefficients();
 
 public:
-	static RawFile *factory(const IO::Stream::Ptr & s);
-	Rw2File(const IO::Stream::Ptr & s);
-	virtual ~Rw2File();
+    static RawFile *factory(const IO::Stream::Ptr& s);
+    Rw2File(const IO::Stream::Ptr& s);
+    virtual ~Rw2File();
 
-  Rw2File(const Rw2File&) = delete;
-	Rw2File & operator=(const Rw2File&) = delete;
+    Rw2File(const Rw2File&) = delete;
+    Rw2File & operator=(const Rw2File&) = delete;
 
-	enum {
-		PANA_RAW_COMPRESSION = 0x11000
-	};
+    enum {
+        PANA_RAW_COMPRESSION = 0x11000
+    };
 
 protected:
-	virtual IfdDir::Ref  _locateCfaIfd() override;
-	virtual IfdDir::Ref  _locateMainIfd() override;
+    virtual IfdDir::Ref _locateCfaIfd() override;
+    virtual IfdDir::Ref _locateMainIfd() override;
+    virtual IfdDir::Ref _locateExifIfd() override;
 private:
 
-	virtual ::or_error _locateThumbnail(const IfdDir::Ref & dir,
-                                     std::vector<uint32_t> &list) override;
-	virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref & dir, uint32_t & len) override;
-	virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+    virtual ::or_error _locateThumbnail(const IfdDir::Ref& dir,
+                                     std::vector<uint32_t>& list) override;
+    const std::unique_ptr<JfifContainer>& getJpegContainer(const IfdDir::Ref& dir, uint32_t& offset, uint32_t& size);
+    virtual uint32_t _getJpegThumbnailOffset(const IfdDir::Ref& dir, uint32_t& len) override;
+    virtual ::or_error _getRawData(RawData& data, uint32_t options) override;
 
-	static const IfdFile::camera_ids_t s_def[];
+    static const IfdFile::camera_ids_t s_def[];
+
+    std::unique_ptr<JfifContainer> m_jfif;
+    uint32_t m_jfif_offset;
+    uint32_t m_jfif_size;
 };
 
 }
 }
-
-#endif
 /*
   Local Variables:
   mode:c++
   c-file-style:"stroustrup"
   c-file-offsets:((innamespace . 0))
-  tab-width:2
-  c-basic-offset:2
+  tab-width:4
+  c-basic-offset:4
   indent-tabs-mode:nil
   fill-column:80
   End:

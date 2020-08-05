@@ -1,7 +1,7 @@
 /*
- * libopenraw - trace.h
+ * libopenraw - trace.hpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,15 +18,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef OR_INTERNALS_TRACE_H_
-#define OR_INTERNALS_TRACE_H_
+#pragma once
 
 #include <string>
 #include <vector>
 #include <algorithm>
 
 #include <libopenraw/debug.h>
+
+namespace OpenRaw {
+namespace Internals {
+class IfdDir;
+}
+}
 
 namespace Debug {
 
@@ -37,6 +41,9 @@ namespace Debug {
 void log(debug_level level, const char* fmt, ...)
     __attribute__ ((format (printf, 2, 3)));
 
+
+#define LOGASSERT(x) \
+  if (!(x)) Debug::log(ERROR, "ASSERT failed: %s\n", #x)
 
 #define LOGWARN(...) \
   Debug::log(WARNING, ## __VA_ARGS__)
@@ -49,6 +56,13 @@ void log(debug_level level, const char* fmt, ...)
 
 #define LOGDBG2(...) \
   Debug::log(DEBUG2, ## __VA_ARGS__)
+
+/** Convert bytes to a displayed string for Debug */
+std::string bytes_to_string(const uint8_t* bytes, size_t len);
+/** Convert ascii bytes to a displayed string for Debug */
+std::string ascii_to_string(const uint8_t* bytes, size_t len);
+/** Convert dump an IFD to a string */
+std::string dump_ifd(const OpenRaw::Internals::IfdDir& dir);
 
 /** a basic Trace class for debug */
 class Trace
@@ -88,8 +102,6 @@ Trace & Trace::operator<<(const std::vector<T> & v)
 }
 
 }
-
-#endif
 /*
   Local Variables:
   mode:c++

@@ -2,7 +2,7 @@
 /*
  * libopenraw - exif.h
  *
- * Copyright (C) 2007-2018 Hubert Figuiere
+ * Copyright (C) 2007-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -165,6 +165,17 @@ typedef	enum {
 	DNG_TAG_CALIBRATION_ILLUMINANT2          = 0xc65b,
 	DNG_TAG_ACTIVE_AREA                      = 0xc68d,
 
+	/* ERF tags */
+	ERF_TAG_PREVIEW_IMAGE = 0x280,
+
+	/* ORF tags */
+	ORF_TAG_THUMBNAIL_IMAGE = 0x100,
+	ORF_TAG_CAMERA_SETTINGS = 0x2020,
+	/* Camera Settings */
+	ORF_TAG_CS_PREVIEW_IMAGE_VALID = 0x100,
+	ORF_TAG_CS_PREVIEW_IMAGE_START = 0x101,
+	ORF_TAG_CS_PREVIEW_IMAGE_LENGTH = 0x102,
+
 	/* CR2 tags */
 	CR2_TAG_c5d9 = 0xc5d9,
 	CR2_TAG_SLICE = 0xc640,    /**< Exif tag for CR2 RAW "slices" */
@@ -181,6 +192,11 @@ typedef	enum {
 	RW2_TAG_JPEG_FROM_RAW = 0x002e,
 	RW2_TAG_STRIP_OFFSETS = 0x0118,
 
+	/* Pentax MakerNote tags */
+	MNOTE_PENTAX_PREVIEW_IMAGE_SIZE = 0x02,
+	MNOTE_PENTAX_PREVIEW_IMAGE_LENGTH = 0x03,
+	MNOTE_PENTAX_PREVIEW_IMAGE_START = 0x04,
+
 	/* Canon MakerNote tags */
 	MNOTE_CANON_MODEL_ID = 0x0010,
 	MNOTE_CANON_RAW_DATA_OFFSET = 0x0081,
@@ -189,7 +205,12 @@ typedef	enum {
 
 	/* Nikon MakerNote tags */
 	MNOTE_NIKON_QUALITY = 0x04,
+	MNOTE_NIKON_PREVIEW_IFD = 0x11,
 	MNOTE_NIKON_NEFDECODETABLE2 = 0x96,
+
+	/* Nikon MakerNote Preview IFD tags */
+	MNOTE_NIKON_PREVIEWIFD_START = 0x201,
+	MNOTE_NIKON_PREVIEWIFD_LENGTH = 0x202,
 
 	_EXIF_TAG_LAST
 } ExifTag;
@@ -218,6 +239,24 @@ typedef enum {
 	/* 23...254 reserved */
 	EV_LIGHTSOURCE_OTHER       = 255
 } ExifLightsourceValue;
+
+/** type for Exif field/tag
+    taken from libexif
+*/
+typedef enum {
+    EXIF_FORMAT_BYTE       =  1,
+    EXIF_FORMAT_ASCII      =  2,
+    EXIF_FORMAT_SHORT      =  3,
+    EXIF_FORMAT_LONG       =  4,
+    EXIF_FORMAT_RATIONAL   =  5,
+    EXIF_FORMAT_SBYTE      =  6,
+    EXIF_FORMAT_UNDEFINED  =  7,
+    EXIF_FORMAT_SSHORT     =  8,
+    EXIF_FORMAT_SLONG      =  9,
+    EXIF_FORMAT_SRATIONAL  = 10,
+    EXIF_FORMAT_FLOAT      = 11,
+    EXIF_FORMAT_DOUBLE     = 12
+} ExifTagType;
 
 
 #ifdef __cplusplus

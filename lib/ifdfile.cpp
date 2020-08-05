@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifdfile.cpp
  *
- * Copyright (C) 2006-2019 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -70,26 +70,19 @@ IfdFile::~IfdFile()
   delete m_container;
 }
 
-// this one seems to be pretty much the same for all the
-// IFD based raw files
-IfdDir::Ref  IfdFile::_locateExifIfd()
+IfdDir::Ref IfdFile::_locateCfaIfd()
 {
-	const IfdDir::Ref & _mainIfd = mainIfd();
-  if (!_mainIfd) {
-    LOGERR("IfdFile::_locateExifIfd() main IFD not found\n");
-    return IfdDir::Ref();
-  }
-  return _mainIfd->getExifIFD();
+  // CFA IFD is the main IFD byt default
+  return mainIfd();
 }
 
-MakerNoteDir::Ref  IfdFile::_locateMakerNoteIfd()
+IfdDir::Ref IfdFile::_locateMainIfd()
 {
-	const IfdDir::Ref & _exifIfd = exifIfd();
-	if(_exifIfd) {
-		// to not have a recursive declaration, getMakerNoteIfd() return an IfdDir.
-		return std::dynamic_pointer_cast<MakerNoteDir>(_exifIfd->getMakerNoteIfd());
-	}
-	return MakerNoteDir::Ref();
+  auto ifd = m_container->setDirectory(0);
+  if (ifd) {
+    ifd->setType(OR_IFD_MAIN);
+  }
+  return ifd;
 }
 
 void IfdFile::_identifyId()
@@ -161,10 +154,7 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 
   auto result = dir->getValue<uint32_t>(IFD::EXIF_TAG_NEW_SUBFILE_TYPE);
   if (result.empty()) {
-    if(!m_cfaIfd) {
-      m_cfaIfd = _locateCfaIfd();
-    }
-    if(m_cfaIfd == dir) {
+    if (cfaIfd() == dir) {
       return OR_ERROR_NOT_FOUND;
     }
     else {
@@ -250,7 +240,7 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
         // by default it is RGB8. Unless stated otherwise.
         bool isRGB8 = true;
         IfdEntry::Ref entry = dir->getEntry(IFD::EXIF_TAG_BITS_PER_SAMPLE);
-        auto result2 = entry->getArray<uint16_t>();
+        auto result2 = dir->getEntryArrayValue<uint16_t>(*entry);
         if (result2) {
           std::vector<uint16_t> arr = result2.value();
           for(auto bpc : arr) {
@@ -318,8 +308,8 @@ MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
     LOGDBG1("Meta value for %u\n", META_NS_MASKOUT(meta_index));
 
     IfdEntry::Ref e = ifd->getEntry(META_NS_MASKOUT(meta_index));
-    if(e) {
-      val = e->make_meta_value();
+    if (e) {
+      val = ifd->makeMetaValue(*e);
     }
   }
   return val;
@@ -330,48 +320,6 @@ MetaValue *IfdFile::_getMetaValue(int32_t meta_index)
 uint32_t IfdFile::_translateCompressionType(IFD::TiffCompress tiff_compression)
 {
 	return (uint32_t)tiff_compression;
-}
-
-
-
-const IfdDir::Ref & IfdFile::cfaIfd()
-{
-	if(!m_cfaIfd) {
-		m_cfaIfd = _locateCfaIfd();
-	}
-	return m_cfaIfd;
-}
-
-
-const IfdDir::Ref & IfdFile::mainIfd()
-{
-	if(!m_mainIfd) {
-		m_mainIfd = _locateMainIfd();
-	}
-	return m_mainIfd;
-}
-
-
-const IfdDir::Ref & IfdFile::exifIfd()
-{
-	if(!m_exifIfd) {
-		m_exifIfd = _locateExifIfd();
-	}
-	return m_exifIfd;
-}
-
-
-const MakerNoteDir::Ref & IfdFile::makerNoteIfd()
-{
-	if(!m_makerNoteIfd) {
-		m_makerNoteIfd = _locateMakerNoteIfd();
-	}
-	return m_makerNoteIfd;
-}
-
-Internals::IfdDir::Ref IfdFile::_getMakerNoteIfd()
-{
-	return makerNoteIfd();
 }
 
 namespace {
@@ -427,14 +375,14 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
   return nullptr;
 }
 
-const MosaicInfo *_convertNewCfaPattern(const IfdEntry::Ref & e)
+const MosaicInfo *_convertNewCfaPattern(const IfdDir::Ref& dir, IfdEntry& e)
 {
-  if(!e || (e->count() < 4)) {
+  if (e.count() < 4) {
     return nullptr;
   }
 
-  uint16_t hdim = IfdTypeTrait<uint16_t>::get(*e, 0, true);
-  uint16_t vdim = IfdTypeTrait<uint16_t>::get(*e, 1, true);
+  uint16_t hdim = dir->getEntryValue<uint16_t>(e, 0, true);
+  uint16_t vdim = dir->getEntryValue<uint16_t>(e, 1, true);
   if(hdim != 2 && vdim != 2) {
     // cfa_pattern = OR_CFA_PATTERN_NON_RGB22;
     if (hdim != 6 && vdim != 6) {
@@ -444,20 +392,20 @@ const MosaicInfo *_convertNewCfaPattern(const IfdEntry::Ref & e)
     return XTransPattern::xtransPattern();
   } else {
     std::vector<uint8_t> cfaPattern;
-    cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 4, true));
-    cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 5, true));
-    cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 6, true));
-    cfaPattern.push_back(IfdTypeTrait<uint8_t>::get(*e, 7, true));
+    cfaPattern.push_back(dir->getEntryValue<uint8_t>(e, 4, true));
+    cfaPattern.push_back(dir->getEntryValue<uint8_t>(e, 5, true));
+    cfaPattern.push_back(dir->getEntryValue<uint8_t>(e, 6, true));
+    cfaPattern.push_back(dir->getEntryValue<uint8_t>(e, 7, true));
     return _convertArrayToCfaPattern(cfaPattern);
   }
 }
 
 
 /** Extract the MosaicInfo from the entry */
-const MosaicInfo *_convertCfaPattern(const IfdEntry::Ref & e)
+const MosaicInfo *_convertCfaPattern(const IfdDir::Ref& dir, IfdEntry& e)
 {
   LOGDBG1("%s\n", __FUNCTION__);
-  auto result = e->getArray<uint8_t>();
+  auto result = dir->getEntryArrayValue<uint8_t>(e);
   if (result) {
     return _convertArrayToCfaPattern(result.value());
   }
@@ -477,11 +425,11 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
   try {
     IfdEntry::Ref e = dir->getEntry(IFD::EXIF_TAG_CFA_PATTERN);
     if (e) {
-      mosaic_info = _convertCfaPattern(e);
+      mosaic_info = _convertCfaPattern(dir, *e);
     } else {
       e = dir->getEntry(IFD::EXIF_TAG_NEW_CFA_PATTERN);
       if (e)  {
-        mosaic_info = _convertNewCfaPattern(e);
+        mosaic_info = _convertNewCfaPattern(dir, *e);
       }
     }
   }
@@ -545,7 +493,7 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
       LOGDBG1("byte len not found\n");
       return OR_ERROR_NOT_FOUND;
     }
-    auto result3 = e->getArray<uint32_t>();
+    auto result3 = dir->getEntryArrayValue<uint32_t>(*e);
     if (result3) {
       std::vector<uint32_t> counts = result3.value();
       LOGDBG1("counting tiles\n");
@@ -560,7 +508,7 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
       LOGDBG1("tile offsets empty\n");
       return OR_ERROR_NOT_FOUND;
     }
-    auto result3 = e->getArray<uint32_t>();
+    auto result3 = dir->getEntryArrayValue<uint32_t>(*e);
     if (!result3) {
       LOGDBG1("tile offsets not found\n");
       return OR_ERROR_NOT_FOUND;
@@ -572,7 +520,7 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
       LOGDBG1("tile byte counts not found\n");
       return OR_ERROR_NOT_FOUND;
     }
-    result3 = e->getArray<uint32_t>();
+    result3 = dir->getEntryArrayValue<uint32_t>(*e);
     if (result3) {
       std::vector<uint32_t> counts = result3.value();
       LOGDBG1("counting tiles\n");
@@ -626,10 +574,7 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
   const MosaicInfo *mosaic_info = _getMosaicInfo(dir);
   if (!mosaic_info) {
     // some file have it in the exif IFD instead.
-    if(!m_exifIfd) {
-      m_exifIfd = _locateExifIfd();
-    }
-    mosaic_info = _getMosaicInfo(m_exifIfd);
+    mosaic_info = _getMosaicInfo(exifIfd());
   }
 
 

@@ -330,16 +330,29 @@ OrfFile::~OrfFile()
 {
 }
 
-IfdDir::Ref  OrfFile::_locateCfaIfd()
+/** Add the thumbnail at offset and len */
+::or_error OrfFile::addThumbnail(std::vector<uint32_t>& list, uint32_t offset, uint32_t len)
 {
-    // in ORF the CFA IFD is the main IFD
-    return mainIfd();
-}
+    auto err = OR_ERROR_NOT_FOUND;
+    LOGDBG1("fetching JPEG\n");
+    IO::Stream::Ptr s = std::make_shared<IO::StreamClone>(m_io, offset);
+    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
 
+    uint32_t x, y;
+    x = y = 0;
+    jfif->getDimensions(x, y);
+    LOGDBG1("JPEG dimensions x=%d y=%d\n", x, y);
 
-IfdDir::Ref  OrfFile::_locateMainIfd()
-{
-    return m_container->setDirectory(0);
+    uint32_t dim = std::max(x, y);
+    // "Olympus" MakerNote carries a 160 px thubnail we might already have.
+    // We don't check it is the same.
+    if (dim && std::find(list.begin(), list.end(), dim) == list.end()) {
+        _addThumbnail(dim, ThumbDesc(x, y, OR_DATA_TYPE_JPEG, offset, len));
+        list.push_back(dim);
+        err = OR_ERROR_NONE;
+    }
+
+    return err;
 }
 
 ::or_error OrfFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
@@ -347,43 +360,46 @@ IfdDir::Ref  OrfFile::_locateMainIfd()
     auto err = OR_ERROR_NOT_FOUND;
 
     err = IfdFile::_enumThumbnailSizes(list);
+    LOGDBG1("got %ld thumbs\n", list.size());
 
     auto exif = exifIfd();
     if (!exif) {
+        LOGDBG1("can't get exif\n");
         return err;
     }
 
-    auto ifd = exif->getMakerNoteIfd();
-    if (!ifd) {
-        return err;
-    }
-    auto makerNote = std::dynamic_pointer_cast<MakerNoteDir>(ifd);
+    auto makerNote = std::dynamic_pointer_cast<MakerNoteDir>(exif->getMakerNoteIfd(type()));
     if (!makerNote) {
+        LOGDBG1("can't get makernote\n");
         return err;
     }
 
-    auto e = makerNote->getEntry(0x100);
+    auto e = makerNote->getEntry(ORF_TAG_THUMBNAIL_IMAGE);
     if (e) {
-        auto val_offset = e->offset();
+        auto val_offset = e->offset() + makerNote->getMnoteOffset();
 
-        val_offset += makerNote->getMnoteOffset();
+        err = addThumbnail(list, val_offset, e->count());
+    }
 
-        LOGDBG1("fetching JPEG\n");
-        IO::Stream::Ptr s(
-            std::make_shared<IO::StreamClone>(m_io, val_offset));
-        std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+    auto ifd = makerNote->getIfdInEntry(ORF_TAG_CAMERA_SETTINGS);
+    if (ifd) {
+        LOGDBG1("CameraSettings %ld\n", ifd->entries().size());
+        uint32_t is_valid = ifd->getValue<uint32_t>(ORF_TAG_CS_PREVIEW_IMAGE_VALID).value_or(0);
+        if (is_valid) {
+            uint32_t start =
+                ifd->getValue<uint32_t>(ORF_TAG_CS_PREVIEW_IMAGE_START).value_or(0);
+            if (start) {
+                start += makerNote->getMnoteOffset();
+            }
+            uint32_t len = ifd->getValue<uint32_t>(ORF_TAG_CS_PREVIEW_IMAGE_LENGTH).value_or(0);
+            LOGDBG1("is_valid %u, start %u len %u\n", is_valid, start, len);
 
-        uint32_t x, y;
-        x = y = 0;
-        jfif->getDimensions(x, y);
-        LOGDBG1("JPEG dimensions x=%d y=%d\n", x, y);
-
-        uint32_t dim = std::max(x, y);
-        if (dim) {
-            _addThumbnail(dim, ThumbDesc(x, y, OR_DATA_TYPE_JPEG,
-                                         val_offset, e->count()));
-            list.push_back(dim);
-            err = OR_ERROR_NONE;
+            // if either value is zero we consider it is wrong.
+            if (start != 0 && len != 0) {
+                err = addThumbnail(list, start, len);
+            } else {
+                err = OR_ERROR_NOT_FOUND;
+            }
         }
     }
 

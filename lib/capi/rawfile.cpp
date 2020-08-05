@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawfile.cpp
  *
- * Copyright (C) 2007-2019 Hubert Figuiere
+ * Copyright (C) 2007-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -219,14 +219,23 @@ or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index)
 }
 
 API_EXPORT
-ORIfdDirRef or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd)
+ORIfdDirRef or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_dir_type ifd)
 {
     RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
     CHECK_PTR(rawfile, nullptr);
     IfdDir::Ref dir;
     switch (ifd) {
-    case OR_IFD_MAKERNOTE:
-        dir = prawfile->getMakerNoteIfd();
+    case OR_IFD_RAW:
+        dir = prawfile->cfaIfd();
+        break;
+    case OR_IFD_MAIN:
+        dir = prawfile->mainIfd();
+        break;
+    case OR_IFD_EXIF:
+        dir = prawfile->exifIfd();
+        break;
+    case OR_IFD_MNOTE:
+        dir = prawfile->makerNoteIfd();
         break;
     default:
         break;
@@ -234,7 +243,16 @@ ORIfdDirRef or_rawfile_get_ifd(ORRawFileRef rawfile, or_ifd_index ifd)
     if (!dir) {
         return nullptr;
     }
-    return reinterpret_cast<ORIfdDirRef>(dir.get());
+    auto wrap = new WrappedPointer<IfdDir>(dir);
+    return reinterpret_cast<ORIfdDirRef>(wrap);
+}
+
+API_EXPORT ORMetadataIteratorRef
+or_rawfile_get_metadata_iterator(ORRawFileRef rawfile)
+{
+    RawFile *prawfile = reinterpret_cast<RawFile *>(rawfile);
+    CHECK_PTR(rawfile, nullptr);
+    return reinterpret_cast<ORMetadataIteratorRef>(prawfile->getMetadataIterator());
 }
 
 }

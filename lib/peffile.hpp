@@ -2,7 +2,7 @@
 /*
  * libopenraw - peffile.h
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_PEFFILE_H_
-#define OR_INTERNALS_PEFFILE_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -52,9 +51,7 @@ public:
     PEFFile & operator=(const PEFFile &) = delete;
 
 protected:
-    virtual IfdDir::Ref  _locateCfaIfd() override;
-    virtual IfdDir::Ref  _locateMainIfd() override;
-
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
 private:
     static const IfdFile::camera_ids_t s_def[];
@@ -62,5 +59,3 @@ private:
 
 }
 }
-
-#endif
