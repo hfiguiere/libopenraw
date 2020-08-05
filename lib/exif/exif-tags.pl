@@ -51,6 +51,11 @@ output_table(\%Image::ExifTool::Nikon::Main, "mnote_nikon_tag_names");
 output_table(\%Image::ExifTool::Nikon::Type2, "mnote_nikon2_tag_names");
 output_table(\%Image::ExifTool::Olympus::Main, "mnote_olympus_tag_names");
 output_table(\%Image::ExifTool::Panasonic::Main, "mnote_panasonic_tag_names");
+output_table(\%Image::ExifTool::Panasonic::Leica2, "mnote_leica2_tag_names");
+output_table(\%Image::ExifTool::Panasonic::Leica4, "mnote_leica4_tag_names");
+output_table(\%Image::ExifTool::Panasonic::Leica5, "mnote_leica5_tag_names");
+output_table(\%Image::ExifTool::Panasonic::Leica6, "mnote_leica6_tag_names");
+output_table(\%Image::ExifTool::Panasonic::Leica9, "mnote_leica9_tag_names");
 output_table(\%Image::ExifTool::Pentax::Main, "mnote_pentax_tag_names");
 output_table(\%Image::ExifTool::Sony::Main, "mnote_sony_tag_names");
 

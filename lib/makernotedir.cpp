@@ -61,11 +61,12 @@ MakerNoteDir::createMakerNote(off_t offset,
             offset, container, 0, "Sony5", mnote_sony_tag_names);
     }
 
-    char data[18];
+    uint8_t data[18];
     auto file = container.file();
     file->seek(offset, SEEK_SET);
     file->read(&data, 18);
-    // LOGDBG1("data %s\n", Debug::ascii_to_string((uint8_t*)&data, 18).c_str());
+    // LOGDBG1("data %s\n", Debug::ascii_to_string(data, 18).c_str());
+    // LOGDBG1("data %s\n", Debug::bytes_to_string(data, 18).c_str());
 
     if (memcmp("Nikon\0", data, 6) == 0) {
         if (data[6] == 1) {
@@ -113,6 +114,57 @@ MakerNoteDir::createMakerNote(off_t offset,
     if (memcmp("Panasonic\0", data, 10) == 0) {
         return std::make_shared<MakerNoteDir>(
             offset + 12, container, 0, "Panasonic", mnote_panasonic_tag_names);
+    }
+
+    if (memcmp("LEICA", data, 5) == 0) {
+        if (data[5] == 0 && data[6] == 0 && data[7] == 0) {
+            if (file_type == OR_RAWFILE_TYPE_RW2) {
+                // Panasonic
+                return std::make_shared<MakerNoteDir>(
+                    offset + 8, container, 0, "Panasonic", mnote_panasonic_tag_names);
+            } else {
+                // Leica M8
+                return std::make_shared<MakerNoteDir>(
+                    offset + 8, container, offset, "Leica2", mnote_leica2_tag_names);
+            }
+        }
+
+        if (data[5] == 0 && data[7] == 0) {
+            switch (data[6]) {
+            case 0x08:
+            case 0x09:
+                // Leica Q Typ 116 and SL (Type 601)
+                return std::make_shared<MakerNoteDir>(
+                    offset + 8, container, 0, "Leica5", mnote_leica5_tag_names);
+            case 0x01: // Leica X1
+            case 0x04: // Leica X VARIO
+            case 0x05: // Leica X2
+            case 0x06: // Leica T (Typ 701)
+            case 0x07: // Leica X (Typ 113)
+            case 0x10: // Leica X-U (Typ 113)
+            case 0x1a:
+                return std::make_shared<MakerNoteDir>(
+                    offset + 8, container, offset, "Leica5", mnote_leica5_tag_names);
+            }
+        }
+
+        // Leica M (Typ 240)
+        if (data[5] == 0x0 && data[6] == 0x02 && data[7] == 0xff) {
+            return std::make_shared<MakerNoteDir>(
+                offset + 8, container, 0, "Leica6", mnote_leica6_tag_names);
+        }
+
+        // Leica M9/Monochrom
+        if (data[5] == '0' && data[6] == 0x03 && data[7] == 0) {
+            return std::make_shared<MakerNoteDir>(
+                offset + 8, container, offset, "Leica4", mnote_leica4_tag_names);
+        }
+
+        // Leica M10
+        if (data[5] == 0 && data[6] == 0x02 && data[7] == 0) {
+            return std::make_shared<MakerNoteDir>(
+                offset + 8, container, 0, "Leica9", mnote_leica9_tag_names);
+        }
     }
 
     if (memcmp("FUJIFILM", data, 8) == 0) {

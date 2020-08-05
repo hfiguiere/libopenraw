@@ -29,6 +29,11 @@ extern const TagTable exif_tag_names;
 
 extern const TagTable mnote_canon_tag_names;
 extern const TagTable mnote_fujifilm_tag_names;
+extern const TagTable mnote_leica2_tag_names;
+extern const TagTable mnote_leica4_tag_names;
+extern const TagTable mnote_leica5_tag_names;
+extern const TagTable mnote_leica6_tag_names;
+extern const TagTable mnote_leica9_tag_names;
 extern const TagTable mnote_minolta_tag_names;
 extern const TagTable mnote_nikon_tag_names;
 extern const TagTable mnote_nikon2_tag_names;

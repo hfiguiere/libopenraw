@@ -1060,6 +1060,68 @@ const TagTable mnote_panasonic_tag_names = {
     { 0x8012, "Transform" },
 };
 
+const TagTable mnote_leica2_tag_names = {
+    { 0x300, "Quality" },
+    { 0x302, "UserProfile" },
+    { 0x303, "SerialNumber" },
+    { 0x304, "WhiteBalance" },
+    { 0x310, "LensType" },
+    { 0x311, "ExternalSensorBrightnessValue" },
+    { 0x312, "MeasuredLV" },
+    { 0x313, "ApproximateFNumber" },
+    { 0x320, "CameraTemperature" },
+    { 0x321, "ColorTemperature" },
+    { 0x322, "WBRedLevel" },
+    { 0x323, "WBGreenLevel" },
+    { 0x324, "WBBlueLevel" },
+    { 0x325, "UV-IRFilterCorrection" },
+    { 0x330, "CCDVersion" },
+    { 0x331, "CCDBoardVersion" },
+    { 0x332, "ControllerBoardVersion" },
+    { 0x333, "M16CVersion" },
+    { 0x340, "ImageIDNumber" },
+};
+
+const TagTable mnote_leica4_tag_names = {
+    { 0x3000, "Subdir3000" },
+    { 0x3100, "Subdir3100" },
+    { 0x3400, "Subdir3400" },
+    { 0x3900, "Subdir3900" },
+};
+
+const TagTable mnote_leica5_tag_names = {
+    { 0x303, "LensType" },
+    { 0x305, "SerialNumber" },
+    { 0x407, "OriginalFileName" },
+    { 0x408, "OriginalDirectory" },
+    { 0x40a, "FocusInfo" },
+    { 0x40d, "ExposureMode" },
+    { 0x410, "ShotInfo" },
+    { 0x412, "FilmMode" },
+    { 0x413, "WB_RGBLevels" },
+    { 0x500, "InternalSerialNumber" },
+};
+
+const TagTable mnote_leica6_tag_names = {
+    { 0x300, "PreviewImage" },
+    { 0x301, "UnknownBlock" },
+    { 0x303, "LensType" },
+    { 0x304, "FocusDistance" },
+    { 0x311, "ExternalSensorBrightnessValue" },
+    { 0x312, "MeasuredLV" },
+    { 0x320, "FirmwareVersion" },
+    { 0x321, "LensSerialNumber" },
+};
+
+const TagTable mnote_leica9_tag_names = {
+    { 0x304, "FocusDistance" },
+    { 0x311, "ExternalSensorBrightnessValue" },
+    { 0x312, "MeasuredLV" },
+    { 0x34c, "UserProfile" },
+    { 0x359, "ISOSelected" },
+    { 0x35a, "FNumber" },
+};
+
 const TagTable mnote_pentax_tag_names = {
     { 0x0, "PentaxVersion" },
     { 0x1, "PentaxModelType" },
