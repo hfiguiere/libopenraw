@@ -375,11 +375,7 @@ OrfFile::~OrfFile()
     }
 
     auto e = makerNote->getEntry(ORF_TAG_THUMBNAIL_IMAGE);
-    if (e) {
-        auto val_offset = e->offset() + makerNote->getMnoteOffset();
-
-        err = addThumbnail(list, val_offset, e->count());
-    }
+    _addThumbnailFromEntry(e, makerNote->getMnoteOffset(), list);
 
     auto ifd = makerNote->getIfdInEntry(ORF_TAG_CAMERA_SETTINGS);
     if (ifd) {

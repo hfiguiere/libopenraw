@@ -126,7 +126,9 @@ void IfdFile::_identifyId()
     LOGDBG1("JPEG dimensions x=%d y=%d\n", x, y);
 
     uint32_t dim = std::max(x, y);
-    if (dim) {
+    // "Olympus" MakerNote carries a 160 px thubnail we might already have.
+    // We don't check it is the same.
+    if (dim && std::find(list.begin(), list.end(), dim) == list.end()) {
       _addThumbnail(dim, ThumbDesc(x, y, OR_DATA_TYPE_JPEG,
                                    val_offset, e->count()));
       list.push_back(dim);
