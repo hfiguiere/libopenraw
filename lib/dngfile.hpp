@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - dngfile.h
+ * libopenraw - dngfile.hpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_DNGFILE_H_
-#define OR_INTERNALS_DNGFILE_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -57,6 +56,7 @@ public:
     /** DNG specific for now: check if file is Cinema DNG. */
     bool isCinema() const;
 protected:
+    virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t>& list) override;
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
     virtual void _identifyId() override;
 
@@ -67,5 +67,3 @@ private:
 
 }
 }
-
-#endif

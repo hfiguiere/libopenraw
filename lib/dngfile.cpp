@@ -199,6 +199,24 @@ DngFile::getColourMatrixOrigin() const
     return OR_COLOUR_MATRIX_PROVIDED;
 }
 
+::or_error DngFile::_enumThumbnailSizes(std::vector<uint32_t>& list)
+{
+    auto err = OR_ERROR_NOT_FOUND;
+
+    err = TiffEpFile::_enumThumbnailSizes(list);
+
+    auto makerNote = makerNoteIfd();
+    if (makerNote) {
+        if (makerNote->getId() == "Leica6") {
+            // File with Leica6 MakerNote (Leica M Typ-240) have a
+            // larger preview in the MakerNote
+            auto e = makerNote->getEntry(MNOTE_LEICA_PREVIEW_IMAGE);
+            _addThumbnailFromEntry(e, makerNote->getMnoteOffset(), list);
+        }
+    }
+    return err;
+}
+
 ::or_error DngFile::_getRawData(RawData & data, uint32_t options)
 {
     ::or_error ret = OR_ERROR_NONE;

@@ -63,6 +63,14 @@ protected:
     virtual ::or_error _enumThumbnailSizes(
         std::vector<uint32_t> &list) override;
 
+    /**
+     * Add the thumbnai found in the IFDEntry
+     * @param offset is the offset for MakerNote. Pass 0 if not.
+     * @param list the thumbnail list to add to.
+     */
+    ::or_error _addThumbnailFromEntry(const IfdEntry::Ref& e, off_t offset,
+                                      std::vector<uint32_t>& list);
+
     /** locate the thumnail in the IFD
      * @param dir the IfdDir where to locate the thumbnail
      * @return the error code. OR_ERROR_NOT_FOUND if the

@@ -106,6 +106,36 @@ void IfdFile::_identifyId()
   }
 }
 
+::or_error IfdFile::_addThumbnailFromEntry(const IfdEntry::Ref& e, off_t offset,
+                                           std::vector<uint32_t>& list)
+{
+  ::or_error err = OR_ERROR_NOT_FOUND;
+  if (e) {
+    auto val_offset = e->offset();
+
+    val_offset += offset;
+
+    LOGDBG1("fetching JPEG\n");
+    IO::Stream::Ptr s(
+      std::make_shared<IO::StreamClone>(m_io, val_offset));
+    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+
+    uint32_t x, y;
+    x = y = 0;
+    jfif->getDimensions(x, y);
+    LOGDBG1("JPEG dimensions x=%d y=%d\n", x, y);
+
+    uint32_t dim = std::max(x, y);
+    if (dim) {
+      _addThumbnail(dim, ThumbDesc(x, y, OR_DATA_TYPE_JPEG,
+                                   val_offset, e->count()));
+      list.push_back(dim);
+      err = OR_ERROR_NONE;
+    }
+  }
+  return err;
+}
+
 ::or_error
 IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {

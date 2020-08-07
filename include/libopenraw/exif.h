@@ -203,6 +203,9 @@ typedef	enum {
 	MNOTE_CANON_RAW_DATA_LENGTH = 0x0082,
 	MNOTE_CANON_SENSORINFO = 0x00e0,
 
+	/* Leica MakerNote tags */
+	MNOTE_LEICA_PREVIEW_IMAGE = 0x300,
+
 	/* Nikon MakerNote tags */
 	MNOTE_NIKON_QUALITY = 0x04,
 	MNOTE_NIKON_PREVIEW_IFD = 0x11,
