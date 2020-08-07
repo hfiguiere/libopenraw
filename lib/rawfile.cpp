@@ -383,12 +383,17 @@ RawFile::TypeId RawFile::typeId()
 RawFile::TypeId RawFile::vendorId()
 {
     const MetaValue* makev = getMetaValue(META_NS_TIFF | EXIF_TAG_MAKE);
+    const MetaValue* modelv = getMetaValue(META_NS_TIFF | EXIF_TAG_MODEL);
     if (makev == nullptr) {
         makev = getMetaValue(META_NS_TIFF | DNG_TAG_UNIQUE_CAMERA_MODEL);
     }
     if (makev !=  nullptr) {
         std::string make = makev->getString(0);
-        return _typeIdFromMake(make) >> 16;
+        std::string model;
+        if (modelv) {
+            model = modelv->getString(0);
+        }
+        return _typeIdFromMake(make, model) >> 16;
     }
     return OR_TYPEID_VENDOR_NONE;
 }
@@ -768,12 +773,18 @@ RawFile::TypeId RawFile::_typeIdFromModel(const std::string& make,
 {
     const camera_ids_t* p = _lookupCameraId(d->m_cam_ids, model);
     if (!p) {
-        return _typeIdFromMake(make);
+        return _typeIdFromMake(make, model);
     }
     return p->type_id;
 }
 
+// About the order:
+// We do a loose match (substring) of the "model" field against the Exif Make
+// It's not a problem until Pentax and Ricoh merged.
+// Where "PENTAX" Exif Make (Pentax) matches "PENTAX RICOH IMAGING" (Ricoh)
 const RawFile::camera_ids_t RawFile::s_make[] = {
+    { "PENTAX RICOH IMAGING", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
+    { "RICOH IMAGING COMPANY, LTD.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
     { "Canon", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, 0) },
     { "NIKON", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_NIKON, 0) },
     { "LEICA", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA, 0) },
@@ -782,7 +793,6 @@ const RawFile::camera_ids_t RawFile::s_make[] = {
     { "SONY", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY, 0) },
     { "OLYMPUS", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_OLYMPUS, 0) },
     { "PENTAX", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 0) },
-    { "RICOH IMAGING COMPANY, LTD.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 0) },
     { "RICOH", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0) },
     { "SAMSUNG TECHWIN Co.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SAMSUNG, 0) },
     { "SEIKO EPSON CORP.", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON, 0) },
@@ -797,11 +807,18 @@ const RawFile::camera_ids_t RawFile::s_make[] = {
     { NULL, 0 }
 };
 
-RawFile::TypeId RawFile::_typeIdFromMake(const std::string& make)
+RawFile::TypeId RawFile::_typeIdFromMake(const std::string& make, const std::string& model)
 {
     const camera_ids_t* p = lookupVendorId(s_make, make);
     if (!p) {
         return 0;
+    }
+    if (p->type_id == OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, 0)) {
+        // Ricoh bought Pentax and now it is a mess.
+        // If the model contain "PENTAX" it's a Pentax.
+        if (model.find("PENTAX") != std::string::npos) {
+            return OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX, 0);
+        }
     }
     return p->type_id;
 }

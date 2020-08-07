@@ -218,7 +218,7 @@ protected:
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 
     TypeId _typeIdFromModel(const std::string& make, const std::string & model);
-    TypeId _typeIdFromMake(const std::string& make);
+    TypeId _typeIdFromMake(const std::string& make, const std::string& model);
     void _setIdMap(const camera_ids_t *map);
     void _setMatrices(const Internals::BuiltinColourMatrix* matrices);
     const Internals::BuiltinColourMatrix* _getMatrices() const;

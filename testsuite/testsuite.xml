@@ -633,6 +633,30 @@
     </results>
   </test>
   <test>
+    <name>DNG-test Ricoh GR</name>
+    <file>/home/hub/samples/dng/Ricoh_GR/Ricoh - GR - 12bit (4:3).DNG</file>
+    <source>https://raw.pixls.us/getfile.php/996/nice/Ricoh%20-%20GR%20-%2012bit%20(4:3).DNG</source>
+    <results>
+      <rawType>DNG</rawType>
+      <rawTypeId>655364</rawTypeId>
+      <exifMake>RICOH IMAGING COMPANY, LTD.</exifMake>
+      <exifModel>GR                                                             </exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 640</thumbSizes>
+      <thumbFormats>8RGB JPEG</thumbFormats>
+      <thumbDataSizes>57600 71191</thumbDataSizes>
+      <thumbMd5>30292 60115</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>32537600</rawDataSize>
+      <rawDataDimensions>4960 3280</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>44094</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>ORF-test E3</name>
     <file>/home/hub/samples/orf/Olympus_E3/PB020085.ORF</file>
     <source disabled="1">http://raw.fotosite.pl/download-Olympus_E-3_ZD_12-60_f2.8-4/PB020085.ORF</source>
