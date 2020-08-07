@@ -546,31 +546,6 @@ NefFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data,
     return TiffEpFile::_unpackData(bpc, compression, data, x, y, offset, byte_length);
 }
 
-/** Add the thumbnail at offset and len */
-::or_error NefFile::addThumbnail(std::vector<uint32_t>& list, uint32_t offset, uint32_t len)
-{
-    auto err = OR_ERROR_NOT_FOUND;
-    LOGDBG1("fetching JPEG\n");
-    IO::Stream::Ptr s = std::make_shared<IO::StreamClone>(m_io, offset);
-    std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
-
-    uint32_t x, y;
-    x = y = 0;
-    jfif->getDimensions(x, y);
-    LOGDBG1("JPEG dimensions x=%d y=%d\n", x, y);
-
-    uint32_t dim = std::max(x, y);
-    // "Olympus" MakerNote carries a 160 px thubnail we might already have.
-    // We don't check it is the same.
-    if (dim && std::find(list.begin(), list.end(), dim) == list.end()) {
-        _addThumbnail(dim, ThumbDesc(x, y, OR_DATA_TYPE_JPEG, offset, len));
-        list.push_back(dim);
-        err = OR_ERROR_NONE;
-    }
-
-    return err;
-}
-
 ::or_error NefFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
     or_error err = this->TiffEpFile::_enumThumbnailSizes(list);
@@ -584,7 +559,7 @@ NefFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data,
             // if either value is zero we consider it is wrong.
             if (start != 0 && len != 0) {
                 start += makernote->getMnoteOffset();
-                err = addThumbnail(list, start, len);
+                err = _addThumbnailFromStream(start, len, list);
             } else {
                 err = OR_ERROR_NOT_FOUND;
             }

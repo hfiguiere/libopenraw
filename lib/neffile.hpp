@@ -84,7 +84,6 @@ protected:
 private:
     static const IfdFile::camera_ids_t s_def[];
 
-    ::or_error addThumbnail(std::vector<uint32_t>& list, uint32_t offset, uint32_t len);
     bool _getCompressionCurve(RawData&, NEFCompressionInfo&);
     ::or_error _decompressNikonQuantized(RawData&);
     virtual ::or_error _decompressIfNeeded(RawData&, uint32_t) override;

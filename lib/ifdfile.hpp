@@ -63,6 +63,12 @@ protected:
     virtual ::or_error _enumThumbnailSizes(
         std::vector<uint32_t> &list) override;
 
+    /** Add a thumbnail from a stream
+     * @param offset the offset in the IO stream
+     * @param len the length of the data
+     */
+    ::or_error _addThumbnailFromStream(uint32_t offset, uint32_t len,
+                                       std::vector<uint32_t>& list);
     /**
      * Add the thumbnai found in the IFDEntry
      * @param offset is the offset for MakerNote. Pass 0 if not.
