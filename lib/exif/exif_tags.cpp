@@ -492,6 +492,15 @@ const TagTable exif_tag_names = {
     { 0xfe58, "MoireFilter" },
 };
 
+const TagTable mnote_apple_tag_names = {
+    { 0x3, "RunTime" },
+    { 0x8, "AccelerationVector" },
+    { 0xa, "HDRImageType" },
+    { 0xb, "BurstUUID" },
+    { 0x11, "ContentIdentifier" },
+    { 0x15, "ImageUniqueID" },
+};
+
 const TagTable mnote_canon_tag_names = {
     { 0x1, "CanonCameraSettings" },
     { 0x2, "CanonFocalLength" },

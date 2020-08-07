@@ -172,6 +172,11 @@ MakerNoteDir::createMakerNote(off_t offset,
         }
     }
 
+    if (memcmp("Apple iOS\0", data, 10) == 0) {
+        return std::make_shared<MakerNoteDir>(
+            offset + 14, container, offset, "Apple", mnote_apple_tag_names);
+    }
+
     if (memcmp("FUJIFILM", data, 8) == 0) {
         return std::make_shared<MakerNoteDir>(
             offset + 12, container, offset, "Fujifilm", mnote_fujifilm_tag_names);

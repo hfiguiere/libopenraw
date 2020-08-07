@@ -2,6 +2,7 @@
 
 
 use Image::ExifTool::Exif;
+use Image::ExifTool::Apple;
 use Image::ExifTool::Canon;
 use Image::ExifTool::FujiFilm;
 use Image::ExifTool::Minolta;
@@ -45,6 +46,7 @@ print "#include <map>\n\n";
 print "#include \"exif_tags.hpp\"\n";
 
 output_table(\%Image::ExifTool::Exif::Main, "exif_tag_names");
+output_table(\%Image::ExifTool::Apple::Main, "mnote_apple_tag_names");
 output_table(\%Image::ExifTool::Canon::Main, "mnote_canon_tag_names");
 output_table(\%Image::ExifTool::FujiFilm::Main, "mnote_fujifilm_tag_names");
 output_table(\%Image::ExifTool::Minolta::Main, "mnote_minolta_tag_names");

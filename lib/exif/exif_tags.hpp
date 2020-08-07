@@ -27,6 +27,7 @@ typedef std::map<uint32_t, const char*> TagTable;
 
 extern const TagTable exif_tag_names;
 
+extern const TagTable mnote_apple_tag_names;
 extern const TagTable mnote_canon_tag_names;
 extern const TagTable mnote_fujifilm_tag_names;
 extern const TagTable mnote_leica2_tag_names;
