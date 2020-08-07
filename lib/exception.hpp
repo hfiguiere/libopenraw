@@ -62,6 +62,13 @@ public:
   IOException(const std::string &w)
     : Exception(w)
     {}
+  const char *what() const noexcept(true) override
+    {
+      if(m_what.empty()) {
+        return typeid(this).name();
+      }
+      return m_what.c_str();
+    }
 };
 
 
@@ -69,18 +76,41 @@ public:
 class BadTypeException
   : public Exception
 {
-
+public:
+  const char *what() const noexcept(true) override
+    {
+      if(m_what.empty()) {
+        return typeid(this).name();
+      }
+      return m_what.c_str();
+    }
 };
 
 /** data is of too big */
 class TooBigException
   : public Exception
 {
+public:
+  const char *what() const noexcept(true) override
+    {
+      if(m_what.empty()) {
+        return typeid(this).name();
+      }
+      return m_what.c_str();
+    }
 };
 
 class OutOfRangeException
   : public Exception
 {
+public:
+  const char *what() const noexcept(true) override
+    {
+      if(m_what.empty()) {
+        return typeid(this).name();
+      }
+      return m_what.c_str();
+    }
 };
 
 class DecodingException
@@ -90,6 +120,13 @@ public:
   DecodingException(const std::string &w)
     : Exception(w)
     {}
+  const char *what() const noexcept(true) override
+    {
+      if(m_what.empty()) {
+        return typeid(this).name();
+      }
+      return m_what.c_str();
+    }
 };
 
 }
