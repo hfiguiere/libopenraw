@@ -10,6 +10,7 @@ use Image::ExifTool::Olympus;
 use Image::ExifTool::Panasonic;
 use Image::ExifTool::PanasonicRaw;
 use Image::ExifTool::Pentax;
+use Image::ExifTool::Ricoh;
 use Image::ExifTool::Sony;
 
 #
@@ -57,6 +58,7 @@ output_table(\%Image::ExifTool::Panasonic::Leica5, "mnote_leica5_tag_names");
 output_table(\%Image::ExifTool::Panasonic::Leica6, "mnote_leica6_tag_names");
 output_table(\%Image::ExifTool::Panasonic::Leica9, "mnote_leica9_tag_names");
 output_table(\%Image::ExifTool::Pentax::Main, "mnote_pentax_tag_names");
+output_table(\%Image::ExifTool::Ricoh::Main, "mnote_ricoh_tag_names");
 output_table(\%Image::ExifTool::Sony::Main, "mnote_sony_tag_names");
 
 output_table(\%Image::ExifTool::PanasonicRaw::Main, "raw_panasonic_tag_names");

@@ -116,6 +116,11 @@ MakerNoteDir::createMakerNote(off_t offset,
             offset + 12, container, 0, "Panasonic", mnote_panasonic_tag_names);
     }
 
+    if (memcmp("Ricoh\0", data, 5) == 0) {
+        return std::make_shared<MakerNoteDir>(
+            offset + 8, container, 0, "Ricoh", mnote_ricoh_tag_names);
+    }
+
     if (memcmp("LEICA", data, 5) == 0) {
         if (data[5] == 0 && data[6] == 0 && data[7] == 0) {
             if (file_type == OR_RAWFILE_TYPE_RW2) {

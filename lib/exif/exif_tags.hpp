@@ -40,6 +40,7 @@ extern const TagTable mnote_nikon2_tag_names;
 extern const TagTable mnote_olympus_tag_names;
 extern const TagTable mnote_panasonic_tag_names;
 extern const TagTable mnote_pentax_tag_names;
+extern const TagTable mnote_ricoh_tag_names;
 extern const TagTable mnote_sony_tag_names;
 
 extern const TagTable raw_panasonic_tag_names;
