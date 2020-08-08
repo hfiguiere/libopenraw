@@ -186,4 +186,5 @@ libopenraw_la_SOURCES = \
 	render/bimedian_demosaic.cpp render/bimedian_demosaic.hpp \
 	render/grayscale.hpp render/grayscale.cpp \
 	exif/exif_tags.hpp exif/exif_tags.cpp \
+	exif/exif_tags-manual.cpp \
 	$(NULL)

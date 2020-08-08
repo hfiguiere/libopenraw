@@ -172,6 +172,11 @@ MakerNoteDir::createMakerNote(off_t offset,
         }
     }
 
+    if (memcmp("YI     \0", data, 8) == 0) {
+        return std::make_shared<MakerNoteDir>(
+            offset + 12, container, offset, "Xiaoyi", mnote_xiaoyi_tag_names);
+    }
+
     if (memcmp("Apple iOS\0", data, 10) == 0) {
         return std::make_shared<MakerNoteDir>(
             offset + 14, container, offset, "Apple", mnote_apple_tag_names);
