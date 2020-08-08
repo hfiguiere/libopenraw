@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainer.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -36,39 +36,40 @@ namespace CIFF {
 bool ImageSpec::readFrom(off_t offset, CIFFContainer *container)
 {
     auto file = container->file();
+    auto endian = container->endian();
     file->seek(offset, SEEK_SET);
 
-    auto result_u32 = container->readUInt32(file);
+    auto result_u32 = container->readUInt32(file, endian);
     if (result_u32.empty()) {
         return false;
     }
     imageWidth = result_u32.value();
-    result_u32 = container->readUInt32(file);
+    result_u32 = container->readUInt32(file, endian);
     if (result_u32.empty()) {
         return false;
     }
     imageHeight = result_u32.value();
-    result_u32 = container->readUInt32(file);
+    result_u32 = container->readUInt32(file, endian);
     if (result_u32.empty()) {
         return false;
     }
     pixelAspectRatio = result_u32.value();
-    auto result_32 = container->readInt32(file);
+    auto result_32 = container->readInt32(file, endian);
     if (result_32.empty()) {
         return false;
     }
     rotationAngle = result_32.value();
-    result_u32 = container->readUInt32(file);
+    result_u32 = container->readUInt32(file, endian);
     if (result_u32.empty()) {
         return false;
     }
     componentBitDepth = result_u32.value();
-    result_u32 = container->readUInt32(file);
+    result_u32 = container->readUInt32(file, endian);
     if (result_u32.empty()) {
         return false;
     }
     colorBitDepth = result_u32.value();
-    result_u32 = container->readUInt32(file);
+    result_u32 = container->readUInt32(file, endian);
     if (result_u32.empty()) {
         return false;
     }
@@ -104,17 +105,18 @@ RecordEntry::RecordEntry()
 bool RecordEntry::readFrom(CIFFContainer *container)
 {
     auto file = container->file();
-    auto result_16 = container->readUInt16(file);
+    auto endian = container->endian();
+    auto result_16 = container->readUInt16(file, endian);
     if (result_16.empty()) {
         return false;
     }
     typeCode = result_16.value();
-    auto result_32 = container->readUInt32(file);
+    auto result_32 = container->readUInt32(file, endian);
     if (result_32.empty()) {
         return false;
     }
     length = result_32.value();
-    result_32 = container->readUInt32(file);
+    result_32 = container->readUInt32(file, endian);
     if (result_32.empty()) {
         return false;
     }
@@ -150,16 +152,17 @@ std::vector<RecordEntry> & Heap::records()
 bool Heap::_loadRecords()
 {
     auto file = m_container->file();
+    auto endian = m_container->endian();
     file->seek(m_start + m_length - 4, SEEK_SET);
 
-    auto result = m_container->readInt32(file);
+    auto result = m_container->readInt32(file, endian);
 
     if (result) {
         int32_t record_offset = result.value();
 
         m_records.clear();
         file->seek(m_start + record_offset, SEEK_SET);
-        auto result16 = m_container->readInt16(file);
+        auto result16 = m_container->readInt16(file, endian);
         if (result16.empty()) {
             LOGDBG1("read numRecords failed\n");
             return false;
@@ -200,7 +203,7 @@ bool HeapFileHeader::readFrom(CIFFContainer *container)
             endian = RawContainer::ENDIAN_BIG;
         }
         container->setEndian(endian);
-        auto result32 = container->readUInt32(file);
+        auto result32 = container->readUInt32(file, endian);
         if (result32) {
             headerLength = result32.value();
             ret = true;
@@ -212,7 +215,7 @@ bool HeapFileHeader::readFrom(CIFFContainer *container)
             ret = (file->read(subType, 4) == 4);
         }
         if (ret) {
-            result32 = container->readUInt32(file);
+            result32 = container->readUInt32(file, endian);
             if (result32) {
                 version = result32.value();
                 ret = true;

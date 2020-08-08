@@ -123,7 +123,7 @@ size_t IfdFileContainer::getDirectoryDataSize()
     m_file->seek(begin, SEEK_SET);
     begin += 2;
 
-    int32_t nextIFD = readInt32(m_file).value_or(0);
+    int32_t nextIFD = readInt32(m_file, m_endian).value_or(0);
     LOGDBG1("nextIFD = %d\n", nextIFD);
     if (nextIFD == 0) {
         // FIXME not good
@@ -154,7 +154,7 @@ bool IfdFileContainer::_locateDirs(void)
         }
     }
     m_file->seek(m_offset + 4, SEEK_SET);
-    int32_t dir_offset = readInt32(m_file).value_or(0);
+    int32_t dir_offset = readInt32(m_file, m_endian).value_or(0);
     m_dirs.clear();
     do {
         if (dir_offset != 0) {

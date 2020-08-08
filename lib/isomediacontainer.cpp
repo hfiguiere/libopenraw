@@ -115,10 +115,10 @@ IsoMediaContainer::get_preview_desc()
         // And skip a short (16bits) value.
         offset += 44 + 2;
         m_file->seek(offset, SEEK_SET);
-        auto width = readUInt16(m_file);
-        auto height = readUInt16(m_file);
+        auto width = readUInt16(m_file, m_endian);
+        auto height = readUInt16(m_file, m_endian);
         skip(2);
-        auto jpeg_size = readUInt32(m_file);
+        auto jpeg_size = readUInt32(m_file, m_endian);
         if (width && height && jpeg_size) {
             return option_some(
                 std::move(ThumbDesc(*width, *height, OR_DATA_TYPE_JPEG,

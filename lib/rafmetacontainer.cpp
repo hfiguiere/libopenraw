@@ -2,7 +2,7 @@
 /*
  * libopenraw - rafcontainer.cpp
  *
- * Copyright (C) 2011-2017 Hubert Figuière
+ * Copyright (C) 2011-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -73,7 +73,7 @@ RafMetaValue::Ref RafMetaContainer::getValue(uint16_t tag)
 
 void RafMetaContainer::_read()
 {
-	auto result = readUInt32(m_file);
+	auto result = readUInt32(m_file, m_endian);
 	if (result.empty()) {
 		LOGERR("Couldn't read RAF meta count\n");
 		return;
@@ -81,13 +81,13 @@ void RafMetaContainer::_read()
 	m_count = result.value();
 
 	for(uint32_t i = 0; i < m_count; i++) {
-		auto result16 = readUInt16(m_file);
+		auto result16 = readUInt16(m_file, m_endian);
 		if (result16.empty()) {
 			return;
 		}
 		uint16_t tag = result16.value();
 
-		result16 = readUInt16(m_file);
+		result16 = readUInt16(m_file, m_endian);
 		if (result16.empty()) {
 			return;
 		}
@@ -95,7 +95,7 @@ void RafMetaContainer::_read()
 
 		MetaValue::value_t v;
 		if (sz == 4) {
-			auto result32 = readUInt32(m_file);
+			auto result32 = readUInt32(m_file, m_endian);
 			if (result32) {
 				v = MetaValue::value_t(result32.value());
 			}

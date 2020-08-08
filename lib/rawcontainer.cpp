@@ -78,9 +78,9 @@ RawContainer::readUInt8(const IO::Stream::Ptr& f) const
 }
 
 Option<int16_t>
-RawContainer::readInt16(const IO::Stream::Ptr& f) const
+RawContainer::readInt16(const IO::Stream::Ptr& f, EndianType endian) const
 {
-  if (m_endian == ENDIAN_NULL) {
+  if (endian == ENDIAN_NULL) {
 
     LOGERR("null endian\n");
 
@@ -91,7 +91,7 @@ RawContainer::readInt16(const IO::Stream::Ptr& f) const
   if (s != 2) {
     return Option<int16_t>();
   }
-  if (m_endian == ENDIAN_LITTLE) {
+  if (endian == ENDIAN_LITTLE) {
     return Option<int16_t>(EL16(buf));
   } else {
     return Option<int16_t>(BE16(buf));
@@ -135,9 +135,9 @@ RawContainer::readUInt16Array(const IO::Stream::Ptr& f, std::vector<uint16_t>& v
 
 
 Option<int32_t>
-RawContainer::readInt32(const IO::Stream::Ptr& f) const
+RawContainer::readInt32(const IO::Stream::Ptr& f, EndianType endian) const
 {
-  if (m_endian == ENDIAN_NULL) {
+  if (endian == ENDIAN_NULL) {
     LOGERR("null endian\n");
     return Option<int32_t>();
   }
@@ -148,7 +148,7 @@ RawContainer::readInt32(const IO::Stream::Ptr& f) const
     return Option<int32_t>();
   }
 
-  if (m_endian == ENDIAN_LITTLE) {
+  if (endian == ENDIAN_LITTLE) {
     return Option<int32_t>(EL32(buf));
   } else {
     return Option<int32_t>(BE32(buf));
@@ -157,9 +157,9 @@ RawContainer::readInt32(const IO::Stream::Ptr& f) const
 
 
 Option<uint16_t>
-RawContainer::readUInt16(const IO::Stream::Ptr& f) const
+RawContainer::readUInt16(const IO::Stream::Ptr& f, EndianType endian) const
 {
-  if (m_endian == ENDIAN_NULL) {
+  if (endian == ENDIAN_NULL) {
 
     LOGERR("null endian\n");
 
@@ -170,7 +170,7 @@ RawContainer::readUInt16(const IO::Stream::Ptr& f) const
   if (s != 2) {
     return Option<uint16_t>();
   }
-  if (m_endian == ENDIAN_LITTLE) {
+  if (endian == ENDIAN_LITTLE) {
     return Option<uint16_t>(EL16(buf));
   } else {
     return Option<uint16_t>(BE16(buf));
@@ -179,9 +179,9 @@ RawContainer::readUInt16(const IO::Stream::Ptr& f) const
 
 
 Option<uint32_t>
-RawContainer::readUInt32(const IO::Stream::Ptr& f) const
+RawContainer::readUInt32(const IO::Stream::Ptr& f, EndianType endian) const
 {
-  if (m_endian == ENDIAN_NULL) {
+  if (endian == ENDIAN_NULL) {
     LOGERR("null endian\n");
 
     return Option<uint32_t>();
@@ -192,7 +192,7 @@ RawContainer::readUInt32(const IO::Stream::Ptr& f) const
     return Option<uint32_t>();
   }
 
-  if (m_endian == ENDIAN_LITTLE) {
+  if (endian == ENDIAN_LITTLE) {
     return Option<uint32_t>(EL32(buf));
   } else {
     return Option<uint32_t>(BE32(buf));

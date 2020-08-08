@@ -2,7 +2,7 @@
 /*
  * libopenraw - rafcontainer.cpp
  *
- * Copyright (C) 2011-2016 Hubert Figuiere
+ * Copyright (C) 2011-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -124,7 +124,7 @@ bool RafContainer::_readHeader()
 
 	m_file->read(model, 32);
 	m_model = model;
-	auto result = readUInt32(m_file);
+	auto result = readUInt32(m_file, m_endian);
 	if (result.empty()) {
 		return false;
 	}
@@ -132,32 +132,32 @@ bool RafContainer::_readHeader()
 
 	m_file->seek(20, SEEK_CUR);
 
-	result = readUInt32(m_file);
+	result = readUInt32(m_file, m_endian);
 	if (result.empty()) {
 		return false;
 	}
 	m_offsetDirectory.jpegOffset = result.value();
-	result = readUInt32(m_file);
+	result = readUInt32(m_file, m_endian);
 	if (result.empty()) {
 		return false;
 	}
 	m_offsetDirectory.jpegLength = result.value();
-	result = readUInt32(m_file);
+	result = readUInt32(m_file, m_endian);
 	if (result.empty()) {
 		return false;
 	}
 	m_offsetDirectory.metaOffset = result.value();
-	result = readUInt32(m_file);
+	result = readUInt32(m_file, m_endian);
 	if (result.empty()) {
 		return false;
 	}
 	m_offsetDirectory.metaLength = result.value();
-	result = readUInt32(m_file);
+	result = readUInt32(m_file, m_endian);
 	if (result.empty()) {
 		return false;
 	}
 	m_offsetDirectory.cfaOffset = result.value();
-	result = readUInt32(m_file);
+	result = readUInt32(m_file, m_endian);
 	if (result.empty()) {
 		return false;
 	}

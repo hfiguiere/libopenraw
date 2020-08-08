@@ -80,6 +80,15 @@ public:
         {
             return m_entries;
         }
+    RawContainer::EndianType endian() const
+        {
+            return m_endian;
+        }
+    /** Set the endian for the IFD. By default it's the same as the container */
+    void setEndian(RawContainer::EndianType _endian)
+        {
+            m_endian = _endian;
+        }
 
     /** Get a T value from an entry
      * @param id the IFD field id
@@ -169,6 +178,7 @@ private:
     Entries m_entries;
     const TagTable* m_tag_table;
     off_t m_base_offset;
+    RawContainer::EndianType m_endian;
 };
 
 

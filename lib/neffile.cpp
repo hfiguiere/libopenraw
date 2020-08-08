@@ -652,6 +652,8 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
         return false;
     }
 
+    auto endian = m_container->endian();
+
     size_t pos = _makerNoteIfd->getMnoteOffset() + curveEntry->offset();
 
     auto file = m_container->file();
@@ -681,7 +683,7 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 
     for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
-            auto result16 = m_container->readInt16(file);
+            auto result16 = m_container->readInt16(file, endian);
             if(result16.empty()) {
                 LOGERR("Failed to read vpred (%d,%d)\n", i, j);
                 return false;
@@ -725,7 +727,7 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 
     // number of elements in the curve
     size_t nelems;
-    nelems = m_container->readInt16(file).value_or(0);
+    nelems = m_container->readInt16(file, endian).value_or(0);
     LOGDBG1("Num elems %ld\n", nelems);
 
     uint32_t ceiling = 1 << bpc & 0x7fff;
@@ -737,7 +739,7 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
 
     if (header0 == 0x44 && header1 == 0x20 && step > 0) {
         for (size_t i = 0; i < nelems; ++i) {
-            auto result16 = m_container->readInt16(file);
+            auto result16 = m_container->readInt16(file, endian);
             if (result16.empty()) {
                 LOGERR("NEF: short read\n");
                 return false;

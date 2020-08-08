@@ -196,7 +196,7 @@ RawContainer* CRWFile::getContainer() const
     auto file = m_container->file();
     file->seek(exifProps.offset() + iter->offset, SEEK_SET);
 
-    auto result = m_container->readUInt32(file);
+    auto result = m_container->readUInt32(file, m_container->endian());
     if(result.empty()) {
         LOGERR("Couldn't find decoder table\n");
         return OR_ERROR_NOT_FOUND;

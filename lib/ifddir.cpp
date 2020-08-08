@@ -54,6 +54,7 @@ IfdDir::IfdDir(off_t _offset, const IfdFileContainer& _container, IfdDirType _ty
     , m_offset(_offset), m_container(_container), m_entries()
     , m_tag_table(&tag_table)
     , m_base_offset(0)
+    , m_endian(_container.endian())
 {
 }
 
@@ -69,14 +70,14 @@ bool IfdDir::load()
     m_entries.clear();
     file->seek(m_offset, SEEK_SET);
 
-    int16_t numEntries = m_container.readInt16(file).value_or(0);
+    int16_t numEntries = m_container.readInt16(file, m_endian).value_or(0);
     LOGDBG1("num entries %d\n", numEntries);
 
     for (int16_t i = 0; i < numEntries; i++) {
         uint32_t data;
-        auto id = m_container.readUInt16(file);
-        auto type = m_container.readInt16(file);
-        auto count = m_container.readInt32(file);
+        auto id = m_container.readUInt16(file, m_endian);
+        auto type = m_container.readInt16(file, m_endian);
+        auto count = m_container.readInt32(file, m_endian);
         size_t sz = file->read(&data, 4);
         if (id.empty() || type.empty() || count.empty() || sz != 4) {
           LOGERR("Failed to read entry %d\n", i);
@@ -85,7 +86,7 @@ bool IfdDir::load()
         uint16_t n_id = id.value();
         IfdEntry::Ref entry =
           std::make_shared<IfdEntry>(n_id, type.value(),
-                                     count.value(), data, m_container);
+                                     count.value(), data, *this);
         m_entries[n_id] = entry;
     }
 
@@ -119,7 +120,7 @@ off_t IfdDir::nextIFD()
 
     if (m_entries.size() == 0) {
         file->seek(m_offset, SEEK_SET);
-        numEntries = m_container.readInt16(file).value_or(0);
+        numEntries = m_container.readInt16(file, m_endian).value_or(0);
         LOGDBG1("numEntries =%d shifting %d bytes\n", numEntries, (numEntries * 12) + 2);
     } else {
         numEntries = m_entries.size();
@@ -127,7 +128,7 @@ off_t IfdDir::nextIFD()
 
     file->seek(m_offset + (numEntries * 12) + 2, SEEK_SET);
     // XXX how about we check the error. Even though 0 is not valid.
-    return m_container.readInt32(file).value_or(0);
+    return m_container.readInt32(file, m_endian).value_or(0);
 }
 
 /** The SubIFD is locate at offset found in the field

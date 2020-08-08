@@ -40,13 +40,13 @@ namespace Internals {
 
 IfdEntry::IfdEntry(uint16_t _id, int16_t _type,
                    int32_t _count, uint32_t _data,
-                   const IfdFileContainer& _container)
+                   const IfdDir& _dir)
     : m_id(_id), m_type(_type),
       m_count(_count), m_data(_data),
       m_loaded(false), m_dataptr(NULL),
-      m_container(_container)
+      m_dir(_dir)
 {
-	auto container_size = m_container.size();
+	auto container_size = m_dir.container().size();
 	auto unit_size = typeUnitSize(static_cast<IFD::ExifTagType>(m_type));
 	if ((m_count * unit_size) > static_cast<size_t>(container_size)) {
 		LOGERR("Trying to have %u items in a container of %lld bytes\n",
@@ -89,7 +89,7 @@ size_t IfdEntry::typeUnitSize(IFD::ExifTagType _type)
 
 RawContainer::EndianType IfdEntry::endian() const
 {
-	return m_container.endian();
+	return m_dir.endian();
 }
 
 size_t IfdEntry::loadDataInto(uint8_t* dataptr, size_t data_size, off_t offset) const
@@ -100,9 +100,9 @@ size_t IfdEntry::loadDataInto(uint8_t* dataptr, size_t data_size, off_t offset) 
 	} else {
 		_offset = IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data, sizeof(uint32_t));
 	}
-	_offset += m_container.exifOffsetCorrection() + offset;
+	_offset += m_dir.container().exifOffsetCorrection() + offset;
 	LOGDBG1("loadData: offset %lu\n", _offset);
-	return m_container.fetchData(dataptr, _offset, data_size);
+	return m_dir.container().fetchData(dataptr, _offset, data_size);
 }
 
 bool IfdEntry::loadData(size_t unit_size, off_t offset)

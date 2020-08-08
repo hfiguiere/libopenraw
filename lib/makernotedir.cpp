@@ -188,8 +188,10 @@ MakerNoteDir::createMakerNote(off_t offset,
     }
 
     if (memcmp("FUJIFILM", data, 8) == 0) {
-        return std::make_shared<MakerNoteDir>(
+        auto mnote = std::make_shared<MakerNoteDir>(
             offset + 12, container, offset, "Fujifilm", mnote_fujifilm_tag_names);
+        mnote->setEndian(RawContainer::ENDIAN_LITTLE);
+        return mnote;
     }
 
     if (memcmp("MLT0", data + 10, 4) == 0) {

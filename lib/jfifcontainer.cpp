@@ -232,9 +232,9 @@ std::unique_ptr<IfdFileContainer> & JfifContainer::ifdContainer()
     m_file->seek(0, SEEK_SET);
 
     // XXX check results and bail.
-    auto result = readUInt16(m_file); // SOI
-    result = readUInt16(m_file); // APP0
-    result = readUInt16(m_file); // ignore
+    auto result = readUInt16(m_file, m_endian); // SOI
+    result = readUInt16(m_file, m_endian); // APP0
+    result = readUInt16(m_file, m_endian); // ignore
 
     char delim[7];
     delim[6] = 0;

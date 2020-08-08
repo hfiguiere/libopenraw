@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwcontainer.cpp
  *
- * Copyright (C) 2006-2017 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -43,7 +43,7 @@ DataBlock::DataBlock(off_t start, MRWContainer *_container)
         LOGWARN("  Error reading block name %lld\n", (long long int)start);
         return;
     }
-    auto result = m_container->readInt32(m_container->file());
+    auto result = m_container->readInt32(m_container->file(), m_container->endian());
     if (result.empty()) {
         // FIXME: Handle error
         LOGWARN("  Error reading block length %lld\n", (long long int)start);
@@ -77,7 +77,7 @@ DataBlock::uint16_val(off_t off)
 {
     MRWContainer *mc = m_container;
     mc->file()->seek(m_start + DataBlockHeaderLength + off, SEEK_SET);
-    return mc->readUInt16(mc->file());
+    return mc->readUInt16(mc->file(), mc->endian());
 }
 
 Option<std::string>
