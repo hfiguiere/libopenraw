@@ -4,13 +4,17 @@ New features:
 
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Added Olympus E-M10MarkIV*.
   - Added Hasselblad Lunar* (rebadged Sony NEX-7).
+  - Added iPhone 8, SE, XS.
 
   - Coefficients for Panasonic DC-G100, Sony ZV-1, Canon EOS R5 and EOS R6.
 
 Bug fixes:
 
   - Fix preview for CR3 files.
+  - Properly recognize Apple as make.
 
 Internal Changes:
 
