@@ -83,6 +83,11 @@ MakerNoteDir::createMakerNote(off_t offset,
                 offset, container, offset, "", empty_tag_names);
         }
     }
+    // Headerless Nikon.
+    if (file_type == OR_RAWFILE_TYPE_NEF) {
+        return std::make_shared<MakerNoteDir>(
+            offset, container, offset, "Nikon", mnote_nikon_tag_names);
+    }
 
     if (memcmp("OLYMPUS\0", data, 8) == 0) {
         return std::make_shared<MakerNoteDir>(
