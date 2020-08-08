@@ -310,6 +310,21 @@ public:
         {
             int32_t o = or_rawfile_get_orientation(rf);
             m_out << "\tMeta data\n";
+            m_out << "\t\tMakerNotes\n";
+
+            auto mnote = or_rawfile_get_ifd(rf, OR_IFD_MNOTE);
+            if (!mnote) {
+                m_out << "\t\t\tNo MakerNote found!\n";
+            } else {
+                const char* makernote_id = or_ifd_get_makernote_id(mnote);
+                m_out << boost::format("\t\t\tType = %1%\n")
+                    % (makernote_id ? makernote_id : "(null)");
+                auto num_entries = or_ifd_count_tags(mnote);
+                m_out << boost::format("\t\t\tNum entries = %1%\n")
+                    % num_entries;
+                or_ifd_release(mnote);
+                mnote = nullptr;
+            }
             m_out << boost::format("\t\tOrientation: %1%\n")
                 % o;
             double matrix[9];
