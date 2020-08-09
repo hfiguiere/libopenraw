@@ -668,7 +668,9 @@ static const int32_t extendOffset[16] =	/* entry n is (-1 << n) + 1 */
 inline
 void HuffExtend(int32_t & x, int32_t s) noexcept
 {
-    if ((x) < extendTest[s]) {
+    // s >= 16 is an overflow. And probably will lead to a corrupt
+    // output but at least not crash.
+    if (s < 16 && x < extendTest[s]) {
         (x) += extendOffset[s];
     }
 }
