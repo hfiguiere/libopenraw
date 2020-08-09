@@ -187,6 +187,14 @@ MakerNoteDir::createMakerNote(off_t offset,
             offset + 14, container, offset, "Apple", mnote_apple_tag_names);
     }
 
+    if (memcmp("STMN", data, 4) == 0) {
+        if (data[8] == data[9] == data[10] == data[11] == 0) {
+            return std::make_shared<NonMakerNoteDir>(container, "Samsung1a");
+        } else {
+            return std::make_shared<NonMakerNoteDir>(container, "Samsung1b");
+        }
+    }
+
     if (memcmp("FUJIFILM", data, 8) == 0) {
         auto mnote = std::make_shared<MakerNoteDir>(
             offset + 12, container, offset, "Fujifilm", mnote_fujifilm_tag_names);
@@ -200,6 +208,12 @@ MakerNoteDir::createMakerNote(off_t offset,
     }
 
     return std::make_shared<MakerNoteDir>(offset, container, offset, "", empty_tag_names);
+}
+
+MakerNoteDir::MakerNoteDir(const IfdFileContainer& _container, const std::string & id)
+    : IfdDir(0, _container, OR_IFD_MNOTE, empty_tag_names)
+    , m_id(id)
+{
 }
 
 MakerNoteDir::MakerNoteDir(off_t _offset,

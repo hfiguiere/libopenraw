@@ -66,10 +66,26 @@ protected:
                  const std::string & id,
                  const TagTable& tag_table);
 
+    MakerNoteDir(const IfdFileContainer& _container, const std::string & id);
     std::string m_magic;
     size_t m_hlen;
     off_t m_mnote_offset;
     std::string m_id;
+};
+
+/** This is for the few cases where the MakerNotes are not MakerNotes.
+ * They'll produce an empty IFD.
+ */
+class NonMakerNoteDir
+    : public MakerNoteDir
+{
+public:
+    NonMakerNoteDir(const IfdFileContainer& _container, const std::string & id)
+        : MakerNoteDir(_container, id)
+        {}
+
+    virtual bool load() override
+        { return true; }
 };
 
 }

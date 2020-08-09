@@ -70,8 +70,12 @@ public:
     off_t offset() const { return m_offset; }
     const IfdFileContainer &container() const { return m_container; }
 
-    /** load the directory to memory */
-    bool load();
+    /** load the directory to memory
+     * The only reason you'd want to override is to synthesize an IFD from
+     * non-IFD.
+     * @return true on success.
+     */
+    virtual bool load();
     /** return the number of entries*/
     int numTags() { return m_entries.size(); }
     IfdEntry::Ref getEntry(uint16_t id) const;
