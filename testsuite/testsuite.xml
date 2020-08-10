@@ -911,6 +911,7 @@
   </test>
   <test>
     <name>SR2-test Sony R1</name>
+    <file>/home/hub/samples/sr2/Sony_DSC-R1/Sony - DSC-R1 - 14bit uncompressed (3:2).SR2</file>
     <source>https://raw.pixls.us/getfile.php/3221/nice/Sony%20-%20DSC-R1%20-%2014bit%20uncompressed%20(3:2).SR2</source>
     <results>
       <rawType>ARW</rawType>
