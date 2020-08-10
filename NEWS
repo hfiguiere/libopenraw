@@ -1,4 +1,3 @@
-
 libopenraw 0.3.0 -
 
 New features:
@@ -28,20 +27,24 @@ Internal Changes:
 
   - Added LOGASSERT()
 
-libopenraw 0.2.3 -
+libopenraw 0.2.3 - 2020/08/09
 
 New features:
 
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
+  - Added Olympus E-M10MarkIV*.
   - Added Hasselblad Lunar* (rebadged Sony NEX-7).
+  - Added iPhone 8, SE, XS.
 
   - Coefficients for Panasonic DC-G100, Sony ZV-1, Canon EOS R5 and EOS R6.
 
 Bug fixes:
 
   - Fix preview for CR3 files.
+  - Properly recognize Apple as make.
+  - Fix an overflow in the ljpeg decompressor.
 
 Internal Changes:
 

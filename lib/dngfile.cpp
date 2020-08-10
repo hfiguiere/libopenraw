@@ -161,6 +161,13 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                          OR_TYPEID_APPLE_IPHONE_6SPLUS) },
     { "iPhone 7 Plus", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
                                          OR_TYPEID_APPLE_IPHONE_7PLUS) },
+    { "iPhone 8", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
+                                      OR_TYPEID_APPLE_IPHONE_8) },
+    { "iPhone SE", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
+                                       OR_TYPEID_APPLE_IPHONE_SE) },
+    { "iPhone XS", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
+                                         OR_TYPEID_APPLE_IPHONE_XS) },
+
     { "Blackmagic Pocket Cinema Camera", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_BLACKMAGIC,
                                          OR_TYPEID_BLACKMAGIC_POCKET_CINEMA) },
     { "SIGMA fp", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SIGMA,
