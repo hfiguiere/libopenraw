@@ -261,6 +261,15 @@ typedef enum {
     EXIF_FORMAT_DOUBLE     = 12
 } ExifTagType;
 
+typedef struct {
+    uint32_t num;
+    uint32_t denom;
+} ORRational;
+
+typedef struct {
+    int32_t num;
+    uint32_t denom;
+} ORSRational;
 
 #ifdef __cplusplus
 }

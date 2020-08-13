@@ -27,6 +27,8 @@
 
 #pragma once
 
+#include <math.h>
+
 namespace OpenRaw {
 namespace Internals {
 namespace IFD {
@@ -54,19 +56,23 @@ typedef enum {
     COMPRESS_CUSTOM = 65535 /**< The value everybody seems to use */
 } TiffCompress;
 
-struct Rational {
-    uint32_t num;
-    uint32_t denom;
+inline
+double to_double(const ORRational& r)
+{
+    if (r.denom == 0) {
+        return INFINITY;
+    }
+    return (double)r.num / (double)r.denom;
+}
 
-    operator double() const;
-};
-
-struct SRational {
-    int32_t num;
-    uint32_t denom;
-
-    operator double() const;
-};
+inline
+double to_double(const ORSRational& r)
+{
+    if (r.denom == 0) {
+        return INFINITY;
+    }
+    return (double)r.num / (double)r.denom;
+}
 
 }
 }

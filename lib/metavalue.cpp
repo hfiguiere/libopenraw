@@ -27,6 +27,9 @@
 
 namespace OpenRaw {
 
+using Internals::IFD::ORRational;
+using Internals::IFD::ORSRational;
+
 MetaValue::MetaValue(const MetaValue & r)
     : m_values(r.m_values)
 {
@@ -86,6 +89,15 @@ const std::string & MetaValue::getString(int idx) const
 
 double MetaValue::getDouble(int idx) const
 {
+    int type = m_values[idx].which();
+    switch (type) {
+    case 5:
+        return to_double(get<OpenRaw::Internals::IFD::ORRational>(idx));
+    case 6:
+        return to_double(get<OpenRaw::Internals::IFD::ORSRational>(idx));
+    default:
+        break;
+    }
     return get<double>(idx);
 }
 
@@ -108,6 +120,12 @@ public:
     }
     std::string operator()(double v) {
         return std::to_string(v);
+    }
+    std::string operator()(const ORRational& r) {
+        return std::to_string(r.num) + "/" + std::to_string(r.denom);
+    }
+    std::string operator()(const ORSRational& r) {
+        return std::to_string(r.num) + "/" + std::to_string(r.denom);
     }
 };
 

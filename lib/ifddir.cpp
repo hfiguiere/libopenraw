@@ -245,7 +245,7 @@ uint32_t IfdDir::getEntryIntegerArrayItemValue(IfdEntry& e, int idx) const
             break;
         case IFD::EXIF_FORMAT_RATIONAL:
         {
-            IFD::Rational r = getEntryValue<IFD::Rational>(e, idx);
+            IFD::ORRational r = getEntryValue<IFD::ORRational>(e, idx);
             if (r.denom == 0) {
                 v = 0;
             } else {
@@ -266,7 +266,7 @@ uint32_t IfdDir::getEntryIntegerArrayItemValue(IfdEntry& e, int idx) const
 
 namespace {
 
-template <class T>
+template<class T>
 void convert(const IfdDir& dir, Internals::IfdEntry& e, std::vector<MetaValue::value_t>& values)
 {
     auto result = dir.getEntryArrayValue<T>(e);
@@ -278,7 +278,7 @@ void convert(const IfdDir& dir, Internals::IfdEntry& e, std::vector<MetaValue::v
 }
 
 // T is the Ifd primitive type. T2 is the target MetaValue type.
-template <class T, class T2>
+template<class T, class T2>
 void convert(const IfdDir& dir, Internals::IfdEntry& e, std::vector<MetaValue::value_t>& values)
 {
     auto result = dir.getEntryArrayValue<T>(e);
@@ -320,7 +320,7 @@ MetaValue* IfdDir::makeMetaValue(IfdEntry& entry) const
     }
     case Internals::IFD::EXIF_FORMAT_RATIONAL:
     {
-        convert<Internals::IFD::Rational, double>(*this, entry, values);
+        convert<Internals::IFD::ORRational>(*this, entry, values);
         break;
     }
     case Internals::IFD::EXIF_FORMAT_SBYTE:
@@ -345,7 +345,7 @@ MetaValue* IfdDir::makeMetaValue(IfdEntry& entry) const
     }
     case Internals::IFD::EXIF_FORMAT_SRATIONAL:
     {
-        convert<Internals::IFD::SRational, double>(*this, entry, values);
+        convert<Internals::IFD::ORSRational>(*this, entry, values);
         break;
     }
     default:

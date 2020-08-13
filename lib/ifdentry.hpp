@@ -156,36 +156,36 @@ inline std::string IfdTypeTrait<std::string>::BE(const uint8_t* b, size_t len) n
 }
 
 template <>
-inline IFD::Rational IfdTypeTrait<IFD::Rational>::EL(const uint8_t* b, size_t) noexcept
+inline IFD::ORRational IfdTypeTrait<IFD::ORRational>::EL(const uint8_t* b, size_t) noexcept
 {
-    IFD::Rational r;
+    IFD::ORRational r;
     r.num = EL32(b);
     r.denom = EL32(b + 4);
     return r;
 }
 
 template <>
-inline IFD::Rational IfdTypeTrait<IFD::Rational>::BE(const uint8_t* b, size_t) noexcept
+inline IFD::ORRational IfdTypeTrait<IFD::ORRational>::BE(const uint8_t* b, size_t) noexcept
 {
-    IFD::Rational r;
+    IFD::ORRational r;
     r.num = BE32(b);
     r.denom = BE32(b + 4);
     return r;
 }
 
 template <>
-inline IFD::SRational IfdTypeTrait<IFD::SRational>::EL(const uint8_t* b, size_t) noexcept
+inline IFD::ORSRational IfdTypeTrait<IFD::ORSRational>::EL(const uint8_t* b, size_t) noexcept
 {
-    IFD::SRational r;
+    IFD::ORSRational r;
     r.num = EL32(b);
     r.denom = EL32(b + 4);
     return r;
 }
 
 template <>
-inline IFD::SRational IfdTypeTrait<IFD::SRational>::BE(const uint8_t* b, size_t) noexcept
+inline IFD::ORSRational IfdTypeTrait<IFD::ORSRational>::BE(const uint8_t* b, size_t) noexcept
 {
-    IFD::SRational r;
+    IFD::ORSRational r;
     r.num = BE32(b);
     r.denom = BE32(b + 4);
     return r;

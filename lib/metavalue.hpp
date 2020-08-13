@@ -19,21 +19,21 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef LIBOPENRAWPP_METAVALUE_H_
-#define LIBOPENRAWPP_METAVALUE_H_
+#pragma once
 
 #include <stdint.h>
 #include <vector>
 
 #include <boost/variant.hpp>
 
+#include "ifd.hpp"
+
 namespace OpenRaw {
 
 class MetaValue
 {
 public:
-    typedef boost::variant<std::string, uint8_t, uint32_t, int32_t, double> value_t;
+    typedef boost::variant<std::string, uint8_t, uint32_t, int32_t, double, OpenRaw::Internals::IFD::ORRational, OpenRaw::Internals::IFD::ORSRational> value_t;
 
     MetaValue(const MetaValue &);
     template <class T> MetaValue(const T &v)
@@ -80,5 +80,3 @@ private:
   fill-column:80
   End:
 */
-
-#endif

@@ -20,7 +20,6 @@
 
 
 #include <stdlib.h>
-#include <math.h>
 
 #include <cstdint>
 #include <string>
@@ -120,26 +119,6 @@ bool IfdEntry::loadData(size_t unit_size, off_t offset)
 	return m_loaded;
 }
 
-namespace IFD {
-
-Rational::operator double() const
-{
-	if(denom == 0) {
-		return INFINITY;
-	}
-	return (double)num / (double)denom;
-}
-
-SRational::operator double() const
-{
-	if(denom == 0) {
-		return INFINITY;
-	}
-	return (double)num / (double)denom;
-}
-
-}
-
 template <>
 const uint16_t IfdTypeTrait<uint8_t>::type = IFD::EXIF_FORMAT_BYTE;
 template <>
@@ -161,14 +140,14 @@ template <>
 const size_t IfdTypeTrait<int16_t>::size = 2;
 
 template <>
-const uint16_t IfdTypeTrait<IFD::Rational>::type = IFD::EXIF_FORMAT_RATIONAL;
+const uint16_t IfdTypeTrait<IFD::ORRational>::type = IFD::EXIF_FORMAT_RATIONAL;
 template <>
-const size_t IfdTypeTrait<IFD::Rational>::size = 8;
+const size_t IfdTypeTrait<IFD::ORRational>::size = 8;
 
 template <>
-const uint16_t IfdTypeTrait<IFD::SRational>::type = IFD::EXIF_FORMAT_SRATIONAL;
+const uint16_t IfdTypeTrait<IFD::ORSRational>::type = IFD::EXIF_FORMAT_SRATIONAL;
 template <>
-const size_t IfdTypeTrait<IFD::SRational>::size = 8;
+const size_t IfdTypeTrait<IFD::ORSRational>::size = 8;
 
 template <>
 const uint16_t IfdTypeTrait<uint32_t>::type = IFD::EXIF_FORMAT_LONG;
