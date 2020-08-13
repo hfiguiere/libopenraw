@@ -52,10 +52,6 @@ public:
     Rw2File(const Rw2File&) = delete;
     Rw2File & operator=(const Rw2File&) = delete;
 
-    enum {
-        PANA_RAW_COMPRESSION = 0x11000
-    };
-
 protected:
     virtual IfdDir::Ref _locateCfaIfd() override;
     virtual IfdDir::Ref _locateMainIfd() override;

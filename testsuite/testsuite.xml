@@ -1058,7 +1058,8 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>15039918</rawDataSize>
       <rawDataDimensions>3177 2367</rawDataDimensions>
-      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawDataActiveArea>16 7 3136 2352</rawDataActiveArea>
+      <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>
       <rawMd5>28497</rawMd5>
@@ -1084,7 +1085,8 @@
       <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>20412420</rawDataSize>
       <rawDataDimensions>3710 2751</rawDataDimensions>
-      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawDataActiveArea>16 7 3648 2736</rawDataActiveArea>
+      <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>
       <rawMd5>55840</rawMd5>
@@ -1110,6 +1112,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>
+      <rawDataActiveArea>8 8 4608 3456</rawDataActiveArea>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>
@@ -1136,6 +1139,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>
+      <rawDataActiveArea>8 8 4608 3456</rawDataActiveArea>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>

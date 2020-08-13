@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2file.cpp
  *
- * Copyright (C) 2011-2020 Hubert Figuiere
+ * Copyright (C) 2011-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -660,7 +660,10 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref& dir, uint32_t & len
 
     if (real_size / (x * 8 / 7) == y) {
         data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
-        data.setCompression(PANA_RAW_COMPRESSION);
+        auto v = _cfaIfd->getValue<uint16_t>(RW2_TAG_IMAGE_COMPRESSION);
+        if (v) {
+            data.setCompression(v.value());
+        }
     } else if (real_size < byte_length) {
         LOGWARN("Size mismatch for data: expected %u got %lu ignoring.\n",
                 byte_length, real_size);
@@ -668,25 +671,54 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref& dir, uint32_t & len
     } else {
         data.setDataType(OR_DATA_TYPE_RAW);
     }
-    data.setCfaPatternType(OR_CFA_PATTERN_BGGR);
+    // It seems that they are all RGB
+    auto pattern = _cfaIfd->getValue<uint16_t>(RW2_TAG_IMAGE_CFAPATTERN);
+    if (!pattern) {
+        LOGERR("Pattern not found.\n");
+    } else {
+        auto v = pattern.value();
+        switch (v) {
+        case 1:
+            data.setCfaPatternType(OR_CFA_PATTERN_RGGB);
+            break;
+        case 2:
+            data.setCfaPatternType(OR_CFA_PATTERN_GRBG);
+            break;
+        case 3:
+            data.setCfaPatternType(OR_CFA_PATTERN_GBRG);
+            break;
+        case 4:
+            data.setCfaPatternType(OR_CFA_PATTERN_BGGR);
+            break;
+        default:
+            LOGERR("Pattern is %u (UNKNOWN).\n", v);
+        }
+    }
 
-
-    // they are not all RGGB.
-    // but I don't seem to see where this is encoded.
-    //
     data.setDimensions(x, y);
+    auto bpc = _cfaIfd->getValue<uint16_t>(RW2_TAG_IMAGE_BITSPERSAMPLE).value_or(0);
+    if (bpc != 0) {
+        data.setBpc(bpc);
+    }
 
     LOGDBG1("In size is %ux%u\n", data.width(), data.height());
     // get the sensor info
     // XXX what if it is not found?
-    IfdEntry::Ref e = _cfaIfd->getEntry(IFD::RW2_TAG_SENSOR_LEFTBORDER);
-    x = _cfaIfd->getEntryIntegerArrayItemValue(*e, 0);
-    e = _cfaIfd->getEntry(IFD::RW2_TAG_SENSOR_TOPBORDER);
-    y = _cfaIfd->getEntryIntegerArrayItemValue(*e, 0);
-    e = _cfaIfd->getEntry(IFD::RW2_TAG_IMAGE_HEIGHT);
-    uint32_t h = _cfaIfd->getEntryIntegerArrayItemValue(*e, 0);
-    e = _cfaIfd->getEntry(IFD::RW2_TAG_IMAGE_WIDTH);
-    uint32_t w = _cfaIfd->getEntryIntegerArrayItemValue(*e, 0);
+    x = _cfaIfd->getValue<uint16_t>(IFD::RW2_TAG_SENSOR_LEFTBORDER).value_or(0);
+    y = _cfaIfd->getValue<uint16_t>(IFD::RW2_TAG_SENSOR_TOPBORDER).value_or(0);
+    auto v = _cfaIfd->getValue<uint16_t>(IFD::RW2_TAG_SENSOR_BOTTOMBORDER);
+    int32_t h = v.value_or(0);
+    h -= y;
+    if (h < 0) {
+        h = 0;
+    }
+
+    v = _cfaIfd->getValue<uint16_t>(IFD::RW2_TAG_SENSOR_RIGHTBORDER);
+    int32_t w = v.value_or(0);
+    w -= x;
+    if (w < 0) {
+        w = 0;
+    }
 
     data.setActiveArea(x, y, w, h);
 
