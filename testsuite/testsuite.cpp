@@ -1102,10 +1102,6 @@ int main(int argc, char ** argv)
 {
     bool bootstrap = false;
     std::string download_dir;
-    const char * srcdir = getenv("srcdir");
-    if(srcdir == NULL) {
-        srcdir = "./";
-    }
 
     int opt;
     while ((opt = getopt(argc, argv, "bd:")) != -1) {
@@ -1141,10 +1137,18 @@ int main(int argc, char ** argv)
         }
     }
 
-    std::string testsuite_file = srcdir;
-    testsuite_file += "/";
-    testsuite_file += (argv[optind] ? argv[optind] : "testsuite.xml");
+        const char * srcdir = getenv("srcdir");
+    if(srcdir == NULL) {
+        srcdir = "./";
+    }
 
+    std::string testsuite_file;
+    if (argv[optind]) {
+        testsuite_file = argv[optind];
+    } else {
+        testsuite_file = srcdir;
+        testsuite_file += "/testsuite.xml";
+    }
     or_debug_set_level(ERROR);
 
     TestSuite testsuite;
@@ -1165,6 +1169,8 @@ int main(int argc, char ** argv)
   mode:c++
   c-file-style:"stroustrup"
   c-file-offsets:((innamespace . 0))
+  c-basic-offset: 4
+  tab-width: 4
   indent-tabs-mode:nil
   fill-column:80
   End:
