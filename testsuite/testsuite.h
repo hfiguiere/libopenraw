@@ -1,8 +1,8 @@
 /* -*- mode:c++; indent-tabs-mode:nil; c-basic-offset:4; tab-width:4; -*- */
 /*
- * libopenraw - testsuite.cpp
+ * libopenraw - testsuite.h
  *
- * Copyright (C) 2008-2018 Hubert Figuiere
+ * Copyright (C) 2008-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -34,6 +34,7 @@
 #include <libxml/tree.h>
 
 #include <string>
+#include <set>
 #include <map>
 #include <memory>
 
@@ -79,6 +80,7 @@ public:
     const std::string& referer() const
         { return m_referer; }
     std::map<int, std::string>& results() { return m_results; }
+    std::set<int>& to_run() { return m_to_run; }
     /** return 0 the test ran perfectly */
     int run();
 
@@ -113,6 +115,7 @@ private:
     bool m_download_disabled;
     std::string m_referer;
     std::map<int, std::string> m_results;
+    std::set<int> m_to_run;
     // runtime data
     std::unique_ptr<_RawFile, RawFileDeleter> m_rawfile;
     std::unique_ptr<_RawData, RawDataDeleter> m_rawdata;

@@ -824,6 +824,18 @@ int Test::run()
             m_success++;
         }
     }
+    if (!m_to_run.empty()) {
+        fprintf(stderr, "Not all test have been run. Still to run: ");
+        for (int t : m_to_run) {
+            auto iter = testsuitetagnames.find(t);
+            if (iter != testsuitetagnames.end()) {
+                fprintf(stderr, "%s, ", iter->second.c_str());
+            } else {
+                fprintf(stderr, "%d, ", t);
+            }
+        }
+        fprintf(stderr, "\n");
+    }
     fprintf(stderr, "total %d, success %d, failure %d\n", m_total,
             m_success, m_failure);
     return m_failure;

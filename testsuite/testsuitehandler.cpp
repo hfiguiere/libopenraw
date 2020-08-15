@@ -28,6 +28,30 @@
 #include "testsuitehandler.h"
 #include "testsuitetags.h"
 
+static const std::set<int> tests_set = {
+    XML_rawType,
+    XML_rawTypeId,
+    XML_thumbNum,
+    XML_thumbSizes,
+    XML_thumbFormats,
+    XML_thumbDataSizes,
+    XML_thumbMd5,
+    XML_rawDataType,
+    XML_rawDataSize,
+    XML_rawDataDimensions,
+    XML_rawDataActiveArea,
+    XML_rawCfaPattern,
+    XML_rawMinValue,
+    XML_rawMaxValue,
+    XML_rawMd5,
+    XML_rawDecompressedMd5,
+    XML_metaOrientation,
+    XML_exifMake,
+    XML_exifModel,
+    XML_makerNoteCount,
+    XML_makerNoteId,
+};
+
 TestContext::TestContext(const xml::HandlerPtr& handler, TestSuite* ts,
                          Test::Ptr&& test)
     : xml::Context(handler)
@@ -62,6 +86,7 @@ xml::ContextPtr TestContext::startElement(int32_t element)
     }
     case XML_results:
         m_results = true;
+        m_tests_to_run = tests_set;
         break;
     case XML_rawType:
     case XML_rawTypeId:
@@ -88,6 +113,10 @@ xml::ContextPtr TestContext::startElement(int32_t element)
         if (m_results) {
             std::string& s(m_test->results()[element]);
             ctxt.reset(new xml::SimpleElementContext(m_handler, s));
+            auto t = m_tests_to_run.find(element);
+            if (t != m_tests_to_run.end()) {
+                m_tests_to_run.erase(t);
+            }
         }
         break;
     default:
@@ -110,6 +139,7 @@ void TestContext::endElement(int32_t element)
         break;
     case XML_results:
         m_results = false;
+        m_test->to_run() = m_tests_to_run;
         break;
     default:
         break;

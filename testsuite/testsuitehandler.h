@@ -2,7 +2,7 @@
 /*
  * libopenraw - testsuitehandler.h
  *
- * Copyright (C) 2008-2015 Hubert Figuiere
+ * Copyright (C) 2008-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,10 +19,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _TEST_TESTSUITEHANDLER_H_
-#define _TEST_TESTSUITEHANDLER_H_
+#pragma once
 
 #include <stdint.h>
+#include <set>
 #include <string>
 
 #include "xmlhandler.h"
@@ -39,6 +39,7 @@ private:
     TestSuite* m_ts;
     Test::Ptr m_test;
     bool m_results;
+    std::set<int> m_tests_to_run;
 };
 
 class TestSuiteHandler : public xml::Handler {
@@ -51,5 +52,3 @@ public:
 private:
     TestSuite* m_ts;
 };
-
-#endif
