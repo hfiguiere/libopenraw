@@ -517,6 +517,7 @@
       <rawDataSize>8025398</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
       <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMd5>48788</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -551,6 +552,9 @@
     <results>
       <rawType>DNG</rawType>
       <rawTypeId>262146</rawTypeId>
+      <exifMake>PENTAX Corporation </exifMake>
+      <exifModel>PENTAX K10D        </exifModel>
+      <makerNoteCount>-1</makerNoteCount>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3872</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
@@ -574,7 +578,10 @@
     <results>
       <rawType>DNG</rawType>
       <rawTypeId>196609</rawTypeId>
+      <exifMake>Leica Camera AG</exifMake>
+      <exifModel>R9 - Digital Back DMR</exifModel>
       <makerNoteCount>15</makerNoteCount>
+      <makerNoteId></makerNoteId>
       <thumbNum>1</thumbNum>
       <thumbSizes>310</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -583,6 +590,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20134656</rawDataSize>
       <rawDataDimensions>3884 2592</rawDataDimensions>
+      <rawDataActiveArea>0 0 3884 2592</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>65535</rawMaxValue>
@@ -597,6 +605,8 @@
     <results>
       <rawType>DNG</rawType>
       <rawTypeId>196610</rawTypeId>
+      <exifMake>Leica Camera AG</exifMake>
+      <exifModel>M8 Digital Camera</exifModel>
       <makerNoteCount>15</makerNoteCount>
       <makerNoteId>Leica2</makerNoteId>
       <thumbNum>1</thumbNum>
@@ -651,6 +661,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>32537600</rawDataSize>
       <rawDataDimensions>4960 3280</rawDataDimensions>
+      <rawDataActiveArea>0 0 4944 3280</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
@@ -667,6 +678,8 @@
       <rawTypeId>458755</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>E-3             </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 1600</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -679,6 +692,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>40898</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -690,6 +704,8 @@
       <rawTypeId>458756</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>E-300           </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 1600</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -701,6 +717,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>57687</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -713,6 +730,8 @@
       <rawTypeId>458756</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>E-300           </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 1600</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -724,6 +743,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>4890</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -736,6 +756,8 @@
       <rawTypeId>458757</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>E-330           </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 1600</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -747,6 +769,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>7047</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -759,6 +782,8 @@
       <rawTypeId>458757</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
       <makerNoteId>Olympus</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>E-330           </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 1600</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -770,6 +795,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
+      <rawMd5>29595</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -781,6 +807,8 @@
       <rawTypeId>458766</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>E-P1            </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3200</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -805,6 +833,8 @@
       <rawTypeId>458766</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>E-P1            </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 3200</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -828,6 +858,8 @@
       <rawTypeId>458759</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>E-410           </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 1600</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -852,6 +884,8 @@
       <rawTypeId>458759</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
       <makerNoteId>Olympus2</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>E-410           </exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 1600</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -984,11 +1018,22 @@
     <results>
       <rawType>ARW</rawType>
       <rawTypeId>524366</rawTypeId>
+      <makerNoteCount>19</makerNoteCount>
+      <makerNoteId>Sony5</makerNoteId>
+      <exifMake>SONY</exifMake>
+      <exifModel>DSC-R1</exifModel>
       <thumbNum>2</thumbNum>
       <thumbSizes>640 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>145173 28372</thumbDataSizes>
       <thumbMd5>15444 18470</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>20780544</rawDataSize>
+      <rawDataDimensions>3984 2608</rawDataDimensions>
+      <rawCfaPattern>GRBG</rawCfaPattern>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>65535</rawMaxValue>
+      <rawMd5>23557</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
