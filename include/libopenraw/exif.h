@@ -168,6 +168,9 @@ typedef	enum {
 	/* ERF tags */
 	ERF_TAG_PREVIEW_IMAGE = 0x280,
 
+	/* ERF MakerNote */
+	MNOTE_EPSON_SENSORAREA = 0x400,
+
 	/* ORF tags */
 	ORF_TAG_THUMBNAIL_IMAGE = 0x100,
 	ORF_TAG_CAMERA_SETTINGS = 0x2020,

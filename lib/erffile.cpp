@@ -24,6 +24,7 @@
 #include "ifddir.hpp"
 #include "rawfile_private.hpp"
 #include "erffile.hpp"
+#include "rawdata.hpp"
 #include "thumbnail.hpp"
 
 using namespace Debug;
@@ -124,6 +125,15 @@ ERFFile::~ERFFile()
     const IfdDir::Ref & _cfaIfd = cfaIfd();
     if(_cfaIfd) {
         err = _getRawDataFromDir(data, _cfaIfd);
+        auto mnote = makerNoteIfd();
+        auto sensor_area = mnote->getEntry(MNOTE_EPSON_SENSORAREA);
+        if (sensor_area) {
+            auto x = mnote->getEntryValue<uint16_t>(*sensor_area, 0, true);
+            auto y = mnote->getEntryValue<uint16_t>(*sensor_area, 1, true);
+            auto w = mnote->getEntryValue<uint16_t>(*sensor_area, 2, true);
+            auto h = mnote->getEntryValue<uint16_t>(*sensor_area, 3, true);
+            data.setActiveArea(x, y, w, h);
+        }
     }
     else {
         err = OR_ERROR_NOT_FOUND;
