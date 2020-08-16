@@ -617,6 +617,9 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
   }
 
 
+  // This is the actual bit per component since we might readjust
+  // for padding.
+  auto actual_bpc = bpc;
   if((bpc == 12 || bpc == 14) && (compression == IFD::COMPRESS_NONE)
      && (byte_length == (x * y * 2))) {
     // We turn this to a 16-bits per sample. MSB are 0
@@ -645,8 +648,8 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
   data.setCompression(data_type == OR_DATA_TYPE_COMPRESSED_RAW
                       ? compression : 1);
   data.setPhotometricInterpretation((ExifPhotometricInterpretation)photo_int);
-  if((data_type == OR_DATA_TYPE_RAW) && (data.whiteLevel() == 0)) {
-    data.setWhiteLevel((1 << bpc) - 1);
+  if(data.whiteLevel() == 0) {
+    data.setWhiteLevel((1 << actual_bpc) - 1);
   }
   data.setDimensions(x, y);
 

@@ -196,7 +196,25 @@ PEFFile::~PEFFile()
     ::or_error err;
     const IfdDir::Ref & _cfaIfd = cfaIfd();
     err = _getRawDataFromDir(data, _cfaIfd);
-    if(err == OR_ERROR_NONE) {
+    if (err == OR_ERROR_NONE) {
+        auto mnote = makerNoteIfd();
+        auto offset = mnote->getEntry(MNOTE_PENTAX_IMAGEAREAOFFSET);
+        if (offset) {
+            auto x = mnote->getEntryValue<uint16_t>(*offset, 0);
+            auto y = mnote->getEntryValue<uint16_t>(*offset, 1);
+            auto image_size = mnote->getEntry(MNOTE_PENTAX_RAWIMAGESIZE);
+            if (image_size) {
+                auto w = mnote->getEntryValue<uint16_t>(*image_size, 0);
+                auto h = mnote->getEntryValue<uint16_t>(*image_size, 1);
+                data.setActiveArea(x, y, w, h);
+            }
+        }
+
+        auto white_level = mnote->getIntegerValue(MNOTE_PENTAX_WHITELEVEL);
+        if (white_level) {
+            data.setWhiteLevel(white_level.value());
+        }
+
         uint16_t compression = data.compression();
         switch(compression) {
         case IFD::COMPRESS_CUSTOM:

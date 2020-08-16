@@ -516,8 +516,11 @@
       <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>8025398</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
+      <rawDataActiveArea>8 8 3872 2592</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMd5>48788</rawMd5>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -540,8 +543,11 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
+      <rawDataActiveArea>19 11 3008 2008</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMd5>11667</rawMd5>
+      <rawMinValue>0</rawMinValue>
+      <rawMaxValue>4095</rawMaxValue>
       <metaOrientation>0</metaOrientation>
     </results>
   </test>
@@ -1032,7 +1038,7 @@
       <rawDataDimensions>3984 2608</rawDataDimensions>
       <rawCfaPattern>GRBG</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
-      <rawMaxValue>65535</rawMaxValue>
+      <rawMaxValue>16383</rawMaxValue>
       <rawMd5>23557</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
