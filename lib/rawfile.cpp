@@ -703,7 +703,6 @@ Internals::MakerNoteDir::Ref RawFile::makerNoteIfd()
 {
     if (!d->m_makerNoteIfd) {
         d->m_makerNoteIfd = _locateMakerNoteIfd();
-        LOGASSERT(d->m_makerNoteIfd);
     }
     LOGASSERT(!d->m_makerNoteIfd || d->m_makerNoteIfd->type() == OR_IFD_MNOTE);
     return d->m_makerNoteIfd;
