@@ -126,6 +126,17 @@ MakerNoteDir::createMakerNote(off_t offset,
             offset + 8, container, 0, "Ricoh", mnote_ricoh_tag_names);
     }
 
+    if (memcmp("LEICA CAMERA AG\0", data, 16) == 0) {
+        if (file_type == OR_RAWFILE_TYPE_RW2) {
+            // Rebadged Panasonic
+            // Leica C-Lux
+            // Leica V-Lux 5
+            // Leica D-Lux 7
+            return std::make_shared<MakerNoteDir>(
+                offset + 18, container, 0, "Panasonic", mnote_panasonic_tag_names);
+        }
+    }
+
     if (memcmp("LEICA", data, 5) == 0) {
         if (data[5] == 0 && data[6] == 0 && data[7] == 0) {
             if (file_type == OR_RAWFILE_TYPE_RW2) {
