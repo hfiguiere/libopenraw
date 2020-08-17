@@ -95,6 +95,16 @@ void dump_file_info(std::ostream& out, ORRawFileRef rf, bool dev_mode)
               % OR_GET_FILE_TYPEID_CAMERA(fileTypeId));
     out << boost::format("\tType ID = %1%\n") % typeId;
     or_rawfile_typeid vendorId = or_rawfile_get_vendorid(rf);
+    if (fileType == OR_RAWFILE_TYPE_DNG) {
+        ORConstMetaValueRef original_value
+            = or_rawfile_get_metavalue(rf, META_NS_TIFF | DNG_TAG_ORIGINAL_RAW_FILE_NAME);
+        if (original_value) {
+            auto original = or_metavalue_get_string(original_value, 0);
+            if (original != nullptr) {
+                out << boost::format("\tConverted to DNG from '%1%'\n") % original;
+            }
+        }
+    }
     if (vendorId != OR_GET_FILE_TYPEID_VENDOR(fileTypeId)) {
         out <<
             boost::format(

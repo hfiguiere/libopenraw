@@ -163,6 +163,7 @@ typedef	enum {
 	DNG_TAG_AS_SHOT_WHITE_XY		 = 0xc629,
 	DNG_TAG_CALIBRATION_ILLUMINANT1		 = 0xc65a,
 	DNG_TAG_CALIBRATION_ILLUMINANT2          = 0xc65b,
+	DNG_TAG_ORIGINAL_RAW_FILE_NAME = 0xc68b,
 	DNG_TAG_ACTIVE_AREA                      = 0xc68d,
 
 	/* ERF tags */
