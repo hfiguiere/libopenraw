@@ -202,6 +202,11 @@ MakerNoteDir::createMakerNote(off_t offset,
         return mnote;
     }
 
+    if (memcmp("SIGMA\0", data, 6) == 0) {
+        return std::make_shared<MakerNoteDir>(
+            offset + 10, container, 0, "Sigma", mnote_sigma_tag_names);
+    }
+
     if (memcmp("MLT0", data + 10, 4) == 0) {
         return std::make_shared<MakerNoteDir>(
             offset, container, offset, "Minolta", mnote_minolta_tag_names);
