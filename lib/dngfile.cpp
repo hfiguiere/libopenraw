@@ -182,6 +182,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                          OR_TYPEID_BLACKMAGIC_POCKET_CINEMA) },
     { "SIGMA fp", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SIGMA,
                                       OR_TYPEID_SIGMA_FP) },
+    { "L1D-20c", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_HASSELBLAD,
+                                     OR_TYPEID_HASSELBLAD_L1D_20C) },
     { "HERO5 Black", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_GOPRO,
                                       OR_TYPEID_GOPRO_HERO5_BLACK) },
     { "HERO6 Black", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_GOPRO,
