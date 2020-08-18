@@ -63,7 +63,11 @@ bool MetadataIterator::next()
     }
     LOGDBG1("next\n");
     if (m_current_ifd) {
-        m_current_entry++;
+        // We might already be at the end, check before incrementing.
+        // This is a corner case that led to an infinite loop.
+        if (m_current_entry != m_current_ifd->entries().end()) {
+            m_current_entry++;
+        }
         if (m_current_entry == m_current_ifd->entries().end()) {
             LOGDBG1("end of IFD, moving on\n");
             m_current_ifd = nextIfd();
