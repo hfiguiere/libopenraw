@@ -47,10 +47,10 @@ or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx)
 }
 
 API_EXPORT const char*
-or_metavalue_get_as_string(ORConstMetaValueRef value)
+or_metavalue_get_as_string(ORConstMetaValueRef value, bool full)
 {
   // TODO validate parameters
-  return reinterpret_cast<const OpenRaw::MetaValue*>(value)->getAsString().c_str();
+  return reinterpret_cast<const OpenRaw::MetaValue*>(value)->getAsString(full).c_str();
 }
 
 API_EXPORT uint32_t

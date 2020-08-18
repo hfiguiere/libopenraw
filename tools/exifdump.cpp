@@ -136,7 +136,7 @@ public:
                             default:
                                 if (type != EXIF_FORMAT_UNDEFINED || m_dump_binaries) {
                                     m_out << boost::format("\tvalue = %1%\n") %
-                                        or_metavalue_get_as_string(value);
+                                        or_metavalue_get_as_string(value, m_dump_binaries);
                                 } else {
                                     m_out << "\tvalue output skipped, use -b to dump\n";
                                 }

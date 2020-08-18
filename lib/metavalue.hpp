@@ -57,7 +57,8 @@ public:
     const std::string & getString(int idx) const;
     double getDouble(int idx) const;
     /// Convert to a string.
-    const std::string & getAsString() const;
+    /// @param full boolean to indicate to print in full or just the first 20 values
+    const std::string & getAsString(bool full) const;
 private:
     /// Return a copy of the value
     template<typename T> T get(int idx) const;

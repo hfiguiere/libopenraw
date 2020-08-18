@@ -129,8 +129,9 @@ public:
     }
 };
 
-const std::string & MetaValue::getAsString() const
+const std::string & MetaValue::getAsString(bool full) const
 {
+    uint32_t count = 0;
     if (m_as_str.empty()) {
         auto visitor = to_string_visitor();
         bool multiple = (getCount() > 1);
@@ -141,6 +142,11 @@ const std::string & MetaValue::getAsString() const
             m_as_str += value.apply_visitor(visitor);
             if (multiple) {
                 m_as_str += ", ";
+            }
+            count++;
+            if (!full && count > 20) {
+                m_as_str += "...";
+                break;
             }
         }
         if (multiple) {
