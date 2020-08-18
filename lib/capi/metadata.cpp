@@ -38,8 +38,12 @@ extern "C" {
 API_EXPORT const char*
 or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx)
 {
-  // TODO validate parameters
-  return reinterpret_cast<const OpenRaw::MetaValue*>(value)->getString(idx).c_str();
+  CHECK_PTR(value, nullptr);
+  auto v = reinterpret_cast<const OpenRaw::MetaValue*>(value);
+  if (idx >= v->getCount()) {
+    return nullptr;
+  }
+  return v->getString(idx).c_str();
 }
 
 API_EXPORT const char*
