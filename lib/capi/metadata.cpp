@@ -122,7 +122,8 @@ or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator,
       *value = reinterpret_cast<ORMetaValueRef>(v);
     } else {
       *value = nullptr;
-      LOGERR("Couldn't get value\n");
+      // This shouldn't be an error.
+      LOGDBG1("Couldn't get value\n");
     }
   }
   return 1;

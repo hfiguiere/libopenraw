@@ -140,6 +140,8 @@ public:
                                 }
                             }
                             or_metavalue_release(value);
+                        } else {
+                            m_out << "\tNo value\n";
                         }
                         or_ifd_release(ifd);
                     }
