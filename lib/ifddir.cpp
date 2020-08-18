@@ -143,7 +143,7 @@ IfdDir::Ref IfdDir::getSubIFD(uint32_t idx) const
         if (result) {
             std::vector<uint32_t> offsets = result.value();
             if (idx >= offsets.size()) {
-                Ref ref = std::make_shared<IfdDir>(offsets[idx], m_container, OR_IFD_OTHER);
+                Ref ref = std::make_shared<IfdDir>(offsets[idx], m_container, OR_IFD_SUBIFD);
                 ref->load();
                 return ref;
             }
@@ -163,7 +163,7 @@ Option<std::vector<IfdDir::Ref>> IfdDir::getSubIFDs()
         if (result) {
             std::vector<uint32_t> offsets = result.value();
             for (auto offset_ : offsets) {
-                Ref ifd = std::make_shared<IfdDir>(offset_, m_container, OR_IFD_OTHER);
+                Ref ifd = std::make_shared<IfdDir>(offset_, m_container, OR_IFD_SUBIFD);
                 ifd->load();
                 ifds.push_back(ifd);
             }

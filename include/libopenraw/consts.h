@@ -141,6 +141,8 @@ typedef enum {
     OR_IFD_MNOTE = 3,
     /// RAW data
     OR_IFD_RAW = 4,
+    /// SubIFD
+    OR_IFD_SUBIFD = 5,
     /// INVALID value
     OR_IFD_INVALID = 10000,
 } or_ifd_dir_type;

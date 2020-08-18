@@ -46,6 +46,8 @@ const char* map_ifd_type(or_ifd_dir_type type)
         return "MakerNote Metadata";
     case OR_IFD_RAW:
         return "RAW Metadata";
+    case OR_IFD_SUBIFD:
+        return "Sub IFD";
     }
     return "INVALID";
 }

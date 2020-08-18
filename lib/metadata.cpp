@@ -32,6 +32,11 @@ MetadataIterator::MetadataIterator(RawFile& rf)
     auto ifd = rf.mainIfd();
     if (ifd) {
         m_ifds.push_back(ifd);
+        auto subifds = ifd->getSubIFDs();
+        if (subifds) {
+            auto v = subifds.value();
+            m_ifds.insert(m_ifds.end(), v.begin(), v.end());
+        }
     }
     ifd = rf.exifIfd();
     if (ifd) {
