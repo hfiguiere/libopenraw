@@ -592,6 +592,8 @@ enum {
     OR_TYPEID_SONY_ZV1 = 77,
     // SR2 file
     OR_TYPEID_SONY_R1 = 78,
+    // ARW
+    OR_TYPEID_SONY_ILCE7SM3 = 79,
     _OR_TYPEID_SONY_LAST
 };
 

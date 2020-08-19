@@ -123,7 +123,8 @@ static const std::map<uint16_t, RawFile::TypeId> type_map = {
     { 376, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE9M2) },
     { 378, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE6600) },
     { 379, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE6100) },
-    { 380, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZV1) }
+    { 380, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZV1) },
+    { 383, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7SM3) }
 };
 
 static RawFile::TypeId sony_modelid_to_typeid(uint32_t model_id)
@@ -430,6 +431,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       128,
       0,
       { 5838, -1430, -246, -3497, 11477, 2297, -748, 1885, 5778 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7SM3),
+      128,
+      0,
+      { 6912, -2127, -469, -4470, 12175, 2587, -398, 1478, 6492 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE9),
       128,
       0,
