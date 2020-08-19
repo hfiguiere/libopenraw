@@ -2,7 +2,7 @@
 /*
  * libopenraw - arwfile.hpp
  *
- * Copyright (C) 2006-2020 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -59,6 +59,8 @@ protected:
     virtual IfdDir::Ref  _locateCfaIfd() override;
 
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+    virtual void _identifyId() override;
+
 private:
     // first version of ARW. Different from the rest.
     bool isA100()

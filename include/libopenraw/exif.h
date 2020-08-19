@@ -226,6 +226,9 @@ typedef	enum {
 	MNOTE_NIKON_PREVIEWIFD_START = 0x201,
 	MNOTE_NIKON_PREVIEWIFD_LENGTH = 0x202,
 
+	/* Sony MakerNode */
+	MNOTE_SONY_MODEL_ID = 0xb001,
+
 	_EXIF_TAG_LAST
 } ExifTag;
 
