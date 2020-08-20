@@ -53,6 +53,8 @@ public:
 protected:
     virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+    virtual bool vendorCameraIdLocation(Internals::IfdDir::Ref& ifd, uint16_t& index,
+                                        const Internals::ModelIdMap*& model_map) override;
 private:
     static const IfdFile::camera_ids_t s_def[];
 };

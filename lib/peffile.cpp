@@ -36,6 +36,47 @@ namespace Internals {
 #define OR_MAKE_PENTAX_TYPEID(camid) \
     OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,camid)
 
+static const ModelIdMap modelid_map = {
+    { 0x12994, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_IST_D_PEF) },
+    { 0x12aa2, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_IST_DS_PEF) },
+    { 0x12b1a, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_IST_DL_PEF) },
+    // *ist DS2
+    // *ist DL2
+    { 0x12b9c, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K100D_PEF) },
+    // K110D
+    { 0x12ba2, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K100D_SUPER_PEF) },
+    { 0x12c1e, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K10D_PEF) },
+    { 0x12cd2, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K20D_PEF) },
+    { 0x12cfa, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K200D_PEF) },
+    // K2000
+    // K-m
+    { 0x12db8, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K7_PEF) },
+    { 0x12dfe, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KX_PEF) },
+    { 0x12e08, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645D_PEF) },
+    { 0x12e6c, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KR_PEF) },
+    { 0x12e76, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K5_PEF) },
+    // Q
+    // K-01
+    // K-30
+    // Q10
+    // K-5 II
+    { 0x12f71, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K5_IIS_PEF) },
+    // Q7
+    // K-50
+    // K-3
+    // K-500
+    { 0x13010, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645Z_PEF) },
+    // K-S1
+    { 0x13024, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KS2_PEF) },
+    // Q-S1
+    { 0x13092, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K1_PEF) },
+    // K-3 II
+    // GR III
+    { 0x13222, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K70_PEF) },
+    { 0x1322c, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KP_PEF) },
+    { 0x13240, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K1_MKII_PEF) },
+};
+
 /* taken from dcraw, by default */
 static const BuiltinColourMatrix s_matrices[] = {
     { OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_IST_D_PEF),
@@ -66,7 +107,7 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 11095, -3157, -1324, -8377, 15834, 2720, -1108, 947, 11688 } },
-    { OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K100D_PEF),
+    { OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K100D_SUPER_PEF),
       0,
       0,
       { 11095, -3157, -1324, -8377, 15834, 2720, -1108, 947, 11688 } },
@@ -128,7 +169,7 @@ const struct IfdFile::camera_ids_t PEFFile::s_def[] = {
     { "PENTAX *ist DS     ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_IST_DS_PEF) },
     { "PENTAX K10D        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K10D_PEF) },
     { "PENTAX K100D       ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K100D_PEF) },
-    { "PENTAX K100D Super ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K100D_PEF) },
+    { "PENTAX K100D Super ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K100D_SUPER_PEF) },
     { "PENTAX K20D        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K20D_PEF) },
     { "PENTAX K200D       ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K200D_PEF) },
     { "PENTAX K-1         ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K1_PEF) },
@@ -189,6 +230,20 @@ PEFFile::~PEFFile()
     }
 
     return err;
+}
+
+bool PEFFile::vendorCameraIdLocation(Internals::IfdDir::Ref& ifd, uint16_t& index,
+                                     const ModelIdMap*& model_map)
+{
+    auto mn = makerNoteIfd();
+    if (mn) {
+        // There is a camera model ID in the MakerNote tag 0x0010.
+        ifd = mn;
+        index = IFD::MNOTE_PENTAX_MODEL_ID;
+        model_map = &modelid_map;
+        return true;
+    }
+    return false;
 }
 
 ::or_error PEFFile::_getRawData(RawData & data, uint32_t options)
