@@ -32,6 +32,8 @@
 namespace OpenRaw {
 namespace Internals {
 
+extern const ModelIdMap canon_modelid_map;
+
 RawFile::TypeId canon_modelid_to_typeid(uint32_t model_id);
 
 /**

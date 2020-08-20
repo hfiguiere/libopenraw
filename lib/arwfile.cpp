@@ -35,7 +35,7 @@ namespace Internals {
 #define OR_MAKE_SONY_TYPEID(camid)                                             \
     OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SONY, camid)
 
-static const std::map<uint16_t, RawFile::TypeId> type_map = {
+static const ModelIdMap modelid_map = {
     /* source: https://exiftool.org/TagNames/Sony.html */
     /* SR2 */
     { 2, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_R1) },
@@ -126,15 +126,6 @@ static const std::map<uint16_t, RawFile::TypeId> type_map = {
     { 380, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZV1) },
     { 383, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7SM3) }
 };
-
-static RawFile::TypeId sony_modelid_to_typeid(uint32_t model_id)
-{
-    auto iter = type_map.find(model_id);
-    if (iter != type_map.end()) {
-        return iter->second;
-    }
-    return 0;
-}
 
 /* taken from dcraw, by default */
 static const BuiltinColourMatrix s_matrices[] = {
@@ -580,26 +571,18 @@ IfdDir::Ref ArwFile::_locateCfaIfd()
     return TiffEpFile::_getRawData(data, options);
 }
 
-void ArwFile::_identifyId()
+bool ArwFile::vendorCameraIdLocation(Internals::IfdDir::Ref& ifd, uint16_t& index,
+                            const ModelIdMap*& model_map)
 {
-    // There is a camera model ID in the MakerNote tag 0xb001.
-    // Use this at first.
     auto mn = makerNoteIfd();
     if (mn) {
-        auto id = mn->getValue<uint16_t>(IFD::MNOTE_SONY_MODEL_ID);
-        if (id) {
-            uint32_t id_value = id.value();
-            auto type_id = sony_modelid_to_typeid(id_value);
-            if (type_id != 0) {
-                _setTypeId(type_id);
-                return;
-            }
-            LOGERR("unknown model ID 0x%x\n", id_value);
-        }
-    } else {
-        LOGERR("model ID not found\n");
+        // There is a camera model ID in the MakerNote tag 0xb001.
+        ifd = mn;
+        index = IFD::MNOTE_SONY_MODEL_ID;
+        model_map = &modelid_map;
+        return true;
     }
-    TiffEpFile::_identifyId();
+    return false;
 }
 
 }

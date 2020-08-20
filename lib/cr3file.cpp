@@ -310,7 +310,7 @@ MetaValue* Cr3File::_getMetaValue(int32_t meta_index)
 
 void Cr3File::_identifyId()
 {
-    // XXX TODO this code seems be very common with Cr2File
+    // XXX TODO this code seems be very common with IfdFile
     // There is a camera model ID in the MakerNote tag 0x0010.
     // Use this at first.
     auto mn = makerNoteIfd();
@@ -318,7 +318,7 @@ void Cr3File::_identifyId()
         auto id = mn->getValue<uint32_t>(IFD::MNOTE_CANON_MODEL_ID);
         if (id) {
             auto id_value = id.value();
-            auto type_id = canon_modelid_to_typeid(id_value);
+            auto type_id = modelid_to_typeid(canon_modelid_map, id_value);
             if (type_id != 0) {
                 _setTypeId(type_id);
                 return;

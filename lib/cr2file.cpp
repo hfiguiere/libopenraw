@@ -724,26 +724,18 @@ void Cr2File::getRawBytes(RawData &data, uint32_t offset, uint32_t byte_length,
     return getRawDataCr2(data, options);
 }
 
-void Cr2File::_identifyId()
+bool Cr2File::vendorCameraIdLocation(Internals::IfdDir::Ref& ifd, uint16_t& index,
+                            const ModelIdMap*& model_map)
 {
-    // There is a camera model ID in the MakerNote tag 0x0010.
-    // Use this at first.
     auto mn = makerNoteIfd();
     if (mn) {
-        auto id = mn->getValue<uint32_t>(IFD::MNOTE_CANON_MODEL_ID);
-        if (id) {
-            uint32_t id_value = id.value();
-            auto type_id = canon_modelid_to_typeid(id_value);
-            if (type_id != 0) {
-                _setTypeId(type_id);
-                return;
-            }
-            LOGERR("unknown model ID 0x%x\n", id_value);
-        }
-    } else {
-        LOGERR("model ID not found\n");
+        // There is a camera model ID in the MakerNote tag 0x0010.
+        ifd = mn;
+        index = IFD::MNOTE_CANON_MODEL_ID;
+        model_map = &canon_modelid_map;
+        return true;
     }
-    IfdFile::_identifyId();
+    return false;
 }
 
 bool Cr2File::isCr2()

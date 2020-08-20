@@ -59,7 +59,7 @@ protected:
     virtual IfdDir::Ref  _locateCfaIfd() override;
 
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
-    virtual void _identifyId() override;
+    virtual bool vendorCameraIdLocation(Internals::IfdDir::Ref& ifd, uint16_t& index, const ModelIdMap*& model_map) override;
 
 private:
     // first version of ARW. Different from the rest.

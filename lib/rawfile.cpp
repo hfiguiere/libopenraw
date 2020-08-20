@@ -398,6 +398,23 @@ RawFile::TypeId RawFile::vendorId()
     return OR_TYPEID_VENDOR_NONE;
 }
 
+RawFile::TypeId RawFile::modelid_to_typeid(const std::map<uint32_t, RawFile::TypeId>& model_map,
+                                           uint32_t model_id)
+{
+    auto iter = model_map.find(model_id);
+    if (iter != model_map.end()) {
+        return iter->second;
+    }
+    return 0;
+}
+
+bool RawFile::vendorCameraIdLocation(Internals::IfdDir::Ref&, uint16_t&,
+                                     const Internals::ModelIdMap*&)
+{
+    // By default there is none.
+    return false;
+}
+
 RawFile::TypeId RawFile::_typeId() const
 {
     return d->m_type_id;

@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr2file.hpp
  *
- * Copyright (C) 2006-2018 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -51,7 +51,8 @@ public:
 protected:
     virtual IfdDir::Ref  _locateCfaIfd() override;
     virtual IfdDir::Ref  _locateMainIfd() override;
-    virtual void _identifyId() override;
+    virtual bool vendorCameraIdLocation(Internals::IfdDir::Ref& ifd, uint16_t& index,
+                                        const ModelIdMap*& model_map) override;
     virtual ::or_error _locateThumbnail(const IfdDir::Ref & dir,
                                         std::vector<uint32_t> &list) override;
 

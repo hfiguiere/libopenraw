@@ -85,25 +85,49 @@ IfdDir::Ref IfdFile::_locateMainIfd()
   return ifd;
 }
 
+namespace {
+
+
+}
+
 void IfdFile::_identifyId()
 {
-	const IfdDir::Ref & _mainIfd = mainIfd();
-  if (!_mainIfd) {
-    LOGERR("Main IFD not found to identify the file.\n");
-    return;
-  }
-
-  auto make = _mainIfd->getValue<std::string>(IFD::EXIF_TAG_MAKE);
-  auto model = _mainIfd->getValue<std::string>(IFD::EXIF_TAG_MODEL);
-  if (!model) {
-    model = _mainIfd->getValue<std::string>(IFD::DNG_TAG_UNIQUE_CAMERA_MODEL);
-    if (!make) {
-      make = model;
+    // Identify from the vendor internal ID.
+    IfdDir::Ref ifd;
+    uint16_t index = 0;
+    const ModelIdMap* model_map = nullptr;
+    if (vendorCameraIdLocation(ifd, index, model_map) && ifd) {
+        auto id = ifd->getIntegerValue(index);
+        if (id) {
+            auto id_value = id.value();
+            auto type_id = modelid_to_typeid(*model_map, id_value);
+            if (type_id != 0) {
+                _setTypeId(type_id);
+                return;
+            }
+            LOGERR("unknown model ID 0x%x\n", id_value);
+        }
     }
-  }
-  if (make && model) {
-    _setTypeId(_typeIdFromModel(make.value(), model.value()));
-  }
+
+    // Fallback on using strings.
+    const IfdDir::Ref & _mainIfd = mainIfd();
+    if (!_mainIfd) {
+        LOGERR("Main IFD not found to identify the file.\n");
+        return;
+    }
+
+    auto make = _mainIfd->getValue<std::string>(IFD::EXIF_TAG_MAKE);
+    auto model = _mainIfd->getValue<std::string>(IFD::EXIF_TAG_MODEL);
+    if (!model) {
+        // BlackMagic CinemaDNG doesn't have Make and Model.
+        model = _mainIfd->getValue<std::string>(IFD::DNG_TAG_UNIQUE_CAMERA_MODEL);
+        if (!make) {
+            make = model;
+        }
+    }
+    if (make && model) {
+        _setTypeId(_typeIdFromModel(make.value(), model.value()));
+    }
 }
 
 ::or_error IfdFile::_addThumbnailFromStream(uint32_t offset, uint32_t len,
@@ -708,8 +732,8 @@ IfdFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data,
   mode:c++
   c-file-style:"stroustrup"
   c-file-offsets:((innamespace . 0))
-  tab-width:2
-  c-basic-offset:2
+  tab-width:4
+  c-basic-offset:4
   indent-tabs-mode:nil
   fill-column:80
   End:

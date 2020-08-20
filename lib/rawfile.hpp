@@ -40,6 +40,8 @@ class MetadataIterator;
 namespace Internals {
 class RawContainer;
 class ThumbDesc;
+/** The map between vendor model ID and TypeId */
+typedef std::map<uint32_t, ::or_rawfile_typeid> ModelIdMap;
 struct BuiltinColourMatrix;
 template<typename T>
 void audit_coefficients();
@@ -176,6 +178,19 @@ protected:
      */
     RawFile(Type _type);
 
+    /** Helper to get the TypeId from the map
+     * @return the TypeId or 0
+     */
+    static RawFile::TypeId modelid_to_typeid(const std::map<uint32_t, RawFile::TypeId>& model_map,
+                                             uint32_t model_id);
+    /** Get the vendor camera ID location.
+     * @param ifd the IfdDir where it is.
+     * @param index the value index in the IfdDir.
+     * @param model_map a point to the model map. Can't be null.
+     * @return true if there is one, otherwise false
+     */
+    virtual bool vendorCameraIdLocation(Internals::IfdDir::Ref& ifd, uint16_t& index,
+                                        const Internals::ModelIdMap*& model_map);
     /** Set the file type id */
     void _setTypeId(TypeId _type_id);
     /** Just get the type id value. No identification.

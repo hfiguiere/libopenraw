@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon.cpp
  *
- * Copyright (C) 2018-2020 Hubert Figuiere
+ * Copyright (C) 2018-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -29,12 +29,10 @@
 namespace OpenRaw {
 namespace Internals {
 
-namespace {
-
 #define OR_MAKE_CANON_TYPEID(camid)                     \
     OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, camid)
 
-const std::map<uint32_t, RawFile::TypeId> type_map = {
+const ModelIdMap canon_modelid_map = {
     // TIF
     { 0x80000001, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_1D) },
     { 0x80000167, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_1DS) },
@@ -129,17 +127,6 @@ const std::map<uint32_t, RawFile::TypeId> type_map = {
     { 0x00000812, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M200) },
     { 0x80000428, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_1DXMKIII) },
 };
-
-}
-
-RawFile::TypeId canon_modelid_to_typeid(uint32_t model_id)
-{
-    auto iter = type_map.find(model_id);
-    if (iter != type_map.end()) {
-        return iter->second;
-    }
-    return 0;
-}
 
 Option<std::array<uint32_t, 4>>
 canon_parse_sensorinfo(const std::vector<uint16_t>& sensor_info)
