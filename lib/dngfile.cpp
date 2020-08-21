@@ -75,6 +75,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                  OR_TYPEID_PENTAX_K10D_DNG) },
     { "PENTAX K-30        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_K30_DNG) },
+    { "PENTAX K-5 II      ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
+                                                 OR_TYPEID_PENTAX_K5_II_DNG) },
     { "PENTAX K-5 II s    ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_K5_IIS_DNG) },
     { "PENTAX K-50        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
