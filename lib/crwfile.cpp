@@ -1,7 +1,7 @@
 /*
  * libopenraw - crwfile.cpp
  *
- * Copyright (C) 2006-2019 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (c) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -77,6 +77,18 @@ static const BuiltinColourMatrix s_matrices[] = {
 	{ 9877,-3775,-871,-7613,14807,3072,-1448,1305,7485 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_PRO1), 0, 0,
 	{ 10062,-3522,-999,-7643,15117,2730,-765,817,7323 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S30), 0, 0,
+	{ 10566, -3652, -1129, -6552, 14662, 2006, -2197, 2581, 7670 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S40), 0, 0,
+	{ 8510, -2487, -940, -6869, 14231, 2900, -2318, 2829, 9013 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S45), 0, 0,
+	{ 8163, -2333, -955, -6682, 14174, 2751, -2077, 2597, 8041 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S50), 0, 0,
+	{ 8882, -2571, -863, -6348, 14234, 2288, -1516, 2172, 6569 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S60), 0, 0,
+	{ 8795, -2482, -797, -7804, 15403, 2573, -1422, 1996, 7082 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S70), 0, 0,
+	{ 9976, -3810, -832, -7115, 14463, 2906, -901, 989, 7889 } },
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
 
@@ -94,6 +106,13 @@ const RawFile::camera_ids_t CRWFile::s_def[] = {
 // G7 is CHDK, So remove from the list from now.
 //    { "Canon PowerShot G7", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7) },
     { "Canon PowerShot Pro1", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_PRO1) },
+    { "Canon PowerShot Pro70", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_PRO70) },
+    { "Canon PowerShot S30", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S30) },
+    { "Canon PowerShot S40", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S40) },
+    { "Canon PowerShot S45", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S45) },
+    { "Canon PowerShot S50", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S50) },
+    { "Canon PowerShot S60", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S60) },
+    { "Canon PowerShot S70", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S70) },
     { 0, 0 }
 };
 
