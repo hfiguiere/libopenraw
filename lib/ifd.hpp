@@ -51,9 +51,11 @@ typedef enum {
     COMPRESS_NONE = 1,
     COMPRESS_JPEG = 6,
     COMPRESS_LJPEG = 7, /**< Lossless JPEG, see DNG */
+    COMPRESS_ARW = 32767, /**< Sony ARW compression */
     COMPRESS_NIKON_PACK = 32769,
     COMPRESS_NIKON_QUANTIZED = 34713,
-    COMPRESS_CUSTOM = 65535 /**< The value everybody seems to use */
+    COMPRESS_CUSTOM = 65535, /**< The value everybody seems to use */
+    COMPRESS_OLYMPUS = 65536
 } TiffCompress;
 
 inline

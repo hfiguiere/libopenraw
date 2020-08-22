@@ -51,13 +51,9 @@ public:
     OrfFile(const OrfFile &) = delete;
     OrfFile &operator=(const OrfFile &) = delete;
 
-    enum { ORF_COMPRESSION = 0x10000 };
-
 protected:
     ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
-    virtual uint32_t _translateCompressionType(
-        IFD::TiffCompress tiffCompression) override;
 
 private:
     ::or_error addThumbnail(std::vector<uint32_t>& list, uint32_t offset, uint32_t len);

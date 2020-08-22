@@ -393,15 +393,15 @@ OrfFile::~OrfFile()
         uint32_t y = data.height();
         uint32_t compression = 0;
         if(data.size() < x * y * 2) {
-            compression = ORF_COMPRESSION;
-            data.setCompression(ORF_COMPRESSION);
+            compression = IFD::COMPRESS_OLYMPUS;
+            data.setCompression(IFD::COMPRESS_OLYMPUS);
             data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
         }
         else {
             compression = data.compression();
         }
         switch(compression) {
-        case ORF_COMPRESSION:
+        case IFD::COMPRESS_OLYMPUS:
             if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
                 OlympusDecompressor decomp((const uint8_t*)data.data(),
                                            data.size(), m_container, x, y);
@@ -419,14 +419,6 @@ OrfFile::~OrfFile()
         }
     }
     return err;
-}
-
-uint32_t OrfFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
-{
-    if(tiffCompression == IFD::COMPRESS_CUSTOM) {
-        return ORF_COMPRESSION;
-    }
-    return (uint32_t)tiffCompression;
 }
 
 }

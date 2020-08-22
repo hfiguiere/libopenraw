@@ -50,11 +50,6 @@ public:
     ArwFile(const ArwFile&) = delete;
     ArwFile & operator=(const ArwFile&) = delete;
 
-    // this is the value for "compression" for ARW
-    enum {
-        ARW_RAW_COMPRESSION = 32767
-    };
-
 protected:
     virtual IfdDir::Ref  _locateCfaIfd() override;
 
