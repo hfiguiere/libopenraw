@@ -107,6 +107,7 @@ const RawFile::camera_ids_t CRWFile::s_def[] = {
 //    { "Canon PowerShot G7", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G7) },
     { "Canon PowerShot Pro1", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_PRO1) },
     { "Canon PowerShot Pro70", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_PRO70) },
+    { "Canon PowerShot Pro90 IS", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_PRO90) },
     { "Canon PowerShot S30", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S30) },
     { "Canon PowerShot S40", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S40) },
     { "Canon PowerShot S45", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S45) },
