@@ -35,7 +35,7 @@ Heap::Heap(off_t start, off_t length, const CIFFContainer* _container)
     LOGDBG2("Heap @ %lld length = %lld\n", (long long int)start, (long long int)m_length);
 }
 
-std::vector<RecordEntry> & Heap::records()
+RecordEntries& Heap::records()
 {
     if (m_records.size() == 0) {
         _loadRecords();
@@ -65,10 +65,10 @@ bool Heap::_loadRecords()
         int16_t numRecords = result16.value();
         LOGDBG2("numRecords %d\n", numRecords);
 
-        m_records.reserve(numRecords);
         for (int16_t i = 0; i < numRecords; i++) {
-            m_records.push_back(RecordEntry());
-            m_records.back().readFrom(m_container);
+            RecordEntry entry;
+            entry.readFrom(m_container);
+            m_records.insert(std::make_pair(TAGCODE(entry.typeCode), entry));
         }
         return true;
     }

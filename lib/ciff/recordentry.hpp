@@ -21,7 +21,8 @@
 
 #pragma once
 
-#include <vector>
+#include <stdint.h>
+#include <map>
 
 #include <boost/array.hpp>
 #include <boost/variant.hpp>
@@ -46,6 +47,9 @@ enum {
                             * part is non significant */
 };
 
+// Remove the storage location bits.
+#define TAGCODE(x) ((x) & TAGCODE_MASK)
+
 typedef enum {
     TYPE_BYTE = 0x0000,
     TYPE_ASCII = 0x0800,
@@ -56,7 +60,7 @@ typedef enum {
     TYPE_HEAP2 = 0x3000,
 } CIFFType;
 
-typedef std::vector<RecordEntry> RecordEntryList;
+typedef std::map<uint16_t, RecordEntry> RecordEntries;
 
 class RecordEntry
 {
@@ -76,15 +80,6 @@ public:
      * @return the size actually fetched. MIN(size, this->length);
      */
     size_t fetchData(Heap* heap, void* buf, size_t size) const;
-    /** determine if entry match type code
-     * @param _typeCode the code to check
-     * @return true if match
-     */
-    bool isA(uint16_t _typeCode) const
-        {
-            LOGDBG2("typeCode = %u\n", typeCode);
-            return typeCode == (TAGCODE_MASK & _typeCode);
-        }
 
     bool isHeap() const
         {

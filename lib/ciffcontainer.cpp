@@ -172,17 +172,14 @@ CIFF::HeapRef CIFFContainer::getImageProps()
         auto & records = m_heap->records();
 
         // locate the properties
-        auto iter = std::find_if(records.cbegin(), records.cend(),
-                                 [](const CIFF::RecordEntry& e) {
-                                     return e.isA(static_cast<uint16_t>(CIFF::TAG_IMAGEPROPS));
-                                 });
+        auto iter = records.find(CIFF::TAG_IMAGEPROPS);
         if (iter == records.end()) {
             LOGERR("Couldn't find the image properties.\n");
             return CIFF::HeapRef();
         }
 
         m_imageprops = std::make_shared<CIFF::Heap>(
-            iter->offset() + m_heap->offset(), iter->length(), this);
+            iter->second.offset() + m_heap->offset(), iter->second.length(), this);
     }
     return m_imageprops;
 }
@@ -196,15 +193,12 @@ const CIFF::ImageSpec * CIFFContainer::getImageSpec()
             return nullptr;
         }
         auto & propsRecs = props->records();
-        auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
-                                 [] (const CIFF::RecordEntry &e) {
-                                     return e.isA(static_cast<uint16_t>(CIFF::TAG_IMAGEINFO));
-                                 });
+        auto iter = propsRecs.find(CIFF::TAG_IMAGEINFO);
         if (iter == propsRecs.end()) {
             LOGERR("Couldn't find the image info.\n");
             return nullptr;
         }
-        m_imagespec.readFrom(iter->offset() + props->offset(), this);
+        m_imagespec.readFrom(iter->second.offset() + props->offset(), this);
         m_hasImageSpec = true;
     }
     return &m_imagespec;
@@ -219,16 +213,13 @@ const CIFF::HeapRef CIFFContainer::getCameraProps()
             return CIFF::HeapRef();
         }
         auto & propsRecs = props->records();
-        auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
-                                 [] (const CIFF::RecordEntry & e) {
-                                     return e.isA(static_cast<uint16_t>(CIFF::TAG_CAMERAOBJECT));
-                                 });
+        auto iter = propsRecs.find(CIFF::TAG_CAMERAOBJECT);
         if (iter == propsRecs.end()) {
             LOGERR("Couldn't find the camera props.\n");
             return CIFF::HeapRef();
         }
         m_cameraprops = std::make_shared<CIFF::Heap>(
-            iter->offset() + props->offset(), iter->length(), this);
+            iter->second.offset() + props->offset(), iter->second.length(), this);
     }
     return m_cameraprops;
 }
@@ -241,33 +232,27 @@ CIFF::HeapRef CIFFContainer::getExifInfo() const
         return CIFF::HeapRef();
     }
     auto& propsRecs = props->records();
-    auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
-                             [] (const CIFF::RecordEntry & e) {
-                                 return e.isA(static_cast<uint16_t>(CIFF::TAG_EXIFINFORMATION));
-                             });
+    auto iter = propsRecs.find(CIFF::TAG_EXIFINFORMATION);
     if (iter == propsRecs.end()) {
         LOGERR("Couldn't find the Exif information.\n");
         return CIFF::HeapRef();
     }
     return std::make_shared<CIFF::Heap>(
-        iter->offset() + props->offset(), iter->length(), this);
+        iter->second.offset() + props->offset(), iter->second.length(), this);
 }
 
 CIFF::CameraSettings CIFFContainer::getCameraSettings() const
 {
     auto exifInfo = getExifInfo();
     auto& propsRecs = exifInfo->records();
-    auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
-                             [] (const CIFF::RecordEntry & e) {
-                                 return e.isA(static_cast<uint16_t>(CIFF::TAG_CAMERASETTINGS));
-                             });
+    auto iter = propsRecs.find(CIFF::TAG_CAMERASETTINGS);
     if (iter == propsRecs.end()) {
         LOGERR("Couldn't find the camera settings.\n");
         return CIFF::CameraSettings();
     }
-    auto count = iter->count();
+    auto count = iter->second.count();
     CIFF::CameraSettings settings;
-    file()->seek(exifInfo->offset() + iter->offset(), SEEK_SET);
+    file()->seek(exifInfo->offset() + iter->second.offset(), SEEK_SET);
     size_t countRead = readUInt16Array(file(), settings, count);
     if (count != countRead) {
         LOGERR("Not enough data for camera settings\n");
@@ -283,13 +268,9 @@ const CIFF::RecordEntry * CIFFContainer::getRawDataRecord() const
     }
     auto & records = m_heap->records();
     // locate the RAW data
-    auto iter = std::find_if(records.cbegin(), records.cend(),
-                             [] (const CIFF::RecordEntry &e) {
-                                 return e.isA(static_cast<uint16_t>(CIFF::TAG_RAWIMAGEDATA));
-                             });
-
+    auto iter = records.find(CIFF::TAG_RAWIMAGEDATA);
     if (iter != records.end()) {
-        return &(*iter);
+        return &(iter->second);
     }
     return nullptr;
 }

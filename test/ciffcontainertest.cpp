@@ -1,7 +1,7 @@
 /*
  * libopenraw - ciffcontainertest.cpp
  *
- * Copyright (C) 2006-2016 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -40,7 +40,7 @@ int main(int /*argc*/, char **argv)
 	std::cout << "byteOrder = " << hdr.byteOrder[0] << hdr.byteOrder[1] << std::endl;
 
 	CIFF::HeapRef heap = container.heap();
-	CIFF::RecordEntryList& records = heap->records();
+	CIFF::RecordEntries& records = heap->records();
 
 	std::cout << "vector size " << records.size() << std::endl;
 }

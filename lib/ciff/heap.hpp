@@ -53,7 +53,7 @@ public:
     Heap(Heap&&) = default;
     Heap & operator=(const Heap &) = delete;
 
-    RecordEntryList & records();
+    RecordEntries& records();
     const CIFFContainer* container() const
         {
             return m_container;
@@ -69,7 +69,7 @@ private:
     off_t m_start;
     off_t m_length;
     const CIFFContainer* m_container;
-    RecordEntryList m_records;
+    RecordEntries m_records;
 };
 
 /** Heap Header of CIFF file*/

@@ -197,16 +197,16 @@ std::vector<IfdEntry::Ref> translateRecordEntry(const RecordEntry& e, Heap& heap
         const CIFFContainer* ciffc = dynamic_cast<const CIFFContainer*>(&ifd.container());
         LOGASSERT(ciffc);
         Heap h = e.heap(heap, ciffc);
-        for (auto rec : h.records()) {
-            auto r = translateRecordEntry(rec, h, ifd);
+        for (const auto& rec : h.records()) {
+            auto r = translateRecordEntry(rec.second, h, ifd);
             vec.insert(vec.begin(), r.begin(), r.end());
         }
         return vec;
     }
-    auto iter = ciff_exif_map.find(TAGCODE_MASK & e.typeCode);
+    auto iter = ciff_exif_map.find(TAGCODE(e.typeCode));
     if (iter != ciff_exif_map.end()) {
         do {
-            if (iter->first != (TAGCODE_MASK & e.typeCode)) {
+            if (iter->first != (TAGCODE(e.typeCode))) {
                 break;
             }
             // printf("tag 0x%x mapped to 0x%x in %d\n", iter->first, iter->second.exifTag,
@@ -237,9 +237,9 @@ bool CiffExifIfd::load()
     auto container = static_cast<CIFFContainer*>(m_file.getContainer());
     HeapRef props = container->getImageProps();
     if (props) {
-        const CIFF::RecordEntryList& propsRecs = props->records();
+        const RecordEntries& propsRecs = props->records();
         for (const auto& rec : propsRecs) {
-            auto ifdentries = translateRecordEntry(rec, *props, *this);
+            auto ifdentries = translateRecordEntry(rec.second, *props, *this);
             if (!ifdentries.empty()) {
                 for (auto entry2 : ifdentries) {
                     m_entries[entry2->id()] = entry2;
@@ -247,15 +247,12 @@ bool CiffExifIfd::load()
             }
         }
 
-        auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
-                                 [] (const auto& e) {
-                                     return e.isA(TAG_EXIFINFORMATION);
-                                 });
+        auto iter = propsRecs.find(TAG_EXIFINFORMATION);
         if (iter != propsRecs.end()) {
-            Heap exifProps = iter->heap(*props, container);
+            Heap exifProps = iter->second.heap(*props, container);
 
-            for (auto rec : exifProps.records()) {
-                auto ifdentries = translateRecordEntry(rec, exifProps, *this);
+            for (const auto& rec : exifProps.records()) {
+                auto ifdentries = translateRecordEntry(rec.second, exifProps, *this);
                 if (!ifdentries.empty()) {
                     for (auto entry2 : ifdentries) {
                         m_entries[entry2->id()] = entry2;

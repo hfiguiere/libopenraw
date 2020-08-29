@@ -149,22 +149,20 @@ CRWFile::~CRWFile()
         // this is not a CIFF file.
         return err;
     }
-    const RecordEntryList & records = heap->records();
-    RecordEntryList::const_iterator iter;
-    iter = std::find_if(records.cbegin(), records.cend(), std::bind(
-                            &RecordEntry::isA, std::placeholders::_1,
-                            static_cast<uint16_t>(TAG_JPEGIMAGE)));
+    const RecordEntries& records = heap->records();
+    RecordEntries::const_iterator iter;
+    iter = records.find(TAG_JPEGIMAGE);
     if (iter != records.end()) {
-        LOGDBG2("JPEG @%u\n", iter->offset());
+        LOGDBG2("JPEG @%u\n", iter->second.offset());
         m_x = m_y = 0;
-        uint32_t offset = heap->offset() + iter->offset();
+        uint32_t offset = heap->offset() + iter->second.offset();
         IO::StreamClone::Ptr s(new IO::StreamClone(m_io, offset));
         std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
 
         jfif->getDimensions(m_x, m_y);
         LOGDBG1("JPEG dimensions x=%d y=%d\n", m_x, m_y);
         uint32_t dim = std::max(m_x,m_y);
-        _addThumbnail(dim, ThumbDesc(m_x, m_y, OR_DATA_TYPE_JPEG, offset, iter->length()));
+        _addThumbnail(dim, ThumbDesc(m_x, m_y, OR_DATA_TYPE_JPEG, offset, iter->second.length()));
         list.push_back(dim);
         err = OR_ERROR_NONE;
     }
@@ -194,30 +192,25 @@ RawContainer* CRWFile::getContainer() const
     }
 
     // locate decoder table
-    const CIFF::RecordEntryList & propsRecs = props->records();
-    auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(), std::bind(
-                                 &RecordEntry::isA, std::placeholders::_1,
-                                 static_cast<uint16_t>(TAG_EXIFINFORMATION)));
+    const RecordEntries& propsRecs = props->records();
+    auto iter = propsRecs.find(TAG_EXIFINFORMATION);
     if (iter == propsRecs.end()) {
         LOGERR("Couldn't find the Exif information.\n");
         return OR_ERROR_NOT_FOUND;
     }
 
-    Heap exifProps(iter->offset() + props->offset(), iter->length(), m_container);
+    Heap exifProps(iter->second.offset() + props->offset(), iter->second.length(), m_container);
 
-    const RecordEntryList & exifPropsRecs = exifProps.records();
-    iter = std::find_if(exifPropsRecs.cbegin(), exifPropsRecs.cend(),
-                        std::bind(
-                            &RecordEntry::isA, std::placeholders::_1,
-                            static_cast<uint16_t>(TAG_DECODERTABLE)));
+    const RecordEntries& exifPropsRecs = exifProps.records();
+    iter = exifPropsRecs.find(TAG_DECODERTABLE);
     if (iter == exifPropsRecs.end()) {
         LOGERR("Couldn't find the decoder table.\n");
         return err;
     }
-    LOGDBG2("length = %d\n", iter->length());
-    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->offset()));
+    LOGDBG2("length = %d\n", iter->second.length());
+    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->second.offset()));
     auto file = m_container->file();
-    file->seek(exifProps.offset() + iter->offset(), SEEK_SET);
+    file->seek(exifProps.offset() + iter->second.offset(), SEEK_SET);
 
     auto result = m_container->readUInt32(file, m_container->endian());
     if(result.empty()) {
@@ -229,19 +222,17 @@ RawContainer* CRWFile::getContainer() const
     LOGDBG2("decoder table = %u\n", decoderTable);
 
     // locate the CFA info
-    iter = std::find_if(exifPropsRecs.cbegin(), exifPropsRecs.cend(), std::bind(
-                            &RecordEntry::isA, std::placeholders::_1,
-                            static_cast<uint16_t>(TAG_SENSORINFO)));
+    iter = exifPropsRecs.find(TAG_SENSORINFO);
     if (iter == exifPropsRecs.end()) {
         LOGERR("Couldn't find the sensor info.\n");
         return err;
     }
-    LOGDBG2("length = %u\n", iter->length());
-    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->offset()));
+    LOGDBG2("length = %u\n", iter->second.length());
+    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->second.offset()));
 
     // This is the SensorInfo tag
-    // https://sno.phy.queensu.ca/%7Ephil/exiftool/TagNames/Canon.html#SensorInfo
-    file->seek(exifProps.offset() + iter->offset(), SEEK_SET);
+    // https://exiftool.org/TagNames/Canon.html#SensorInfo
+    file->seek(exifProps.offset() + iter->second.offset(), SEEK_SET);
 
     std::vector<uint16_t> sensor_info;
     auto count_read = m_container->readUInt16Array(file, sensor_info, 9);
@@ -260,7 +251,7 @@ RawContainer* CRWFile::getContainer() const
         return OR_ERROR_NOT_FOUND;
     }
 
-    const CIFF::RecordEntry *entry = m_container->getRawDataRecord();
+    const RecordEntry *entry = m_container->getRawDataRecord();
     if (entry) {
         CIFF::HeapRef heap = m_container->heap();
         LOGDBG2("RAW @%lld\n", (long long int)(heap->offset() + entry->offset()));
@@ -319,21 +310,17 @@ Option<std::string> CRWFile::getMakeOrModel(uint32_t index)
     CIFF::HeapRef heap = m_container->getCameraProps();
     if (heap) {
         auto propsRecs = heap->records();
-        auto iter
-            = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
-                           [](const CIFF::RecordEntry &e){
-                               return e.isA(static_cast<uint16_t>(CIFF::TAG_RAWMAKEMODEL));
-                           });
+        auto iter = propsRecs.find(TAG_RAWMAKEMODEL);
         if (iter == propsRecs.end()) {
             LOGERR("Couldn't find the image info.\n");
         } else {
             char buf[256];
-            size_t sz = iter->length();
+            size_t sz = iter->second.length();
             if(sz > 256) {
                 sz = 256;
             }
-            /*size_t sz2 = */iter->fetchData(heap.get(),
-                                             (void*)buf, sz);
+            /*size_t sz2 = */iter->second.fetchData(heap.get(),
+                                                    (void*)buf, sz);
             const char *p = buf;
             while(*p) {
                 p++;
