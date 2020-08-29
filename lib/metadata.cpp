@@ -57,6 +57,10 @@ Internals::IfdDir::Ref MetadataIterator::nextIfd()
     auto ifd = m_ifds[m_next_ifd];
     m_next_ifd++;
     m_current_entry = ifd->entries().begin();
+    if (m_current_entry == ifd->entries().end()) {
+        LOGWARN("IFD is empty\n");
+        return nextIfd();
+    }
     return ifd;
 }
 
