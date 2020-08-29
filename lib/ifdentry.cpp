@@ -39,18 +39,20 @@ namespace Internals {
 
 IfdEntry::IfdEntry(uint16_t _id, int16_t _type,
                    int32_t _count, uint32_t _data,
-                   const IfdDir& _dir)
+                   const IfdDir& _dir, bool synthetic)
     : m_id(_id), m_type(_type),
       m_count(_count), m_data(_data),
       m_loaded(false), m_dataptr(NULL),
       m_dir(_dir)
 {
-	auto container_size = m_dir.container().size();
-	auto unit_size = typeUnitSize(static_cast<IFD::ExifTagType>(m_type));
-	if ((m_count * unit_size) > static_cast<size_t>(container_size)) {
-		LOGERR("Trying to have %u items in a container of %lld bytes\n",
-			   m_count, (long long int)container_size);
-		m_count = container_size / unit_size;
+	if (!synthetic) {
+		auto container_size = m_dir.container().size();
+		auto unit_size = typeUnitSize(static_cast<IFD::ExifTagType>(m_type));
+		if ((m_count * unit_size) > static_cast<size_t>(container_size)) {
+			LOGERR("Trying to have %u items in a container of %lld bytes\n",
+				   m_count, (long long int)container_size);
+			m_count = container_size / unit_size;
+		}
 	}
 }
 
@@ -117,6 +119,15 @@ bool IfdEntry::loadData(size_t unit_size, off_t offset)
 		}
 	}
 	return m_loaded;
+}
+
+void IfdEntry::setData(const uint8_t* dataptr, size_t data_size)
+{
+	if (!m_loaded) {
+		m_dataptr = (uint8_t*)realloc(m_dataptr, data_size);
+		memcpy(m_dataptr, dataptr, data_size);
+		m_loaded = true;
+	}
 }
 
 template <>

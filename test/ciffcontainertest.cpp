@@ -39,8 +39,8 @@ int main(int /*argc*/, char **argv)
 
 	std::cout << "byteOrder = " << hdr.byteOrder[0] << hdr.byteOrder[1] << std::endl;
 
-	CIFF::Heap::Ref heap = container.heap();
-	std::vector<CIFF::RecordEntry> & records = heap->records();
+	CIFF::HeapRef heap = container.heap();
+	CIFF::RecordEntryList& records = heap->records();
 
 	std::cout << "vector size " << records.size() << std::endl;
 }

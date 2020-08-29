@@ -31,7 +31,7 @@
 namespace OpenRaw {
 namespace Internals {
 
-class IfdFileContainer;
+class RawContainer;
 
 class MakerNoteDir
     : public IfdDir
@@ -41,10 +41,10 @@ public:
 
     /** Create the appropriate MakerNote at offset */
     static Ref createMakerNote(off_t offset,
-                               const IfdFileContainer& container, or_rawfile_type file_type);
+                               const RawContainer& container, or_rawfile_type file_type);
 
     MakerNoteDir(IfdDir& ifd, const std::string& id, const TagTable& tag_table);
-    MakerNoteDir(off_t _offset, const IfdFileContainer& _container,
+    MakerNoteDir(off_t _offset, const RawContainer& _container,
                  off_t mnote_offset, const std::string & id,
                  const TagTable& tag_table);
     virtual ~MakerNoteDir();
@@ -61,12 +61,12 @@ public:
 protected:
     MakerNoteDir(const char* magic, size_t hlen,
                  off_t _offset,
-                 const IfdFileContainer& _container,
+                 const RawContainer& _container,
                  off_t mnote_offset,
                  const std::string & id,
                  const TagTable& tag_table);
 
-    MakerNoteDir(const IfdFileContainer& _container, const std::string & id);
+    MakerNoteDir(const RawContainer& _container, const std::string& id);
     std::string m_magic;
     size_t m_hlen;
     off_t m_mnote_offset;
@@ -80,7 +80,7 @@ class NonMakerNoteDir
     : public MakerNoteDir
 {
 public:
-    NonMakerNoteDir(const IfdFileContainer& _container, const std::string & id)
+    NonMakerNoteDir(const RawContainer& _container, const std::string& id)
         : MakerNoteDir(_container, id)
         {}
 

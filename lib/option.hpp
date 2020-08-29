@@ -69,6 +69,13 @@ public:
     m_none = true;
     return std::move(m_data);
   }
+  const T& value_ref() const
+  {
+    if (m_none) {
+      throw std::runtime_error("none option value");
+    }
+    return m_data;
+  }
   T&& value_or(T&& def)
   {
     if (m_none) {

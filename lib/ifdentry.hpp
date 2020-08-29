@@ -197,9 +197,8 @@ public:
 	/** Ref (ie shared pointer) */
 	typedef std::shared_ptr<IfdEntry> Ref;
 
-	IfdEntry(uint16_t _id, int16_t _type, int32_t _count,
-			 uint32_t _data,
-			 const IfdDir& _dir);
+	IfdEntry(uint16_t _id, int16_t _type, int32_t _count, uint32_t _data,
+					 const IfdDir& _dir, bool synthetic = false);
 	virtual ~IfdEntry();
 
 	int16_t id() const noexcept
@@ -253,7 +252,7 @@ public:
 	 */
 	bool loadData(size_t unit_size, off_t offset);
 	size_t loadDataInto(uint8_t* dataptr, size_t data_size, off_t offset) const;
-
+	void setData(const uint8_t* dataptr, size_t data_size);
 private:
 	uint16_t m_id;
 	uint16_t m_type;

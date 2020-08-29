@@ -21,10 +21,12 @@
 
 #include <fcntl.h>
 #include <stddef.h>
+#include <endian.h>
 #include <cstdint>
 #include <algorithm>
 #include <functional>
 #include <memory>
+#include <map>
 
 #include <libopenraw/debug.h>
 #include <libopenraw/metadata.h>
@@ -43,6 +45,7 @@
 #include "crwdecompressor.hpp"
 #include "rawfile_private.hpp"
 #include "canon.hpp"
+#include "ciff/ciffifd.hpp"
 
 using namespace Debug;
 
@@ -141,27 +144,27 @@ CRWFile::~CRWFile()
 {
     ::or_error err = OR_ERROR_NOT_FOUND;
 
-    Heap::Ref heap = m_container->heap();
+    HeapRef heap = m_container->heap();
     if(!heap) {
         // this is not a CIFF file.
         return err;
     }
-    const RecordEntry::List & records = heap->records();
-    RecordEntry::List::const_iterator iter;
+    const RecordEntryList & records = heap->records();
+    RecordEntryList::const_iterator iter;
     iter = std::find_if(records.cbegin(), records.cend(), std::bind(
                             &RecordEntry::isA, std::placeholders::_1,
                             static_cast<uint16_t>(TAG_JPEGIMAGE)));
     if (iter != records.end()) {
-        LOGDBG2("JPEG @%u\n", (*iter).offset);
+        LOGDBG2("JPEG @%u\n", iter->offset());
         m_x = m_y = 0;
-        uint32_t offset = heap->offset() + (*iter).offset;
+        uint32_t offset = heap->offset() + iter->offset();
         IO::StreamClone::Ptr s(new IO::StreamClone(m_io, offset));
         std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
 
         jfif->getDimensions(m_x, m_y);
         LOGDBG1("JPEG dimensions x=%d y=%d\n", m_x, m_y);
         uint32_t dim = std::max(m_x,m_y);
-        _addThumbnail(dim, ThumbDesc(m_x, m_y, OR_DATA_TYPE_JPEG, offset, (*iter).length));
+        _addThumbnail(dim, ThumbDesc(m_x, m_y, OR_DATA_TYPE_JPEG, offset, iter->length()));
         list.push_back(dim);
         err = OR_ERROR_NONE;
     }
@@ -177,7 +180,7 @@ RawContainer* CRWFile::getContainer() const
 ::or_error CRWFile::_getRawData(RawData & data, uint32_t options)
 {
     ::or_error err = OR_ERROR_NOT_FOUND;
-    Heap::Ref props = m_container->getImageProps();
+    HeapRef props = m_container->getImageProps();
 
     if(!props) {
         return OR_ERROR_NOT_FOUND;
@@ -191,7 +194,7 @@ RawContainer* CRWFile::getContainer() const
     }
 
     // locate decoder table
-    const CIFF::RecordEntry::List & propsRecs = props->records();
+    const CIFF::RecordEntryList & propsRecs = props->records();
     auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(), std::bind(
                                  &RecordEntry::isA, std::placeholders::_1,
                                  static_cast<uint16_t>(TAG_EXIFINFORMATION)));
@@ -200,9 +203,9 @@ RawContainer* CRWFile::getContainer() const
         return OR_ERROR_NOT_FOUND;
     }
 
-    Heap exifProps(iter->offset + props->offset(), iter->length, m_container);
+    Heap exifProps(iter->offset() + props->offset(), iter->length(), m_container);
 
-    const RecordEntry::List & exifPropsRecs = exifProps.records();
+    const RecordEntryList & exifPropsRecs = exifProps.records();
     iter = std::find_if(exifPropsRecs.cbegin(), exifPropsRecs.cend(),
                         std::bind(
                             &RecordEntry::isA, std::placeholders::_1,
@@ -211,10 +214,10 @@ RawContainer* CRWFile::getContainer() const
         LOGERR("Couldn't find the decoder table.\n");
         return err;
     }
-    LOGDBG2("length = %d\n", iter->length);
-    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->offset));
+    LOGDBG2("length = %d\n", iter->length());
+    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->offset()));
     auto file = m_container->file();
-    file->seek(exifProps.offset() + iter->offset, SEEK_SET);
+    file->seek(exifProps.offset() + iter->offset(), SEEK_SET);
 
     auto result = m_container->readUInt32(file, m_container->endian());
     if(result.empty()) {
@@ -233,12 +236,12 @@ RawContainer* CRWFile::getContainer() const
         LOGERR("Couldn't find the sensor info.\n");
         return err;
     }
-    LOGDBG2("length = %u\n", iter->length);
-    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->offset));
+    LOGDBG2("length = %u\n", iter->length());
+    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->offset()));
 
     // This is the SensorInfo tag
     // https://sno.phy.queensu.ca/%7Ephil/exiftool/TagNames/Canon.html#SensorInfo
-    file->seek(exifProps.offset() + iter->offset, SEEK_SET);
+    file->seek(exifProps.offset() + iter->offset(), SEEK_SET);
 
     std::vector<uint16_t> sensor_info;
     auto count_read = m_container->readUInt16Array(file, sensor_info, 9);
@@ -259,9 +262,9 @@ RawContainer* CRWFile::getContainer() const
 
     const CIFF::RecordEntry *entry = m_container->getRawDataRecord();
     if (entry) {
-        CIFF::Heap::Ref heap = m_container->heap();
-        LOGDBG2("RAW @%lld\n", (long long int)(heap->offset() + entry->offset));
-        size_t byte_size = entry->length;
+        CIFF::HeapRef heap = m_container->heap();
+        LOGDBG2("RAW @%lld\n", (long long int)(heap->offset() + entry->offset()));
+        size_t byte_size = entry->length();
         void *buf = data.allocData(byte_size);
         size_t real_size = entry->fetchData(heap.get(), buf, byte_size);
         if (real_size != byte_size) {
@@ -295,6 +298,62 @@ RawContainer* CRWFile::getContainer() const
     return err;
 }
 
+Option<uint32_t> CRWFile::getOrientation() const
+{
+    const ImageSpec * img_spec = m_container->getImageSpec();
+    if (img_spec) {
+        return static_cast<uint32_t>(img_spec->exifOrientation());
+    }
+    return OptionNone();
+}
+
+Option<std::string> CRWFile::getMakeOrModel(uint32_t index)
+{
+    if (index == EXIF_TAG_MAKE && !m_make.empty()) {
+        return m_make;
+    } else if (index == EXIF_TAG_MODEL && !m_model.empty()) {
+        return m_model;
+    }
+
+    Option<std::string> val;
+    CIFF::HeapRef heap = m_container->getCameraProps();
+    if (heap) {
+        auto propsRecs = heap->records();
+        auto iter
+            = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
+                           [](const CIFF::RecordEntry &e){
+                               return e.isA(static_cast<uint16_t>(CIFF::TAG_RAWMAKEMODEL));
+                           });
+        if (iter == propsRecs.end()) {
+            LOGERR("Couldn't find the image info.\n");
+        } else {
+            char buf[256];
+            size_t sz = iter->length();
+            if(sz > 256) {
+                sz = 256;
+            }
+            /*size_t sz2 = */iter->fetchData(heap.get(),
+                                             (void*)buf, sz);
+            const char *p = buf;
+            while(*p) {
+                p++;
+            }
+            m_make = std::string(buf, p - buf);
+            p++;
+            m_model = p;
+
+            if (index == EXIF_TAG_MODEL) {
+                val = m_model;
+            } else if (index == EXIF_TAG_MAKE) {
+                val = m_make;
+            }
+            LOGDBG1("Make %s\n", m_make.c_str());
+            LOGDBG1("Model %s\n", m_model.c_str());
+        }
+    }
+    return val;
+}
+
 MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
 {
     MetaValue * val = NULL;
@@ -306,64 +365,19 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
         switch(index) {
         case EXIF_TAG_ORIENTATION:
         {
-            const ImageSpec * img_spec = m_container->getImageSpec();
-            if(img_spec) {
-                val = new MetaValue(static_cast<uint32_t>(
-                                            img_spec->exifOrientation()));
+            auto orientation = getOrientation();
+            if (orientation) {
+                val = new MetaValue(orientation.value());
             }
             break;
         }
         case EXIF_TAG_MAKE:
         case EXIF_TAG_MODEL:
         {
-            if (index == EXIF_TAG_MAKE && !m_make.empty()) {
-                val = new MetaValue(m_make);
-                break;
+            auto tag = getMakeOrModel(index);
+            if (tag) {
+                val = new MetaValue(tag.value());
             }
-            if (index == EXIF_TAG_MODEL && !m_model.empty()) {
-                val = new MetaValue(m_model);
-                break;
-            }
-
-            CIFF::Heap::Ref heap = m_container->getCameraProps();
-            if(heap) {
-                auto propsRecs = heap->records();
-                auto iter
-                    = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
-                                   [](const CIFF::RecordEntry &e){
-                                       return e.isA(static_cast<uint16_t>(CIFF::TAG_RAWMAKEMODEL));
-                                   });
-                if (iter == propsRecs.end()) {
-                    LOGERR("Couldn't find the image info.\n");
-                }
-                else {
-                    char buf[256];
-                    size_t sz = iter->length;
-                    if(sz > 256) {
-                        sz = 256;
-                    }
-                    /*size_t sz2 = */iter->fetchData(heap.get(),
-                                                     (void*)buf, sz);
-                    const char *p = buf;
-                    while(*p) {
-                        p++;
-                    }
-                    m_make = std::string(buf, p - buf);
-                    p++;
-                    m_model = p;
-
-                    if (index == EXIF_TAG_MODEL) {
-                        val = new MetaValue(m_model);
-                    }
-                    else if (index == EXIF_TAG_MAKE) {
-                        val = new MetaValue(m_make);
-                    }
-                    LOGDBG1("Make %s\n", m_make.c_str());
-                    LOGDBG1("Model %s\n", m_model.c_str());
-                }
-            }
-
-
             break;
         }
         }
@@ -377,6 +391,20 @@ MetaValue *CRWFile::_getMetaValue(int32_t meta_index)
     }
 
     return val;
+}
+
+IfdDir::Ref CRWFile::_locateMainIfd()
+{
+    auto ifd = std::make_shared<CiffMainIfd>(*this, *m_container);
+    ifd->load();
+    return ifd;
+}
+
+IfdDir::Ref CRWFile::_locateExifIfd()
+{
+    auto ifd = std::make_shared<CiffExifIfd>(*this, *m_container);
+    ifd->load();
+    return ifd;
 }
 
 void CRWFile::_identifyId()
@@ -409,6 +437,8 @@ void CRWFile::_identifyId()
   mode:c++
   c-file-style:"stroustrup"
   c-file-offsets:((innamespace . 0))
+  c-basic-offset: 4
+  tab-width: 4
   indent-tabs-mode:nil
   fill-column:80
   End:

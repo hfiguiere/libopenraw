@@ -1,7 +1,7 @@
 /*
- * libopenraw - ifd.h
+ * libopenraw - ifd.hpp
  *
- * Copyright (C) 2006-2007,2012-2020 Hubert Figuière
+ * Copyright (C) 2006-2007, 2012-2020 Hubert Figuière
  *
  * Defintions taken from libexif:
  * Copyright (C) 2001 Lutz Müller <lutz@users.sourceforge.net>
@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include <stdint.h>
 #include <math.h>
 
 namespace OpenRaw {

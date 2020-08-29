@@ -1,6 +1,6 @@
-/* -*- Mode: C++ -*- */
+/* -*- Mode: C++; c-basic-offset:4; tab-width:4; indent-tabs-mode:nil; -*- */
 /*
- * libopenraw - crwfile.h
+ * libopenraw - crwfile.hpp
  *
  * Copyright (C) 2006-2020 Hubert Figuière
  *
@@ -39,6 +39,11 @@ class RawData;
 
 namespace Internals {
 
+namespace CIFF {
+    class CiffMainIfd;
+    class CiffExifIfd;
+}
+
 class CIFFContainer;
 
 class CRWFile
@@ -46,6 +51,8 @@ class CRWFile
 {
     template<typename T>
     friend void audit_coefficients();
+    friend class CIFF::CiffMainIfd;
+    friend class CIFF::CiffExifIfd;
 
 public:
     static RawFile *factory(const IO::Stream::Ptr &);
@@ -61,34 +68,25 @@ protected:
     virtual RawContainer* getContainer() const override;
     virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) override;
 
-//virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail) override;
-
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
     virtual IfdDir::Ref _locateCfaIfd() override
         {
-            LOGERR("not implemented\n");
-            return IfdDir::Ref();
+            return _locateMainIfd();
         }
-    virtual IfdDir::Ref _locateMainIfd() override
-        {
-            LOGERR("not implemented\n");
-            return IfdDir::Ref();
-        }
-    virtual IfdDir::Ref _locateExifIfd() override
-        {
-            LOGERR("not implemented\n");
-            return IfdDir::Ref();
-        }
+    virtual IfdDir::Ref _locateMainIfd() override;
+    virtual IfdDir::Ref _locateExifIfd() override;
     virtual MakerNoteDir::Ref _locateMakerNoteIfd() override
         {
-            LOGERR("not implemented\n");
             return MakerNoteDir::Ref();
         }
     virtual MetaValue *_getMetaValue(int32_t meta_index) override;
 
     virtual void _identifyId() override;
-private:
 
+    Option<uint32_t> getOrientation() const;
+    Option<std::string> getMakeOrModel(uint32_t index);
+
+private:
     IO::Stream::Ptr m_io; /**< the IO handle */
     CIFFContainer *m_container; /**< the real container */
     uint32_t m_x;

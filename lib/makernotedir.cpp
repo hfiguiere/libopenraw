@@ -42,7 +42,7 @@ const TagTable empty_tag_names = {};
  */
 MakerNoteDir::Ref
 MakerNoteDir::createMakerNote(off_t offset,
-                              const IfdFileContainer& container, or_rawfile_type file_type)
+                              const RawContainer& container, or_rawfile_type file_type)
 {
     LOGDBG1("createMakerNote()\n");
 
@@ -226,14 +226,14 @@ MakerNoteDir::createMakerNote(off_t offset,
     return std::make_shared<MakerNoteDir>(offset, container, offset, "", empty_tag_names);
 }
 
-MakerNoteDir::MakerNoteDir(const IfdFileContainer& _container, const std::string & id)
+MakerNoteDir::MakerNoteDir(const RawContainer& _container, const std::string& id)
     : IfdDir(0, _container, OR_IFD_MNOTE, empty_tag_names)
     , m_id(id)
 {
 }
 
 MakerNoteDir::MakerNoteDir(off_t _offset,
-                           const IfdFileContainer& _container,
+                           const RawContainer& _container,
                            off_t mnote_offset,
                            const std::string& id,
                            const TagTable& tag_table)
@@ -249,7 +249,7 @@ MakerNoteDir::MakerNoteDir(IfdDir& ifd, const std::string& id, const TagTable& t
 
 MakerNoteDir::MakerNoteDir(const char* magic, size_t hlen,
                            off_t _offset,
-                           const IfdFileContainer& _container,
+                           const RawContainer& _container,
                            off_t mnote_offset,
                            const std::string& id,
                            const TagTable& tag_table)

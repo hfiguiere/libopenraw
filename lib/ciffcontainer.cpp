@@ -97,89 +97,6 @@ int32_t ImageSpec::exifOrientation() const
     return orientation;
 }
 
-RecordEntry::RecordEntry()
-    : typeCode(0), length(0), offset(0)
-{
-}
-
-bool RecordEntry::readFrom(CIFFContainer *container)
-{
-    auto file = container->file();
-    auto endian = container->endian();
-    auto result_16 = container->readUInt16(file, endian);
-    if (result_16.empty()) {
-        return false;
-    }
-    typeCode = result_16.value();
-    auto result_32 = container->readUInt32(file, endian);
-    if (result_32.empty()) {
-        return false;
-    }
-    length = result_32.value();
-    result_32 = container->readUInt32(file, endian);
-    if (result_32.empty()) {
-        return false;
-    }
-    offset = result_32.value();
-    return true;
-}
-
-size_t RecordEntry::fetchData(Heap* heap, void* buf, size_t size) const
-{
-    return heap->container()->fetchData(buf,
-                                        offset + heap->offset(), size);
-}
-
-
-Heap::Heap(off_t start, off_t length, CIFFContainer * _container)
-    : m_start(start),
-      m_length(length),
-      m_container(_container),
-      m_records()
-{
-    LOGDBG2("Heap @ %lld length = %lld\n", (long long int)start, (long long int)m_length);
-}
-
-std::vector<RecordEntry> & Heap::records()
-{
-    if (m_records.size() == 0) {
-        _loadRecords();
-    }
-    return m_records;
-}
-
-
-bool Heap::_loadRecords()
-{
-    auto file = m_container->file();
-    auto endian = m_container->endian();
-    file->seek(m_start + m_length - 4, SEEK_SET);
-
-    auto result = m_container->readInt32(file, endian);
-
-    if (result) {
-        int32_t record_offset = result.value();
-
-        m_records.clear();
-        file->seek(m_start + record_offset, SEEK_SET);
-        auto result16 = m_container->readInt16(file, endian);
-        if (result16.empty()) {
-            LOGDBG1("read numRecords failed\n");
-            return false;
-        }
-        int16_t numRecords = result16.value();
-        LOGDBG2("numRecords %d\n", numRecords);
-
-        m_records.reserve(numRecords);
-        for (int16_t i = 0; i < numRecords; i++) {
-            m_records.push_back(RecordEntry());
-            m_records.back().readFrom(m_container);
-        }
-        return true;
-    }
-    return false;
-}
-
 
 #if 0
 class OffsetTable {
@@ -187,43 +104,6 @@ class OffsetTable {
     RecordEntry tblArray[1];/* Array of the record entries */
 };
 #endif
-
-
-bool HeapFileHeader::readFrom(CIFFContainer *container)
-{
-    endian = RawContainer::ENDIAN_NULL;
-    bool ret = false;
-    auto file = container->file();
-    int s = file->read(byteOrder, 2);
-    if (s == 2) {
-        if((byteOrder[0] == 'I') && (byteOrder[1] == 'I')) {
-            endian = RawContainer::ENDIAN_LITTLE;
-        }
-        else if((byteOrder[0] == 'M') && (byteOrder[1] == 'M')) {
-            endian = RawContainer::ENDIAN_BIG;
-        }
-        container->setEndian(endian);
-        auto result32 = container->readUInt32(file, endian);
-        if (result32) {
-            headerLength = result32.value();
-            ret = true;
-        }
-        if (ret) {
-            ret = (file->read(type, 4) == 4);
-        }
-        if (ret) {
-            ret = (file->read(subType, 4) == 4);
-        }
-        if (ret) {
-            result32 = container->readUInt32(file, endian);
-            if (result32) {
-                version = result32.value();
-                ret = true;
-            }
-        }
-    }
-    return ret;
-}
 
 }
 
@@ -240,7 +120,7 @@ CIFFContainer::~CIFFContainer()
 {
 }
 
-CIFF::Heap::Ref CIFFContainer::heap()
+CIFF::HeapRef CIFFContainer::heap()
 {
     if (m_heap == nullptr) {
         _loadHeap();
@@ -282,11 +162,11 @@ RawContainer::EndianType CIFFContainer::_readHeader()
     return _endian;
 }
 
-CIFF::Heap::Ref CIFFContainer::getImageProps()
+CIFF::HeapRef CIFFContainer::getImageProps()
 {
     if(!m_imageprops) {
         if(!heap()) {
-            return CIFF::Heap::Ref();
+            return CIFF::HeapRef();
         }
 
         auto & records = m_heap->records();
@@ -298,11 +178,11 @@ CIFF::Heap::Ref CIFFContainer::getImageProps()
                                  });
         if (iter == records.end()) {
             LOGERR("Couldn't find the image properties.\n");
-            return CIFF::Heap::Ref();
+            return CIFF::HeapRef();
         }
 
         m_imageprops = std::make_shared<CIFF::Heap>(
-            iter->offset + m_heap->offset(), iter->length, this);
+            iter->offset() + m_heap->offset(), iter->length(), this);
     }
     return m_imageprops;
 }
@@ -310,7 +190,7 @@ CIFF::Heap::Ref CIFFContainer::getImageProps()
 const CIFF::ImageSpec * CIFFContainer::getImageSpec()
 {
     if(!m_hasImageSpec) {
-        CIFF::Heap::Ref props = getImageProps();
+        CIFF::HeapRef props = getImageProps();
 
         if(!props) {
             return nullptr;
@@ -324,19 +204,19 @@ const CIFF::ImageSpec * CIFFContainer::getImageSpec()
             LOGERR("Couldn't find the image info.\n");
             return nullptr;
         }
-        m_imagespec.readFrom(iter->offset + props->offset(), this);
+        m_imagespec.readFrom(iter->offset() + props->offset(), this);
         m_hasImageSpec = true;
     }
     return &m_imagespec;
 }
 
-const CIFF::Heap::Ref CIFFContainer::getCameraProps()
+const CIFF::HeapRef CIFFContainer::getCameraProps()
 {
     if(!m_cameraprops) {
-        CIFF::Heap::Ref props = getImageProps();
+        CIFF::HeapRef props = getImageProps();
 
         if(!props) {
-            return CIFF::Heap::Ref();
+            return CIFF::HeapRef();
         }
         auto & propsRecs = props->records();
         auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
@@ -345,12 +225,55 @@ const CIFF::Heap::Ref CIFFContainer::getCameraProps()
                                  });
         if (iter == propsRecs.end()) {
             LOGERR("Couldn't find the camera props.\n");
-            return CIFF::Heap::Ref();
+            return CIFF::HeapRef();
         }
         m_cameraprops = std::make_shared<CIFF::Heap>(
-            iter->offset + props->offset(), iter->length, this);
+            iter->offset() + props->offset(), iter->length(), this);
     }
     return m_cameraprops;
+}
+
+CIFF::HeapRef CIFFContainer::getExifInfo() const
+{
+    CIFF::HeapRef props = m_imageprops;
+
+    if (!props) {
+        return CIFF::HeapRef();
+    }
+    auto& propsRecs = props->records();
+    auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
+                             [] (const CIFF::RecordEntry & e) {
+                                 return e.isA(static_cast<uint16_t>(CIFF::TAG_EXIFINFORMATION));
+                             });
+    if (iter == propsRecs.end()) {
+        LOGERR("Couldn't find the Exif information.\n");
+        return CIFF::HeapRef();
+    }
+    return std::make_shared<CIFF::Heap>(
+        iter->offset() + props->offset(), iter->length(), this);
+}
+
+CIFF::CameraSettings CIFFContainer::getCameraSettings() const
+{
+    auto exifInfo = getExifInfo();
+    auto& propsRecs = exifInfo->records();
+    auto iter = std::find_if(propsRecs.cbegin(), propsRecs.cend(),
+                             [] (const CIFF::RecordEntry & e) {
+                                 return e.isA(static_cast<uint16_t>(CIFF::TAG_CAMERASETTINGS));
+                             });
+    if (iter == propsRecs.end()) {
+        LOGERR("Couldn't find the camera settings.\n");
+        return CIFF::CameraSettings();
+    }
+    auto count = iter->count();
+    CIFF::CameraSettings settings;
+    file()->seek(exifInfo->offset() + iter->offset(), SEEK_SET);
+    size_t countRead = readUInt16Array(file(), settings, count);
+    if (count != countRead) {
+        LOGERR("Not enough data for camera settings\n");
+    }
+
+    return settings;
 }
 
 const CIFF::RecordEntry * CIFFContainer::getRawDataRecord() const

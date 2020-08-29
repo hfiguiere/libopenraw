@@ -58,6 +58,11 @@ public:
     const IO::Stream::Ptr &file() const { return m_file; }
     EndianType endian() const { return m_endian; }
     off_t offset() const { return m_offset; }
+    // This only make sense for IFD.
+    virtual int exifOffsetCorrection() const
+        {
+            return 0;
+        }
 
     bool skip(off_t offset);
     Option<int8_t> readInt8(const IO::Stream::Ptr& f) const;
@@ -91,6 +96,7 @@ public:
     off_t size() const;
 protected:
     RawContainer(const RawContainer &) = delete;
+    RawContainer(RawContainer&&) = default;
     RawContainer &operator=(const RawContainer &) = delete;
 
     void setEndian(EndianType _endian) { m_endian = _endian; }

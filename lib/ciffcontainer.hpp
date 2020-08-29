@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - ciffcontainer.h
+ * libopenraw - ciffcontainer.hpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -24,9 +24,7 @@
  * make this a standard. I guess it failed.
  */
 
-
-#ifndef OR_INTERNALS_CIFFCONTAINER_H_
-#define OR_INTERNALS_CIFFCONTAINER_H_
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -38,6 +36,7 @@
 #include <libopenraw/debug.h>
 
 #include "io/stream.hpp"
+#include "ciff/heap.hpp"
 #include "rawcontainer.hpp"
 #include "trace.hpp"
 
@@ -48,13 +47,6 @@ class CIFFContainer;
 
 namespace CIFF {
 
-/** mask for the typeCode */
-enum {
-    STORAGELOC_MASK = 0xc000, /**< storage location bit mask */
-    FORMAT_MASK = 0x3800,     /**< format of the data */
-    TAGCODE_MASK = 0x3fff  /**< include the format, because the last
-                            * part is non significant */
-};
 /** tags for the CIFF records.
  * List made by a combination of the CIFF spec and
  * what exifprobe by Duane H. Hesser has.
@@ -116,6 +108,7 @@ enum {
 
 class Heap;
 
+typedef std::vector<uint16_t> CameraSettings;
 
 class ImageSpec
 {
@@ -146,90 +139,6 @@ public:
 };
 
 
-class RecordEntry
-{
-public:
-    typedef std::vector<RecordEntry> List;
-
-    RecordEntry();
-
-    /** load record from container
-     * @param container the container
-     * @return true if success
-     */
-    bool readFrom(CIFFContainer *container);
-    /** fetch data define by the record from the heap
-     * @param heap the heap to load from
-     * @param buf the allocated buffer to load into
-     * @param size the size of the allocated buffer
-     * @return the size actually fetched. MIN(size, this->length);
-     */
-    size_t fetchData(Heap* heap, void* buf, size_t size) const;
-    /** determine if entry match type code
-     * @param _typeCode the code to check
-     * @return true if match
-     */
-    bool isA(uint16_t _typeCode) const
-        {
-            LOGDBG2("typeCode = %u\n", typeCode);
-            return typeCode == (TAGCODE_MASK & _typeCode);
-        }
-
-    uint16_t   typeCode;/* type code of the record */
-    uint32_t   length;/* record length */
-    uint32_t   offset;/* offset of the record in the heap*/
-};
-
-/** a CIFF Heap */
-class Heap
-{
-public:
-    typedef std::shared_ptr<Heap> Ref;
-
-    /** Construct a heap from a location in the container
-     * @param start the begin address relative to the container.
-     * @param length the length in bytes
-     * @param container the container to read from
-     */
-    Heap(off_t start, off_t length, CIFFContainer * container);
-
-    Heap(const Heap &) = delete;
-    Heap & operator=(const Heap &) = delete;
-
-    RecordEntry::List & records();
-    CIFFContainer *container()
-        {
-            return m_container;
-        }
-    /** Eeturn the offset from the begining of the container. */
-    off_t offset()
-        {
-            return m_start;
-        }
-private:
-    bool _loadRecords();
-
-    off_t m_start;
-    off_t m_length;
-    CIFFContainer *m_container;
-    RecordEntry::List m_records;
-};
-
-
-/** Heap Header of CIFF file*/
-class HeapFileHeader
-{
-public:
-    bool readFrom(CIFFContainer *);
-    char       byteOrder[2];/* 'MM' for Motorola,'II' for Intel */
-    uint32_t   headerLength;/* length of header (in bytes) */
-    char       type[4];
-    char       subType[4];
-    uint32_t   version; /* higher word: 0x0001, Lower word: 0x0002 */
-    //uint32_t   reserved1;
-    //uint32_t   reserved2;
-    RawContainer::EndianType endian;
-};
 
 } // namespace CIFF
 
@@ -246,33 +155,31 @@ public:
     CIFFContainer(const CIFFContainer &) = delete;
     CIFFContainer & operator=(const CIFFContainer &) = delete;
 
-    CIFF::Heap::Ref heap();
+    CIFF::HeapRef heap();
 
     const CIFF::HeapFileHeader & header() const
         {
             return m_hdr;
         }
-    CIFF::Heap::Ref getImageProps();
+    CIFF::HeapRef getImageProps();
     const CIFF::RecordEntry * getRawDataRecord() const;
     const CIFF::ImageSpec * getImageSpec();
-    const CIFF::Heap::Ref getCameraProps();
+    const CIFF::HeapRef getCameraProps();
+    CIFF::HeapRef getExifInfo() const;
+    CIFF::CameraSettings getCameraSettings() const;
 private:
     bool _loadHeap();
     EndianType _readHeader();
 
     friend class CIFF::HeapFileHeader;
     CIFF::HeapFileHeader m_hdr;
-    CIFF::Heap::Ref m_heap;
-    CIFF::Heap::Ref m_imageprops;
+    CIFF::HeapRef m_heap;
+    CIFF::HeapRef m_imageprops;
     bool m_hasImageSpec;
     CIFF::ImageSpec m_imagespec;
-    CIFF::Heap::Ref m_cameraprops;
+    CIFF::HeapRef m_cameraprops;
 };
 
 
 }
 }
-
-
-
-#endif

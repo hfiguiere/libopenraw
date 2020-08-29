@@ -1,7 +1,7 @@
 /*
- * libopenraw - ifdfilecontainer.h
+ * libopenraw - ifdfilecontainer.hpp
  *
- * Copyright (C) 2005-2016 Hubert Figuiere
+ * Copyright (C) 2005-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,9 +25,7 @@
  readers (like Olympus ORW).
 */
 
-
-#ifndef OR_INTERNALS_IFDFILECONTAINER_H_
-#define OR_INTERNALS_IFDFILECONTAINER_H_
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -57,6 +55,7 @@ public:
                    off_t offset);
   /** destructor */
   virtual ~IfdFileContainer();
+  IfdFileContainer(IfdFileContainer&&) = default;
 
   /** 
       due to the way Exif works, we have to set specific index
@@ -126,7 +125,7 @@ public:
      default it is 0, but some format like MRW needs a different one.
      This is an adjustement for the offset in the Exif IFD tag.
   */
-  int exifOffsetCorrection() const
+  virtual int exifOffsetCorrection() const override
     {
       return m_exif_offset_correction;
     }
@@ -160,8 +159,6 @@ private:
 
 }
 }
-
-#endif
 /*
   Local Variables:
   mode:c++

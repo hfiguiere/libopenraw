@@ -185,6 +185,9 @@ libopenraw_la_SOURCES = \
 	unpack.cpp \
 	render/bimedian_demosaic.cpp render/bimedian_demosaic.hpp \
 	render/grayscale.hpp render/grayscale.cpp \
+	ciff/heap.hpp ciff/heap.cpp \
+	ciff/recordentry.hpp ciff/recordentry.cpp \
+	ciff/ciffifd.hpp ciff/ciffifd.cpp \
 	exif/exif_tags.hpp exif/exif_tags.cpp \
 	exif/exif_tags-manual.cpp \
 	$(NULL)
