@@ -178,11 +178,7 @@ RawContainer* CRWFile::getContainer() const
 ::or_error CRWFile::_getRawData(RawData & data, uint32_t options)
 {
     ::or_error err = OR_ERROR_NOT_FOUND;
-    HeapRef props = m_container->getImageProps();
 
-    if(!props) {
-        return OR_ERROR_NOT_FOUND;
-    }
     const ImageSpec * img_spec = m_container->getImageSpec();
     uint32_t x, y;
     x = y = 0;
@@ -192,25 +188,21 @@ RawContainer* CRWFile::getContainer() const
     }
 
     // locate decoder table
-    const RecordEntries& propsRecs = props->records();
-    auto iter = propsRecs.find(TAG_EXIFINFORMATION);
-    if (iter == propsRecs.end()) {
-        LOGERR("Couldn't find the Exif information.\n");
-        return OR_ERROR_NOT_FOUND;
+    HeapRef exifProps = m_container->getExifInfo();
+    if (!exifProps) {
+        LOGERR("Couldn't find the exif info table.\n");
+        return err;
     }
-
-    Heap exifProps(iter->second.offset() + props->offset(), iter->second.length(), m_container);
-
-    const RecordEntries& exifPropsRecs = exifProps.records();
-    iter = exifPropsRecs.find(TAG_DECODERTABLE);
+    const RecordEntries& exifPropsRecs = exifProps->records();
+    auto iter = exifPropsRecs.find(TAG_DECODERTABLE);
     if (iter == exifPropsRecs.end()) {
         LOGERR("Couldn't find the decoder table.\n");
         return err;
     }
     LOGDBG2("length = %d\n", iter->second.length());
-    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->second.offset()));
+    LOGDBG2("offset = %lld\n", (long long int)(exifProps->offset() + iter->second.offset()));
     auto file = m_container->file();
-    file->seek(exifProps.offset() + iter->second.offset(), SEEK_SET);
+    file->seek(exifProps->offset() + iter->second.offset(), SEEK_SET);
 
     auto result = m_container->readUInt32(file, m_container->endian());
     if(result.empty()) {
@@ -228,11 +220,11 @@ RawContainer* CRWFile::getContainer() const
         return err;
     }
     LOGDBG2("length = %u\n", iter->second.length());
-    LOGDBG2("offset = %lld\n", (long long int)(exifProps.offset() + iter->second.offset()));
+    LOGDBG2("offset = %lld\n", (long long int)(exifProps->offset() + iter->second.offset()));
 
     // This is the SensorInfo tag
     // https://exiftool.org/TagNames/Canon.html#SensorInfo
-    file->seek(exifProps.offset() + iter->second.offset(), SEEK_SET);
+    file->seek(exifProps->offset() + iter->second.offset(), SEEK_SET);
 
     std::vector<uint16_t> sensor_info;
     auto count_read = m_container->readUInt16Array(file, sensor_info, 9);

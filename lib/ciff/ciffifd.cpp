@@ -125,7 +125,7 @@ IfdEntry::Ref translateFocalLength(const RecordEntry& e, Heap&, CiffIfd& ifd, ui
         fl = IfdTypeTrait<uint16_t>::BE(data.c_array() + 2, sizeof(uint16_t));
     }
 
-    const CIFFContainer* ciffc = dynamic_cast<const CIFFContainer*>(&ifd.container());
+    CIFFContainer* ciffc = dynamic_cast<CIFFContainer*>(&ifd.container());
     auto csettings = ciffc->getCameraSettings();
     if (csettings.size() >= 26) {
         fu = csettings[25];
@@ -247,12 +247,10 @@ bool CiffExifIfd::load()
             }
         }
 
-        auto iter = propsRecs.find(TAG_EXIFINFORMATION);
-        if (iter != propsRecs.end()) {
-            Heap exifProps = iter->second.heap(*props, container);
-
-            for (const auto& rec : exifProps.records()) {
-                auto ifdentries = translateRecordEntry(rec.second, exifProps, *this);
+        HeapRef exifProps = container->getExifInfo();
+        if (exifProps) {
+            for (const auto& rec : exifProps->records()) {
+                auto ifdentries = translateRecordEntry(rec.second, *exifProps, *this);
                 if (!ifdentries.empty()) {
                     for (auto entry2 : ifdentries) {
                         m_entries[entry2->id()] = entry2;

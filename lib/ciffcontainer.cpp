@@ -204,7 +204,7 @@ const CIFF::ImageSpec * CIFFContainer::getImageSpec()
     return &m_imagespec;
 }
 
-const CIFF::HeapRef CIFFContainer::getCameraProps()
+CIFF::HeapRef CIFFContainer::getCameraProps()
 {
     if(!m_cameraprops) {
         CIFF::HeapRef props = getImageProps();
@@ -224,24 +224,28 @@ const CIFF::HeapRef CIFFContainer::getCameraProps()
     return m_cameraprops;
 }
 
-CIFF::HeapRef CIFFContainer::getExifInfo() const
+CIFF::HeapRef CIFFContainer::getExifInfo()
 {
-    CIFF::HeapRef props = m_imageprops;
+    if (!m_exifinfo) {
+        CIFF::HeapRef props = getImageProps();
 
-    if (!props) {
-        return CIFF::HeapRef();
+        if (!props) {
+            return CIFF::HeapRef();
+        }
+        auto& propsRecs = props->records();
+        auto iter = propsRecs.find(CIFF::TAG_EXIFINFORMATION);
+        if (iter == propsRecs.end()) {
+            LOGERR("Couldn't find the Exif information.\n");
+            return CIFF::HeapRef();
+        }
+        m_exifinfo = std::make_shared<CIFF::Heap>(
+            iter->second.offset() + props->offset(), iter->second.length(), this);
     }
-    auto& propsRecs = props->records();
-    auto iter = propsRecs.find(CIFF::TAG_EXIFINFORMATION);
-    if (iter == propsRecs.end()) {
-        LOGERR("Couldn't find the Exif information.\n");
-        return CIFF::HeapRef();
-    }
-    return std::make_shared<CIFF::Heap>(
-        iter->second.offset() + props->offset(), iter->second.length(), this);
+
+    return m_exifinfo;
 }
 
-CIFF::CameraSettings CIFFContainer::getCameraSettings() const
+CIFF::CameraSettings CIFFContainer::getCameraSettings()
 {
     auto exifInfo = getExifInfo();
     auto& propsRecs = exifInfo->records();

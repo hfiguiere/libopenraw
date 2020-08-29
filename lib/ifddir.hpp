@@ -50,7 +50,7 @@ public:
     typedef std::vector<Ref> RefVec;
     typedef std::map<uint16_t, IfdEntry::Ref> Entries;
 
-    IfdDir(off_t _offset, const RawContainer& _container, IfdDirType _type /*= OR_IFDDIR_OTHER */, const TagTable& tag_table = exif_tag_names);
+    IfdDir(off_t _offset, RawContainer& _container, IfdDirType _type /*= OR_IFDDIR_OTHER */, const TagTable& tag_table = exif_tag_names);
     virtual ~IfdDir();
 
     IfdDirType type() const
@@ -69,6 +69,7 @@ public:
     /** return the offset */
     off_t offset() const { return m_offset; }
     const RawContainer& container() const { return m_container; }
+    RawContainer& container() { return m_container; }
 
     /** load the directory to memory
      * The only reason you'd want to override is to synthesize an IFD from
@@ -180,7 +181,7 @@ protected:
 private:
     IfdDirType m_type;
     off_t m_offset;
-    const RawContainer& m_container;
+    RawContainer& m_container;
     const TagTable* m_tag_table;
     off_t m_base_offset;
     RawContainer::EndianType m_endian;

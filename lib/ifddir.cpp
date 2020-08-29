@@ -49,7 +49,7 @@ bool IfdDir::isThumbnail() const
     return result && (result.value() == 1);
 }
 
-IfdDir::IfdDir(off_t _offset, const RawContainer& _container, IfdDirType _type, const TagTable& tag_table)
+IfdDir::IfdDir(off_t _offset, RawContainer& _container, IfdDirType _type, const TagTable& tag_table)
     : m_type(_type)
     , m_offset(_offset), m_container(_container), m_entries()
     , m_tag_table(&tag_table)

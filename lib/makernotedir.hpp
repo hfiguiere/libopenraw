@@ -41,10 +41,10 @@ public:
 
     /** Create the appropriate MakerNote at offset */
     static Ref createMakerNote(off_t offset,
-                               const RawContainer& container, or_rawfile_type file_type);
+                               RawContainer& container, or_rawfile_type file_type);
 
     MakerNoteDir(IfdDir& ifd, const std::string& id, const TagTable& tag_table);
-    MakerNoteDir(off_t _offset, const RawContainer& _container,
+    MakerNoteDir(off_t _offset, RawContainer& _container,
                  off_t mnote_offset, const std::string & id,
                  const TagTable& tag_table);
     virtual ~MakerNoteDir();
@@ -61,12 +61,12 @@ public:
 protected:
     MakerNoteDir(const char* magic, size_t hlen,
                  off_t _offset,
-                 const RawContainer& _container,
+                 RawContainer& _container,
                  off_t mnote_offset,
                  const std::string & id,
                  const TagTable& tag_table);
 
-    MakerNoteDir(const RawContainer& _container, const std::string& id);
+    MakerNoteDir(RawContainer& _container, const std::string& id);
     std::string m_magic;
     size_t m_hlen;
     off_t m_mnote_offset;
@@ -80,7 +80,7 @@ class NonMakerNoteDir
     : public MakerNoteDir
 {
 public:
-    NonMakerNoteDir(const RawContainer& _container, const std::string& id)
+    NonMakerNoteDir(RawContainer& _container, const std::string& id)
         : MakerNoteDir(_container, id)
         {}
 

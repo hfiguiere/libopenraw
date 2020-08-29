@@ -164,9 +164,9 @@ public:
     CIFF::HeapRef getImageProps();
     const CIFF::RecordEntry * getRawDataRecord() const;
     const CIFF::ImageSpec * getImageSpec();
-    const CIFF::HeapRef getCameraProps();
-    CIFF::HeapRef getExifInfo() const;
-    CIFF::CameraSettings getCameraSettings() const;
+    CIFF::HeapRef getCameraProps();
+    CIFF::HeapRef getExifInfo();
+    CIFF::CameraSettings getCameraSettings();
 private:
     bool _loadHeap();
     EndianType _readHeader();
@@ -178,6 +178,7 @@ private:
     bool m_hasImageSpec;
     CIFF::ImageSpec m_imagespec;
     CIFF::HeapRef m_cameraprops;
+    CIFF::HeapRef m_exifinfo;
 };
 
 
