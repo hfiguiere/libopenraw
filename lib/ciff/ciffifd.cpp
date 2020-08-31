@@ -104,7 +104,7 @@ CiffExifIfd::CiffExifIfd(CRWFile& ciff, RawContainer& container)
 
 namespace {
 
-typedef IfdEntry::Ref (*Converter)(const RecordEntry& e, Heap& heap, CiffIfd& ifd, uint16_t exifTag);
+typedef std::vector<IfdEntry::Ref> (*Converter)(const RecordEntry& e, Heap& heap, CiffIfd& ifd, uint16_t exifTag);
 
 struct Ciff2Exif {
     uint16_t exifTag;
@@ -113,7 +113,7 @@ struct Ciff2Exif {
 };
 
 // TAG_FOCALLENGTH to Exif
-IfdEntry::Ref translateFocalLength(const RecordEntry& e, Heap&, CiffIfd& ifd, uint16_t exifTag)
+std::vector<IfdEntry::Ref> translateFocalLength(const RecordEntry& e, Heap&, CiffIfd& ifd, uint16_t exifTag)
 {
     LOGASSERT(e.inRecord());
     uint32_t fl;
@@ -134,10 +134,10 @@ IfdEntry::Ref translateFocalLength(const RecordEntry& e, Heap&, CiffIfd& ifd, ui
     uint32_t r[] = { fl, fu };
     auto ifdentry = std::make_shared<IfdEntry>(exifTag, EXIF_FORMAT_RATIONAL, 1, 0, ifd, true);
     ifdentry->setData(reinterpret_cast<uint8_t*>(&r), 8);
-    return ifdentry;
+    return { ifdentry };
 }
 
-IfdEntry::Ref translateDate(const RecordEntry& e, Heap& heap, CiffIfd& ifd, uint16_t exifTag)
+std::vector<IfdEntry::Ref> translateDate(const RecordEntry& e, Heap& heap, CiffIfd& ifd, uint16_t)
 {
     struct tm d;
     uint32_t data[3];
@@ -148,10 +148,13 @@ IfdEntry::Ref translateDate(const RecordEntry& e, Heap& heap, CiffIfd& ifd, uint
     if (d2) {
         strftime(date, 20, "%Y:%m:%d %H:%M:%S", d2);
     }
-    return ifd.entryForString(exifTag, date);
+    return {
+        ifd.entryForString(EXIF_TAG_DATE_TIME_ORIGINAL, date),
+        ifd.entryForString(EXIF_TAG_DATE_TIME_DIGITIZED, date),
+    };
 }
 
-IfdEntry::Ref translateSerial(const RecordEntry& e, Heap& , CiffIfd& ifd, uint16_t exifTag)
+std::vector<IfdEntry::Ref> translateSerial(const RecordEntry& e, Heap& , CiffIfd& ifd, uint16_t exifTag)
 {
     uint32_t serial_v;
     LOGASSERT(e.inRecord());
@@ -163,18 +166,132 @@ IfdEntry::Ref translateSerial(const RecordEntry& e, Heap& , CiffIfd& ifd, uint16
     }
     char serial[10];
     snprintf(serial, 10, "%X", serial_v);
-    return ifd.entryForString(exifTag, serial);
+    return { ifd.entryForString(exifTag, serial) };
 }
 
-IfdEntry::Ref translateString(const RecordEntry& e, Heap& heap, CiffIfd& ifd, uint16_t exifTag)
+std::vector<IfdEntry::Ref> translateString(const RecordEntry& e, Heap& heap, CiffIfd& ifd, uint16_t exifTag)
 {
     std::string val_str = e.getString(heap);
-    return ifd.entryForString(exifTag, val_str);
+    return { ifd.entryForString(exifTag, val_str) };
 }
 
-IfdEntry::Ref translateMakeModel(const RecordEntry& e, Heap& heap, CiffIfd& ifd, uint16_t exifTag)
+std::vector<IfdEntry::Ref> translateMakeModel(const RecordEntry& e, Heap& heap, CiffIfd& ifd, uint16_t exifTag)
 {
-    return ifd.entryForString(exifTag, e.getString(heap));
+    return { ifd.entryForString(exifTag, e.getString(heap)) };
+}
+
+std::vector<IfdEntry::Ref> translateCameraSettings(const RecordEntry& e, Heap& heap, CiffIfd& ifd, uint16_t /*exifTag*/)
+{
+    std::vector<IfdEntry::Ref> entries;
+    auto count = e.count();
+    CIFF::CameraSettings settings;
+    auto file = ifd.container().file();
+    file->seek(heap.offset() + e.offset(), SEEK_SET);
+    size_t countRead = ifd.container().readUInt16Array(file, settings, count);
+    if (count != countRead) {
+        LOGERR("Not enough data for camera settings\n");
+    } else {
+        for (uint32_t i = 0; i < count; i++) {
+            switch (i) {
+            case 1: // Macro Mode
+                if (settings[i] == 1) {
+                    auto ifdentry = std::make_shared<IfdEntry>(
+                        EXIF_TAG_SUBJECT_DISTANCE_RANGE, EXIF_FORMAT_SHORT, 1,
+                        1, ifd, true);
+                    entries.push_back(ifdentry);
+                }
+                break;
+            case 4: { // Flash mode
+                uint16_t flash = 0;
+                switch (settings[i]) {
+                case 0:
+                    // off
+                    break;
+                case 1:
+                    // Auto
+                    flash = 0x19;
+                    break;
+                case 2:
+                    // on
+                    flash = 0x01;
+                    break;
+                case 3:
+                case 5:
+                    // red-eye
+                    flash = 0x41;
+                    break;
+                }
+                auto ifdentry = std::make_shared<IfdEntry>(
+                    EXIF_TAG_FLASH, EXIF_FORMAT_SHORT, 1, flash, ifd, true);
+                entries.push_back(ifdentry);
+                break;
+            }
+            case 17: { // Metering mode
+                uint16_t metering = 0;
+                switch (settings[i]) {
+                case 0: // Default
+                    break;
+                case 1: // Spot
+                    metering = 3;
+                    break;
+                case 2: // Average
+                    metering = 1;
+                    break;
+                case 3: // Evaluative
+                    metering = 5;
+                    break;
+                case 4: // Partial
+                    metering = 6;
+                    break;
+                case 5: // Center-weigthed average
+                    metering = 2;
+                    break;
+                default:
+                    break;
+                }
+                auto ifdentry = std::make_shared<IfdEntry>(
+                    EXIF_TAG_METERING_MODE, EXIF_FORMAT_SHORT, 1, metering, ifd, true);
+                entries.push_back(ifdentry);
+                break;
+            }
+            case 20: { // Exposure mode
+                uint16_t exposure = 0;
+                switch (settings[i]) {
+                case 0: // Easy
+                    break;
+                case 1: // Program AE
+                    exposure = 2;
+                    break;
+                case 2: // Shutter prio
+                    exposure = 4;
+                    break;
+                case 3: // Aperture prio
+                    exposure = 3;
+                    break;
+                case 4: // Manual
+                    exposure = 1;
+                    break;
+                case 5: // DoF
+                    exposure = 5;
+                    break;
+                case 6: // M-Dep
+                case 7: // Bulb
+                case 8: // Flexible
+                default:
+                    break;
+                }
+                auto ifdentry = std::make_shared<IfdEntry>(
+                    EXIF_TAG_METERING_MODE, EXIF_FORMAT_SHORT, 1, exposure, ifd, true);
+                entries.push_back(ifdentry);
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
+
+    return entries;
 }
 
 static const std::multimap<uint16_t, Ciff2Exif> ciff_exif_map = {
@@ -186,8 +303,8 @@ static const std::multimap<uint16_t, Ciff2Exif> ciff_exif_map = {
     { TAG_RAWMAKEMODEL, { EXIF_TAG_MODEL, OR_IFD_MAIN, &translateMakeModel } },
     { TAG_OWNERNAME, { EXIF_TAG_CAMERA_OWNER_NAME, OR_IFD_EXIF, &translateString } },
     { TAG_SERIALNUMBER, { EXIF_TAG_BODY_SERIAL_NUMBER, OR_IFD_EXIF, &translateSerial } },
-    { TAG_CAPTUREDTIME, { EXIF_TAG_DATE_TIME_ORIGINAL, OR_IFD_EXIF, &translateDate } },
-    { TAG_CAPTUREDTIME, { EXIF_TAG_DATE_TIME_DIGITIZED, OR_IFD_EXIF, &translateDate } }
+    { TAG_CAPTUREDTIME, { 0, OR_IFD_EXIF, &translateDate } },
+    { TAG_CAMERASETTINGS, { 0, OR_IFD_EXIF, &translateCameraSettings } }
 };
 
 std::vector<IfdEntry::Ref> translateRecordEntry(const RecordEntry& e, Heap& heap, CiffIfd& ifd)
@@ -213,8 +330,9 @@ std::vector<IfdEntry::Ref> translateRecordEntry(const RecordEntry& e, Heap& heap
             //       iter->second.dest);
             if (iter->second.dest == ifd.type()) {
                 if (iter->second.converter) {
-                    vec.push_back(
-                        iter->second.converter.value_ref()(e, heap, ifd, iter->second.exifTag));
+                    auto values =
+                        iter->second.converter.value_ref()(e, heap, ifd, iter->second.exifTag);
+                    vec.insert(vec.end(), values.begin(), values.end());
                 } else {
                     vec.push_back(
                         std::make_shared<IfdEntry>(
