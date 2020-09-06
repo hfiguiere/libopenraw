@@ -1,7 +1,7 @@
 /*
- * libopenraw - endiantutils.h
+ * libopenraw - endianutils.hpp
  *
- * Copyright (C) 2006 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,8 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_ENDIANUTILS_H_
-#define OR_INTERNALS_ENDIANUTILS_H_
+#pragma once
 
 #define EL16(b) \
   ((b)[0] | ((b)[1] << 8))
@@ -33,6 +32,14 @@
 #define BE32(b) \
   ((b)[3] | ((b)[2] << 8) | ((b)[1] << 16) | ((b)[0] << 24))
 
+#ifdef __APPLE__
+
+// Linux and BSD have these.
+// macOS need its own.
+
+#include <libkern/OSByteOrder.h>
+
+#define htobe16(x) OSSwapHostToBigInt16(x)
+#define htole16(x) OSSwapHostToLittleInt16(x)
 
 #endif
-

@@ -19,6 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include "endianutils.hpp"
 #include "ifd.hpp"
 #include "ciffifd.hpp"
 #include "ciffcontainer.hpp"

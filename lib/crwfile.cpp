@@ -21,7 +21,6 @@
 
 #include <fcntl.h>
 #include <stddef.h>
-#include <endian.h>
 #include <cstdint>
 #include <algorithm>
 #include <functional>
