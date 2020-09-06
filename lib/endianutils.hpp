@@ -42,4 +42,8 @@
 #define htobe16(x) OSSwapHostToBigInt16(x)
 #define htole16(x) OSSwapHostToLittleInt16(x)
 
+#else
+
+#include <endian.h>
+
 #endif
