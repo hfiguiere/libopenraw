@@ -5,9 +5,22 @@ New features:
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
+  - Added Pentax K-7 (DNG), K5 II (DNG), *-ist DL2*, K110D*, K5 II*, K3*,
+    K3 II*, K-S1*.
+  - Added Leica Monochrom M Typ-246 (DNG), D-LUX 4*.
+  - Added XIAOYI YDXJ-2 and YIAC-3 (DNG).
+  - Added Nikon Z5*.
+  - Added Sony A7SIII*.
+  - Added Canon PowerShot S30*, S40*, S45*, S50*, S60*, S70*, S100V*, Pro70.
+  - Added Hasselblad L1D-20c (DNG).
+  - Added Panasonic S5.
+
   - Epson R-D1, R-D1s: extract the 640 pixel preview.
-  - Panasonic: extract the Exif thumbnail
+  - Panasonic: extract the Exif thumbnail, get bit per channel, CFA pattern.
   - Olympus, Nikon, Pentax: extract the MakerNote preview.
+  - Pentax: Extract the active area and white level when available.
+  - Sony: files properly identified. A390 treated as a A380.
+  - Canon CRW: synthesize Exif metadata.
 
 Changes:
 
@@ -25,7 +38,14 @@ Changes:
 
 Internal Changes:
 
-  - Added LOGASSERT()
+  - Added LOGASSERT().
+  - Use model ID when available (Sony, Pentax) instead of strings.
+  - Testsuite list the tests that are not run.
+  - You can run any testsuite.
+
+Bug fixes:
+
+  - Panasonic: fix the active area, the bpc and the CFA pattern type.
 
 libopenraw 0.2.3 - 2020/08/09
 
