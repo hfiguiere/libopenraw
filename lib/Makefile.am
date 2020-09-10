@@ -24,7 +24,7 @@ EXTRA_DIST = libopenraw.sym io/testfile.tmp \
 update_tags:
 	$(srcdir)/exif/exif-tags.pl > $(srcdir)/exif/exif_tags.cpp
 
-pkgconfig_DATA = libopenraw-0.2.pc
+pkgconfig_DATA = libopenraw-0.3.pc
 
 TESTS = teststream
 
