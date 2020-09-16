@@ -31,8 +31,7 @@ TESTS = teststream
 check_PROGRAMS = teststream
 
 teststream_SOURCES = io/teststream.cpp
-teststream_LDFLAGS = -static
-teststream_LDADD = libopenraw.la
+teststream_LDADD = libopenraw_internals.la
 
 BUILT_SOURCES = mp4/mp4parse.h
 CLEANFILES = mp4/mp4parse.h
@@ -86,6 +85,7 @@ noinst_HEADERS = \
 	$(NULL)
 
 lib_LTLIBRARIES = libopenraw.la
+noinst_LTLIBRARIES = libopenraw_internals.la
 
 if DEBUG
 CARGO_RELEASE_ARGS=
@@ -112,16 +112,8 @@ clean-local:
 libopenraw_la_LDFLAGS = \
 	-version-info @LIBOPENRAW_VERSION_INFO@ \
 	-lpthread -ldl
-libopenraw_la_LIBADD = -ljpeg $(RUST_LIBADD)
-libopenraw_la_DEPENDENCIES = $(RUST_LIB)
+libopenraw_la_LIBADD = -ljpeg $(RUST_LIBADD) libopenraw_internals.la
 libopenraw_la_SOURCES = \
-	io/io.c io/posix_io.h \
-	io/posix_io.c io/posix_io.h \
-	io/stream.cpp io/stream.hpp \
-	io/streamclone.cpp io/streamclone.hpp \
-	io/memstream.cpp io/memstream.hpp \
-	io/file.cpp io/file.hpp \
-	io/io_private.h \
 	capi/capi.h \
 	capi/capi.cpp \
 	capi/debug.cpp \
@@ -131,6 +123,17 @@ libopenraw_la_SOURCES = \
 	capi/mosaicinfo.cpp \
 	capi/metadata.cpp \
 	capi/ifd.cpp \
+	$(NULL)
+
+libopenraw_internals_la_DEPENDENCIES = $(RUST_LIB)
+libopenraw_internals_la_SOURCES = \
+	io/io.c io/posix_io.h \
+	io/posix_io.c io/posix_io.h \
+	io/stream.cpp io/stream.hpp \
+	io/streamclone.cpp io/streamclone.hpp \
+	io/memstream.cpp io/memstream.hpp \
+	io/file.cpp io/file.hpp \
+	io/io_private.h \
 	trace.cpp \
 	bititerator.hpp \
 	bititerator.cpp \
