@@ -170,7 +170,7 @@ bool IfdFileContainer::_locateDirs(void)
         }
     } while (dir_offset != 0);
 
-    LOGDBG1("# dir found = %ld\n", m_dirs.size());
+    LOGDBG1("# dir found = %lu\n", (LSIZE)m_dirs.size());
     return (m_dirs.size() != 0);
 }
 }

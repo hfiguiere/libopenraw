@@ -26,6 +26,9 @@
 
 #include <libopenraw/debug.h>
 
+// use this to cast size_t to a format %lu
+#define LSIZE long unsigned int
+
 namespace OpenRaw {
 namespace Internals {
 class IfdDir;

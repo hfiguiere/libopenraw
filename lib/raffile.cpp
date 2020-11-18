@@ -532,7 +532,7 @@ RafFile::isXTrans(RawFile::TypeId type_) const
     uint32_t datalen = (is_compressed ? byte_size : finaldatalen);
     void *buf = data.allocData(finaldatalen);
 
-    LOGDBG2("byte_size = %lu finaldatalen = %u compressed = %u", byte_size,
+    LOGDBG2("byte_size = %lu finaldatalen = %u compressed = %u", (LSIZE)byte_size,
             finaldatalen, compressed);
 
     ret = OR_ERROR_NONE;

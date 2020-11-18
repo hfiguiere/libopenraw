@@ -162,7 +162,7 @@ canon_parse_sensorinfo(const std::vector<uint16_t>& sensor_info)
     }
     else {
         LOGWARN("SensorInfo is too small: %lu - skipping.\n",
-                sensor_info.size());
+                (LSIZE)sensor_info.size());
     }
     return OptionNone();
 }

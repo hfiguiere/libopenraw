@@ -340,7 +340,7 @@ OrfFile::~OrfFile()
     auto err = OR_ERROR_NOT_FOUND;
 
     err = IfdFile::_enumThumbnailSizes(list);
-    LOGDBG1("got %ld thumbs\n", list.size());
+    LOGDBG1("got %lu thumbs\n", (LSIZE)list.size());
 
     auto exif = exifIfd();
     if (!exif) {
@@ -359,7 +359,7 @@ OrfFile::~OrfFile()
 
     auto ifd = makerNote->getIfdInEntry(ORF_TAG_CAMERA_SETTINGS);
     if (ifd) {
-        LOGDBG1("CameraSettings %ld\n", ifd->entries().size());
+        LOGDBG1("CameraSettings %lu\n", (LSIZE)ifd->entries().size());
         uint32_t is_valid = ifd->getValue<uint32_t>(ORF_TAG_CS_PREVIEW_IMAGE_VALID).value_or(0);
         if (is_valid) {
             uint32_t start =

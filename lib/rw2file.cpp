@@ -672,7 +672,7 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref& dir, uint32_t & len
         }
     } else if (real_size < byte_length) {
         LOGWARN("Size mismatch for data: expected %u got %lu ignoring.\n",
-                byte_length, real_size);
+                byte_length, (LSIZE)real_size);
         return OR_ERROR_NOT_FOUND;
     } else {
         data.setDataType(OR_DATA_TYPE_RAW);

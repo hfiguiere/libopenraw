@@ -177,7 +177,7 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
   LOGDBG1("_enumThumbnailSizes()\n");
   std::vector<IfdDir::Ref> & dirs = m_container->directories();
 
-  LOGDBG1("num of dirs %lu\n", dirs.size());
+  LOGDBG1("num of dirs %lu\n", (LSIZE)dirs.size());
   for(auto dir : dirs)
   {
     dir->load();
@@ -396,7 +396,7 @@ _convertArrayToCfaPattern(const std::vector<uint8_t> &cfaPattern)
       // XXX don't assume this is X-Trans
       return XTransPattern::xtransPattern();
     }
-    LOGWARN("Unsupported bayer pattern of size %ld\n", cfaPattern.size());
+    LOGWARN("Unsupported bayer pattern of size %lu\n", (LSIZE)cfaPattern.size());
   } else {
     LOGDBG2("pattern is = %d, %d, %d, %d\n", cfaPattern[0],
             cfaPattern[1], cfaPattern[2], cfaPattern[3]);
@@ -690,7 +690,7 @@ IfdFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data,
   uint32_t current_offset = offset;
   Unpack unpack(x, compression);
   const size_t blocksize = (bpc == 8 ? x : unpack.block_size());
-  LOGDBG1("Block size = %lu\n", blocksize);
+  LOGDBG1("Block size = %lu\n", (LSIZE)blocksize);
   LOGDBG1("dimensions (x, y) %u, %u\n", x, y);
   std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
   size_t outsize = x * y * 2;

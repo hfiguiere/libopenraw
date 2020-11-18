@@ -733,7 +733,7 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
     // number of elements in the curve
     size_t nelems;
     nelems = m_container->readInt16(file, endian).value_or(0);
-    LOGDBG1("Num elems %ld\n", nelems);
+    LOGDBG1("Num elems %lu\n", (LSIZE)nelems);
 
     uint32_t ceiling = 1 << bpc & 0x7fff;
     uint32_t step = 0;
@@ -760,7 +760,7 @@ NefFile::_getCompressionCurve(RawData & data,  NefFile::NEFCompressionInfo& c)
     } else if (header0 != 0x46 && nelems <= 0x4001) {
         size_t num_read = m_container->readUInt16Array(file, c.curve, nelems);
         if (num_read < nelems) {
-            LOGERR("NEF: short read of %ld elements instead of %ld\n", num_read, nelems);
+            LOGERR("NEF: short read of %lu elements instead of %lu\n", (LSIZE)num_read, (LSIZE)nelems);
             return false;
         }
         ceiling = nelems;

@@ -190,7 +190,7 @@ void MRWFile::_identifyId()
                                             tnail_len);
     if (fetched != tnail_len) {
         LOGWARN("Unable to fetch all thumbnail data: %lu not %u bytes\n",
-                fetched, tnail_len);
+                (LSIZE)fetched, tnail_len);
     }
     /* Need to patch first byte. */
     ((unsigned char *)p)[0] = 0xFF;
@@ -256,14 +256,14 @@ void MRWFile::_identifyId()
                                          offset, blocksize);
             fetched += got;
             offset += got;
-            LOGDBG2("got %ld\n", got);
+            LOGDBG2("got %lu\n", (LSIZE)got);
             if (got) {
                 size_t out;
                 or_error err = unpack.unpack_be12to16(outdata, outsize,
                                                       block.get(), got, out);
                 outdata += out / 2;
                 outsize -= out;
-                LOGDBG2("unpacked %ld bytes from %ld\n", out, got);
+                LOGDBG2("unpacked %lu bytes from %lu\n", (LSIZE)out, (LSIZE)got);
                 if (err != OR_ERROR_NONE) {
                     ret = err;
                     break;
@@ -272,7 +272,7 @@ void MRWFile::_identifyId()
         } while ((got != 0) && (fetched < datalen));
     }
     if (fetched < datalen) {
-        LOGWARN("Fetched only %ld of %u: continuing anyway.\n", fetched,
+        LOGWARN("Fetched only %lu of %u: continuing anyway.\n", (LSIZE)fetched,
                 datalen);
     }
     uint16_t bpat = mc->prd->uint16_val(MRW::PRD_BAYER_PATTERN).value_or(0);

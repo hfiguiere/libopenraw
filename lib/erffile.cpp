@@ -84,7 +84,7 @@ ERFFile::~ERFFile()
     void *p = thumbnail.allocData(count);
     auto size = mnote->getEntryData(*thumb, (uint8_t*)p, count);
     if (size != count) {
-        LOGERR("Couldn't load the preview image. Read only %lu bytes, expected %d", size, count);
+        LOGERR("Couldn't load the preview image. Read only %lu bytes, expected %d", (LSIZE)size, count);
         return OR_ERROR_NOT_FOUND;
     }
 

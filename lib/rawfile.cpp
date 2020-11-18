@@ -198,7 +198,7 @@ RawFile* RawFile::newRawFile(const char* filename, RawFile::Type typeHint)
     else {
         type = typeHint;
     }
-    LOGDBG1("factory size %ld\n", RawFileFactory::table().size());
+    LOGDBG1("factory size %lu\n", (LSIZE)RawFileFactory::table().size());
     auto iter = RawFileFactory::table().find(type);
     if (iter == RawFileFactory::table().end()) {
         LOGWARN("factory not found\n");
@@ -513,7 +513,7 @@ const std::vector<uint32_t>& RawFile::listThumbnailSizes(void)
                 if (real_size < byte_length) {
                     LOGWARN("Size mismatch for data: got %lu expected %u "
                             "ignoring.\n",
-                            real_size, byte_length);
+                            (LSIZE)real_size, byte_length);
                 }
             }
         }

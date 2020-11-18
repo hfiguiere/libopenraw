@@ -228,10 +228,10 @@ RawContainer* CRWFile::getContainer() const
     std::vector<uint16_t> sensor_info;
     auto count_read = m_container->readUInt16Array(file, sensor_info, 9);
     if (count_read != 9) {
-        LOGERR("SensorInfo short read %lu.\n", count_read);
+        LOGERR("SensorInfo short read %lu.\n", (LSIZE)count_read);
         return OR_ERROR_NOT_FOUND;
     }
-    LOGDBG1("read sensor info %ld\n", count_read);
+    LOGDBG1("read sensor info %lu\n", (LSIZE)count_read);
     auto cfa_x = sensor_info[1];
     auto cfa_y = sensor_info[2];
     LOGDBG2("cfa, x %u, y %u\n", cfa_x, cfa_y);

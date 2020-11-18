@@ -110,7 +110,7 @@ void BitmapData::setDataType(BitmapData::DataType _type)
 
 void *BitmapData::allocData(const size_t s)
 {
-    LOGDBG1("allocate s=%lu data =%p\n", s, d->data);
+    LOGDBG1("allocate s=%lu data =%p\n", (LSIZE)s, d->data);
     d->data = calloc(s, 1);
     LOGDBG1(" data =%p\n", d->data);
     d->data_size = s;

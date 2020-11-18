@@ -684,7 +684,7 @@ void Cr2File::getRawBytes(RawData &data, uint32_t offset, uint32_t byte_length,
         auto result2 = _cfaIfd->getEntryArrayValue<uint16_t>(*e);
         if (result2) {
             slices = result2.value();
-            LOGDBG1("Found slice entry count %ld\n", slices.size());
+            LOGDBG1("Found slice entry count %lu\n", (LSIZE)slices.size());
         }
     }
 
