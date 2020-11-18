@@ -7,7 +7,6 @@ RUST_FILES = mp4/Cargo.lock \
 	mp4/mp4parse_capi/src/lib.rs \
 	mp4/mp4parse_capi/build.rs \
 	mp4/mp4parse_capi/Cargo.toml \
-	mp4/mp4parse_capi/Cargo.lock \
 	mp4/mp4parse/src/boxes.rs \
 	mp4/mp4parse/src/fallible.rs \
 	mp4/mp4parse/src/lib.rs \
