@@ -48,8 +48,9 @@ const char* map_ifd_type(or_ifd_dir_type type)
         return "RAW Metadata";
     case OR_IFD_SUBIFD:
         return "Sub IFD";
+    default:
+        return "INVALID";
     }
-    return "INVALID";
 }
 
 const char* map_exif_type(ExifTagType type)
@@ -79,8 +80,9 @@ const char* map_exif_type(ExifTagType type)
         return "FLOAT";
     case EXIF_FORMAT_DOUBLE:
         return "DOUBLE";
+    default:
+        return "INVALID";
     }
-    return "INVALID";
 }
 
 class ExifDump

@@ -83,9 +83,9 @@ size_t IfdEntry::typeUnitSize(IFD::ExifTagType _type)
     case IFD::EXIF_FORMAT_SRATIONAL:
     case IFD::EXIF_FORMAT_DOUBLE:
 		return 8;
+	default:
+		return 0;
 	}
-
-	return 0;
 }
 
 RawContainer::EndianType IfdEntry::endian() const
