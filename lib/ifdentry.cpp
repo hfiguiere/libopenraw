@@ -102,7 +102,7 @@ size_t IfdEntry::loadDataInto(uint8_t* dataptr, size_t data_size, off_t offset) 
 		_offset = IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data, sizeof(uint32_t));
 	}
 	_offset += m_dir.container().exifOffsetCorrection() + offset;
-	LOGDBG1("loadData: offset %lu\n", _offset);
+	LOGDBG1("loadData: offset %lld\n", (LOFFSET)_offset);
 	return m_dir.container().fetchData(dataptr, _offset, data_size);
 }
 

@@ -28,6 +28,8 @@
 
 // use this to cast size_t to a format %lu
 #define LSIZE long unsigned int
+// use this to cast off_t to a format %lld
+#define LOFFSET long long int
 
 namespace OpenRaw {
 namespace Internals {
