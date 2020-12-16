@@ -1,7 +1,7 @@
 /*
  * libopenraw - xmlhandler.cpp
  *
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,7 +21,7 @@
 
 #include <string>
 
-#include <boost/test/minimal.hpp>
+#include <boost/test/included/unit_test.hpp>
 
 #include "xmlhandler.h"
 
@@ -79,7 +79,12 @@ public:
 	std::string bar;
 };
 
-int test_main( int, char *[] )             // note the name!
+boost::unit_test::test_suite* init_unit_test_suite(int, char**)
+{
+    return nullptr;
+}
+
+BOOST_AUTO_TEST_CASE(test_xmlhandler)
 {
 	std::string dir;
 	std::string filename;
@@ -98,8 +103,6 @@ int test_main( int, char *[] )             // note the name!
 	BOOST_CHECK(std::static_pointer_cast<TestHandler>(handler)->rootFound);
 	BOOST_CHECK(std::static_pointer_cast<TestHandler>(handler)->foo == "foo");
 	BOOST_CHECK(std::static_pointer_cast<TestHandler>(handler)->bar == "bar");
-
-	return 0;
 }
 
 

@@ -106,7 +106,9 @@ AC_ARG_WITH(fink,[  --with-fink          add /sw/... to CPP/LDFLAGS (Mac OSX)],[
         fi
 ])
 
-BOOST_REQUIRE([1.33.0])
+dnl Approximate minimum version.
+dnl Feel free to adjust.
+BOOST_REQUIRE([1.60.0])
 BOOST_TEST([s])
 BOOST_STRING_ALGO
 BOOST_VARIANT

@@ -26,7 +26,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#include <boost/test/minimal.hpp>
+#include <boost/test/included/unit_test.hpp>
 
 #include "stream.hpp"
 #include "file.hpp"
@@ -36,7 +36,7 @@ using namespace OpenRaw;
 
 std::string g_testfile;
 
-int test_main (int argc, char * argv[])
+boost::unit_test::test_suite* init_unit_test_suite (int argc, char * argv[])
 {
     if (argc == 1) {
         // no argument, lets run like we are in "check"
@@ -49,6 +49,12 @@ int test_main (int argc, char * argv[])
     else {
         g_testfile = argv[1];
     }
+
+    return nullptr;
+}
+
+BOOST_AUTO_TEST_CASE(test_stream)
+{
     auto file = IO::Stream::Ptr(new IO::File(g_testfile.c_str()));
     char buf1[128];
     int ret = file->open();
@@ -111,7 +117,6 @@ int test_main (int argc, char * argv[])
     clone->close();
     delete clone;
     file->close();
-    return 0;
 }
 
 /*

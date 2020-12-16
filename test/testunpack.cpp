@@ -1,7 +1,7 @@
 /* -*- tab-width:4; indent-tabs-mode:nil; c-basic-offset:4; -*- */
 /*
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2009-2018 Hubert Figuiere
+ * Copyright (C) 2009-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,13 +19,13 @@
  */
 
 
-#include <boost/test/minimal.hpp>
+#include <boost/test/included/unit_test.hpp>
 
 #include "unpack.hpp"
 #include "ifd.hpp"
 
 
-int test_unpack()
+BOOST_AUTO_TEST_CASE(test_unpack)
 {
 	const uint8_t packed[32] = {0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF,
 								0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0x00,
@@ -53,10 +53,9 @@ int test_unpack()
 		BOOST_CHECK(unpacked[10 * i + 8] == 0x090A);
 		BOOST_CHECK(unpacked[10 * i + 9] == 0x0BCD);
 	}
-	return 0;
 }
 
-int test_unpack2()
+BOOST_AUTO_TEST_CASE(test_unpack2)
 {
 	const uint8_t packed[3] = {0x12, 0x34, 0x56};
 	uint16_t unpacked[2];
@@ -71,12 +70,9 @@ int test_unpack2()
 	BOOST_CHECK(err == OR_ERROR_NONE);
 	BOOST_CHECK(unpacked[0] == 0x0123);
 	BOOST_CHECK(unpacked[1] == 0x0456);
-	return 0;
 }
 
-int test_main( int /*argc*/, char * /*argv*/[] ) 
+boost::unit_test::test_suite* init_unit_test_suite(int, char**)
 {
-	test_unpack();
-	test_unpack2();
-	return 0;
+	return nullptr;
 }

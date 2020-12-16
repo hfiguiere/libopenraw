@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -16,11 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-
 #include <string>
 
-#include <boost/test/minimal.hpp>
+#include <boost/test/included/unit_test.hpp>
 #include <boost/crc.hpp>      // for boost::crc_basic, boost::crc_optimal
 
 #include "rawdata.hpp"
@@ -30,14 +28,13 @@
 #include "ljpegdecompressor.hpp"
 #include "ljpegdecompressor_priv.hpp"
 
-
 using OpenRaw::IO::File;
 
 std::string g_testfile;
 
 using namespace OpenRaw::Internals;
 
-int test_main(int argc, char *argv[])
+boost::unit_test::test_suite* init_unit_test_suite(int argc, char** argv)
 {
 	if (argc == 1) {
 		// no argument, lets run like we are in "check"
@@ -46,11 +43,15 @@ int test_main(int argc, char *argv[])
 		BOOST_ASSERT(srcdir != NULL);
 		g_testfile = std::string(srcdir);
 		g_testfile += "/ljpegtest1.jpg";
-	}
-	else {
+	} else {
 		g_testfile = argv[1];
 	}
+	return nullptr;
+}
 
+
+BOOST_AUTO_TEST_CASE(test_ljpeg)
+{
 	File::Ptr s(new File(g_testfile.c_str()));
 	RawContainer *container = new JfifContainer(s, 0);
 
@@ -66,7 +67,5 @@ int test_main(int argc, char *argv[])
 	BOOST_CHECK(crc_ccitt2() == 0x20cc);
 
 	delete container;
-
-	return 0;
 }
 

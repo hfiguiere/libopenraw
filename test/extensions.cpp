@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Hubert Figuiere
+ * Copyright (C) 2008-2020 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -17,29 +17,28 @@
  */
 
 #include <stdio.h>
-#include <boost/test/minimal.hpp>
+
+#include <boost/test/included/unit_test.hpp>
 
 #include "libopenraw/rawfile.h"
 
-#include <stdlib.h>
+boost::unit_test::test_suite* init_unit_test_suite(int, char**)
+{
+    return nullptr;
+}
 
-int test_main( int, char *[] )             // note the name!
+BOOST_AUTO_TEST_CASE(test_extensions)
 {
     const char **exts = or_get_file_extensions();
-    if(exts == NULL) {
-        fprintf(stderr, "extension list is NULL\n");
-        return 1;
-    }
+    BOOST_CHECK(exts);
+
     int i = 0;
-    while(*exts) {
+    while (*exts) {
         i++;
         exts++;
     }
-    if (i != 17) {
-        fprintf(stderr, "extension list has the wrong number: %d\n", i);
-        return 1;
-    }
-    return 0;
+
+    BOOST_CHECK(i == 17);
 }
 
 /*

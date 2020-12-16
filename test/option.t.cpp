@@ -1,7 +1,7 @@
 /*
  * libopenraw - option.t.cpp
  *
- * Copyright (C) 2017 Hubert Figuière
+ * Copyright (C) 2017-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,7 +19,7 @@
  */
 /** @brief unit test for option */
 
-#include <boost/test/minimal.hpp>
+#include <boost/test/included/unit_test.hpp>
 
 #include <stdlib.h>
 
@@ -27,7 +27,12 @@
 
 #include "option.hpp"
 
-int test_main( int, char *[] )             // note the name!
+boost::unit_test::test_suite* init_unit_test_suite(int, char**)
+{
+  return nullptr;
+}
+
+BOOST_AUTO_TEST_CASE(test_option)
 {
   Option<std::string> result;
 
@@ -65,7 +70,5 @@ int test_main( int, char *[] )             // note the name!
   BOOST_CHECK(!unwrapped);
   BOOST_CHECK(result.empty());
   BOOST_CHECK(result.value_or("good bye") == "good bye");
-
-  return 0;
 }
 
