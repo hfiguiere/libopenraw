@@ -1,15 +1,38 @@
 What's (visibly) new in 0.3.0
 =============================
 
-New API.
+For more details see the NEWS file.
 
-New tool.
+- Largely improved metadata extraction on various format.
+- More thumbnails are available on Panasonic RAW.
+- Fix MakerNote on Pentax and Panasonic.
+- Large number of new cameras listed.
+
+New API:
+
+- API to list and access IFD.
+- API to iterator through metaata tags.
+
+New tool:
+
+- `exifdump` allow dumping EXIF from RAW files.
+
+What's (visibly) new in 0.2.3
+=============================
+
+- Added a few more cameras.
+- Fixed previews for CR3.
 
 What's (visibly) new in 0.2.2
 =============================
 
 - ordiag now accept the flag `-D` to turn on a developer mode for the
   output.
+
+What's (visibly) new in 0.2.1
+=============================
+
+- Added a few more cameras.
 
 What's (visibly) new in 0.2.0
 =============================
