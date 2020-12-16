@@ -7,6 +7,7 @@ RUST_FILES = mp4/Cargo.lock \
 	mp4/mp4parse_capi/src/lib.rs \
 	mp4/mp4parse_capi/build.rs \
 	mp4/mp4parse_capi/Cargo.toml \
+	mp4/mp4parse_capi/Cargo.lock \
 	mp4/mp4parse/src/boxes.rs \
 	mp4/mp4parse/src/fallible.rs \
 	mp4/mp4parse/src/lib.rs \
@@ -33,7 +34,7 @@ teststream_SOURCES = io/teststream.cpp
 teststream_LDADD = libopenraw_internals.la
 
 BUILT_SOURCES = mp4/mp4parse.h
-CLEANFILES = mp4/mp4parse.h
+CLEANFILES = mp4/mp4parse.h mp4/target/CACHEDIR.TAG
 
 noinst_HEADERS = \
 	trace.hpp	\

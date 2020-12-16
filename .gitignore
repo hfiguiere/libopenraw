@@ -54,7 +54,6 @@ testsuite/testsuite
 testsuite/*.log
 testsuite/*.trs
 
-lib/mp4/mp4parse_capi/Cargo.lock
 lib/mp4/mp4parse/tests/bipbop_cbcs_audio_init.mp4
 lib/mp4/mp4parse/tests/bipbop_cbcs_video_init.mp4
 lib/mp4/mp4parse/tests/metadata.mp4
