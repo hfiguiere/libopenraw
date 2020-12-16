@@ -427,6 +427,11 @@ static const BuiltinColourMatrix s_matrices[] = {
       128,
       0,
       { 6912, -2127, -469, -4470, 12175, 2587, -398, 1478, 6492 } },
+
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7C),
+      128,
+      0,
+      { 7374, -2389, -551, -5435, 13162, 2519, -1006, 1795, 6552 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE9),
       128,
       0,
