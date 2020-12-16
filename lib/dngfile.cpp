@@ -42,6 +42,8 @@ using namespace Debug;
 namespace OpenRaw {
 namespace Internals {
 
+// The model here is definitely the "Model" tag, not the "UniqueModelId"
+// One day this will be a problem.
 const IfdFile::camera_ids_t DngFile::s_def[] = {
     { "PENTAX 645Z        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_645Z_DNG) },
@@ -198,6 +200,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                       OR_TYPEID_GOPRO_HERO7_BLACK) },
     { "HERO8 Black", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_GOPRO,
                                       OR_TYPEID_GOPRO_HERO8_BLACK) },
+    { "ZX1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ZEISS,
+                                       OR_TYPEID_ZEISS_ZX1) },
     { 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE,
                              OR_TYPEID_ADOBE_DNG_GENERIC) }
 };
@@ -328,6 +332,7 @@ void DngFile::_identifyId()
 
         // It's an error to not find the mainIfd()
         if (!_mainIfd) {
+            LOGERR("No main IFD to identify.\n");
             return;
         }
 
