@@ -7,13 +7,17 @@ New features:
 
   - Added Pentax K-7 (DNG), K5 II (DNG), *-ist DL2*, K110D*, K5 II*, K3*,
     K3 II*, K-S1*.
-  - Added Leica Monochrom M Typ-246 (DNG), D-LUX 4*.
+  - Added Leica Monochrom M Typ-246 (DNG), D-LUX 4*, Q2-Monochrom (DNG) and
+    SL2-S (DNG).
   - Added XIAOYI YDXJ-2 and YIAC-3 (DNG).
-  - Added Nikon Z5*.
-  - Added Sony A7SIII*.
-  - Added Canon PowerShot S30*, S40*, S45*, S50*, S60*, S70*, S100V*, Pro70.
+  - Added Nikon Z5*, Z6 2* and Z7 2*.
+  - Added Sony A7SIII*, A7C*.
+  - Added Canon PowerShot S30*, S40*, S45*, S50*, S60*, S70*, S100V*, Pro70,
+    EOS 850 D / Rebel T8i / KISS X10i*.
   - Added Hasselblad L1D-20c (DNG).
-  - Added Panasonic S5.
+  - Added Panasonic S5*.
+  - Added Zeiss ZS1 (DNG).
+  - Added Fujifilm FinePix S100FS*, X-S10*.
 
   - Epson R-D1, R-D1s: extract the 640 pixel preview.
   - Panasonic: extract the Exif thumbnail, get bit per channel, CFA pattern.
