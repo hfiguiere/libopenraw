@@ -320,8 +320,7 @@ RawFile::identifyIOBuffer(IO::Stream::Ptr& stream, RawFile::Type& _type)
         }
         if (len >= 8) {
             stream->seek(0, SEEK_SET);
-            std::unique_ptr<Internals::TiffEpFile> f(
-                new Internals::TiffEpFile(stream, OR_RAWFILE_TYPE_TIFF));
+            auto f = std::make_unique<Internals::TiffEpFile>(stream, OR_RAWFILE_TYPE_TIFF);
 
             // Take into account DNG by checking the DNGVersion tag
             const MetaValue* dng_version =
@@ -540,7 +539,7 @@ void RawFile::_addThumbnail(uint32_t size, Internals::ThumbDesc&& desc)
     uint32_t matrix_size = 0;
     if (!rawdata.getColourMatrix1(matrix_size) || !matrix_size) {
         matrix_size = colourMatrixSize();
-        std::unique_ptr<double[]> matrix(new double[matrix_size]);
+        auto matrix = std::make_unique<double[]>(matrix_size);
         if (getColourMatrix1(matrix.get(), matrix_size) == OR_ERROR_NONE) {
             rawdata.setColourMatrix1(matrix.get(), matrix_size);
         }

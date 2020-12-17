@@ -438,9 +438,8 @@ IfdDir::Ref RafFile::_locateMainIfd()
         }
         uint32_t jpeg_size = result.value();
 
-        IO::Stream::Ptr s(std::make_shared<IO::StreamClone>(jpegPreview->file(),
-                                                            jpeg_offset));
-        std::unique_ptr<JfifContainer> thumb(new JfifContainer(s, 0));
+        auto s = std::make_shared<IO::StreamClone>(jpegPreview->file(), jpeg_offset);
+        auto thumb = std::make_unique<JfifContainer>(s, 0);
 
         if (thumb->getDimensions(x, y)) {
             uint32_t size = std::max(x, y);

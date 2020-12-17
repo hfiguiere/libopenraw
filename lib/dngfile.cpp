@@ -268,11 +268,10 @@ DngFile::getColourMatrixOrigin() const
     if (result && (result.value() == IFD::COMPRESS_LJPEG)) {
         // if the option is not set, decompress
         if ((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-            IO::Stream::Ptr s(
-                std::make_shared<IO::MemStream>((const uint8_t*)data.data(),
-                                                data.size()));
+            auto s = std::make_shared<IO::MemStream>((const uint8_t*)data.data(),
+                                                     data.size());
             s->open(); // TODO check success
-            std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+            auto jfif = std::make_unique<JfifContainer>(s, 0);
             LJpegDecompressor decomp(s.get(), jfif.get());
             RawDataPtr dData = decomp.decompress();
             if (dData) {

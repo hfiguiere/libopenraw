@@ -630,7 +630,7 @@ void Cr2File::getRawBytes(RawData &data, uint32_t offset, uint32_t byte_length,
       IO::Stream::Ptr s(new IO::MemStream((const uint8_t*)data.data(),
                                           data.size()));
       s->open(); // TODO check success
-      std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+      auto jfif = std::make_unique<JfifContainer>(s, 0);
       LJpegDecompressor decomp(s.get(), jfif.get());
       // in fact on Canon CR2 files slices either do not exists
       // or is 3.

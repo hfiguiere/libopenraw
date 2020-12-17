@@ -242,7 +242,7 @@ bool Test::testRawType(const std::string & result)
     fseek(f, 0, SEEK_END);
     off_t len = ftell(f);
     fseek(f, 0, SEEK_SET);
-    unique_ptr<uint8_t[]> buff(new uint8_t[len]);
+    auto buff = std::make_unique<uint8_t[]>(len);
     int res = fread(buff.get(), 1, len, f);
     fclose(f);
     if (res == len) {

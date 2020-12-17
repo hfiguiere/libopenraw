@@ -196,7 +196,7 @@ RawContainer *Cr3File::getContainer() const
         auto dim = std::max(x, y);
         if (dim) {
             list.push_back(dim);
-            std::unique_ptr<BitmapData> data(new BitmapData);
+            auto data = std::make_unique<BitmapData>();
             data->setDimensions(x, y);
             data->setDataType(OR_DATA_TYPE_JPEG);
             void* p = data->allocData((*craw_header).thumbnail.length);

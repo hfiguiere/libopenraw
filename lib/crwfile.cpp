@@ -156,7 +156,7 @@ CRWFile::~CRWFile()
         m_x = m_y = 0;
         uint32_t offset = heap->offset() + iter->second.offset();
         IO::StreamClone::Ptr s(new IO::StreamClone(m_io, offset));
-        std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+        auto jfif = std::make_unique<JfifContainer>(s, 0);
 
         jfif->getDimensions(m_x, m_y);
         LOGDBG1("JPEG dimensions x=%d y=%d\n", m_x, m_y);
@@ -258,8 +258,7 @@ RawContainer* CRWFile::getContainer() const
 
         // decompress if we need
         if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-            std::unique_ptr<IO::Stream> s(
-                new IO::MemStream((const uint8_t*)data.data(), data.size()));
+            auto s = std::make_unique<IO::MemStream>((const uint8_t*)data.data(), data.size());
             s->open(); // TODO check success
 
             CrwDecompressor decomp(s.get(), m_container);

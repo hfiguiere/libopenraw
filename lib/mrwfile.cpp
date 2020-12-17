@@ -246,7 +246,7 @@ void MRWFile::_identifyId()
     } else {
         Unpack unpack(x, IFD::COMPRESS_NONE);
         size_t blocksize = unpack.block_size();
-        std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
+        auto block = std::make_unique<uint8_t[]>(blocksize);
         uint16_t* outdata = (uint16_t*)data.data();
         size_t outsize = finaldatalen;
         size_t got;

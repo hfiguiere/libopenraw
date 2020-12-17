@@ -136,7 +136,7 @@ void IfdFile::_identifyId()
   auto err = OR_ERROR_NOT_FOUND;
   LOGDBG1("fetching JPEG\n");
   IO::Stream::Ptr s = std::make_shared<IO::StreamClone>(m_io, offset);
-  std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+  auto jfif = std::make_unique<JfifContainer>(s, 0);
 
   uint32_t x, y;
   x = y = 0;
@@ -274,9 +274,8 @@ IfdFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
           _type = OR_DATA_TYPE_JPEG;
           LOGDBG1("looking for JPEG at %u\n", offset);
           if (x == 0 || y == 0) {
-            IO::Stream::Ptr s(std::make_shared<IO::StreamClone>(
-                                m_io, offset));
-            std::unique_ptr<JfifContainer> jfif(new JfifContainer(s, 0));
+            auto s =std::make_shared<IO::StreamClone>(m_io, offset);
+            auto jfif = std::make_unique<JfifContainer>(s, 0);
             if (jfif->getDimensions(x,y)) {
               LOGDBG1("JPEG dimensions x=%u y=%u\n", x, y);
             }
@@ -692,7 +691,7 @@ IfdFile::_unpackData(uint16_t bpc, uint32_t compression, RawData & data,
   const size_t blocksize = (bpc == 8 ? x : unpack.block_size());
   LOGDBG1("Block size = %lu\n", (LSIZE)blocksize);
   LOGDBG1("dimensions (x, y) %u, %u\n", x, y);
-  std::unique_ptr<uint8_t[]> block(new uint8_t[blocksize]);
+  auto block = std::make_unique<uint8_t[]>(blocksize);
   size_t outsize = x * y * 2;
   uint16_t* outdata = (uint16_t*)data.allocData(outsize);
   size_t got;

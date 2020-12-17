@@ -546,7 +546,7 @@ Rw2File::getJpegContainer(const IfdDir::Ref& dir, uint32_t& offset, uint32_t& si
         LOGDBG1("Jpeg offset: %u\n", m_jfif_offset);
 
         IO::Stream::Ptr s(new IO::StreamClone(m_io, m_jfif_offset));
-        m_jfif = std::unique_ptr<JfifContainer>(new JfifContainer(s, 0));
+        m_jfif = std::make_unique<JfifContainer>(s, 0);
     }
     offset = m_jfif_offset;
     size = m_jfif_size;
@@ -575,8 +575,8 @@ Rw2File::getJpegContainer(const IfdDir::Ref& dir, uint32_t& offset, uint32_t& si
             auto toffset = result.value();
             LOGDBG1("toffset %u\n", toffset);
             uint32_t tnail_offset = offset + toffset + jfif->exifOffset();
-            IO::Stream::Ptr s(std::make_shared<IO::StreamClone>(m_io, tnail_offset));
-            std::unique_ptr<JfifContainer> tnail(new JfifContainer(s, 0));
+            auto s = std::make_shared<IO::StreamClone>(m_io, tnail_offset);
+            auto tnail = std::make_unique<JfifContainer>(s, 0);
 
             uint32_t x = 0;
             uint32_t y = 0;
