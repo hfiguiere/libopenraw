@@ -4,7 +4,7 @@ SUBDIRS = include
 if BUILD_GNOME_SUPPORT
 GNOME_TARGETS = libopenrawgnome.la
 GDK_PIXBUF_PLUGIN = libopenraw_pixbuf.la
-PKG_CONFIG_FILES = libopenraw-gnome-0.2.pc
+PKG_CONFIG_FILES = libopenraw-gnome-0.3.pc
 endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/include \
