@@ -3,6 +3,7 @@ What's (visibly) new in 0.3.0
 
 For more details see the NEWS file.
 
+- Now requires a C++14 capable compiler to build.
 - Largely improved metadata extraction on various format.
 - More thumbnails are available on Panasonic RAW.
 - Fix MakerNote on Pentax and Panasonic.

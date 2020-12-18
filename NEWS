@@ -1,4 +1,4 @@
-libopenraw 0.3.0 -
+libopenraw 0.3.0 - 2020/12/18
 
 New features:
 
@@ -42,6 +42,7 @@ Changes:
 
 Internal Changes:
 
+  - Use std::make_unique<>: requires C++14 to compile.
   - Added LOGASSERT().
   - Use model ID when available (Sony, Pentax) instead of strings.
   - Testsuite list the tests that are not run.
