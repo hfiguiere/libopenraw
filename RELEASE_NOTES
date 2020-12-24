@@ -1,3 +1,8 @@
+What's (visibly) new in 0.3.1
+=============================
+
+- Fixes to the release notes for 0.3.0
+
 What's (visibly) new in 0.3.0
 =============================
 
@@ -7,16 +12,25 @@ For more details see the NEWS file.
 - Largely improved metadata extraction on various format.
 - More thumbnails are available on Panasonic RAW.
 - Fix MakerNote on Pentax and Panasonic.
-- Large number of new cameras listed.
+- 24 new cameras listed.
 
-New API:
+API changes:
 
-- API to list and access IFD.
-- API to iterator through metaata tags.
+- ORCfaPatternRef has been renamed to ORMosaicInfoRef.
+  In consequence, or_cfapattern_*() is renamed to or_mosaicinfo_*().
+  or_rawdata_get_mosaicinfo() replaces or_rawdata_get_cfa_pattern().
+- NEW or_ifd_release() to release ORIfdDirRef.
+- NEW or_ifd_get_name() and or_ifd_get_type() to get the name if an
+  entry in the IFD and the type if the IFD repectively
+- or_rawfile_get_ifd() support more types
+- NEW or_ifd_dir_type is the new type IFD types and enum values have
+  been rename.
+- NEW or_iterator_*() to iterate through the metadata tags.
+  NEW or_metavalue_get_count() to get the count in the metadata.
 
 New tool:
 
-- `exifdump` allow dumping EXIF from RAW files.
+- `exifdump` allow dumping EXIF from RAW files to assist development.
 
 What's (visibly) new in 0.2.3
 =============================

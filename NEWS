@@ -54,6 +54,7 @@ Internal Changes:
 Bug fixes:
 
   - Panasonic: fix the active area, the bpc and the CFA pattern type.
+  - Issue #4: Test can be run with --disable-static.
 
 libopenraw 0.2.3 - 2020/08/09
 
