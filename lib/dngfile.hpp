@@ -36,6 +36,15 @@ class RawData;
 
 namespace Internals {
 
+/** @defgroup dng_parsing DNG parsing
+ * @ingroup ifd_parsing
+ *
+ * @brief DNG file parsing.
+ *
+ * @{
+ */
+
+/** @brief DNG file */
 class DngFile
     : public TiffEpFile
 {
@@ -51,13 +60,20 @@ public:
     DngFile & operator=(const DngFile&) = delete;
 
 
+    /** @inherit */
     virtual or_colour_matrix_origin getColourMatrixOrigin() const override;
 
-    /** DNG specific for now: check if file is Cinema DNG. */
+    /** @brief Tell if a file is Cinema DNG.
+     *
+     * DNG specific for now.
+     */
     bool isCinema() const;
 protected:
+    /** @inherit */
     virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t>& list) override;
+    /** @inherit */
     virtual ::or_error _getRawData(RawData & data, uint32_t options) override;
+    /** @inherit */
     virtual void _identifyId() override;
 
 private:

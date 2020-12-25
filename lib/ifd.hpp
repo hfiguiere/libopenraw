@@ -28,12 +28,19 @@
 
 namespace OpenRaw {
 namespace Internals {
+
+/** @addtogroup ifd_parsing
+ * @{
+ */
+
+/** @brief IFD namespace */
 namespace IFD {
 
 #define INCLUDE_EXIF_
 #include "libopenraw/exif.h"
 #undef INCLUDE_EXIF_
 
+/** @brief Component colour from CFA. Duplicate of or_cfa_pattern_colour */
 typedef enum {
     CFA_RED = 0,
     CFA_GREEN = 1,
@@ -44,17 +51,19 @@ typedef enum {
     CFA_WHITE = 6
 } CfaComponent;
 
+/** @brief TIFF compression */
 typedef enum {
-    COMPRESS_NONE = 1,
-    COMPRESS_JPEG = 6,
+    COMPRESS_NONE = 1, /**< No compression */
+    COMPRESS_JPEG = 6, /**< JPEG compression */
     COMPRESS_LJPEG = 7, /**< Lossless JPEG, see DNG */
     COMPRESS_ARW = 32767, /**< Sony ARW compression */
-    COMPRESS_NIKON_PACK = 32769,
-    COMPRESS_NIKON_QUANTIZED = 34713,
+    COMPRESS_NIKON_PACK = 32769, /**< Nikon packed */
+    COMPRESS_NIKON_QUANTIZED = 34713, /**< Nikon quantized */
     COMPRESS_CUSTOM = 65535, /**< The value everybody seems to use */
-    COMPRESS_OLYMPUS = 65536
+    COMPRESS_OLYMPUS = 65536 /**< Olympus compression */
 } TiffCompress;
 
+/** @brief Convert an ORRational to a double */
 inline
 double to_double(const ORRational& r)
 {
@@ -64,6 +73,7 @@ double to_double(const ORRational& r)
     return (double)r.num / (double)r.denom;
 }
 
+/** @brief Convert an ORSRational to a double */
 inline
 double to_double(const ORSRational& r)
 {
@@ -74,6 +84,9 @@ double to_double(const ORSRational& r)
 }
 
 }
+
+/** @} */
+
 }
 }
 /*

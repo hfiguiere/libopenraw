@@ -74,21 +74,23 @@ public:
     RawFile(const RawFile&) = delete;
     RawFile & operator=(const RawFile &) = delete;
 
-    /** return a NULL terminated list of file extensions
-     * that the library handle. This is purely informational.
+    /** @brief Return a NULL terminated list of file extensions
+     * that the library handle.
+     *
+     * This is purely informational.
      * @return a pointer the list, NULL terminated. The pointer is
      * owned by the library.
      */
     static const char **fileExtensions();
 
-    /** factory method to create the proper RawFile instance.
+    /** @brief Factory method to create the proper RawFile instance.
      * @param _filename the name of the file to load
      * @param _typeHint a hint on the type. Use UNKNOWN_TYPE
      * if you want to let the library detect it for you.
      */
     static RawFile *newRawFile(const char*_filename,
                                Type typeHint = OR_RAWFILE_TYPE_UNKNOWN);
-    /** factory method to create the proper RawFile instance
+    /** @brief Factory method to create the proper RawFile instance
      *  from content
      * @param buffer the buffer to examine.
      * @param len the number of bytes in the length.
@@ -98,12 +100,12 @@ public:
     static RawFile *newRawFileFromMemory(const uint8_t *buffer, uint32_t len,
                                          Type typeHint = OR_RAWFILE_TYPE_UNKNOWN);
 
-    /** Destructor */
+    /** @brief Destructor */
     virtual ~RawFile();
-    /** Accessor for the type */
+    /** @brief Accessor for the type */
     Type type() const;
 
-    /** The RAW file type ID. Identify it if needed.
+    /** @brief The RAW file type ID. Identify it if needed.
      *  @todo figure how to make this const.
      */
     TypeId typeId();
@@ -112,31 +114,31 @@ public:
     // standard api, like get thumbnail
     // and get exif.
 
-    /** list the available thumbnail sizes
+    /** @brief List the available thumbnail sizes
      */
     const std::vector<uint32_t> & listThumbnailSizes(void);
-    /** Get the thumbnail from the raw file
+    /** @brief Get the thumbnail from the raw file
      * @param size the square size in px
-     * @param thumbnail the thumbnail to extract into
+     * @param [out] thumbnail the thumbnail to extract into
      * @return the error code
      */
     ::or_error getThumbnail(uint32_t size, Thumbnail & thumbnail);
 
-    /** Get the RAW data
+    /** @brief Get the RAW data
      * @param rawdata the RawData to put the data into
      * @param options the option bits defined by %or_options
      * @return the error code
      */
     ::or_error getRawData(RawData & rawdata, uint32_t options);
 
-    /** Get the rendered image
+    /** @brief Get the rendered image
      * @param bitmapdata the BitmapData to put the image into
      * @param options the option bits. Pass 0 for now.
      * @return the error code
      */
     ::or_error getRenderedImage(BitmapData & bitmapdata, uint32_t options);
 
-    /** Get the orientation of the image, using Exif enums.
+    /** @brief Get the orientation of the image, using Exif enums.
      */
     uint32_t getOrientation();
 
@@ -145,7 +147,7 @@ public:
      */
     uint32_t colourMatrixSize();
 
-    /** Get colour matrix
+    /** @brief Get colour matrix
      * @param index The matrix index.
      * @param [out] matrix pointer to array of %size double.
      * @param size the size of the buffer. On out the actual size. If it is too
@@ -155,14 +157,14 @@ public:
     ::or_error getColourMatrix1(double* matrix, uint32_t& size);
     ::or_error getColourMatrix2(double* matrix, uint32_t& size);
 
-    /** Get calibration illuminant that match the colour matrix.
+    /** @brief Get calibration illuminant that match the colour matrix.
      * @return the Exif value. 0 = unknown. Likely not found.
      */
     ExifLightsourceValue getCalibrationIlluminant1();
     ExifLightsourceValue getCalibrationIlluminant2();
 
     /**
-     * Get the origin of the colour matrix for the RAW file
+     * @brief Get the origin of the colour matrix for the RAW file
      * @return value of `or_colour_matrix_origin`
      */
     virtual or_colour_matrix_origin getColourMatrixOrigin() const;
@@ -186,17 +188,17 @@ protected:
         const uint32_t type_id;
     };
     /**
-     * Construct a raw file
+     * @brief Construct a raw file
      * @param _type the type
      */
     RawFile(Type _type);
 
-    /** Helper to get the TypeId from the map
+    /** @brief Helper to get the TypeId from the map
      * @return the TypeId or 0
      */
     static RawFile::TypeId modelid_to_typeid(const std::map<uint32_t, RawFile::TypeId>& model_map,
                                              uint32_t model_id);
-    /** Get the vendor camera ID location.
+    /** @brief Get the vendor camera ID location.
      * @param ifd the IfdDir where it is.
      * @param index the value index in the IfdDir.
      * @param model_map a point to the model map. Can't be null.
@@ -204,41 +206,41 @@ protected:
      */
     virtual bool vendorCameraIdLocation(Internals::IfdDir::Ref& ifd, uint16_t& index,
                                         const Internals::ModelIdMap*& model_map);
-    /** Set the file type id */
+    /** @brief Set the file type id */
     void _setTypeId(TypeId _type_id);
-    /** Just get the type id value. No identification.
-     *  You might want to use %typeId() in the general case.
+    /** @brief Just get the type id value. No identification.
+     *  You might want to use typeId() in the general case.
      */
     TypeId _typeId() const;
 
-    /** Get the container. */
+    /** @brief Get the container. */
     virtual Internals::RawContainer* getContainer() const = 0;
 
-    /** enumerate the thumbnail sizes.
+    /** @brief Enumerate the thumbnail sizes.
      * @param list the list to enumerate into
      * @return OR_ERROR_NONE if success
      */
     virtual ::or_error _enumThumbnailSizes(std::vector<uint32_t> &list) = 0;
 
-    /** get the thumbnail of exact size.
+    /** @brief Get the thumbnail of exact size.
      * @param size the size in pixel of the square
-     * @retval thumbnail the thumbnail to load
+     * @param [out] thumbnail the thumbnail to load
      * @return OR_ERROR_NONE if success
-     * @seealso listThumbnailSizes() to understand how to fetch the sizes
+     * @see listThumbnailSizes() to understand how to fetch the sizes
      * available
      */
     virtual ::or_error _getThumbnail(uint32_t size, Thumbnail & thumbnail);
     void _addThumbnail(uint32_t size, Internals::ThumbDesc&& desc);
 
-    /** get the RAW data
-     * @param data the RAW data
-     * @param option the option bits
+    /** @brief Get the RAW data
+     * @param data The RAW data
+     * @param option The option bits
      * @return OR_ERROR_NONE if success
      * Return the data compressed or uncompressed.
      */
     virtual ::or_error _getRawData(RawData & data, uint32_t options) = 0;
 
-    /** get the colour matrix.
+    /** @brief Get the colour matrix.
      * @param index 1 or 2
      */
     virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);

@@ -39,10 +39,15 @@
 namespace OpenRaw {
 namespace Internals {
 
+/** @addtogroup ifd_parsing
+ * @{
+ */
+
 typedef or_ifd_dir_type IfdDirType;
 
 class IfdFileContainer;
 
+/** @brief An IFD directory */
 class IfdDir {
 public:
     typedef std::weak_ptr<IfdDir> WeakRef;
@@ -66,21 +71,22 @@ public:
     bool isPrimary() const;
     bool isThumbnail() const;
 
-    /** return the offset */
+    /** @brief Return the offset */
     off_t offset() const { return m_offset; }
     const RawContainer& container() const { return m_container; }
     RawContainer& container() { return m_container; }
 
-    /** load the directory to memory
+    /** @brief Load the directory to memory
+     *
      * The only reason you'd want to override is to synthesize an IFD from
      * non-IFD.
      * @return true on success.
      */
     virtual bool load();
-    /** return the number of entries*/
+    /** @brief Return the number of entries*/
     int numTags() { return m_entries.size(); }
     IfdEntry::Ref getEntry(uint16_t id) const;
-    /** Direct access to the entries */
+    /** @brief Direct access to the entries */
     const Entries& entries() const
         {
             return m_entries;
@@ -89,13 +95,13 @@ public:
         {
             return m_endian;
         }
-    /** Set the endian for the IFD. By default it's the same as the container */
+    /** @brief Set the endian for the IFD. By default it's the same as the container */
     void setEndian(RawContainer::EndianType _endian)
         {
             m_endian = _endian;
         }
 
-    /** Get a T value from an entry
+    /** @brief Get a T value from an entry
      * @param id the IFD field id
      * @return an Option<T> containing the value or none.
      */
@@ -114,36 +120,37 @@ public:
         return Option<T>();
     }
 
-    /** Get an loosely typed integer value from an entry.
+    /** @brief Get an loosely typed integer value from an entry.
+     *
      * This method is  preferred over getLongValue()
      * or getShortValue() unless you really want the strong
-     * typing that IFD structure provide
+     * typing that IFD structure provide.
      * @param id the IFD field id
      * @return an Option<uint32_t> containing the value or none.
      */
     Option<uint32_t> getIntegerValue(uint16_t id);
 
-    /** get the offset of the next IFD
+    /** @brief Get the offset of the next IFD
      * in absolute
      */
     off_t nextIFD();
 
-    /** get the SubIFD at index idx.
+    /** @brief Get the SubIFD at index idx.
      * @return Ref to the new IfdDir if found
      */
     Ref getSubIFD(uint32_t idx = 0) const;
 
-    /** get all SubIFDs
+    /** @brief Get all SubIFDs
      * @return an option of ifds the list of IFDs Ref
      */
     Option<std::vector<IfdDir::Ref>> getSubIFDs();
 
-    /** get the Exif IFD.
+    /** @brief Get the Exif IFD.
      * @return Ref to the new IfdDir if found
      */
     Ref getExifIFD();
 
-    /** get the MakerNote IFD.
+    /** @brief Get the MakerNote IFD.
      * @param file_type the file type as a hint
      * @return Ref to the new MakerNoteDir if found
      */
@@ -153,19 +160,19 @@ public:
         {
             m_tag_table = &tag_table;
         }
-    /** Return the tag name for tag
+    /** @brief Return the tag name for tag
      * @return a static string or nullptr if not found.
      */
     const char* getTagName(uint32_t tag) const;
 
-    /** Get the entry value as an array */
+    /** @brief Get the entry value as an array */
     template <typename T>
     Option<std::vector<T>> getEntryArrayValue(IfdEntry& e) const;
-    /** Get the typed entry value */
+    /** @brief Get the typed entry value */
     template<typename T>
     T getEntryValue(IfdEntry& e, uint32_t idx = 0, bool ignore_type = false) const;
 
-    /** Copy the enty data. Endian is ignored. Suite for bytes, undefined, etc
+    /** @brief Copy the enty data. Endian is ignored. Suite for bytes, undefined, etc
      * @param e the entry
      * @param buffer the buffer
      * @param buffersize the size of the buffer in bytes. Will copy at most this.
@@ -173,14 +180,14 @@ public:
      */
     size_t getEntryData(IfdEntry& e, uint8_t* buffer, size_t buffersize) const;
 
-    /** Return the integer value at index. It will coerce the type.
+    /** @brief Return the integer value at index. It will coerce the type.
      * @param e the IFD entry
      * @param idx the index
      * @return the integer value or 0.
      */
     uint32_t getEntryIntegerArrayItemValue(IfdEntry& e, int idx) const;
 
-    /** Make a meta value out of the IFD entry.
+    /** @brief Make a meta value out of the IFD entry.
      * @return a %MetaValue or nullptr. Must be freed.
      */
     MetaValue* makeMetaValue(IfdEntry& e) const;
@@ -197,7 +204,7 @@ private:
 };
 
 
-/** get the array values of type T
+/** @brief Get the array values of type T
  * @param T the type of the value needed
  * @param array the storage
  * @throw whatever is thrown
@@ -220,7 +227,7 @@ Option<std::vector<T>> IfdDir::getEntryArrayValue(IfdEntry& entry) const
     return OptionNone();
 }
 
-/** get the value of type T
+/** @brief Get the value of type T
  * @param T the type of the value needed
  * @param idx the index, by default 0
  * @param ignore_type if true, don't check type. *DANGEROUS* Default is false.
@@ -257,6 +264,6 @@ T IfdDir::getEntryValue(IfdEntry& e, uint32_t idx, bool ignore_type) const
     return val;
 }
 
-
+/** @} */
 }
 }

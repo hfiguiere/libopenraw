@@ -31,9 +31,13 @@
 namespace OpenRaw {
 namespace Internals {
 
+/** @addtogroup ifd_parsing
+ * @{
+ */
 
-/** This is for TIFF EP conformant files. This include DNG, NEF,
- *  ERF
+/** @brief TIFF.EP conformant files.
+ *
+ * A more strict TIFF file. This includes DNG, NEF, ERF.
  */
 class TiffEpFile
     : public IfdFile
@@ -43,8 +47,10 @@ public:
 
 protected:
 
+    /** @inherit */
     virtual IfdDir::Ref  _locateCfaIfd() override;
 };
 
+/** @} */
 }
 }

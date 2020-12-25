@@ -41,9 +41,13 @@ class MetaValue;
 class RawData;
 
 namespace Internals {
+/** @addtogroup ifd_parsing
+ * @{
+ */
+
 class IfdFileContainer;
 
-/** @brief generic IFD based raw file. */
+/** @brief A generic IFD (TIFF) based raw file. */
 class IfdFile : public OpenRaw::RawFile {
 #if defined(IN_TESTSUITE)
 public:
@@ -55,7 +59,7 @@ protected:
             bool instantiateContainer = true);
     virtual ~IfdFile();
 
-    /** list the thumbnails in the IFD
+    /** @brief List the thumbnails in the IFD
      * @retval list the list of thumbnails
      * @return the error code. OR_ERROR_NOT_FOUND if no
      * thumbnail are found.
@@ -63,24 +67,23 @@ protected:
     virtual ::or_error _enumThumbnailSizes(
         std::vector<uint32_t> &list) override;
 
-    /** Add a thumbnail from a stream
+    /** @brief Add a thumbnail from a stream
      * @param offset the offset in the IO stream
      * @param len the length of the data
      */
     ::or_error _addThumbnailFromStream(uint32_t offset, uint32_t len,
                                        std::vector<uint32_t>& list);
-    /**
-     * Add the thumbnai found in the IFDEntry
+    /** @brief Add the thumbnail found in the IfdEntry
      * @param offset is the offset for MakerNote. Pass 0 if not.
      * @param list the thumbnail list to add to.
      */
     ::or_error _addThumbnailFromEntry(const IfdEntry::Ref& e, off_t offset,
                                       std::vector<uint32_t>& list);
 
-    /** locate the thumnail in the IFD
+    /** @brief Locate the thumnail in the IFD
      * @param dir the IfdDir where to locate the thumbnail
      * @return the error code. OR_ERROR_NOT_FOUND if the
-     * thumbnail are not found.
+     * thumbnails are not found.
      */
     virtual ::or_error _locateThumbnail(const IfdDir::Ref &dir,
                                         std::vector<uint32_t> &list);
@@ -91,7 +94,8 @@ protected:
      */
     ::or_error _getRawDataFromDir(RawData &data, const IfdDir::Ref &dir);
 
-    /** Get the JPEG thumbnail offset from dir.
+    /** @brief Get the JPEG thumbnail offset from dir.
+     *
      * @param dir the IFD to get the thumbnail from
      * @param len the length of the JPEG stream. 0 is not valid.
      * @return the offset. 0 is not valid.
@@ -102,24 +106,31 @@ protected:
     IO::Stream::Ptr m_io;          /**< the IO handle */
     IfdFileContainer *m_container; /**< the real container */
 
+    /** @inherit */
     virtual RawContainer *getContainer() const override;
 
+    /** @inherit */
     virtual IfdDir::Ref _locateCfaIfd() override;
+    /** @inherit */
     virtual IfdDir::Ref _locateMainIfd() override;
 
+    /** @inherit */
     virtual void _identifyId() override;
 
+    /** @inherit */
     virtual MetaValue *_getMetaValue(int32_t meta_index) override;
 
-    /** Translate the compression type from the tiff type (16MSB)
+    /** @brief Translate the compression type from the tiff type (16MSB)
      * to the RAW specific type if needed (16MSB)
+     *
      * @param tiffCompression the 16 bits value from TIFF
      * @return the actually value. Anything >= 2^16 is specific the RAW type
      */
     virtual uint32_t _translateCompressionType(
         IFD::TiffCompress tiffCompression);
 
-    /** Unpack the data
+    /** @brief Unpack the data
+     *
      * @param bpc bits per components
      * @param compression the compression type
      * @param x the width
@@ -132,8 +143,9 @@ protected:
                                    RawData &data, uint32_t x, uint32_t y,
                                    uint32_t offset, uint32_t byte_length);
 
+    /** @inherit */
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
-    // call to decrompress if needed from _getRawData()
+    /** @brief Call to decompress if needed from _getRawData() */
     virtual ::or_error _decompressIfNeeded(RawData &, uint32_t);
 
 private:
@@ -141,6 +153,7 @@ private:
     IfdFile(const IfdFile &) = delete;
     IfdFile &operator=(const IfdFile &) = delete;
 };
+/** @} */
 }
 }
 

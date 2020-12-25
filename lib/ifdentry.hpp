@@ -42,11 +42,14 @@ class MetaValue;
 
 namespace Internals {
 
+/** @addtogroup ifd_parsing
+ * @{
+ */
 class IfdDir;
 
 class IfdEntry;
 
-/** Describe and IFDType */
+/** @brief Describe an IFD type */
 template <typename T>
 struct IfdTypeTrait
 {
@@ -191,10 +194,11 @@ inline IFD::ORSRational IfdTypeTrait<IFD::ORSRational>::BE(const uint8_t* b, siz
     return r;
 }
 
+/** @brief An entry in the IfdDir. */
 class IfdEntry
 {
 public:
-	/** Ref (ie shared pointer) */
+	/** @brief IfdEntry reference (ie shared pointer) */
 	typedef std::shared_ptr<IfdEntry> Ref;
 
 	IfdEntry(uint16_t _id, int16_t _type, int32_t _count, uint32_t _data,
@@ -210,14 +214,15 @@ public:
 			return m_type;
 		}
 
-	/** the count of items in the entry */
+	/** @brief The count of items in the entry. */
 	uint32_t count() const noexcept
 		{
 			return m_count;
 		}
 
-	/** the offset of the data. It can just be the value
-	 * if the entry is self contained.
+	/** @brief The offset of the data.
+	 *
+	 *  It can just be the value if the entry is self contained.
 	 */
 	off_t offset() noexcept
 		{
@@ -229,7 +234,7 @@ public:
 
 	RawContainer::EndianType endian() const;
 
-	/** return the raw data pointer */
+	/** @brief Return the raw data pointer */
 	const uint8_t* dataptr() const
 		{
 			if (m_dataptr == nullptr) {
@@ -240,11 +245,12 @@ public:
 		}
 
 	/**
-	 * Unit size for type
+	 * @brief Unit size for type
 	 */
 	static size_t typeUnitSize(IFD::ExifTagType _type);
-	/** load the data for the entry if m_loaded is false
-	 * if all the data fits in m_data, it will keep it there
+	/** @brief Load the data for the entry if m_loaded is false
+	 *
+	 * If all the data fits in m_data, it will keep it there
 	 * it will set m_loaded in case of success.
 	 * @param unit_size the size of 1 unit of data
 	 * @param offset offset from the begining of the container. Usually 0.
@@ -257,7 +263,7 @@ private:
 	uint16_t m_id;
 	uint16_t m_type;
 	uint32_t m_count;
-	uint32_t m_data; /**< raw data without endian conversion */
+	uint32_t m_data; /**< @brief raw data without endian conversion */
 	bool m_loaded;
 	uint8_t *m_dataptr;
 	const IfdDir& m_dir;
@@ -268,6 +274,7 @@ private:
 
 };
 
+/** @} */
 }
 }
 /*

@@ -101,11 +101,11 @@ typedef enum {
     _OR_CFA_PATTERN_INVALID
 } or_cfa_pattern;
 
-/** CFA colour components */
+/** @brief CFA colour components */
 typedef enum {
-    OR_PATTERN_COLOUR_RED = 0,
-    OR_PATTERN_COLOUR_GREEN = 1,
-    OR_PATTERN_COLOUR_BLUE = 2
+    OR_PATTERN_COLOUR_RED = 0, /**< Red */
+    OR_PATTERN_COLOUR_GREEN = 1, /**< Green */
+    OR_PATTERN_COLOUR_BLUE = 2 /** Blue */
 } or_cfa_pattern_colour;
 
 /** @brief Options */
