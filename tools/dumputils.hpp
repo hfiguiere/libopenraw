@@ -25,5 +25,14 @@
 
 #include <libopenraw/libopenraw.h>
 
+/** @defgroup tools Tools
+ * @brief Tools for libopenraw
+ * @{
+ */
+
+/** @brief Return a string for the raw file type */
 std::string typeToString(or_rawfile_type t);
+/** @brief Dump raw file info */
 void dump_file_info(std::ostream& out, ORRawFileRef rf, bool dev_mode);
+
+/** @} */

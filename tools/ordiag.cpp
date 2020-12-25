@@ -36,14 +36,21 @@
 
 #include "dumputils.hpp"
 
+/** @addtogroup tools
+ * @{
+ */
+
 /**
- * Dump on RawFile. (functor)
+ * @brief Dump a RawFile. (functor)
  */
 class OrDiag
 {
 public:
-    /** constructor
-     * @param out the output stream
+    /** @brief Constructor
+     * @param out The output stream
+     * @param extract_thumbs If "all" extract all thumbnails, otherwise try
+     *   to guess the size.
+     * @param dev_mode If true the output format for devlopment.
      */
     OrDiag(std::ostream & out, const std::string & extract_thumbs, bool dev_mode)
         : m_out(out)
@@ -154,7 +161,8 @@ public:
             return "Invalid";
         }
 
-    /** Extract thumbnail to a file
+    /** @brief Extract thumbnail to a file
+     * @return The filename. If empty, nothing was done.
      */
     std::string extractThumb(ORThumbnailRef thumb)
         {
@@ -196,7 +204,7 @@ public:
             return name;
         }
 
-    /** dump the previews of the raw file to mout
+    /** @brief Dump the previews of the raw file to the output stream.
      */
     void dumpPreviews(ORRawFileRef rf)
         {
@@ -514,6 +522,8 @@ int main(int argc, char **argv)
 
     return 0;
 }
+
+/** @} */
 /*
   Local Variables:
   mode:c++

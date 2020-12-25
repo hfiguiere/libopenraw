@@ -23,8 +23,6 @@
 
 #include "dumputils.hpp"
 
-/** return a string for the raw file type
- */
 std::string typeToString(or_rawfile_type t)
 {
     switch(t) {
