@@ -31,6 +31,8 @@
 
 /** @defgroup raw_file_api RawFile API
  * @ingroup public_api
+ *
+ * @brief Decode the raw file
  * @{
  */
 

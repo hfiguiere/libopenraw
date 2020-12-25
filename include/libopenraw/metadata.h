@@ -33,6 +33,8 @@
 
 /** @defgroup metadata_api Metadata API
  * @ingroup public_api
+ *
+ * @brief Access to the metadata
  * @{
  */
 #ifdef __cplusplus

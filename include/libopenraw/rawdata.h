@@ -35,6 +35,8 @@
 
 /** @defgroup rawdata_api RawData API
  * @ingroup public_api
+ *
+ * @brief Access the raw data.
  * @{
  */
 #ifdef __cplusplus

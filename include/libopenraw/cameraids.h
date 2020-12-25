@@ -29,6 +29,9 @@
 
 /** @defgroup camera_id Camera IDs
  * @ingroup public_api
+ *
+ * @brief The vendor and camera IDs.
+ *
  * @{
  */
 
@@ -36,7 +39,7 @@
 extern "C" {
 #endif
 
-/** @brief The vendor ID: the high order 16-bits of the %or_rawfile_typeid
+/** @brief The vendor ID: the high order 16-bits of the or_rawfile_typeid
  */
 enum _OR_TYPE_ID_VENDOR {
     OR_TYPEID_VENDOR_NONE = 0,
@@ -52,8 +55,7 @@ enum _OR_TYPE_ID_VENDOR {
     OR_TYPEID_VENDOR_RICOH = 10,
     OR_TYPEID_VENDOR_PANASONIC = 11,
     OR_TYPEID_VENDOR_MAMIYA = 12,
-    /* not really a camera vendor. For the converter. */
-    OR_TYPEID_VENDOR_ADOBE = 13,
+    OR_TYPEID_VENDOR_ADOBE = 13, /**< Generic DNG files. */
     OR_TYPEID_VENDOR_FUJIFILM = 14,
     OR_TYPEID_VENDOR_BLACKMAGIC = 15,
     OR_TYPEID_VENDOR_XIAOYI = 16,
@@ -463,6 +465,7 @@ enum _OR_TYPEID_VENDOR_MINOLTA {
     _OR_TYPEID_MINOLTA_LAST
 };
 
+/** @brief Olympus type IDs */
 enum _OR_TYPEID_VENDOR_OLYMPUS {
     OR_TYPEID_OLYMPUS_UNKNOWN = 0,
     OR_TYPEID_OLYMPUS_E1,
@@ -520,6 +523,7 @@ enum _OR_TYPEID_VENDOR_OLYMPUS {
     _OR_TYPEID_OLYMPUS_LAST
 };
 
+/** @brief Samsung type IDs */
 enum _OR_TYPEID_VENDOR_SAMSUNG {
     OR_TYPEID_SAMSUNG_UNKNOWN = 0,
     OR_TYPEID_SAMSUNG_GX10,
@@ -527,6 +531,10 @@ enum _OR_TYPEID_VENDOR_SAMSUNG {
     _OR_TYPEID_SAMSUNG_LAST
 };
 
+/** @brief Ricoh type IDs
+ *
+ * Following the merger with Pentax newer cameras may be Pentax.
+ */
 enum _OR_TYPEID_VENDOR_RICOH {
     OR_TYPEID_RICOH_UNKNOWN = 0,
     OR_TYPEID_RICOH_GR2 = 1,
@@ -541,6 +549,7 @@ enum _OR_TYPEID_VENDOR_RICOH {
     _OR_TYPEID_RICOH_LAST
 };
 
+/** @brief Sony type IDs */
 enum _OR_TYPEID_VENDOR_SONY {
     OR_TYPEID_SONY_UNKNOWN = 0,
     OR_TYPEID_SONY_A100 = 1,
@@ -630,6 +639,7 @@ enum _OR_TYPEID_VENDOR_SONY {
     _OR_TYPEID_SONY_LAST
 };
 
+/** @brief Panasonic type IDs */
 enum _OR_TYPEID_VENDOR_PANASONIC {
     OR_TYPEID_PANASONIC_UNKNOWN = 0,
     OR_TYPEID_PANASONIC_GF1 = 1,
@@ -721,6 +731,7 @@ enum _OR_TYPEID_VENDOR_PANASONIC {
     _OR_TYPEID_PANASONIC_LAST
 };
 
+/** @brief Fujifilm type IDs */
 enum _OR_TYPEID_VENDOR_FUJIFILM {
     OR_TYPEID_FUJIFILM_UNKNOWN = 0,
     OR_TYPEID_FUJIFILM_F700 = 1,

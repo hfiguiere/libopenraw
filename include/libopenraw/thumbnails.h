@@ -33,6 +33,8 @@
 
 /** @defgroup thumbnails_api Thumbnail API
  * @ingroup public_api
+ *
+ * @brief Access the thumbnails
  * @{
  */
 #ifdef __cplusplus

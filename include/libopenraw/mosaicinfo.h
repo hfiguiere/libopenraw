@@ -28,6 +28,8 @@
 
 /** @defgroup mosaicinfo_api Mosaic Info API
  * @ingroup public_api
+ *
+ * @brief Access to the mosaic info
  * @{
  */
 #ifdef __cplusplus
