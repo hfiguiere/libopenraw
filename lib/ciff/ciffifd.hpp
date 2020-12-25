@@ -36,11 +36,18 @@ class CiffIfd
 {
 public:
     CiffIfd(CRWFile& ciff, RawContainer& container, IfdDirType _type);
+    /** Synthesize an IFD entry for a string value
+     * @param id the id for the entry
+     * @param str the string value
+     * @return the IFD entry reference.
+     */
     IfdEntry::Ref entryForString(uint16_t id, const std::string& str) const;
 protected:
+     /** The containing file */
     CRWFile& m_file;
 };
 
+/** IFD that will synthesize the entries for main. */
 class CiffMainIfd
     : public CiffIfd
 {
@@ -49,6 +56,7 @@ public:
     virtual bool load() override;
 };
 
+/** IFD that will synthesize the entries for the Exif. */
 class CiffExifIfd
     : public CiffIfd
 {

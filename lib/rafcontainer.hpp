@@ -32,10 +32,15 @@ namespace OpenRaw {
 
 namespace Internals {
 
+/** @addtogroup fujifilm
+ * @{
+ */
+
 class JfifContainer;
 class IfdFileContainer;
 class RafMetaContainer;
-	
+
+/** @brief Directory offsets */
 struct RafOffsetDirectory
 {
 	// 36 bytes skipped
@@ -46,13 +51,14 @@ struct RafOffsetDirectory
 	uint32_t cfaOffset;
 	uint32_t cfaLength;
 };
-	
+
+/** @brief Container for RAF */
 class RafContainer
 	: public RawContainer
 {
 public:
 	RafContainer(const IO::Stream::Ptr &_file);
-	/** destructor */
+	/** @brief Destructor */
 	virtual ~RafContainer();
 
 	const std::string & getModel();
@@ -81,12 +87,13 @@ private:
 	std::string m_model;
 	uint32_t m_version;
 	RafOffsetDirectory m_offsetDirectory;
-	
+
 	JfifContainer * m_jpegPreview;
 	IfdFileContainer * m_cfaContainer;
 	RafMetaContainer * m_metaContainer;
 };
 
+/** @} */
 }
 }
 

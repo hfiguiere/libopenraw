@@ -21,10 +21,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @brief Define IFD values like fields ID and types
- */
-
 #pragma once
 
 #include <stdint.h>

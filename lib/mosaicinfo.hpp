@@ -1,7 +1,7 @@
 /*
  * libopenraw - mosaicinfo.h
  *
- * Copyright (C) 2012-2019 Hubert Figuière
+ * Copyright (C) 2012-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,20 +25,21 @@
 
 namespace OpenRaw {
 
+/** @brief Info on the mosaic for the Colour Filter Array */
 class MosaicInfo
 {
 public:
   virtual ~MosaicInfo();
 
-  /** Set the pattern size */
+  /** @brief Set the pattern size */
   void setSize(uint16_t x, uint16_t y);
-  /** Get the pattern size */
+  /** @brief Get the pattern size */
   void getSize(uint16_t &x, uint16_t &y) const;
 
-  /** Return of the mosaic is a Color Filter Array */
+  /** @brief Return of the mosaic is a Color Filter Array */
   bool isCFA() const;
 
-  /** Return if the pattern is 2x2 RGB */
+  /** @brief Return if the pattern is 2x2 RGB */
   bool is2by2Rgb() const;
 
   /**
@@ -48,7 +49,7 @@ public:
   ::or_cfa_pattern patternType() const;
   const uint8_t* patternPattern(uint16_t& count) const;
 
-  /** factory to return a singleton instance of the right pattern
+  /** @brief Factory to return a singleton instance of the right pattern
    *  @return a const MosaicInfo. Never delete it. MAY BE NULL.
    */
   static const MosaicInfo* twoByTwoPattern(::or_cfa_pattern);
@@ -57,7 +58,7 @@ protected:
   MosaicInfo();
   MosaicInfo(::or_cfa_pattern pattern, uint16_t width, uint16_t height);
 
-  /** Set the pattern pattern.
+  /** @brief Set the pattern pattern.
    * @param pattern the actual pattern sequence left to right,
    *  top to bottom
    * @param count the number of element. Should be width x height

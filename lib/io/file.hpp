@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - file.h
+ * libopenraw - file.hpp
  *
- * Copyright (C) 2006-2016 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -32,7 +32,7 @@
 namespace OpenRaw {
 namespace IO {
 
-/** file IO stream */
+/** @brief File IO stream */
 class File : public Stream {
 public:
     /** Contruct the file

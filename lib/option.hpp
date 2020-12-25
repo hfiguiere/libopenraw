@@ -19,15 +19,29 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-// an option<> template class inspired by Rust
+// @file an option<> template class inspired by Rust
 
 #pragma once
 
 #include <stdexcept>
 
+/** @addtogroup internals
+ * @{ */
+
+/** @brief Tag class to help create an empty Option.
+ *
+ * @code
+ * Option<T> returnOption()
+ * {
+ *   // Will return an Option<> that is empty.
+ *   return OptionNone();
+ * }
+ * @endcode
+ */
 class OptionNone {
 };
 
+/** @brief An option type inspired by Rust */
 template<class T>
 class Option
 {
@@ -112,8 +126,11 @@ private:
   T m_data;
 };
 
+/** @brief Create an Option<T> is some value */
 template<class T> Option<T>
 option_some(T&& value)
 {
   return Option<T>(std::move(value));
 }
+
+/** @} */

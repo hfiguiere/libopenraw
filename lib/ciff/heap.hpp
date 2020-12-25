@@ -50,15 +50,18 @@ public:
     Heap(off_t start, off_t length, const CIFFContainer* container);
 
     Heap(const Heap &) = delete;
+    /** Move constructor */
     Heap(Heap&&) = default;
     Heap & operator=(const Heap &) = delete;
 
+    /** Return the records from the heap. Load them as needed. */
     RecordEntries& records();
+    /** Return the containing container */
     const CIFFContainer* container() const
         {
             return m_container;
         }
-    /** Eeturn the offset from the begining of the container. */
+    /** Return the offset from the begining of the container. */
     off_t offset() const
         {
             return m_start;
@@ -72,19 +75,23 @@ private:
     RecordEntries m_records;
 };
 
-/** Heap Header of CIFF file*/
+/** Header of heap CIFF file
+ */
 class HeapFileHeader
 {
 public:
+    /** Read the header from the container
+     * @return false in case of error.
+     */
     bool readFrom(CIFFContainer *);
-    char       byteOrder[2];/* 'MM' for Motorola,'II' for Intel */
-    uint32_t   headerLength;/* length of header (in bytes) */
-    char       type[4];
-    char       subType[4];
-    uint32_t   version; /* higher word: 0x0001, Lower word: 0x0002 */
-    //uint32_t   reserved1;
-    //uint32_t   reserved2;
-    RawContainer::EndianType endian;
+    char       byteOrder[2]; /**< byte order 'MM' for Motorola,'II' for Intel */
+    uint32_t   headerLength; /**< length of header (in bytes) */
+    char       type[4]; /**< File type. Value is 'heap' */
+    char       subType[4]; /**< Sub type. */
+    uint32_t   version; /**< version higher word: 0x0001, Lower word: 0x0002. */
+    /* uint32_t   reserved1; */
+    /* uint32_t   reserved2; */
+    RawContainer::EndianType endian; /**< The endian, based on %byteOrder */
 };
 
 }

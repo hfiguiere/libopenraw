@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - mrwcontainer.h
+ * libopenraw - mrwcontainer.hpp
  *
- * Copyright (C) 2006-2015 Hubert Figuiere
+ * Copyright (C) 2006-2020 Hubert Figuière
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -44,11 +44,13 @@ namespace MRW {
 
 const int DataBlockHeaderLength = 8; /* Number of bytes in a block header. */
 
-/** Represents an MRW Data Block.
+/** @brief Represents an MRW Data Block.
  */
 class DataBlock {
 public:
+    /** Shared pointer to %DataBlock */
     typedef std::shared_ptr<DataBlock> Ref;
+    /** Vector of shared pointer to %DataBlock */
     typedef std::vector<Ref> RefVec;
 
     /** Construct a datablock from a location in the container
@@ -90,9 +92,10 @@ public:
      * data block.
      */
     Option<uint16_t> uint16_val(off_t offset);
-
+    /** Return a string value at offset bytes fro the start of the data block */
     Option<std::string> string_val(off_t offset);
 
+    /** Return if the data block was loaded. */
     bool loaded() const { return m_loaded; }
 
 private:

@@ -25,6 +25,7 @@
 
 namespace OpenRaw {
 
+/** @brief Represent some bitmap data. */
 class BitmapData
 {
 public:
@@ -33,29 +34,29 @@ public:
 	BitmapData();
 	virtual ~BitmapData();
 
-	/** swap the two objects data. */
+	/** @brief Swap the two objects data. */
 	void swap(BitmapData & with);
 
-	/** return the data type */
+	/** @brief Get the data type */
 	DataType dataType() const;
-	/** set the data type */
+	/** @brief Set the data type */
 	void setDataType(DataType _type);
 
 	virtual void *allocData(const size_t s);
-	/** return the size of the data */
+	/** @brief Get the size of the data */
 	size_t size() const;
 	void *data() const;
 
-	/** width of the image data */
+	/** @brief Width of the image data */
 	uint32_t width() const;
-	/** height of the image data */
+	/** @brief Height of the image data */
 	uint32_t height() const;
-	/** bit per channel */
+	/** @brief Bit per channel */
 	uint32_t bpc() const;
-	/** set bit per channel */
+	/** @brief Set bit per channel */
 	void setBpc(uint32_t _bpc);
 
-	/** set the pixel dimensions of the bitmap */
+	/** @brief Set the pixel dimensions of the bitmap */
 	virtual void setDimensions(uint32_t x, uint32_t y);
 
 private:

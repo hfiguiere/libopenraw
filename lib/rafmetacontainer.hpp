@@ -35,6 +35,11 @@ namespace OpenRaw {
 
 namespace Internals {
 
+/** @addtogroup fujifilm
+ * @{
+ */
+
+/** @brief RAF tags */
 enum {
     RAF_TAG_INVALID = 0,
     RAF_TAG_SENSOR_DIMENSION = 0x100, // the RAW dimensions
@@ -46,6 +51,7 @@ enum {
     _RAF_TAG_LAST
 };
 
+/** @brief Metadata value for RAF files */
 class RafMetaValue {
 public:
     typedef std::shared_ptr<RafMetaValue> Ref;
@@ -62,6 +68,7 @@ private:
     MetaValue m_value;
 };
 
+/** @brief RAF metadata container */
 class RafMetaContainer : public RawContainer {
 public:
     RafMetaContainer(const IO::Stream::Ptr &_file);
@@ -74,6 +81,9 @@ private:
     uint32_t m_count;
     std::map<uint16_t, RafMetaValue::Ref> m_tags;
 };
+
+/** @} */
+
 }
 }
 

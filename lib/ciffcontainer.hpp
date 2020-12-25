@@ -19,11 +19,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @brief CIFF is the container for CRW files. It is an attempt from Canon to
- * make this a standard. I guess it failed.
- */
-
 #pragma once
 
 #include <stddef.h>
@@ -45,6 +40,10 @@ namespace Internals {
 
 class CIFFContainer;
 
+/**
+ * @brief CIFF is the container for CRW files. It is an attempt from Canon to
+ * make this a standard. I guess it failed.
+ */
 namespace CIFF {
 
 /** tags for the CIFF records.
@@ -110,6 +109,9 @@ class Heap;
 
 typedef std::vector<uint16_t> CameraSettings;
 
+/**
+ * ImageSpec struct from CIFF.
+ */
 class ImageSpec
 {
 public:
@@ -127,20 +129,22 @@ public:
      * @param container the container to read from.
      */
     bool readFrom(off_t offset, CIFFContainer *container);
+    /** Return the EXIF orientation (EXIF value).
+     */
     int32_t exifOrientation() const;
 
-    uint32_t imageWidth;
-    uint32_t imageHeight;
-    uint32_t /*float32*/pixelAspectRatio;
-    int32_t rotationAngle;
-    uint32_t componentBitDepth;
-    uint32_t colorBitDepth;
-    uint32_t colorBW;
+    uint32_t imageWidth; /**< Width (horizantal) in pixel. */
+    uint32_t imageHeight; /**< Height (vertical) in pixel. */
+    uint32_t /*float32*/pixelAspectRatio; /**< Pixel aspect ratio. */
+    int32_t rotationAngle; /**< Rotation angle in degrees. */
+    uint32_t componentBitDepth; /**< bit depth per component. */
+    uint32_t colorBitDepth; /**< bit depth for colour. */
+    uint32_t colorBW;  /**< colorr or B&W. See CIFF spec. */
 };
 
 
 
-} // namespace CIFF
+} /* namespace CIFF */
 
 /** CIFF container
  * as described by the CIFF documentation

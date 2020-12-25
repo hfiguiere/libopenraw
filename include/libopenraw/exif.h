@@ -24,13 +24,16 @@
 #error Cannot include exif.h directly
 #endif
 
+/** @addtogroup public_api
+ * @{
+ */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
 /** IFD Exif Tag
- * Taken from libexif
+ * @note Taken from libexif
  */
 typedef	enum {
 	EXIF_TAG_INTEROPERABILITY_INDEX		= 0x0001,
@@ -262,9 +265,9 @@ typedef enum {
 	EV_LIGHTSOURCE_OTHER       = 255
 } ExifLightsourceValue;
 
-/** type for Exif field/tag
-    taken from libexif
-*/
+/** Type for Exif field/tag
+ * @note taken from libexif
+ */
 typedef enum {
     EXIF_FORMAT_BYTE       =  1,
     EXIF_FORMAT_ASCII      =  2,
@@ -281,17 +284,20 @@ typedef enum {
     EXIF_FORMAT_INVALID = 13
 } ExifTagType;
 
+/** @brief Unsigned rational as a fraction */
 typedef struct {
-    uint32_t num;
-    uint32_t denom;
+    uint32_t num; /**< Numerator */
+    uint32_t denom; /**< Denominator */
 } ORRational;
 
+/** @brief Signed rational as a fraction */
 typedef struct {
-    int32_t num;
-    uint32_t denom;
+    int32_t num; /**< Numerator (carry the sign) */
+    uint32_t denom; /**< Denominator */
 } ORSRational;
 
 #ifdef __cplusplus
 }
 #endif
 
+/** @} */

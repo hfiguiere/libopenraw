@@ -30,8 +30,16 @@
 #include "rawcontainer.hpp"
 #include "io/stream.hpp"
 
+/** @addtogroup fujifilm
+ * @{
+ */
+
+/// @brief The RAF MAGIC string.
 #define RAF_MAGIC "FUJIFILMCCD-RAW "
+/// @brief The length of the MAGIC strinng.
 #define RAF_MAGIC_LEN 16
+
+/** @} */
 
 namespace OpenRaw {
 
@@ -40,8 +48,12 @@ class MetaValue;
 
 namespace Internals {
 
+/** @addtogroup fujifilm
+ * @{
+ */
 class RafContainer;
 
+/** @brief Fujifilm RAF file */
 class RafFile : public OpenRaw::RawFile {
     template<typename T>
     friend void audit_coefficients();
@@ -85,5 +97,7 @@ private:
 
     static const RawFile::camera_ids_t s_def[];
 };
+
+/** @} */
 }
 }

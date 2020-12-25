@@ -1,7 +1,7 @@
 /*
  * libopenraw - mosaicinfo.h
  *
- * Copyright (C) 2016-2019 Hubert Figuière
+ * Copyright (C) 2016-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,24 +26,42 @@
 
 #include <libopenraw/consts.h>
 
+/** @defgroup mosaicinfo_api Mosaic Info API
+ * @ingroup public_api
+ * @{
+ */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/** @brief A MosaicInfo object */
 typedef const struct _MosaicInfo *ORMosaicInfoRef;
 
+/** @brief Set the size of the mosaic */
 void or_mosaicinfo_set_size(ORMosaicInfoRef pattern, uint16_t x, uint16_t y);
+/** @brief Get the size of the mosaic */
 void or_mosaicinfo_get_size(ORMosaicInfoRef pattern, uint16_t *x, uint16_t *y);
 
+/** @brief Get the type of the mosaic */
 or_cfa_pattern or_mosaicinfo_get_type(ORMosaicInfoRef);
 
-const uint8_t *or_mosaicinfo_get_pattern(ORMosaicInfoRef pattern, uint16_t * count);
+/** @brief Get the pattern.
+ *
+ * This will return an array of %or_cfa_pattern_colour indicating the individual colours
+ * of the mosaic colour filter array.
+ *
+ * @param pattern The %MosaicInfo
+ * @param [out] count the size of the array returned.
+ * @return The pattern. The pointer is owned by the %MosaicInfo object.
+ */
+const uint8_t* or_mosaicinfo_get_pattern(ORMosaicInfoRef pattern, uint16_t* count);
 
 
 #ifdef __cplusplus
 }
 #endif
 
+/** @} */
 #endif
 
 

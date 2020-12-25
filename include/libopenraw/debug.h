@@ -21,24 +21,29 @@
 #ifndef LIBOPENRAW_DEBUG_H_
 #define LIBOPENRAW_DEBUG_H_
 
+/** @addtogroup public_api
+ *
+ * @{
+ */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	typedef enum _debug_level {
-		ERROR = 0,
-		WARNING,
-		NOTICE,
-		DEBUG1,
-		DEBUG2
-	} debug_level;
+    /** @brief Debug levels. */
+    typedef enum _debug_level {
+        ERROR = 0,
+        WARNING,
+        NOTICE,
+        DEBUG1,
+        DEBUG2
+    } debug_level;
 
-
-	void or_debug_set_level(debug_level lvl);
-
+    /** @brief Set the debug level. */
+    void or_debug_set_level(debug_level lvl);
 
 #ifdef __cplusplus
 }
 #endif
+/** @} */
 
 #endif

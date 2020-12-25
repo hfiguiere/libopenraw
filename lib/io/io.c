@@ -1,7 +1,7 @@
 /*
  * libopenraw - io.c
  *
- * Copyright (C) 2005-2014 Hubert Figuiere
+ * Copyright (C) 2005-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -33,11 +33,9 @@ extern "C" {
 #define CHECK_PTR(p,r) \
 	if(p == NULL) { return r; }
 
-/** get the default io methods instance 
-
-  @fixme currently hardcoded to POSIX
-  @return the default io_methods instance, currentlty posix_io_methods
-*/
+/**
+ * @todo currently hardcoded to POSIX
+ */
 struct io_methods* get_default_io_methods(void)
 {
 	return &posix_io_methods;

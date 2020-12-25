@@ -1,7 +1,7 @@
 /*
  * libopenraw - thumbnail.h
  *
- * Copyright (C) 2005-2007 Hubert Figuiere
+ * Copyright (C) 2005-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,24 +26,23 @@
 
 namespace OpenRaw {
 
-/** real thumbnail extracted */
-	class Thumbnail 
+/** @brief Represent a thumbnail */
+	class Thumbnail
 		: public BitmapData
 	{
 	public:
 		Thumbnail();
 		virtual ~Thumbnail();
 
-		/** quick and dirty "get this thumbnail" 
-		 * @param _filename the filename
-		 * @param preferred_size the size of the thumbnail
+		/** @brief Quick and dirty "get this thumbnail"
+		 * @param filename The filename to get the thumbnail from
+		 * @param preferred_size The size of the thumbnail.
 		 * @retval err the error code
-		 * @return a Thumbnail object. Callers own it and must delete it.
+		 * @return a Thumbnail object. Caller owns it and must delete it.
 		 */
 		static Thumbnail *
-		getAndExtractThumbnail(const char *_filename,
-													 uint32_t preferred_size,
-													 ::or_error & err);
+		getAndExtractThumbnail(const char* filename,
+                                       uint32_t preferred_size, ::or_error & err);
 
 	private:
 

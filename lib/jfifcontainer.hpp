@@ -19,10 +19,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @brief a JPEG container
- */
-
 #pragma once
 
 #include <stdint.h>
@@ -47,6 +43,9 @@ namespace Internals {
 
 class IfdFileContainer;
 
+/**
+ * @brief a JPEG container
+ */
 class JfifContainer
   : public RawContainer
 {

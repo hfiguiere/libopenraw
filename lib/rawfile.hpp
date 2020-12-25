@@ -29,6 +29,17 @@
 #include "ifddir.hpp"
 #include "makernotedir.hpp"
 
+/** @defgroup internals libopenraw Internals
+ *
+ * The libopenraw internals include the C++ API that is bound by
+ * the public C API.
+ *
+ * @{
+ */
+/** @brief Global namespace for libopenraw
+ *
+ * This namespace exposes the C++ API that the C API will bind.
+ */
 namespace OpenRaw {
 
 class Thumbnail;
@@ -37,6 +48,7 @@ class BitmapData;
 class MetaValue;
 class MetadataIterator;
 
+/** @brief Internal classes for libopenraw */
 namespace Internals {
 class RawContainer;
 class ThumbDesc;
@@ -49,6 +61,7 @@ void audit_coefficients();
 
 void init();
 
+/** @brief RAW file. */
 class RawFile
 {
     template<typename T>
@@ -266,9 +279,9 @@ private:
     Private *d;
 };
 
-
-
 }
+
+/** @} */
 
 /*
   Local Variables:

@@ -18,13 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/**
- @brief Defines the class for reading TIFF-like file, including but not
- limited to TIFF, Exif, CR2, NEF, etc. It is designed to also address 
- issues like sone RAW file that do create veriation of TIFF just to confuse
- readers (like Olympus ORW).
-*/
-
 #pragma once
 
 #include <stddef.h>
@@ -40,8 +33,13 @@
 
 namespace OpenRaw {
 namespace Internals {
-		
 
+/**
+ * Defines the class for reading TIFF-like file, including but not
+ * limited to TIFF, Exif, CR2, NEF, etc. It is designed to also address
+ * issues like sone RAW file that do create veriation of TIFF just to confuse
+ * readers (like Olympus ORW).
+*/
 class IfdFileContainer
   : public RawContainer
 {

@@ -1,4 +1,4 @@
-/* -*- Mode: C++ -*- */
+/* -*- mode:c++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil; -*- */
 /*
  * libopenraw - ifddir.hpp
  *
@@ -165,7 +165,7 @@ public:
     template<typename T>
     T getEntryValue(IfdEntry& e, uint32_t idx = 0, bool ignore_type = false) const;
 
-    /** copy the enty data. Endian is ignored. Suite for bytes, undefined, etc
+    /** Copy the enty data. Endian is ignored. Suite for bytes, undefined, etc
      * @param e the entry
      * @param buffer the buffer
      * @param buffersize the size of the buffer in bytes. Will copy at most this.
@@ -173,10 +173,19 @@ public:
      */
     size_t getEntryData(IfdEntry& e, uint8_t* buffer, size_t buffersize) const;
 
+    /** Return the integer value at index. It will coerce the type.
+     * @param e the IFD entry
+     * @param idx the index
+     * @return the integer value or 0.
+     */
     uint32_t getEntryIntegerArrayItemValue(IfdEntry& e, int idx) const;
 
+    /** Make a meta value out of the IFD entry.
+     * @return a %MetaValue or nullptr. Must be freed.
+     */
     MetaValue* makeMetaValue(IfdEntry& e) const;
 protected:
+    /** The IFD entries */
     Entries m_entries;
 private:
     IfdDirType m_type;

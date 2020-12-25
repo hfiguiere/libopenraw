@@ -1,7 +1,7 @@
 /*
  * libopenraw - xtranspattern.h
  *
- * Copyright (C) 2012-2019 Hubert Figuière
+ * Copyright (C) 2012-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,8 +25,16 @@
 namespace OpenRaw {
 namespace Internals {
 
+/** @defgroup fujifilm Fujfilm parsing
+ * @ingroup internals
+ *
+ * @brief Fujifilm specific parsing.
+ *
+ * @{
+ */
+
 /**
- * The X-Trans CMOS 6x6 pattern for the Fuji X-Pro1.
+ * @brief The X-Trans CMOS 6x6 pattern starting with the Fuji X-Pro1.
  */
 class XTransPattern
 	: public MosaicInfo
@@ -37,6 +45,8 @@ public:
 protected:
   XTransPattern();
 };
+
+/** @} */
 
 }
 }

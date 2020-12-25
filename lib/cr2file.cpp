@@ -49,6 +49,10 @@ namespace OpenRaw {
 
 namespace Internals {
 
+/** @addtogroup canon
+ * @{
+ */
+
 #define OR_MAKE_CANON_TYPEID(camid)                                            \
     OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_CANON, camid)
 
@@ -748,6 +752,8 @@ bool Cr2File::isCr2()
     return ((OR_GET_FILE_TYPEID_CAMERA(typeId()) != OR_TYPEID_CANON_1D)
             && (OR_GET_FILE_TYPEID_CAMERA(typeId()) != OR_TYPEID_CANON_1DS));
 }
+
+/** @} */
 
 }
 }

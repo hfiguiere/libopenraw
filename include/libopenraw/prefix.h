@@ -17,18 +17,25 @@
  * License along with this library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
+
 /**
- * @brief the prefix public API header. Must be top include most of the time.
+ * @file The prefix public API header. Must be top include most of the time.
  * @author Hubert Figuiere <hub@figuiere.net>
  */
 
 #ifndef LIBOPENRAW_PREFIX_H_
 #define LIBOPENRAW_PREFIX_H_
 
+/** @addtogroup public_api
+ * @{
+ */
+
+/** @brief Mark API as deprecated */
 #if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 #define OR_DEPRECATED  __attribute__((__deprecated__))
 #else
 #define OR_DEPRECATED
 #endif /* __GNUC__ */
 
+/** @} */
 #endif

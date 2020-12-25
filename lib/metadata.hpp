@@ -29,6 +29,7 @@ namespace OpenRaw {
 
 class RawFile;
 
+/** @brief Iterator for the metadata */
 class MetadataIterator
 {
 public:
@@ -42,22 +43,22 @@ public:
         {
             return m_is_valid;
         }
-    /// Get the IFD for the current entry.
+    /// @brief Get the IFD for the current entry.
     Internals::IfdDir::Ref getIfd() const;
-    /// Get the type of the current entry
+    /// @brief Get the type of the current entry
     Option<ExifTagType> getEntryType() const;
-    /// Get the ID of the current entry
+    /// @brief Get the ID of the current entry
     Option<uint16_t> getEntryId() const;
     MetaValue* getMetaValue() const;
 
 private:
     Internals::IfdDir::Ref nextIfd();
 
-    /// Safe guard against getting data. False until an IFD is picked.
+    /// @brief Safe guard against getting data. False until an IFD is picked.
     bool m_is_initialized;
-    /// Safe guard against advancing. True until the end.
+    /// @brief Safe guard against advancing. True until the end.
     bool m_is_valid;
-    /// Index of the next IFD.
+    /// @brief Index of the next IFD.
     size_t m_next_ifd;
     Internals::IfdDir::Ref m_current_ifd;
     Internals::IfdDir::Entries::const_iterator m_current_entry;

@@ -2,7 +2,7 @@
 /*
  * libopenraw - memstream.h
  *
- * Copyright (C) 2007-2018 Hubert Figuière
+ * Copyright (C) 2007-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -31,10 +31,15 @@
 namespace OpenRaw {
 namespace IO {
 
+/** @brief Memory based stream to read memory like a file IO */
 class MemStream
   : public Stream
 {
 public:
+  /** Construct a new memory base stream.
+   * @param ptr the pointer to the memory area
+   * @param s the size of the memory area for the stream.
+   */
   MemStream(const uint8_t* ptr, size_t s);
 
   virtual ~MemStream()

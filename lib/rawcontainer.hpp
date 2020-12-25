@@ -35,15 +35,15 @@ namespace OpenRaw {
 namespace Internals {
 
 /**
-   Generic interface for the RAW file container
+   @brief Generic interface for the RAW file container
 */
 class RawContainer {
 public:
-    /** define the endian of the container */
+    /** @brief Define the endian of the container */
     typedef enum {
-        ENDIAN_NULL = 0, /** no endian found: means invalid file */
-        ENDIAN_BIG,      /** big endian found */
-        ENDIAN_LITTLE    /** little endian found */
+        ENDIAN_NULL = 0, /**< no endian found: means invalid file */
+        ENDIAN_BIG,      /**< big endian found */
+        ENDIAN_LITTLE    /**< little endian found */
     } EndianType;
 
     /**
@@ -67,22 +67,22 @@ public:
     bool skip(off_t offset);
     Option<int8_t> readInt8(const IO::Stream::Ptr& f) const;
     Option<uint8_t> readUInt8(const IO::Stream::Ptr& f) const;
-    /** Read an int16 following the m_endian set */
+    /** @brief Read an int16 following the m_endian set */
     Option<int16_t> readInt16(const IO::Stream::Ptr& f, EndianType endian) const;
-    /** Read an int32 following the m_endian set */
+    /** @brief Read an int32 following the m_endian set */
     Option<int32_t> readInt32(const IO::Stream::Ptr& f, EndianType endian) const;
-    /** Read an uint16 following the m_endian set */
+    /** @brief Read an uint16 following the m_endian set */
     Option<uint16_t> readUInt16(const IO::Stream::Ptr& f, EndianType endian) const;
-    /** Read an array of uint16 following the m_endian set.
+    /** @brief Read an array of uint16 following the m_endian set.
      * @param v the vector to fill. Will be resized if too small.
      * @param count the number of elements to read
      * @return the number of element read. `count` if success.
      */
     size_t readUInt16Array(const IO::Stream::Ptr& f, std::vector<uint16_t>& v, size_t count) const;
-    /** Read an uint32 following the m_endian set */
+    /** @brief Read an uint32 following the m_endian set */
     Option<uint32_t> readUInt32(const IO::Stream::Ptr& f, EndianType endian) const;
     /**
-     * Fetch the data chunk from the file
+     * @brief Fetch the data chunk from the file
      * @param buf the buffer to load into
      * @param offset the offset
      * @param buf_size the size of the data to fetch
@@ -91,7 +91,7 @@ public:
     size_t fetchData(void* buf, off_t offset, size_t buf_size) const;
 
     /**
-     * Return the effective size of the container.
+     * @brief Return the effective size of the container.
      */
     off_t size() const;
 protected:
@@ -101,11 +101,12 @@ protected:
 
     void setEndian(EndianType _endian) { m_endian = _endian; }
 
-    /** the file handle */
+    /** @brief The file handle */
     IO::Stream::Ptr m_file;
-    /** the offset from the beginning of the file */
+    /** @brief The offset from the beginning of the file */
     off_t m_offset;
     EndianType m_endian;
 };
+
 }
 }

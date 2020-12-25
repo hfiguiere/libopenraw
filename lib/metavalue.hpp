@@ -30,6 +30,7 @@
 
 namespace OpenRaw {
 
+/** @brief Metadata value */
 class MetaValue
 {
 public:
@@ -56,13 +57,13 @@ public:
     int32_t getSInteger(int idx) const;
     const std::string & getString(int idx) const;
     double getDouble(int idx) const;
-    /// Convert to a string.
+    /// @brief Convert to a string.
     /// @param full boolean to indicate to print in full or just the first 20 values
     const std::string & getAsString(bool full) const;
 private:
-    /// Return a copy of the value
+    /// @brief Return a copy of the value
     template<typename T> T get(int idx) const;
-    /// Return a const ref to the value. T needs to be default constructible.
+    /// @brief Return a const ref to the value. T needs to be default constructible.
     template<typename T> const T & getRef(int idx) const;
 
     std::vector<value_t> m_values;

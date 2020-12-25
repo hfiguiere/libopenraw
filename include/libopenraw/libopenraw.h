@@ -18,12 +18,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 /**
- * @brief the libopenraw public API header
+ * @file The libopenraw public API umbrella header
  * @author Hubert Figuiere <hub@figuiere.net>
  */
 
 #ifndef LIBOPENRAW_H_
 #define LIBOPENRAW_H_
+
+/** @defgroup public_api libopenraw public API */
 
 #include <libopenraw/prefix.h>
 

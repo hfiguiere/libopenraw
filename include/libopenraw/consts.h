@@ -2,7 +2,7 @@
  * libopenraw - consts.h
  *
  * Copyright (c) 2008 Novell, Inc.
- * Copyright (C) 2005-2020 Hubert Figuiere
+ * Copyright (C) 2005-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 /**
- * @brief the libopenraw public consts types
+ * @file The libopenraw public consts types
  * @author Hubert Figuiere <hub@figuiere.net>
  */
 
@@ -28,31 +28,34 @@
 
 #include <stdint.h>
 
+/** @addtogroup public_api
+ * @{
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * Error codes returned by libopenraw.
+ * @brief Error codes returned by libopenraw.
  */
 typedef enum {
     OR_ERROR_NONE = 0, /**< no error */
-    OR_ERROR_BUF_TOO_SMALL = 1,
-    OR_ERROR_NOTAREF = 2,       /**< the object is not ref */
-    OR_ERROR_CANT_OPEN = 3,     /**< can't open file. Check OS error codes */
-    OR_ERROR_CLOSED_STREAM = 4, /**< stream closed */
-    OR_ERROR_NOT_FOUND = 5,     /**< requested "object" not found */
-    OR_ERROR_INVALID_PARAM = 6,
-    OR_ERROR_INVALID_FORMAT = 7, /**< invalid format */
-    OR_ERROR_DECOMPRESSION = 8,  /**< decompression error */
-    OR_ERROR_NOT_IMPLEMENTED = 9, /**< function is not implemented */
-    OR_ERROR_ALREADY_OPEN = 10, /**< stream already open */
-    OR_ERROR_UNKNOWN = 42,
+    OR_ERROR_BUF_TOO_SMALL = 1, /**< Buffer is too small. */
+    OR_ERROR_NOTAREF = 2,       /**< The object is not ref */
+    OR_ERROR_CANT_OPEN = 3,     /**< Can't open file. Check OS error codes */
+    OR_ERROR_CLOSED_STREAM = 4, /**< Stream closed */
+    OR_ERROR_NOT_FOUND = 5,     /**< Requested "object" not found */
+    OR_ERROR_INVALID_PARAM = 6, /**< Invalid parameter */
+    OR_ERROR_INVALID_FORMAT = 7, /**< Invalid format */
+    OR_ERROR_DECOMPRESSION = 8,  /**< Decompression error */
+    OR_ERROR_NOT_IMPLEMENTED = 9, /**< Function is not implemented */
+    OR_ERROR_ALREADY_OPEN = 10, /**< Stream already open */
+    OR_ERROR_UNKNOWN = 42, /**< Unknown error. */
     OR_ERROR_LAST_
 } or_error;
 
-/** different types of RAW files
- */
+/** @brief Types of RAW files */
 typedef enum {
     OR_RAWFILE_TYPE_UNKNOWN = 0, /**< no type. Invalid value. */
     OR_RAWFILE_TYPE_CR2,         /**< Canon CR2 */
@@ -73,6 +76,7 @@ typedef enum {
     OR_RAWFILE_TYPE_SR2,         /**< Sony SR2 */
 } or_rawfile_type;
 
+/** @brief Data types */
 typedef enum {
     OR_DATA_TYPE_NONE = 0,
     OR_DATA_TYPE_PIXMAP_8RGB,    /**< 8bit per channel RGB pixmap */
@@ -86,9 +90,10 @@ typedef enum {
     OR_DATA_TYPE_UNKNOWN
 } or_data_type;
 
+/** @brief CFA pattern types */
 typedef enum {
     OR_CFA_PATTERN_NONE = 0, /**< Invalid value */
-    OR_CFA_PATTERN_NON_RGB22 = 1,
+    OR_CFA_PATTERN_NON_RGB22 = 1, /**< Non RGB 2x2 CFA */
     OR_CFA_PATTERN_RGGB = 2,
     OR_CFA_PATTERN_GBRG = 3,
     OR_CFA_PATTERN_BGGR = 4,
@@ -96,40 +101,42 @@ typedef enum {
     _OR_CFA_PATTERN_INVALID
 } or_cfa_pattern;
 
+/** CFA colour components */
 typedef enum {
     OR_PATTERN_COLOUR_RED = 0,
     OR_PATTERN_COLOUR_GREEN = 1,
     OR_PATTERN_COLOUR_BLUE = 2
 } or_cfa_pattern_colour;
 
+/** @brief Options */
 typedef enum {
-    OR_OPTIONS_NONE = 0x00000000,
-    OR_OPTIONS_DONT_DECOMPRESS = 0x00000001 /**< don't decompress */
+    OR_OPTIONS_NONE = 0x00000000, /**< No options */
+    OR_OPTIONS_DONT_DECOMPRESS = 0x00000001 /**< Don't decompress */
 
 } or_options;
 
-/** Where the colour matrix comes from
+/** @brief Where the colour matrix comes from.
  * Typically DNG is provided. The others are built-in.
  */
 typedef enum {
-    OR_COLOUR_MATRIX_UNKNOWN = 0,
+    OR_COLOUR_MATRIX_UNKNOWN = 0, /**< Unknown. This usually signify an error */
     OR_COLOUR_MATRIX_BUILTIN = 1, /**< Colour matrix in library */
     OR_COLOUR_MATRIX_PROVIDED = 2, /**< Colour matrix provided by file */
 } or_colour_matrix_origin;
 
-/** this is the type ID, a combination of vendor model
+/** @brief This is the type ID, a combination of vendor model
  *  It maps a specific camera. Only for the NATIVE file format.
  */
 typedef uint32_t or_rawfile_typeid;
 
-/** make a %or_rawfile_typeid with a vendor and camera. */
+/** @brief Make a %or_rawfile_typeid with a vendor and camera. */
 #define OR_MAKE_FILE_TYPEID(vendor, camera) ((vendor << 16) | (camera & 0xffff))
-/** get the vendor from the %or_rawfile_typeid */
+/** @brief Get the vendor from the %or_rawfile_typeid */
 #define OR_GET_FILE_TYPEID_VENDOR(ftypeid) ((ftypeid & 0xffff0000) >> 16)
-/** get the camera from the %or_rawfile_typeid */
+/** @brief Get the camera from the %or_rawfile_typeid */
 #define OR_GET_FILE_TYPEID_CAMERA(ftypeid) (ftypeid & 0xffff)
 
-/** Type of IfdDir */
+/** @brief Type of IfdDir */
 typedef enum {
     /// Generic
     OR_IFD_OTHER = 0,
@@ -151,5 +158,7 @@ typedef enum {
 #ifdef __cplusplus
 }
 #endif
+
+/** @} */
 
 #endif

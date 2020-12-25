@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 /**
- * @brief the libopenraw list of camera id.
+ * @file The libopenraw list of camera ID.
  * @author Hubert Figuière <hub@figuiere.net>
  */
 
@@ -27,13 +27,18 @@
 
 #include <stdint.h>
 
+/** @defgroup camera_id Camera IDs
+ * @ingroup public_api
+ * @{
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** The vendor ID: the high order 16-bits of the %or_rawfile_typeid
+/** @brief The vendor ID: the high order 16-bits of the %or_rawfile_typeid
  */
-enum {
+enum _OR_TYPE_ID_VENDOR {
     OR_TYPEID_VENDOR_NONE = 0,
     OR_TYPEID_VENDOR_CANON = 1,
     OR_TYPEID_VENDOR_NIKON = 2,
@@ -63,14 +68,15 @@ enum {
 
 enum { OR_TYPEID_UNKNOWN = 0 };
 
-enum {
+/** @brief Adobe type ID */
+enum _OR_TYPEID_VENDOR_ADOBE {
     OR_TYPEID_ADOBE_UNKNOWN = 0,
-    OR_TYPEID_ADOBE_DNG_GENERIC = 1,
+    OR_TYPEID_ADOBE_DNG_GENERIC = 1, /**< Generic DNG file. */
     _OR_TYPEID_ADOBE_LAST
 };
 
-/** Canon type IDs */
-enum {
+/** @brief Canon type IDs */
+enum _OR_TYPEID_VENDOR_CANON {
     OR_TYPEID_CANON_UNKNOWN = 0,
     OR_TYPEID_CANON_20D = 1,
     OR_TYPEID_CANON_30D = 2,
@@ -233,8 +239,8 @@ enum {
     _OR_TYPEID_CANON_LAST
 };
 
-/** Nikon type IDs */
-enum {
+/** @brief Nikon type IDs */
+enum _OR_TYPEID_VENDOR_NIKON {
     OR_TYPEID_NIKON_UNKNOWN = 0,
     OR_TYPEID_NIKON_E5700,
     OR_TYPEID_NIKON_D1,
@@ -321,8 +327,8 @@ enum {
     _OR_TYPEID_NIKON_LAST
 };
 
-/** Leica type IDs */
-enum {
+/** @brief Leica type IDs */
+enum _OR_TYPEID_VENDOR_LEICA {
     OR_TYPEID_LEICA_UNKNOWN = 0,
     /* DNG */
     OR_TYPEID_LEICA_DMR = 1,
@@ -375,8 +381,8 @@ enum {
     _OR_TYPEID_LEICA_LAST
 };
 
-/** Pentax type IDs */
-enum {
+/** @brief Pentax type IDs */
+enum _OR_TYPEID_VENDOR_PENTAX {
     OR_TYPEID_PENTAX_UNKNOWN = 0,
     OR_TYPEID_PENTAX_K10D_PEF,
     OR_TYPEID_PENTAX_K10D_DNG,
@@ -434,16 +440,16 @@ enum {
     _OR_TYPEID_PENTAX_LAST
 };
 
-/** Epson type IDs */
-enum {
+/** @brief Epson type IDs */
+enum _OR_TYPEID_VENDOR_EPSON {
     OR_TYPEID_EPSON_UNKNOWN = 0,
     OR_TYPEID_EPSON_RD1 = 1,
     OR_TYPEID_EPSON_RD1S = 2,
     _OR_TYPEID_EPSON_LAST
 };
 
-/** Minolta type IDs */
-enum {
+/** @brief Minolta type IDs */
+enum _OR_TYPEID_VENDOR_MINOLTA {
     OR_TYPEID_MINOLTA_UNKNOWN = 0,
     OR_TYPEID_MINOLTA_A1,
     OR_TYPEID_MINOLTA_A2,
@@ -457,7 +463,7 @@ enum {
     _OR_TYPEID_MINOLTA_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_OLYMPUS {
     OR_TYPEID_OLYMPUS_UNKNOWN = 0,
     OR_TYPEID_OLYMPUS_E1,
     OR_TYPEID_OLYMPUS_E10,
@@ -514,14 +520,14 @@ enum {
     _OR_TYPEID_OLYMPUS_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_SAMSUNG {
     OR_TYPEID_SAMSUNG_UNKNOWN = 0,
     OR_TYPEID_SAMSUNG_GX10,
     OR_TYPEID_SAMSUNG_PRO815,
     _OR_TYPEID_SAMSUNG_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_RICOH {
     OR_TYPEID_RICOH_UNKNOWN = 0,
     OR_TYPEID_RICOH_GR2 = 1,
     OR_TYPEID_RICOH_GXR = 2,
@@ -535,7 +541,7 @@ enum {
     _OR_TYPEID_RICOH_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_SONY {
     OR_TYPEID_SONY_UNKNOWN = 0,
     OR_TYPEID_SONY_A100 = 1,
     OR_TYPEID_SONY_A200 = 2,
@@ -624,7 +630,7 @@ enum {
     _OR_TYPEID_SONY_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_PANASONIC {
     OR_TYPEID_PANASONIC_UNKNOWN = 0,
     OR_TYPEID_PANASONIC_GF1 = 1,
     OR_TYPEID_PANASONIC_GF2 = 2,
@@ -715,7 +721,7 @@ enum {
     _OR_TYPEID_PANASONIC_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_FUJIFILM {
     OR_TYPEID_FUJIFILM_UNKNOWN = 0,
     OR_TYPEID_FUJIFILM_F700 = 1,
     OR_TYPEID_FUJIFILM_E900 = 2,
@@ -777,13 +783,13 @@ enum {
     _OR_TYPEID_FUJIFILM_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_BLACKMAGIC {
     OR_TYPEID_BLACKMAGIC_UNKNOWN = 0,
     OR_TYPEID_BLACKMAGIC_POCKET_CINEMA = 1,
     _OR_TYPEID_BLACKMAGIC_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_XIAOYI {
     OR_TYPEID_XIAOYI_UNKNOWN = 0,
     OR_TYPEID_XIAOYI_M1 = 1,
     OR_TYPEID_XIAOYI_YDXJ_2 = 2,
@@ -791,7 +797,7 @@ enum {
     _OR_TYPEID_XIAOYI_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_APPLE {
     OR_TYPEID_APPLE_UNKNOWN = 0,
     OR_TYPEID_APPLE_IPHONE_6SPLUS = 1,
     OR_TYPEID_APPLE_IPHONE_7PLUS = 2,
@@ -801,13 +807,13 @@ enum {
     _OR_TYPEID_APPLE_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_SIGMA {
     OR_TYPEID_SIGMA_UNKNOWN = 0,
     OR_TYPEID_SIGMA_FP = 1,
     _OR_TYPEID_SIGMA_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_GOPRO {
     OR_TYPEID_GOPRO_UNKNOWN = 0,
     OR_TYPEID_GOPRO_HERO5_BLACK = 1,
     OR_TYPEID_GOPRO_HERO6_BLACK = 2,
@@ -817,7 +823,7 @@ enum {
     _OR_TYPEID_GOPRO_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_HASSELBLAD {
     OR_TYPEID_HASSELBLAD_UNKNOWN = 0,
     OR_TYPEID_HASSELBLAD_LUNAR = 1,
     OR_TYPEID_HASSELBLAD_L1D_20C = 2,
@@ -825,7 +831,7 @@ enum {
     _OR_TYPEID_HASSELBLAD_LAST
 };
 
-enum {
+enum _OR_TYPEID_VENDOR_ZEISS {
     OR_TYPEID_ZEISS_UNKNOWN = 0,
     OR_TYPEID_ZEISS_ZX1 = 1,
 
@@ -836,4 +842,5 @@ enum {
 }
 #endif
 
+/** @} */
 #endif

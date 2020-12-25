@@ -32,6 +32,7 @@
 
 namespace OpenRaw {
 
+/** @brief Represent camera raw data. */
 class RawData
     : public BitmapData
 {

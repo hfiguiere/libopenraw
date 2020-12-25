@@ -47,9 +47,10 @@ enum {
                             * part is non significant */
 };
 
-// Remove the storage location bits.
+/** Remove the storage location bits. */
 #define TAGCODE(x) ((x) & TAGCODE_MASK)
 
+/** Type a record entry, value masked with %FORMAT_MASK */
 typedef enum {
     TYPE_BYTE = 0x0000,
     TYPE_ASCII = 0x0800,
@@ -60,8 +61,10 @@ typedef enum {
     TYPE_HEAP2 = 0x3000,
 } CIFFType;
 
+/** Record entries of a heap */
 typedef std::map<uint16_t, RecordEntry> RecordEntries;
 
+/** @brief A record entry from a CIFF Heap */
 class RecordEntry
 {
 public:
@@ -81,11 +84,13 @@ public:
      */
     size_t fetchData(Heap* heap, void* buf, size_t size) const;
 
+    /** Tell if current record is a heap */
     bool isHeap() const
         {
             auto t = type();
             return (t == TYPE_HEAP1 || t == TYPE_HEAP2);
         }
+    /** Type of current record %CIFFType */
     CIFFType type() const
         {
             return (CIFFType)(typeCode & (uint16_t)FORMAT_MASK);
@@ -100,21 +105,32 @@ public:
     /** Offset from begining of container */
     uint32_t containerOffset(const Heap& heap) const;
 
+    /** Return a string stored in the record entry... if applicable */
     std::string getString(Heap& heap) const;
 
+    /** Im record record (8 bytes) */
     typedef boost::array<uint8_t, 8> InRec;
+    /** In heap record */
     struct InHeap
     {
+        /** Construct an in heap record (descriptor) */
         InHeap();
+        /** Construct an in heap record (descriptor) of length and at offset */
         InHeap(uint32_t _length, uint32_t _offset);
-        uint32_t length;/* record length */
-        uint32_t offset;/* offset of the record in the heap*/
+        /** record length */
+        uint32_t length;
+        /** offset of the record in the heap */
+        uint32_t offset;
     };
 
+    /** Return whether the data is in-record. */
     bool inRecord() const
         {
             return (typeCode & STORAGELOC_MASK) != 0;
         }
+    /** Length of the data in the Heap
+     * @return 0 if the data is in record, otherwise the length in byte
+     */
     uint32_t length() const
         {
             if (!inRecord()) {
@@ -123,6 +139,9 @@ public:
             LOGERR("length failed\n");
             return 0;
         }
+    /** Offset of the data in the Heap
+     * @return 0 if the data in in-record. Otherwise the offse in the heap
+     */
     uint32_t offset() const
         {
             if (!inRecord()) {
@@ -131,7 +150,8 @@ public:
             LOGERR("offset failed\n");
             return 0;
         }
-    uint16_t typeCode;/* type code of the record */
+    uint16_t typeCode; /**< type code of the record */
+    /** Actual data of the record */
     boost::variant<InRec, InHeap> data;
 };
 

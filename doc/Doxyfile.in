@@ -23,7 +23,7 @@ PROJECT_NAME           = libopenraw
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 
+PROJECT_NUMBER         = @VERSION@
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -461,7 +461,10 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = @top_srcdir@/lib @top_srcdir@/include @top_srcdir@/test
+INPUT                  = @top_srcdir@/lib \
+                       @top_srcdir@/include \
+                       @top_srcdir@/test \
+                       @top_srcdir@/doc/mainpage.hpp
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 

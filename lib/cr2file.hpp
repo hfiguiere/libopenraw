@@ -36,6 +36,11 @@ class RawData;
 
 namespace Internals {
 
+/** @addtogroup canon
+ * @{
+ */
+
+/** @brief Canon CR2 file */
 class Cr2File
     : public IfdFile
 {
@@ -57,7 +62,7 @@ protected:
                                         std::vector<uint32_t> &list) override;
 
 private:
-    // Return true unless it is a 1D or 1DS (TIF)
+    /// @brief Return true unless it is a 1D or 1DS (TIF)
     bool isCr2();
     ::or_error getRawDataTif(RawData &data, uint32_t options);
     ::or_error getRawDataCr2(RawData &data, uint32_t options);
@@ -69,6 +74,8 @@ private:
 
     static const IfdFile::camera_ids_t s_def[];
 };
+
+/* @} */
 
 }
 }

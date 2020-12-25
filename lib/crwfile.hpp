@@ -39,6 +39,10 @@ class RawData;
 
 namespace Internals {
 
+/** @addtogroup canon
+ * @{
+ */
+
 namespace CIFF {
     class CiffMainIfd;
     class CiffExifIfd;
@@ -46,6 +50,7 @@ namespace CIFF {
 
 class CIFFContainer;
 
+/** @brief Canon CRW file */
 class CRWFile
     : public OpenRaw::RawFile
 {
@@ -97,5 +102,6 @@ private:
     static const RawFile::camera_ids_t s_def[];
 };
 
+/** @} */
 }
 }

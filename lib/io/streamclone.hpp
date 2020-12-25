@@ -1,8 +1,8 @@
 /* -*- Mode: C++ -*- */
 /*
- * libopenraw - streamclone.h
+ * libopenraw - streamclone.hpp
  *
- * Copyright (C) 2006-2016 Hubert Figuière
+ * Copyright (C) 2006-2020 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -37,6 +37,10 @@ class StreamClone
   : public Stream
 {
 public:
+  /** Construct a new clone streamed
+   * @param clone the stream to clone.
+   * @param offset the offset from the original stream.
+   */
   StreamClone(const Stream::Ptr &clone, off_t offset);
   virtual ~StreamClone();
 

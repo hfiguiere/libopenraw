@@ -31,87 +31,124 @@
 #include <libopenraw/types.h>
 #include <libopenraw/mosaicinfo.h>
 
+/** @file Functions to access manipulate %ORRawData */
+
+/** @defgroup rawdata_api RawData API
+ * @ingroup public_api
+ * @{
+ */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	/** Extract the RAW data from the raw file.
+	/** @brief Extract the RAW data from the raw file.
 	 * @param filename the raw file name
 	 * @param options the options to pass
-	 * @param 
+	 * @param rawdata the destination RawData. Must allocated.
 	 */
 	or_error or_get_extract_rawdata(const char* filename, uint32_t options,
 																	ORRawDataRef *rawdata);
-	
-	ORRawDataRef
-	or_rawdata_new(void);
+	/** @brief Allocate a new RawData
+	 * @return A newly allocated RawData. Must be released by %or_rawdata_release
+	 */
+	ORRawDataRef or_rawdata_new(void);
 
-	or_error
-	or_rawdata_release(ORRawDataRef rawdata);
+	/** @brief Release the rawdata */
+	or_error or_rawdata_release(ORRawDataRef rawdata);
 
-	or_data_type 
-	or_rawdata_format(ORRawDataRef rawdata);
+	/** @brief Get the format of the RAW data */
+	or_data_type or_rawdata_format(ORRawDataRef rawdata);
 
-	void *
-	or_rawdata_data(ORRawDataRef rawdata);
+	/** @brief Get a pointer to the RAW data
+	 *
+	 * The pointer is owned by the RawData object.
+	 */
+	void* or_rawdata_data(ORRawDataRef rawdata);
 
-	size_t
-	or_rawdata_data_size(ORRawDataRef rawdata);
+	/** @brief Get the size of the RAW data in bytes */
+	size_t or_rawdata_data_size(ORRawDataRef rawdata);
 
+	/** @brief Get the RAW data dimensions in pixels
+	 * @param [out] x the horizontal dimension
+	 * @param [out] y the vertical dimension
+	 */
 	void
-	or_rawdata_dimensions(ORRawDataRef rawdata, 
+	or_rawdata_dimensions(ORRawDataRef rawdata,
 						  uint32_t *x, uint32_t *y);
 
-	/** Return the active area for the raw data.
+	/** @brief Get the active area for the raw data.
+	 *
+	 * The active area is the usefull part of the RAW data
+	 * it is specific per camera and isn't the crop.
+	 *
+	 * @param rawdata the RawData object
+	 * @param [out] x the X origin
+	 * @param [out] y the Y origin
+	 * @param [out] width the width
+	 * @param [out] height the height.
+	 * @return an error code or %OR_ERROR_NONE in case of success.
 	 */
 	or_error
 	or_rawdata_get_active_area(ORRawDataRef rawdata,
 							   uint32_t *x, uint32_t *y,
 							   uint32_t *width, uint32_t *height);
 
+	/** @brief Return the bits per component
+	 *
+	 * @return the number of bits per component in the RAW data.
+	 */
 	uint32_t
 	or_rawdata_bpc(ORRawDataRef rawdata);
 
-	/** Return the bayer type for the raw data.
+	/** @brief Return the bayer type for the raw data.
+	 *
 	 * @return one of the constant defined in %or_cfa_pattern
 	 */
 	or_cfa_pattern
 	or_rawdata_get_cfa_pattern_type(ORRawDataRef rawdata);
 
+	/** @brief Return the mosaic info
+	 *
+	 * @return a MosaicInfo object. It is owned by the RawData. Can't be NULL.
+	 */
 	ORMosaicInfoRef
 	or_rawdata_get_mosaicinfo(ORRawDataRef rawdata);
 
-	/** Return the compression type for the RawData.
+	/** @brief Return the compression type for the RawData.
+	 *
 	 * @return the numerical value.
 	 */
 	uint32_t
 	or_rawdata_get_compression(ORRawDataRef rawdata);
 
-	/** Return the levels values for the raw data.
-	 * This are possible values, not actual values.
+	/** @brief Return the levels values for the raw data.
+	 *
+	 * These are possible values, not actual values.
+	 *
 	 * @param rawdata the raw data object
-	 * @param black the pointer to the black value.
-	 * @param white the pointer to the white value.
+	 * @param [out] black the pointer to the black value.
+	 * @param [out] white the pointer to the white value.
 	 * @return the error code.
 	 */
 	or_error
 	or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
                              uint16_t *white);
 
-	/** Get the colour matrix.
+	/** @brief Get the colour matrix.
 	 * @param rawdata the raw data object
 	 * @param index the matrix index.
-	 * @param size of %matrix. Returns the actual size.
-	 * @return the matrix. Pointer is valid as long as %rawdata is.
+	 * @param [out] size of %matrix. Returns the actual size.
+	 * @return the matrix. Pointer is owned by the RawData.
 	 */
 	const double*
 	or_rawdata_get_colour_matrix(ORRawDataRef rawdata, uint32_t index,
 				     uint32_t *size);
 
-	/** Get the rendered image from the raw data
+	/** @brief Get the rendered image from the raw data
 	 * @param rawdata the raw data.
 	 * @param bitmapdata the preallocated bitmap data.
 	 * @param options option for rendering. Pass 0 for now.
+	 * @return an error code, %OR_ERROR_NONE in case of success.
 	 */
 	or_error
 	or_rawdata_get_rendered_image(ORRawDataRef rawdata,
@@ -121,5 +158,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
+/** @} */
 #endif

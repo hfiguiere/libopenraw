@@ -41,6 +41,11 @@ namespace Internals {
 
 class IsoMediaContainer;
 
+/** @addtogroup canon
+ * @{
+ */
+
+/** @brief Canon CR3 file */
 class Cr3File : public RawFile {
     template<typename T>
     friend void audit_coefficients();
@@ -81,5 +86,8 @@ private:
 
     static const RawFile::camera_ids_t s_def[];
 };
+
+/** @} */
+
 }
 }
