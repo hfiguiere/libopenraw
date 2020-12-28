@@ -58,6 +58,7 @@ protected:
     virtual IfdDir::Ref  _locateMainIfd() override;
     virtual bool vendorCameraIdLocation(Internals::IfdDir::Ref& ifd, uint16_t& index,
                                         const ModelIdMap*& model_map) override;
+    /** @inherit */
     virtual ::or_error _locateThumbnail(const IfdDir::Ref & dir,
                                         std::vector<uint32_t> &list) override;
 

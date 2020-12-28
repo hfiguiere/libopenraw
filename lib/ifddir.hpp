@@ -50,30 +50,63 @@ class IfdFileContainer;
 /** @brief An IFD directory */
 class IfdDir {
 public:
+    /** @brief Weak ptr of an IfdDir */
     typedef std::weak_ptr<IfdDir> WeakRef;
+    /** @brief Shared ptr of an IfdDir */
     typedef std::shared_ptr<IfdDir> Ref;
+    /** @brief Vector of shared ptr of IfdDir
+     *
+     * Used for situations like with IfdFileContainer.
+     */
     typedef std::vector<Ref> RefVec;
+    /** @brief Ifd Entries map type.
+     *
+     * The key is the tag id of the entry.
+     */
     typedef std::map<uint16_t, IfdEntry::Ref> Entries;
 
+    /** @brief Construct an IfdDir
+     * @param _offset The offset from the begining of the container (where it starts)
+     * @param _container The container
+     * @param _type The IFD type.
+     * @param tag_table The tag to name table. By default it is the Exif tags.
+     */
     IfdDir(off_t _offset, RawContainer& _container, IfdDirType _type /*= OR_IFDDIR_OTHER */, const TagTable& tag_table = exif_tag_names);
     virtual ~IfdDir();
 
+    /** @brief Get the type of the IfdDir */
     IfdDirType type() const
         { return m_type; }
+    /** @brief Set the type of the IfdDir */
     void setType(IfdDirType type_)
         { m_type = type_; }
 
+    /** @brief Get the base offset for the data
+     *
+     * Usually it is 0.
+     */
     off_t baseOffset() const
         { return m_base_offset; }
+    /** @brief Set the base offset */
     void setBaseOffset(off_t base)
         { m_base_offset = base; }
 
+    /** @brief The IFD is a primary in the TIFF/EP sense
+     *
+     * @return true if EXIF_TAG_NEW_SUBFILE_TYPE is 0.
+     */
     bool isPrimary() const;
+    /** @brief The IFD is for a thumnail
+     *
+     * @return true if EXIF_TAG_NEW_SUBFILE_TYPE is 1.
+     */
     bool isThumbnail() const;
 
     /** @brief Return the offset */
     off_t offset() const { return m_offset; }
+    /** @brief The container for the IfdDir, const. */
     const RawContainer& container() const { return m_container; }
+    /** @brief The container for the IfdDir */
     RawContainer& container() { return m_container; }
 
     /** @brief Load the directory to memory
@@ -85,17 +118,31 @@ public:
     virtual bool load();
     /** @brief Return the number of entries*/
     int numTags() { return m_entries.size(); }
+    /** @brief Get the IfdEntry for the tag id
+     *
+     * Requires load() to have been called once.
+     * @return an IfdEntry::Ref. NULL if not found.
+     */
     IfdEntry::Ref getEntry(uint16_t id) const;
     /** @brief Direct access to the entries */
     const Entries& entries() const
         {
             return m_entries;
         }
+    /** @brief the Container endian
+     *
+     * Usually it is the same as the file, but MakerNote are weird
+     * and might have a different idea.
+     */
     RawContainer::EndianType endian() const
         {
             return m_endian;
         }
-    /** @brief Set the endian for the IFD. By default it's the same as the container */
+    /** @brief Set the endian for the IFD.
+     *
+     * By default it's the same as the container but you might want to set it if,
+     * for example, parsing a MakerNote.
+     */
     void setEndian(RawContainer::EndianType _endian)
         {
             m_endian = _endian;
@@ -156,6 +203,11 @@ public:
      */
     Ref getMakerNoteIfd(or_rawfile_type file_type);
 
+    /** @brief Set the tag table for tag to name correspondance
+     *
+     * This is used to override the tag name in IFD that use non standard
+     * tags, like MakerNote or Panasonic RW2.
+     */
     void setTagTable(const TagTable& tag_table)
         {
             m_tag_table = &tag_table;

@@ -205,10 +205,15 @@ public:
 					 const IfdDir& _dir, bool synthetic = false);
 	virtual ~IfdEntry();
 
+	/** @brief id (i.e. tag) of the entry */
 	int16_t id() const noexcept
 		{
 			return m_id;
 		}
+	/** @brief Type of the entry data
+	 *
+	 * The value is from ExifTagType and is size like it is stored in the file.
+	 */
 	int16_t type() const noexcept
 		{
 			return m_type;
@@ -232,6 +237,7 @@ public:
 			return IfdTypeTrait<uint32_t>::BE((uint8_t*)&m_data, sizeof(uint32_t));
 		}
 
+	/** @brief Get the endian from the owning IfdDir */
 	RawContainer::EndianType endian() const;
 
 	/** @brief Return the raw data pointer */
@@ -257,7 +263,16 @@ public:
 	 * @return true m_loaded
 	 */
 	bool loadData(size_t unit_size, off_t offset);
+
+	/** @brief Load data into a buffer.
+	 *
+	 * @param dataptr The target byte buffer.
+	 * @param data_size the size of the buffer.
+	 * @param offset An extra offset to load the data from. For a standard IFD it is 0.
+	 * @return Return the size effectively loaded.
+	 */
 	size_t loadDataInto(uint8_t* dataptr, size_t data_size, off_t offset) const;
+	/** @brief Set the data of the entry */
 	void setData(const uint8_t* dataptr, size_t data_size);
 private:
 	uint16_t m_id;

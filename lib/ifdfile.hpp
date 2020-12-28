@@ -87,7 +87,7 @@ protected:
      */
     virtual ::or_error _locateThumbnail(const IfdDir::Ref &dir,
                                         std::vector<uint32_t> &list);
-    /** load the compressed rawdata from a standard location in an IFD
+    /** @brief Load the compressed raw data from a standard location in an IFD
      * @param data the data storage
      * @param dir the IFD
      * @return the error code.

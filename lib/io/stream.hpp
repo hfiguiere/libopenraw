@@ -34,6 +34,8 @@
 namespace OpenRaw {
 namespace IO {
 
+/** @addtogroup io_internals
+ * @{ */
 /**
  * @brief base virtual class for IO
  * @internal
@@ -43,7 +45,7 @@ class Stream
 public:
   /** Shared Ptr stream type */
   typedef std::shared_ptr<Stream> Ptr;
-  /** Construct the file
+  /** @brief Construct the stream
    * @param filename the full uri for the file
    */
   Stream(const char *filename);
@@ -52,51 +54,52 @@ public:
   Stream(const Stream& f) = delete;
   Stream & operator=(const Stream&) = delete;
 
-  /** Error type.
+  /** @brief Error type.
    * @see or_error
    */
   typedef ::or_error Error;
 
 // file APIs
-  /** open the file */
+  /** @brief open the file */
   virtual Error open() = 0;
-  /** close the file */
+  /** @brief close the file */
   virtual int close() = 0;
-  /** seek in the file. Semantics are similar to POSIX lseek() */
+  /** @brief seek in the file. Semantics are similar to POSIX lseek() */
   virtual int seek(off_t offset, int whence) = 0;
-  /** read in the file. Semantics are similar to POSIX read() */
+  /** @brief read in the file. Semantics are similar to POSIX read() */
   virtual int read(void *buf, size_t count) = 0;
-  /** Return the filesize */
+  /** @brief Return the filesize */
   virtual off_t filesize() = 0;
 //			virtual void *mmap(size_t l, off_t offset) = 0;
 //			virtual int munmap(void *addr, size_t l) = 0;
-  /** Obtain the last error */
+  /** @brief Obtain the last error */
   Error get_error() const
     {
       return m_error;
     }
 
-  /** get the uri path of the file */
+  /** @brief Get the uri path of the file */
   const std::string &get_path() const
     {
       return m_fileName;
     }
 
-  /** Read a single byte */
+  /** @brief Read a single byte */
   uint8_t readByte() noexcept(false);
 protected:
-  /** Set the error. This is calld by implementations */
+  /** @brief Set the error. This is calld by implementations */
   void set_error(Error error)
     {
       m_error = error;
     }
 
 private:
-  /** the file name (full path) */
+  /** @brief the file name (full path) */
   std::string m_fileName;
   Error m_error;
 };
 
+/** @} */
 }
 }
 

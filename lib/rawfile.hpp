@@ -157,7 +157,7 @@ public:
     ::or_error getColourMatrix1(double* matrix, uint32_t& size);
     ::or_error getColourMatrix2(double* matrix, uint32_t& size);
 
-    /** @brief Get calibration illuminant that match the colour matrix.
+    /** @brief Get the calibration illuminant that match the colour matrix.
      * @return the Exif value. 0 = unknown. Likely not found.
      */
     ExifLightsourceValue getCalibrationIlluminant1();
@@ -169,18 +169,51 @@ public:
      */
     virtual or_colour_matrix_origin getColourMatrixOrigin() const;
 
+    /** @brief Get the IFD containing the CFA */
     Internals::IfdDir::Ref cfaIfd();
+    /** @brief Get the main IFD */
     Internals::IfdDir::Ref mainIfd();
+    /** @brief Get the Exif IFD */
     Internals::IfdDir::Ref exifIfd();
+    /** @brief Get the MakerNote IFD */
     Internals::MakerNoteDir::Ref makerNoteIfd();
 
+    /** @brief Get a metadata value
+     *
+     * @return A MetaValue, or NULL if not found.
+     */
     const MetaValue *getMetaValue(int32_t meta_index);
 
     MetadataIterator* getMetadataIterator();
 protected:
+    /** @brief Locate the IFD for the raw data
+     *
+     * This is not necessarily a unique IFD and it can be the same as
+     * the main.
+     *
+     * @return the CFA Ifd. May be null.
+     */
     virtual Internals::IfdDir::Ref _locateCfaIfd() = 0;
+    /** @brief Locate the main IFD
+     *
+     * @return the main IFD. Main be null.
+     */
     virtual Internals::IfdDir::Ref _locateMainIfd() = 0;
+    /** @brief Locate the Exif IFD.
+     *
+     * The default implementation follow the specification by
+     * by calling getExifIFD() on the main IFD.
+     *
+     * @return the Exif IFD.
+     */
     virtual Internals::IfdDir::Ref _locateExifIfd();
+    /** @brief Locate the MakerNote IFD.
+     *
+     * The default implementation follow the specification by
+     * by calling getMakerNoteIfd() on the main IFD.
+     *
+     * @return the MakerNote IFD.
+     */
     virtual Internals::MakerNoteDir::Ref _locateMakerNoteIfd();
 
     struct camera_ids_t {
@@ -245,6 +278,7 @@ protected:
      */
     virtual ::or_error _getColourMatrix(uint32_t index, double* matrix, uint32_t & size);
     virtual ExifLightsourceValue _getCalibrationIlluminant(uint16_t index);
+    /** @brief Implementation for getMetaValue() */
     virtual MetaValue *_getMetaValue(int32_t /*meta_index*/) = 0;
 
     TypeId _typeIdFromModel(const std::string& make, const std::string & model);
@@ -253,6 +287,7 @@ protected:
     void _setMatrices(const Internals::BuiltinColourMatrix* matrices);
     const Internals::BuiltinColourMatrix* _getMatrices() const;
 
+    /** @brief Identify the file and set the ID internally. */
     virtual void _identifyId() = 0;
 
     static ::or_error _getBuiltinLevels(const Internals::BuiltinColourMatrix* m,

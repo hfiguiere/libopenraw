@@ -31,10 +31,13 @@ class RawContainer;
 
 namespace CIFF {
 
+/** @addtogroup canon
+ * @{ */
 class CiffIfd
     : public IfdDir
 {
 public:
+    /** @brief construct a CIFF Ifd. */
     CiffIfd(CRWFile& ciff, RawContainer& container, IfdDirType _type);
     /** Synthesize an IFD entry for a string value
      * @param id the id for the entry
@@ -52,6 +55,7 @@ class CiffMainIfd
     : public CiffIfd
 {
 public:
+    /** @brief Construct a main IFD for a CIFF file */
     CiffMainIfd(CRWFile& ciff, RawContainer& container);
     virtual bool load() override;
 };
@@ -61,10 +65,12 @@ class CiffExifIfd
     : public CiffIfd
 {
 public:
+    /** @brief Construct an Exif IFD for a CIFF file */
     CiffExifIfd(CRWFile& ciff, RawContainer& container);
     virtual bool load() override;
 };
 
+/** @} */
 }
 }
 }

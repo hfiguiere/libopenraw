@@ -154,6 +154,12 @@ private:
   IfdDir::Ref m_current_dir;
   std::vector<IfdDir::Ref> m_dirs;
 
+  /** @brief Locate the Image File Directories from the file
+   *
+   * It will add the directorues to m_dirs. This is called to load the file.
+   *
+   * @return true if one or more IfdDir is found.
+   */
   bool _locateDirs();
 };
 

@@ -31,6 +31,9 @@
 namespace OpenRaw {
 namespace IO {
 
+/** @addtogroup io_internals
+ * @{ */
+
 /** @brief cloned stream. Allow reading from a different offset
  */
 class StreamClone
@@ -47,10 +50,15 @@ public:
   StreamClone(const StreamClone& f) = delete;
   StreamClone & operator=(const StreamClone&) = delete;
 
+  /** @inherit */
   virtual Error open() override;
+  /** @inherit */
   virtual int close() override;
+  /** @inherit */
   virtual int seek(off_t offset, int whence) override;
+  /** @inherit */
   virtual int read(void *buf, size_t count) override;
+  /** @inherit */
   virtual off_t filesize() override;
 
 private:
@@ -59,6 +67,7 @@ private:
   off_t m_offset;
 };
 
+/** @} */
 }
 }
 

@@ -31,12 +31,16 @@
 namespace OpenRaw {
 namespace IO {
 
+/** @addtogroup io_internals
+ * @{ */
+
 /** @brief Memory based stream to read memory like a file IO */
 class MemStream
   : public Stream
 {
 public:
-  /** Construct a new memory base stream.
+  /** @brief Construct a new memory base stream.
+   *
    * @param ptr the pointer to the memory area
    * @param s the size of the memory area for the stream.
    */
@@ -48,10 +52,15 @@ public:
   MemStream(const MemStream& f) = delete;
   MemStream & operator=(const MemStream&) = delete;
 
+  /** @inherit */
   virtual or_error open() override;
+  /** @inherit */
   virtual int close() override;
+  /** @inherit */
   virtual int seek(off_t offset, int whence) override;
+  /** @inherit */
   virtual int read(void *buf, size_t count) override;
+  /** @inherit */
   virtual off_t filesize() override;
 
 
@@ -60,6 +69,6 @@ private:
   size_t m_size;
   const uint8_t* m_current;
 };
-
+/** @} */
 }
 }

@@ -32,6 +32,9 @@
 namespace OpenRaw {
 namespace IO {
 
+/** @addtogroup io_internals
+ * @{ */
+
 /** @brief File IO stream */
 class File : public Stream {
 public:
@@ -45,28 +48,30 @@ public:
     File &operator=(const File &) = delete;
 
     // file APIs
-    /** open the file.
+    /** @brief Open the file.
      *
      * Return OR_ERROR_ALREADY_OPEN if it is already open.
      * The stream is still usable after that.
      */
     virtual Error open() override;
-    /** close the file */
+    /** @inherit */
     virtual int close() override;
-    /** seek in the file. Semantics are similar to POSIX */
+    /** @inherit */
     virtual int seek(off_t offset, int whence) override;
-    /** read in the file. Semantics are similar to POSIX */
+    /** @inherit */
     virtual int read(void *buf, size_t count) override;
     virtual off_t filesize() override;
     //virtual void *mmap(size_t l, off_t offset) override;
     //virtual int munmap(void *addr, size_t l) override;
 
 private:
-    /** the interface to the C io */
+    /** @brief The interface to the C io */
     ::io_methods *m_methods;
-    /** the C io file handle */
+    /** @brief The C io file handle */
     ::IOFileRef m_ioRef;
 };
+
+/** @} */
 }
 }
 
