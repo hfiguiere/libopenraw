@@ -35,11 +35,14 @@ namespace Internals {
 
 /**
  * @brief The X-Trans CMOS 6x6 pattern starting with the Fuji X-Pro1.
+ *
+ * When RafFile::isXTrans() is true, this is the type a MosaicInfo returned.
  */
 class XTransPattern
 	: public MosaicInfo
 {
 public:
+  /** @brief Return the X-Trans pattern singleton */
   static const XTransPattern* xtransPattern();
 
 protected:

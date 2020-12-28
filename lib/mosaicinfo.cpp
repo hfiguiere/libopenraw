@@ -33,6 +33,10 @@ namespace OpenRaw {
 
 namespace Internals {
 
+/** @addtogroup internals
+ * @{
+ */
+
 /** alias the colours. */
 static const uint8_t RED = OR_PATTERN_COLOUR_RED;
 static const uint8_t GREEN = OR_PATTERN_COLOUR_GREEN;
@@ -43,10 +47,12 @@ static const uint8_t GBRG_PATTERN[] = { GREEN, BLUE, RED, GREEN };
 static const uint8_t BGGR_PATTERN[] = { BLUE, GREEN, GREEN, RED };
 static const uint8_t GRBG_PATTERN[] = { GREEN, RED, BLUE, GREEN };
 
+/** @brief The MosaicInfo type for 2x2 bayer mosaic patterns */
 class Cfa2x2RgbPattern
   : public MosaicInfo
 {
 public:
+  /** @brief Constructor for a specific 2x2 pattern */
   Cfa2x2RgbPattern(::or_cfa_pattern pattern)
     : MosaicInfo(pattern, 2, 2)
     {
@@ -71,6 +77,7 @@ public:
 
 };
 
+/** @} */
 }
 
 const MosaicInfo*

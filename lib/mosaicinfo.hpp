@@ -1,5 +1,5 @@
 /*
- * libopenraw - mosaicinfo.h
+ * libopenraw - mosaicinfo.hpp
  *
  * Copyright (C) 2012-2020 Hubert Figuière
  *
@@ -25,6 +25,9 @@
 
 namespace OpenRaw {
 
+/** @addtogroup internals
+ * @{ */
+
 /** @brief Info on the mosaic for the Colour Filter Array */
 class MosaicInfo
 {
@@ -47,6 +50,11 @@ public:
    * non 2x2 RGB.
    */
   ::or_cfa_pattern patternType() const;
+  /**
+   * @brief Return the pattern's pattern.
+   * @param [out] count The number of elements in the pattern.
+   * @return The pattern bytes. The pointer is owned but the MosaicInfo.
+   */
   const uint8_t* patternPattern(uint16_t& count) const;
 
   /** @brief Factory to return a singleton instance of the right pattern
@@ -56,6 +64,11 @@ public:
 
 protected:
   MosaicInfo();
+  /** @brief Construct a MosaicInfo
+   * @param pattern The pattern.
+   * @param width The horizontal dimension in pixels.
+   * @param height The vertical dimension in pixels.
+   */
   MosaicInfo(::or_cfa_pattern pattern, uint16_t width, uint16_t height);
 
   /** @brief Set the pattern pattern.
@@ -68,14 +81,16 @@ protected:
   MosaicInfo(const MosaicInfo &) = delete;
   MosaicInfo& operator=(const MosaicInfo&) = delete;
 
+  /** @brief Set the pattern type */
   void setPatternType(::or_cfa_pattern pattern);
 
   class Private;
 
+  /** @brief Private data */
   Private *d;
 };
 
-
+/** @} */
 }
 /*
   Local Variables:
