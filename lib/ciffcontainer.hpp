@@ -46,7 +46,8 @@ class CIFFContainer;
  */
 namespace CIFF {
 
-/** tags for the CIFF records.
+/** @brief Tags for the CIFF records.
+ *
  * List made by a combination of the CIFF spec and
  * what exifprobe by Duane H. Hesser has.
  */
@@ -107,10 +108,10 @@ enum {
 
 class Heap;
 
+/** @brief Camera settings are stored as array of 16-bits int */
 typedef std::vector<uint16_t> CameraSettings;
 
-/**
- * ImageSpec struct from CIFF.
+/** @brief ImageSpec struct from CIFF.
  */
 class ImageSpec
 {

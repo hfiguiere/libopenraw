@@ -32,17 +32,20 @@ namespace Internals {
 class CIFFContainer;
 
 namespace CIFF {
+/** @addtogroup canon
+ * @{ */
 
 class Heap;
 
+/** @brief Shared ptr to Heap */
 typedef std::shared_ptr<Heap> HeapRef;
 
-/** a CIFF Heap */
+/** @brief A CIFF Heap */
 class Heap
 {
 public:
 
-    /** Construct a heap from a location in the container
+    /** @brief Construct a heap from a location in the container
      * @param start the begin address relative to the container.
      * @param length the length in bytes
      * @param container the container to read from
@@ -50,23 +53,24 @@ public:
     Heap(off_t start, off_t length, const CIFFContainer* container);
 
     Heap(const Heap &) = delete;
-    /** Move constructor */
+    /** @brief Move constructor */
     Heap(Heap&&) = default;
     Heap & operator=(const Heap &) = delete;
 
-    /** Return the records from the heap. Load them as needed. */
+    /** @brief Return the records from the heap. Load them as needed. */
     RecordEntries& records();
-    /** Return the containing container */
+    /** @brief Return the containing container */
     const CIFFContainer* container() const
         {
             return m_container;
         }
-    /** Return the offset from the begining of the container. */
+    /** @brief Return the offset from the begining of the container. */
     off_t offset() const
         {
             return m_start;
         }
 private:
+    /** @brief Read the Heap from file and parse the records */
     bool _loadRecords();
 
     off_t m_start;
@@ -75,12 +79,12 @@ private:
     RecordEntries m_records;
 };
 
-/** Header of heap CIFF file
+/** @brief Header of heap CIFF file
  */
 class HeapFileHeader
 {
 public:
-    /** Read the header from the container
+    /** @brief Read the header from the container
      * @return false in case of error.
      */
     bool readFrom(CIFFContainer *);
@@ -94,6 +98,7 @@ public:
     RawContainer::EndianType endian; /**< The endian, based on %byteOrder */
 };
 
+/** @} */
 }
 }
 }

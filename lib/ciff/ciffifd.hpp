@@ -33,6 +33,8 @@ namespace CIFF {
 
 /** @addtogroup canon
  * @{ */
+
+/** @brief Special IFD to synthesize entries out of a CIFF file */
 class CiffIfd
     : public IfdDir
 {
@@ -50,7 +52,7 @@ protected:
     CRWFile& m_file;
 };
 
-/** IFD that will synthesize the entries for main. */
+/** @brief IFD that will synthesize the entries for main. */
 class CiffMainIfd
     : public CiffIfd
 {
@@ -60,7 +62,7 @@ public:
     virtual bool load() override;
 };
 
-/** IFD that will synthesize the entries for the Exif. */
+/** @brief IFD that will synthesize the entries for the Exif. */
 class CiffExifIfd
     : public CiffIfd
 {
