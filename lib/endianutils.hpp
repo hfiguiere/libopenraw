@@ -42,6 +42,10 @@
 #define htobe16(x) OSSwapHostToBigInt16(x)
 #define htole16(x) OSSwapHostToLittleInt16(x)
 
+#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
+
+#include <sys/endian.h>
+
 #else
 
 #include <endian.h>
