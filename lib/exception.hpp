@@ -1,7 +1,7 @@
 /*
- * libopenraw - exception.h
+ * libopenraw - exception.hpp
  *
- * Copyright (C) 2006-2014 Hubert Figuiere
+ * Copyright (C) 2006-2021 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,8 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_EXCEPTION_H_
-#define OR_INTERNALS_EXCEPTION_H_
+#pragma once
 
 #include <exception>
 #include <string>
@@ -28,23 +27,29 @@
 namespace OpenRaw {
 namespace Internals {
 
-/** generic OpenRaw exception */
+/** @addtogroup internals
+ * @{ */
+
+/** @brief Generic OpenRaw exception */
 class Exception
   : public std::exception
 {
 protected:
+  /** @brief Exception error string */
   std::string m_what;
 public:
   Exception()
     : std::exception(),
       m_what()
     {}
+  /** @brief Construct an exception with a message strings */
   Exception(const std::string &w)
     : std::exception(),
       m_what(w)
     {}
   virtual ~Exception()
     {}
+  /** @brief the std::exception::what() override */
   const char *what() const noexcept(true) override
     {
       if(m_what.empty()) {
@@ -54,7 +59,7 @@ public:
     }
 };
 
-/** IO exception */
+/** @brief IO exception */
 class IOException
   : public Exception
 {
@@ -62,6 +67,7 @@ public:
   IOException(const std::string &w)
     : Exception(w)
     {}
+  /** @inherit */
   const char *what() const noexcept(true) override
     {
       if(m_what.empty()) {
@@ -72,11 +78,12 @@ public:
 };
 
 
-/** data is of bad type */
+/** @brief Data is of bad type */
 class BadTypeException
   : public Exception
 {
 public:
+  /** @inherit */
   const char *what() const noexcept(true) override
     {
       if(m_what.empty()) {
@@ -86,11 +93,12 @@ public:
     }
 };
 
-/** data is of too big */
+/** @brief Data is of too big */
 class TooBigException
   : public Exception
 {
 public:
+  /** @inherit */
   const char *what() const noexcept(true) override
     {
       if(m_what.empty()) {
@@ -100,10 +108,12 @@ public:
     }
 };
 
+/** @brief Out of range index */
 class OutOfRangeException
   : public Exception
 {
 public:
+  /** @inherit */
   const char *what() const noexcept(true) override
     {
       if(m_what.empty()) {
@@ -113,6 +123,7 @@ public:
     }
 };
 
+/** @brief Decoding error */
 class DecodingException
   : public Exception
 {
@@ -120,6 +131,7 @@ public:
   DecodingException(const std::string &w)
     : Exception(w)
     {}
+  /** @inherit */
   const char *what() const noexcept(true) override
     {
       if(m_what.empty()) {
@@ -129,10 +141,10 @@ public:
     }
 };
 
+/** @} */
 }
 }
 
-#endif
 /*
   Local Variables:
   mode:c++
