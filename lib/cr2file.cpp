@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2021 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include <cstdint>
 #include <vector>
+#include <limits>
 #include <memory>
 
 #include <libopenraw/cameraids.h>
