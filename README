@@ -65,8 +65,8 @@ How to build:
     $ make install DESTDIR=...
 
 
-Support table:
-==============
+Supported formats:
+==================
 
   T  Tested and proven to work. (I have a sample.)
   Y  Yes, it is there. (Untested as I do not have a sample but the format
@@ -78,287 +78,46 @@ Support table:
   #  Sample file needed.
 
                           ThNail
-                         /  CFA compressed (as is)
+                         /  CFA compressed bitstream
                          | /  CFA decompress
                          | | /  Orientation Tag
                          | | | /  Bayer Type
                          | | | | /  Type ID
                          | | | | | /  Active Area (ROI)
                          | | | | | | /  Color Matrices
-                         | | | | | | | /
-                         | | | | | | | |
-Canon CR2                Y Y Y Y Y Y Y Y
- 1000D/Rebel XS          T T T T T T T
- 1100D/Rebel T3          T T T T T T T
- 20D                     T T T T T T T
- 30D                     T T T T T T T
- 350D/Rebel XT           T T T T T T T
- 40D                     T T T T T T T
- 400D                    T T T T T T T
- 450D                    T T T T T T T
- 50D                     T T T T T T T
- 500D                    T T T T T T T
- 550D                    T T T T T T T
- 5D                      T T T     T T
- 5DMarkII                T T T T   T T
- 5DMarkIII               T T T T   T T
- 6D
- 60D                     T T T T T T T
- 600D                    T T T T T T T
- 650D/T4i
- 7D                      T T T     T T
- 1DMarkII                T T T     T T
- 1DMarkIII
- 1DMarkIV                T T T T T T T
- 1D X
- EOS-M
- G9                                T T
- G10                               T T
- G11                     T T T     T T
- G12                     T T T T T T T
- G15
- G1X
- SX1 IS                  # # # # # # #
- S90                     T T T T T T T
- S95                     T T T T T T T
- S100
+                         | | | | | | | /  Exif and MakerNotes
+                         | | | | | | | | /
+                         | | | | | | | | |
+Canon CR2                Y Y Y Y Y Y Y Y Y
+Canon CR3                Y         Y   Y Y
+Canon CRW                Y Y Y Y Y Y N Y N
 
-Canon CR3                Y         Y   Y
- EOS M50                 T         T
-
-Canon CRW                Y Y Y Y Y Y N Y
- 300D                    T T T T T T
- 10D                     T T T   T T
- D60                     T T T   T T
- G1                      T T T   T T
- G2                      T T T   T T
- G5                      T T T   T T
- Pro1                    T T T   T T
-
-Canon CRW CHDK           N N N N N N N N
+Canon CRW CHDK           N N N N N N N N N
 (unofficial firmware)
- A610                    N N N N N N N
 
-Nikon NEF                Y Y Y Y Y Y N Y
- D1                      T T X X T T
- D1H                     # # # # # # # #
- D1X                     T T X X T T
- D100                    T T T X T T
- D2H                     T T Y T T T
- D2X                     T T X T T T
- D200                              T
- D3
- D3S                     T   B     T
- D3X                     T   B     T
- D300                    T T T     T
- D300S                   T   B     T
- D3000                   T B B T T T
- D3100                   T T T T T T
- D3200                   T   B     T
- D4
- D40                     T T Y T T T
- D40X                    T T Y T T T
- D50                               T
- D5000                   T   B     T
- D5100                   T   B     T
- D5200
- D60
- D600
- D70                     T T Y T T T
- D70s                    T T Y T T T
- D700                              T
- D7000                   T T T T T T
- D7100
- D80                               T
- D800                              T
- D800E                             T
- D90                         B     T
- J1                      T T B Y Y T
- J2
- J3
- S1
- V1                      T T B Y Y T
- V2
- Coolpix A
 
-Nikon NRW                Y         Y N Y
- P6000                   T         T   T
- P7000                   T         T   T
- P7100                   T             T
- P7700
-
-Olympus ORF              Y Y B Y Y Y N Y
- E-1                     T T T   T T
- E-10                    T B B     T
- E-3                     T T T   T T
- E-300                   T T B T T T
- E-330                   T T N     T
- E-400                   T B T T T T
- E-410                   T T T T T T
- E-500                   T T B T   T
- E-510                   B T T T T T
- E-620                   B T T   T T
- SP-350                  B B X T T T
- SP-500                  B B X T T T
- SP-510                  B B X T T T
- SP-550                  B B X T T T
- E-P1                    T T T   T T
- E-P2                    B T T   T T
- E-P3                    B T T   T T
- E-PL1                   B T T   T T
- E-PL2                   B T T   T T
- E-PL3                   B T T   T T
- E-PL5
- E-PM1                   B T T   T T
- E-PM2
- E-M5                    B       T T
- XZ-1                    B T T   T T
- XZ-2
-
-Adobe DNG                Y Y B Y Y Y Y Y
- Leica DMR               T T X T T T
- Leica M8                T T X T T T
- Leica M9                T T X T T T
- Leica M-Monochrom       T T X T T T
- Leica X1                T T T T T T
- Leica X2
- Leica S2                T T B T T T
- Adobe DNG converter     T T B T T T
- Pentax K10D             T T X T T T T
- Pentax K200D            T T   T T T T
- Pentax K30
- Pentax K-r              T T   T T T T
- Pentax K-x              T T   T T T T
- Pentax 645D             T T X T T T T
- Pentax Q                T T X T T T T
- Samsung GX-10           T T X T T T
- Samsung Pro815          T T X T T T
- Ricoh GR-2              T T X T T T
- Ricoh GRX               T T X T T T
- Ricoh GX100
-
-GoPro GPR                Y Y N Y Y Y Y Y
-
+Nikon NEF                Y Y Y Y Y Y N Y Y
+Nikon NRW                Y         Y N Y Y
+Olympus ORF              Y Y B Y Y Y N Y Y
+Adobe DNG                Y Y B Y Y Y Y Y Y
+GoPro GPR                Y Y N Y Y Y Y Y X
 Sony SR2                 Y Y N Y N Y N Y
- R-1
+Sony ARW                 Y Y N Y N Y N Y Y
+Pentax PEF               Y Y N Y Y Y N Y Y
+Epson ERF                Y Y Y Y Y Y N Y Y
+Minolta MRW              Y Y B N Y Y N Y Y
+Panasonic RAW            Y Y N Y Y Y Y N Y
+Panasonic RW2            Y Y N Y Y Y Y N Y
+FujiFilm RAF             Y Y N Y N Y N T Y
 
-Sony ARW                 Y Y N Y N Y N Y
- A-100                   T N   T   T
- A-200                   # # # # # T #
- A-550                   T T       T
- A-580
- A-700                   T T   T   T
- A-380                   T T       T
- A-390                   T T       T
- A-560
- A-850
- A-900
- SLT-A33
- SLT-A35
- SLT-A55                 T T       T
- SLT-A57
- SLT-A65                 T T       T
- SLT-A77                 T T       T
- SLT-A99
- Nex-3                   T T   T   T
- Nex-5                   T T       T
- Nex-5N                  T T       T
- Nex-6
- Nex-C3                  T T       T
- Nex-F3
- Nex-7
- RX-1
- RX-100
 
-Pentax PEF               Y Y N Y Y Y N Y
- *-ist D                 T T X X T T
- *-ist DL                T T N     T
- K10D                    T T N T T T
- K100D                   # # # # # T #
- K100D Super             T T N     T
- K20D                    T T N T   T
- K-r                               T   T
- K-x                               T   T
- K-5                               T   T
- K-7                               T   T
- 645D                              T   T
-
-Epson ERF                Y Y Y Y Y Y N Y
- Epson RD1               T T T T T T   Y
- Epson RD1s                            Y
-
-Minolta MRW              Y Y B N Y Y N Y
- A1                      T T T X T     Y
- A2                      T T T X T     Y
- Dimage 5                T T X X T T   Y
- Dimage 7i               T T X X T T   Y
- Dimage 7Hi              T T X X T T   Y
- Maxxum 5D               T T T N T     Y
- Maxxum 7D               T T T N T     Y
- A200
-
+Unsupported
+-----------
 Sony SRF                 N N N N N N N N
-
 Kodak DCR                N N N N N N N N
-
 Kodak KDC                N N N N N N N N
-
-FujiFilm RAF             Y Y B N N Y N T
- Finepix S2Pro           T         T
- Finepix S3Pro           T         T
- Finepix S5Pro           T         T
- Finepix S6500Fd         T         T
- Finepix S5600           T         T
- Finepix S9500           T         T
- Finepix X100            T T T     T
- Finepix F700            T         T
- Finepix E900            T         T
- X10                     T         T
- X100S
- X20
- X-Pro1                  T       Y T   N
- X-E1
- X-S1                    T         T   N
- XF1
- Finepix S200 EXR        T         T
-
 Foveon X3F               N N N N N N N N
-
-Panasonic RAW            Y Y N Y Y Y Y N
- FZ30                    N T X T   T T
- FZ50                    N T X T   T T
- FZ8                     N T B T   T T
- FZ18                    T T B T   T T
- L1                      N T X T   T T
- L10                     T T N T   T T
- LX2                     N T X T   T T
- Leica Digilux 2         N T X T   T T
- Leica DLUX 3            N T X T   T T
- Leica VLUX 1            N T X T   T T
-
-Panasonic RW2            Y Y N Y Y Y Y N
- GF1                     T T       T T
- GF2                     T T       T T
- GF3
- GF5
- GF6
- GH1                     T T       T T
- GH2                     T T N     T T
- GH3
- G1                      T T       T T
- G2                      T T       T T
- G3
- G5
- G10                     T T       T T
- LX3                     T T B     T T
- LX5                     T T B     T T
- LX7
- FZ200
- FZ28                    T T B     T T
-
 Mamiya MEF               N N N N N N N N
- Mamiya ZD
-
 Samsung SRW              N N N N N N N N
 
 
@@ -395,3 +154,31 @@ downloded.  If you build in a different directory than the source
 directory, you need to set the `srcdir` environment to the path where
 the testsuite binary is build.
 
+
+References
+==========
+
+Many online resources, including open source software were used (list
+non exhaustive):
+
+dcraw was the first open source effort out there. We all owe its
+authors and contributor a lot.
+
+CR3
+---
+Mozilla MP4 Rust parser, that is being used:
+  https://github.com/mozilla/mp4parse-rust/
+Laurent Clevy CR3 documentation, provided lot of information:
+  https://github.com/lclevy/canon_cr3
+
+Exif & MakerNote
+----------------
+ExifTool is used to provide documentation and the tag table:
+  https://exiftool.org/
+  https://exiftool.org/makernote_types.html
+Exiv2 knowledge:
+  https://www.exiv2.org/makernote.html
+libexif:
+  https://libexif.github.io/
+exifprobe:
+  https://github.com/hfiguiere/exifprobe/
