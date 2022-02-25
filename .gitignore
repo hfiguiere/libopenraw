@@ -59,3 +59,8 @@ lib/mp4/mp4parse/tests/bipbop_cbcs_video_init.mp4
 lib/mp4/mp4parse/tests/metadata.mp4
 lib/mp4/mp4parse/tests/metadata_gnre.mp4
 lib/mp4/mp4parse/tests/tiny_av1.mp4
+
+
+# Added by cargo
+
+/target
