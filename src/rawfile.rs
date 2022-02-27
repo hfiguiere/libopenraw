@@ -1,7 +1,38 @@
+/*
+ * libopenraw - rawfile.rs
+ *
+ * Copyright (C) 2022 Hubert Figuière
+ *
+ * This library is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
 use std::path::Path;
 
 use super::{Error, Result, Type, TypeId};
+use crate::factory;
+use crate::identify;
 use crate::thumbnail::Thumbnail;
+
+/// The trait for any IO
+pub trait ReadAndSeek: std::io::Read + std::io::Seek {}
+
+impl ReadAndSeek for std::fs::File {}
+impl ReadAndSeek for std::io::Cursor<&[u8]> {}
+impl ReadAndSeek for std::io::Cursor<Vec<u8>> {}
+
+pub type RawFileFactory = fn(Box<dyn ReadAndSeek>) -> Box<dyn RawFile>;
 
 /// Very specific implementation trait.
 /// It should be the only things that needs to be implemented
@@ -17,26 +48,71 @@ pub trait RawFileImpl {
     fn list_thumbnail_sizes(&self) -> Vec<u32>;
 }
 
+/// Identify the RAW file type from file extension
+/// `filename` is the file path.
+pub fn identify_extension<P>(filename: &P) -> Option<Type>
+where
+    P: AsRef<Path>,
+{
+    let file_path = filename.as_ref();
+    file_path
+        .extension()
+        .and_then(|e| identify::type_for_extension(&e.to_ascii_lowercase()))
+}
+
+/// Crate RawFile object from IO.
+/// Use `RawFile::from_file() or `RawFile::from_memory`
+/// Will return `Error::UnrecognizedFormat` or some `Error::IOError`
+/// if the file can't be identified.
+fn from_io(
+    mut readable: Box<dyn ReadAndSeek>,
+    type_hint: Option<Type>,
+) -> Result<Box<dyn RawFile>> {
+    let type_hint = if let Some(_) = type_hint {
+        type_hint
+    } else {
+        identify::type_for_content(&mut *readable)?
+    };
+    readable.rewind()?;
+
+    if type_hint == None {
+        return Err(Error::UnrecognizedFormat);
+    }
+
+    let hint = type_hint.unwrap();
+    if let Some(f) = factory::get_raw_file_factory(hint) {
+        Ok(f(readable))
+    } else {
+        Err(Error::UnrecognizedFormat)
+    }
+}
+
 /// Standard trait for RAW files.
 /// Mostly using the default implementation
 pub trait RawFile: RawFileImpl {
     /// Create a RawFile object from a file
-    fn new<P>(filename: P, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
+    fn from_file<P>(filename: P, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
     where
         P: AsRef<Path>,
         Self: Sized,
     {
-        Err(Error::UnrecognizedFormat)
+        let type_hint = match type_hint {
+            Some(_) => type_hint,
+            None => identify_extension(&filename),
+        };
+        let file = Box::new(std::fs::File::open(filename)?);
+        from_io(file, type_hint)
     }
 
     /// Create a RawFile object from a buffer
-    fn from_memory<B>(buffer: B, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
-    where
-        B: AsRef<[u8]>,
-        Self: Sized,
-    {
-        Err(Error::UnrecognizedFormat)
-    }
+    // XXX figure out the lifetime issue
+    //    fn from_memory<B>(buffer: B, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
+    //    where
+    //        B: AsRef<[u8]>,
+    //        Self: Sized,
+    //    {
+    //        from_io(Box::new(std::io::Cursor::new(buffer.as_ref())), type_hint)
+    //    }
 
     /// Return the type for the RAW file
     fn type_(&self) -> Type;
@@ -71,16 +147,16 @@ pub trait RawFile: RawFileImpl {
 
         for s in sizes {
             match s.cmp(&tsize) {
-                Ordering::Less =>  {
+                Ordering::Less => {
                     if s > biggest_smaller {
                         biggest_smaller = s;
                     }
-                },
+                }
                 Ordering::Greater => {
                     if s < smallest_bigger {
                         smallest_bigger = s;
                     }
-                },
+                }
                 Ordering::Equal => {
                     found_size = s;
                     break;
@@ -159,5 +235,22 @@ mod test {
         assert!(t.is_ok());
         let t = t.unwrap();
         assert_eq!(t.size, 4096);
+    }
+
+    #[test]
+    fn test_identify_extension() {
+        use std::path::PathBuf;
+
+        use super::identify_extension;
+
+        assert_eq!(
+            identify_extension(&PathBuf::from("FILE.CR3")),
+            Some(Type::Cr3)
+        );
+        assert_eq!(
+            identify_extension(&PathBuf::from("FiLe.cr3")),
+            Some(Type::Cr3)
+        );
+        assert_eq!(identify_extension(&PathBuf::from("NOPE")), None);
     }
 }

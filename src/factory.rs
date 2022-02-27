@@ -1,5 +1,5 @@
 /*
- * libopenraw - thumbnail.rs
+ * libopenraw - factory.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -18,12 +18,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-pub struct Thumbnail {
-    pub size: u32,
+use std::collections::HashMap;
+
+use super::cr3::Cr3File;
+use super::rawfile::RawFileFactory;
+use super::Type;
+
+lazy_static::lazy_static! {
+    static ref FACTORY_MAP: HashMap<Type, RawFileFactory> = {
+        let mut m = HashMap::new();
+
+        m.insert(Type::Cr3, Cr3File::factory as RawFileFactory);
+
+        m
+    };
 }
 
-impl Thumbnail {
-    pub fn new(size: u32) -> Thumbnail {
-        Thumbnail { size }
-    }
+pub fn get_raw_file_factory(t: Type) -> Option<&'static RawFileFactory> {
+    FACTORY_MAP.get(&t)
 }

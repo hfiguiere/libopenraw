@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 # mp4 = { path = "lib/mp4", version = "0.1.0" }
-
+lazy_static = "1.4.0"
 
 [workspace]
 members = [

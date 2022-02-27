@@ -1,5 +1,5 @@
 /*
- * libopenraw - thumbnail.rs
+ * libopenraw - raf.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -18,12 +18,4 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-pub struct Thumbnail {
-    pub size: u32,
-}
-
-impl Thumbnail {
-    pub fn new(size: u32) -> Thumbnail {
-        Thumbnail { size }
-    }
-}
+pub(crate) const RAF_MAGIC: &[u8] = b"FUJIFILMCCD-RAW ";
