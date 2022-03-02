@@ -18,9 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+mod container;
 mod cr3;
 mod factory;
 mod identify;
+mod io;
+mod mp4;
 mod raf;
 mod rawfile;
 mod thumbnail;
