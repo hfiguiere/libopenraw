@@ -75,10 +75,8 @@ pub(crate) fn type_for_content(content: &mut dyn ReadAndSeek) -> Result<Option<T
     }
     if &buf[0..4] == b"II\x2a\0" || &buf[0..4] == b"MM\0\x2a" {
         // TIFF based format
-        if len >= 12 {
-            if &buf[8..11] == b"CR\x02" {
-                return Ok(Some(Cr2));
-            }
+        if len >= 12 && &buf[8..11] == b"CR\x02" {
+            return Ok(Some(Cr2));
         }
         if len >= 8 {
             // XXX missing the TIFF part.

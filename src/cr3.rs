@@ -18,30 +18,109 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+use std::collections::HashMap;
 use std::rc::Rc;
 
+use once_cell::unsync::OnceCell;
+
+use crate::container::Container;
 use crate::io::Viewer;
 use crate::mp4;
+use crate::rawfile::ReadAndSeek;
+use crate::thumbnail;
 use crate::thumbnail::Thumbnail;
-
-use super::rawfile::ReadAndSeek;
-use super::{Error, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Error, RawFile, RawFileImpl, Result, Type, TypeId};
 
 /// Canon CR3 File
 pub struct Cr3File {
     reader: Rc<Viewer>,
-    container: mp4::Container,
+    container: OnceCell<mp4::Container>,
+    thumbnails: OnceCell<HashMap<u32, thumbnail::ThumbDesc>>,
 }
 
 impl Cr3File {
     pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
         let viewer = Viewer::new(reader);
-        // XXX we should be faillible here.
-        let view = Viewer::create_view(&viewer, 0).expect("Created view");
-        let container = mp4::Container::new(view);
         Box::new(Cr3File {
             reader: viewer,
-            container,
+            container: OnceCell::new(),
+            thumbnails: OnceCell::new(),
+        })
+    }
+
+    /// Return a lazily loaded `mp4::Container`
+    fn container(&self) -> &mp4::Container {
+        self.container.get_or_init(|| {
+            // XXX we should be faillible here.
+            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
+            let mut container = mp4::Container::new(view);
+            container.load();
+            container
+        })
+    }
+
+    /// Return a lazily loaded set of thumbnails
+    fn thumbnails(&self) -> &HashMap<u32, thumbnail::ThumbDesc> {
+        self.thumbnails.get_or_init(|| {
+            use thumbnail::{Data, DataOffset};
+
+            let container = self.container();
+            let mut thumbnails = HashMap::new();
+            if let Ok(craw_header) = container.craw_header() {
+                let x = craw_header.thumb_w;
+                let y = craw_header.thumb_h;
+                let dim = std::cmp::max(x, y) as u32;
+                if dim > 0 {
+                    let mut data = Vec::new();
+                    data.resize(craw_header.thumbnail.length as usize, 0);
+                    // XXX change the way the parsed data comes out of the mp4.
+                    // This is a left over from the C API where
+                    // thumbnail olds a pointer to the slice
+                    unsafe {
+                        std::ptr::copy(
+                            craw_header.thumbnail.data,
+                            data.as_mut_ptr(),
+                            craw_header.thumbnail.length as usize,
+                        );
+                    };
+                    let desc = thumbnail::ThumbDesc {
+                        width: x as u32,
+                        height: y as u32,
+                        data_type: DataType::Jpeg,
+                        data: Data::Bytes(data),
+                    };
+                    thumbnails.insert(dim, desc);
+                }
+            }
+
+            let track_count = container.track_count().unwrap_or(0);
+            for i in 0..track_count {
+                if !container.is_track_video(i).unwrap_or(false) {
+                    continue;
+                }
+                if let Ok(raw_track) = container.raw_track(i) {
+                    if raw_track.is_jpeg {
+                        let dim =
+                            std::cmp::max(raw_track.image_width, raw_track.image_height) as u32;
+                        let desc = thumbnail::ThumbDesc {
+                            width: raw_track.image_width as u32,
+                            height: raw_track.image_height as u32,
+                            data_type: DataType::Jpeg,
+                            data: Data::Offset(DataOffset {
+                                offset: raw_track.offset,
+                                len: raw_track.len,
+                            }),
+                        };
+                        thumbnails.insert(dim, desc);
+                    }
+                }
+            }
+
+            if let Ok(desc) = container.preview_desc() {
+                let dim = std::cmp::max(desc.width, desc.height);
+                thumbnails.insert(dim, desc);
+            }
+            thumbnails
         })
     }
 }
@@ -51,12 +130,22 @@ impl RawFileImpl for Cr3File {
         0
     }
 
-    fn thumbnail_for_size(&self, _size: u32) -> Result<Thumbnail> {
-        Err(Error::NotSupported)
+    fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
+        let thumbnails = self.thumbnails();
+        if let Some(desc) = thumbnails.get(&size) {
+            self.container().make_thumbnail(desc)
+        } else {
+            Err(Error::NotFound)
+        }
     }
 
     fn list_thumbnail_sizes(&self) -> Vec<u32> {
-        vec![]
+        let thumbnails = self.thumbnails();
+
+        // XXX shall we cache this?
+        let mut sizes: Vec<u32> = thumbnails.keys().copied().collect();
+        sizes.sort_unstable();
+        sizes
     }
 }
 

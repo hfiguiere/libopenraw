@@ -18,11 +18,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+use crate::thumbnail::{ThumbDesc, Thumbnail};
+use crate::Result;
+
 /// Endian of the container
 pub enum Endian {
     Unset,
-    BigEndian,
-    EndianLittle,
+    Big,
+    Little,
 }
 
 /// Container abstract trait
@@ -31,4 +34,7 @@ pub trait Container {
     fn endian() -> Endian {
         Endian::Unset
     }
+
+    /// Make a thumbnail from the thumbdesc
+    fn make_thumbnail(&self, desc: &ThumbDesc) -> Result<Thumbnail>;
 }

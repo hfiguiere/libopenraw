@@ -18,12 +18,43 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-pub struct Thumbnail {
-    pub size: u32,
+use crate::DataType;
+
+/// Offset/len representation for `Data`
+pub struct DataOffset {
+    /// Offset in the container
+    pub offset: u64,
+    /// Data size
+    pub len: u64,
 }
 
-impl Thumbnail {
-    pub fn new(size: u32) -> Thumbnail {
-        Thumbnail { size }
-    }
+/// Represent data either as offset/len or a buffer.
+pub enum Data {
+    Offset(DataOffset),
+    Bytes(Vec<u8>),
 }
+
+/// Describe a thumbnail to fetch it from the container later
+/// as a blob
+pub struct ThumbDesc {
+    /// Thumbnail width
+    pub width: u32,
+    /// Thumbnail height
+    pub height: u32,
+    /// Type if the data
+    pub data_type: DataType,
+    /// The data
+    pub data: Data,
+}
+
+pub struct Thumbnail {
+    /// Thumbnail width
+    pub width: u32,
+    /// Thumbnail height
+    pub height: u32,
+    /// Type if the data
+    pub data_type: DataType,
+    pub data: Vec<u8>,
+}
+
+impl Thumbnail {}

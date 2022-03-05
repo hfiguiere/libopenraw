@@ -31,6 +31,8 @@ mod thumbnail;
 pub use rawfile::RawFile;
 pub use rawfile::RawFileImpl;
 
+pub use rawfile::raw_file_from_file;
+
 /// Standard Result for libopenraw
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -47,11 +49,21 @@ pub enum Error {
     BufferTooSmall,
     /// IO Error
     IoError(String),
+    /// Error parsing format
+    FormatError,
+    /// MP4 parse error. Can't use native error as it doesn't do `PartialEq`
+    Mp4Parse(String),
 }
 
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Error {
         Error::IoError(err.to_string())
+    }
+}
+
+impl From<mp4parse::Error> for Error {
+    fn from(err: mp4parse::Error) -> Error {
+        Error::Mp4Parse(err.to_string())
     }
 }
 
@@ -63,11 +75,23 @@ impl std::fmt::Display for Error {
             Self::NotFound => write!(f, "Data not found"),
             Self::BufferTooSmall => write!(f, "Buffer is too small"),
             Self::IoError(ref err) => write!(f, "IO Error: {}", err),
+            Self::FormatError => write!(f, "Format error"),
+            Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {}", err),
         }
     }
 }
 
 impl std::error::Error for Error {}
+
+/// What type is the data.
+///
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum DataType {
+    /// JPEG stream
+    Jpeg,
+    /// RAW data compressed. (undetermined codec)
+    CompressedRaw,
+}
 
 /// RAW file type. This list the type of files, which
 /// coincidentally match the vendor, except for DNG.

@@ -42,7 +42,7 @@ impl Viewer {
     }
 
     /// Get the inner io to make an io call
-    pub fn get_io<'a>(&'a self) -> RefMut<'a, Box<dyn ReadAndSeek>> {
+    pub fn get_io(&self) -> RefMut<'_, Box<dyn ReadAndSeek>> {
         self.inner.borrow_mut()
     }
 }

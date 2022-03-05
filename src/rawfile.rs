@@ -68,7 +68,7 @@ fn from_io(
     mut readable: Box<dyn ReadAndSeek>,
     type_hint: Option<Type>,
 ) -> Result<Box<dyn RawFile>> {
-    let type_hint = if let Some(_) = type_hint {
+    let type_hint = if type_hint.is_some() {
         type_hint
     } else {
         identify::type_for_content(&mut *readable)?
@@ -87,33 +87,32 @@ fn from_io(
     }
 }
 
+/// Create a RawFile object from a file
+pub fn raw_file_from_file<P>(filename: P, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
+where
+    P: AsRef<Path>,
+{
+    let type_hint = match type_hint {
+        Some(_) => type_hint,
+        None => identify_extension(&filename),
+    };
+    let file = Box::new(std::fs::File::open(filename)?);
+    from_io(file, type_hint)
+}
+
+/// Create a RawFile object from a buffer
+// XXX figure out the lifetime issue
+//    fn from_memory<B>(buffer: B, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
+//    where
+//        B: AsRef<[u8]>,
+//        Self: Sized,
+//    {
+//        from_io(Box::new(std::io::Cursor::new(buffer.as_ref())), type_hint)
+//    }
+
 /// Standard trait for RAW files.
 /// Mostly using the default implementation
 pub trait RawFile: RawFileImpl {
-    /// Create a RawFile object from a file
-    fn from_file<P>(filename: P, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
-    where
-        P: AsRef<Path>,
-        Self: Sized,
-    {
-        let type_hint = match type_hint {
-            Some(_) => type_hint,
-            None => identify_extension(&filename),
-        };
-        let file = Box::new(std::fs::File::open(filename)?);
-        from_io(file, type_hint)
-    }
-
-    /// Create a RawFile object from a buffer
-    // XXX figure out the lifetime issue
-    //    fn from_memory<B>(buffer: B, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
-    //    where
-    //        B: AsRef<[u8]>,
-    //        Self: Sized,
-    //    {
-    //        from_io(Box::new(std::io::Cursor::new(buffer.as_ref())), type_hint)
-    //    }
-
     /// Return the type for the RAW file
     fn type_(&self) -> Type;
 
@@ -184,7 +183,7 @@ pub trait RawFile: RawFileImpl {
 mod test {
     use super::{RawFile, RawFileImpl};
     use crate::thumbnail::Thumbnail;
-    use crate::{Error, Result, Type, TypeId};
+    use crate::{DataType, Error, Result, Type, TypeId};
 
     struct TestRawFile {}
 
@@ -196,7 +195,12 @@ mod test {
         fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
             let sizes = self.list_thumbnail_sizes();
             if sizes.contains(&size) {
-                Ok(Thumbnail::new(size))
+                Ok(Thumbnail {
+                    width: size,
+                    height: size,
+                    data_type: DataType::Jpeg,
+                    data: vec![],
+                })
             } else {
                 Err(Error::NotFound)
             }
@@ -219,22 +223,22 @@ mod test {
         let t = raw_file.thumbnail(160);
         assert!(t.is_ok());
         let t = t.unwrap();
-        assert_eq!(t.size, 160);
+        assert_eq!(t.width, 160);
 
         let t = raw_file.thumbnail(1024);
         assert!(t.is_ok());
         let t = t.unwrap();
-        assert_eq!(t.size, 1024);
+        assert_eq!(t.width, 1024);
 
         let t = raw_file.thumbnail(512);
         assert!(t.is_ok());
         let t = t.unwrap();
-        assert_eq!(t.size, 1024);
+        assert_eq!(t.width, 1024);
 
         let t = raw_file.thumbnail(8192);
         assert!(t.is_ok());
         let t = t.unwrap();
-        assert_eq!(t.size, 4096);
+        assert_eq!(t.width, 4096);
     }
 
     #[test]
