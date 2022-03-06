@@ -68,15 +68,15 @@ impl Cr3File {
             let container = self.container();
             let mut thumbnails = HashMap::new();
             if let Ok(craw_header) = container.craw_header() {
-                let x = craw_header.thumb_w;
-                let y = craw_header.thumb_h;
+                let x = craw_header.thumbnail.width;
+                let y = craw_header.thumbnail.height;
                 let dim = std::cmp::max(x, y) as u32;
                 if dim > 0 {
                     let desc = thumbnail::ThumbDesc {
                         width: x as u32,
                         height: y as u32,
                         data_type: DataType::Jpeg,
-                        data: Data::Bytes(craw_header.thumbnail.data),
+                        data: Data::Bytes(craw_header.thumbnail.data.clone()),
                     };
                     thumbnails.insert(dim, desc);
                 }

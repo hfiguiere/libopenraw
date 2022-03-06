@@ -23,6 +23,7 @@ use std::io::{Seek, SeekFrom};
 use std::rc::Rc;
 
 use byteorder::{BigEndian, ReadBytesExt};
+use mp4parse::craw;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
@@ -34,18 +35,6 @@ use crate::{DataType, Error, Result};
 
 /// Copy paste imports from mp4parse_capi
 mod capi {
-
-    #[derive(Debug, Default)]
-    pub struct ByteData {
-        pub data: Vec<u8>,
-    }
-
-    impl ByteData {
-        pub(super) fn set_data(&mut self, data: &[u8]) {
-            self.data = data.into();
-        }
-    }
-
     #[derive(Default, Debug)]
     pub struct TrackRawInfo {
         pub image_width: u16,
@@ -53,15 +42,6 @@ mod capi {
         pub is_jpeg: bool,
         pub offset: u64,
         pub len: u64,
-    }
-
-    #[derive(Default)]
-    pub struct CrawHeader {
-        pub cncv: ByteData,
-        pub thumb_w: u16,
-        pub thumb_h: u16,
-        pub thumbnail: ByteData,
-        pub meta: [ByteData; 4],
     }
 }
 
@@ -153,25 +133,35 @@ impl Container {
 
     /// Get the metadata at `idx`
     pub(crate) fn metadata_block(&self, idx: u32) -> Option<IfdHolder> {
+        fn make_ifd_holder(data: Option<&Vec<u8>>) -> Option<IfdHolder> {
+            data.and_then(|d| {
+                if d.len() >= 4 {
+                    // XXX so many copies
+                    let cursor = Box::new(std::io::Cursor::new(d.clone()));
+                    let viewer = Viewer::new(cursor);
+                    if let Ok(view) = Viewer::create_view(&viewer, 0) {
+                        let mut ifd = ifd::Container::new(view);
+                        ifd.load().expect("ifd load");
+                        return Some((viewer, Rc::new(ifd)));
+                    }
+                }
+                None
+            })
+        }
+
         let len = self
             .meta_ifds
             .get_or_init(|| {
-                let mut ifds = vec![None; 4];
-                if let Ok(ref craw) = self.craw_header() {
-                    for (i, item) in ifds.iter_mut().enumerate() {
-                        if craw.meta[i].data.len() >= 4 {
-                            // XXX so many copies
-                            let cursor = Box::new(std::io::Cursor::new(craw.meta[i].data.clone()));
-                            let viewer = Viewer::new(cursor);
-                            if let Ok(view) = Viewer::create_view(&viewer, 0) {
-                                let mut ifd = ifd::Container::new(view);
-                                ifd.load().expect("ifd load");
-                                *item = Some((viewer, Rc::new(ifd)));
-                            }
-                        }
-                    }
+                if let Ok(craw) = self.craw_header() {
+                    vec![
+                        make_ifd_holder(craw.meta1.as_ref()),
+                        make_ifd_holder(craw.meta2.as_ref()),
+                        make_ifd_holder(craw.meta3.as_ref()),
+                        make_ifd_holder(craw.meta4.as_ref()),
+                    ]
+                } else {
+                    vec![None; 4]
                 }
-                ifds
             })
             .len();
 
@@ -257,31 +247,12 @@ impl Container {
     }
 
     /// Get the Craw header
-    pub(crate) fn craw_header(&self) -> Result<capi::CrawHeader> {
-        let mut header = capi::CrawHeader::default();
-
+    pub(crate) fn craw_header(&self) -> Result<&craw::CrawHeader> {
         if self.context.craw.is_none() {
             return Err(Error::FormatError);
         }
 
-        let craw = self.context.craw.as_ref().unwrap();
-        header.cncv.set_data(&craw.cncv);
-        header.thumb_w = craw.thumbnail.width;
-        header.thumb_h = craw.thumbnail.height;
-        header.thumbnail.set_data(&craw.thumbnail.data);
-        if let Some(ref meta) = craw.meta1 {
-            header.meta[0].set_data(meta);
-        }
-        if let Some(ref meta) = craw.meta2 {
-            header.meta[1].set_data(meta);
-        }
-        if let Some(ref meta) = craw.meta3 {
-            header.meta[2].set_data(meta);
-        }
-        if let Some(ref meta) = craw.meta4 {
-            header.meta[3].set_data(meta);
-        }
-        Ok(header)
+        Ok(self.context.craw.as_ref().unwrap())
     }
 
     /// Return an entry from the Craw table as index.

@@ -28,7 +28,7 @@ use boxes::{BoxType, FourCC};
 mod fallible;
 
 #[cfg(feature = "craw")]
-mod craw;
+pub mod craw;
 
 // Unit tests.
 #[cfg(test)]
