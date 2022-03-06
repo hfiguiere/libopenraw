@@ -21,6 +21,7 @@
 use byteorder::ByteOrder;
 
 /// Type a tag. See `ifd::Entry`.
+#[derive(Debug, PartialEq)]
 #[repr(i16)]
 pub enum TagType {
     Byte = 1,
@@ -36,6 +37,29 @@ pub enum TagType {
     Float = 11,
     Double = 12,
     Invalid = 13,
+}
+
+impl std::convert::TryFrom<i16> for TagType {
+    type Error = &'static str;
+    fn try_from(value: i16) -> Result<Self, Self::Error> {
+        if value <= 0 || value > 13 {
+            Err("Value out of range")
+        } else {
+            Ok(unsafe { std::mem::transmute(value) })
+        }
+    }
+}
+
+/// Return the size of a unit for the tag type
+pub fn tag_unit_size(tag_type: TagType) -> usize {
+    use TagType::*;
+
+    match tag_type {
+        Byte | SByte | Ascii | Undefined | Invalid => 1,
+        Short | SShort => 2,
+        Long | SLong | Float => 4,
+        Rational | SRational | Double => 8,
+    }
 }
 
 /// Trait for ExifValue conversion
@@ -233,5 +257,28 @@ impl ExifValue for SRational {
             num: E::read_i32(buf),
             denom: E::read_u32(buf),
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use super::TagType;
+
+    #[test]
+    fn test_tag_type_convert() {
+        let tag = TagType::try_from(1);
+        assert_eq!(tag, Ok(TagType::Byte));
+
+        let tag = TagType::try_from(4);
+        assert_eq!(tag, Ok(TagType::Long));
+
+        // Invalid value
+        let tag = TagType::try_from(-1);
+        assert!(tag.is_err());
+
+        // Invalid value
+        let tag = TagType::try_from(42);
+        assert!(tag.is_err());
     }
 }

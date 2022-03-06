@@ -22,6 +22,7 @@ use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
+use log::debug;
 
 use crate::container;
 use crate::exif;
@@ -58,7 +59,14 @@ impl Dir {
             let count = view.read_u32::<E>()?;
             let mut data = [0_u8; 4];
             view.read_exact(&mut data)?;
-            let entry = Entry::new(id, type_, count, data);
+            let mut entry = Entry::new(id, type_, count, data);
+            if !entry.is_inline() {
+                debug!("Entry {} is not inline", id);
+
+                let pos = view.seek(SeekFrom::Current(0))?;
+                entry.load_data::<E>(view)?;
+                view.seek(SeekFrom::Start(pos))?;
+            }
             entries.insert(id, entry);
         }
 

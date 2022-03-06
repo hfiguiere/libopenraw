@@ -55,6 +55,8 @@ pub enum Error {
     IoError(String),
     /// Error parsing format
     FormatError,
+    /// Already inited
+    AlreadyInited,
     /// MP4 parse error. Can't use native error as it doesn't do `PartialEq`
     Mp4Parse(String),
 }
@@ -81,6 +83,7 @@ impl std::fmt::Display for Error {
             Self::UnexpectedEOF => write!(f, "Unexpected end-of-file"),
             Self::IoError(ref err) => write!(f, "IO Error: {}", err),
             Self::FormatError => write!(f, "Format error"),
+            Self::AlreadyInited => write!(f, "Already Inited"),
             Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {}", err),
         }
     }
