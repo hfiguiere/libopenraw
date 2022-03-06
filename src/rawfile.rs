@@ -19,10 +19,12 @@
  */
 
 use std::path::Path;
+use std::rc::Rc;
 
 use super::{Error, Result, Type, TypeId};
 use crate::factory;
 use crate::identify;
+use crate::ifd;
 use crate::thumbnail::Thumbnail;
 
 /// The trait for any IO
@@ -46,6 +48,9 @@ pub trait RawFileImpl {
 
     /// List the thumbnail sizes in the file
     fn list_thumbnail_sizes(&self) -> Vec<u32>;
+
+    /// Get the ifd with type
+    fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>>;
 }
 
 /// Identify the RAW file type from file extension
@@ -177,11 +182,27 @@ pub trait RawFile: RawFileImpl {
 
         self.thumbnail_for_size(found_size)
     }
+
+    ///
+    fn main_ifd(&self) -> Option<Rc<ifd::Dir>> {
+        self.ifd(ifd::Type::Main)
+    }
+
+    fn exif_ifd(&self) -> Option<Rc<ifd::Dir>> {
+        self.ifd(ifd::Type::Exif)
+    }
+
+    fn maker_note_ifd(&self) -> Option<Rc<ifd::Dir>> {
+        self.ifd(ifd::Type::MakerNote)
+    }
 }
 
 #[cfg(test)]
 mod test {
+    use std::rc::Rc;
+
     use super::{RawFile, RawFileImpl};
+    use crate::ifd;
     use crate::thumbnail::Thumbnail;
     use crate::{DataType, Error, Result, Type, TypeId};
 
@@ -208,6 +229,10 @@ mod test {
 
         fn list_thumbnail_sizes(&self) -> Vec<u32> {
             vec![160, 1024, 4096]
+        }
+
+        fn ifd(&self, _ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>> {
+            None
         }
     }
 

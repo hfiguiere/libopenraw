@@ -1,5 +1,5 @@
 /*
- * libopenraw - container.rs
+ * libopenraw - ifd/entry.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -18,24 +18,20 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-use crate::thumbnail::{ThumbDesc, Thumbnail};
-use crate::Result;
-
-/// Endian of the container
-#[derive(Clone, Copy)]
-pub enum Endian {
-    Unset,
-    Big,
-    Little,
+pub struct Entry {
+    id: u16,
+    type_: i16,
+    count: i32,
+    data: [u8; 4],
 }
 
-/// Container abstract trait
-pub trait Container {
-    /// Return the endian of the container
-    fn endian(&self) -> Endian {
-        Endian::Unset
+impl Entry {
+    pub fn new(id: u16, type_: i16, count: i32, data: [u8; 4]) -> Self {
+        Entry {
+            id,
+            type_,
+            count,
+            data,
+        }
     }
-
-    /// Make a thumbnail from the thumbdesc
-    fn make_thumbnail(&self, desc: &ThumbDesc) -> Result<Thumbnail>;
 }

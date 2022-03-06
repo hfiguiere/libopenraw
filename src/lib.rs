@@ -22,6 +22,7 @@ mod container;
 mod cr3;
 mod factory;
 mod identify;
+pub mod ifd;
 mod io;
 mod mp4;
 mod raf;
@@ -47,6 +48,8 @@ pub enum Error {
     NotFound,
     /// Buffer too small: we expect a bigger amount of data
     BufferTooSmall,
+    /// Unextepected end of file
+    UnexpectedEOF,
     /// IO Error
     IoError(String),
     /// Error parsing format
@@ -74,6 +77,7 @@ impl std::fmt::Display for Error {
             Self::NotSupported => write!(f, "Operation not supported"),
             Self::NotFound => write!(f, "Data not found"),
             Self::BufferTooSmall => write!(f, "Buffer is too small"),
+            Self::UnexpectedEOF => write!(f, "Unexpected end-of-file"),
             Self::IoError(ref err) => write!(f, "IO Error: {}", err),
             Self::FormatError => write!(f, "Format error"),
             Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {}", err),

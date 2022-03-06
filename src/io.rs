@@ -66,7 +66,7 @@ impl View {
 
 impl std::io::Read for View {
     fn read(&mut self, buf: &mut [u8]) -> Result<usize> {
-        let inner = self.inner.upgrade().unwrap();
+        let inner = self.inner.upgrade().expect("Couldn't upgrade inner");
         let mut io = inner.get_io();
         io.read(buf)
     }
@@ -74,7 +74,7 @@ impl std::io::Read for View {
 
 impl std::io::Seek for View {
     fn seek(&mut self, pos: SeekFrom) -> Result<u64> {
-        let inner = self.inner.upgrade().unwrap();
+        let inner = self.inner.upgrade().expect("Couldn't upgrade inner");
         let mut io = inner.get_io();
         io.seek(match pos {
             SeekFrom::Start(p) => SeekFrom::Start(p + self.offset),

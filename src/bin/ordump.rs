@@ -1,3 +1,4 @@
+use libopenraw::ifd;
 use libopenraw::raw_file_from_file;
 
 pub fn main() {
@@ -34,6 +35,12 @@ fn process_file(p: &str) {
                         println!("Failed to fetch preview for {}: {}", size, err);
                     }
                 }
+            }
+
+            let exif_ifd = rawfile.ifd(ifd::Type::Exif);
+            println!("Has Exif: {}", exif_ifd.is_some());
+            if let Some(exif_ifd) = exif_ifd {
+                println!("Number of exif entries {}", exif_ifd.num_entries());
             }
         }
         Err(err) => {

@@ -1,5 +1,5 @@
 /*
- * libopenraw - container.rs
+ * libopenraw - ifd.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -18,24 +18,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-use crate::thumbnail::{ThumbDesc, Thumbnail};
-use crate::Result;
+mod container;
+mod dir;
+mod entry;
 
-/// Endian of the container
+pub(crate) use container::Container;
+pub(crate) use dir::Dir;
+pub(crate) use entry::Entry;
+
+/// Type of IFD
 #[derive(Clone, Copy)]
-pub enum Endian {
-    Unset,
-    Big,
-    Little,
-}
-
-/// Container abstract trait
-pub trait Container {
-    /// Return the endian of the container
-    fn endian(&self) -> Endian {
-        Endian::Unset
-    }
-
-    /// Make a thumbnail from the thumbdesc
-    fn make_thumbnail(&self, desc: &ThumbDesc) -> Result<Thumbnail>;
+pub enum Type {
+    /// Main IFD (see TIFF)
+    Main,
+    /// CFA specific IFD
+    Cfa,
+    /// Exif IFD
+    Exif,
+    /// MakerNote IFD
+    MakerNote,
+    /// Any other IFD
+    Other,
 }

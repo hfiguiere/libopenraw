@@ -20,11 +20,14 @@
 
 use std::cell::RefCell;
 use std::io::{Seek, SeekFrom};
+use std::rc::Rc;
 
 use byteorder::{BigEndian, ReadBytesExt};
+use once_cell::unsync::OnceCell;
 
 use crate::container;
-use crate::io::View;
+use crate::ifd;
+use crate::io::{View, Viewer};
 use crate::thumbnail;
 use crate::thumbnail::Thumbnail;
 use crate::{DataType, Error, Result};
@@ -32,25 +35,14 @@ use crate::{DataType, Error, Result};
 /// Copy paste imports from mp4parse_capi
 mod capi {
 
-    #[derive(Debug)]
+    #[derive(Debug, Default)]
     pub struct ByteData {
-        pub length: u32,
-        pub data: *const u8,
-    }
-
-    impl Default for ByteData {
-        fn default() -> Self {
-            Self {
-                length: 0,
-                data: std::ptr::null(),
-            }
-        }
+        pub data: Vec<u8>,
     }
 
     impl ByteData {
         pub(super) fn set_data(&mut self, data: &[u8]) {
-            self.length = data.len() as u32;
-            self.data = data.as_ptr();
+            self.data = data.into();
         }
     }
 
@@ -69,21 +61,23 @@ mod capi {
         pub thumb_w: u16,
         pub thumb_h: u16,
         pub thumbnail: ByteData,
-        pub meta1: ByteData,
-        pub meta2: ByteData,
-        pub meta3: ByteData,
-        pub meta4: ByteData,
+        pub meta: [ByteData; 4],
     }
 }
+
+/// Type to hold the IFD and its `Viewer`.
+type IfdHolder = (Rc<Viewer>, Rc<ifd::Container>);
 
 /// A container for ISO Media, aka MPEG4.
 pub(crate) struct Container {
     view: RefCell<View>,
     context: mp4parse::MediaContext,
+    /// The metadata IFDs, and their viewer.
+    meta_ifds: OnceCell<Vec<Option<IfdHolder>>>,
 }
 
 impl container::Container for Container {
-    fn endian() -> container::Endian {
+    fn endian(&self) -> container::Endian {
         container::Endian::Big
     }
 
@@ -112,14 +106,17 @@ impl container::Container for Container {
 }
 
 impl Container {
+    /// New IFD read from `View`
+    // XXX implement the reading offset. Currently assume 0.
     pub fn new(view: View) -> Self {
         Self {
             view: RefCell::new(view),
             context: mp4parse::MediaContext::new(),
+            meta_ifds: OnceCell::new(),
         }
     }
 
-    pub fn load(&mut self) -> Result<()> {
+    pub(crate) fn load(&mut self) -> Result<()> {
         mp4parse::read_mp4(self.view.get_mut(), &mut self.context)?;
         Ok(())
     }
@@ -152,6 +149,39 @@ impl Container {
             data: Data::Offset(DataOffset { offset, len }),
             data_type: DataType::Jpeg,
         })
+    }
+
+    /// Get the metadata at `idx`
+    pub(crate) fn metadata_block(&self, idx: u32) -> Option<IfdHolder> {
+        let len = self
+            .meta_ifds
+            .get_or_init(|| {
+                let mut ifds = vec![None; 4];
+                if let Ok(ref craw) = self.craw_header() {
+                    for (i, item) in ifds.iter_mut().enumerate() {
+                        if craw.meta[i].data.len() >= 4 {
+                            // XXX so many copies
+                            let cursor = Box::new(std::io::Cursor::new(craw.meta[i].data.clone()));
+                            let viewer = Viewer::new(cursor);
+                            if let Ok(view) = Viewer::create_view(&viewer, 0) {
+                                let mut ifd = ifd::Container::new(view);
+                                ifd.load().expect("ifd load");
+                                *item = Some((viewer, Rc::new(ifd)));
+                            }
+                        }
+                    }
+                }
+                ifds
+            })
+            .len();
+
+        if len < idx as usize {
+            None
+        } else {
+            self.meta_ifds
+                .get()
+                .and_then(|v| v[idx as usize].as_ref().cloned())
+        }
     }
 
     /// Number of tracks in the ISO container
@@ -240,16 +270,16 @@ impl Container {
         header.thumb_h = craw.thumbnail.height;
         header.thumbnail.set_data(&craw.thumbnail.data);
         if let Some(ref meta) = craw.meta1 {
-            header.meta1.set_data(meta);
+            header.meta[0].set_data(meta);
         }
         if let Some(ref meta) = craw.meta2 {
-            header.meta2.set_data(meta);
+            header.meta[1].set_data(meta);
         }
         if let Some(ref meta) = craw.meta3 {
-            header.meta3.set_data(meta);
+            header.meta[2].set_data(meta);
         }
         if let Some(ref meta) = craw.meta4 {
-            header.meta4.set_data(meta);
+            header.meta[3].set_data(meta);
         }
         Ok(header)
     }

@@ -24,6 +24,7 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 
 use crate::container::Container;
+use crate::ifd;
 use crate::io::Viewer;
 use crate::mp4;
 use crate::rawfile::ReadAndSeek;
@@ -54,7 +55,7 @@ impl Cr3File {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
             let mut container = mp4::Container::new(view);
-            container.load();
+            container.load().expect("MP4 container error");
             container
         })
     }
@@ -71,23 +72,11 @@ impl Cr3File {
                 let y = craw_header.thumb_h;
                 let dim = std::cmp::max(x, y) as u32;
                 if dim > 0 {
-                    let mut data = Vec::new();
-                    data.resize(craw_header.thumbnail.length as usize, 0);
-                    // XXX change the way the parsed data comes out of the mp4.
-                    // This is a left over from the C API where
-                    // thumbnail olds a pointer to the slice
-                    unsafe {
-                        std::ptr::copy(
-                            craw_header.thumbnail.data,
-                            data.as_mut_ptr(),
-                            craw_header.thumbnail.length as usize,
-                        );
-                    };
                     let desc = thumbnail::ThumbDesc {
                         width: x as u32,
                         height: y as u32,
                         data_type: DataType::Jpeg,
-                        data: Data::Bytes(data),
+                        data: Data::Bytes(craw_header.thumbnail.data),
                     };
                     thumbnails.insert(dim, desc);
                 }
@@ -146,6 +135,16 @@ impl RawFileImpl for Cr3File {
         let mut sizes: Vec<u32> = thumbnails.keys().copied().collect();
         sizes.sort_unstable();
         sizes
+    }
+
+    fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>> {
+        match ifd_type {
+            ifd::Type::Main => self.container().metadata_block(0),
+            ifd::Type::Exif => self.container().metadata_block(1),
+            ifd::Type::MakerNote => self.container().metadata_block(2),
+            _ => None,
+        }
+        .and_then(|c| c.1.directory(0))
     }
 }
 
