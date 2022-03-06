@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+use byteorder::{BigEndian, ByteOrder, LittleEndian};
+
 use crate::thumbnail::{ThumbDesc, Thumbnail};
 use crate::Result;
 
@@ -27,6 +29,31 @@ pub enum Endian {
     Unset,
     Big,
     Little,
+}
+
+/// Allow converting a `byteorder::ByteOrder` type to a
+/// `Endian` value
+///
+/// ```no_compile
+/// use byteorder::{BigEndian, LittleEndian};
+///
+/// let endian = LittleEndian::endian();
+/// let endian = BigEndian::endian();
+/// ```
+pub(crate) trait EndianType: ByteOrder {
+    fn endian() -> Endian;
+}
+
+impl EndianType for LittleEndian {
+    fn endian() -> Endian {
+        Endian::Little
+    }
+}
+
+impl EndianType for BigEndian {
+    fn endian() -> Endian {
+        Endian::Big
+    }
 }
 
 /// Container abstract trait

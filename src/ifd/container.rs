@@ -36,6 +36,8 @@ pub(crate) struct Container {
     view: RefCell<View>,
     endian: RefCell<container::Endian>,
     dirs: OnceCell<Vec<Rc<Dir>>>,
+    /// offset correction for Exif. 0 in most cases.
+    exif_correction: i32,
 }
 
 impl container::Container for Container {
@@ -54,7 +56,13 @@ impl Container {
             view: RefCell::new(view),
             endian: RefCell::new(container::Endian::Unset),
             dirs: OnceCell::new(),
+            exif_correction: 0,
         }
+    }
+
+    /// The the Exif correction.
+    pub fn set_exif_correction(&mut self, correction: i32) {
+        self.exif_correction = correction;
     }
 
     fn read_i32(&self, view: &mut View) -> std::io::Result<i32> {

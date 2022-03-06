@@ -21,8 +21,10 @@
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 
-use byteorder::{ByteOrder, ReadBytesExt};
+use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
 
+use crate::container;
+use crate::exif;
 use crate::io::View;
 use crate::Result;
 
@@ -30,6 +32,8 @@ use super::{Entry, Type};
 
 /// IFD
 pub struct Dir {
+    /// Endian for the IFD
+    endian: container::Endian,
     /// Type of IFD
     type_: Type,
     /// All the IFD entries
@@ -42,7 +46,7 @@ impl Dir {
     /// Read an IFD from the view, using endian `E`.
     pub(crate) fn read<E>(view: &mut View, dir_offset: i32, type_: Type) -> Result<Self>
     where
-        E: ByteOrder,
+        E: container::EndianType,
     {
         let mut entries = HashMap::new();
         view.seek(SeekFrom::Start(dir_offset as u64))?;
@@ -51,7 +55,7 @@ impl Dir {
         for _ in 0..num_entries {
             let id = view.read_u16::<E>()?;
             let type_ = view.read_i16::<E>()?;
-            let count = view.read_i32::<E>()?;
+            let count = view.read_u32::<E>()?;
             let mut data = [0_u8; 4];
             view.read_exact(&mut data)?;
             let entry = Entry::new(id, type_, count, data);
@@ -60,6 +64,7 @@ impl Dir {
 
         let next = view.read_i32::<E>()?;
         Ok(Dir {
+            endian: E::endian(),
             type_,
             entries,
             next,
@@ -83,5 +88,17 @@ impl Dir {
     /// Return the number of entries.
     pub fn num_entries(&self) -> usize {
         self.entries.len()
+    }
+
+    /// Get value for tag.
+    pub fn value<T>(&self, tag: u16) -> Option<T>
+    where
+        T: exif::ExifValue,
+    {
+        self.entry(tag).and_then(|e| match self.endian {
+            container::Endian::Big => e.value::<T, BigEndian>(),
+            container::Endian::Little => e.value::<T, LittleEndian>(),
+            _ => unreachable!("Endian unset"),
+        })
     }
 }
