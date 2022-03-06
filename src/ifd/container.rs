@@ -23,6 +23,7 @@ use std::io::{Read, Seek, SeekFrom};
 use std::rc::Rc;
 
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
+use log::error;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
@@ -46,6 +47,7 @@ impl container::Container for Container {
     }
 
     fn make_thumbnail(&self, _desc: &thumbnail::ThumbDesc) -> Result<Thumbnail> {
+        error!("make_thumbnail not implemented");
         Err(Error::NotSupported)
     }
 }
@@ -69,7 +71,10 @@ impl Container {
         match *self.endian.borrow() {
             container::Endian::Little => view.read_i32::<LittleEndian>(),
             container::Endian::Big => view.read_i32::<BigEndian>(),
-            container::Endian::Unset => unreachable!("endian unset"),
+            container::Endian::Unset => {
+                error!("Endian is unset. PANIC");
+                unreachable!("endian unset");
+            }
         }
     }
 
@@ -99,14 +104,14 @@ impl Container {
                         Dir::read::<BigEndian>(&mut view, dir_offset, Type::Other)
                     }
                     _ => {
-                        // XXX log this
-                        unreachable!("endian failed");
+                        error!("Endian unset to read directory");
+                        break;
                     }
                 } {
                     dir_offset = dir.next_ifd();
                     dirs.push(Rc::new(dir));
                 } else {
-                    // XXX log this
+                    error!("Endian couldn't be checked to read directory");
                     break;
                 }
             }
@@ -128,6 +133,7 @@ impl Container {
     /// Will identify the magic header and return the endian
     fn is_magic_header(&self, buf: &[u8]) -> Result<container::Endian> {
         if buf.len() < 4 {
+            error!("IFD magic header buffer too small: {} bytes", buf.len());
             return Err(Error::BufferTooSmall);
         }
 
@@ -136,6 +142,7 @@ impl Container {
         } else if buf == b"MM\x00\x2a" {
             Ok(container::Endian::Big)
         } else {
+            error!("Incorrect IFD magic: {:?}", buf);
             Err(Error::FormatError)
         }
     }

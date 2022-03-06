@@ -21,6 +21,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use log::warn;
 use once_cell::unsync::OnceCell;
 
 use crate::container::Container;
@@ -116,6 +117,7 @@ impl Cr3File {
 
 impl RawFileImpl for Cr3File {
     fn identify_id(&self) -> TypeId {
+        warn!("identify_id() not implemented");
         0
     }
 
@@ -124,6 +126,7 @@ impl RawFileImpl for Cr3File {
         if let Some(desc) = thumbnails.get(&size) {
             self.container().make_thumbnail(desc)
         } else {
+            warn!("Thumbnail size {} not found", size);
             Err(Error::NotFound)
         }
     }

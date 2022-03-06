@@ -21,6 +21,8 @@
 use std::path::Path;
 use std::rc::Rc;
 
+use log::{debug, error};
+
 use super::{Error, Result, Type, TypeId};
 use crate::factory;
 use crate::identify;
@@ -140,8 +142,11 @@ pub trait RawFile: RawFileImpl {
     fn thumbnail(&self, tsize: u32) -> Result<Thumbnail> {
         use std::cmp::Ordering;
 
+        debug!("Requested thumbnail of size {}", tsize);
+
         let sizes = self.list_thumbnail_sizes();
         if sizes.is_empty() {
+            error!("No thumbnail available");
             return Err(Error::NotFound);
         }
 
@@ -180,6 +185,7 @@ pub trait RawFile: RawFileImpl {
             return Err(Error::NotFound);
         }
 
+        debug!("Found thumbnail of size {}", found_size);
         self.thumbnail_for_size(found_size)
     }
 
