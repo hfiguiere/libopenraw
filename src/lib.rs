@@ -18,6 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+mod bitmap;
 mod camera_ids;
 mod canon;
 mod container;
@@ -30,6 +31,7 @@ mod raf;
 mod rawfile;
 mod thumbnail;
 
+pub use bitmap::Bitmap;
 pub use rawfile::RawFile;
 pub use rawfile::RawFileImpl;
 pub use thumbnail::Thumbnail;

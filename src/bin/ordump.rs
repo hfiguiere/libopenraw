@@ -24,6 +24,7 @@ use simple_logger::SimpleLogger;
 
 use libopenraw::ifd;
 use libopenraw::ifd::Ifd;
+use libopenraw::Bitmap;
 use libopenraw::{raw_file_from_file, DataType, Thumbnail};
 
 pub fn main() {
@@ -59,21 +60,23 @@ pub fn main() {
 fn save_thumbnail(p: &str, thumb: &Thumbnail) {
     use std::io::Write;
 
-    match thumb.data_type {
+    match thumb.data_type() {
         DataType::Jpeg => {
             if let Some(stem) = std::path::PathBuf::from(p)
                 .file_stem()
                 .and_then(|s| s.to_str())
             {
-                let filename = format!("{}_{}x{}", stem, thumb.width, thumb.height);
+                let filename = format!("{}_{}x{}", stem, thumb.width(), thumb.height());
                 let thumbnail = std::path::PathBuf::from(filename).with_extension("jpg");
-                let mut f = std::fs::File::create(&thumbnail).expect("Couldn't open file");
-                let amount = f.write(&thumb.data).expect("Couldn't write thumbnail");
-                println!("Written {:?}: {} bytes", thumbnail, amount);
+                if let Some(d) = thumb.data8() {
+                    let mut f = std::fs::File::create(&thumbnail).expect("Couldn't open file");
+                    let amount = f.write(d).expect("Couldn't write thumbnail");
+                    println!("Written {:?}: {} bytes", thumbnail, amount);
+                }
             }
         }
         _ => {
-            println!("Unsupported format {:?}", thumb.data_type);
+            println!("Unsupported format {:?}", thumb.data_type());
         }
     }
 }
@@ -95,9 +98,12 @@ fn process_file(p: &str, extract_thumbnails: bool) {
                 let thumb = rawfile.thumbnail(size);
                 match thumb {
                     Ok(ref thumb) => {
-                        println!("\tThumbnail size: {} x {}", thumb.width, thumb.height);
-                        println!("\tFormat: {:?}", thumb.data_type);
-                        println!("\tSize: {} bytes", thumb.data.len());
+                        println!("\tThumbnail size: {} x {}", thumb.width(), thumb.height());
+                        println!("\tFormat: {:?}", thumb.data_type());
+                        println!(
+                            "\tSize: {} bytes",
+                            thumb.data8().map(|d| d.len()).unwrap_or(0)
+                        );
 
                         if extract_thumbnails {
                             save_thumbnail(p, thumb);

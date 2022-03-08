@@ -208,6 +208,7 @@ mod test {
     use std::rc::Rc;
 
     use super::{RawFile, RawFileImpl};
+    use crate::bitmap::Bitmap;
     use crate::ifd;
     use crate::thumbnail::Thumbnail;
     use crate::{DataType, Error, Result, Type, TypeId};
@@ -222,12 +223,7 @@ mod test {
         fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
             let sizes = self.list_thumbnail_sizes();
             if sizes.contains(&size) {
-                Ok(Thumbnail {
-                    width: size,
-                    height: size,
-                    data_type: DataType::Jpeg,
-                    data: vec![],
-                })
+                Ok(Thumbnail::new(size, size, DataType::Jpeg, vec![]))
             } else {
                 Err(Error::NotFound)
             }
@@ -254,22 +250,22 @@ mod test {
         let t = raw_file.thumbnail(160);
         assert!(t.is_ok());
         let t = t.unwrap();
-        assert_eq!(t.width, 160);
+        assert_eq!(t.width(), 160);
 
         let t = raw_file.thumbnail(1024);
         assert!(t.is_ok());
         let t = t.unwrap();
-        assert_eq!(t.width, 1024);
+        assert_eq!(t.width(), 1024);
 
         let t = raw_file.thumbnail(512);
         assert!(t.is_ok());
         let t = t.unwrap();
-        assert_eq!(t.width, 1024);
+        assert_eq!(t.width(), 1024);
 
         let t = raw_file.thumbnail(8192);
         assert!(t.is_ok());
         let t = t.unwrap();
-        assert_eq!(t.width, 4096);
+        assert_eq!(t.width(), 4096);
     }
 
     #[test]

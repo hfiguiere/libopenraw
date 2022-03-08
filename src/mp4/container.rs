@@ -76,12 +76,12 @@ impl container::Container for Container {
                 data
             }
         };
-        Ok(Thumbnail {
-            width: desc.width,
-            height: desc.height,
-            data_type: desc.data_type,
+        Ok(Thumbnail::new(
+            desc.width,
+            desc.height,
+            desc.data_type,
             data,
-        })
+        ))
     }
 }
 

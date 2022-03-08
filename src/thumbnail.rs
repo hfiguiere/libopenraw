@@ -18,6 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+use crate::bitmap::Bitmap;
 use crate::DataType;
 
 /// Offset/len representation for `Data`
@@ -49,12 +50,45 @@ pub struct ThumbDesc {
 
 pub struct Thumbnail {
     /// Thumbnail width
-    pub width: u32,
+    width: u32,
     /// Thumbnail height
-    pub height: u32,
+    height: u32,
     /// Type if the data
-    pub data_type: DataType,
-    pub data: Vec<u8>,
+    data_type: DataType,
+    data: Vec<u8>,
 }
 
-impl Thumbnail {}
+impl Thumbnail {
+    pub fn new(width: u32, height: u32, data_type: DataType, data: Vec<u8>) -> Thumbnail {
+        Thumbnail {
+            width,
+            height,
+            data_type,
+            data,
+        }
+    }
+}
+
+impl Bitmap for Thumbnail {
+    fn data_type(&self) -> DataType {
+        self.data_type
+    }
+    fn width(&self) -> u32 {
+        self.width
+    }
+    fn height(&self) -> u32 {
+        self.height
+    }
+
+    fn bpc(&self) -> u16 {
+        8
+    }
+
+    fn data8(&self) -> Option<&[u8]> {
+        Some(&self.data)
+    }
+
+    fn data16(&self) -> Option<&[u16]> {
+        None
+    }
+}
