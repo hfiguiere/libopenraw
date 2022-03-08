@@ -21,7 +21,6 @@
 mod camera_ids;
 mod canon;
 mod container;
-pub mod exif;
 mod factory;
 mod identify;
 pub mod ifd;

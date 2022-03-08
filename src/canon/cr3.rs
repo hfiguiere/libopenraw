@@ -26,8 +26,8 @@ use once_cell::unsync::OnceCell;
 
 use crate::canon;
 use crate::container::Container;
-use crate::exif;
 use crate::ifd;
+use crate::ifd::exif;
 use crate::ifd::Ifd;
 use crate::io::Viewer;
 use crate::mp4;

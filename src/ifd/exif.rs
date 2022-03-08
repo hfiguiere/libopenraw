@@ -1,5 +1,5 @@
 /*
- * libopenraw - exif.rs
+ * libopenraw - ifd/exif.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *

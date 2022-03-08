@@ -21,11 +21,11 @@
 mod container;
 mod dir;
 mod entry;
+pub mod exif;
 
 use byteorder::{BigEndian, LittleEndian};
 
 use crate::container::Endian;
-use crate::exif;
 pub(crate) use container::Container;
 pub(crate) use dir::Dir;
 pub(crate) use entry::Entry;

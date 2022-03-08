@@ -22,10 +22,11 @@ use byteorder::ByteOrder;
 use log::debug;
 use std::io::{Read, Seek, SeekFrom};
 
-use crate::exif;
-use crate::exif::{ExifValue, TagType};
 use crate::io::View;
 use crate::{Error, Result};
+
+use super::exif;
+use super::exif::{ExifValue, TagType};
 
 /// Represent the data bytes, either the 4 bytes read
 /// Or the read bytes from the view.
@@ -130,7 +131,7 @@ mod test {
 
     use super::Entry;
 
-    use crate::exif::TagType;
+    use crate::ifd::exif::TagType;
     use crate::Error;
 
     #[test]
