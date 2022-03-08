@@ -82,6 +82,12 @@ impl Cr3File {
                         data_type: DataType::Jpeg,
                         data: Data::Bytes(craw_header.thumbnail.data.clone()),
                     };
+                    log::debug!(
+                        "Found thumbnail: {}x{} len: {}",
+                        x,
+                        y,
+                        craw_header.thumbnail.data.len()
+                    );
                     thumbnails.insert(dim, desc);
                 }
             }
@@ -104,6 +110,13 @@ impl Cr3File {
                                 len: raw_track.len,
                             }),
                         };
+                        log::debug!(
+                            "Found thumbnail: {}x{} @{} len: {}",
+                            raw_track.image_width,
+                            raw_track.image_height,
+                            raw_track.offset,
+                            raw_track.len
+                        );
                         thumbnails.insert(dim, desc);
                     }
                 }

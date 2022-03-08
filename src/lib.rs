@@ -32,6 +32,7 @@ mod thumbnail;
 
 pub use rawfile::RawFile;
 pub use rawfile::RawFileImpl;
+pub use thumbnail::Thumbnail;
 
 pub use rawfile::raw_file_from_file;
 

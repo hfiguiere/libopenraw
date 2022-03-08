@@ -18,29 +18,67 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+use getopts::Options;
 use log::{info, LevelFilter};
 use simple_logger::SimpleLogger;
 
 use libopenraw::ifd;
 use libopenraw::ifd::Ifd;
-use libopenraw::raw_file_from_file;
+use libopenraw::{raw_file_from_file, DataType, Thumbnail};
 
 pub fn main() {
-    // XXX extract from the arguments the log level
+    let args: Vec<String> = std::env::args().collect();
+
+    let mut opts = Options::new();
+    opts.optflag("d", "", "Debug");
+    opts.optflag("t", "", "Extract thumbnails");
+
+    let matches = match opts.parse(&args[1..]) {
+        Ok(m) => m,
+        Err(f) => panic!("{}", f.to_string()),
+    };
+
+    let loglevel = if matches.opt_present("d") {
+        LevelFilter::Debug
+    } else {
+        LevelFilter::Error
+    };
     SimpleLogger::new()
         .with_module_level("mp4parse", LevelFilter::Error)
-        .with_module_level("libopenraw", LevelFilter::Error)
+        .with_module_level("libopenraw", loglevel)
         .init()
         .unwrap();
 
-    let mut args: Vec<String> = std::env::args().collect();
-    args.remove(0);
-    for name in args {
-        process_file(&name);
+    let extract_thumbnails = matches.opt_present("t");
+
+    for name in matches.free.iter() {
+        process_file(name, extract_thumbnails);
     }
 }
 
-fn process_file(p: &str) {
+fn save_thumbnail(p: &str, thumb: &Thumbnail) {
+    use std::io::Write;
+
+    match thumb.data_type {
+        DataType::Jpeg => {
+            if let Some(stem) = std::path::PathBuf::from(p)
+                .file_stem()
+                .and_then(|s| s.to_str())
+            {
+                let filename = format!("{}_{}x{}", stem, thumb.width, thumb.height);
+                let thumbnail = std::path::PathBuf::from(filename).with_extension("jpg");
+                let mut f = std::fs::File::create(&thumbnail).expect("Couldn't open file");
+                let amount = f.write(&thumb.data).expect("Couldn't write thumbnail");
+                println!("Written {:?}: {} bytes", thumbnail, amount);
+            }
+        }
+        _ => {
+            println!("Unsupported format {:?}", thumb.data_type);
+        }
+    }
+}
+
+fn process_file(p: &str, extract_thumbnails: bool) {
     let rawfile = raw_file_from_file(p, None);
 
     info!("Dumping {}", p);
@@ -60,6 +98,10 @@ fn process_file(p: &str) {
                         println!("\tThumbnail size: {} x {}", thumb.width, thumb.height);
                         println!("\tFormat: {:?}", thumb.data_type);
                         println!("\tSize: {} bytes", thumb.data.len());
+
+                        if extract_thumbnails {
+                            save_thumbnail(p, thumb);
+                        }
                     }
                     Err(err) => {
                         println!("Failed to fetch preview for {}: {}", size, err);

@@ -123,10 +123,22 @@ impl Container {
             return Err(Error::NotFound);
         }
 
+        log::debug!(
+            "Found preview: {}x{} @{} len: {}",
+            width,
+            height,
+            offset + 10,
+            len
+        );
+
         Ok(thumbnail::ThumbDesc {
             width,
             height,
-            data: Data::Offset(DataOffset { offset, len }),
+            // Added 10 to the offset because we read 10 bytes
+            data: Data::Offset(DataOffset {
+                offset: offset + 10,
+                len,
+            }),
             data_type: DataType::Jpeg,
         })
     }
