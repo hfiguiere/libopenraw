@@ -22,18 +22,16 @@ use std::collections::HashMap;
 
 use super::rawfile::RawFileFactory;
 use super::Type;
+
 use crate::canon::Cr3File;
 
 lazy_static::lazy_static! {
-    static ref FACTORY_MAP: HashMap<Type, RawFileFactory> = {
-        let mut m = HashMap::new();
-
-        m.insert(Type::Cr3, Cr3File::factory as RawFileFactory);
-
-        m
-    };
+    static ref FACTORY_MAP: HashMap<Type, RawFileFactory> = HashMap::from([
+        (Type::Cr3, Cr3File::factory as RawFileFactory),
+    ]);
 }
 
-pub fn get_raw_file_factory(t: Type) -> Option<&'static RawFileFactory> {
+/// Get the factory for type.
+pub(crate) fn get_raw_file_factory(t: Type) -> Option<&'static RawFileFactory> {
     FACTORY_MAP.get(&t)
 }
