@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Canon CR3 format.
+
 use std::collections::HashMap;
 use std::rc::Rc;
 
@@ -34,7 +36,7 @@ use crate::mp4;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::thumbnail::Thumbnail;
-use crate::{DataType, Error, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Error, RawData, RawFile, RawFileImpl, Rect, Result, Type, TypeId};
 
 /// Canon CR3 File
 pub struct Cr3File {
@@ -173,6 +175,50 @@ impl RawFileImpl for Cr3File {
             _ => None,
         }
         .and_then(|c| c.1.directory(0))
+    }
+
+    /// Load the RawData and return it.
+    fn load_rawdata(&self) -> Result<RawData> {
+        if !self.container().is_track_video(2).unwrap_or(false) {
+            log::error!("Video track not found");
+            return Err(Error::NotFound);
+        }
+        if let Ok(raw_track) = self.container().raw_track(2) {
+            if raw_track.is_jpeg {
+                log::error!("RAW track is JPEG");
+                return Err(Error::NotFound);
+            }
+
+            let width = raw_track.image_width;
+            let height = raw_track.image_height;
+            let byte_len = raw_track.len;
+            let offset = raw_track.offset;
+            let data = self.container().load_buffer8(offset, byte_len);
+
+            let mut rawdata = RawData::new8(
+                width as u32,
+                height as u32,
+                8,
+                DataType::CompressedRaw,
+                data,
+            );
+
+            let sensor_info = self
+                .maker_note_ifd()
+                .and_then(canon::SensorInfo::new)
+                .map(|s| Rect {
+                    x: s.0[0],
+                    y: s.0[1],
+                    width: s.0[2],
+                    height: s.0[3],
+                });
+            rawdata.set_active_area(sensor_info);
+
+            Ok(rawdata)
+        } else {
+            log::error!("Raw track not found");
+            Err(Error::NotFound)
+        }
     }
 }
 

@@ -18,15 +18,18 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Canon specific code.
+
 mod cr3;
 
-/// Canon specific code.
 use std::collections::HashMap;
+use std::rc::Rc;
 
 use lazy_static::lazy_static;
 
 use super::TypeId;
 use crate::camera_ids::{canon, vendor};
+use crate::ifd::{exif, Dir, Ifd};
 pub use cr3::Cr3File;
 
 lazy_static! {
@@ -131,4 +134,58 @@ pub(crate) fn get_typeid_for_modelid(model_id: u32) -> TypeId {
         .get(&model_id)
         .copied()
         .unwrap_or(TypeId(vendor::CANON, canon::UNKNOWN))
+}
+
+/// SensorInfo currently only contain the active area (x, y, w, h)
+pub(crate) struct SensorInfo([u32; 4]);
+
+impl SensorInfo {
+    /// Load the `SensorInfo` from the MakerNote
+    pub fn new(maker_note: Rc<Dir>) -> Option<SensorInfo> {
+        maker_note
+            .entry(exif::MNOTE_CANON_SENSORINFO)
+            .and_then(|e| e.value_array(maker_note.endian()))
+            .and_then(Self::parse)
+    }
+
+    /// Parse the `SensorInfo` from the array of u16
+    fn parse(sensor_info: Vec<u16>) -> Option<SensorInfo> {
+        if sensor_info.len() <= 8 {
+            log::warn!("Data too small for sensor info {}", sensor_info.len());
+            None
+        } else {
+            let mut result = [0u32; 4];
+            result[0] = sensor_info[5] as u32;
+            result[1] = sensor_info[6] as u32;
+            if sensor_info[7] <= sensor_info[5] {
+                log::warn!(
+                    "sensor_info: bottom {} <= top {}",
+                    sensor_info[7],
+                    sensor_info[5]
+                );
+                return None;
+            }
+            let mut w: u32 = (sensor_info[7] - sensor_info[5]) as u32;
+            // it seems that this could lead to an odd number. Make it even.
+            if (w % 2) != 0 {
+                w += 1;
+            }
+            result[2] = w;
+            if sensor_info[8] <= sensor_info[6] {
+                log::warn!(
+                    "sensor_info: right {} <= left {}",
+                    sensor_info[8],
+                    sensor_info[6]
+                );
+                return None;
+            }
+            let mut h: u32 = (sensor_info[8] - sensor_info[6]) as u32;
+            // same as for width
+            if (h % 2) != 0 {
+                h += 1;
+            }
+            result[3] = h;
+            Some(SensorInfo(result))
+        }
+    }
 }

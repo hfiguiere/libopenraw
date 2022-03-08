@@ -28,10 +28,12 @@ pub mod ifd;
 mod io;
 mod mp4;
 mod raf;
+mod rawdata;
 mod rawfile;
 mod thumbnail;
 
-pub use bitmap::Bitmap;
+pub use bitmap::{Bitmap, Rect};
+pub use rawdata::RawData;
 pub use rawfile::RawFile;
 pub use rawfile::RawFileImpl;
 pub use thumbnail::Thumbnail;
@@ -102,6 +104,8 @@ pub enum DataType {
     Jpeg,
     /// RAW data compressed. (undetermined codec)
     CompressedRaw,
+    /// RAW data uncompressed
+    Raw,
 }
 
 /// RAW file type. This list the type of files, which

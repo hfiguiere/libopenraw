@@ -20,6 +20,7 @@
 
 use crate::DataType;
 
+/// Trait for bitmap objects.
 pub trait Bitmap {
     fn data_type(&self) -> DataType;
     fn width(&self) -> u32;
@@ -30,4 +31,13 @@ pub trait Bitmap {
     fn data8(&self) -> Option<&[u8]>;
     /// Image data in 16 bits
     fn data16(&self) -> Option<&[u16]>;
+}
+
+/// Rectangle struct.
+#[derive(Debug)]
+pub struct Rect {
+    pub x: u32,
+    pub y: u32,
+    pub width: u32,
+    pub height: u32,
 }

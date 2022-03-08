@@ -18,10 +18,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-use byteorder::ByteOrder;
+use byteorder::{BigEndian, ByteOrder, LittleEndian};
 use log::debug;
 use std::io::{Read, Seek, SeekFrom};
 
+use crate::container::Endian;
 use crate::io::View;
 use crate::{Error, Result};
 
@@ -123,6 +124,32 @@ impl Entry {
     {
         self.value_at_index::<T, E>(0)
     }
+
+    /// Get the value array out of the entry, using `endian`.
+    pub fn value_array<T>(&self, endian: Endian) -> Option<Vec<T>>
+    where
+        T: ExifValue,
+    {
+        if !T::is_array() && self.type_ == T::exif_type() as i16 {
+            let mut values = Vec::new();
+            for index in 0..self.count {
+                let v = match endian {
+                    Endian::Big => T::read::<BigEndian>(
+                        &self.data.as_slice()[T::unit_size() * index as usize..],
+                    ),
+                    Endian::Little => T::read::<LittleEndian>(
+                        &self.data.as_slice()[T::unit_size() * index as usize..],
+                    ),
+                    _ => unreachable!(),
+                };
+                values.push(v);
+            }
+            Some(values)
+        } else {
+            log::error!("incorrect type {} for {:?}", self.type_, T::exif_type());
+            None
+        }
+    }
 }
 
 #[cfg(test)]
@@ -131,6 +158,7 @@ mod test {
 
     use super::Entry;
 
+    use crate::container::Endian;
     use crate::ifd::exif::TagType;
     use crate::Error;
 
@@ -140,6 +168,12 @@ mod test {
         assert_eq!(e.value_at_index::<u8, LittleEndian>(3), None);
         assert_eq!(e.value::<u16, LittleEndian>(), None);
         assert_eq!(e.value_at_index::<u8, LittleEndian>(2), Some(30));
+        // testing value_array
+        assert_eq!(
+            e.value_array::<u8>(Endian::Little),
+            Some(vec![10_u8, 20, 30])
+        );
+        assert_eq!(e.value_array::<u16>(Endian::Little), None);
 
         let e = Entry::new(0, TagType::Ascii as i16, 4, *b"asci");
         assert_eq!(

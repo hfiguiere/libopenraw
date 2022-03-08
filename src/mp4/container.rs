@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-use std::cell::RefCell;
+use std::cell::{RefCell, RefMut};
 use std::io::{Seek, SeekFrom};
 use std::rc::Rc;
 
@@ -82,6 +82,10 @@ impl container::Container for Container {
             desc.data_type,
             data,
         ))
+    }
+
+    fn borrow_view_mut(&self) -> RefMut<'_, View> {
+        self.view.borrow_mut()
     }
 }
 

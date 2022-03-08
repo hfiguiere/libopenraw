@@ -25,7 +25,7 @@ use simple_logger::SimpleLogger;
 use libopenraw::ifd;
 use libopenraw::ifd::Ifd;
 use libopenraw::Bitmap;
-use libopenraw::{raw_file_from_file, DataType, Thumbnail};
+use libopenraw::{raw_file_from_file, DataType, RawFile, Thumbnail};
 
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -81,6 +81,26 @@ fn save_thumbnail(p: &str, thumb: &Thumbnail) {
     }
 }
 
+fn extract_rawdata(rawfile: &dyn RawFile) {
+    if let Ok(rawdata) = rawfile.raw_data() {
+        println!("Found rawdata:");
+        println!("\tFormat: {:?}", rawdata.data_type());
+        println!("\tSize: {}x{}", rawdata.width(), rawdata.height());
+        println!("\tActive area: {:?}", rawdata.active_area());
+        let bpc = rawdata.bpc();
+        println!("\tBpc: {}", bpc);
+        if bpc <= 8 {
+            if let Some(d) = rawdata.data8() {
+                println!("\tRaw data: {} bytes", d.len());
+            }
+        } else if let Some(d) = rawdata.data16() {
+            println!("\tRaw data: {} words", d.len());
+        }
+    } else {
+        println!("Raw data not found");
+    }
+}
+
 fn process_file(p: &str, extract_thumbnails: bool) {
     let rawfile = raw_file_from_file(p, None);
 
@@ -114,6 +134,8 @@ fn process_file(p: &str, extract_thumbnails: bool) {
                     }
                 }
             }
+
+            extract_rawdata(rawfile.as_ref());
 
             let exif_ifd = rawfile.ifd(ifd::Type::Exif);
             println!("Has Exif: {}", exif_ifd.is_some());

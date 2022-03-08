@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-use std::cell::RefCell;
+use std::cell::{RefCell, RefMut};
 use std::io::{Read, Seek, SeekFrom};
 use std::rc::Rc;
 
@@ -49,6 +49,10 @@ impl container::Container for Container {
     fn make_thumbnail(&self, _desc: &thumbnail::ThumbDesc) -> Result<Thumbnail> {
         error!("make_thumbnail not implemented");
         Err(Error::NotSupported)
+    }
+
+    fn borrow_view_mut(&self) -> RefMut<'_, View> {
+        self.view.borrow_mut()
     }
 }
 

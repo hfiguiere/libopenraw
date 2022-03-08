@@ -18,8 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+use std::cell::RefMut;
+use std::io::{Read, Seek, SeekFrom};
+
 use byteorder::{BigEndian, ByteOrder, LittleEndian};
 
+use crate::io::View;
 use crate::thumbnail::{ThumbDesc, Thumbnail};
 use crate::Result;
 
@@ -57,7 +61,7 @@ impl EndianType for BigEndian {
 }
 
 /// Container abstract trait
-pub trait Container {
+pub(crate) trait Container {
     /// Return the endian of the container
     fn endian(&self) -> Endian {
         Endian::Unset
@@ -65,4 +69,23 @@ pub trait Container {
 
     /// Make a thumbnail from the thumbdesc
     fn make_thumbnail(&self, desc: &ThumbDesc) -> Result<Thumbnail>;
+
+    /// Get the io::View for the container.
+    fn borrow_view_mut(&self) -> RefMut<'_, View>;
+
+    /// Load an 8bit buffer at `offset` and of `len` bytes.
+    fn load_buffer8(&self, offset: u64, len: u64) -> Vec<u8> {
+        let mut data = Vec::new();
+
+        let mut view = self.borrow_view_mut();
+        data.resize(len as usize, 0);
+        if view.seek(SeekFrom::Start(offset)).is_err() {
+            log::error!("load_buffer8: Seek failed");
+        }
+        if view.read_exact(data.as_mut_slice()).is_err() {
+            log::error!("load_buffer8: read failed");
+        }
+
+        data
+    }
 }

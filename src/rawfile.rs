@@ -23,7 +23,7 @@ use std::rc::Rc;
 
 use log::{debug, error};
 
-use super::{Error, Result, Type, TypeId};
+use super::{Error, RawData, Result, Type, TypeId};
 use crate::factory;
 use crate::identify;
 use crate::ifd;
@@ -53,6 +53,9 @@ pub trait RawFileImpl {
 
     /// Get the ifd with type
     fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>>;
+
+    /// Load the RawData and return it.
+    fn load_rawdata(&self) -> Result<RawData>;
 }
 
 /// Identify the RAW file type from file extension
@@ -189,15 +192,22 @@ pub trait RawFile: RawFileImpl {
         self.thumbnail_for_size(found_size)
     }
 
-    ///
+    /// Get the RAW data
+    fn raw_data(&self) -> Result<RawData> {
+        self.load_rawdata()
+    }
+
+    /// Get the main IFD
     fn main_ifd(&self) -> Option<Rc<ifd::Dir>> {
         self.ifd(ifd::Type::Main)
     }
 
+    /// Get the Exif IFD
     fn exif_ifd(&self) -> Option<Rc<ifd::Dir>> {
         self.ifd(ifd::Type::Exif)
     }
 
+    /// Get the MakerNote
     fn maker_note_ifd(&self) -> Option<Rc<ifd::Dir>> {
         self.ifd(ifd::Type::MakerNote)
     }
@@ -207,7 +217,7 @@ pub trait RawFile: RawFileImpl {
 mod test {
     use std::rc::Rc;
 
-    use super::{RawFile, RawFileImpl};
+    use super::{RawData, RawFile, RawFileImpl};
     use crate::bitmap::Bitmap;
     use crate::ifd;
     use crate::thumbnail::Thumbnail;
@@ -235,6 +245,10 @@ mod test {
 
         fn ifd(&self, _ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>> {
             None
+        }
+
+        fn load_rawdata(&self) -> Result<RawData> {
+            Err(Error::NotFound)
         }
     }
 
