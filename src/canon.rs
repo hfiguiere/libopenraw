@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+mod cr3;
+
 /// Canon specific code.
 use std::collections::HashMap;
 
@@ -25,6 +27,7 @@ use lazy_static::lazy_static;
 
 use super::TypeId;
 use crate::camera_ids::{canon, vendor};
+pub use cr3::Cr3File;
 
 lazy_static! {
     static ref CANON_MODEL_ID_MAP: HashMap<u32, TypeId> = HashMap::from([

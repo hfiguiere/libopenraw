@@ -1,5 +1,5 @@
 /*
- * libopenraw - cr3.rs
+ * libopenraw - canon/cr3.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -165,6 +165,6 @@ impl RawFileImpl for Cr3File {
 
 impl RawFile for Cr3File {
     fn type_(&self) -> Type {
-        super::Type::Cr3
+        Type::Cr3
     }
 }

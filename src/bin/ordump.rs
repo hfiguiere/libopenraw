@@ -29,6 +29,7 @@ pub fn main() {
     // XXX extract from the arguments the log level
     SimpleLogger::new()
         .with_module_level("mp4parse", LevelFilter::Error)
+        .with_module_level("libopenraw", LevelFilter::Error)
         .init()
         .unwrap();
 

@@ -20,9 +20,9 @@
 
 use std::collections::HashMap;
 
-use super::cr3::Cr3File;
 use super::rawfile::RawFileFactory;
 use super::Type;
+use crate::canon::Cr3File;
 
 lazy_static::lazy_static! {
     static ref FACTORY_MAP: HashMap<Type, RawFileFactory> = {

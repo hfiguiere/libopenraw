@@ -21,7 +21,6 @@
 mod camera_ids;
 mod canon;
 mod container;
-mod cr3;
 pub mod exif;
 mod factory;
 mod identify;
