@@ -21,11 +21,14 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use log::warn;
+use log::{error, warn};
 use once_cell::unsync::OnceCell;
 
+use crate::canon;
 use crate::container::Container;
+use crate::exif;
 use crate::ifd;
+use crate::ifd::Ifd;
 use crate::io::Viewer;
 use crate::mp4;
 use crate::rawfile::ReadAndSeek;
@@ -117,8 +120,17 @@ impl Cr3File {
 
 impl RawFileImpl for Cr3File {
     fn identify_id(&self) -> TypeId {
-        warn!("identify_id() not implemented");
-        0
+        if let Some(maker_note) = self.maker_note_ifd() {
+            if let Some(id) = maker_note.value::<u32>(exif::MNOTE_CANON_MODEL_ID) {
+                log::debug!("Canon model ID: {:x}", id);
+                return canon::get_typeid_for_modelid(id);
+            } else {
+                error!("Canon model ID tag not found");
+            }
+        } else {
+            error!("MakerNote not found");
+        }
+        TypeId(0, 0)
     }
 
     fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {

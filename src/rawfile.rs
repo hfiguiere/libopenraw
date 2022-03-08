@@ -129,8 +129,8 @@ pub trait RawFile: RawFileImpl {
     }
 
     /// Return the vendor ID
-    fn vendor_id(&self) -> TypeId {
-        self.identify_id() >> 16
+    fn vendor_id(&self) -> u16 {
+        self.identify_id().0
     }
 
     /// The rawfile thumbnail sizes
@@ -216,7 +216,7 @@ mod test {
 
     impl RawFileImpl for TestRawFile {
         fn identify_id(&self) -> TypeId {
-            0
+            TypeId::default()
         }
 
         fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {

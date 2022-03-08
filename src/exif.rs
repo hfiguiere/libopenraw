@@ -18,6 +18,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+/// Exif tags constants
+mod tags;
+pub use tags::*;
+
 use byteorder::ByteOrder;
 
 /// Type a tag. See `ifd::Entry`.
@@ -137,6 +141,19 @@ impl ExifValue for i16 {
         E: ByteOrder,
     {
         E::read_i16(buf)
+    }
+}
+
+impl ExifValue for u32 {
+    fn exif_type() -> TagType {
+        TagType::Long
+    }
+
+    fn read<E>(buf: &[u8]) -> Self
+    where
+        E: ByteOrder,
+    {
+        E::read_u32(buf)
     }
 }
 

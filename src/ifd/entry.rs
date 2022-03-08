@@ -103,12 +103,14 @@ impl Entry {
     {
         if self.type_ == T::exif_type() as i16 {
             if index >= self.count {
+                log::error!("index {} is >= {}", index, self.count);
                 return None;
             }
             return Some(T::read::<E>(
                 &self.data.as_slice()[T::unit_size() * index as usize..],
             ));
         }
+        log::error!("incorrect type {} for {:?}", self.type_, T::exif_type());
         None
     }
 
@@ -148,6 +150,10 @@ mod test {
         LittleEndian::write_f32(&mut buf, 3.14);
         let e = Entry::new(0, TagType::Float as i16, 1, buf);
         assert_eq!(e.value::<f32, LittleEndian>(), Some(3.14));
+
+        BigEndian::write_f32(&mut buf, 3.14);
+        let e = Entry::new(0, TagType::Float as i16, 1, buf);
+        assert_eq!(e.value::<f32, BigEndian>(), Some(3.14));
     }
 
     #[test]

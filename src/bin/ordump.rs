@@ -22,6 +22,7 @@ use log::{info, LevelFilter};
 use simple_logger::SimpleLogger;
 
 use libopenraw::ifd;
+use libopenraw::ifd::Ifd;
 use libopenraw::raw_file_from_file;
 
 pub fn main() {
@@ -47,7 +48,7 @@ fn process_file(p: &str) {
         Ok(ref rawfile) => {
             println!("Raw type: {:?}", rawfile.type_());
             println!("Vendor id: {}", rawfile.vendor_id());
-            println!("Type id: {}", rawfile.type_id());
+            println!("Type id: {:?}", rawfile.type_id());
 
             let sizes = rawfile.thumbnail_sizes();
             println!("Thumbnail sizes: {:?}", &sizes);
@@ -68,7 +69,11 @@ fn process_file(p: &str) {
             let exif_ifd = rawfile.ifd(ifd::Type::Exif);
             println!("Has Exif: {}", exif_ifd.is_some());
             if let Some(exif_ifd) = exif_ifd {
-                println!("Number of exif entries {}", exif_ifd.num_entries());
+                println!("Number of Exif entries {}", exif_ifd.num_entries());
+            }
+            let maker_note = rawfile.ifd(ifd::Type::MakerNote);
+            if let Some(maker_note) = maker_note {
+                println!("Number of MakerNote entries {}", maker_note.num_entries());
             }
         }
         Err(err) => {

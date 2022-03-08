@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+mod camera_ids;
+mod canon;
 mod container;
 mod cr3;
 pub mod exif;
@@ -143,5 +145,18 @@ pub enum Type {
     Test,
 }
 
-/// Type ID
-pub type TypeId = u32;
+/// Type ID (vendor, model)
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct TypeId(u16, u16);
+
+impl Default for TypeId {
+    fn default() -> Self {
+        TypeId(camera_ids::vendor::NONE, camera_ids::generic::UNKNOWN)
+    }
+}
+
+impl From<TypeId> for u32 {
+    fn from(type_id: TypeId) -> u32 {
+        ((type_id.0 as u32) << 16) & type_id.1 as u32
+    }
+}

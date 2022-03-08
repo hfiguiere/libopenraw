@@ -22,6 +22,10 @@ mod container;
 mod dir;
 mod entry;
 
+use byteorder::{BigEndian, LittleEndian};
+
+use crate::container::Endian;
+use crate::exif;
 pub(crate) use container::Container;
 pub(crate) use dir::Dir;
 pub(crate) use entry::Entry;
@@ -39,4 +43,30 @@ pub enum Type {
     MakerNote,
     /// Any other IFD
     Other,
+}
+
+/// Trait for Ifd
+pub trait Ifd {
+    /// Return the type if IFD
+    fn ifd_type(&self) -> Type;
+
+    fn endian(&self) -> Endian;
+
+    /// The number of entries
+    fn num_entries(&self) -> usize;
+
+    /// Return the entry for the `tag`.
+    fn entry(&self, tag: u16) -> Option<&Entry>;
+
+    /// Get value for tag.
+    fn value<T>(&self, tag: u16) -> Option<T>
+    where
+        T: exif::ExifValue,
+    {
+        self.entry(tag).and_then(|e| match self.endian() {
+            Endian::Big => e.value::<T, BigEndian>(),
+            Endian::Little => e.value::<T, LittleEndian>(),
+            _ => unreachable!("Endian unset"),
+        })
+    }
 }

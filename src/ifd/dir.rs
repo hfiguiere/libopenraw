@@ -21,15 +21,14 @@
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 
-use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
+use byteorder::ReadBytesExt;
 use log::debug;
 
 use crate::container;
-use crate::exif;
 use crate::io::View;
 use crate::Result;
 
-use super::{Entry, Type};
+use super::{Entry, Ifd, Type};
 
 /// IFD
 pub struct Dir {
@@ -59,10 +58,9 @@ impl Dir {
             let count = view.read_u32::<E>()?;
             let mut data = [0_u8; 4];
             view.read_exact(&mut data)?;
+            debug!("Entry {:x} with type {} added", id, type_);
             let mut entry = Entry::new(id, type_, count, data);
             if !entry.is_inline() {
-                debug!("Entry {} is not inline", id);
-
                 let pos = view.seek(SeekFrom::Current(0))?;
                 entry.load_data::<E>(view)?;
                 view.seek(SeekFrom::Start(pos))?;
@@ -79,34 +77,28 @@ impl Dir {
         })
     }
 
-    pub fn ifd_type(&self) -> Type {
-        self.type_
-    }
-
     /// Offset of the next IFD. 0 mean this was the last one.
     pub fn next_ifd(&self) -> i32 {
         self.next
     }
+}
 
-    /// Return the entry for the `tag`.
-    pub fn entry(&self, tag: u16) -> Option<&Entry> {
-        self.entries.get(&tag)
+impl Ifd for Dir {
+    fn ifd_type(&self) -> Type {
+        self.type_
+    }
+
+    fn endian(&self) -> container::Endian {
+        self.endian
     }
 
     /// Return the number of entries.
-    pub fn num_entries(&self) -> usize {
+    fn num_entries(&self) -> usize {
         self.entries.len()
     }
 
-    /// Get value for tag.
-    pub fn value<T>(&self, tag: u16) -> Option<T>
-    where
-        T: exif::ExifValue,
-    {
-        self.entry(tag).and_then(|e| match self.endian {
-            container::Endian::Big => e.value::<T, BigEndian>(),
-            container::Endian::Little => e.value::<T, LittleEndian>(),
-            _ => unreachable!("Endian unset"),
-        })
+    /// Return the entry for the `tag`.
+    fn entry(&self, tag: u16) -> Option<&Entry> {
+        self.entries.get(&tag)
     }
 }
