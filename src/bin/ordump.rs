@@ -89,6 +89,11 @@ fn extract_rawdata(rawfile: &dyn RawFile) {
         println!("\tActive area: {:?}", rawdata.active_area());
         let bpc = rawdata.bpc();
         println!("\tBpc: {}", bpc);
+        println!(
+            "\tValues: white = {} black = {}",
+            rawfile.white(),
+            rawfile.black()
+        );
         if bpc <= 8 {
             if let Some(d) = rawdata.data8() {
                 println!("\tRaw data: {} bytes", d.len());
