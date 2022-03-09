@@ -56,6 +56,9 @@ pub trait RawFileImpl {
 
     /// Load the RawData and return it.
     fn load_rawdata(&self) -> Result<RawData>;
+
+    /// Get the builtin colour matrix for this file.
+    fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>>;
 }
 
 /// Identify the RAW file type from file extension
@@ -211,6 +214,16 @@ pub trait RawFile: RawFileImpl {
     fn maker_note_ifd(&self) -> Option<Rc<ifd::Dir>> {
         self.ifd(ifd::Type::MakerNote)
     }
+
+    /// Return the colour matrix for the file.
+    fn colour_matrix(&self, index: u32) -> Result<Vec<f64>> {
+        // XXX get the DNG TAG when we can
+
+        if index != 1 {
+            return Err(Error::InvalidParam);
+        }
+        self.get_builtin_colour_matrix()
+    }
 }
 
 #[cfg(test)]
@@ -249,6 +262,10 @@ mod test {
 
         fn load_rawdata(&self) -> Result<RawData> {
             Err(Error::NotFound)
+        }
+
+        fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>> {
+            Err(Error::NotSupported)
         }
     }
 

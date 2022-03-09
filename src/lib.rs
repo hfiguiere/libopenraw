@@ -21,6 +21,7 @@
 mod bitmap;
 mod camera_ids;
 mod canon;
+mod colour;
 mod container;
 mod factory;
 mod identify;
@@ -62,6 +63,8 @@ pub enum Error {
     FormatError,
     /// Already inited
     AlreadyInited,
+    /// Invalid parameter
+    InvalidParam,
     /// MP4 parse error. Can't use native error as it doesn't do `PartialEq`
     Mp4Parse(String),
 }
@@ -89,6 +92,7 @@ impl std::fmt::Display for Error {
             Self::IoError(ref err) => write!(f, "IO Error: {}", err),
             Self::FormatError => write!(f, "Format error"),
             Self::AlreadyInited => write!(f, "Already Inited"),
+            Self::InvalidParam => write!(f, "Invalid parameter"),
             Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {}", err),
         }
     }

@@ -96,6 +96,12 @@ fn extract_rawdata(rawfile: &dyn RawFile) {
         } else if let Some(d) = rawdata.data16() {
             println!("\tRaw data: {} words", d.len());
         }
+        if let Ok(matrix) = rawfile.colour_matrix(1) {
+            println!("\tColour matrix 1: {:?}", matrix);
+        }
+        if let Ok(matrix) = rawfile.colour_matrix(2) {
+            println!("\tColour matrix 2: {:?}", matrix);
+        }
     } else {
         println!("Raw data not found");
     }
