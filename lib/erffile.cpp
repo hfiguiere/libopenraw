@@ -1,7 +1,7 @@
 /*
  * libopenraw - erffile.cpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -82,7 +82,7 @@ ERFFile::~ERFFile()
 
     auto count = thumb->count();
     void *p = thumbnail.allocData(count);
-    auto size = mnote->getEntryData(*thumb, (uint8_t*)p, count);
+    auto size = thumb->loadDataInto((uint8_t*)p, count, 0);
     if (size != count) {
         LOGERR("Couldn't load the preview image. Read only %lu bytes, expected %d", (LSIZE)size, count);
         return OR_ERROR_NOT_FOUND;

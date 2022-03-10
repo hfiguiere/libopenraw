@@ -2,7 +2,7 @@
 /*
  * libopenraw - ifddir.hpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -223,14 +223,6 @@ public:
     /** @brief Get the typed entry value */
     template<typename T>
     T getEntryValue(IfdEntry& e, uint32_t idx = 0, bool ignore_type = false) const;
-
-    /** @brief Copy the enty data. Endian is ignored. Suite for bytes, undefined, etc
-     * @param e the entry
-     * @param buffer the buffer
-     * @param buffersize the size of the buffer in bytes. Will copy at most this.
-     * @return the number of bytes copied
-     */
-    size_t getEntryData(IfdEntry& e, uint8_t* buffer, size_t buffersize) const;
 
     /** @brief Return the integer value at index. It will coerce the type.
      * @param e the IFD entry
