@@ -34,6 +34,7 @@ mod rawfile;
 mod thumbnail;
 
 pub use bitmap::{Bitmap, Rect};
+pub use ifd::Ifd;
 pub use rawdata::RawData;
 pub use rawfile::RawFile;
 pub use rawfile::RawFileImpl;
@@ -110,6 +111,19 @@ pub enum DataType {
     CompressedRaw,
     /// RAW data uncompressed
     Raw,
+    /// Unknown type
+    Unknown,
+}
+
+impl From<&str> for DataType {
+    fn from(s: &str) -> DataType {
+        match s {
+            "JPEG" => Self::Jpeg,
+            "COMP_RAW" => Self::CompressedRaw,
+            "RAW" => Self::Raw,
+            _ => Self::Unknown,
+        }
+    }
 }
 
 /// RAW file type. This list the type of files, which
@@ -149,9 +163,20 @@ pub enum Type {
     Rw2,
     /// Sony RAW (old)
     Sr2,
+    /// Unknown vendor
+    Unknown,
     #[cfg(test)]
     /// Value for testing only
     Test,
+}
+
+impl From<&str> for Type {
+    fn from(s: &str) -> Type {
+        match s {
+            "CR3" => Self::Cr3,
+            _ => Self::Unknown,
+        }
+    }
 }
 
 /// Type ID (vendor, model)
@@ -164,8 +189,24 @@ impl Default for TypeId {
     }
 }
 
+impl From<u32> for TypeId {
+    fn from(id: u32) -> TypeId {
+        TypeId(((id & 0xffff0000) >> 16) as u16, (id & 0xffff) as u16)
+    }
+}
 impl From<TypeId> for u32 {
     fn from(type_id: TypeId) -> u32 {
         ((type_id.0 as u32) << 16) & type_id.1 as u32
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::TypeId;
+
+    #[test]
+    fn test_typeid_from_u32() {
+        let id = 0x0001_0042;
+        assert_eq!(TypeId(1, 0x42), TypeId::from(id));
     }
 }

@@ -23,7 +23,11 @@ use crate::DataType;
 /// Trait for bitmap objects.
 pub trait Bitmap {
     fn data_type(&self) -> DataType;
+    /// The data size is bytes
+    fn data_size(&self) -> usize;
+    /// Pixel width
     fn width(&self) -> u32;
+    /// Pixel height
     fn height(&self) -> u32;
     /// Bits per component
     fn bpc(&self) -> u16;

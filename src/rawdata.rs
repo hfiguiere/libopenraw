@@ -78,6 +78,14 @@ impl Bitmap for RawData {
     fn data_type(&self) -> DataType {
         self.data_type
     }
+
+    fn data_size(&self) -> usize {
+        match self.data {
+            Data::Data8(ref d) => d.len(),
+            Data::Data16(ref d) => d.len() * 2,
+        }
+    }
+
     fn width(&self) -> u32 {
         self.width
     }

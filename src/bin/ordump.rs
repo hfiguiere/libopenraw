@@ -22,9 +22,8 @@ use getopts::Options;
 use log::{info, LevelFilter};
 use simple_logger::SimpleLogger;
 
-use libopenraw::ifd;
-use libopenraw::ifd::Ifd;
 use libopenraw::Bitmap;
+use libopenraw::Ifd;
 use libopenraw::{raw_file_from_file, DataType, RawFile, Thumbnail};
 
 pub fn main() {
@@ -148,12 +147,12 @@ fn process_file(p: &str, extract_thumbnails: bool) {
 
             extract_rawdata(rawfile.as_ref());
 
-            let exif_ifd = rawfile.ifd(ifd::Type::Exif);
+            let exif_ifd = rawfile.exif_ifd();
             println!("Has Exif: {}", exif_ifd.is_some());
             if let Some(exif_ifd) = exif_ifd {
                 println!("Number of Exif entries {}", exif_ifd.num_entries());
             }
-            let maker_note = rawfile.ifd(ifd::Type::MakerNote);
+            let maker_note = rawfile.maker_note_ifd();
             if let Some(maker_note) = maker_note {
                 println!("Number of MakerNote entries {}", maker_note.num_entries());
             }

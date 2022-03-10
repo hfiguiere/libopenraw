@@ -73,9 +73,15 @@ impl Bitmap for Thumbnail {
     fn data_type(&self) -> DataType {
         self.data_type
     }
+
+    fn data_size(&self) -> usize {
+        self.data.len()
+    }
+
     fn width(&self) -> u32 {
         self.width
     }
+
     fn height(&self) -> u32 {
         self.height
     }
