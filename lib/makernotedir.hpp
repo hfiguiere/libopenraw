@@ -67,8 +67,6 @@ protected:
                  const TagTable& tag_table);
 
     MakerNoteDir(RawContainer& _container, const std::string& id);
-    std::string m_magic;
-    size_t m_hlen;
     off_t m_mnote_offset;
     std::string m_id;
 };

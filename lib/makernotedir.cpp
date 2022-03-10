@@ -232,30 +232,18 @@ MakerNoteDir::MakerNoteDir(RawContainer& _container, const std::string& id)
 {
 }
 
-MakerNoteDir::MakerNoteDir(off_t _offset,
-                           RawContainer& _container,
-                           off_t mnote_offset,
-                           const std::string& id,
-                           const TagTable& tag_table)
-    : MakerNoteDir("", 0, _offset, _container, mnote_offset, id, tag_table)
-{
-}
-
 MakerNoteDir::MakerNoteDir(IfdDir& ifd, const std::string& id, const TagTable& tag_table)
     : MakerNoteDir(ifd.offset(), ifd.container(), ifd.offset(), id, tag_table)
 {
     setBaseOffset(0);
 }
 
-MakerNoteDir::MakerNoteDir(const char* magic, size_t hlen,
-                           off_t _offset,
+MakerNoteDir::MakerNoteDir(off_t _offset,
                            RawContainer& _container,
                            off_t mnote_offset,
                            const std::string& id,
                            const TagTable& tag_table)
     : IfdDir(_offset, _container, OR_IFD_MNOTE, tag_table)
-    , m_magic(magic ? magic : "")
-    , m_hlen(hlen)
     , m_mnote_offset(mnote_offset)
     , m_id(id)
 {
