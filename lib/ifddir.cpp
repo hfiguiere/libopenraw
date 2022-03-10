@@ -2,7 +2,7 @@
 /*
  * libopenraw - ifddir.cpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -222,12 +222,6 @@ const char* IfdDir::getTagName(uint32_t tag) const
         return iter->second;
     }
     return nullptr;
-}
-
-size_t IfdDir::getEntryData(IfdEntry& e, uint8_t* buffer, size_t buffersize) const
-{
-    auto loaded = e.loadDataInto(buffer, buffersize, m_base_offset);
-    return loaded;
 }
 
 uint32_t IfdDir::getEntryIntegerArrayItemValue(IfdEntry& e, int idx) const
