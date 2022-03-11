@@ -202,7 +202,13 @@ impl ExifValue for String {
     where
         E: ByteOrder,
     {
-        Self::from_utf8_lossy(buf).to_string()
+        // According to the Exif spec, the string is NUL terminated
+        if let Ok(cstr) = std::ffi::CStr::from_bytes_with_nul(buf) {
+            cstr.to_string_lossy().to_string()
+        } else {
+            // We'll try as a fallback.
+            Self::from_utf8_lossy(buf).to_string()
+        }
     }
 }
 
@@ -256,7 +262,7 @@ impl ExifValue for Rational {
 /// Signed rational number (fraction)
 pub struct SRational {
     pub num: i32,
-    pub denom: u32,
+    pub denom: i32,
 }
 
 impl ExifValue for SRational {
@@ -265,7 +271,7 @@ impl ExifValue for SRational {
     }
 
     fn unit_size() -> usize {
-        std::mem::size_of::<u32>() + std::mem::size_of::<i32>()
+        std::mem::size_of::<i32>() + std::mem::size_of::<i32>()
     }
 
     fn read<E>(buf: &[u8]) -> Self
@@ -274,7 +280,7 @@ impl ExifValue for SRational {
     {
         SRational {
             num: E::read_i32(buf),
-            denom: E::read_u32(buf),
+            denom: E::read_i32(buf),
         }
     }
 }

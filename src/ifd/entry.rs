@@ -177,11 +177,16 @@ mod test {
         );
         assert_eq!(e.value_array::<u16>(Endian::Little), None);
 
+        // test Ascii to `String`
         let e = Entry::new(0, TagType::Ascii as i16, 4, *b"asci");
         assert_eq!(
             e.value::<String, LittleEndian>(),
             Some(String::from("asci"))
         );
+
+        // test Ascii with trailing NUL to `String`
+        let e = Entry::new(0, TagType::Ascii as i16, 4, *b"asc\0");
+        assert_eq!(e.value::<String, LittleEndian>(), Some(String::from("asc")));
 
         let mut buf = [0_u8; 4];
         LittleEndian::write_f32(&mut buf, 3.14);
