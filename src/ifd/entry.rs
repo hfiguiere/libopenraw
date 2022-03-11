@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! IFD entries.
+
 use byteorder::{BigEndian, ByteOrder, LittleEndian};
 use log::debug;
 use std::io::{Read, Seek, SeekFrom};

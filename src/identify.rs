@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Indentification of RAW files.
+
 use std::collections::HashMap;
 use std::ffi::{OsStr, OsString};
 
@@ -26,6 +28,7 @@ use crate::raf;
 use crate::rawfile::ReadAndSeek;
 
 lazy_static::lazy_static! {
+    /// Mapping of extensions (lowercase) to a `Type`.
     static ref EXT_TO_TYPE: HashMap<OsString, Type> = {
         let mut m = HashMap::new();
         // The extension MUST be lowercase

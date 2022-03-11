@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! ISO Media container (MP4)
+
 use std::cell::{RefCell, RefMut};
 use std::io::{Seek, SeekFrom};
 use std::rc::Rc;

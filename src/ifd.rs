@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! TIFF format (Image File Directories)
+
 mod container;
 mod dir;
 mod entry;

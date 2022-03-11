@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-//! Canon CR3 format.
+//! Canon CR3 format, the 3rd generation of Canon RAW format, based on
+//! the ISOMedia (MP4) container format.
 
 use std::collections::HashMap;
 use std::rc::Rc;

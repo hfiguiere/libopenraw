@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Container traits. A RAW file is a bunch of containers.
+
 use std::cell::RefMut;
 use std::io::{Read, Seek, SeekFrom};
 

@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! The IFD Container. Contains the IFD `Dir`
+
 use std::cell::{RefCell, RefMut};
 use std::io::{Read, Seek, SeekFrom};
 use std::rc::Rc;
@@ -33,9 +35,13 @@ use crate::thumbnail;
 use crate::thumbnail::Thumbnail;
 use crate::{Error, Result};
 
+/// IFD Container for TIFF based file.
 pub(crate) struct Container {
+    /// The `io::View`.
     view: RefCell<View>,
+    /// Endian of the container.
     endian: RefCell<container::Endian>,
+    /// IFD.
     dirs: OnceCell<Vec<Rc<Dir>>>,
     /// offset correction for Exif. 0 in most cases.
     exif_correction: i32,
@@ -57,6 +63,7 @@ impl container::Container for Container {
 }
 
 impl Container {
+    /// Create a new container for the view.
     pub(crate) fn new(view: View) -> Self {
         Self {
             view: RefCell::new(view),
@@ -71,6 +78,7 @@ impl Container {
         self.exif_correction = correction;
     }
 
+    /// Read an `i32` based on the container endian.
     fn read_i32(&self, view: &mut View) -> std::io::Result<i32> {
         match *self.endian.borrow() {
             container::Endian::Little => view.read_i32::<LittleEndian>(),
@@ -82,6 +90,7 @@ impl Container {
         }
     }
 
+    /// load the container.
     pub(crate) fn load(&mut self) -> Result<()> {
         let mut view = self.view.borrow_mut();
         view.seek(SeekFrom::Start(0))?;
@@ -92,6 +101,7 @@ impl Container {
         Ok(())
     }
 
+    /// Get the directories. They get loaded once as needed.
     pub(crate) fn dirs(&self) -> &Vec<Rc<Dir>> {
         self.dirs.get_or_init(|| {
             let mut dirs = vec![];
@@ -124,7 +134,7 @@ impl Container {
         })
     }
 
-    /// Get the `ifd::Dir` from the container
+    /// Get the indexed `ifd::Dir` from the container
     pub fn directory(&self, idx: usize) -> Option<Rc<Dir>> {
         let dirs = self.dirs();
         if dirs.len() <= idx {

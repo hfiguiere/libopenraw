@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! RAW data
+
 use super::{Bitmap, DataType, Rect};
 
 /// Encapsulate data 8 or 16 bits
@@ -26,6 +28,7 @@ enum Data {
     Data16(Vec<u16>),
 }
 
+/// RAW Data extracted from the file.
 pub struct RawData {
     /// Thumbnail width
     width: u32,
@@ -38,11 +41,12 @@ pub struct RawData {
     /// Bits per component
     bpc: u16,
 
-    /// Active area
+    /// Sensor active area
     active_area: Option<Rect>,
 }
 
 impl RawData {
+    /// New `RawData` with 8 bit data.
     pub fn new8(width: u32, height: u32, bpc: u16, data_type: DataType, data: Vec<u8>) -> Self {
         RawData {
             width,
@@ -54,6 +58,7 @@ impl RawData {
         }
     }
 
+    /// New `RawData` with 16 bit data.
     pub fn new16(width: u32, height: u32, bpc: u16, data_type: DataType, data: Vec<u16>) -> Self {
         RawData {
             width,
@@ -65,10 +70,12 @@ impl RawData {
         }
     }
 
+    /// The sensor active area.
     pub fn active_area(&self) -> Option<&Rect> {
         self.active_area.as_ref()
     }
 
+    /// Set the sensor active area.
     pub fn set_active_area(&mut self, rect: Option<Rect>) {
         self.active_area = rect;
     }

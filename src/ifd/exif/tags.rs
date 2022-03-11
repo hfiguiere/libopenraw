@@ -224,6 +224,7 @@ pub const MNOTE_NIKON_PREVIEWIFD_LENGTH: u16 = 0x202;
 pub const MNOTE_SONY_MODEL_ID: u16 = 0xb001;
 
 lazy_static::lazy_static! {
+    /// Exif tag names
     pub static ref TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
         (0x1, "InteropIndex"),
         (0x2, "InteropVersion"),

@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Trait for Bitmap data, and other geometry.
+
 use crate::DataType;
 
 /// Trait for bitmap objects.

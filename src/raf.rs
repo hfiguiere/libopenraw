@@ -18,4 +18,6 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Fujifilm RAF format
+
 pub(crate) const RAF_MAGIC: &[u8] = b"FUJIFILMCCD-RAW ";

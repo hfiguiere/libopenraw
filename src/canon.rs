@@ -33,6 +33,7 @@ use crate::ifd::{exif, Dir, Ifd};
 pub use cr3::Cr3File;
 
 lazy_static! {
+    /// Map the Canon IDs to `TypeId`. This is the most reliable way for Canon
     static ref CANON_MODEL_ID_MAP: HashMap<u32, TypeId> = HashMap::from([
         (0x80000001, TypeId(vendor::CANON, canon::EOS_1D)),
         (0x80000167, TypeId(vendor::CANON, canon::EOS_1DS)),

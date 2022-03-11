@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Camera RAW file
+
 use std::path::Path;
 use std::rc::Rc;
 

@@ -18,6 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Image File Directory is the main data structure of TIFF used by Exif
+//! and most RAW format.
+
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 use std::rc::Rc;
@@ -41,6 +44,7 @@ lazy_static::lazy_static! {
 }
 
 /// IFD
+/// Also handle MakerNotes
 pub struct Dir {
     /// Endian for the IFD
     endian: container::Endian,

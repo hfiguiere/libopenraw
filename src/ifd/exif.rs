@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Exif support
+
 /// Exif tags constants
 mod tags;
 pub use tags::*;

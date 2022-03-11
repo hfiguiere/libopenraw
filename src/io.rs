@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Abstract the IO to allow for "stacking".
+
 use std::cell::{RefCell, RefMut};
 use std::io::{Result, SeekFrom};
 use std::rc::{Rc, Weak};
@@ -25,11 +27,21 @@ use std::rc::{Rc, Weak};
 use crate::rawfile::ReadAndSeek;
 
 /// Wrap the IO for views.
+///
+/// ```no_compile
+/// use io::Viewer;
+///
+/// let buffer = b"abcdefg";
+/// let cursor = Box::new(std::io::Cursor::new(buffer.as_slice()));
+///
+/// let viewer = Viewer::new(cursor);
+/// ```
 pub(crate) struct Viewer {
     inner: RefCell<Box<dyn ReadAndSeek>>,
 }
 
 impl Viewer {
+    /// Create a new Viewer from an actual I/O.
     pub fn new(inner: Box<dyn ReadAndSeek>) -> Rc<Self> {
         Rc::new(Viewer {
             inner: RefCell::new(inner),
@@ -55,6 +67,7 @@ pub(crate) struct View {
 }
 
 impl View {
+    /// Crate a new view. `Viewer::create_view()` should be used instead.
     fn new(viewer: &Rc<Viewer>, offset: u64) -> Result<Self> {
         viewer.get_io().seek(SeekFrom::Start(offset))?;
         Ok(View {

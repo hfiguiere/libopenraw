@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/// Define all the file IDs.
+//! Define all the file IDs.
 
 /// The vendor ID is `TypeId::0`
 #[allow(unused)]
@@ -316,7 +316,7 @@ pub mod nikon {
     pub const Z7_2: u16 = 81;
 }
 
-/// Leica type IDs */
+/// Leica type IDs
 #[allow(unused)]
 mod leica {
     pub const UNKNOWN: u16 = 0;
@@ -370,7 +370,7 @@ mod leica {
     pub const Q2_MONOCHROM: u16 = 37;
 }
 
-/// Pentax type IDs */
+/// Pentax type IDs
 #[allow(unused)]
 mod pentax {
     pub const UNKNOWN: u16 = 0;
@@ -429,7 +429,7 @@ mod pentax {
     pub const K110D_PEF: u16 = 53;
 }
 
-/// Epson type IDs */
+/// Epson type IDs
 #[allow(unused)]
 mod epson {
     pub const UNKNOWN: u16 = 0;
@@ -437,7 +437,7 @@ mod epson {
     pub const RD1S: u16 = 2;
 }
 
-/// Minolta type IDs */
+/// Minolta type IDs
 #[allow(unused)]
 mod minolta {
     pub const UNKNOWN: u16 = 0;
@@ -452,7 +452,7 @@ mod minolta {
     pub const A200: u16 = 9;
 }
 
-/// Olympus type IDs */
+/// Olympus type IDs
 #[allow(unused)]
 mod olympus {
     pub const UNKNOWN: u16 = 0;
@@ -509,7 +509,7 @@ mod olympus {
     pub const EM10IV: u16 = 51;
 }
 
-/// Samsung type IDs */
+/// Samsung type IDs
 #[allow(unused)]
 mod samsung {
     pub const UNKNOWN: u16 = 0;
@@ -536,7 +536,7 @@ mod ricoh {
     pub const GRIII: u16 = 9;
 }
 
-/// Sony type IDs */
+/// Sony type IDs
 #[allow(unused)]
 mod sony {
     pub const UNKNOWN: u16 = 0;
@@ -626,7 +626,7 @@ mod sony {
     pub const ILCE7C: u16 = 80;
 }
 
-/// Panasonic type IDs */
+/// Panasonic type IDs
 #[allow(unused)]
 mod panasonic {
     pub const UNKNOWN: u16 = 0;
@@ -718,7 +718,7 @@ mod panasonic {
     pub const DC_S5: u16 = 72;
 }
 
-/// Fujifilm type IDs */
+/// Fujifilm type IDs
 #[allow(unused)]
 mod fujifilm {
     pub const UNKNOWN: u16 = 0;
@@ -781,12 +781,14 @@ mod fujifilm {
     pub const XS10: u16 = 56;
 }
 
+/// Black Magic
 #[allow(unused)]
 mod blackmagic {
     pub const UNKNOWN: u16 = 0;
     pub const POCKET_CINEMA: u16 = 1;
 }
 
+/// Xiaoyi
 #[allow(unused)]
 mod xiaoyi {
     pub const UNKNOWN: u16 = 0;
@@ -795,6 +797,7 @@ mod xiaoyi {
     pub const YIAC_3: u16 = 3;
 }
 
+/// Apple (iPhones)
 #[allow(unused)]
 mod apple {
     pub const UNKNOWN: u16 = 0;
@@ -805,12 +808,14 @@ mod apple {
     pub const IPHONE_XS: u16 = 5;
 }
 
+/// Sigma
 #[allow(unused)]
 mod sigma {
     pub const UNKNOWN: u16 = 0;
     pub const FP: u16 = 1;
 }
 
+/// GoPro
 #[allow(unused)]
 mod gopro {
     pub const UNKNOWN: u16 = 0;
@@ -820,6 +825,7 @@ mod gopro {
     pub const HERO8_BLACK: u16 = 4;
 }
 
+/// Hasselblad
 #[allow(unused)]
 mod hasselblad {
     pub const UNKNOWN: u16 = 0;
@@ -827,6 +833,7 @@ mod hasselblad {
     pub const L1D_20C: u16 = 2;
 }
 
+/// Zeiss
 #[allow(unused)]
 mod zeiss {
     pub const UNKNOWN: u16 = 0;

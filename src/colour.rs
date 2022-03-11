@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Everything about colour
+
 mod matrix;
 
 pub use matrix::BuiltinMatrix;

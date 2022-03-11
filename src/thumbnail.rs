@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Representation of thumbnails
+
 use crate::bitmap::Bitmap;
 use crate::DataType;
 
@@ -48,6 +50,7 @@ pub struct ThumbDesc {
     pub data: Data,
 }
 
+/// A thumbnail
 pub struct Thumbnail {
     /// Thumbnail width
     width: u32,
@@ -59,6 +62,7 @@ pub struct Thumbnail {
 }
 
 impl Thumbnail {
+    /// New thumbnail with data.
     pub fn new(width: u32, height: u32, data_type: DataType, data: Vec<u8>) -> Thumbnail {
         Thumbnail {
             width,

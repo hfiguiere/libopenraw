@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! ISO Media format (MP4).
+
 mod container;
 
 pub(crate) use container::Container;
