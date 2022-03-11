@@ -30,7 +30,7 @@ use crate::camera_ids::{canon, vendor};
 use crate::container::Container;
 use crate::ifd;
 use crate::ifd::exif;
-use crate::ifd::Ifd;
+use crate::ifd::{Dir, Ifd};
 use crate::io::Viewer;
 use crate::mp4;
 use crate::rawfile::ReadAndSeek;
@@ -230,14 +230,23 @@ impl RawFileImpl for Cr3File {
         sizes
     }
 
-    fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>> {
+    fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<Dir>> {
         match ifd_type {
-            ifd::Type::Main => self.container().metadata_block(0),
-            ifd::Type::Exif => self.container().metadata_block(1),
-            ifd::Type::MakerNote => self.container().metadata_block(2),
+            ifd::Type::Main => self
+                .container()
+                .metadata_block(0)
+                .and_then(|c| c.1.directory(0)),
+            ifd::Type::Exif => self
+                .container()
+                .metadata_block(1)
+                .and_then(|c| c.1.directory(0)),
+            ifd::Type::MakerNote => self.container().metadata_block(2).and_then(|c| {
+                // XXX subobptimal as we already loaded the Dir
+                // 8 as offset = past the TIFF magic
+                Dir::new_makernote("Canon", &*c.1, 8, 0, &super::MNOTE_TAG_NAMES).ok()
+            }),
             _ => None,
         }
-        .and_then(|c| c.1.directory(0))
     }
 
     /// Load the RawData and return it.

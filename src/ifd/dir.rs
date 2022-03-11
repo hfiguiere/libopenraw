@@ -20,15 +20,25 @@
 
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
+use std::rc::Rc;
 
-use byteorder::ReadBytesExt;
+use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
 use log::debug;
 
+use crate::canon;
 use crate::container;
+use crate::ifd::exif;
 use crate::io::View;
-use crate::Result;
+use crate::sony;
+use crate::Type as RawType;
+use crate::{Error, Result};
 
 use super::{Entry, Ifd, Type};
+
+lazy_static::lazy_static! {
+    /// Empty tag list
+    static ref MNOTE_EMPTY_TAGS: HashMap<u16, &'static str> = HashMap::new();
+}
 
 /// IFD
 pub struct Dir {
@@ -40,9 +50,60 @@ pub struct Dir {
     entries: HashMap<u16, Entry>,
     /// Position of the next IFD
     next: i32,
+    /// The MakerNote ID
+    id: String,
+    /// Offset in MakerNote
+    mnote_offset: u64,
+    /// Tag names to decode.
+    tag_names: &'static HashMap<u16, &'static str>,
 }
 
 impl Dir {
+    pub(crate) fn create_maker_note(
+        container: &dyn container::Container,
+        offset: i32,
+        file_type: RawType,
+    ) -> Result<Rc<Dir>> {
+        match file_type {
+            RawType::Cr2 | RawType::Cr3 | RawType::Crw => {
+                return Dir::new_makernote("Canon", container, offset, 0, &canon::MNOTE_TAG_NAMES)
+            }
+            RawType::Arw => {
+                return Dir::new_makernote("Sony5", container, offset, 0, &sony::MNOTE_TAG_NAMES)
+            }
+            _ => {}
+        }
+        Dir::new_makernote("", container, offset, 0, &MNOTE_EMPTY_TAGS)
+    }
+
+    ///
+    pub(crate) fn new_makernote(
+        id: &str,
+        container: &dyn container::Container,
+        offset: i32,
+        mnote_offset: u64,
+        tag_names: &'static HashMap<u16, &'static str>,
+    ) -> Result<Rc<Dir>> {
+        let mut view = container.borrow_view_mut();
+        if let Ok(mut dir) = match container.endian() {
+            container::Endian::Little => {
+                Dir::read::<LittleEndian>(&mut view, offset, Type::MakerNote)
+            }
+            container::Endian::Big => Dir::read::<BigEndian>(&mut view, offset, Type::MakerNote),
+            _ => {
+                log::error!("Endian unset to read directory");
+                Err(Error::NotFound)
+            }
+        } {
+            dir.id = id.to_string();
+            dir.mnote_offset = mnote_offset;
+            dir.tag_names = tag_names;
+            Ok(Rc::new(dir))
+        } else {
+            Err(Error::NotFound)
+        }
+    }
+
     /// Read an IFD from the view, using endian `E`.
     pub(crate) fn read<E>(view: &mut View, dir_offset: i32, type_: Type) -> Result<Self>
     where
@@ -74,7 +135,14 @@ impl Dir {
             type_,
             entries,
             next,
+            id: String::new(),
+            mnote_offset: 0,
+            tag_names: &exif::TAG_NAMES,
         })
+    }
+
+    pub fn id(&self) -> &str {
+        &self.id
     }
 
     /// Offset of the next IFD. 0 mean this was the last one.

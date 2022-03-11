@@ -182,7 +182,14 @@ impl Results {
                 assert_eq!(maker_note.num_entries(), maker_note_count as usize);
             }
         }
-        // XXX makerNoteId
+        // Check MakerNote ID
+        if let Some(ref maker_note_id) = self.maker_note_id {
+            count += 1;
+            let maker_note = rawfile.maker_note_ifd();
+            assert!(maker_note.is_some());
+            let maker_note = maker_note.unwrap();
+            assert_eq!(maker_note.id(), maker_note_id);
+        }
 
         count += self.thumbnail_test(rawfile);
         count += self.raw_test(rawfile);

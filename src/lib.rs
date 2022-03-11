@@ -31,6 +31,7 @@ mod mp4;
 mod raf;
 mod rawdata;
 mod rawfile;
+mod sony;
 mod thumbnail;
 
 pub use bitmap::{Bitmap, Rect};

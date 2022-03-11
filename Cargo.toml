@@ -20,12 +20,6 @@ serde = "1.0.136"
 serde_derive = "1.0.136"
 serde-xml-rs = "0.5.1"
 
-[workspace]
-members = [
-    "lib/mp4/mp4parse"
-]
-
-
 [[bin]]
 name = "ordump"
 test = false
