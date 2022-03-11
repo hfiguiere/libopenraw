@@ -29,13 +29,10 @@ use crate::rawfile::ReadAndSeek;
 
 lazy_static::lazy_static! {
     /// Mapping of extensions (lowercase) to a `Type`.
-    static ref EXT_TO_TYPE: HashMap<OsString, Type> = {
-        let mut m = HashMap::new();
+    static ref EXT_TO_TYPE: HashMap<OsString, Type> = HashMap::from([
         // The extension MUST be lowercase
-        m.insert(OsString::from("cr3"), Type::Cr3);
-
-        m
-    };
+        (OsString::from("cr3"), Type::Cr3),
+    ]);
 }
 
 /// Get the type associated to the extension.
