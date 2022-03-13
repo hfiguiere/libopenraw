@@ -29,6 +29,7 @@ use lazy_static::lazy_static;
 
 use super::TypeId;
 use crate::camera_ids::{canon, vendor};
+use crate::ifd;
 use crate::ifd::{exif, Dir, Ifd};
 pub use cr3::Cr3File;
 
@@ -215,11 +216,21 @@ lazy_static! {
 }
 
 /// Get the TypeId for the model ID.
-pub(crate) fn get_typeid_for_modelid(model_id: u32) -> TypeId {
+fn get_typeid_for_modelid(model_id: u32) -> TypeId {
     CANON_MODEL_ID_MAP
         .get(&model_id)
         .copied()
         .unwrap_or(TypeId(vendor::CANON, canon::UNKNOWN))
+}
+
+pub(crate) fn identify_from_maker_note(maker_note: Rc<ifd::Dir>) -> TypeId {
+    if let Some(id) = maker_note.value::<u32>(exif::MNOTE_CANON_MODEL_ID) {
+        log::debug!("Canon model ID: {:x}", id);
+        return get_typeid_for_modelid(id);
+    } else {
+        log::error!("Canon model ID tag not found");
+    }
+    TypeId(0, 0)
 }
 
 /// SensorInfo currently only contain the active area (x, y, w, h)

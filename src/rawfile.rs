@@ -26,6 +26,7 @@ use std::rc::Rc;
 use log::{debug, error};
 
 use super::{Error, RawData, Result, Type, TypeId};
+use crate::container::GenericContainer;
 use crate::factory;
 use crate::identify;
 use crate::ifd;
@@ -47,11 +48,22 @@ pub trait RawFileImpl {
     /// Will identify ID. Ensure it's cached.
     fn identify_id(&self) -> TypeId;
 
+    /// Return the main continer.
+    fn container(&self) -> &dyn GenericContainer;
+
     /// Return the thumbnails. Implementation lazy load them
     fn thumbnails(&self) -> &std::collections::HashMap<u32, ThumbDesc>;
 
     /// Get the thumbnail for the exact size.
-    fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail>;
+    fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
+        let thumbnails = self.thumbnails();
+        if let Some(desc) = thumbnails.get(&size) {
+            self.container().make_thumbnail(desc)
+        } else {
+            log::warn!("Thumbnail size {} not found", size);
+            Err(Error::NotFound)
+        }
+    }
 
     /// List the thumbnail sizes in the file
     fn list_thumbnail_sizes(&self) -> Vec<u32> {
@@ -250,6 +262,7 @@ pub trait RawFile: RawFileImpl {
 
 #[cfg(test)]
 mod test {
+    use std::cell::{RefCell, RefMut};
     use std::collections::HashMap;
     use std::rc::Rc;
 
@@ -257,17 +270,39 @@ mod test {
 
     use super::{RawData, RawFile, RawFileImpl};
     use crate::bitmap::Bitmap;
+    use crate::container::GenericContainer;
     use crate::ifd;
+    use crate::io::View;
     use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
     use crate::{DataType, Error, Result, Type, TypeId};
 
+    struct TestContainer {
+        view: RefCell<View>,
+    }
+
+    impl TestContainer {
+        pub fn new() -> TestContainer {
+            TestContainer {
+                view: RefCell::new(View::new_test()),
+            }
+        }
+    }
+
+    impl GenericContainer for TestContainer {
+        fn borrow_view_mut(&self) -> RefMut<'_, View> {
+            self.view.borrow_mut()
+        }
+    }
+
     struct TestRawFile {
+        container: TestContainer,
         thumbnails: OnceCell<HashMap<u32, ThumbDesc>>,
     }
 
     impl TestRawFile {
         fn new() -> TestRawFile {
             TestRawFile {
+                container: TestContainer::new(),
                 thumbnails: OnceCell::new(),
             }
         }
@@ -275,6 +310,10 @@ mod test {
     impl RawFileImpl for TestRawFile {
         fn identify_id(&self) -> TypeId {
             TypeId::default()
+        }
+
+        fn container(&self) -> &dyn GenericContainer {
+            &self.container
         }
 
         fn thumbnails(&self) -> &HashMap<u32, ThumbDesc> {

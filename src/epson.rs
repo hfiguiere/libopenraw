@@ -62,8 +62,26 @@ impl ErfFile {
         })
     }
 
+    /// Return the CFA dir
+    fn cfa_dir(&self) -> Option<&Rc<ifd::Dir>> {
+        self.cfa
+            .get_or_init(|| {
+                self.container();
+                ifd::tiff_locate_cfa_ifd(self.container.get().unwrap())
+            })
+            .as_ref()
+    }
+}
+
+impl RawFileImpl for ErfFile {
+    fn identify_id(&self) -> TypeId {
+        self.container();
+        let container = self.container.get().unwrap();
+        ifd::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(0, 0))
+    }
+
     /// Return a lazily loaded `ifd::Container`
-    fn container(&self) -> &ifd::Container {
+    fn container(&self) -> &dyn GenericContainer {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
@@ -73,26 +91,11 @@ impl ErfFile {
         })
     }
 
-    /// Return the CFA dir
-    fn cfa_dir(&self) -> Option<&Rc<ifd::Dir>> {
-        self.cfa
-            .get_or_init(|| ifd::tiff_locate_cfa_ifd(self.container()))
-            .as_ref()
-    }
-}
-
-impl RawFileImpl for ErfFile {
-    fn identify_id(&self) -> TypeId {
-        if let Some(id) = ifd::identify_with_exif(self.container(), &MAKE_TO_ID_MAP) {
-            id
-        } else {
-            TypeId(0, 0)
-        }
-    }
-
     fn thumbnails(&self) -> &std::collections::HashMap<u32, thumbnail::ThumbDesc> {
         self.thumbnails.get_or_init(|| {
-            let mut thumbnails = ifd::tiff_thumbnails(self.container());
+            self.container();
+            let container = self.container.get().unwrap();
+            let mut thumbnails = ifd::tiff_thumbnails(container);
             self.maker_note_ifd().and_then(|mnote| {
                 mnote.entry(exif::ERF_TAG_PREVIEW_IMAGE).map(|e| {
                     let mut data = Vec::from(e.data());
@@ -113,22 +116,18 @@ impl RawFileImpl for ErfFile {
         })
     }
 
-    fn thumbnail_for_size(&self, size: u32) -> Result<thumbnail::Thumbnail> {
-        let thumbnails = self.thumbnails();
-        if let Some(desc) = thumbnails.get(&size) {
-            self.container().make_thumbnail(desc)
-        } else {
-            log::warn!("Thumbnail size {} not found", size);
-            Err(Error::NotFound)
-        }
-    }
-
     fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>> {
         // XXX todo
         match ifd_type {
             ifd::Type::Cfa => self.cfa_dir().cloned(),
-            ifd::Type::Exif => self.container().exif_dir(),
-            ifd::Type::MakerNote => self.container().mnote_dir(),
+            ifd::Type::Exif => {
+                self.container();
+                self.container.get().unwrap().exif_dir()
+            }
+            ifd::Type::MakerNote => {
+                self.container();
+                self.container.get().unwrap().mnote_dir()
+            }
             _ => None,
         }
     }
@@ -140,7 +139,8 @@ impl RawFileImpl for ErfFile {
                 Error::NotFound
             })
             .and_then(|ref ifd| {
-                ifd::tiff_get_rawdata(self.container(), ifd).map(|mut rawdata| {
+                self.container();
+                ifd::tiff_get_rawdata(self.container.get().unwrap(), ifd).map(|mut rawdata| {
                     self.maker_note_ifd().and_then(|mnote| {
                         mnote
                             .entry_cloned(

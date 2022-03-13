@@ -24,19 +24,16 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use log::{error, warn};
 use once_cell::unsync::OnceCell;
 
 use crate::camera_ids::{canon, vendor};
 use crate::container::GenericContainer;
 use crate::ifd;
-use crate::ifd::exif;
-use crate::ifd::{Dir, Ifd};
+use crate::ifd::Dir;
 use crate::io::Viewer;
 use crate::mp4;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
-use crate::thumbnail::Thumbnail;
 use crate::{DataType, Error, RawData, RawFile, RawFileImpl, Rect, Result, Type, TypeId};
 
 use crate::colour::BuiltinMatrix;
@@ -118,9 +115,20 @@ impl Cr3File {
             thumbnails: OnceCell::new(),
         })
     }
+}
+
+impl RawFileImpl for Cr3File {
+    fn identify_id(&self) -> TypeId {
+        if let Some(maker_note) = self.maker_note_ifd() {
+            super::identify_from_maker_note(maker_note)
+        } else {
+            log::error!("MakerNote not found");
+            TypeId(0, 0)
+        }
+    }
 
     /// Return a lazily loaded `mp4::Container`
-    fn container(&self) -> &mp4::Container {
+    fn container(&self) -> &dyn GenericContainer {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
@@ -129,29 +137,14 @@ impl Cr3File {
             container
         })
     }
-}
-
-impl RawFileImpl for Cr3File {
-    fn identify_id(&self) -> TypeId {
-        if let Some(maker_note) = self.maker_note_ifd() {
-            if let Some(id) = maker_note.value::<u32>(exif::MNOTE_CANON_MODEL_ID) {
-                log::debug!("Canon model ID: {:x}", id);
-                return super::get_typeid_for_modelid(id);
-            } else {
-                error!("Canon model ID tag not found");
-            }
-        } else {
-            error!("MakerNote not found");
-        }
-        TypeId(0, 0)
-    }
 
     /// Return a lazily loaded set of thumbnails
     fn thumbnails(&self) -> &HashMap<u32, thumbnail::ThumbDesc> {
         self.thumbnails.get_or_init(|| {
             use thumbnail::{Data, DataOffset};
 
-            let container = self.container();
+            self.container();
+            let container = self.container.get().unwrap();
             let mut thumbnails = HashMap::new();
             if let Ok(craw_header) = container.craw_header() {
                 let x = craw_header.thumbnail.width;
@@ -212,28 +205,13 @@ impl RawFileImpl for Cr3File {
         })
     }
 
-    /// Get the thumbnail for the exact size.
-    fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
-        let thumbnails = self.thumbnails();
-        if let Some(desc) = thumbnails.get(&size) {
-            self.container().make_thumbnail(desc)
-        } else {
-            warn!("Thumbnail size {} not found", size);
-            Err(Error::NotFound)
-        }
-    }
-
     fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<Dir>> {
+        self.container();
+        let container = self.container.get().unwrap();
         match ifd_type {
-            ifd::Type::Main => self
-                .container()
-                .metadata_block(0)
-                .and_then(|c| c.1.directory(0)),
-            ifd::Type::Exif => self
-                .container()
-                .metadata_block(1)
-                .and_then(|c| c.1.directory(0)),
-            ifd::Type::MakerNote => self.container().metadata_block(2).and_then(|c| {
+            ifd::Type::Main => container.metadata_block(0).and_then(|c| c.1.directory(0)),
+            ifd::Type::Exif => container.metadata_block(1).and_then(|c| c.1.directory(0)),
+            ifd::Type::MakerNote => container.metadata_block(2).and_then(|c| {
                 // XXX subobptimal as we already loaded the Dir
                 // 8 as offset = past the TIFF magic
                 Dir::new_makernote("Canon", &*c.1, 8, 0, &super::MNOTE_TAG_NAMES).ok()
@@ -244,11 +222,14 @@ impl RawFileImpl for Cr3File {
 
     /// Load the RawData and return it.
     fn load_rawdata(&self) -> Result<RawData> {
-        if !self.container().is_track_video(2).unwrap_or(false) {
+        self.container();
+        let container = self.container.get().unwrap();
+
+        if !container.is_track_video(2).unwrap_or(false) {
             log::error!("Video track not found");
             return Err(Error::NotFound);
         }
-        if let Ok(raw_track) = self.container().raw_track(2) {
+        if let Ok(raw_track) = container.raw_track(2) {
             if raw_track.is_jpeg {
                 log::error!("RAW track is JPEG");
                 return Err(Error::NotFound);
@@ -258,7 +239,7 @@ impl RawFileImpl for Cr3File {
             let height = raw_track.image_height;
             let byte_len = raw_track.len;
             let offset = raw_track.offset;
-            let data = self.container().load_buffer8(offset, byte_len);
+            let data = container.load_buffer8(offset, byte_len);
 
             let mut rawdata = RawData::new8(
                 width as u32,

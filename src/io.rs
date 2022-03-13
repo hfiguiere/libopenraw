@@ -61,7 +61,7 @@ impl Viewer {
 
 /// And IO View. Allow having file IO as an offset of another
 /// Useful for containers.
-pub(crate) struct View {
+pub struct View {
     inner: Weak<Viewer>,
     offset: u64,
 }
@@ -74,6 +74,15 @@ impl View {
             inner: Rc::downgrade(viewer),
             offset,
         })
+    }
+
+    /// Only for test to create a non functional `View`
+    #[cfg(test)]
+    pub fn new_test() -> Self {
+        View {
+            inner: Weak::new(),
+            offset: 0,
+        }
     }
 }
 

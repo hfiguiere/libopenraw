@@ -64,7 +64,7 @@ impl EndianType for BigEndian {
 }
 
 /// Container abstract trait
-pub(crate) trait GenericContainer {
+pub trait GenericContainer {
     /// Return the endian of the container
     fn endian(&self) -> Endian {
         Endian::Unset
