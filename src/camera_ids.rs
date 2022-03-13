@@ -431,7 +431,7 @@ mod pentax {
 
 /// Epson type IDs
 #[allow(unused)]
-mod epson {
+pub mod epson {
     pub const UNKNOWN: u16 = 0;
     pub const RD1: u16 = 1;
     pub const RD1S: u16 = 2;

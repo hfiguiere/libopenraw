@@ -307,3 +307,31 @@ mod test {
         assert!(tag.is_err());
     }
 }
+
+/// Exif photometric interpretation
+#[repr(u16)]
+pub enum PhotometricInterpretation {
+    BlackIsZero = 1,
+    Rgb = 2,
+    YCbCr = 6,
+
+    // RAW only
+    CFA = 32803,
+    LinearRaw = 34892,
+}
+
+impl std::convert::TryFrom<u32> for PhotometricInterpretation {
+    type Error = crate::Error;
+
+    fn try_from(v: u32) -> crate::Result<PhotometricInterpretation> {
+        use PhotometricInterpretation::*;
+        match v {
+            1 => Ok(BlackIsZero),
+            2 => Ok(Rgb),
+            6 => Ok(YCbCr),
+            32803 => Ok(CFA),
+            34892 => Ok(LinearRaw),
+            _ => Err(Self::Error::InvalidFormat),
+        }
+    }
+}

@@ -32,6 +32,7 @@ lazy_static::lazy_static! {
     static ref EXT_TO_TYPE: HashMap<OsString, Type> = HashMap::from([
         // The extension MUST be lowercase
         (OsString::from("cr3"), Type::Cr3),
+        (OsString::from("erf"), Type::Erf),
     ]);
 }
 

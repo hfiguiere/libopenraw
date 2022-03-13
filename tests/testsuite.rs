@@ -111,19 +111,26 @@ impl Results {
         // RAW black and white
         if let Some(raw_min_value) = self.raw_min_value {
             count += 1;
-            assert_eq!(rawfile.black() as u32, raw_min_value);
+            assert_eq!(rawdata.black() as u32, raw_min_value);
         }
         if let Some(raw_max_value) = self.raw_max_value {
             count += 1;
-            assert_eq!(rawfile.black() as u32, raw_max_value);
+            assert_eq!(rawdata.white() as u32, raw_max_value);
         }
 
         // RAW data checksum. It's not even a md5.
         if let Some(raw_md5) = self.raw_md5 {
             count += 1;
-            let buf = rawdata.data8();
-            assert!(buf.is_some());
-            let r = Self::raw_checksum(buf.unwrap());
+            let buf = if rawdata.bpc() == 8 {
+                let buf = rawdata.data8();
+                assert!(buf.is_some());
+                buf.unwrap()
+            } else {
+                let buf = rawdata.data16_as_u8();
+                assert!(buf.is_some());
+                buf.unwrap()
+            };
+            let r = Self::raw_checksum(buf);
             assert_eq!(raw_md5, r as u32)
         }
         count

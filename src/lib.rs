@@ -23,16 +23,20 @@ mod camera_ids;
 mod canon;
 mod colour;
 mod container;
+mod decompress;
+mod epson;
 mod factory;
 mod identify;
 pub mod ifd;
 mod io;
 mod mp4;
+mod olympus;
 mod raf;
 mod rawdata;
 mod rawfile;
 mod sony;
 mod thumbnail;
+mod utils;
 
 pub use bitmap::{Bitmap, Rect};
 pub use ifd::Ifd;
@@ -67,6 +71,10 @@ pub enum Error {
     AlreadyInited,
     /// Invalid parameter
     InvalidParam,
+    /// Invalid format: wrong kind of data found
+    InvalidFormat,
+    /// Decompression error.
+    Decompression,
     /// MP4 parse error. Can't use native error as it doesn't do `PartialEq`
     Mp4Parse(String),
 }
@@ -95,6 +103,8 @@ impl std::fmt::Display for Error {
             Self::FormatError => write!(f, "Format error"),
             Self::AlreadyInited => write!(f, "Already Inited"),
             Self::InvalidParam => write!(f, "Invalid parameter"),
+            Self::InvalidFormat => write!(f, "Invalid format"),
+            Self::Decompression => write!(f, "Decompression error"),
             Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {}", err),
         }
     }
@@ -108,6 +118,8 @@ impl std::error::Error for Error {}
 pub enum DataType {
     /// JPEG stream
     Jpeg,
+    /// RGB8 Pixmap
+    PixmapRgb8,
     /// RAW data compressed. (undetermined codec)
     CompressedRaw,
     /// RAW data uncompressed
@@ -120,6 +132,7 @@ impl From<&str> for DataType {
     fn from(s: &str) -> DataType {
         match s {
             "JPEG" => Self::Jpeg,
+            "RGB8" => Self::PixmapRgb8,
             "COMP_RAW" => Self::CompressedRaw,
             "RAW" => Self::Raw,
             _ => Self::Unknown,
@@ -175,6 +188,7 @@ impl From<&str> for Type {
     fn from(s: &str) -> Type {
         match s {
             "CR3" => Self::Cr3,
+            "ERF" => Self::Erf,
             _ => Self::Unknown,
         }
     }

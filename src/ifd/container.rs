@@ -29,10 +29,10 @@ use log::error;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
-use crate::ifd::{Dir, Type};
+use crate::ifd::exif;
+use crate::ifd::{Dir, Ifd, Type};
 use crate::io::View;
-use crate::thumbnail;
-use crate::thumbnail::Thumbnail;
+use crate::Type as RawType;
 use crate::{Error, Result};
 
 /// IFD Container for TIFF based file.
@@ -45,16 +45,15 @@ pub(crate) struct Container {
     dirs: OnceCell<Vec<Rc<Dir>>>,
     /// offset correction for Exif. 0 in most cases.
     exif_correction: i32,
+    /// The Exif IFD
+    exif_ifd: OnceCell<Option<Rc<Dir>>>,
+    /// The MakerNote IFD
+    mnote_ifd: OnceCell<Option<Rc<Dir>>>,
 }
 
-impl container::Container for Container {
+impl container::GenericContainer for Container {
     fn endian(&self) -> container::Endian {
         *self.endian.borrow()
-    }
-
-    fn make_thumbnail(&self, _desc: &thumbnail::ThumbDesc) -> Result<Thumbnail> {
-        error!("make_thumbnail not implemented");
-        Err(Error::NotSupported)
     }
 
     fn borrow_view_mut(&self) -> RefMut<'_, View> {
@@ -70,6 +69,8 @@ impl Container {
             endian: RefCell::new(container::Endian::Unset),
             dirs: OnceCell::new(),
             exif_correction: 0,
+            exif_ifd: OnceCell::new(),
+            mnote_ifd: OnceCell::new(),
         }
     }
 
@@ -78,11 +79,11 @@ impl Container {
         self.exif_correction = correction;
     }
 
-    /// Read an `i32` based on the container endian.
-    fn read_i32(&self, view: &mut View) -> std::io::Result<i32> {
+    /// Read an `u32` based on the container endian.
+    fn read_u32(&self, view: &mut View) -> std::io::Result<u32> {
         match *self.endian.borrow() {
-            container::Endian::Little => view.read_i32::<LittleEndian>(),
-            container::Endian::Big => view.read_i32::<BigEndian>(),
+            container::Endian::Little => view.read_u32::<LittleEndian>(),
+            container::Endian::Big => view.read_u32::<BigEndian>(),
             container::Endian::Unset => {
                 error!("Endian is unset. PANIC");
                 unreachable!("endian unset");
@@ -101,6 +102,18 @@ impl Container {
         Ok(())
     }
 
+    /// Read the dir at the offset
+    fn dir_at(&self, view: &mut View, offset: u32, t: Type) -> Result<Dir> {
+        match *self.endian.borrow() {
+            container::Endian::Little => Dir::read::<LittleEndian>(view, offset, t),
+            container::Endian::Big => Dir::read::<BigEndian>(view, offset, t),
+            _ => {
+                error!("Endian unset to read directory");
+                Err(Error::NotFound)
+            }
+        }
+    }
+
     /// Get the directories. They get loaded once as needed.
     pub(crate) fn dirs(&self) -> &Vec<Rc<Dir>> {
         self.dirs.get_or_init(|| {
@@ -108,24 +121,13 @@ impl Container {
 
             let mut view = self.view.borrow_mut();
             view.seek(SeekFrom::Start(4)).expect("Seek failed");
-            let mut dir_offset = self.read_i32(&mut view).unwrap_or(0);
+            let mut dir_offset = self.read_u32(&mut view).unwrap_or(0);
             while dir_offset != 0 {
-                if let Ok(dir) = match *self.endian.borrow() {
-                    container::Endian::Little => {
-                        Dir::read::<LittleEndian>(&mut view, dir_offset, Type::Other)
-                    }
-                    container::Endian::Big => {
-                        Dir::read::<BigEndian>(&mut view, dir_offset, Type::Other)
-                    }
-                    _ => {
-                        error!("Endian unset to read directory");
-                        break;
-                    }
-                } {
+                if let Ok(dir) = self.dir_at(&mut view, dir_offset, Type::Other) {
                     dir_offset = dir.next_ifd();
                     dirs.push(Rc::new(dir));
                 } else {
-                    error!("Endian couldn't be checked to read directory");
+                    error!("Endian couldn't read directory");
                     break;
                 }
             }
@@ -159,5 +161,55 @@ impl Container {
             error!("Incorrect IFD magic: {:?}", buf);
             Err(Error::FormatError)
         }
+    }
+
+    /// Lazily load the Exif dir and return it.
+    pub(crate) fn exif_dir(&self) -> Option<Rc<Dir>> {
+        self.exif_ifd
+            .get_or_init(|| {
+                self.directory(0)
+                    .and_then(|dir| dir.value::<u32>(exif::EXIF_TAG_EXIF_IFD_POINTER))
+                    .and_then(|offset| {
+                        let mut view = self.view.borrow_mut();
+                        self.dir_at(&mut view, offset, Type::Exif)
+                            .map(Rc::new)
+                            .map_err(|e| {
+                                log::warn!("Coudln't get exif dir at {}: {}", offset, e);
+                                e
+                            })
+                            .ok()
+                    })
+                    .or_else(|| {
+                        log::warn!("Coudln't find Exif IFD");
+                        None
+                    })
+            })
+            .clone()
+    }
+
+    /// Lazily load the MakerNote and return it.
+    pub(crate) fn mnote_dir(&self) -> Option<Rc<Dir>> {
+        self.mnote_ifd
+            .get_or_init(|| {
+                log::debug!("Loading MakerNote");
+                self.exif_dir()
+                    .and_then(|dir| {
+                        dir.entry(exif::EXIF_TAG_MAKER_NOTE)
+                            .and_then(|e| e.offset())
+                    })
+                    .and_then(|offset| {
+                        Dir::create_maker_note(self, offset, RawType::Erf)
+                            .map_err(|e| {
+                                log::warn!("Coudln't create maker_note: {}", e);
+                                e
+                            })
+                            .ok()
+                    })
+                    .or_else(|| {
+                        log::warn!("Couldn't find MakerNote");
+                        None
+                    })
+            })
+            .clone()
     }
 }

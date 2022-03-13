@@ -26,11 +26,12 @@ use std::io::{Read, Seek, SeekFrom};
 use byteorder::{BigEndian, ByteOrder, LittleEndian};
 
 use crate::io::View;
-use crate::thumbnail::{ThumbDesc, Thumbnail};
+use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
+use crate::utils;
 use crate::Result;
 
 /// Endian of the container
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Endian {
     Unset,
     Big,
@@ -63,14 +64,32 @@ impl EndianType for BigEndian {
 }
 
 /// Container abstract trait
-pub(crate) trait Container {
+pub(crate) trait GenericContainer {
     /// Return the endian of the container
     fn endian(&self) -> Endian {
         Endian::Unset
     }
 
     /// Make a thumbnail from the thumbdesc
-    fn make_thumbnail(&self, desc: &ThumbDesc) -> Result<Thumbnail>;
+    fn make_thumbnail(&self, desc: &ThumbDesc) -> Result<Thumbnail> {
+        let data = match desc.data {
+            Data::Bytes(ref b) => b.clone(),
+            Data::Offset(ref offset) => {
+                let mut view = self.borrow_view_mut();
+                let mut data = Vec::new();
+                data.resize(offset.len as usize, 0);
+                view.seek(SeekFrom::Start(offset.offset))?;
+                view.read_exact(data.as_mut_slice())?;
+                data
+            }
+        };
+        Ok(Thumbnail::new(
+            desc.width,
+            desc.height,
+            desc.data_type,
+            data,
+        ))
+    }
 
     /// Get the io::View for the container.
     fn borrow_view_mut(&self) -> RefMut<'_, View>;
@@ -86,6 +105,24 @@ pub(crate) trait Container {
         }
         if view.read_exact(data.as_mut_slice()).is_err() {
             log::error!("load_buffer8: read failed");
+        }
+
+        data
+    }
+
+    /// Load an 16 bit buffer at `offset` and of `len` bytes.
+    fn load_buffer16(&self, offset: u64, len: u64) -> Vec<u16> {
+        let mut data = Vec::new();
+
+        let mut view = self.borrow_view_mut();
+        data.resize((len / 2) as usize, 0);
+        if view.seek(SeekFrom::Start(offset)).is_err() {
+            log::error!("load_buffer16: Seek failed");
+        }
+        // XXX do we need to deal with the endian????
+        let slice = utils::to_u8_slice_mut(&mut data);
+        if view.read_exact(slice).is_err() {
+            log::error!("load_buffer18: read failed");
         }
 
         data

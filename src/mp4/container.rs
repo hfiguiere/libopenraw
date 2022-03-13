@@ -32,7 +32,6 @@ use crate::container;
 use crate::ifd;
 use crate::io::{View, Viewer};
 use crate::thumbnail;
-use crate::thumbnail::Thumbnail;
 use crate::{DataType, Error, Result};
 
 /// Copy paste imports from mp4parse_capi
@@ -58,32 +57,9 @@ pub(crate) struct Container {
     meta_ifds: OnceCell<Vec<Option<IfdHolder>>>,
 }
 
-impl container::Container for Container {
+impl container::GenericContainer for Container {
     fn endian(&self) -> container::Endian {
         container::Endian::Big
-    }
-
-    fn make_thumbnail(&self, desc: &thumbnail::ThumbDesc) -> Result<Thumbnail> {
-        use std::io::Read;
-        use thumbnail::Data;
-
-        let data = match desc.data {
-            Data::Bytes(ref b) => b.clone(),
-            Data::Offset(ref offset) => {
-                let mut view = self.view.borrow_mut();
-                let mut data = Vec::new();
-                data.resize(offset.len as usize, 0);
-                view.seek(SeekFrom::Start(offset.offset))?;
-                view.read_exact(data.as_mut_slice())?;
-                data
-            }
-        };
-        Ok(Thumbnail::new(
-            desc.width,
-            desc.height,
-            desc.data_type,
-            data,
-        ))
     }
 
     fn borrow_view_mut(&self) -> RefMut<'_, View> {

@@ -30,6 +30,9 @@ use log::debug;
 
 use crate::canon;
 use crate::container;
+use crate::container::GenericContainer;
+use crate::epson;
+use crate::ifd;
 use crate::ifd::exif;
 use crate::io::View;
 use crate::sony;
@@ -53,7 +56,7 @@ pub struct Dir {
     /// All the IFD entries
     entries: HashMap<u16, Entry>,
     /// Position of the next IFD
-    next: i32,
+    next: u32,
     /// The MakerNote ID
     id: String,
     /// Offset in MakerNote
@@ -64,8 +67,8 @@ pub struct Dir {
 
 impl Dir {
     pub(crate) fn create_maker_note(
-        container: &dyn container::Container,
-        offset: i32,
+        container: &dyn container::GenericContainer,
+        offset: u32,
         file_type: RawType,
     ) -> Result<Rc<Dir>> {
         match file_type {
@@ -75,7 +78,27 @@ impl Dir {
             RawType::Arw => {
                 return Dir::new_makernote("Sony5", container, offset, 0, &sony::MNOTE_TAG_NAMES)
             }
-            _ => {}
+            _ => {
+                let mut data = [0_u8; 8];
+                {
+                    let mut view = container.borrow_view_mut();
+                    view.seek(SeekFrom::Start(offset as u64))?;
+                    view.read_exact(&mut data)?;
+                }
+                // XXX missing other
+
+                // EPSON R-D1, use Olympus
+                // XXX deal with endian.
+                if &data[0..6] == b"EPSON\0" {
+                    return Dir::new_makernote(
+                        "Epson",
+                        container,
+                        offset + 8,
+                        0,
+                        &epson::MNOTE_TAG_NAMES,
+                    );
+                }
+            }
         }
         Dir::new_makernote("", container, offset, 0, &MNOTE_EMPTY_TAGS)
     }
@@ -83,17 +106,20 @@ impl Dir {
     ///
     pub(crate) fn new_makernote(
         id: &str,
-        container: &dyn container::Container,
-        offset: i32,
+        container: &dyn container::GenericContainer,
+        offset: u32,
         mnote_offset: u64,
         tag_names: &'static HashMap<u16, &'static str>,
     ) -> Result<Rc<Dir>> {
-        let mut view = container.borrow_view_mut();
         if let Ok(mut dir) = match container.endian() {
             container::Endian::Little => {
+                let mut view = container.borrow_view_mut();
                 Dir::read::<LittleEndian>(&mut view, offset, Type::MakerNote)
             }
-            container::Endian::Big => Dir::read::<BigEndian>(&mut view, offset, Type::MakerNote),
+            container::Endian::Big => {
+                let mut view = container.borrow_view_mut();
+                Dir::read::<BigEndian>(&mut view, offset, Type::MakerNote)
+            }
             _ => {
                 log::error!("Endian unset to read directory");
                 Err(Error::NotFound)
@@ -109,7 +135,7 @@ impl Dir {
     }
 
     /// Read an IFD from the view, using endian `E`.
-    pub(crate) fn read<E>(view: &mut View, dir_offset: i32, type_: Type) -> Result<Self>
+    pub(crate) fn read<E>(view: &mut View, dir_offset: u32, type_: Type) -> Result<Self>
     where
         E: container::EndianType,
     {
@@ -125,7 +151,10 @@ impl Dir {
             view.read_exact(&mut data)?;
             debug!("Entry {:x} with type {} added", id, type_);
             let mut entry = Entry::new(id, type_, count, data);
-            if !entry.is_inline() {
+            if type_ == exif::TagType::Undefined as i16 {
+                let offset = data.as_slice().read_u32::<E>()?;
+                entry.set_offset(offset);
+            } else if !entry.is_inline() {
                 let pos = view.seek(SeekFrom::Current(0))?;
                 entry.load_data::<E>(view)?;
                 view.seek(SeekFrom::Start(pos))?;
@@ -133,7 +162,7 @@ impl Dir {
             entries.insert(id, entry);
         }
 
-        let next = view.read_i32::<E>()?;
+        let next = view.read_u32::<E>()?;
         Ok(Dir {
             endian: E::endian(),
             type_,
@@ -150,8 +179,87 @@ impl Dir {
     }
 
     /// Offset of the next IFD. 0 mean this was the last one.
-    pub fn next_ifd(&self) -> i32 {
+    pub fn next_ifd(&self) -> u32 {
         self.next
+    }
+
+    /// Get and unsigned integer that could be either size.
+    pub fn uint_value(&self, tag: u16) -> Option<u32> {
+        use exif::TagType::*;
+        self.entry(tag).and_then(|e| {
+            exif::TagType::try_from(e.type_)
+                .ok()
+                .and_then(|typ| match typ {
+                    Short => self.entry_value::<u16>(e, 0).map(|v| v as u32),
+                    Long => self.entry_value::<u32>(e, 0),
+                    _ => {
+                        log::warn!("Entry {} has wrong type {}", tag, e.type_);
+                        None
+                    }
+                })
+        })
+    }
+
+    /// Whether the IFD is primary
+    pub fn is_primary(&self) -> bool {
+        if let Some(v) = self.value::<u32>(exif::EXIF_TAG_NEW_SUBFILE_TYPE) {
+            v == 0
+        } else {
+            false
+        }
+    }
+
+    /// Get sub IFDs.
+    pub(crate) fn get_sub_ifds(&self, container: &ifd::Container) -> Option<Vec<Rc<Dir>>> {
+        let entry = self.entry(exif::EXIF_TAG_SUB_IFDS)?;
+        let offsets = entry.value_array::<u32>(self.endian())?;
+
+        let mut ifds = Vec::new();
+        for offset in offsets {
+            if let Ok(dir) = match self.endian() {
+                container::Endian::Little => {
+                    let mut view = container.borrow_view_mut();
+                    Dir::read::<LittleEndian>(&mut view, offset, Type::SubIfd)
+                }
+                container::Endian::Big => {
+                    let mut view = container.borrow_view_mut();
+                    Dir::read::<BigEndian>(&mut view, offset, Type::SubIfd)
+                }
+                _ => {
+                    log::error!("Endian unset to read directory");
+                    Err(Error::NotFound)
+                }
+            } {
+                ifds.push(Rc::new(dir));
+            };
+        }
+        Some(ifds)
+    }
+
+    /// Return the cloned entry for the `tag`.
+    /// This is not just a clone, it allow also making sure the data
+    /// in self contained.
+    /// If the data can't be loaded (error), `None` is returned.
+    pub(crate) fn entry_cloned(&self, tag: u16, view: &mut View) -> Option<Entry> {
+        self.entries.get(&tag).and_then(|e| {
+            let mut e = (*e).clone();
+            if e.offset().is_some() {
+                match self.endian() {
+                    container::Endian::Little => {
+                        e.load_data::<LittleEndian>(view).ok()?;
+                    }
+                    container::Endian::Big => {
+                        e.load_data::<BigEndian>(view).ok()?;
+                    }
+                    _ => {
+                        log::error!("Endian unset to read Entry");
+                        return None;
+                    }
+                }
+            }
+
+            Some(e)
+        })
     }
 }
 

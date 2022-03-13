@@ -29,7 +29,7 @@ use super::{Error, RawData, Result, Type, TypeId};
 use crate::factory;
 use crate::identify;
 use crate::ifd;
-use crate::thumbnail::Thumbnail;
+use crate::thumbnail::{ThumbDesc, Thumbnail};
 
 /// The trait for any IO
 pub trait ReadAndSeek: std::io::Read + std::io::Seek {}
@@ -47,11 +47,21 @@ pub trait RawFileImpl {
     /// Will identify ID. Ensure it's cached.
     fn identify_id(&self) -> TypeId;
 
+    /// Return the thumbnails. Implementation lazy load them
+    fn thumbnails(&self) -> &std::collections::HashMap<u32, ThumbDesc>;
+
     /// Get the thumbnail for the exact size.
     fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail>;
 
     /// List the thumbnail sizes in the file
-    fn list_thumbnail_sizes(&self) -> Vec<u32>;
+    fn list_thumbnail_sizes(&self) -> Vec<u32> {
+        let thumbnails = self.thumbnails();
+
+        // XXX shall we cache this?
+        let mut sizes: Vec<u32> = thumbnails.keys().copied().collect();
+        sizes.sort_unstable();
+        sizes
+    }
 
     /// Get the ifd with type
     fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>>;
@@ -240,19 +250,65 @@ pub trait RawFile: RawFileImpl {
 
 #[cfg(test)]
 mod test {
+    use std::collections::HashMap;
     use std::rc::Rc;
+
+    use once_cell::unsync::OnceCell;
 
     use super::{RawData, RawFile, RawFileImpl};
     use crate::bitmap::Bitmap;
     use crate::ifd;
-    use crate::thumbnail::Thumbnail;
+    use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
     use crate::{DataType, Error, Result, Type, TypeId};
 
-    struct TestRawFile {}
+    struct TestRawFile {
+        thumbnails: OnceCell<HashMap<u32, ThumbDesc>>,
+    }
 
+    impl TestRawFile {
+        fn new() -> TestRawFile {
+            TestRawFile {
+                thumbnails: OnceCell::new(),
+            }
+        }
+    }
     impl RawFileImpl for TestRawFile {
         fn identify_id(&self) -> TypeId {
             TypeId::default()
+        }
+
+        fn thumbnails(&self) -> &HashMap<u32, ThumbDesc> {
+            self.thumbnails.get_or_init(|| {
+                HashMap::from([
+                    (
+                        160,
+                        ThumbDesc {
+                            width: 160,
+                            height: 160,
+                            data_type: DataType::Jpeg,
+                            data: Data::Bytes(vec![]),
+                        },
+                    ),
+                    (
+                        1024,
+                        ThumbDesc {
+                            width: 1024,
+                            height: 1024,
+                            data_type: DataType::Jpeg,
+                            data: Data::Bytes(vec![]),
+                        },
+                    ),
+                    (
+                        4096,
+                        ThumbDesc {
+                            width: 4096,
+                            height: 4096,
+                            data_type: DataType::Jpeg,
+                            data: Data::Bytes(vec![]),
+                        },
+                    ),
+                ])
+            })
         }
 
         fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
@@ -262,10 +318,6 @@ mod test {
             } else {
                 Err(Error::NotFound)
             }
-        }
-
-        fn list_thumbnail_sizes(&self) -> Vec<u32> {
-            vec![160, 1024, 4096]
         }
 
         fn ifd(&self, _ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>> {
@@ -279,14 +331,6 @@ mod test {
         fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>> {
             Err(Error::NotSupported)
         }
-
-        fn white(&self) -> u16 {
-            0xffff
-        }
-
-        fn black(&self) -> u16 {
-            0
-        }
     }
 
     impl RawFile for TestRawFile {
@@ -297,7 +341,7 @@ mod test {
 
     #[test]
     fn test_thumbnail() {
-        let raw_file = TestRawFile {};
+        let raw_file = TestRawFile::new();
         let t = raw_file.thumbnail(160);
         assert!(t.is_ok());
         let t = t.unwrap();

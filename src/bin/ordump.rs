@@ -95,9 +95,13 @@ fn extract_rawdata(rawfile: &dyn RawFile) {
         if bpc <= 8 {
             if let Some(d) = rawdata.data8() {
                 println!("\tRaw data: {} bytes", d.len());
+            } else {
+                println!("\tMissing 8bits raw data.");
             }
         } else if let Some(d) = rawdata.data16() {
             println!("\tRaw data: {} words", d.len());
+        } else {
+            println!("\tNo raw data found.");
         }
         if let Ok(matrix) = rawfile.colour_matrix(1) {
             println!("\tColour matrix 1: {:?}", matrix);

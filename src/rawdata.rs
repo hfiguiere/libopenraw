@@ -21,6 +21,9 @@
 //! RAW data
 
 use super::{Bitmap, DataType, Rect};
+use crate::ifd;
+use crate::ifd::exif;
+use crate::utils;
 
 /// Encapsulate data 8 or 16 bits
 enum Data {
@@ -40,7 +43,12 @@ pub struct RawData {
     data: Data,
     /// Bits per component
     bpc: u16,
-
+    /// White point
+    white: u16,
+    ///
+    photom_int: exif::PhotometricInterpretation,
+    ///
+    compression: ifd::Compression,
     /// Sensor active area
     active_area: Option<Rect>,
 }
@@ -55,6 +63,9 @@ impl RawData {
             data_type,
             data: Data::Data8(data),
             active_area: None,
+            white: 0,
+            compression: ifd::Compression::Unknown,
+            photom_int: exif::PhotometricInterpretation::CFA,
         }
     }
 
@@ -67,6 +78,9 @@ impl RawData {
             data_type,
             data: Data::Data16(data),
             active_area: None,
+            white: 0,
+            compression: ifd::Compression::Unknown,
+            photom_int: exif::PhotometricInterpretation::CFA,
         }
     }
 
@@ -78,6 +92,37 @@ impl RawData {
     /// Set the sensor active area.
     pub fn set_active_area(&mut self, rect: Option<Rect>) {
         self.active_area = rect;
+    }
+
+    /// Black value
+    pub fn black(&self) -> u16 {
+        // XXX implement
+        0
+    }
+
+    pub fn white(&self) -> u16 {
+        self.white
+    }
+
+    pub fn set_white(&mut self, w: u16) {
+        self.white = w;
+    }
+
+    pub fn set_photometric_interpretation(&mut self, photom_int: exif::PhotometricInterpretation) {
+        self.photom_int = photom_int;
+    }
+
+    pub fn set_compression(&mut self, compression: ifd::Compression) {
+        self.compression = compression;
+    }
+
+    /// Provide the 16bits data as a u8 slice.
+    /// Use with caution
+    pub fn data16_as_u8(&self) -> Option<&[u8]> {
+        match self.data {
+            Data::Data16(ref d) => Some(utils::to_u8_slice(d)),
+            _ => None,
+        }
     }
 }
 

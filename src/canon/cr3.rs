@@ -28,7 +28,7 @@ use log::{error, warn};
 use once_cell::unsync::OnceCell;
 
 use crate::camera_ids::{canon, vendor};
-use crate::container::Container;
+use crate::container::GenericContainer;
 use crate::ifd;
 use crate::ifd::exif;
 use crate::ifd::{Dir, Ifd};
@@ -129,6 +129,22 @@ impl Cr3File {
             container
         })
     }
+}
+
+impl RawFileImpl for Cr3File {
+    fn identify_id(&self) -> TypeId {
+        if let Some(maker_note) = self.maker_note_ifd() {
+            if let Some(id) = maker_note.value::<u32>(exif::MNOTE_CANON_MODEL_ID) {
+                log::debug!("Canon model ID: {:x}", id);
+                return super::get_typeid_for_modelid(id);
+            } else {
+                error!("Canon model ID tag not found");
+            }
+        } else {
+            error!("MakerNote not found");
+        }
+        TypeId(0, 0)
+    }
 
     /// Return a lazily loaded set of thumbnails
     fn thumbnails(&self) -> &HashMap<u32, thumbnail::ThumbDesc> {
@@ -195,23 +211,8 @@ impl Cr3File {
             thumbnails
         })
     }
-}
 
-impl RawFileImpl for Cr3File {
-    fn identify_id(&self) -> TypeId {
-        if let Some(maker_note) = self.maker_note_ifd() {
-            if let Some(id) = maker_note.value::<u32>(exif::MNOTE_CANON_MODEL_ID) {
-                log::debug!("Canon model ID: {:x}", id);
-                return super::get_typeid_for_modelid(id);
-            } else {
-                error!("Canon model ID tag not found");
-            }
-        } else {
-            error!("MakerNote not found");
-        }
-        TypeId(0, 0)
-    }
-
+    /// Get the thumbnail for the exact size.
     fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
         let thumbnails = self.thumbnails();
         if let Some(desc) = thumbnails.get(&size) {
@@ -220,15 +221,6 @@ impl RawFileImpl for Cr3File {
             warn!("Thumbnail size {} not found", size);
             Err(Error::NotFound)
         }
-    }
-
-    fn list_thumbnail_sizes(&self) -> Vec<u32> {
-        let thumbnails = self.thumbnails();
-
-        // XXX shall we cache this?
-        let mut sizes: Vec<u32> = thumbnails.keys().copied().collect();
-        sizes.sort_unstable();
-        sizes
     }
 
     fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<Dir>> {
