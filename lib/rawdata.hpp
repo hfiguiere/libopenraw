@@ -115,8 +115,6 @@ public:
 //		BitmapData &append(uint8_t c);
     /** append a uint18_t at the current position */
     RawData &append(uint16_t c);
-    /** Jump to next row. Take slicing into account. */
-    void nextRow();
 private:
     class Private;
     RawData::Private *d;

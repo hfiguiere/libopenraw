@@ -573,7 +573,6 @@ LJpegDecompressor::PmPutRow(MCU* RowBuf, int32_t numComp, int32_t numCol, int32_
             m_output->append(v);
         }
     }
-//			m_output->nextRow();
 }
 
 /*
