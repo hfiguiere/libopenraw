@@ -1,7 +1,7 @@
 /*
  * libopenraw - ljpegdecompressor.cpp
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,21 +28,21 @@
  * Copyright (c) 1993 Brian C. Smith, The Regents of the University
  * of California
  * All rights reserved.
- * 
+ *
  * Copyright (c) 1994 Kongji Huang and Brian C. Smith.
  * Cornell University
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose, without fee, and without written agreement is
  * hereby granted, provided that the above copyright notice and the following
  * two paragraphs appear in all copies of this software.
- * 
+ *
  * IN NO EVENT SHALL CORNELL UNIVERSITY BE LIABLE TO ANY PARTY FOR
  * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
  * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF CORNELL
  * UNIVERSITY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * CORNELL UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
  * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
@@ -110,7 +110,7 @@ LJpegDecompressor::~LJpegDecompressor()
         free(m_buf2);
     }
 }
-		
+
 
 void LJpegDecompressor::setSlices(const std::vector<uint16_t> & slices)
 {
@@ -121,25 +121,22 @@ void LJpegDecompressor::setSlices(const std::vector<uint16_t> & slices)
     }
     m_slices[n] = slices[2];
 }
-		
 
-
-		
-static uint32_t bitMask[] = {  0xffffffff, 0x7fffffff, 
+static uint32_t bitMask[] = {  0xffffffff, 0x7fffffff,
                                0x3fffffff, 0x1fffffff,
-                               0x0fffffff, 0x07ffffff, 
+                               0x0fffffff, 0x07ffffff,
                                0x03ffffff, 0x01ffffff,
-                               0x00ffffff, 0x007fffff, 
+                               0x00ffffff, 0x007fffff,
                                0x003fffff, 0x001fffff,
-                               0x000fffff, 0x0007ffff, 
+                               0x000fffff, 0x0007ffff,
                                0x0003ffff, 0x0001ffff,
-                               0x0000ffff, 0x00007fff, 
+                               0x0000ffff, 0x00007fff,
                                0x00003fff, 0x00001fff,
-                               0x00000fff, 0x000007ff, 
+                               0x00000fff, 0x000007ff,
                                0x000003ff, 0x000001ff,
-                               0x000000ff, 0x0000007f, 
+                               0x000000ff, 0x0000007f,
                                0x0000003f, 0x0000001f,
-                               0x0000000f, 0x00000007, 
+                               0x0000000f, 0x00000007,
                                0x00000003, 0x00000001};
 
 void FixHuffTbl (HuffmanTable *htbl);
@@ -171,7 +168,7 @@ FixHuffTbl (HuffmanTable *htbl)
     uint16_t code;
     int32_t size;
     int32_t value, ll, ul;
-			
+
     /*
      * Figure C.1: make table of Huffman code length for each symbol
      * Note that this is in code-length order.
@@ -183,8 +180,8 @@ FixHuffTbl (HuffmanTable *htbl)
     }
     huffsize[p] = 0;
     lastp = p;
-			
-			
+
+
     /*
      * Figure C.2: generate the codes themselves
      * Note that this is in code-length order.
@@ -200,7 +197,7 @@ FixHuffTbl (HuffmanTable *htbl)
         code <<= 1;
         si++;
     }
-			
+
     /*
      * Figure C.3: generate encoding tables
      * These are code and size indexed by symbol value
@@ -208,12 +205,12 @@ FixHuffTbl (HuffmanTable *htbl)
      * EmitBits to detect any attempt to emit such symbols.
      */
     memset(htbl->ehufsi, 0, sizeof(htbl->ehufsi));
-			
+
     for (p = 0; p < lastp; p++) {
         htbl->ehufco[htbl->huffval[p]] = huffcode[p];
         htbl->ehufsi[htbl->huffval[p]] = huffsize[p];
     }
-			
+
     /*
      * Figure F.15: generate decoding tables
      */
@@ -228,12 +225,12 @@ FixHuffTbl (HuffmanTable *htbl)
             htbl->maxcode[l] = -1;
         }
     }
-			
+
     /*
      * We put in this value to ensure HuffDecode terminates.
      */
     htbl->maxcode[17] = 0xFFFFFL;
-			
+
     /*
      * Build the numbits, value lookup tables.
      * These table allow us to gather 8 bits from the bits stream,
@@ -291,12 +288,12 @@ int inputBufferOffset;		/* Offset of current byte */
  * fillBitBuffer.
  * On most machines MIN_GET_BITS should be 25 to allow the full 32-bit width
  * of getBuffer to be used.  (On machines with wider words, an even larger
- * buffer could be used.)  
+ * buffer could be used.)
  */
 
 #define BITS_PER_LONG	(8*sizeof(int32_t))
 #define MIN_GET_BITS  (BITS_PER_LONG-7)	   /* max value for long getBuffer */
-		
+
 /*
  * bmask[n] is mask for n rightmost bits
  */
@@ -305,11 +302,11 @@ static int32_t bmask[] = {0x0000,
                           0x001F, 0x003F, 0x007F, 0x00FF,
                           0x01FF, 0x03FF, 0x07FF, 0x0FFF,
                           0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF};
-		
+
 
 /*
  * Lossless JPEG specifies data precision to be from 2 to 16 bits/sample.
- */ 
+ */
 #define MinPrecisionBits 2
 #define MaxPrecisionBits 16
 
@@ -410,31 +407,31 @@ void
 LJpegDecompressor::fillBitBuffer (IO::Stream * s,uint16_t nbits)
 {
     uint8_t c, c2;
-			
+
     while (m_bitsLeft < MIN_GET_BITS) {
         c = s->readByte();
-				
+
         /*
          * If it's 0xFF, check and discard stuffed zero byte
          */
         if (c == 0xFF) {
             c2 = s->readByte();
-					
+
             if (c2 != 0) {
-						
+
                 /*
                  * Oops, it's actually a marker indicating end of
                  * compressed data.  Better put it back for use later.
                  */
                 s->seek(-2, SEEK_CUR);
-						
+
                 /*
                  * There should be enough bits still left in the data
                  * segment; if so, just break out of the while loop.
                  */
                 if (m_bitsLeft >= nbits)
                     break;
-						
+
                 /*
                  * Uh-oh.  Corrupted data: stuff zeroes into the data
                  * stream, since this sometimes occurs when we are on the
@@ -455,7 +452,7 @@ LJpegDecompressor::fillBitBuffer (IO::Stream * s,uint16_t nbits)
 
 
 inline int32_t LJpegDecompressor::QuickPredict(int32_t col, int16_t curComp,
-                                               MCU *curRowBuf, 
+                                               MCU *curRowBuf,
                                                MCU *prevRowBuf,
                                                int32_t psv)
 {
@@ -466,7 +463,7 @@ inline int32_t LJpegDecompressor::QuickPredict(int32_t col, int16_t curComp,
     upper=prevRowBuf[col][curComp];
     left=curRowBuf[leftcol][curComp];
     diag=prevRowBuf[leftcol][curComp];
-	
+
     /*
      * All predictor are calculated according to psv.
      */
@@ -520,15 +517,15 @@ void LJpegDecompressor::flush_bits(uint16_t nbits)
 inline
 int32_t LJpegDecompressor::get_bits(uint16_t nbits)
 {
-    if (m_bitsLeft < nbits) 
+    if (m_bitsLeft < nbits)
         fillBitBuffer(m_stream, nbits);
     return ((m_getBuffer >> (m_bitsLeft -= (nbits)))) & bmask[nbits];
 }
-		
+
 inline
-int32_t LJpegDecompressor::get_bit() 
+int32_t LJpegDecompressor::get_bit()
 {
-    if (!m_bitsLeft) 
+    if (!m_bitsLeft)
         fillBitBuffer(m_stream, 1);
     return (m_getBuffer >> (--m_bitsLeft)) & 1;
 }
@@ -595,7 +592,7 @@ LJpegDecompressor::PmPutRow(MCU* RowBuf, int32_t numComp, int32_t numCol, int32_
  *
  *--------------------------------------------------------------
  */
-inline int32_t 
+inline int32_t
 LJpegDecompressor::HuffDecode(HuffmanTable *htbl)
 {
     int32_t rv;
@@ -708,7 +705,7 @@ LJpegDecompressor::HuffDecoderInit (DecompressInfo *dcPtr)
         /*
          * Make sure requested tables are present
          */
-        if (dcPtr->dcHuffTblPtrs[compptr->dcTblNo] == NULL) { 
+        if (dcPtr->dcHuffTblPtrs[compptr->dcTblNo] == NULL) {
             throw DecodingException("Error: Use of undefined Huffman table\n");
         }
 
@@ -793,7 +790,7 @@ LJpegDecompressor::ProcessRestart (DecompressInfo *dcPtr)
  *
  * DecodeFirstRow --
  *
- *	Decode the first raster line of samples at the start of 
+ *	Decode the first raster line of samples at the start of
  *      the scan and at the beginning of each restart interval.
  *	This includes modifying the component value so the real
  *      value, not the difference is returned.
@@ -839,7 +836,7 @@ void LJpegDecompressor::DecodeFirstRow(DecompressInfo *dcPtr,
             d = 0;
         }
 
-        /* 
+        /*
          * Add the predictor to the difference.
          */
         curRowBuf[0][curComp]=d+(1<<(Pr-Pt-1));
@@ -865,7 +862,7 @@ void LJpegDecompressor::DecodeFirstRow(DecompressInfo *dcPtr,
                 d = 0;
             }
 
-            /* 
+            /*
              * Add the predictor to the difference.
              */
             curRowBuf[col][curComp]=d+curRowBuf[col-1][curComp];
@@ -904,9 +901,9 @@ LJpegDecompressor::DecodeImage(DecompressInfo *dcPtr)
     int32_t predictor;
     int32_t numCOL,numROW,compsInScan;
     MCU *prevRowBuf,*curRowBuf;
-    int32_t imagewidth,Pt,psv;
+    int32_t Pt,psv;
 
-    numCOL=imagewidth=dcPtr->imageWidth;
+    numCOL = dcPtr->imageWidth;
     numROW=dcPtr->imageHeight;
     compsInScan=dcPtr->compsInScan;
     Pt=dcPtr->Pt;
@@ -918,7 +915,7 @@ LJpegDecompressor::DecodeImage(DecompressInfo *dcPtr)
      * Decode the first row of image. Output the row and
      * turn this row into a previous row for later predictor
      * calculation.
-     */  
+     */
     DecodeFirstRow(dcPtr,curRowBuf);
     PmPutRow(curRowBuf,compsInScan,numCOL,Pt);
     std::swap(prevRowBuf,curRowBuf);
@@ -931,7 +928,7 @@ LJpegDecompressor::DecodeImage(DecompressInfo *dcPtr)
         if (dcPtr->restartInRows) {
             if (dcPtr->restartRowsToGo == 0) {
                 ProcessRestart (dcPtr);
-            
+
                 /*
                  * Reset predictors at restart.
                  */
@@ -967,7 +964,7 @@ LJpegDecompressor::DecodeImage(DecompressInfo *dcPtr)
 
         /*
          * For the rest of the column on this row, predictor
-         * calculations are base on PSV. 
+         * calculations are base on PSV.
          */
         for (col=1; col<numCOL; col++) {
             for (curComp = 0; curComp < compsInScan; curComp++) {
@@ -1286,9 +1283,9 @@ LJpegDecompressor::GetSos (DecompressInfo *dcPtr)
     /*
      * Get the PSV, skip Se, and get the point transform parameter.
      */
-    dcPtr->Ss = m_stream->readByte(); 
+    dcPtr->Ss = m_stream->readByte();
     (void)m_stream->readByte();
-    c = m_stream->readByte(); 
+    c = m_stream->readByte();
     dcPtr->Pt = c & 0x0F;
 }
 
@@ -1537,7 +1534,7 @@ RawDataPtr LJpegDecompressor::decompress()
 {
     DecompressInfo dcInfo;
     try {
-        ReadFileHeader(&dcInfo); 
+        ReadFileHeader(&dcInfo);
         ReadScanHeader (&dcInfo);
 
         m_output = RawDataPtr(new RawData);
@@ -1548,7 +1545,7 @@ RawDataPtr LJpegDecompressor::decompress()
         m_output->setWhiteLevel((1 << bpc) - 1);
         /*uint16_t *dataPtr = (uint16_t*)*/
         m_output->allocData(dcInfo.imageWidth
-                          * sizeof(uint16_t) 
+                          * sizeof(uint16_t)
                           * dcInfo.imageHeight
                           * dcInfo.numComponents);
 

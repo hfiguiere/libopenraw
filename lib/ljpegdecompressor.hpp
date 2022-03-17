@@ -2,7 +2,7 @@
 /*
  * libopenraw - ljpegdecompressor.h
  *
- * Copyright (C) 2007-2016 Hubert Figuiere
+ * Copyright (C) 2007-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_LJPEGDECOMPRESSOR_H_
-#define OR_INTERNALS_LJPEGDECOMPRESSOR_H_
+#pragma once
 
 #include <stddef.h>
 #include <sys/types.h>
@@ -178,9 +177,6 @@ private:
 }
 }
 
-
-
-#endif
 /*
   Local Variables:
   mode:c++
