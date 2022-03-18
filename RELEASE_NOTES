@@ -1,7 +1,17 @@
 What's (visibly) new in 0.3.1
 =============================
 
-- Fixes to the release notes for 0.3.0
+- Fixes to the release notes for 0.3.0.
+- Fix gnome/libopenraw-gnome-0.3.pc so that it depends in the right
+  version.
+- Generated documentation with Doxygen is much more usable.
+- Fix correct endian header on BSD.
+- Fix build on gcc 11
+
+Contributors to this release:
+
+- Trevor Beckerson
+- Jason E. Hale
 
 What's (visibly) new in 0.3.0
 =============================

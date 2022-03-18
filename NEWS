@@ -1,5 +1,20 @@
 libopenraw 0.3.1 -
 
+Bug fixes:
+
+  - gnome/libopenraw-gnome-0.3.pc now has the right dependency version.
+    https://github.com/hfiguiere/libopenraw/pull/2
+  - The Doxygen generated documentation is much more usable.
+  - Fix build on BSD (endian header)
+    https://gitlab.freedesktop.org/libopenraw/libopenraw/-/merge_requests/2
+  - Fix build on gcc 11
+    https://gitlab.freedesktop.org/libopenraw/libopenraw/-/issues/6
+
+Internal changes
+
+  - Added a make webdist target to streamline copying the doxygen output.
+  - Removed a few piece of unused code in IFD, MakerNote and ljpeg decompressor.
+  - Use bionic on Travis CI
 
 libopenraw 0.3.0 - 2020/12/18
 
