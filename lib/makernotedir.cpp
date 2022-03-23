@@ -1,7 +1,7 @@
 /*
  * libopenraw - makernotedir.cpp
  *
- * Copyright (C) 2010-2020 Hubert Figuière
+ * Copyright (C) 2010-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -92,6 +92,11 @@ MakerNoteDir::createMakerNote(off_t offset,
     if (memcmp("OLYMPUS\0", data, 8) == 0) {
         return std::make_shared<MakerNoteDir>(
             offset + 12, container, offset, "Olympus2", mnote_olympus_tag_names);
+    }
+
+    if (memcmp("OM SYSTEM", data, 9) == 0) {
+        return std::make_shared<MakerNoteDir>(
+            offset + 16, container, offset, "Olympus2", mnote_olympus_tag_names);
     }
 
     if (memcmp("OLYMP\0", data, 6) == 0) {

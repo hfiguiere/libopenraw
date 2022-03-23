@@ -1,7 +1,7 @@
 /*
  * libopenraw - orffile.cpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -222,6 +222,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 8380, -2630, -639, -2887, 10725, 2496, -627, 1427, 5438 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10IIIS),
+      0,
+      0,
+      { 8380, -2630, -639, -2887, 10725, 2496, -627, 1427, 5438 } },
     { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10IV),
       0,
       0,
@@ -230,6 +234,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 11896, -5110, -1076, -3181, 11378, 2048, -519, 1224, 5166 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_OM1),
+      0,
+      0,
+      { 9488, -3984, -714, -2887, 10945, 2229, -137, 960, 5786 } },
     { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1),
       0,
       0,
@@ -307,7 +315,9 @@ const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
     { "E-M10           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10) },
     { "E-M10MarkII     ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10II) },
     { "E-M10 Mark III  ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10III) },
+    { "E-M10MarkIIIS   ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10IIIS) },
     { "E-M10MarkIV     ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10IV) },
+    { "OM-1            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_OM1) },
     { "STYLUS1         ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1) },
     { "STYLUS1,1s      ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1_1S) },
     { "PEN-F           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_PEN_F) },
