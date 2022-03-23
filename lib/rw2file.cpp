@@ -1,7 +1,7 @@
 /*
  * libopenraw - rw2file.cpp
  *
- * Copyright (C) 2011-2020 Hubert Figuière
+ * Copyright (C) 2011-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -236,6 +236,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       15,
       0,
       { 6929, -2355, -708, -4192, 12534, 1828, -1097, 1989, 5195 } },
+    { OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GH5M2),
+      15,
+      0,
+      { 9300, -3659, -755, -2981, 10988, 2287, -190, 1077, 5016 } },
     { OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GM1),
       15,
       0,
@@ -430,6 +434,8 @@ const IfdFile::camera_ids_t Rw2File::s_def[] = {
     { "DMC-GH4", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GH4) },
     { "DC-GH5", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GH5) },
     { "DC-GH5S", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GH5S) },
+    { "DC-GH5M2", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GH5M2) },
+    { "DC-GH6", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GH6) },
     { "DMC-GM1", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GM1) },
     { "DMC-GM5", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_GM5) },
     { "DMC-LX1", OR_MAKE_PANASONIC_TYPEID(OR_TYPEID_PANASONIC_LX1) },
