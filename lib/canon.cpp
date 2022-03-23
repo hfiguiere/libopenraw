@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon.cpp
  *
- * Copyright (C) 2018-2020 Hubert Figuière
+ * Copyright (C) 2018-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -82,7 +82,7 @@ const ModelIdMap canon_modelid_map = {
     { 0x80000325, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_70D) },
     { 0x03540000, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G16) },
     { 0x03550000, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_S120) },
-//    { 0x80000355, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M2) },
+    { 0x80000355, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M2) },
     { 0x80000327, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_1200D) },
     { 0x03640000, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_G1XMKII) },
     { 0x80000289, OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_7DMKII) },

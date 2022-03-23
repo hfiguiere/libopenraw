@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr2file.cpp
  *
- * Copyright (C) 2006-2021 Hubert Figuière
+ * Copyright (C) 2006-2022 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -258,11 +258,14 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 6602, -841, -939, -4472, 12458, 2247, -975, 2039, 6148 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M2),
+      0,
+      0,
+      { 6400, -480, -888, -5294, 13416, 2047, -1296, 2203, 6137 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M3),
       0,
       0,
       { 6362, -823, -847, -4426, 12109, 2616, -743, 1857, 5635 } },
-    // From DNG Converter 10.3
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M5),
       0,
       0,
@@ -461,6 +464,7 @@ const IfdFile::camera_ids_t Cr2File::s_def[] = {
     { "Canon EOS M", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M) },
     { "Canon EOS M10", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M10) },
     { "Canon EOS M100", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M100) },
+    { "Canon EOS M2", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M2) },
     { "Canon EOS M3", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M3) },
     { "Canon EOS M5", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M5) },
     { "Canon EOS M6", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M6) },
