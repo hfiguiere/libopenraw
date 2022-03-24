@@ -285,16 +285,22 @@ typedef enum {
 } ExifTagType;
 
 /** @brief Unsigned rational as a fraction */
-typedef struct {
+struct ORRational {
+#ifdef __cplusplus
+	ORRational() : num(0), denom(0) {}
+#endif
     uint32_t num; /**< Numerator */
     uint32_t denom; /**< Denominator */
-} ORRational;
+};
 
 /** @brief Signed rational as a fraction */
-typedef struct {
+struct ORSRational {
+#ifdef __cplusplus
+	ORSRational() : num(0), denom(0) {}
+#endif
     int32_t num; /**< Numerator (carry the sign) */
     uint32_t denom; /**< Denominator */
-} ORSRational;
+};
 
 #ifdef __cplusplus
 }
