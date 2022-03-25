@@ -824,6 +824,7 @@ const RawFile::camera_ids_t RawFile::s_make[] = {
     { "Apple", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE, 0) },
     { "XIAOYI", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_XIAOYI, 0) },
     { "ZEISS", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ZEISS, 0) },
+    { "DJI", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI, 0) },
     { NULL, 0 }
 };
 

@@ -218,6 +218,10 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                       OR_TYPEID_GOPRO_HERO10_BLACK) },
     { "ZX1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ZEISS,
                                        OR_TYPEID_ZEISS_ZX1) },
+    { "FC350", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
+                                   OR_TYPEID_DJI_FC350) },
+    { "FC7303", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
+                                    OR_TYPEID_DJI_FC7303) },
     { 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE,
                              OR_TYPEID_ADOBE_DNG_GENERIC) }
 };
