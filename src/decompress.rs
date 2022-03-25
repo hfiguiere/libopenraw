@@ -115,3 +115,54 @@ pub(crate) fn unpack(
 
     Ok(out_data)
 }
+
+#[cfg(test)]
+mod test {
+
+    use super::unpack_be12to16;
+    use crate::ifd;
+
+    #[test]
+    fn test_unpack() {
+        let packed: [u8; 32] = [
+            0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB,
+            0xCD, 0x00, 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78,
+            0x90, 0xAB, 0xCD, 0x00,
+        ];
+
+        let mut unpacked: Vec<u16> = Vec::new();
+
+        let result = unpack_be12to16(
+            packed.as_slice(),
+            &mut unpacked,
+            ifd::Compression::NikonPack,
+        );
+
+        assert_eq!(result, Ok(20));
+        for i in 0..2 {
+            assert_eq!(unpacked[10 * i + 0], 0x0123);
+            assert_eq!(unpacked[10 * i + 1], 0x0456);
+            assert_eq!(unpacked[10 * i + 2], 0x0789);
+            assert_eq!(unpacked[10 * i + 3], 0x00ab);
+            assert_eq!(unpacked[10 * i + 4], 0x0cde);
+            assert_eq!(unpacked[10 * i + 5], 0x0f12);
+            assert_eq!(unpacked[10 * i + 6], 0x0345);
+            assert_eq!(unpacked[10 * i + 7], 0x0678);
+            assert_eq!(unpacked[10 * i + 8], 0x090a);
+            assert_eq!(unpacked[10 * i + 9], 0x0bcd);
+        }
+    }
+
+    #[test]
+    fn test_unpack2() {
+        let packed: [u8; 3] = [0x12, 0x34, 0x56];
+
+        let mut unpacked: Vec<u16> = Vec::new();
+
+        let result = unpack_be12to16(packed.as_slice(), &mut unpacked, ifd::Compression::None);
+
+        assert_eq!(result, Ok(2));
+        assert_eq!(unpacked[0], 0x0123);
+        assert_eq!(unpacked[1], 0x0456);
+    }
+}
