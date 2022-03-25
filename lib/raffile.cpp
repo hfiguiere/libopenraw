@@ -292,6 +292,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 11756, -4754, -874, -3056, 11045, 2305, -381, 1457, 6006 } },
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_GFX50S_II),
+      0,
+      0,
+      { 11756, -4754, -874, -3056, 11045, 2305, -381, 1457, 6006 } },
     // For now we assume it is the same sensor as the GFX50S
     { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_GFX50R),
       0,
@@ -301,14 +305,20 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199 } },
+    { OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_GFX100S),
+      0,
+      0,
+      { 16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199 } },
 
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
 
 const RawFile::camera_ids_t RafFile::s_def[] = {
     { "GFX 50S", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_GFX50S) },
+    { "GFX50S II", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_GFX50S_II) },
     { "GFX 50R", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_GFX50R) },
     { "GFX 100", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_GFX100) },
+    { "GFX100S", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_GFX100S) },
     { "FinePix F550EXR", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_F550EXR) },
     { "FinePix F700  ", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_F700) },
     { "FinePix F810   ", OR_MAKE_FUJIFILM_TYPEID(OR_TYPEID_FUJIFILM_F810) },
