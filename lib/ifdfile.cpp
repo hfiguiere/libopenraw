@@ -105,7 +105,7 @@ void IfdFile::_identifyId()
                 _setTypeId(type_id);
                 return;
             }
-            LOGERR("unknown model ID 0x%x\n", id_value);
+            LOGERR("unknown model ID 0x%x (%u)\n", id_value, id_value);
         }
     }
 
