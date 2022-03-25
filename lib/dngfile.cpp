@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2022 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -89,6 +89,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                  OR_TYPEID_PENTAX_K3_DNG) },
     { "PENTAX K-3 II      ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_K3_II_DNG) },
+    { "PENTAX K-3 Mark III             ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
+                                                 OR_TYPEID_PENTAX_K3_II_DNG) },
     { "PENTAX K-7         ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_K7_DNG) },
     { "PENTAX K-70        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
@@ -159,6 +161,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                           OR_TYPEID_RICOH_GRII) },
     { "RICOH GR III       ",
       OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, OR_TYPEID_RICOH_GRIII) },
+    { "RICOH GR IIIx      ",
+      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, OR_TYPEID_RICOH_GRIIIX) },
     { "GXR            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
                                              OR_TYPEID_RICOH_GXR) },
     { "GXR A16                                                        ",
