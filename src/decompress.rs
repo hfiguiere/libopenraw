@@ -20,6 +20,8 @@
 
 //! Decompression
 
+mod sliced_buffer;
+
 use std::io::{Read, Seek, SeekFrom};
 
 use crate::container::GenericContainer;
