@@ -126,7 +126,7 @@ impl RawFileImpl for ErfFile {
             }
             ifd::Type::MakerNote => {
                 self.container();
-                self.container.get().unwrap().mnote_dir()
+                self.container.get().unwrap().mnote_dir(Type::Erf)
             }
             _ => None,
         }

@@ -188,7 +188,7 @@ impl Container {
     }
 
     /// Lazily load the MakerNote and return it.
-    pub(crate) fn mnote_dir(&self) -> Option<Rc<Dir>> {
+    pub(crate) fn mnote_dir(&self, raw_type: RawType) -> Option<Rc<Dir>> {
         self.mnote_ifd
             .get_or_init(|| {
                 log::debug!("Loading MakerNote");
@@ -198,7 +198,7 @@ impl Container {
                             .and_then(|e| e.offset())
                     })
                     .and_then(|offset| {
-                        Dir::create_maker_note(self, offset, RawType::Erf)
+                        Dir::create_maker_note(self, offset, raw_type)
                             .map_err(|e| {
                                 log::warn!("Coudln't create maker_note: {}", e);
                                 e
