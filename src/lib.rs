@@ -77,6 +77,8 @@ pub enum Error {
     Decompression,
     /// MP4 parse error. Can't use native error as it doesn't do `PartialEq`
     Mp4Parse(String),
+    /// Jpeg decompress
+    JpegFormat(String),
 }
 
 impl From<std::io::Error> for Error {
@@ -106,6 +108,7 @@ impl std::fmt::Display for Error {
             Self::InvalidFormat => write!(f, "Invalid format"),
             Self::Decompression => write!(f, "Decompression error"),
             Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {}", err),
+            Self::JpegFormat(ref err) => write!(f, "JPEG error: {}", err),
         }
     }
 }

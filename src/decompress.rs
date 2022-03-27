@@ -20,7 +20,10 @@
 
 //! Decompression
 
+mod ljpeg;
 mod sliced_buffer;
+
+pub(crate) use ljpeg::LJpeg;
 
 use std::io::{Read, Seek, SeekFrom};
 
