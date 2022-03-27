@@ -329,7 +329,7 @@ pub(crate) fn ifd_locate_thumbnail(
             if got_it {
                 // workaround for CR2 files where 8RGB data is marked
                 // as JPEG. Check the real data size.
-                if x == 0 && y == 0 {
+                if x != 0 && y != 0 {
                     if byte_count >= (x * y * 3) {
                         // We ignore this, it's 8RGB in a Canon CR2 file.
                         // See bug 72270
