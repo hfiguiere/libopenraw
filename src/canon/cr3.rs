@@ -39,7 +39,7 @@ use crate::{DataType, Error, RawData, RawFile, RawFileImpl, Rect, Result, Type, 
 use crate::colour::BuiltinMatrix;
 
 lazy_static::lazy_static! {
-    static ref MATRICES: [BuiltinMatrix; 14] = [
+    static ref MATRICES: [BuiltinMatrix; 16] = [
     BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_M200),
       0,
       0,
@@ -48,6 +48,10 @@ lazy_static::lazy_static! {
       0,
       0,
       [ 8532, -701, -1167, -4095, 11879, 2508, -797, 2424, 7010 ] ),
+    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_M50MKII),
+      0,
+      0,
+      [ 10463, -2173, -1437, -4856, 12635, 2482, -1216, 2915, 7237 ] ),
     BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_M6MKII),
       0,
       0,
@@ -64,6 +68,10 @@ lazy_static::lazy_static! {
       0,
       0,
       [ 8608, -2097, -1178, -5425, 13265, 2383, -1149, 2238, 5680 ] ),
+    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_R3),
+      0,
+      0,
+      [ 9423, -2839, -1195, -4532, 12377, 2415, -483, 1374, 5276 ] ),
     BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_R5),
       0,
       0,

@@ -130,6 +130,8 @@ lazy_static! {
         (0x00000812, TypeId(vendor::CANON, canon::EOS_M200)),
         (0x80000428, TypeId(vendor::CANON, canon::EOS_1DXMKIII)),
         (0x80000435, TypeId(vendor::CANON, canon::EOS_850D)),
+        (0x80000468, TypeId(vendor::CANON, canon::EOS_M50MKII)),
+        (0x80000450, TypeId(vendor::CANON, canon::EOS_R3)),
     ]);
 
     /// Canon MakerNote tag names
