@@ -373,17 +373,6 @@ impl Cr2File {
         })
     }
 
-    /// Return a lazily loaded `mp4::Container`
-    fn container(&self) -> &ifd::Container {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = ifd::Container::new(view);
-            container.load().expect("TIFF container error");
-            container
-        })
-    }
-
     fn is_cr2(&self) -> bool {
         // XXX todo
         true
@@ -479,7 +468,16 @@ impl RawFileImpl for Cr2File {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = ifd::Container::new(view);
+            let mut container = ifd::Container::new(
+                // XXX non CR2 have a different layout
+                view,
+                vec![
+                    ifd::Type::Main,
+                    ifd::Type::Other,
+                    ifd::Type::Other,
+                    ifd::Type::Cfa,
+                ],
+            );
             container.load().expect("TIFF container error");
             container
         })

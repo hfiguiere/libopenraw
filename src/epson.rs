@@ -85,7 +85,7 @@ impl RawFileImpl for ErfFile {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = ifd::Container::new(view);
+            let mut container = ifd::Container::new(view, vec![]);
             container.load().expect("IFD container error");
             container
         })

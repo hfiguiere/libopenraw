@@ -85,7 +85,7 @@ impl From<u16> for Compression {
 }
 
 /// Type of IFD
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum Type {
     /// Main IFD (see TIFF)
     Main,
@@ -218,7 +218,6 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
         .map(Compression::from)
         .unwrap_or(Compression::None);
 
-    println!("compression {:?}, bpc {}", compression, bpc);
     let data_type = match compression {
         Compression::None => DataType::Raw,
         Compression::NikonPack => DataType::Raw,
@@ -277,6 +276,9 @@ pub(crate) fn tiff_thumbnails(container: &Container) -> HashMap<u32, thumbnail::
 
     let dirs = container.dirs();
     for dir in dirs {
+        if dir.ifd_type() == Type::Cfa {
+            continue;
+        }
         ifd_locate_thumbnail(container, dir, &mut thumbnails);
 
         if let Some(subdirs) = dir.get_sub_ifds(container) {

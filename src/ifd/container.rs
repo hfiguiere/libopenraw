@@ -43,6 +43,8 @@ pub(crate) struct Container {
     endian: RefCell<container::Endian>,
     /// IFD.
     dirs: OnceCell<Vec<Rc<Dir>>>,
+    /// index to `Type` map
+    dir_map: Vec<Type>,
     /// offset correction for Exif. 0 in most cases.
     exif_correction: i32,
     /// The Exif IFD
@@ -63,11 +65,12 @@ impl container::GenericContainer for Container {
 
 impl Container {
     /// Create a new container for the view.
-    pub(crate) fn new(view: View) -> Self {
+    pub(crate) fn new(view: View, dir_map: Vec<Type>) -> Self {
         Self {
             view: RefCell::new(view),
             endian: RefCell::new(container::Endian::Unset),
             dirs: OnceCell::new(),
+            dir_map,
             exif_correction: 0,
             exif_ifd: OnceCell::new(),
             mnote_ifd: OnceCell::new(),
@@ -119,13 +122,20 @@ impl Container {
         self.dirs.get_or_init(|| {
             let mut dirs = vec![];
 
+            let mut index = 0_usize;
             let mut view = self.view.borrow_mut();
             view.seek(SeekFrom::Start(4)).expect("Seek failed");
             let mut dir_offset = self.read_u32(&mut view).unwrap_or(0);
             while dir_offset != 0 {
-                if let Ok(dir) = self.dir_at(&mut view, dir_offset, Type::Other) {
+                let t = if index < self.dir_map.len() {
+                    self.dir_map[index]
+                } else {
+                    Type::Other
+                };
+                if let Ok(dir) = self.dir_at(&mut view, dir_offset, t) {
                     dir_offset = dir.next_ifd();
                     dirs.push(Rc::new(dir));
+                    index += 1
                 } else {
                     error!("Endian couldn't read directory");
                     break;
