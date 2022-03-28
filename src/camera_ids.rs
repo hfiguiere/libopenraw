@@ -226,6 +226,10 @@ pub mod canon {
     pub const EOS_850D: u16 = 112;
     pub const REBEL_T8I: u16 = EOS_850D;
     pub const KISS_X10I: u16 = EOS_850D;
+    pub const EOS_M2: u16 = 113;
+    pub const EOS_M50MKII: u16 = 114;
+    pub const KISS_M2: u16 = EOS_M50MKII;
+    pub const EOS_R3: u16 = 115;
 }
 
 /// Nikon type IDs

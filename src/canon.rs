@@ -20,6 +20,7 @@
 
 //! Canon specific code.
 
+mod cr2;
 mod cr3;
 
 use std::collections::HashMap;
@@ -31,6 +32,7 @@ use super::TypeId;
 use crate::camera_ids::{canon, vendor};
 use crate::ifd;
 use crate::ifd::{exif, Dir, Ifd};
+pub use cr2::Cr2File;
 pub use cr3::Cr3File;
 
 lazy_static! {
@@ -83,6 +85,7 @@ lazy_static! {
         (0x80000325, TypeId(vendor::CANON, canon::EOS_70D)),
         (0x03540000, TypeId(vendor::CANON, canon::G16)),
         (0x03550000, TypeId(vendor::CANON, canon::S120)),
+        (0x80000355, TypeId(vendor::CANON, canon::EOS_M2)),
         (0x80000327, TypeId(vendor::CANON, canon::EOS_1200D)),
         (0x03640000, TypeId(vendor::CANON, canon::G1XMKII)),
         (0x80000289, TypeId(vendor::CANON, canon::EOS_7DMKII)),

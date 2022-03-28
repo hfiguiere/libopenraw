@@ -153,12 +153,7 @@ impl LJpeg {
         self.slices = Some(v);
     }
 
-    pub fn decompress(
-        &mut self,
-        width: u32,
-        height: u32,
-        reader: &mut dyn ReadAndSeek,
-    ) -> Result<RawData> {
+    pub fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<RawData> {
         let mut dc_info = DecompressInfo::default();
 
         self.read_file_header(&mut dc_info, reader)?;
@@ -168,7 +163,7 @@ impl LJpeg {
         let mut output: SlicedBuffer<ComponentType> = SlicedBuffer::new(
             dc_info.image_width * dc_info.num_components as u16,
             dc_info.image_height,
-            self.slices.clone().as_ref().map(|v| v.as_slice()),
+            self.slices.clone().as_deref(),
         );
         output.reserve(
             dc_info.image_width as usize
@@ -1100,8 +1095,6 @@ fn extend(x: u16, s: u8) -> i32 {
 
 #[cfg(test)]
 mod test {
-    use crate::RawFile;
-
     use super::LJpeg;
     use super::{BitReader, BITS_PER_LONG, MIN_GET_BITS};
 
@@ -1173,7 +1166,7 @@ mod test {
         let io = std::fs::File::open("test/ljpegtest1.jpg");
         assert!(io.is_ok());
         let mut io = io.unwrap();
-        let rawdata = decompressor.decompress(120, 272, &mut io);
+        let rawdata = decompressor.decompress(&mut io);
 
         assert!(rawdata.is_ok());
         let rawdata = rawdata.unwrap();

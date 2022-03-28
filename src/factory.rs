@@ -25,12 +25,14 @@ use std::collections::HashMap;
 use super::rawfile::RawFileFactory;
 use super::Type;
 
+use crate::canon::Cr2File;
 use crate::canon::Cr3File;
 use crate::epson::ErfFile;
 
 lazy_static::lazy_static! {
     /// Factory map. This is where new types are registered.
     static ref FACTORY_MAP: HashMap<Type, RawFileFactory> = HashMap::from([
+        (Type::Cr2, Cr2File::factory as RawFileFactory),
         (Type::Cr3, Cr3File::factory as RawFileFactory),
         (Type::Erf, ErfFile::factory as RawFileFactory),
     ]);
