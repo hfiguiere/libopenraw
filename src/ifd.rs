@@ -32,6 +32,8 @@ use byteorder::{BigEndian, LittleEndian};
 
 use crate::container::{Endian, GenericContainer};
 use crate::decompress;
+use crate::io;
+use crate::jpeg;
 use crate::thumbnail;
 use crate::{DataType, Error, RawData, Result, TypeId};
 pub(crate) use container::Container;
@@ -275,11 +277,11 @@ pub(crate) fn tiff_thumbnails(container: &Container) -> HashMap<u32, thumbnail::
 
     let dirs = container.dirs();
     for dir in dirs {
-        ifd_locate_thumbnail(dir, &mut thumbnails);
+        ifd_locate_thumbnail(container, dir, &mut thumbnails);
 
         if let Some(subdirs) = dir.get_sub_ifds(container) {
             for subdir in subdirs {
-                ifd_locate_thumbnail(&subdir, &mut thumbnails);
+                ifd_locate_thumbnail(container, &subdir, &mut thumbnails);
             }
         }
     }
@@ -290,6 +292,7 @@ pub(crate) fn tiff_thumbnails(container: &Container) -> HashMap<u32, thumbnail::
 }
 
 pub(crate) fn ifd_locate_thumbnail(
+    container: &dyn GenericContainer,
     dir: &Rc<Dir>,
     thumbnails: &mut HashMap<u32, thumbnail::ThumbDesc>,
 ) {
@@ -304,8 +307,8 @@ pub(crate) fn ifd_locate_thumbnail(
         let photom_int = dir
             .value::<u16>(exif::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
             .unwrap_or(exif::PhotometricInterpretation::Rgb as u16);
-        let x = dir.uint_value(exif::EXIF_TAG_IMAGE_WIDTH).unwrap_or(0);
-        let y = dir.uint_value(exif::EXIF_TAG_IMAGE_LENGTH).unwrap_or(0);
+        let mut x = dir.uint_value(exif::EXIF_TAG_IMAGE_WIDTH).unwrap_or(0);
+        let mut y = dir.uint_value(exif::EXIF_TAG_IMAGE_LENGTH).unwrap_or(0);
         let compression = dir.value::<u16>(exif::EXIF_TAG_COMPRESSION).unwrap_or(0);
         let mut byte_count = dir
             .value::<u32>(exif::EXIF_TAG_STRIP_BYTE_COUNTS)
@@ -341,8 +344,16 @@ pub(crate) fn ifd_locate_thumbnail(
                 } else {
                     data_type = DataType::Jpeg;
                     if x == 0 || y == 0 {
-                        // XXX load the JFIF stream and get the dimensions.
-                        log::warn!("Couldn't get JPEG dimensions. (unimplemented)");
+                        if let Ok(view) =
+                            io::Viewer::create_subview(&*container.borrow_view_mut(), offset as u64)
+                        {
+                            let jpeg = jpeg::Container::new(view);
+                            x = jpeg.width() as u32;
+                            y = jpeg.height() as u32;
+                        } else {
+                            // XXX load the JFIF stream and get the dimensions.
+                            log::error!("Couldn't get JPEG dimensions.");
+                        }
                     } else {
                         log::debug!("JPEG (supposed) dimensions x={} y={}", x, y);
                     }

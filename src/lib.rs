@@ -29,6 +29,7 @@ mod factory;
 mod identify;
 pub mod ifd;
 mod io;
+mod jpeg;
 mod mp4;
 mod olympus;
 mod raf;

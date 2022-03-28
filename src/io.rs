@@ -21,7 +21,7 @@
 //! Abstract the IO to allow for "stacking".
 
 use std::cell::{RefCell, RefMut};
-use std::io::{Result, SeekFrom};
+use std::io::{Error, ErrorKind, Result, SeekFrom};
 use std::rc::{Rc, Weak};
 
 use crate::rawfile::ReadAndSeek;
@@ -53,6 +53,14 @@ impl Viewer {
         View::new(viewer, offset)
     }
 
+    /// Create a subview for view.
+    pub fn create_subview(view: &View, offset: u64) -> Result<View> {
+        view.inner
+            .upgrade()
+            .ok_or_else(|| Error::new(ErrorKind::Other, "failed to acquire Rc"))
+            .and_then(|viewer| View::new(&viewer, offset))
+    }
+
     /// Get the inner io to make an io call
     pub fn get_io(&self) -> RefMut<'_, Box<dyn ReadAndSeek>> {
         self.inner.borrow_mut()
@@ -61,6 +69,7 @@ impl Viewer {
 
 /// And IO View. Allow having file IO as an offset of another
 /// Useful for containers.
+#[derive(Clone)]
 pub struct View {
     inner: Weak<Viewer>,
     offset: u64,
