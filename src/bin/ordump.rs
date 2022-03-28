@@ -80,7 +80,11 @@ fn save_thumbnail(p: &str, thumb: &Thumbnail) {
 }
 
 fn extract_rawdata(rawfile: &dyn RawFile) {
-    if let Ok(rawdata) = rawfile.raw_data() {
+    let before = std::time::Instant::now();
+    let rawdata = rawfile.raw_data();
+    println!("Elapsed time: {:.2?}", before.elapsed());
+
+    if let Ok(rawdata) = rawdata {
         println!("Found rawdata:");
         println!("\tFormat: {:?}", rawdata.data_type());
         println!("\tSize: {}x{}", rawdata.width(), rawdata.height());
