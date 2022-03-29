@@ -47,7 +47,7 @@ lazy_static::lazy_static! {
 pub(crate) struct ErfFile {
     reader: Rc<Viewer>,
     container: OnceCell<ifd::Container>,
-    thumbnails: OnceCell<HashMap<u32, thumbnail::ThumbDesc>>,
+    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
     cfa: OnceCell<Option<Rc<ifd::Dir>>>,
 }
 
@@ -91,7 +91,7 @@ impl RawFileImpl for ErfFile {
         })
     }
 
-    fn thumbnails(&self) -> &std::collections::HashMap<u32, thumbnail::ThumbDesc> {
+    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
         self.thumbnails.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
@@ -108,7 +108,7 @@ impl RawFileImpl for ErfFile {
                         data_type: DataType::Jpeg,
                         data: thumbnail::Data::Bytes(data),
                     };
-                    thumbnails.insert(640, desc);
+                    thumbnails.push((640, desc));
                 })
             });
 

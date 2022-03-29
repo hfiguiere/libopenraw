@@ -50,6 +50,15 @@ pub struct ThumbDesc {
     pub data: Data,
 }
 
+impl ThumbDesc {
+    pub fn data_size(&self) -> u64 {
+        match self.data {
+            Data::Offset(ref offset) => offset.len,
+            Data::Bytes(ref v) => v.len() as u64,
+        }
+    }
+}
+
 /// A thumbnail
 pub struct Thumbnail {
     /// Thumbnail width

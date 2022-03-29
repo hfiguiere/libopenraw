@@ -151,12 +151,55 @@ impl Results {
             let sizes: Vec<&str> = thumb_sizes.split(' ').collect();
 
             assert_eq!(thumbnail_sizes.len(), sizes.len());
-//            let mut index = 0;
-//            for size in sizes {
-//                // XXX fix this, the order should be stable.
-//                assert_eq!(size, thumbnail_sizes[index].to_string());
-//                index += 1;
-//            }
+            let mut index = 0;
+            for size in sizes {
+                assert_eq!(size, thumbnail_sizes[index].to_string());
+                index += 1;
+            }
+        }
+
+        if let Some(ref thumb_formats) = self.thumb_formats {
+            count += 1;
+            let thumbnails = rawfile.thumbnails();
+            let formats: Vec<DataType> = thumb_formats.split(' ').map(DataType::from).collect();
+
+            assert_eq!(thumbnails.len(), formats.len());
+            let mut index = 0;
+            for thumbnail in thumbnails {
+                assert_eq!(thumbnail.1.data_type, formats[index]);
+                index += 1;
+            }
+        }
+
+        if let Some(ref thumb_data_sizes) = self.thumb_data_sizes {
+            count += 1;
+            let thumbnails = rawfile.thumbnails();
+            let data_sizes: Vec<&str> = thumb_data_sizes.split(' ').collect();
+
+            assert_eq!(thumbnails.len(), data_sizes.len());
+            let mut index = 0;
+            for thumbnail in thumbnails {
+                assert_eq!(thumbnail.1.data_size().to_string(), data_sizes[index]);
+                index += 1;
+            }
+        }
+
+        if let Some(ref thumb_md5) = self.thumb_md5 {
+            count += 1;
+            let thumbnails = rawfile.thumbnails();
+            let md5s: Vec<&str> = thumb_md5.split(' ').collect();
+
+            assert_eq!(thumbnails.len(), md5s.len());
+            let mut index = 0;
+            for thumbnail_desc in thumbnails {
+                let thumbnail = rawfile
+                    .thumbnail(thumbnail_desc.0)
+                    .expect("Thumbnail not found");
+                let buf = thumbnail.data8().unwrap();
+                let r = Self::raw_checksum(buf);
+                assert_eq!(r.to_string(), md5s[index]);
+                index += 1;
+            }
         }
 
         // XXX todo
@@ -218,8 +261,9 @@ impl Test {
         let rawfile = libopenraw::raw_file_from_file(self.file.clone(), None);
         match rawfile {
             Ok(rawfile) => {
+                print!("Test '{}'", &self.name);
                 let count = self.results.run(rawfile.as_ref());
-                println!("Test '{}' produced {} results", &self.name, count);
+                println!(" produced {} results", count);
             }
             Err(err) => println!("Test '{}' skipped: {}", &self.name, err),
         }
@@ -298,6 +342,15 @@ where
 
 #[test]
 fn test_regression_suite() {
+    use log::LevelFilter;
+    use simple_logger::SimpleLogger;
+    SimpleLogger::new()
+        .with_module_level("serde_xml_rs", LevelFilter::Error)
+        .with_module_level("mp4parse", LevelFilter::Error)
+        .with_module_level("libopenraw", LevelFilter::Error)
+        .init()
+        .unwrap();
+
     let testsuite = load_testsuite("testsuite/testsuite.xml");
 
     assert!(testsuite.is_some());

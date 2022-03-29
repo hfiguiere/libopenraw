@@ -52,12 +52,12 @@ pub trait RawFileImpl {
     fn container(&self) -> &dyn GenericContainer;
 
     /// Return the thumbnails. Implementation lazy load them
-    fn thumbnails(&self) -> &std::collections::HashMap<u32, ThumbDesc>;
+    fn thumbnails(&self) -> &Vec<(u32, ThumbDesc)>;
 
     /// Get the thumbnail for the exact size.
     fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
         let thumbnails = self.thumbnails();
-        if let Some(desc) = thumbnails.get(&size) {
+        if let Some((_, desc)) = thumbnails.iter().find(|t| t.0 == size) {
             self.container().make_thumbnail(desc)
         } else {
             log::warn!("Thumbnail size {} not found", size);
@@ -70,9 +70,7 @@ pub trait RawFileImpl {
         let thumbnails = self.thumbnails();
 
         // XXX shall we cache this?
-        let mut sizes: Vec<u32> = thumbnails.keys().copied().collect();
-        sizes.sort_unstable();
-        sizes
+        thumbnails.iter().map(|v| v.0).collect()
     }
 
     /// Get the ifd with type
@@ -263,7 +261,6 @@ pub trait RawFile: RawFileImpl {
 #[cfg(test)]
 mod test {
     use std::cell::{RefCell, RefMut};
-    use std::collections::HashMap;
     use std::rc::Rc;
 
     use once_cell::unsync::OnceCell;
@@ -296,7 +293,7 @@ mod test {
 
     struct TestRawFile {
         container: TestContainer,
-        thumbnails: OnceCell<HashMap<u32, ThumbDesc>>,
+        thumbnails: OnceCell<Vec<(u32, ThumbDesc)>>,
     }
 
     impl TestRawFile {
@@ -316,9 +313,9 @@ mod test {
             &self.container
         }
 
-        fn thumbnails(&self) -> &HashMap<u32, ThumbDesc> {
+        fn thumbnails(&self) -> &Vec<(u32, ThumbDesc)> {
             self.thumbnails.get_or_init(|| {
-                HashMap::from([
+                vec![
                     (
                         160,
                         ThumbDesc {
@@ -346,7 +343,7 @@ mod test {
                             data: Data::Bytes(vec![]),
                         },
                     ),
-                ])
+                ]
             })
         }
 

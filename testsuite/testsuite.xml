@@ -490,6 +490,7 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
+      <rawDataActiveArea>0 0 3040 2024</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>

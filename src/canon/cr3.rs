@@ -21,7 +21,6 @@
 //! Canon CR3 format, the 3rd generation of Canon RAW format, based on
 //! the ISOMedia (MP4) container format.
 
-use std::collections::HashMap;
 use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
@@ -111,7 +110,7 @@ lazy_static::lazy_static! {
 pub struct Cr3File {
     reader: Rc<Viewer>,
     container: OnceCell<mp4::Container>,
-    thumbnails: OnceCell<HashMap<u32, thumbnail::ThumbDesc>>,
+    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
 }
 
 impl Cr3File {
@@ -147,13 +146,13 @@ impl RawFileImpl for Cr3File {
     }
 
     /// Return a lazily loaded set of thumbnails
-    fn thumbnails(&self) -> &HashMap<u32, thumbnail::ThumbDesc> {
+    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
         self.thumbnails.get_or_init(|| {
             use thumbnail::{Data, DataOffset};
 
             self.container();
             let container = self.container.get().unwrap();
-            let mut thumbnails = HashMap::new();
+            let mut thumbnails = Vec::new();
             if let Ok(craw_header) = container.craw_header() {
                 let x = craw_header.thumbnail.width;
                 let y = craw_header.thumbnail.height;
@@ -171,7 +170,7 @@ impl RawFileImpl for Cr3File {
                         y,
                         craw_header.thumbnail.data.len()
                     );
-                    thumbnails.insert(dim, desc);
+                    thumbnails.push((dim, desc));
                 }
             }
 
@@ -200,14 +199,14 @@ impl RawFileImpl for Cr3File {
                             raw_track.offset,
                             raw_track.len
                         );
-                        thumbnails.insert(dim, desc);
+                        thumbnails.push((dim, desc));
                     }
                 }
             }
 
             if let Ok(desc) = container.preview_desc() {
                 let dim = std::cmp::max(desc.width, desc.height);
-                thumbnails.insert(dim, desc);
+                thumbnails.push((dim, desc));
             }
             thumbnails
         })

@@ -25,7 +25,6 @@ mod dir;
 mod entry;
 pub mod exif;
 
-use std::collections::HashMap;
 use std::rc::Rc;
 
 use byteorder::{BigEndian, LittleEndian};
@@ -271,8 +270,8 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
 }
 
 /// Get the thumbnails out of a TIFF
-pub(crate) fn tiff_thumbnails(container: &Container) -> HashMap<u32, thumbnail::ThumbDesc> {
-    let mut thumbnails = HashMap::new();
+pub(crate) fn tiff_thumbnails(container: &Container) -> Vec<(u32, thumbnail::ThumbDesc)> {
+    let mut thumbnails = Vec::new();
 
     let dirs = container.dirs();
     for dir in dirs {
@@ -296,7 +295,7 @@ pub(crate) fn tiff_thumbnails(container: &Container) -> HashMap<u32, thumbnail::
 pub(crate) fn ifd_locate_thumbnail(
     container: &dyn GenericContainer,
     dir: &Rc<Dir>,
-    thumbnails: &mut HashMap<u32, thumbnail::ThumbDesc>,
+    thumbnails: &mut Vec<(u32, thumbnail::ThumbDesc)>,
 ) {
     let mut data_type = DataType::Unknown;
     let subtype = if let Some(subtype) = dir.value::<u32>(exif::EXIF_TAG_NEW_SUBFILE_TYPE) {
@@ -403,7 +402,7 @@ pub(crate) fn ifd_locate_thumbnail(
                     len: byte_count as u64,
                 }),
             };
-            thumbnails.insert(dim, desc);
+            thumbnails.push((dim, desc));
         }
     }
 }

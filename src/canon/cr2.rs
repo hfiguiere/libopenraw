@@ -21,7 +21,6 @@
 //! Canon CR2 format, the 2nd generation of Canon RAW format, based on
 //! TIFF.
 
-use std::collections::HashMap;
 use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
@@ -360,7 +359,7 @@ lazy_static::lazy_static! {
 pub struct Cr2File {
     reader: Rc<Viewer>,
     container: OnceCell<ifd::Container>,
-    thumbnails: OnceCell<HashMap<u32, thumbnail::ThumbDesc>>,
+    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
 }
 
 impl Cr2File {
@@ -483,7 +482,7 @@ impl RawFileImpl for Cr2File {
         })
     }
 
-    fn thumbnails(&self) -> &std::collections::HashMap<u32, ThumbDesc> {
+    fn thumbnails(&self) -> &Vec<(u32, ThumbDesc)> {
         self.thumbnails.get_or_init(|| {
             if self.is_cr2() {
                 self.container();
@@ -491,7 +490,7 @@ impl RawFileImpl for Cr2File {
                 ifd::tiff_thumbnails(container)
             } else {
                 // XXX todo non CR2 files
-                HashMap::new()
+                vec![]
             }
         })
     }

@@ -136,7 +136,7 @@ impl From<&str> for DataType {
     fn from(s: &str) -> DataType {
         match s {
             "JPEG" => Self::Jpeg,
-            "RGB8" => Self::PixmapRgb8,
+            "8RGB" => Self::PixmapRgb8,
             "COMP_RAW" => Self::CompressedRaw,
             "RAW" => Self::Raw,
             _ => Self::Unknown,
