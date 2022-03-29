@@ -30,12 +30,12 @@ use crate::camera_ids::{canon, vendor};
 use crate::colour::BuiltinMatrix;
 use crate::container::GenericContainer;
 use crate::decompress;
-use crate::ifd;
-use crate::ifd::{exif, Dir, Ifd};
 use crate::io::Viewer;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::thumbnail::ThumbDesc;
+use crate::tiff;
+use crate::tiff::{exif, Dir, Ifd};
 use crate::{Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 lazy_static::lazy_static! {
@@ -358,7 +358,7 @@ lazy_static::lazy_static! {
 /// Canon CR2 File
 pub struct Cr2File {
     reader: Rc<Viewer>,
-    container: OnceCell<ifd::Container>,
+    container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
 }
 
@@ -401,7 +401,7 @@ impl Cr2File {
         self.container();
         let container = self.container.get().unwrap();
 
-        let cfa_ifd = self.ifd(ifd::Type::Cfa).ok_or_else(|| {
+        let cfa_ifd = self.ifd(tiff::Type::Cfa).ok_or_else(|| {
             log::debug!("CFA IFD not found");
             Error::NotFound
         })?;
@@ -462,19 +462,19 @@ impl RawFileImpl for Cr2File {
         }
     }
 
-    /// Return a lazily loaded `ifd::Container`
+    /// Return a lazily loaded `tiff::Container`
     fn container(&self) -> &dyn GenericContainer {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = ifd::Container::new(
+            let mut container = tiff::Container::new(
                 // XXX non CR2 have a different layout
                 view,
                 vec![
-                    ifd::Type::Main,
-                    ifd::Type::Other,
-                    ifd::Type::Other,
-                    ifd::Type::Cfa,
+                    tiff::Type::Main,
+                    tiff::Type::Other,
+                    tiff::Type::Other,
+                    tiff::Type::Cfa,
                 ],
             );
             container.load().expect("TIFF container error");
@@ -487,7 +487,7 @@ impl RawFileImpl for Cr2File {
             if self.is_cr2() {
                 self.container();
                 let container = self.container.get().unwrap();
-                ifd::tiff_thumbnails(container)
+                tiff::tiff_thumbnails(container)
             } else {
                 // XXX todo non CR2 files
                 vec![]
@@ -495,25 +495,25 @@ impl RawFileImpl for Cr2File {
         })
     }
 
-    fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<Dir>> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
-            ifd::Type::Cfa => {
+            tiff::Type::Cfa => {
                 if !self.is_cr2() {
-                    self.ifd(ifd::Type::MakerNote)
+                    self.ifd(tiff::Type::MakerNote)
                 } else {
                     // XXX todo set the IFD to type Cfa
                     container.directory(3)
                 }
             }
-            ifd::Type::Main =>
+            tiff::Type::Main =>
             // XXX todo set the IFD to type Main
             {
                 container.directory(0)
             }
-            ifd::Type::Exif => container.exif_dir(),
-            ifd::Type::MakerNote => container.mnote_dir(Type::Cr2),
+            tiff::Type::Exif => container.exif_dir(),
+            tiff::Type::MakerNote => container.mnote_dir(Type::Cr2),
             _ => None,
         }
     }

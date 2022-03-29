@@ -21,8 +21,8 @@
 //! RAW data
 
 use super::{Bitmap, DataType, Rect};
-use crate::ifd;
-use crate::ifd::exif;
+use crate::tiff;
+use crate::tiff::exif;
 use crate::utils;
 
 /// Encapsulate data 8 or 16 bits
@@ -48,7 +48,7 @@ pub struct RawData {
     ///
     photom_int: exif::PhotometricInterpretation,
     ///
-    compression: ifd::Compression,
+    compression: tiff::Compression,
     /// Sensor active area
     active_area: Option<Rect>,
 }
@@ -64,7 +64,7 @@ impl RawData {
             data: Data::Data8(data),
             active_area: None,
             white: 0,
-            compression: ifd::Compression::Unknown,
+            compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
         }
     }
@@ -79,7 +79,7 @@ impl RawData {
             data: Data::Data16(data),
             active_area: None,
             white: 0,
-            compression: ifd::Compression::Unknown,
+            compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
         }
     }
@@ -112,7 +112,7 @@ impl RawData {
         self.photom_int = photom_int;
     }
 
-    pub fn set_compression(&mut self, compression: ifd::Compression) {
+    pub fn set_compression(&mut self, compression: tiff::Compression) {
         self.compression = compression;
     }
 

@@ -27,7 +27,6 @@ mod decompress;
 mod epson;
 mod factory;
 mod identify;
-pub mod ifd;
 mod io;
 mod jpeg;
 mod mp4;
@@ -37,14 +36,15 @@ mod rawdata;
 mod rawfile;
 mod sony;
 mod thumbnail;
+pub mod tiff;
 mod utils;
 
 pub use bitmap::{Bitmap, Rect};
-pub use ifd::Ifd;
 pub use rawdata::RawData;
 pub use rawfile::RawFile;
 pub use rawfile::RawFileImpl;
 pub use thumbnail::Thumbnail;
+pub use tiff::Ifd;
 
 pub use rawfile::raw_file_from_file;
 

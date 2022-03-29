@@ -27,12 +27,12 @@ use once_cell::unsync::OnceCell;
 
 use crate::camera_ids::{canon, vendor};
 use crate::container::GenericContainer;
-use crate::ifd;
-use crate::ifd::Dir;
 use crate::io::Viewer;
 use crate::mp4;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
+use crate::tiff;
+use crate::tiff::Dir;
 use crate::{DataType, Error, RawData, RawFile, RawFileImpl, Rect, Result, Type, TypeId};
 
 use crate::colour::BuiltinMatrix;
@@ -212,13 +212,13 @@ impl RawFileImpl for Cr3File {
         })
     }
 
-    fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<Dir>> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
-            ifd::Type::Main => container.metadata_block(0).and_then(|c| c.1.directory(0)),
-            ifd::Type::Exif => container.metadata_block(1).and_then(|c| c.1.directory(0)),
-            ifd::Type::MakerNote => container.metadata_block(2).and_then(|c| {
+            tiff::Type::Main => container.metadata_block(0).and_then(|c| c.1.directory(0)),
+            tiff::Type::Exif => container.metadata_block(1).and_then(|c| c.1.directory(0)),
+            tiff::Type::MakerNote => container.metadata_block(2).and_then(|c| {
                 // XXX subobptimal as we already loaded the Dir
                 // 8 as offset = past the TIFF magic
                 Dir::new_makernote("Canon", &*c.1, 8, 0, &super::MNOTE_TAG_NAMES).ok()

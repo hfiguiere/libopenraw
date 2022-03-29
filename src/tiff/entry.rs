@@ -1,5 +1,5 @@
 /*
- * libopenraw - ifd/entry.rs
+ * libopenraw - tiff/entry.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -201,7 +201,7 @@ mod test {
     use super::Entry;
 
     use crate::container::Endian;
-    use crate::ifd::exif::TagType;
+    use crate::tiff::exif::TagType;
     use crate::Error;
 
     #[test]

@@ -29,8 +29,8 @@ use super::{Error, RawData, Result, Type, TypeId};
 use crate::container::GenericContainer;
 use crate::factory;
 use crate::identify;
-use crate::ifd;
 use crate::thumbnail::{ThumbDesc, Thumbnail};
+use crate::tiff;
 
 /// The trait for any IO
 pub trait ReadAndSeek: std::io::Read + std::io::Seek {}
@@ -74,7 +74,7 @@ pub trait RawFileImpl {
     }
 
     /// Get the ifd with type
-    fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>>;
+    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<tiff::Dir>>;
 
     /// Load the RawData and return it.
     fn load_rawdata(&self) -> Result<RawData>;
@@ -233,18 +233,18 @@ pub trait RawFile: RawFileImpl {
     }
 
     /// Get the main IFD
-    fn main_ifd(&self) -> Option<Rc<ifd::Dir>> {
-        self.ifd(ifd::Type::Main)
+    fn main_ifd(&self) -> Option<Rc<tiff::Dir>> {
+        self.ifd(tiff::Type::Main)
     }
 
     /// Get the Exif IFD
-    fn exif_ifd(&self) -> Option<Rc<ifd::Dir>> {
-        self.ifd(ifd::Type::Exif)
+    fn exif_ifd(&self) -> Option<Rc<tiff::Dir>> {
+        self.ifd(tiff::Type::Exif)
     }
 
     /// Get the MakerNote
-    fn maker_note_ifd(&self) -> Option<Rc<ifd::Dir>> {
-        self.ifd(ifd::Type::MakerNote)
+    fn maker_note_ifd(&self) -> Option<Rc<tiff::Dir>> {
+        self.ifd(tiff::Type::MakerNote)
     }
 
     /// Return the colour matrix for the file.
@@ -268,9 +268,9 @@ mod test {
     use super::{RawData, RawFile, RawFileImpl};
     use crate::bitmap::Bitmap;
     use crate::container::GenericContainer;
-    use crate::ifd;
     use crate::io::View;
     use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
+    use crate::tiff;
     use crate::{DataType, Error, Result, Type, TypeId};
 
     struct TestContainer {
@@ -356,7 +356,7 @@ mod test {
             }
         }
 
-        fn ifd(&self, _ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>> {
+        fn ifd(&self, _ifd_type: tiff::Type) -> Option<Rc<tiff::Dir>> {
             None
         }
 

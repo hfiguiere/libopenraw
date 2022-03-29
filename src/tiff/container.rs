@@ -1,5 +1,5 @@
 /*
- * libopenraw - ifd/container.rs
+ * libopenraw - tiff/container.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -29,9 +29,9 @@ use log::error;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
-use crate::ifd::exif;
-use crate::ifd::{Dir, Ifd, Type};
 use crate::io::View;
+use crate::tiff::exif;
+use crate::tiff::{Dir, Ifd, Type};
 use crate::Type as RawType;
 use crate::{Error, Result};
 
@@ -146,7 +146,7 @@ impl Container {
         })
     }
 
-    /// Get the indexed `ifd::Dir` from the container
+    /// Get the indexed `tiff::Dir` from the container
     pub fn directory(&self, idx: usize) -> Option<Rc<Dir>> {
         let dirs = self.dirs();
         if dirs.len() <= idx {

@@ -28,7 +28,7 @@ pub(crate) use ljpeg::LJpeg;
 use std::io::{Read, Seek, SeekFrom};
 
 use crate::container::GenericContainer;
-use crate::ifd;
+use crate::tiff;
 use crate::{Error, Result};
 
 /// Unpack 12-bits into 16-bits values
@@ -37,9 +37,9 @@ use crate::{Error, Result};
 fn unpack_be12to16(
     input: &[u8],
     out_data: &mut Vec<u16>,
-    compression: ifd::Compression,
+    compression: tiff::Compression,
 ) -> Result<usize> {
-    let pad = if compression == ifd::Compression::NikonPack {
+    let pad = if compression == tiff::Compression::NikonPack {
         1_usize
     } else {
         0_usize
@@ -89,7 +89,7 @@ pub(crate) fn unpack(
     width: u32,
     height: u32,
     bpc: u16,
-    compression: ifd::Compression,
+    compression: tiff::Compression,
     offset: u64,
     byte_len: usize,
 ) -> Result<Vec<u16>> {
@@ -97,7 +97,7 @@ pub(crate) fn unpack(
     if bpc != 12 {
         return Err(Error::InvalidFormat);
     }
-    let block_size: usize = if compression == ifd::Compression::NikonPack {
+    let block_size: usize = if compression == tiff::Compression::NikonPack {
         ((width / 2 * 3) + width / 10) as usize
     } else {
         (width / 2 * 3) as usize
@@ -125,7 +125,7 @@ pub(crate) fn unpack(
 mod test {
 
     use super::unpack_be12to16;
-    use crate::ifd;
+    use crate::tiff;
 
     #[test]
     fn test_unpack() {
@@ -140,7 +140,7 @@ mod test {
         let result = unpack_be12to16(
             packed.as_slice(),
             &mut unpacked,
-            ifd::Compression::NikonPack,
+            tiff::Compression::NikonPack,
         );
 
         assert_eq!(result, Ok(20));
@@ -164,7 +164,7 @@ mod test {
 
         let mut unpacked: Vec<u16> = Vec::new();
 
-        let result = unpack_be12to16(packed.as_slice(), &mut unpacked, ifd::Compression::None);
+        let result = unpack_be12to16(packed.as_slice(), &mut unpacked, tiff::Compression::None);
 
         assert_eq!(result, Ok(2));
         assert_eq!(unpacked[0], 0x0123);

@@ -30,8 +30,8 @@ use lazy_static::lazy_static;
 
 use super::TypeId;
 use crate::camera_ids::{canon, vendor};
-use crate::ifd;
-use crate::ifd::{exif, Dir, Ifd};
+use crate::tiff;
+use crate::tiff::{exif, Dir, Ifd};
 pub use cr2::Cr2File;
 pub use cr3::Cr3File;
 
@@ -228,7 +228,7 @@ fn get_typeid_for_modelid(model_id: u32) -> TypeId {
         .unwrap_or(TypeId(vendor::CANON, canon::UNKNOWN))
 }
 
-pub(crate) fn identify_from_maker_note(maker_note: Rc<ifd::Dir>) -> TypeId {
+pub(crate) fn identify_from_maker_note(maker_note: Rc<tiff::Dir>) -> TypeId {
     if let Some(id) = maker_note.value::<u32>(exif::MNOTE_CANON_MODEL_ID) {
         log::debug!("Canon model ID: {:x}", id);
         return get_typeid_for_modelid(id);

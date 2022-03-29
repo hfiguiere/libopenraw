@@ -29,9 +29,9 @@ use mp4parse::craw;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
-use crate::ifd;
 use crate::io::{View, Viewer};
 use crate::thumbnail;
+use crate::tiff;
 use crate::{DataType, Error, Result};
 
 /// Copy paste imports from mp4parse_capi
@@ -47,7 +47,7 @@ mod capi {
 }
 
 /// Type to hold the IFD and its `Viewer`.
-type IfdHolder = (Rc<Viewer>, Rc<ifd::Container>);
+type IfdHolder = (Rc<Viewer>, Rc<tiff::Container>);
 
 /// A container for ISO Media, aka MPEG4.
 pub(crate) struct Container {
@@ -127,14 +127,14 @@ impl Container {
 
     /// Get the metadata at `idx`
     pub(crate) fn metadata_block(&self, idx: u32) -> Option<IfdHolder> {
-        fn make_ifd_holder(data: Option<&Vec<u8>>, t: ifd::Type) -> Option<IfdHolder> {
+        fn make_ifd_holder(data: Option<&Vec<u8>>, t: tiff::Type) -> Option<IfdHolder> {
             data.and_then(|d| {
                 if d.len() >= 4 {
                     // XXX so many copies
                     let cursor = Box::new(std::io::Cursor::new(d.clone()));
                     let viewer = Viewer::new(cursor);
                     if let Ok(view) = Viewer::create_view(&viewer, 0) {
-                        let mut ifd = ifd::Container::new(view, vec![t]);
+                        let mut ifd = tiff::Container::new(view, vec![t]);
                         ifd.load().expect("ifd load");
                         return Some((viewer, Rc::new(ifd)));
                     }
@@ -148,10 +148,10 @@ impl Container {
             .get_or_init(|| {
                 if let Ok(craw) = self.craw_header() {
                     vec![
-                        make_ifd_holder(craw.meta1.as_ref(), ifd::Type::Main),
-                        make_ifd_holder(craw.meta2.as_ref(), ifd::Type::Exif),
-                        make_ifd_holder(craw.meta3.as_ref(), ifd::Type::MakerNote),
-                        make_ifd_holder(craw.meta4.as_ref(), ifd::Type::Other),
+                        make_ifd_holder(craw.meta1.as_ref(), tiff::Type::Main),
+                        make_ifd_holder(craw.meta2.as_ref(), tiff::Type::Exif),
+                        make_ifd_holder(craw.meta3.as_ref(), tiff::Type::MakerNote),
+                        make_ifd_holder(craw.meta4.as_ref(), tiff::Type::Other),
                     ]
                 } else {
                     vec![None; 4]

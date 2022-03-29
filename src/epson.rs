@@ -9,11 +9,11 @@ use crate::bitmap;
 use crate::camera_ids;
 use crate::camera_ids::vendor;
 use crate::container::GenericContainer;
-use crate::ifd;
-use crate::ifd::{exif, Ifd};
 use crate::io::Viewer;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
+use crate::tiff;
+use crate::tiff::{exif, Ifd};
 use crate::{DataType, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 /// The MakerNote tag names. It's actually the same as Olympus.
@@ -37,7 +37,7 @@ lazy_static::lazy_static! {
 
 lazy_static::lazy_static! {
     /// Make to TypeId map for ERF files.
-    static ref MAKE_TO_ID_MAP: ifd::MakeToIdMap = HashMap::from([
+    static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
         ( "R-D1", TypeId(vendor::EPSON, camera_ids::epson::RD1) ),
         ( "R-D1s", TypeId(vendor::EPSON, camera_ids::epson::RD1S) ),
     ]);
@@ -46,9 +46,9 @@ lazy_static::lazy_static! {
 /// ERF RAW file support
 pub(crate) struct ErfFile {
     reader: Rc<Viewer>,
-    container: OnceCell<ifd::Container>,
+    container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
-    cfa: OnceCell<Option<Rc<ifd::Dir>>>,
+    cfa: OnceCell<Option<Rc<tiff::Dir>>>,
 }
 
 impl ErfFile {
@@ -63,11 +63,11 @@ impl ErfFile {
     }
 
     /// Return the CFA dir
-    fn cfa_dir(&self) -> Option<&Rc<ifd::Dir>> {
+    fn cfa_dir(&self) -> Option<&Rc<tiff::Dir>> {
         self.cfa
             .get_or_init(|| {
                 self.container();
-                ifd::tiff_locate_cfa_ifd(self.container.get().unwrap())
+                tiff::tiff_locate_cfa_ifd(self.container.get().unwrap())
             })
             .as_ref()
     }
@@ -77,15 +77,15 @@ impl RawFileImpl for ErfFile {
     fn identify_id(&self) -> TypeId {
         self.container();
         let container = self.container.get().unwrap();
-        ifd::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(0, 0))
+        tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(0, 0))
     }
 
-    /// Return a lazily loaded `ifd::Container`
+    /// Return a lazily loaded `tiff::Container`
     fn container(&self) -> &dyn GenericContainer {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = ifd::Container::new(view, vec![]);
+            let mut container = tiff::Container::new(view, vec![]);
             container.load().expect("IFD container error");
             container
         })
@@ -95,7 +95,7 @@ impl RawFileImpl for ErfFile {
         self.thumbnails.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
-            let mut thumbnails = ifd::tiff_thumbnails(container);
+            let mut thumbnails = tiff::tiff_thumbnails(container);
             self.maker_note_ifd().and_then(|mnote| {
                 mnote.entry(exif::ERF_TAG_PREVIEW_IMAGE).map(|e| {
                     let mut data = Vec::from(e.data());
@@ -116,15 +116,15 @@ impl RawFileImpl for ErfFile {
         })
     }
 
-    fn ifd(&self, ifd_type: ifd::Type) -> Option<Rc<ifd::Dir>> {
+    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<tiff::Dir>> {
         // XXX todo
         match ifd_type {
-            ifd::Type::Cfa => self.cfa_dir().cloned(),
-            ifd::Type::Exif => {
+            tiff::Type::Cfa => self.cfa_dir().cloned(),
+            tiff::Type::Exif => {
                 self.container();
                 self.container.get().unwrap().exif_dir()
             }
-            ifd::Type::MakerNote => {
+            tiff::Type::MakerNote => {
                 self.container();
                 self.container.get().unwrap().mnote_dir(Type::Erf)
             }
@@ -133,14 +133,14 @@ impl RawFileImpl for ErfFile {
     }
 
     fn load_rawdata(&self) -> Result<RawData> {
-        self.ifd(ifd::Type::Cfa)
+        self.ifd(tiff::Type::Cfa)
             .ok_or_else(|| {
                 log::error!("CFA not found");
                 Error::NotFound
             })
             .and_then(|ref ifd| {
                 self.container();
-                ifd::tiff_get_rawdata(self.container.get().unwrap(), ifd).map(|mut rawdata| {
+                tiff::tiff_get_rawdata(self.container.get().unwrap(), ifd).map(|mut rawdata| {
                     self.maker_note_ifd().and_then(|mnote| {
                         mnote
                             .entry_cloned(

@@ -1,5 +1,5 @@
 /*
- * libopenraw - ifd/dir.rs
+ * libopenraw - tiff/dir.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -32,10 +32,10 @@ use crate::canon;
 use crate::container;
 use crate::container::GenericContainer;
 use crate::epson;
-use crate::ifd;
-use crate::ifd::exif;
 use crate::io::View;
 use crate::sony;
+use crate::tiff;
+use crate::tiff::exif;
 use crate::Type as RawType;
 use crate::{Error, Result};
 
@@ -210,7 +210,7 @@ impl Dir {
     }
 
     /// Get sub IFDs.
-    pub(crate) fn get_sub_ifds(&self, container: &ifd::Container) -> Option<Vec<Rc<Dir>>> {
+    pub(crate) fn get_sub_ifds(&self, container: &tiff::Container) -> Option<Vec<Rc<Dir>>> {
         let entry = self.entry(exif::EXIF_TAG_SUB_IFDS)?;
         let offsets = entry.value_array::<u32>(self.endian())?;
 

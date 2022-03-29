@@ -1,5 +1,5 @@
 /*
- * libopenraw - ifd/exif.rs
+ * libopenraw - tiff/exif.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -26,7 +26,7 @@ pub use tags::*;
 
 use byteorder::ByteOrder;
 
-/// Type a tag. See `ifd::Entry`.
+/// Type a tag. See `tiff::Entry`.
 #[derive(Debug, PartialEq)]
 #[repr(i16)]
 pub enum TagType {

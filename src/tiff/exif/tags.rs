@@ -1,5 +1,5 @@
 /*
- * libopenraw - ifd/exif/tags.rs
+ * libopenraw - tiff/exif/tags.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -172,6 +172,7 @@ pub const ORF_TAG_CS_PREVIEW_IMAGE_START: u16 = 0x101;
 pub const ORF_TAG_CS_PREVIEW_IMAGE_LENGTH: u16 = 0x102;
 
 /* CR2 tags */
+/// This tag is present in the RAW IFD for Canon CR2.
 pub const CR2_TAG_C5D8: u16 = 0xc5d8;
 pub const CR2_TAG_C5D9: u16 = 0xc5d9;
 /// Exif tag for CR2 RAW "slices"
