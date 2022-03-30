@@ -25,6 +25,7 @@ mod dir;
 mod entry;
 pub mod exif;
 
+use std::convert::TryFrom;
 use std::rc::Rc;
 
 use byteorder::{BigEndian, LittleEndian};

@@ -22,6 +22,7 @@
 //! and most RAW format.
 
 use std::collections::HashMap;
+use std::convert::TryFrom;
 use std::io::{Read, Seek, SeekFrom};
 use std::rc::Rc;
 

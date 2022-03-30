@@ -288,6 +288,8 @@ impl ExifValue for SRational {
 #[cfg(test)]
 mod test {
 
+    use std::convert::TryFrom;
+
     use super::TagType;
 
     #[test]

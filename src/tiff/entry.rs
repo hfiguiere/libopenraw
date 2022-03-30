@@ -20,9 +20,11 @@
 
 //! IFD entries.
 
+use std::convert::TryFrom;
+use std::io::{Read, Seek, SeekFrom};
+
 use byteorder::{BigEndian, ByteOrder, LittleEndian};
 use log::debug;
-use std::io::{Read, Seek, SeekFrom};
 
 use crate::container::Endian;
 use crate::io::View;
