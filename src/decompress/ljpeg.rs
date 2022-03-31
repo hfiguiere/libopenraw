@@ -245,7 +245,7 @@ impl LJpeg {
         for ci in 0..dc.num_components {
             let comp_ptr = &dc.comp_info[ci as usize];
             if comp_ptr.h_samp_factor != 1 || comp_ptr.v_samp_factor != 1 {
-                log::error!("Downsampling is no supproted");
+                log::error!("Downsampling is not supported");
                 return Err(Error::Decompression);
             }
         }
