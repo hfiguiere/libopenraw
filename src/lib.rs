@@ -203,6 +203,12 @@ impl From<&str> for Type {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct TypeId(u16, u16);
 
+impl std::fmt::Display for TypeId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {}", self.0, self.1)
+    }
+}
+
 impl Default for TypeId {
     fn default() -> Self {
         TypeId(camera_ids::vendor::NONE, camera_ids::generic::UNKNOWN)
