@@ -29,11 +29,15 @@ use log::error;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
+use crate::container::GenericContainer;
+use crate::io;
 use crate::io::View;
+use crate::jpeg;
+use crate::thumbnail;
 use crate::tiff::exif;
-use crate::tiff::{Dir, Ifd, Type};
+use crate::tiff::{Dir, Entry, Ifd, Type};
 use crate::Type as RawType;
-use crate::{Error, Result};
+use crate::{DataType, Error, Result};
 
 /// IFD Container for TIFF based file.
 pub(crate) struct Container {
@@ -221,5 +225,56 @@ impl Container {
                     })
             })
             .clone()
+    }
+
+    /// Add the thumbnail from data in the container
+    pub(crate) fn add_thumbnail_from_stream(
+        &self,
+        offset: u32,
+        len: u32,
+        list: &mut Vec<(u32, thumbnail::ThumbDesc)>,
+    ) -> Result<usize> {
+        let view = io::Viewer::create_subview(&*self.borrow_view_mut(), offset as u64)?;
+        let jpeg = jpeg::Container::new(view);
+        let width = jpeg.width() as u32;
+        let height = jpeg.height() as u32;
+        let dim = std::cmp::max(width, height);
+        // "Olympus" MakerNote carries a 160 px thubnail we might already have.
+        // We don't check it is the same.
+        if !list.iter().any(|t| t.0 == dim) {
+            use crate::thumbnail::{Data, DataOffset};
+
+            list.push((
+                dim,
+                thumbnail::ThumbDesc {
+                    width,
+                    height,
+                    data_type: DataType::Jpeg,
+                    data: Data::Offset(DataOffset {
+                        offset: offset as u64,
+                        len: len as u64,
+                    }),
+                },
+            ));
+            Ok(1)
+        } else {
+            Ok(0)
+        }
+    }
+
+    /// Add a thumbnail from the entry
+    pub(crate) fn add_thumbnail_from_entry(
+        &self,
+        e: &Entry,
+        offset: u32,
+        list: &mut Vec<(u32, thumbnail::ThumbDesc)>,
+    ) -> Result<usize> {
+        if let Some(val_offset) = e.offset() {
+            let val_offset = val_offset + offset;
+            self.add_thumbnail_from_stream(val_offset, e.count, list)
+        } else {
+            log::error!("Entry for thumbnail has no offset");
+            Err(Error::NotFound)
+        }
     }
 }

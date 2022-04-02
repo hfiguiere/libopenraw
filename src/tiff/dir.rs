@@ -61,7 +61,7 @@ pub struct Dir {
     /// The MakerNote ID
     id: String,
     /// Offset in MakerNote
-    mnote_offset: u64,
+    pub mnote_offset: u32,
     /// Tag names to decode.
     tag_names: &'static HashMap<u16, &'static str>,
 }
@@ -109,7 +109,7 @@ impl Dir {
         id: &str,
         container: &dyn container::GenericContainer,
         offset: u32,
-        mnote_offset: u64,
+        mnote_offset: u32,
         tag_names: &'static HashMap<u16, &'static str>,
     ) -> Result<Rc<Dir>> {
         if let Ok(mut dir) = match container.endian() {

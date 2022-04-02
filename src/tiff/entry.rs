@@ -66,7 +66,7 @@ pub struct Entry {
     /// The type. See `exif::TagType`, use `exif::TagType::try_from()`
     /// to get the enum.
     pub(crate) type_: i16,
-    count: u32,
+    pub(crate) count: u32,
     data: DataBytes,
 }
 
