@@ -238,7 +238,7 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
     } else if bpc == 16 {
         let data = container.load_buffer16(offset as u64, byte_len as u64);
         RawData::new16(x, y, actual_bpc, data_type, data)
-    } else if bpc == 12 || bpc == 8 {
+    } else if bpc == 12 {
         // XXX unpack data
         let data = decompress::unpack(
             container,
@@ -250,8 +250,18 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
             byte_len as usize,
         )?;
         RawData::new16(x, y, actual_bpc, data_type, data)
+    } else if bpc == 8 {
+        let data = container.load_buffer8(offset as u64, byte_len as u64);
+        // XXX is this efficient?
+        RawData::new16(
+            x,
+            y,
+            bpc,
+            data_type,
+            data.iter().map(|v| *v as u16).collect(),
+        )
     } else {
-        log::error!("Invalid RAW format");
+        log::error!("Invalid RAW format, unsupported bpc {}", bpc);
         return Err(Error::InvalidFormat);
     };
     // XXX set mosaic_info

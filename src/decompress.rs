@@ -95,6 +95,7 @@ pub(crate) fn unpack(
 ) -> Result<Vec<u16>> {
     // XXX handle other BPC like 14.
     if bpc != 12 {
+        log::warn!("Invalid BPC {}", bpc);
         return Err(Error::InvalidFormat);
     }
     let block_size: usize = if compression == tiff::Compression::NikonPack {

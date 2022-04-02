@@ -121,7 +121,7 @@ impl Results {
         // RAW data checksum. It's not even a md5.
         if let Some(raw_md5) = self.raw_md5 {
             count += 1;
-            let buf = if rawdata.bpc() == 8 {
+            let buf = if rawdata.data_type() == DataType::CompressedRaw {
                 let buf = rawdata.data8();
                 assert!(buf.is_some());
                 buf.unwrap()

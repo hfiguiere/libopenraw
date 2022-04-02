@@ -96,14 +96,14 @@ fn extract_rawdata(rawfile: &dyn RawFile) {
             rawfile.white(),
             rawfile.black()
         );
-        if bpc <= 8 {
+        if rawdata.data_type() == DataType::CompressedRaw {
             if let Some(d) = rawdata.data8() {
                 println!("\tRaw data: {} bytes", d.len());
             } else {
-                println!("\tMissing 8bits raw data.");
+                println!("\tMissing compressed raw data.");
             }
         } else if let Some(d) = rawdata.data16() {
-            println!("\tRaw data: {} words", d.len());
+            println!("\tRaw data: {} bytes", d.len() * 2);
         } else {
             println!("\tNo raw data found.");
         }
