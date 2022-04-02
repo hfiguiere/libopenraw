@@ -264,7 +264,8 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
     });
     rawdata.set_photometric_interpretation(photom_int);
     if rawdata.white() == 0 {
-        rawdata.set_white((1 << actual_bpc) - 1);
+        let white: u32 = (1_u32 << actual_bpc) - 1;
+        rawdata.set_white(white as u16);
     }
 
     Ok(rawdata)
