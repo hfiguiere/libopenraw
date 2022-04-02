@@ -33,7 +33,9 @@ lazy_static::lazy_static! {
         // The extension MUST be lowercase
         (OsString::from("cr2"), Type::Cr2),
         (OsString::from("cr3"), Type::Cr3),
+        (OsString::from("dng"), Type::Dng),
         (OsString::from("erf"), Type::Erf),
+        (OsString::from("gpr"), Type::Gpr),
     ]);
 }
 

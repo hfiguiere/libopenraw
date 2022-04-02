@@ -1,5 +1,5 @@
 /*
- * libopenraw - factory.rs
+ * libopenraw - apple.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -18,30 +18,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-//! Factory for RAW files.
+//! Apple camera support.
 
 use std::collections::HashMap;
 
-use super::rawfile::RawFileFactory;
-use super::Type;
-
-use crate::canon::Cr2File;
-use crate::canon::Cr3File;
-use crate::dng::DngFile;
-use crate::epson::ErfFile;
-
 lazy_static::lazy_static! {
-    /// Factory map. This is where new types are registered.
-    static ref FACTORY_MAP: HashMap<Type, RawFileFactory> = HashMap::from([
-        (Type::Cr2, Cr2File::factory as RawFileFactory),
-        (Type::Cr3, Cr3File::factory as RawFileFactory),
-        (Type::Dng, DngFile::factory as RawFileFactory),
-        (Type::Erf, ErfFile::factory as RawFileFactory),
-        (Type::Gpr, DngFile::factory as RawFileFactory),
+    pub static ref MNOTE_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+        (0x3, "RunTime"),
+        (0x8, "AccelerationVector"),
+        (0xa, "HDRImageType"),
+        (0xb, "BurstUUID"),
+        (0x11, "ContentIdentifier"),
+        (0x15, "ImageUniqueID"),
     ]);
-}
-
-/// Get the factory for a type.
-pub(crate) fn get_raw_file_factory(t: Type) -> Option<&'static RawFileFactory> {
-    FACTORY_MAP.get(&t)
 }

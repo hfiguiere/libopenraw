@@ -18,22 +18,29 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+mod apple;
 mod bitmap;
 mod camera_ids;
 mod canon;
 mod colour;
 mod container;
 mod decompress;
+mod dng;
 mod epson;
 mod factory;
 mod identify;
 mod io;
 mod jpeg;
+mod leica;
 mod mp4;
 mod olympus;
+mod panasonic;
+mod pentax;
 mod raf;
 mod rawdata;
 mod rawfile;
+mod ricoh;
+mod sigma;
 mod sony;
 mod thumbnail;
 pub mod tiff;
@@ -193,6 +200,7 @@ impl From<&str> for Type {
         match s {
             "CR2" => Self::Cr2,
             "CR3" => Self::Cr3,
+            "DNG" => Self::Dng,
             "ERF" => Self::Erf,
             _ => Self::Unknown,
         }

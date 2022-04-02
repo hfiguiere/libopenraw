@@ -52,12 +52,16 @@ pub enum Compression {
     Jpeg = 6,
     /// Losless JPEG compression (like in DNG)
     LJpeg = 7,
+    /// Deflate (ZIP)
+    Deflate = 8,
     /// Sony ARW compression
     Arw = 32767,
     /// Nikon packed
     NikonPack = 32769,
     /// Nikon quantized
     NikonQuantized = 34713,
+    /// DNG Lossy JPEG
+    DngLossy = 34892,
     /// What everybody seems to use
     Custom = 65535,
     // XXX figure out Olympus compression value
@@ -189,7 +193,7 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
         .or_else(|| {
             // the tile are individual JPEGS....
             // XXX todo
-            log::error!("Unimplemented");
+            log::error!("Tiles support unimplemented");
             Some(0_u32)
         })
         .ok_or(Error::NotFound)?;

@@ -49,6 +49,7 @@ pub mod vendor {
     pub const GOPRO: u16 = 19;
     pub const HASSELBLAD: u16 = 20;
     pub const ZEISS: u16 = 21;
+    pub const DJI: u16 = 22;
 }
 
 /// Generic camera ID. All camera IDs are `u16` and are in `TypeId::1`
@@ -322,7 +323,7 @@ pub mod nikon {
 
 /// Leica type IDs
 #[allow(unused)]
-mod leica {
+pub mod leica {
     pub const UNKNOWN: u16 = 0;
     /* DNG */
     pub const DMR: u16 = 1;
@@ -372,11 +373,12 @@ mod leica {
     /* DNG */
     pub const SL2S: u16 = 36;
     pub const Q2_MONOCHROM: u16 = 37;
+    pub const M11: u16 = 38;
 }
 
 /// Pentax type IDs
 #[allow(unused)]
-mod pentax {
+pub mod pentax {
     pub const UNKNOWN: u16 = 0;
     pub const K10D_PEF: u16 = 1;
     pub const K10D_DNG: u16 = 2;
@@ -515,7 +517,7 @@ mod olympus {
 
 /// Samsung type IDs
 #[allow(unused)]
-mod samsung {
+pub mod samsung {
     pub const UNKNOWN: u16 = 0;
     pub const GX10: u16 = 1;
     pub const PRO815: u16 = 2;
@@ -526,7 +528,7 @@ mod samsung {
 /// Following the merger with Pentax newer cameras may be Pentax.
 ///
 #[allow(unused)]
-mod ricoh {
+pub mod ricoh {
     pub const UNKNOWN: u16 = 0;
     pub const GR2: u16 = 1;
     pub const GXR: u16 = 2;
@@ -538,6 +540,7 @@ mod ricoh {
     pub const PENTAX_645Z_DNG: u16 = 7;
     pub const GRII: u16 = 8;
     pub const GRIII: u16 = 9;
+    pub const GRIIIX: u16 = 10;
 }
 
 /// Sony type IDs
@@ -787,14 +790,14 @@ mod fujifilm {
 
 /// Black Magic
 #[allow(unused)]
-mod blackmagic {
+pub mod blackmagic {
     pub const UNKNOWN: u16 = 0;
     pub const POCKET_CINEMA: u16 = 1;
 }
 
 /// Xiaoyi
 #[allow(unused)]
-mod xiaoyi {
+pub mod xiaoyi {
     pub const UNKNOWN: u16 = 0;
     pub const M1: u16 = 1;
     pub const YDXJ_2: u16 = 2;
@@ -803,35 +806,40 @@ mod xiaoyi {
 
 /// Apple (iPhones)
 #[allow(unused)]
-mod apple {
+pub mod apple {
     pub const UNKNOWN: u16 = 0;
     pub const IPHONE_6SPLUS: u16 = 1;
     pub const IPHONE_7PLUS: u16 = 2;
     pub const IPHONE_SE: u16 = 3;
     pub const IPHONE_8: u16 = 4;
     pub const IPHONE_XS: u16 = 5;
+    pub const IPHONE_12_PRO: u16 = 6;
+    pub const IPHONE_13_PRO: u16 = 7;
 }
 
 /// Sigma
 #[allow(unused)]
-mod sigma {
+pub mod sigma {
     pub const UNKNOWN: u16 = 0;
     pub const FP: u16 = 1;
+    pub const FP_L: u16 = 2;
 }
 
 /// GoPro
 #[allow(unused)]
-mod gopro {
+pub mod gopro {
     pub const UNKNOWN: u16 = 0;
     pub const HERO5_BLACK: u16 = 1;
     pub const HERO6_BLACK: u16 = 2;
     pub const HERO7_BLACK: u16 = 3;
     pub const HERO8_BLACK: u16 = 4;
+    pub const HERO9_BLACK: u16 = 5;
+    pub const HERO10_BLACK: u16 = 6;
 }
 
 /// Hasselblad
 #[allow(unused)]
-mod hasselblad {
+pub mod hasselblad {
     pub const UNKNOWN: u16 = 0;
     pub const LUNAR: u16 = 1;
     pub const L1D_20C: u16 = 2;
@@ -839,7 +847,18 @@ mod hasselblad {
 
 /// Zeiss
 #[allow(unused)]
-mod zeiss {
+pub mod zeiss {
     pub const UNKNOWN: u16 = 0;
     pub const ZX1: u16 = 1;
+}
+
+/// DJI
+#[allow(unused)]
+pub mod dji {
+    pub const UNKNOWN: u16 = 0;
+    pub const FC350: u16 = 1;
+    pub const FC7303: u16 = 2;
+    pub const OSMO_ACTION: u16 = 3;
+    pub const FC220: u16 = 4;
+    pub const FC6310: u16 = 5;
 }

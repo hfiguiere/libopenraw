@@ -28,11 +28,17 @@ use std::rc::Rc;
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
 use log::debug;
 
+use crate::apple;
 use crate::canon;
 use crate::container;
 use crate::container::GenericContainer;
 use crate::epson;
 use crate::io::View;
+use crate::leica;
+use crate::panasonic;
+use crate::pentax;
+use crate::ricoh;
+use crate::sigma;
 use crate::sony;
 use crate::tiff;
 use crate::tiff::exif;
@@ -79,7 +85,7 @@ impl Dir {
                 return Dir::new_makernote("Sony5", container, offset, 0, &sony::MNOTE_TAG_NAMES)
             }
             _ => {
-                let mut data = [0_u8; 8];
+                let mut data = [0_u8; 16];
                 {
                     let mut view = container.borrow_view_mut();
                     view.seek(SeekFrom::Start(offset as u64))?;
@@ -98,6 +104,194 @@ impl Dir {
                         &epson::MNOTE_TAG_NAMES,
                     );
                 }
+
+                // Pentax Asahi Optical Corporation (pre Ricoh merger)
+                if &data[0..4] == b"AOC\0" {
+                    return Dir::new_makernote(
+                        "Pentax",
+                        container,
+                        offset + 6,
+                        0,
+                        &pentax::MNOTE_TAG_NAMES,
+                    );
+                }
+
+                // Pentax post Ricoh merger
+                if &data[0..8] == b"PENTAX \0" {
+                    return Dir::new_makernote(
+                        "Pentax",
+                        container,
+                        offset + 10,
+                        offset,
+                        &pentax::MNOTE_TAG_NAMES,
+                    );
+                }
+
+                // XXX Panasonic
+
+                if &data[0..5] == b"Ricoh\0" {
+                    return Dir::new_makernote(
+                        "Ricoh",
+                        container,
+                        offset + 8,
+                        0,
+                        &ricoh::MNOTE_TAG_NAMES,
+                    );
+                }
+
+                if &data[0..16] == b"LEICA CAMERA AG\0" && file_type == RawType::Rw2 {
+                    // Rebadged Panasonic
+                    // Leica C-Lux
+                    // Leica V-Lux 5
+                    // Leica D-Lux 7
+                    return Dir::new_makernote(
+                        "Panasonic",
+                        container,
+                        offset + 18,
+                        0,
+                        &panasonic::MNOTE_TAG_NAMES,
+                    );
+                }
+
+                if &data[0..5] == b"LEICA" {
+                    if &data[5..8] == b"\0\0\0" {
+                        if file_type == RawType::Rw2 {
+                            // Panasonic
+                            return Dir::new_makernote(
+                                "Panasonic",
+                                container,
+                                offset + 8,
+                                0,
+                                &panasonic::MNOTE_TAG_NAMES,
+                            );
+                        } else {
+                            // Leica M8
+                            return Dir::new_makernote(
+                                "Leica2",
+                                container,
+                                offset + 8,
+                                offset,
+                                &leica::MNOTE_TAG_NAMES_2,
+                            );
+                        }
+                    }
+
+                    if data[5] == 0 && data[7] == 0 {
+                        match data[6] {
+                            0x08 | 0x09 =>
+                            // Leica Q Typ 116 and SL (Type 601)
+                                return Dir::new_makernote(
+                                    "Leica5",
+                                    container,
+                                    offset + 8, 0,
+                                    &leica::MNOTE_TAG_NAMES_5,
+                                ),
+                            0x01 | // Leica X1
+                            0x04 | // Leica X VARIO
+                            0x05 | // Leica X2
+                            0x06 | // Leica T (Typ 701)
+                            0x07 | // Leica X (Typ 113)
+                            0x10 | // Leica X-U (Typ 113)
+                            0x1a =>
+                                return Dir::new_makernote(
+                                    "Leica5",
+                                    container,
+                                    offset + 8,
+                                    offset,
+                                    &leica::MNOTE_TAG_NAMES_5,
+                                ),
+                            _ => {}
+                        }
+                    }
+
+                    // Leica M (Typ 240)
+                    if data[5] == 0x0 && data[6] == 0x02 && data[7] == 0xff {
+                        return Dir::new_makernote(
+                            "Leica6",
+                            container,
+                            offset + 8,
+                            0,
+                            &leica::MNOTE_TAG_NAMES_6,
+                        );
+                    }
+
+                    // Leica M9/Monochrom
+                    if data[5] == b'0' && data[6] == 0x03 && data[7] == 0 {
+                        return Dir::new_makernote(
+                            "Leica4",
+                            container,
+                            offset + 8,
+                            offset,
+                            &leica::MNOTE_TAG_NAMES_4,
+                        );
+                    }
+
+                    // Leica M10
+                    if data[5] == 0 && data[6] == 0x02 && data[7] == 0 {
+                        return Dir::new_makernote(
+                            "Leica9",
+                            container,
+                            offset + 8,
+                            0,
+                            &leica::MNOTE_TAG_NAMES_9,
+                        );
+                    }
+                }
+
+                if &data[0..8] == b"YI     \0" {
+                    return Dir::new_makernote(
+                        "Xiaoyi",
+                        container,
+                        offset + 12,
+                        offset,
+                        // XXX we have no idea.
+                        &MNOTE_EMPTY_TAGS,
+                    );
+                }
+
+                if &data[0..10] == b"Apple iOS\0" {
+                    return Dir::new_makernote(
+                        "Apple",
+                        container,
+                        offset + 14,
+                        offset,
+                        &apple::MNOTE_TAG_NAMES,
+                    );
+                }
+
+                if &data[0..4] == b"STMN" {
+                    return if &data[8..12] == b"\0\0\0\0" {
+                        Dir::new_makernote(
+                            "Samsung1a",
+                            container,
+                            offset,
+                            offset,
+                            &MNOTE_EMPTY_TAGS,
+                        )
+                    } else {
+                        Dir::new_makernote(
+                            "Samsung1b",
+                            container,
+                            offset,
+                            offset,
+                            &MNOTE_EMPTY_TAGS,
+                        )
+                    };
+                }
+
+                // XXX FujiFilm
+
+                if &data[0..6] == b"SIGMA\0" {
+                    return Dir::new_makernote(
+                        "Sigma",
+                        container,
+                        offset + 10,
+                        0,
+                        &sigma::MNOTE_TAG_NAMES,
+                    );
+                }
+
+                // XXX Minolta
             }
         }
         Dir::new_makernote("", container, offset, 0, &MNOTE_EMPTY_TAGS)
