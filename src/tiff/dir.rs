@@ -22,7 +22,6 @@
 //! and most RAW format.
 
 use std::collections::HashMap;
-use std::convert::TryFrom;
 use std::io::{Read, Seek, SeekFrom};
 use std::rc::Rc;
 
@@ -186,18 +185,13 @@ impl Dir {
 
     /// Get and unsigned integer that could be either size.
     pub fn uint_value(&self, tag: u16) -> Option<u32> {
-        use exif::TagType::*;
-        self.entry(tag).and_then(|e| {
-            exif::TagType::try_from(e.type_)
-                .ok()
-                .and_then(|typ| match typ {
-                    Short => self.entry_value::<u16>(e, 0).map(|v| v as u32),
-                    Long => self.entry_value::<u32>(e, 0),
-                    _ => {
-                        log::warn!("Entry {} has wrong type {}", tag, e.type_);
-                        None
-                    }
-                })
+        self.entry(tag).and_then(|e| match self.endian() {
+            container::Endian::Little => e.uint_value::<LittleEndian>(),
+            container::Endian::Big => e.uint_value::<BigEndian>(),
+            _ => {
+                log::error!("Endian unset to read directory");
+                None
+            }
         })
     }
 

@@ -109,6 +109,7 @@ impl Entry {
     }
 
     /// Load the data for the entry from the `io::View`.
+    /// It doesn't check if the value is inline.
     pub(crate) fn load_data<E>(&mut self, view: &mut View) -> Result<usize>
     where
         E: ByteOrder,
@@ -141,7 +142,16 @@ impl Entry {
         T: ExifValue,
         E: ByteOrder,
     {
-        if self.type_ == T::exif_type() as i16 {
+        self.value_at_index_::<T, E>(index, false)
+    }
+
+    /// Get the value at index. Ignore typing if `untyped` is true.
+    fn value_at_index_<T, E>(&self, index: u32, untyped: bool) -> Option<T>
+    where
+        T: ExifValue,
+        E: ByteOrder,
+    {
+        if untyped || (self.type_ == T::exif_type() as i16) {
             if index >= self.count {
                 log::error!("index {} is >= {}", index, self.count);
                 return None;
@@ -154,13 +164,95 @@ impl Entry {
         None
     }
 
+    /// Get the uint value at index. Ignore typing between SHORT and LONG
+    fn uint_value_at_index<E>(&self, index: u32) -> Option<u32>
+    where
+        E: ByteOrder,
+    {
+        if index >= self.count {
+            log::error!("index {} is >= {}", index, self.count);
+            return None;
+        }
+        exif::TagType::try_from(self.type_)
+            .ok()
+            .and_then(|typ| match typ {
+                TagType::Short => Some(u16::read::<E>(
+                    &self.data.as_slice()[u16::unit_size() * index as usize..],
+                ) as u32),
+                TagType::Long => Some(u32::read::<E>(
+                    &self.data.as_slice()[u32::unit_size() * index as usize..],
+                )),
+                _ => {
+                    log::error!("incorrect type {} for uint", self.type_);
+                    None
+                }
+            })
+    }
+
+    /// Get the value out of the entry, ignoring the type.
+    pub fn value_untyped<T, E>(&self) -> Option<T>
+    where
+        T: ExifValue,
+        E: ByteOrder,
+    {
+        self.value_at_index_::<T, E>(0, true)
+    }
+
+    /// Get an uint value out of the entry
+    pub fn uint_value<E>(&self) -> Option<u32>
+    where
+        E: ByteOrder,
+    {
+        self.uint_value_at_index::<E>(0)
+    }
+
     /// Get the value out of the entry.
     pub fn value<T, E>(&self) -> Option<T>
     where
         T: ExifValue,
         E: ByteOrder,
     {
-        self.value_at_index::<T, E>(0)
+        self.value_at_index_::<T, E>(0, false)
+    }
+
+    /// Get the value array out of the entry, using `endian`.
+    pub fn uint_value_array(&self, endian: Endian) -> Option<Vec<u32>> {
+        let type_ = match exif::TagType::try_from(self.type_) {
+            Ok(t @ TagType::Short) | Ok(t @ TagType::Long) => t,
+            _ => {
+                log::error!("incorrect type {} for uint", self.type_);
+                return None;
+            }
+        };
+        let unit_size = match type_ {
+            TagType::Short => u16::unit_size(),
+            TagType::Long => u32::unit_size(),
+            _ => unreachable!(),
+        };
+
+        let data_slice = self.data.as_slice();
+        let count = self.count as usize;
+        let mut values = Vec::new();
+        for index in 0..count {
+            let slice = &data_slice[unit_size * index as usize..];
+            let v = match type_ {
+                TagType::Short => {
+                    (match endian {
+                        Endian::Big => u16::read::<BigEndian>(slice),
+                        Endian::Little => u16::read::<LittleEndian>(slice),
+                        _ => unreachable!(),
+                    }) as u32
+                }
+                TagType::Long => match endian {
+                    Endian::Big => u32::read::<BigEndian>(slice),
+                    Endian::Little => u32::read::<LittleEndian>(slice),
+                    _ => unreachable!(),
+                },
+                _ => unreachable!(),
+            };
+            values.push(v);
+        }
+        Some(values)
     }
 
     /// Get the value array out of the entry, using `endian`.
@@ -274,6 +366,7 @@ mod test {
             e.value::<String, BigEndian>(),
             Some(String::from("edfgijkl"))
         );
+        assert_eq!(e.uint_value::<LittleEndian>(), None);
 
         // Undefined
         let e = Entry::new(0, TagType::Undefined as i16, 4, [4, 0, 8, 0]);
@@ -283,5 +376,22 @@ mod test {
         let e = Entry::new(0, TagType::Undefined as i16, 3, [4, 0, 0, 0]);
         let r = e.value_array::<u16>(Endian::Little);
         assert_eq!(r, Some(vec![4_u16]));
+    }
+
+    #[test]
+    fn test_uint_value() {
+        // uint_value
+        let e = Entry::new(0, TagType::Short as i16, 2, [4, 0, 3, 0]);
+        assert_eq!(e.uint_value::<LittleEndian>(), Some(4));
+        assert_eq!(e.uint_value_at_index::<LittleEndian>(1), Some(3));
+        // out of range
+        assert_eq!(e.uint_value_at_index::<LittleEndian>(2), None);
+        assert_eq!(e.uint_value_array(Endian::Little), Some(vec![4, 3]),);
+
+        let e = Entry::new(0, TagType::Long as i16, 1, [4, 0, 0, 0]);
+        assert_eq!(e.uint_value::<LittleEndian>(), Some(4));
+        // incorrect type
+        let e = Entry::new(0, TagType::SLong as i16, 1, [4, 0, 0, 0]);
+        assert_eq!(e.uint_value::<LittleEndian>(), None);
     }
 }
