@@ -437,8 +437,8 @@ impl Cr2File {
 
         let mut rawdata = self.get_raw_bytes(offset as u64, byte_len as u64, &slices)?;
 
-        let sensor_info = container
-            .mnote_dir(Type::Cr2)
+        let sensor_info = self
+            .ifd(tiff::Type::MakerNote)
             .and_then(super::SensorInfo::new)
             .map(|sensor_info| bitmap::Rect {
                 x: sensor_info.0[0],
@@ -513,7 +513,7 @@ impl RawFileImpl for Cr2File {
                 container.directory(0)
             }
             tiff::Type::Exif => container.exif_dir(),
-            tiff::Type::MakerNote => container.mnote_dir(Type::Cr2),
+            tiff::Type::MakerNote => container.mnote_dir(self.type_()),
             _ => None,
         }
     }
