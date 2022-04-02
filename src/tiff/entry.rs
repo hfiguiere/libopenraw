@@ -127,9 +127,14 @@ impl Entry {
         debug!("Loading data at {}: {} bytes", offset, data_size);
 
         view.seek(SeekFrom::Start(offset as u64))?;
-        let mut data = Vec::new();
-        // XXX can we use an unitialized vector?
-        data.resize(data_size, 0);
+        let mut data = Vec::with_capacity(data_size);
+        // Avoiding initialization of the big buffer.
+        // This is deliberate.
+        #[allow(clippy::uninit_vec)]
+        unsafe {
+            data.set_len(data_size);
+        }
+
         let bytes = view.read(&mut data)?;
         self.data = DataBytes::External(data);
 
