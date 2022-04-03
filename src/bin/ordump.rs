@@ -23,7 +23,7 @@ use log::{info, LevelFilter};
 use simple_logger::SimpleLogger;
 
 use libopenraw::Bitmap;
-use libopenraw::{raw_file_from_file, DataType, Ifd, RawFile, Thumbnail};
+use libopenraw::{raw_file_from_file, DataType, Error, Ifd, RawData, RawFile, Result, Thumbnail};
 
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -31,6 +31,7 @@ pub fn main() {
     let mut opts = Options::new();
     opts.optflag("d", "", "Debug");
     opts.optflag("t", "", "Extract thumbnails");
+    opts.optflag("R", "", "Extract Raw data");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -49,10 +50,26 @@ pub fn main() {
         .unwrap();
 
     let extract_thumbnails = matches.opt_present("t");
+    let extract_raw = matches.opt_present("R");
 
     for name in matches.free.iter() {
-        process_file(name, extract_thumbnails);
+        process_file(name, extract_thumbnails, extract_raw);
     }
+}
+
+fn make_thumbnail_name(p: &str, thumb: &Thumbnail) -> Option<std::path::PathBuf> {
+    std::path::PathBuf::from(p)
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .map(|stem| {
+            let thumbnail = std::path::PathBuf::from(format!(
+                "{}_{}x{}.jpg",
+                stem,
+                thumb.width(),
+                thumb.height()
+            ));
+            thumbnail
+        })
 }
 
 fn save_thumbnail(p: &str, thumb: &Thumbnail) {
@@ -60,16 +77,11 @@ fn save_thumbnail(p: &str, thumb: &Thumbnail) {
 
     match thumb.data_type() {
         DataType::Jpeg => {
-            if let Some(stem) = std::path::PathBuf::from(p)
-                .file_stem()
-                .and_then(|s| s.to_str())
-            {
-                let filename = format!("{}_{}x{}", stem, thumb.width(), thumb.height());
-                let thumbnail = std::path::PathBuf::from(filename).with_extension("jpg");
+            if let Some(fname) = make_thumbnail_name(p, thumb) {
                 if let Some(d) = thumb.data8() {
-                    let mut f = std::fs::File::create(&thumbnail).expect("Couldn't open file");
+                    let mut f = std::fs::File::create(&fname).expect("Couldn't open file");
                     let amount = f.write(d).expect("Couldn't write thumbnail");
-                    println!("Written {:?}: {} bytes", thumbnail, amount);
+                    println!("Written {:?}: {} bytes", fname, amount);
                 }
             }
         }
@@ -79,7 +91,37 @@ fn save_thumbnail(p: &str, thumb: &Thumbnail) {
     }
 }
 
-fn extract_rawdata(rawfile: &dyn RawFile) {
+fn save_raw(p: &str, rawdata: &RawData) -> Result<usize> {
+    if let Some(stem) = std::path::PathBuf::from(p)
+        .file_stem()
+        .and_then(|s| s.to_str())
+    {
+        use std::io::Write;
+
+        use byteorder::BigEndian;
+        use byteorder::WriteBytesExt;
+
+        let mut amount = 0;
+        let raw = std::path::PathBuf::from(format!("{}_RAW.pgm", stem));
+        if let Some(d) = rawdata.data16() {
+            let mut f = std::fs::File::create(&raw)?;
+            amount += f.write(b"P5\n")?;
+            amount += f.write(format!("{} {}\n", rawdata.width(), rawdata.height()).as_bytes())?;
+            amount += f.write(format!("{}\n", (1 << rawdata.bpc()) - 1).as_bytes())?;
+            for b in d {
+                f.write_u16::<BigEndian>(*b)?;
+                amount += 2;
+            }
+            println!("Written Raw {:?}: {} bytes", raw, amount);
+        }
+
+        Ok(amount)
+    } else {
+        Err(Error::Unknown)
+    }
+}
+
+fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool) {
     let before = std::time::Instant::now();
     let rawdata = rawfile.raw_data();
     println!("Elapsed time: {:.2?}", before.elapsed());
@@ -113,12 +155,17 @@ fn extract_rawdata(rawfile: &dyn RawFile) {
         if let Ok(matrix) = rawfile.colour_matrix(2) {
             println!("\tColour matrix 2: {:?}", matrix);
         }
+        if extract_raw {
+            if let Err(err) = save_raw(p, &rawdata) {
+                println!("Saving raw failed: {}", err);
+            }
+        }
     } else {
         println!("Raw data not found");
     }
 }
 
-fn process_file(p: &str, extract_thumbnails: bool) {
+fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool) {
     let rawfile = raw_file_from_file(p, None);
 
     info!("Dumping {}", p);
@@ -152,7 +199,7 @@ fn process_file(p: &str, extract_thumbnails: bool) {
                 }
             }
 
-            extract_rawdata(rawfile.as_ref());
+            extract_rawdata(p, rawfile.as_ref(), extract_raw);
 
             let exif_ifd = rawfile.exif_ifd();
             println!("Has Exif: {}", exif_ifd.is_some());
@@ -167,5 +214,25 @@ fn process_file(p: &str, extract_thumbnails: bool) {
         Err(err) => {
             println!("Failed to open raw file: {}", err);
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use super::make_thumbnail_name;
+    use libopenraw::{DataType, Thumbnail};
+
+    #[test]
+    fn test_make_thumbnail_name() {
+        let filename: &str = "samples/dng/iphone-13-pro_1.57+IMG_0445.DNG";
+        let thumbnail = Thumbnail::new(100, 75, DataType::Jpeg, vec![100, 120, 130]);
+        let n = make_thumbnail_name(filename, &thumbnail);
+        assert_eq!(
+            n,
+            Some(std::path::PathBuf::from(
+                "iphone-13-pro_1.57+IMG_0445_100x75.jpg"
+            ))
+        );
     }
 }
