@@ -254,7 +254,7 @@ impl ExifValue for Rational {
     {
         Rational {
             num: E::read_u32(buf),
-            denom: E::read_u32(buf),
+            denom: E::read_u32(&buf[4..]),
         }
     }
 }
@@ -263,6 +263,16 @@ impl ExifValue for Rational {
 pub struct SRational {
     pub num: i32,
     pub denom: i32,
+}
+
+impl From<&SRational> for f64 {
+    fn from(r: &SRational) -> f64 {
+        if r.denom != 0 {
+            r.num as f64 / r.denom as f64
+        } else {
+            f64::NAN
+        }
+    }
 }
 
 impl ExifValue for SRational {
@@ -280,33 +290,8 @@ impl ExifValue for SRational {
     {
         SRational {
             num: E::read_i32(buf),
-            denom: E::read_i32(buf),
+            denom: E::read_i32(&buf[4..]),
         }
-    }
-}
-
-#[cfg(test)]
-mod test {
-
-    use std::convert::TryFrom;
-
-    use super::TagType;
-
-    #[test]
-    fn test_tag_type_convert() {
-        let tag = TagType::try_from(1);
-        assert_eq!(tag, Ok(TagType::Byte));
-
-        let tag = TagType::try_from(4);
-        assert_eq!(tag, Ok(TagType::Long));
-
-        // Invalid value
-        let tag = TagType::try_from(-1);
-        assert!(tag.is_err());
-
-        // Invalid value
-        let tag = TagType::try_from(42);
-        assert!(tag.is_err());
     }
 }
 
@@ -335,5 +320,53 @@ impl std::convert::TryFrom<u32> for PhotometricInterpretation {
             34892 => Ok(LinearRaw),
             _ => Err(Self::Error::InvalidFormat),
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use std::convert::TryFrom;
+
+    use byteorder::LittleEndian;
+
+    use super::{ExifValue, Rational, SRational, TagType};
+
+    #[test]
+    fn test_tag_type_convert() {
+        let tag = TagType::try_from(1);
+        assert_eq!(tag, Ok(TagType::Byte));
+
+        let tag = TagType::try_from(4);
+        assert_eq!(tag, Ok(TagType::Long));
+
+        // Invalid value
+        let tag = TagType::try_from(-1);
+        assert!(tag.is_err());
+
+        // Invalid value
+        let tag = TagType::try_from(42);
+        assert!(tag.is_err());
+    }
+
+    #[test]
+    fn test_rational() {
+        let r = SRational { num: 10, denom: 5 };
+        let f: f64 = (&r).into();
+        assert_eq!(f, 2.0);
+
+        let r = SRational { num: -10, denom: 5 };
+        let f: f64 = (&r).into();
+        assert_eq!(f, -2.0);
+
+        let buf = [10_u8, 0, 0, 0, 5, 0, 0, 0];
+
+        let r = SRational::read::<LittleEndian>(buf.as_slice());
+        assert_eq!(r.num, 10);
+        assert_eq!(r.denom, 5);
+
+        let r = Rational::read::<LittleEndian>(buf.as_slice());
+        assert_eq!(r.num, 10);
+        assert_eq!(r.denom, 5);
     }
 }
