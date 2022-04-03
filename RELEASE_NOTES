@@ -8,8 +8,9 @@ For more details see the NEWS file.
   version.
 - Generated documentation with Doxygen is much more usable.
 - Fix correct endian header on BSD.
-- Fix build on gcc 11
-- 32 new cameras listed.
+- Fix build on gcc 11.
+- Updated Exif tags list.
+- 34 new cameras listed.
 
 Contributors to this release:
 

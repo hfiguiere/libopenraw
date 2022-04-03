@@ -2,6 +2,10 @@ libopenraw 0.3.1 -
 
 New features:
 
+  - Added `identify` as a tool to check a file can be open. This is just
+    for development purpose.
+  - Updated the Exif tag list to ExifTool 12.30.
+
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
@@ -17,10 +21,12 @@ New features:
   - Added Pentax K3 MarkIII (DNG and PEF*).
   - Added Ricoh GR IIIx.
   - Added Sigma fp L.
-  - Added Sony DSLR-A300*, DSLR-A350*, ZV-E10*, QX-1*, A-1*, and A-7IV*.
+  - Added Sony DSLR-A300*, DSLR-A350*, ILCE-A7R III A*, ILCE-A7R IV A*,
+    DSC-HX95*, ZV-E10*, QX-1*, A-1*, and A-7IV*.
 
 Bug fixes:
 
+  - Sony HX95 was not identified properly.
   - gnome/libopenraw-gnome-0.3.pc now has the right dependency version.
     https://github.com/hfiguiere/libopenraw/pull/2
   - The Doxygen generated documentation is much more usable.
