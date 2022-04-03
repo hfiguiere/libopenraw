@@ -31,6 +31,7 @@ use crate::factory;
 use crate::identify;
 use crate::thumbnail::{ThumbDesc, Thumbnail};
 use crate::tiff;
+use crate::tiff::{exif, Ifd};
 
 /// The trait for any IO
 pub trait ReadAndSeek: std::io::Read + std::io::Seek {}
@@ -249,12 +250,29 @@ pub trait RawFile: RawFileImpl {
 
     /// Return the colour matrix for the file.
     fn colour_matrix(&self, index: u32) -> Result<Vec<f64>> {
-        // XXX get the DNG TAG when we can
+        let tag = match index {
+            1 => exif::DNG_TAG_COLORMATRIX1,
+            2 => exif::DNG_TAG_COLORMATRIX2,
+            _ => return Err(Error::InvalidParam),
+        };
 
-        if index != 1 {
-            return Err(Error::InvalidParam);
-        }
-        self.get_builtin_colour_matrix()
+        self.main_ifd()
+            .and_then(|dir| {
+                dir.entry(tag)
+                    .and_then(|e| e.value_array::<exif::SRational>(dir.endian()))
+                    .map(|a| a.iter().map(|r| r.into()).collect())
+            })
+            .ok_or_else(|| {
+                log::debug!("DNG color matrix not found");
+                Error::NotFound
+            })
+            .or_else(|_| {
+                if index != 1 {
+                    self.get_builtin_colour_matrix()
+                } else {
+                    Err(Error::NotFound)
+                }
+            })
     }
 }
 
