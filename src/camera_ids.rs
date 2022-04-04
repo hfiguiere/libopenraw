@@ -50,6 +50,7 @@ pub mod vendor {
     pub const HASSELBLAD: u16 = 20;
     pub const ZEISS: u16 = 21;
     pub const DJI: u16 = 22;
+    pub const NOKIA: u16 = 23;
 }
 
 /// Generic camera ID. All camera IDs are `u16` and are in `TypeId::1`
@@ -433,6 +434,8 @@ pub mod pentax {
     pub const K3_PEF: u16 = 51;
     pub const K3_II_PEF: u16 = 52;
     pub const K110D_PEF: u16 = 53;
+    pub const K5_DNG: u16 = 54;
+    pub const K20D_DNG: u16 = 55;
 }
 
 /// Epson type IDs
@@ -521,6 +524,7 @@ pub mod samsung {
     pub const UNKNOWN: u16 = 0;
     pub const GX10: u16 = 1;
     pub const PRO815: u16 = 2;
+    pub const GX20: u16 = 3;
 }
 
 /// Ricoh type IDs
@@ -861,4 +865,8 @@ pub mod dji {
     pub const OSMO_ACTION: u16 = 3;
     pub const FC220: u16 = 4;
     pub const FC6310: u16 = 5;
+}
+
+pub mod nokia {
+    pub const LUMIA_1020: u16 = 1;
 }

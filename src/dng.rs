@@ -27,7 +27,7 @@ use once_cell::unsync::OnceCell;
 
 use crate::bitmap::{Bitmap, Rect};
 use crate::camera_ids::{
-    apple, blackmagic, dji, gopro, hasselblad, leica, pentax, ricoh, samsung, sigma, vendor,
+    apple, blackmagic, dji, gopro, hasselblad, leica, nokia, pentax, ricoh, samsung, sigma, vendor,
     xiaoyi, zeiss,
 };
 use crate::container::GenericContainer;
@@ -44,6 +44,7 @@ lazy_static::lazy_static! {
         ( "PENTAX 645Z        ", TypeId(vendor::PENTAX, ricoh::PENTAX_645Z_DNG) ),
         ( "PENTAX 645D        ", TypeId(vendor::PENTAX, pentax::PENTAX_645D_DNG) ),
         ( "PENTAX K10D        ", TypeId(vendor::PENTAX, pentax::K10D_DNG) ),
+        ( "PENTAX K20D        ", TypeId(vendor::PENTAX, pentax::K20D_DNG) ),
         ( "PENTAX Q           ", TypeId(vendor::PENTAX, pentax::Q_DNG) ),
         ( "PENTAX K200D       ", TypeId(vendor::PENTAX, pentax::K200D_DNG) ),
         ( "PENTAX K2000       ", TypeId(vendor::PENTAX, pentax::K2000_DNG) ),
@@ -57,6 +58,7 @@ lazy_static::lazy_static! {
         ( "PENTAX K-1 Mark II ", TypeId(vendor::PENTAX, pentax::K1_MKII_DNG) ),
         ( "PENTAX K10D        ", TypeId(vendor::PENTAX, pentax::K10D_DNG) ),
         ( "PENTAX K-30        ", TypeId(vendor::PENTAX, pentax::K30_DNG) ),
+        ( "PENTAX K-5         ", TypeId(vendor::PENTAX, pentax::K5_DNG) ),
         ( "PENTAX K-5 II      ", TypeId(vendor::PENTAX, pentax::K5_II_DNG) ),
         ( "PENTAX K-5 II s    ", TypeId(vendor::PENTAX, pentax::K5_IIS_DNG) ),
         ( "PENTAX K-50        ", TypeId(vendor::PENTAX, pentax::K50_DNG) ),
@@ -68,6 +70,7 @@ lazy_static::lazy_static! {
         ( "PENTAX K-7         ", TypeId(vendor::PENTAX, pentax::K7_DNG) ),
         ( "PENTAX K-70        ", TypeId(vendor::PENTAX, pentax::K70_DNG) ),
         ( "PENTAX K-S1        ", TypeId(vendor::PENTAX, pentax::KS1_DNG) ),
+        ( "PENTAX K-S2        ", TypeId(vendor::PENTAX, pentax::KS2_DNG) ),
         ( "PENTAX KP          ", TypeId(vendor::PENTAX, pentax::KP_DNG) ),
         ( "PENTAX MX-1            ", TypeId(vendor::PENTAX,
                                             pentax::MX1_DNG) ),
@@ -110,6 +113,7 @@ lazy_static::lazy_static! {
         ( "RICOH GX200    ",
            TypeId(vendor::RICOH, ricoh::GX200) ),
         ( "SAMSUNG GX10       ", TypeId(vendor::SAMSUNG, samsung::GX10) ),
+        ( "SAMSUNG GX20       ", TypeId(vendor::SAMSUNG, samsung::GX20) ),
         ( "Pro 815    ", TypeId(vendor::SAMSUNG, samsung::PRO815) ),
         ( "M1              ", TypeId(vendor::XIAOYI, xiaoyi::M1) ),
         ( "YDXJ 2", TypeId(vendor::XIAOYI, xiaoyi::YDXJ_2) ),
@@ -138,6 +142,7 @@ lazy_static::lazy_static! {
         ( "FC6310", TypeId(vendor::DJI, dji::FC6310) ),
         ( "FC7303", TypeId(vendor::DJI, dji::FC7303) ),
         ( "DJI Osmo Action", TypeId(vendor::DJI, dji::OSMO_ACTION) ),
+        ( "Lumia 1020", TypeId(vendor::NOKIA, nokia::LUMIA_1020) ),
 //        ( 0, TypeId(vendor::ADOBE, adobe::DNG_GENERIC) ),
     ]);
 }
