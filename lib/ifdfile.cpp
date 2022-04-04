@@ -72,7 +72,7 @@ IfdFile::~IfdFile()
 
 IfdDir::Ref IfdFile::_locateCfaIfd()
 {
-  // CFA IFD is the main IFD byt default
+  // CFA IFD is the main IFD by default
   return mainIfd();
 }
 
