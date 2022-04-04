@@ -87,6 +87,8 @@ pub enum Error {
     Mp4Parse(String),
     /// Jpeg decompress
     JpegFormat(String),
+    /// Bit reader error.
+    BitReaderError(bitreader::BitReaderError),
     /// Unknown error: placeholder for anything else.
     Unknown,
 }
@@ -94,6 +96,12 @@ pub enum Error {
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Error {
         Error::IoError(err.to_string())
+    }
+}
+
+impl From<bitreader::BitReaderError> for Error {
+    fn from(err: bitreader::BitReaderError) -> Error {
+        Error::BitReaderError(err)
     }
 }
 
@@ -119,6 +127,7 @@ impl std::fmt::Display for Error {
             Self::Decompression => write!(f, "Decompression error"),
             Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {}", err),
             Self::JpegFormat(ref err) => write!(f, "JPEG error: {}", err),
+            Self::BitReaderError(ref err) => write!(f, "BitReader error: {}", err),
             Self::Unknown => write!(f, "Unknown error"),
         }
     }

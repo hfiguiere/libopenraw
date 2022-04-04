@@ -31,6 +31,24 @@ use crate::container::GenericContainer;
 use crate::tiff;
 use crate::{Error, Result};
 
+/// Unpack n-bits into 16-bits values
+/// out_len is the number of expected 16-bits pixel.
+/// For performance `out_data` should have reserved size
+/// Return the number of elements written.
+fn unpack_bento16(input: &[u8], n: u16, out_len: usize, out_data: &mut Vec<u16>) -> Result<usize> {
+    if n > 16 {
+        return Err(Error::InvalidParam);
+    }
+    let mut reader = bitreader::BitReader::new(input);
+    let mut written = 0_usize;
+    for _ in 0..out_len {
+        let t = reader.read_u16(n as u8)?;
+        out_data.push(t);
+        written += 1;
+    }
+    Ok(written)
+}
+
 /// Unpack 12-bits into 16-bits values
 /// For performance `out_data` should have reserved size
 /// Return the number of elements written.
@@ -93,31 +111,62 @@ pub(crate) fn unpack(
     offset: u64,
     byte_len: usize,
 ) -> Result<Vec<u16>> {
-    // XXX handle other BPC like 14.
-    if bpc != 12 {
-        log::warn!("Invalid BPC {}", bpc);
-        return Err(Error::InvalidFormat);
-    }
-    let block_size: usize = if compression == tiff::Compression::NikonPack {
-        ((width / 2 * 3) + width / 10) as usize
-    } else {
-        (width / 2 * 3) as usize
+    log::debug!(
+        "Unpack {} bytes {} x {} - compression {:?}",
+        byte_len,
+        width,
+        height,
+        compression
+    );
+    let block_size: usize = match bpc {
+        10 => {
+            if compression == tiff::Compression::NikonPack {
+                ((width / 4 * 5) + width / 10) as usize
+            } else {
+                (width / 4 * 5) as usize
+            }
+        }
+        12 => {
+            if compression == tiff::Compression::NikonPack {
+                ((width / 2 * 3) + width / 10) as usize
+            } else {
+                (width / 2 * 3) as usize
+            }
+        }
+        14 => {
+            if compression == tiff::Compression::NikonPack {
+                ((width / 4 * 7) + width / 10) as usize
+            } else {
+                (width / 4 * 7) as usize
+            }
+        }
+        _ => {
+            log::warn!("Invalid BPC {}", bpc);
+            return Err(Error::InvalidFormat);
+        }
     };
     log::debug!("Block size = {}", block_size);
     let mut block = Vec::new();
     block.resize(block_size, 0);
-    let out_size = (width * height * 2) as usize;
-    let mut out_data = Vec::new();
-    out_data.reserve(out_size);
+    let out_size = width as usize * height as usize;
+    let mut out_data = Vec::with_capacity(out_size);
     let mut fetched = 0_usize;
+    let mut written = 0_usize;
 
     let mut view = container.borrow_view_mut();
     view.seek(SeekFrom::Start(offset))?;
+
+    let byte_len = std::cmp::min(byte_len, block_size * height as usize);
     while fetched < byte_len {
         view.read_exact(block.as_mut_slice())?;
         fetched += block.len();
-        unpack_be12to16(&block, &mut out_data, compression)?;
+        match bpc {
+            n @ 10 | n @ 14 => written += unpack_bento16(&block, n, width as usize, &mut out_data)?,
+            12 => written += unpack_be12to16(&block, &mut out_data, compression)?,
+            _ => unreachable!(),
+        }
     }
+    log::debug!("Unpacked {} pixels", written);
 
     Ok(out_data)
 }
@@ -126,6 +175,7 @@ pub(crate) fn unpack(
 mod test {
 
     use super::unpack_be12to16;
+    use super::unpack_bento16;
     use crate::tiff;
 
     #[test]
@@ -136,7 +186,7 @@ mod test {
             0x90, 0xAB, 0xCD, 0x00,
         ];
 
-        let mut unpacked: Vec<u16> = Vec::new();
+        let mut unpacked: Vec<u16> = Vec::with_capacity(20);
 
         let result = unpack_be12to16(
             packed.as_slice(),
@@ -163,12 +213,34 @@ mod test {
     fn test_unpack2() {
         let packed: [u8; 3] = [0x12, 0x34, 0x56];
 
-        let mut unpacked: Vec<u16> = Vec::new();
+        let mut unpacked: Vec<u16> = Vec::with_capacity(2);
 
         let result = unpack_be12to16(packed.as_slice(), &mut unpacked, tiff::Compression::None);
 
         assert_eq!(result, Ok(2));
         assert_eq!(unpacked[0], 0x0123);
         assert_eq!(unpacked[1], 0x0456);
+    }
+
+    #[test]
+    fn test_unpack14() {
+        let buf: [u8; 7] = [
+            0b1111_1111,
+            0b1111_1100,
+            0b0000_0000,
+            0b0000_1111,
+            0b1111_1111,
+            0b1100_0000,
+            0b0000_0000,
+        ];
+
+        let mut unpacked: Vec<u16> = Vec::with_capacity(4);
+
+        let result = unpack_bento16(buf.as_slice(), 14, 4, &mut unpacked);
+        assert_eq!(result, Ok(4));
+        assert_eq!(unpacked[0], 0b0011_1111_1111_1111);
+        assert_eq!(unpacked[1], 0b0000_0000_0000_0000);
+        assert_eq!(unpacked[2], 0b0011_1111_1111_1111);
+        assert_eq!(unpacked[3], 0b0000_0000_0000_0000);
     }
 }

@@ -242,8 +242,7 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
     } else if bpc == 16 {
         let data = container.load_buffer16(offset as u64, byte_len as u64);
         RawData::new16(x, y, actual_bpc, data_type, data)
-    } else if bpc == 12 {
-        // XXX unpack data
+    } else if bpc == 10 || bpc == 12 || bpc == 14 {
         let data = decompress::unpack(
             container,
             x,

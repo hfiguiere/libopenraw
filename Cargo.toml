@@ -7,6 +7,7 @@ default-run = "ordump"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+bitreader = "0.3.5"
 byteorder = "1.4.3"
 getopts = "0.2.21"
 jpeg-decoder = "0.2.3"
