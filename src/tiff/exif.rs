@@ -26,6 +26,8 @@ pub use tags::*;
 
 use byteorder::ByteOrder;
 
+use crate::utils;
+
 /// Type a tag. See `tiff::Entry`.
 #[derive(Debug, PartialEq)]
 #[repr(i16)]
@@ -203,12 +205,7 @@ impl ExifValue for String {
         E: ByteOrder,
     {
         // According to the Exif spec, the string is NUL terminated
-        if let Ok(cstr) = std::ffi::CStr::from_bytes_with_nul(buf) {
-            cstr.to_string_lossy().to_string()
-        } else {
-            // We'll try as a fallback.
-            Self::from_utf8_lossy(buf).to_string()
-        }
+        utils::from_maybe_nul_terminated(buf)
     }
 }
 
