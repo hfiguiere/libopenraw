@@ -102,7 +102,7 @@ impl Container {
                         Some((exif, viewer))
                     })
                     .or_else(|| {
-                        log::error!("Error loading exif");
+                        log::warn!("Error loading exif (likely there is none)");
                         None
                     })
             })
