@@ -21,12 +21,15 @@
 //! JPEG container
 
 use std::cell::{RefCell, RefMut};
+use std::rc::Rc;
 
 use jpeg_decoder::{Decoder, ImageInfo};
 use once_cell::unsync::OnceCell;
 
 use crate::container;
-use crate::io::View;
+use crate::io::{View, Viewer};
+use crate::tiff;
+use crate::tiff::Type;
 
 /// JFIF Container to just read a JPEG image.
 pub(crate) struct Container {
@@ -36,6 +39,8 @@ pub(crate) struct Container {
     image_info: OnceCell<Option<ImageInfo>>,
     /// JPEG decoder
     decoder: OnceCell<RefCell<Decoder<View>>>,
+    /// Exif IFD
+    exif: OnceCell<Option<(tiff::Container, Rc<Viewer>)>>,
 }
 
 impl container::GenericContainer for Container {
@@ -54,6 +59,7 @@ impl Container {
             view: RefCell::new(view),
             image_info: OnceCell::new(),
             decoder: OnceCell::new(),
+            exif: OnceCell::new(),
         }
     }
 
@@ -63,6 +69,45 @@ impl Container {
             let view = &*self.view.borrow_mut();
             RefCell::new(Decoder::new(view.clone()))
         })
+    }
+
+    pub fn exif(&self) -> Option<&tiff::Container> {
+        self.exif
+            .get_or_init(|| {
+                let decoder = self.decoder();
+                decoder
+                    .borrow_mut()
+                    .read_info()
+                    .map_err(|err| {
+                        log::error!("JPEG decoding error: {}", err);
+                        err
+                    })
+                    .ok()?;
+                decoder
+                    .borrow()
+                    .exif_data()
+                    .and_then(|data| {
+                        let data = Vec::from(data);
+                        let io = Box::new(std::io::Cursor::new(data));
+                        let viewer = Viewer::new(io);
+                        let view = Viewer::create_view(&viewer, 0)
+                            .map_err(|err| {
+                                log::error!("Failed to create view {}", err);
+                                err
+                            })
+                            .ok()?;
+                        let mut exif = tiff::Container::new(view, vec![Type::Main, Type::Other]);
+                        exif.load().expect("Failed to load");
+
+                        Some((exif, viewer))
+                    })
+                    .or_else(|| {
+                        log::error!("Error loading exif");
+                        None
+                    })
+            })
+            .as_ref()
+            .map(|m| &m.0)
     }
 
     /// Load the image info.

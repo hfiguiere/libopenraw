@@ -28,6 +28,7 @@ mod decompress;
 mod dng;
 mod epson;
 mod factory;
+mod fujifilm;
 mod identify;
 mod io;
 mod jpeg;
@@ -36,7 +37,6 @@ mod mp4;
 mod olympus;
 mod panasonic;
 mod pentax;
-mod raf;
 mod rawdata;
 mod rawfile;
 mod ricoh;
@@ -214,6 +214,7 @@ impl From<&str> for Type {
             "CR3" => Self::Cr3,
             "DNG" => Self::Dng,
             "ERF" => Self::Erf,
+            "RAF" => Self::Raf,
             _ => Self::Unknown,
         }
     }

@@ -29,6 +29,7 @@ use crate::canon::Cr2File;
 use crate::canon::Cr3File;
 use crate::dng::DngFile;
 use crate::epson::ErfFile;
+use crate::fujifilm::RafFile;
 
 lazy_static::lazy_static! {
     /// Factory map. This is where new types are registered.
@@ -38,6 +39,7 @@ lazy_static::lazy_static! {
         (Type::Dng, DngFile::factory as RawFileFactory),
         (Type::Erf, ErfFile::factory as RawFileFactory),
         (Type::Gpr, DngFile::factory as RawFileFactory),
+        (Type::Raf, RafFile::factory as RawFileFactory),
     ]);
 }
 

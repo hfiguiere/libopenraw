@@ -730,9 +730,7 @@ mod panasonic {
 }
 
 /// Fujifilm type IDs
-#[allow(unused)]
-mod fujifilm {
-    pub const UNKNOWN: u16 = 0;
+pub mod fujifilm {
     pub const F700: u16 = 1;
     pub const E900: u16 = 2;
     pub const S2PRO: u16 = 3;
@@ -790,6 +788,10 @@ mod fujifilm {
     pub const F550EXR: u16 = 54;
     pub const S100FS: u16 = 55;
     pub const XS10: u16 = 56;
+    pub const XT30_II: u16 = 57;
+    pub const GFX50S_II: u16 = 58;
+    pub const GFX100S: u16 = 59;
+    pub const XE4: u16 = 60;
 }
 
 /// Black Magic

@@ -33,6 +33,7 @@ use crate::canon;
 use crate::container;
 use crate::container::GenericContainer;
 use crate::epson;
+use crate::fujifilm;
 use crate::io::View;
 use crate::leica;
 use crate::panasonic;
@@ -279,7 +280,15 @@ impl Dir {
                     };
                 }
 
-                // XXX FujiFilm
+                if &data[0..8] == b"FUJIFILM" {
+                    return Dir::new_makernote(
+                        "Fujifilm",
+                        container,
+                        offset + 12,
+                        offset,
+                        &fujifilm::MNOTE_TAG_NAMES,
+                    );
+                }
 
                 if &data[0..6] == b"SIGMA\0" {
                     return Dir::new_makernote(

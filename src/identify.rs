@@ -24,7 +24,7 @@ use std::collections::HashMap;
 use std::ffi::{OsStr, OsString};
 
 use super::{Error, Result, Type};
-use crate::raf;
+use crate::fujifilm;
 use crate::rawfile::ReadAndSeek;
 
 lazy_static::lazy_static! {
@@ -36,6 +36,7 @@ lazy_static::lazy_static! {
         (OsString::from("dng"), Type::Dng),
         (OsString::from("erf"), Type::Erf),
         (OsString::from("gpr"), Type::Gpr),
+        (OsString::from("raf"), Type::Raf),
     ]);
 }
 
@@ -74,7 +75,8 @@ pub(crate) fn type_for_content(content: &mut dyn ReadAndSeek) -> Result<Option<T
     if &buf[0..4] == b"IIU\0" {
         return Ok(Some(Rw2));
     }
-    if len >= raf::RAF_MAGIC.len() && &buf[0..raf::RAF_MAGIC.len()] == raf::RAF_MAGIC {
+    if len >= fujifilm::RAF_MAGIC.len() && &buf[0..fujifilm::RAF_MAGIC.len()] == fujifilm::RAF_MAGIC
+    {
         return Ok(Some(Raf));
     }
     if &buf[0..4] == b"II\x2a\0" || &buf[0..4] == b"MM\0\x2a" {

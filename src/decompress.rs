@@ -101,7 +101,6 @@ fn unpack_be12to16(
 }
 
 /// Unpack data at `offset` into a 16-bits buffer.
-/// Currently only support 12-bits input.
 pub(crate) fn unpack(
     container: &dyn GenericContainer,
     width: u32,
