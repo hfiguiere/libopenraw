@@ -347,6 +347,8 @@ impl RawFileImpl for RafFile {
                 // Dimensions are encapsulated into two u16 with an u32
                 let raw_size = container
                     .value(raf::TAG_SENSOR_DIMENSION)
+                    // Fujifilm HS10 doesn't have sensor dimension
+                    .or_else(|| container.value(raf::TAG_IMG_HEIGHT_WIDTH))
                     .and_then(|v| Size::try_from(v).ok())
                     .ok_or_else(|| {
                         log::error!("Wrong RAF dimensions.");
@@ -390,7 +392,11 @@ impl RawFileImpl for RafFile {
                         tiff::Compression::None,
                         cfa_offset,
                         cfa_len as usize,
-                    )?;
+                    )
+                    .map_err(|err| {
+                        log::error!("RAF failed to unpack {}", err);
+                        err
+                    })?;
                     RawData::new16(raw_size.width, raw_size.height, 16, DataType::Raw, unpacked)
                 } else {
                     // XXX decompress is not supported yet
