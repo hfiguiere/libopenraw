@@ -23,10 +23,12 @@
 mod raf;
 
 use std::collections::HashMap;
+use std::convert::TryFrom;
 use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
+use crate::bitmap::{Point, Rect, Size};
 use crate::camera_ids::{fujifilm, vendor};
 use crate::colour::BuiltinMatrix;
 use crate::container::GenericContainer;
@@ -343,21 +345,23 @@ impl RawFileImpl for RafFile {
             .ok_or(Error::NotFound)
             .and_then(|container| {
                 // Dimensions are encapsulated into two u16 with an u32
-                let (height, width) = container
+                let raw_size = container
                     .value(raf::TAG_SENSOR_DIMENSION)
-                    .or_else(|| container.value(raf::TAG_IMG_HEIGHT_WIDTH))
-                    .and_then(|v| match v {
-                        raf::Value::Int(dims) => {
-                            let h = (dims & 0xffff0000) >> 16;
-                            let w = dims & 0x0000ffff;
-                            Some((h, w))
-                        }
-                        _ => {
-                            log::error!("Wrong RAF dimensions {:?}", v);
-                            None
-                        }
-                    })
-                    .ok_or(Error::FormatError)?;
+                    .and_then(|v| Size::try_from(v).ok())
+                    .ok_or_else(|| {
+                        log::error!("Wrong RAF dimensions.");
+                        Error::FormatError
+                    })?;
+                let active_area = container
+                    .value(raf::TAG_IMG_TOP_LEFT)
+                    .and_then(|topleft| Point::try_from(topleft).ok())
+                    .and_then(|topleft| {
+                        container
+                            .value(raf::TAG_IMG_HEIGHT_WIDTH)
+                            .and_then(|size| Size::try_from(size).ok())
+                            .map(|size| Rect::new(topleft, size))
+                    });
+
                 let raw_props = container
                     .value(raf::TAG_RAW_INFO)
                     .and_then(|v| match v {
@@ -377,22 +381,30 @@ impl RawFileImpl for RafFile {
                 // XXX use a tiff container instead.
                 let cfa_offset = raw_container.cfa_offset() as u64 + 2048;
                 let cfa_len = raw_container.cfa_len() as u64 - 2048;
-                let rawdata = if !compressed {
+                let mut rawdata = if !compressed {
                     let unpacked = decompress::unpack(
                         raw_container,
-                        width,
-                        height,
+                        raw_size.width,
+                        raw_size.height,
                         12,
                         tiff::Compression::None,
                         cfa_offset,
                         cfa_len as usize,
                     )?;
-                    RawData::new16(width, height, 16, DataType::Raw, unpacked)
+                    RawData::new16(raw_size.width, raw_size.height, 16, DataType::Raw, unpacked)
                 } else {
                     // XXX decompress is not supported yet
                     let raw = raw_container.load_buffer8(cfa_offset, cfa_len);
-                    RawData::new8(width, height, 16, DataType::CompressedRaw, raw)
+                    RawData::new8(
+                        raw_size.width,
+                        raw_size.height,
+                        16,
+                        DataType::CompressedRaw,
+                        raw,
+                    )
                 };
+
+                rawdata.set_active_area(active_area);
 
                 Ok(rawdata)
             })

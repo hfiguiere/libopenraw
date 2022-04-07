@@ -47,3 +47,28 @@ pub struct Rect {
     pub width: u32,
     pub height: u32,
 }
+
+impl Rect {
+    pub fn new(origin: Point, size: Size) -> Rect {
+        Rect {
+            x: origin.x,
+            y: origin.y,
+            width: size.width,
+            height: size.height,
+        }
+    }
+}
+
+/// Point struct
+#[derive(Debug, PartialEq)]
+pub struct Point {
+    pub x: u32,
+    pub y: u32,
+}
+
+/// Size struct
+#[derive(Debug, PartialEq)]
+pub struct Size {
+    pub width: u32,
+    pub height: u32,
+}

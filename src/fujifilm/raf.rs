@@ -7,6 +7,7 @@ use std::io::{Read, Seek, SeekFrom};
 use byteorder::{BigEndian, ReadBytesExt};
 use once_cell::unsync::OnceCell;
 
+use crate::bitmap::{Point, Size};
 use crate::container;
 use crate::container::GenericContainer;
 use crate::io::{View, Viewer};
@@ -159,9 +160,10 @@ impl GenericContainer for RafContainer {
 
 /// the RAW dimensions
 pub(super) const TAG_SENSOR_DIMENSION: u16 = 0x100;
-// const TAG_IMG_TOP_LEFT: u16 = 0x110;
+/// Top Left of activate area
+pub(super) const TAG_IMG_TOP_LEFT: u16 = 0x110;
+/// Width Height of activate area
 pub(super) const TAG_IMG_HEIGHT_WIDTH: u16 = 0x111;
-/// this is the one dcraw use for the active area
 //const TAG_OUTPUT_HEIGHT_WIDTH: u16 = 0x121;
 /// some info about the RAW.
 pub(super) const TAG_RAW_INFO: u16 = 0x130;
@@ -170,6 +172,40 @@ pub(super) const TAG_RAW_INFO: u16 = 0x130;
 pub(super) enum Value {
     Int(u32),
     Bytes(Vec<u8>),
+}
+
+impl std::convert::TryFrom<&Value> for Point {
+    type Error = crate::Error;
+    fn try_from(v: &Value) -> Result<Self> {
+        match v {
+            Value::Int(n) => {
+                let h = (n & 0xffff0000) >> 16;
+                let w = n & 0x0000ffff;
+                Ok(Point {
+                    x: w as u32,
+                    y: h as u32,
+                })
+            }
+            _ => Err(Error::InvalidFormat),
+        }
+    }
+}
+
+impl std::convert::TryFrom<&Value> for Size {
+    type Error = crate::Error;
+    fn try_from(v: &Value) -> Result<Self> {
+        match v {
+            Value::Int(n) => {
+                let h = (n & 0xffff0000) >> 16;
+                let w = n & 0x0000ffff;
+                Ok(Size {
+                    width: w as u32,
+                    height: h as u32,
+                })
+            }
+            _ => Err(Error::InvalidFormat),
+        }
+    }
 }
 
 pub(super) struct MetaContainer {
@@ -241,5 +277,42 @@ impl GenericContainer for MetaContainer {
 
     fn borrow_view_mut(&self) -> RefMut<'_, View> {
         self.view.borrow_mut()
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use std::convert::TryFrom;
+
+    use super::Value;
+    use crate::bitmap::{Point, Size};
+
+    #[test]
+    fn test_value_convert() {
+        let test_value = 0x0100_0001;
+
+        let value = Value::Int(test_value);
+        let value_bytes = Value::Bytes(vec![]);
+
+        let pt = Point::try_from(&value);
+        assert!(pt.is_ok());
+        assert_eq!(pt.unwrap(), Point { x: 1, y: 256 });
+
+        let pt = Point::try_from(&value_bytes);
+        assert!(pt.is_err());
+
+        let sz = Size::try_from(&value);
+        assert!(sz.is_ok());
+        assert_eq!(
+            sz.unwrap(),
+            Size {
+                width: 1,
+                height: 256
+            }
+        );
+
+        let sz = Size::try_from(&value_bytes);
+        assert!(sz.is_err());
     }
 }
