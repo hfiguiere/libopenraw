@@ -14,7 +14,7 @@ use crate::io::{View, Viewer};
 use crate::jpeg;
 use crate::utils;
 use crate::Type as RawType;
-use crate::{Error, Result};
+use crate::{Dump, Error, Result};
 
 /// Just a list of offset/length
 #[derive(Default)]
@@ -176,6 +176,40 @@ impl GenericContainer for RafContainer {
     }
 }
 
+impl Dump for RafContainer {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<RAF Container>");
+        {
+            let indent = indent + 1;
+            dump_println!(indent, "Model  = {}", self.model);
+            dump_println!(indent, "<Offsets>");
+            {
+                let indent = indent + 1;
+                dump_println!(indent, "JPEG Offset = {}", self.offsets.jpeg_offset);
+                dump_println!(indent, "JPEG Len    = {}", self.offsets.jpeg_len);
+                dump_println!(indent, "Meta Offset = {}", self.offsets.meta_offset);
+                dump_println!(indent, "Meta Len    = {}", self.offsets.meta_len);
+                dump_println!(indent, "CFA Offset  = {}", self.offsets.cfa_offset);
+                dump_println!(indent, "CFA Len     = {}", self.offsets.cfa_len);
+            }
+            dump_println!(indent, "</Offsets>");
+            dump_println!(indent, "JPEG Container TODO");
+            // if let Some(jpeg_preview) = self.jpeg_preview() {
+
+            // } else {
+            //    dump_println!(indent, "ERROR: JPEG Preview not found");
+            // }
+            if let Some(meta_container) = self.meta_container() {
+                meta_container.print_dump(indent);
+            } else {
+                dump_println!(indent, "ERROR: Meta container not found");
+            }
+            dump_println!(indent, "CFA Container TODO");
+        }
+        dump_println!(indent, "</RAF Container>");
+    }
+}
+
 /// the RAW dimensions
 pub(super) const TAG_SENSOR_DIMENSION: u16 = 0x100;
 /// Top Left of activate area
@@ -192,6 +226,14 @@ pub(super) enum Value {
     Bytes(Vec<u8>),
 }
 
+impl std::fmt::Display for Value {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Int(n) => write!(f, "{:x}", n),
+            Self::Bytes(b) => write!(f, "bytes len={}", b.len()),
+        }
+    }
+}
 impl std::convert::TryFrom<&Value> for Point {
     type Error = crate::Error;
     fn try_from(v: &Value) -> Result<Self> {
@@ -299,6 +341,19 @@ impl GenericContainer for MetaContainer {
 
     fn raw_type(&self) -> RawType {
         RawType::Raf
+    }
+}
+
+impl Dump for MetaContainer {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<RAF Meta Container>");
+        {
+            let indent = indent + 1;
+            for (tag, value) in &self.tags {
+                dump_println!(indent, "<Meta {}=0x{:x}: {} />", tag, tag, value);
+            }
+        }
+        dump_println!(indent, "</RAF Meta Container>");
     }
 }
 

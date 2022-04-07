@@ -33,7 +33,7 @@ use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::Dir;
-use crate::{DataType, Error, RawData, RawFile, RawFileImpl, Rect, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Rect, Result, Type, TypeId};
 
 use crate::colour::BuiltinMatrix;
 
@@ -298,5 +298,17 @@ impl RawFileImpl for Cr3File {
 impl RawFile for Cr3File {
     fn type_(&self) -> Type {
         Type::Cr3
+    }
+}
+
+impl Dump for Cr3File {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<Canon CR3 File>");
+        // dump container
+        {
+            let indent = indent + 1;
+            self.container().print_dump(indent);
+        }
+        dump_println!(indent, "</Canon CR3 File>");
     }
 }

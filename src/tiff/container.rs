@@ -37,7 +37,7 @@ use crate::thumbnail;
 use crate::tiff::exif;
 use crate::tiff::{Dir, Entry, Ifd, Type};
 use crate::Type as RawType;
-use crate::{DataType, Error, Result};
+use crate::{DataType, Dump, Error, Result};
 
 /// IFD Container for TIFF based file.
 pub(crate) struct Container {
@@ -289,5 +289,13 @@ impl Container {
             log::error!("Entry for thumbnail has no offset");
             Err(Error::NotFound)
         }
+    }
+}
+
+impl Dump for Container {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<TIFF Container>");
+        // dump directories
+        dump_println!(indent, "</TIFF Container>");
     }
 }

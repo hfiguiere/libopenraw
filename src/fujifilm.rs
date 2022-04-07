@@ -39,7 +39,7 @@ use crate::thumbnail;
 use crate::thumbnail::{Data, DataOffset};
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
-use crate::{DataType, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 pub(crate) const RAF_MAGIC: &[u8] = b"FUJIFILMCCD-RAW ";
 
@@ -412,5 +412,14 @@ impl RawFileImpl for RafFile {
 impl RawFile for RafFile {
     fn type_(&self) -> Type {
         Type::Raf
+    }
+}
+
+impl Dump for RafFile {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<Fujifilm RAF File>");
+        // dump container
+        self.container().print_dump(indent + 1);
+        dump_println!(indent, "</Fujfilm RAF File>");
     }
 }

@@ -30,6 +30,7 @@ use crate::container;
 use crate::io::{View, Viewer};
 use crate::tiff;
 use crate::tiff::Type;
+use crate::Dump;
 use crate::Type as RawType;
 
 /// JFIF Container to just read a JPEG image.
@@ -154,5 +155,27 @@ impl Container {
         } else {
             0
         }
+    }
+}
+
+impl Dump for Container {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<JPEG Container>");
+        {
+            let indent = indent + 1;
+            dump_println!(
+                indent,
+                "Height = {} Width = {}",
+                self.height(),
+                self.width()
+            );
+            if let Some(exif) = self.exif() {
+                dump_println!(indent, "Exif: ");
+                exif.print_dump(indent);
+            } else {
+                dump_println!(indent, "No Exif");
+            }
+        }
+        dump_println!(indent, "</JPEG Container>");
     }
 }

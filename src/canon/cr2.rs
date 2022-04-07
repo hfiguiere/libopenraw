@@ -36,7 +36,7 @@ use crate::thumbnail;
 use crate::thumbnail::ThumbDesc;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
-use crate::{Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 lazy_static::lazy_static! {
     static ref MATRICES: [BuiltinMatrix; 78] = [
@@ -538,5 +538,13 @@ impl RawFileImpl for Cr2File {
 impl RawFile for Cr2File {
     fn type_(&self) -> Type {
         Type::Cr2
+    }
+}
+
+impl Dump for Cr2File {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<Canon CR2 File>");
+        // dump container
+        dump_println!(indent, "</Canon CR2 File>");
     }
 }

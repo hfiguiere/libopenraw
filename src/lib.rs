@@ -18,6 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#[macro_use]
+mod dump;
+
 mod apple;
 mod bitmap;
 mod camera_ids;
@@ -47,6 +50,7 @@ pub mod tiff;
 mod utils;
 
 pub use bitmap::{Bitmap, Rect};
+pub use dump::Dump;
 pub use rawdata::RawData;
 pub use rawfile::RawFile;
 pub use rawfile::RawFileImpl;

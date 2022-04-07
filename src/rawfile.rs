@@ -25,7 +25,7 @@ use std::rc::Rc;
 
 use log::{debug, error};
 
-use super::{Error, RawData, Result, Type, TypeId};
+use super::{Dump, Error, RawData, Result, Type, TypeId};
 use crate::container::GenericContainer;
 use crate::factory;
 use crate::identify;
@@ -158,7 +158,7 @@ where
 
 /// Standard trait for RAW files.
 /// Mostly using the default implementation
-pub trait RawFile: RawFileImpl {
+pub trait RawFile: RawFileImpl + Dump {
     /// Return the type for the RAW file
     fn type_(&self) -> Type;
 
@@ -289,7 +289,7 @@ mod test {
     use crate::io::View;
     use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
     use crate::tiff;
-    use crate::{DataType, Error, Result, Type, TypeId};
+    use crate::{DataType, Dump, Error, Result, Type, TypeId};
 
     struct TestContainer {
         view: RefCell<View>,
@@ -311,6 +311,10 @@ mod test {
         fn raw_type(&self) -> Type {
             Type::Test
         }
+    }
+
+    impl Dump for TestContainer {
+        fn print_dump(&self, _indent: u32) {}
     }
 
     struct TestRawFile {
@@ -395,6 +399,10 @@ mod test {
         fn type_(&self) -> Type {
             Type::Test
         }
+    }
+
+    impl Dump for TestRawFile {
+        fn print_dump(&self, _indent: u32) {}
     }
 
     #[test]

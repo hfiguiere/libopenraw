@@ -34,7 +34,7 @@ use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
-use crate::{DataType, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 /// The MakerNote tag names. It's actually the same as Olympus.
 pub(crate) use crate::olympus::MNOTE_TAG_NAMES;
@@ -207,5 +207,10 @@ impl RawFile for ErfFile {
     }
 }
 
-#[cfg(test)]
-mod test {}
+impl Dump for ErfFile {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<Epson ERF File>");
+        // dump container
+        dump_println!(indent, "</Epson ERF File>");
+    }
+}

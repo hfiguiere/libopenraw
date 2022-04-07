@@ -36,7 +36,7 @@ use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
-use crate::{Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 lazy_static::lazy_static! {
     /// Make to TypeId map for DNG files.
@@ -278,5 +278,13 @@ impl RawFileImpl for DngFile {
 impl RawFile for DngFile {
     fn type_(&self) -> Type {
         Type::Dng
+    }
+}
+
+impl Dump for DngFile {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<DNG File>");
+        // dump container
+        dump_println!(indent, "</DNG File>");
     }
 }

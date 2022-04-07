@@ -33,7 +33,7 @@ use crate::io::{View, Viewer};
 use crate::thumbnail;
 use crate::tiff;
 use crate::Type as RawType;
-use crate::{DataType, Error, Result};
+use crate::{DataType, Dump, Error, Result};
 
 /// Copy paste imports from mp4parse_capi
 mod capi {
@@ -275,5 +275,13 @@ impl Container {
     }
 }
 
-#[cfg(test)]
-mod test {}
+impl Dump for Container {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<MP4 Iso Container>");
+        {
+            let indent = indent + 1;
+            dump_println!(indent, "Track count: {}", self.track_count().unwrap_or(0));
+        }
+        dump_println!(indent, "</MP4 Iso Container>");
+    }
+}
