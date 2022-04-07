@@ -34,7 +34,6 @@ use crate::colour::BuiltinMatrix;
 use crate::container::GenericContainer;
 use crate::decompress;
 use crate::io::Viewer;
-use crate::jpeg;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::thumbnail::{Data, DataOffset};
@@ -203,7 +202,6 @@ pub(crate) struct RafFile {
     reader: Rc<Viewer>,
     container: OnceCell<raf::RafContainer>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
-    jpeg_preview: OnceCell<Option<jpeg::Container>>,
 }
 
 impl RafFile {
@@ -213,26 +211,11 @@ impl RafFile {
             reader: viewer,
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
-            jpeg_preview: OnceCell::new(),
         })
     }
 
     fn is_xtrans() -> bool {
         false
-    }
-
-    fn jpeg_preview(&self) -> Option<&jpeg::Container> {
-        self.jpeg_preview
-            .get_or_init(|| {
-                self.container();
-                self.container.get().and_then(|container| {
-                    let offset = container.jpeg_offset() as u64;
-                    Viewer::create_view(&self.reader, offset)
-                        .map(jpeg::Container::new)
-                        .ok()
-                })
-            })
-            .as_ref()
     }
 }
 
@@ -257,13 +240,12 @@ impl RawFileImpl for RafFile {
     fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
         self.thumbnails.get_or_init(|| {
             let mut thumbnails = Vec::new();
-            if let Some(jpeg) = self.jpeg_preview() {
+            self.container();
+            let container = self.container.get().unwrap();
+            if let Some(jpeg) = container.jpeg_preview() {
                 let width = jpeg.width();
                 let height = jpeg.height();
                 let dim = std::cmp::max(width, height) as u32;
-
-                self.container();
-                let container = self.container.get().unwrap();
 
                 thumbnails.push((
                     dim,
@@ -320,16 +302,18 @@ impl RawFileImpl for RafFile {
     }
 
     fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<tiff::Dir>> {
+        self.container();
+        let raw_container = self.container.get().unwrap();
         match ifd_type {
-            tiff::Type::Main => self
+            tiff::Type::Main => raw_container
                 .jpeg_preview()
                 .and_then(|jpeg| jpeg.exif())
                 .and_then(|exif| exif.directory(0)),
-            tiff::Type::Exif => self
+            tiff::Type::Exif => raw_container
                 .jpeg_preview()
                 .and_then(|jpeg| jpeg.exif())
                 .and_then(|exif| exif.exif_dir()),
-            tiff::Type::MakerNote => self
+            tiff::Type::MakerNote => raw_container
                 .jpeg_preview()
                 .and_then(|jpeg| jpeg.exif())
                 .and_then(|exif| exif.mnote_dir(self.type_())),

@@ -11,6 +11,7 @@ use crate::bitmap::{Point, Size};
 use crate::container;
 use crate::container::GenericContainer;
 use crate::io::{View, Viewer};
+use crate::jpeg;
 use crate::utils;
 use crate::{Error, Result};
 
@@ -30,6 +31,7 @@ pub(super) struct RafContainer {
     model: String,
     offsets: RafOffsetDirectory,
     meta: OnceCell<Option<MetaContainer>>,
+    jpeg_preview: OnceCell<Option<jpeg::Container>>,
 }
 
 impl RafContainer {
@@ -39,6 +41,7 @@ impl RafContainer {
             model: String::from(""),
             offsets: RafOffsetDirectory::default(),
             meta: OnceCell::new(),
+            jpeg_preview: OnceCell::new(),
         }
     }
 
@@ -123,6 +126,16 @@ impl RafContainer {
                 .ok();
 
                 container
+            })
+            .as_ref()
+    }
+
+    pub fn jpeg_preview(&self) -> Option<&jpeg::Container> {
+        self.jpeg_preview
+            .get_or_init(|| {
+                Viewer::create_subview(&*self.view.borrow_mut(), self.offsets.jpeg_offset as u64)
+                    .map(jpeg::Container::new)
+                    .ok()
             })
             .as_ref()
     }
