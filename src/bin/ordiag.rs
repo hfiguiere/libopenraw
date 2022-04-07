@@ -1,5 +1,5 @@
 /*
- * libopenraw - bin/ordump.rs
+ * libopenraw - bin/ordiag.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -168,7 +168,7 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool) {
 fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool) {
     let rawfile = raw_file_from_file(p, None);
 
-    info!("Dumping {}", p);
+    info!("Diags {}", p);
 
     match rawfile {
         Ok(ref rawfile) => {

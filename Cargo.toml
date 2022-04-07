@@ -2,7 +2,7 @@
 name = "libopenraw"
 version = "0.4.0"
 edition = "2018"
-default-run = "ordump"
+default-run = "ordiag"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -24,6 +24,6 @@ serde_derive = "1.0.136"
 serde-xml-rs = "0.5.1"
 
 [[bin]]
-name = "ordump"
+name = "ordiag"
 test = false
 bench = false
