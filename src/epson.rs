@@ -165,7 +165,7 @@ impl RawFileImpl for ErfFile {
                         mnote
                             .entry_cloned(
                                 exif::MNOTE_EPSON_SENSORAREA,
-                                &mut *self.container().borrow_view_mut(),
+                                &mut self.container().borrow_view_mut(),
                             )
                             // the data type is `Undefined`
                             .and_then(|e| e.value_array::<u16>(mnote.endian()))

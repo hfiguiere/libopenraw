@@ -361,7 +361,7 @@ pub(crate) fn ifd_locate_thumbnail(
                     data_type = DataType::Jpeg;
                     if x == 0 || y == 0 {
                         if let Ok(view) =
-                            io::Viewer::create_subview(&*container.borrow_view_mut(), offset as u64)
+                            io::Viewer::create_subview(&container.borrow_view_mut(), offset as u64)
                         {
                             let jpeg = jpeg::Container::new(view, container.raw_type());
                             x = jpeg.width() as u32;

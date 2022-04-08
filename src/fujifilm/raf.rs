@@ -115,7 +115,7 @@ impl RafContainer {
                     return None;
                 }
                 let container = Viewer::create_subview(
-                    &*self.view.borrow_mut(),
+                    &self.view.borrow_mut(),
                     self.offsets.meta_offset as u64,
                 )
                 .map_err(Error::from)
@@ -134,7 +134,7 @@ impl RafContainer {
     pub fn jpeg_preview(&self) -> Option<&jpeg::Container> {
         self.jpeg_preview
             .get_or_init(|| {
-                Viewer::create_subview(&*self.view.borrow_mut(), self.offsets.jpeg_offset as u64)
+                Viewer::create_subview(&self.view.borrow_mut(), self.offsets.jpeg_offset as u64)
                     .map(|view| jpeg::Container::new(view, RawType::Raf))
                     .ok()
             })

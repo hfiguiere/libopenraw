@@ -247,7 +247,7 @@ impl Container {
         len: u32,
         list: &mut Vec<(u32, thumbnail::ThumbDesc)>,
     ) -> Result<usize> {
-        let view = io::Viewer::create_subview(&*self.borrow_view_mut(), offset as u64)?;
+        let view = io::Viewer::create_subview(&self.borrow_view_mut(), offset as u64)?;
         let jpeg = jpeg::Container::new(view, self.raw_type);
         let width = jpeg.width() as u32;
         let height = jpeg.height() as u32;
