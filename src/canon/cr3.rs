@@ -139,7 +139,7 @@ impl RawFileImpl for Cr3File {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = mp4::Container::new(view);
+            let mut container = mp4::Container::new(view, self.type_());
             container.load().expect("MP4 container error");
             container
         })
@@ -218,11 +218,7 @@ impl RawFileImpl for Cr3File {
         match ifd_type {
             tiff::Type::Main => container.metadata_block(0).and_then(|c| c.1.directory(0)),
             tiff::Type::Exif => container.metadata_block(1).and_then(|c| c.1.directory(0)),
-            tiff::Type::MakerNote => container.metadata_block(2).and_then(|c| {
-                // XXX subobptimal as we already loaded the Dir
-                // 8 as offset = past the TIFF magic
-                Dir::new_makernote("Canon", &*c.1, 8, 0, &super::MNOTE_TAG_NAMES).ok()
-            }),
+            tiff::Type::MakerNote => container.metadata_block(2).and_then(|c| c.1.directory(0)),
             _ => None,
         }
     }

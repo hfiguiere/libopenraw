@@ -363,7 +363,7 @@ pub(crate) fn ifd_locate_thumbnail(
                         if let Ok(view) =
                             io::Viewer::create_subview(&*container.borrow_view_mut(), offset as u64)
                         {
-                            let jpeg = jpeg::Container::new(view);
+                            let jpeg = jpeg::Container::new(view, container.raw_type());
                             x = jpeg.width() as u32;
                             y = jpeg.height() as u32;
                         } else {

@@ -55,6 +55,7 @@ pub(crate) struct Container {
     exif_ifd: OnceCell<Option<Rc<Dir>>>,
     /// The MakerNote IFD
     mnote_ifd: OnceCell<Option<Rc<Dir>>>,
+    raw_type: RawType,
 }
 
 impl container::GenericContainer for Container {
@@ -65,11 +66,15 @@ impl container::GenericContainer for Container {
     fn borrow_view_mut(&self) -> RefMut<'_, View> {
         self.view.borrow_mut()
     }
+
+    fn raw_type(&self) -> RawType {
+        self.raw_type
+    }
 }
 
 impl Container {
     /// Create a new container for the view.
-    pub(crate) fn new(view: View, dir_map: Vec<Type>) -> Self {
+    pub(crate) fn new(view: View, dir_map: Vec<Type>, raw_type: RawType) -> Self {
         Self {
             view: RefCell::new(view),
             endian: RefCell::new(container::Endian::Unset),
@@ -78,6 +83,7 @@ impl Container {
             exif_correction: 0,
             exif_ifd: OnceCell::new(),
             mnote_ifd: OnceCell::new(),
+            raw_type,
         }
     }
 
@@ -127,16 +133,22 @@ impl Container {
             let mut dirs = vec![];
 
             let mut index = 0_usize;
-            let mut view = self.view.borrow_mut();
-            view.seek(SeekFrom::Start(4)).expect("Seek failed");
-            let mut dir_offset = self.read_u32(&mut view).unwrap_or(0);
+            let mut dir_offset = {
+                let mut view = self.view.borrow_mut();
+                view.seek(SeekFrom::Start(4)).expect("Seek failed");
+                self.read_u32(&mut view).unwrap_or(0)
+            };
             while dir_offset != 0 {
                 let t = if index < self.dir_map.len() {
                     self.dir_map[index]
                 } else {
                     Type::Other
                 };
-                if let Ok(dir) = self.dir_at(&mut view, dir_offset, t) {
+                if let Ok(dir) = if t == Type::MakerNote {
+                    Dir::create_maker_note(self, dir_offset, self.raw_type)
+                } else {
+                    self.dir_at(&mut *self.view.borrow_mut(), dir_offset, t)
+                } {
                     dir_offset = dir.next_ifd();
                     dirs.push(Rc::new(dir));
                     index += 1
@@ -217,6 +229,7 @@ impl Container {
                                 log::warn!("Coudln't create maker_note: {}", e);
                                 e
                             })
+                            .map(Rc::new)
                             .ok()
                     })
                     .or_else(|| {
@@ -235,7 +248,7 @@ impl Container {
         list: &mut Vec<(u32, thumbnail::ThumbDesc)>,
     ) -> Result<usize> {
         let view = io::Viewer::create_subview(&*self.borrow_view_mut(), offset as u64)?;
-        let jpeg = jpeg::Container::new(view);
+        let jpeg = jpeg::Container::new(view, self.raw_type);
         let width = jpeg.width() as u32;
         let height = jpeg.height() as u32;
         let dim = std::cmp::max(width, height);

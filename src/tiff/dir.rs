@@ -77,7 +77,7 @@ impl Dir {
         container: &dyn container::GenericContainer,
         offset: u32,
         file_type: RawType,
-    ) -> Result<Rc<Dir>> {
+    ) -> Result<Dir> {
         match file_type {
             RawType::Cr2 | RawType::Cr3 | RawType::Crw => {
                 return Dir::new_makernote("Canon", container, offset, 0, &canon::MNOTE_TAG_NAMES)
@@ -313,7 +313,7 @@ impl Dir {
         offset: u32,
         mnote_offset: u32,
         tag_names: &'static HashMap<u16, &'static str>,
-    ) -> Result<Rc<Dir>> {
+    ) -> Result<Dir> {
         if let Ok(mut dir) = match container.endian() {
             container::Endian::Little => {
                 let mut view = container.borrow_view_mut();
@@ -331,7 +331,7 @@ impl Dir {
             dir.id = id.to_string();
             dir.mnote_offset = mnote_offset;
             dir.tag_names = tag_names;
-            Ok(Rc::new(dir))
+            Ok(dir)
         } else {
             Err(Error::NotFound)
         }

@@ -307,6 +307,10 @@ mod test {
         fn borrow_view_mut(&self) -> RefMut<'_, View> {
             self.view.borrow_mut()
         }
+
+        fn raw_type(&self) -> Type {
+            Type::Test
+        }
     }
 
     struct TestRawFile {

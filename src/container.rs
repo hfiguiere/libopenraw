@@ -29,6 +29,7 @@ use crate::io::View;
 use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
 use crate::utils;
 use crate::Result;
+use crate::Type as RawType;
 
 /// Endian of the container
 #[derive(Clone, Copy, Debug)]
@@ -69,6 +70,9 @@ pub trait GenericContainer {
     fn endian(&self) -> Endian {
         Endian::Unset
     }
+
+    /// Return the rawtype for which this was created
+    fn raw_type(&self) -> RawType;
 
     /// Make a thumbnail from the thumbdesc
     fn make_thumbnail(&self, desc: &ThumbDesc) -> Result<Thumbnail> {

@@ -476,6 +476,7 @@ impl RawFileImpl for Cr2File {
                     tiff::Type::Other,
                     tiff::Type::Cfa,
                 ],
+                self.type_(),
             );
             container.load().expect("TIFF container error");
             container

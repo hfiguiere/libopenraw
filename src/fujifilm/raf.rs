@@ -13,6 +13,7 @@ use crate::container::GenericContainer;
 use crate::io::{View, Viewer};
 use crate::jpeg;
 use crate::utils;
+use crate::Type as RawType;
 use crate::{Error, Result};
 
 /// Just a list of offset/length
@@ -134,7 +135,7 @@ impl RafContainer {
         self.jpeg_preview
             .get_or_init(|| {
                 Viewer::create_subview(&*self.view.borrow_mut(), self.offsets.jpeg_offset as u64)
-                    .map(jpeg::Container::new)
+                    .map(|view| jpeg::Container::new(view, RawType::Raf))
                     .ok()
             })
             .as_ref()
@@ -168,6 +169,10 @@ impl GenericContainer for RafContainer {
 
     fn borrow_view_mut(&self) -> RefMut<'_, View> {
         self.view.borrow_mut()
+    }
+
+    fn raw_type(&self) -> RawType {
+        RawType::Raf
     }
 }
 
@@ -290,6 +295,10 @@ impl GenericContainer for MetaContainer {
 
     fn borrow_view_mut(&self) -> RefMut<'_, View> {
         self.view.borrow_mut()
+    }
+
+    fn raw_type(&self) -> RawType {
+        RawType::Raf
     }
 }
 

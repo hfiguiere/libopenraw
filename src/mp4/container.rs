@@ -32,6 +32,7 @@ use crate::container;
 use crate::io::{View, Viewer};
 use crate::thumbnail;
 use crate::tiff;
+use crate::Type as RawType;
 use crate::{DataType, Error, Result};
 
 /// Copy paste imports from mp4parse_capi
@@ -55,6 +56,7 @@ pub(crate) struct Container {
     context: mp4parse::MediaContext,
     /// The metadata IFDs, and their viewer.
     meta_ifds: OnceCell<Vec<Option<IfdHolder>>>,
+    raw_type: RawType,
 }
 
 impl container::GenericContainer for Container {
@@ -65,16 +67,21 @@ impl container::GenericContainer for Container {
     fn borrow_view_mut(&self) -> RefMut<'_, View> {
         self.view.borrow_mut()
     }
+
+    fn raw_type(&self) -> RawType {
+        self.raw_type
+    }
 }
 
 impl Container {
     /// New IFD read from `View`
     // XXX implement the reading offset. Currently assume 0.
-    pub fn new(view: View) -> Self {
+    pub fn new(view: View, raw_type: RawType) -> Self {
         Self {
             view: RefCell::new(view),
             context: mp4parse::MediaContext::new(),
             meta_ifds: OnceCell::new(),
+            raw_type,
         }
     }
 
@@ -127,14 +134,18 @@ impl Container {
 
     /// Get the metadata at `idx`
     pub(crate) fn metadata_block(&self, idx: u32) -> Option<IfdHolder> {
-        fn make_ifd_holder(data: Option<&Vec<u8>>, t: tiff::Type) -> Option<IfdHolder> {
+        fn make_ifd_holder(
+            data: Option<&Vec<u8>>,
+            t: tiff::Type,
+            raw_type: RawType,
+        ) -> Option<IfdHolder> {
             data.and_then(|d| {
                 if d.len() >= 4 {
                     // XXX so many copies
                     let cursor = Box::new(std::io::Cursor::new(d.clone()));
                     let viewer = Viewer::new(cursor);
                     if let Ok(view) = Viewer::create_view(&viewer, 0) {
-                        let mut ifd = tiff::Container::new(view, vec![t]);
+                        let mut ifd = tiff::Container::new(view, vec![t], raw_type);
                         ifd.load().expect("ifd load");
                         return Some((viewer, Rc::new(ifd)));
                     }
@@ -148,10 +159,10 @@ impl Container {
             .get_or_init(|| {
                 if let Ok(craw) = self.craw_header() {
                     vec![
-                        make_ifd_holder(craw.meta1.as_ref(), tiff::Type::Main),
-                        make_ifd_holder(craw.meta2.as_ref(), tiff::Type::Exif),
-                        make_ifd_holder(craw.meta3.as_ref(), tiff::Type::MakerNote),
-                        make_ifd_holder(craw.meta4.as_ref(), tiff::Type::Other),
+                        make_ifd_holder(craw.meta1.as_ref(), tiff::Type::Main, self.raw_type),
+                        make_ifd_holder(craw.meta2.as_ref(), tiff::Type::Exif, self.raw_type),
+                        make_ifd_holder(craw.meta3.as_ref(), tiff::Type::MakerNote, self.raw_type),
+                        make_ifd_holder(craw.meta4.as_ref(), tiff::Type::Other, self.raw_type),
                     ]
                 } else {
                     vec![None; 4]

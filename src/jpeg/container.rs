@@ -30,6 +30,7 @@ use crate::container;
 use crate::io::{View, Viewer};
 use crate::tiff;
 use crate::tiff::Type;
+use crate::Type as RawType;
 
 /// JFIF Container to just read a JPEG image.
 pub(crate) struct Container {
@@ -41,6 +42,8 @@ pub(crate) struct Container {
     decoder: OnceCell<RefCell<Decoder<View>>>,
     /// Exif IFD
     exif: OnceCell<Option<(tiff::Container, Rc<Viewer>)>>,
+    /// The RawType this belong to
+    raw_type: RawType,
 }
 
 impl container::GenericContainer for Container {
@@ -51,15 +54,20 @@ impl container::GenericContainer for Container {
     fn borrow_view_mut(&self) -> RefMut<'_, View> {
         self.view.borrow_mut()
     }
+
+    fn raw_type(&self) -> RawType {
+        self.raw_type
+    }
 }
 
 impl Container {
-    pub(crate) fn new(view: View) -> Self {
+    pub(crate) fn new(view: View, raw_type: RawType) -> Self {
         Self {
             view: RefCell::new(view),
             image_info: OnceCell::new(),
             decoder: OnceCell::new(),
             exif: OnceCell::new(),
+            raw_type,
         }
     }
 
@@ -96,7 +104,11 @@ impl Container {
                                 err
                             })
                             .ok()?;
-                        let mut exif = tiff::Container::new(view, vec![Type::Main, Type::Other]);
+                        let mut exif = tiff::Container::new(
+                            view,
+                            vec![Type::Main, Type::Other],
+                            self.raw_type,
+                        );
                         exif.load().expect("Failed to load");
 
                         Some((exif, viewer))
