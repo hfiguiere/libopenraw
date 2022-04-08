@@ -20,6 +20,7 @@
 
 //! IFD entries.
 
+use std::collections::HashMap;
 use std::convert::TryFrom;
 use std::io::{Read, Seek, SeekFrom};
 
@@ -28,7 +29,7 @@ use log::debug;
 
 use crate::container::Endian;
 use crate::io::View;
-use crate::{Error, Result};
+use crate::{Dump, Error, Result};
 
 use super::exif;
 use super::exif::{ExifValue, TagType};
@@ -62,7 +63,7 @@ impl DataBytes {
 #[derive(Clone)]
 pub struct Entry {
     /// The tag
-    _id: u16,
+    id: u16,
     /// The type. See `exif::TagType`, use `exif::TagType::try_from()`
     /// to get the enum.
     pub(crate) type_: i16,
@@ -73,7 +74,7 @@ pub struct Entry {
 impl Entry {
     pub fn new(id: u16, type_: i16, count: u32, data: [u8; 4]) -> Self {
         Entry {
-            _id: id,
+            id,
             type_,
             count,
             data: DataBytes::Inline(data),
@@ -290,6 +291,30 @@ impl Entry {
             log::error!("incorrect type {} for {:?}", self.type_, T::exif_type());
             None
         }
+    }
+}
+
+impl Dump for Entry {
+    fn print_dump(&self, indent: u32) {
+        self.print_dump_with_args(indent, HashMap::new());
+    }
+
+    fn print_dump_with_args(&self, indent: u32, args: HashMap<&str, String>) {
+        let type_: &str = TagType::try_from(self.type_)
+            .map(|t| t.into())
+            .unwrap_or("ERROR");
+        let tag_name = args.get("tag_name").cloned().unwrap_or_default();
+        dump_println!(
+            indent,
+            "<0x{:x}={}> {} [{}={} {}] = {}",
+            self.id,
+            self.id,
+            tag_name,
+            self.type_,
+            type_,
+            self.count,
+            "VALUE"
+        );
     }
 }
 

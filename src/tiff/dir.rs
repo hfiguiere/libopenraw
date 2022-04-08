@@ -21,7 +21,7 @@
 //! Image File Directory is the main data structure of TIFF used by Exif
 //! and most RAW format.
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::io::{Read, Seek, SeekFrom};
 use std::rc::Rc;
 
@@ -44,7 +44,7 @@ use crate::sony;
 use crate::tiff;
 use crate::tiff::exif;
 use crate::Type as RawType;
-use crate::{Error, Result};
+use crate::{Dump, Error, Result};
 
 use super::{Entry, Ifd, Type};
 
@@ -61,7 +61,7 @@ pub struct Dir {
     /// Type of IFD
     type_: Type,
     /// All the IFD entries
-    entries: HashMap<u16, Entry>,
+    entries: BTreeMap<u16, Entry>,
     /// Position of the next IFD
     next: u32,
     /// The MakerNote ID
@@ -342,7 +342,7 @@ impl Dir {
     where
         E: container::EndianType,
     {
-        let mut entries = HashMap::new();
+        let mut entries = BTreeMap::new();
         view.seek(SeekFrom::Start(dir_offset as u64))?;
 
         let num_entries = view.read_i16::<E>()?;
@@ -478,5 +478,25 @@ impl Ifd for Dir {
     /// Return the entry for the `tag`.
     fn entry(&self, tag: u16) -> Option<&Entry> {
         self.entries.get(&tag)
+    }
+}
+
+impl Dump for Dir {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(
+            indent,
+            "<IFD type={:?} {} entries>",
+            self.type_,
+            self.num_entries()
+        );
+        {
+            let indent = indent + 1;
+            for (id, entry) in &self.entries {
+                let tag_name = self.tag_names.get(id).unwrap_or(&"");
+                let args = HashMap::from([("tag_name", String::from(*tag_name))]);
+                entry.print_dump_with_args(indent, args);
+            }
+        }
+        dump_println!(indent, "</IFD>");
     }
 }

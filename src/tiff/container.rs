@@ -294,8 +294,24 @@ impl Container {
 
 impl Dump for Container {
     fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<TIFF Container>");
+        let dirs = self.dirs();
+        dump_println!(
+            indent,
+            "<TIFF Container endian={} {} directories>",
+            match self.endian() {
+                container::Endian::Little => "II",
+                container::Endian::Big => "MM",
+                _ => "Unknown",
+            },
+            dirs.len()
+        );
         // dump directories
+        {
+            let indent = indent + 1;
+            for dir in dirs {
+                dir.print_dump(indent);
+            }
+        }
         dump_println!(indent, "</TIFF Container>");
     }
 }

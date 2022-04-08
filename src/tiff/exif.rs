@@ -58,6 +58,27 @@ impl std::convert::TryFrom<i16> for TagType {
     }
 }
 
+impl std::convert::From<TagType> for &'static str {
+    fn from(tag_type: TagType) -> Self {
+        use TagType::*;
+        match tag_type {
+            Byte => "BYTE",
+            Ascii => "ASCII",
+            Short => "SHORT",
+            Long => "LONG",
+            Rational => "RATIONAL",
+            SByte => "SBYTE",
+            Undefined => "UNDEFINED",
+            SShort => "SSHORT",
+            SLong => "SLONG",
+            SRational => "SRATIONAL",
+            Float => "FLOAT",
+            Double => "DOUBLE",
+            Invalid => "INVALID",
+        }
+    }
+}
+
 /// Return the size of a unit for the tag type
 pub fn tag_unit_size(tag_type: TagType) -> usize {
     use TagType::*;

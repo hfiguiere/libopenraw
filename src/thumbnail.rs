@@ -37,6 +37,15 @@ pub enum Data {
     Bytes(Vec<u8>),
 }
 
+impl Data {
+    pub fn len(&self) -> usize {
+        match *self {
+            Self::Offset(ref offset) => offset.len as usize,
+            Self::Bytes(ref v) => v.len(),
+        }
+    }
+}
+
 /// Describe a thumbnail to fetch it from the container later
 /// as a blob
 pub struct ThumbDesc {

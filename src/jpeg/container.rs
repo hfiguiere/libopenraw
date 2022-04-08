@@ -165,9 +165,9 @@ impl Dump for Container {
             let indent = indent + 1;
             dump_println!(
                 indent,
-                "Height = {} Width = {}",
-                self.height(),
-                self.width()
+                "Width = {} Height = {}",
+                self.width(),
+                self.height()
             );
             if let Some(exif) = self.exif() {
                 dump_println!(indent, "Exif: ");

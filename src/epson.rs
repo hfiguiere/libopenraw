@@ -210,7 +210,10 @@ impl RawFile for ErfFile {
 impl Dump for ErfFile {
     fn print_dump(&self, indent: u32) {
         dump_println!(indent, "<Epson ERF File>");
-        // dump container
+        {
+            let indent = indent + 1;
+            self.container().print_dump(indent);
+        }
         dump_println!(indent, "</Epson ERF File>");
     }
 }

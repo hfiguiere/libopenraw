@@ -29,7 +29,9 @@ use mp4parse::craw;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
+use crate::container::GenericContainer;
 use crate::io::{View, Viewer};
+use crate::jpeg;
 use crate::thumbnail;
 use crate::tiff;
 use crate::Type as RawType;
@@ -44,6 +46,30 @@ mod capi {
         pub is_jpeg: bool,
         pub offset: u64,
         pub len: u64,
+    }
+
+    impl crate::Dump for TrackRawInfo {
+        fn print_dump(&self, indent: u32) {
+            dump_println!(indent, "<TrackRawInfo>");
+            {
+                let indent = indent + 1;
+
+                dump_println!(
+                    indent,
+                    "Image: Width {} x {}",
+                    self.image_width,
+                    self.image_height
+                );
+                dump_println!(
+                    indent,
+                    "{}: {} bytes @{}",
+                    if self.is_jpeg { "JPEG" } else { "Raw" },
+                    self.len,
+                    self.offset
+                );
+            }
+            dump_println!(indent, "</TrackRawInfo>");
+        }
     }
 }
 
@@ -275,12 +301,143 @@ impl Container {
     }
 }
 
+impl Dump for craw::CanonThumbnail {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(
+            indent,
+            "Thumbnail: {}x{} {} bytes",
+            self.width,
+            self.height,
+            self.data.len()
+        );
+    }
+}
+
+impl Dump for craw::CrawHeader {
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<CRaw header>");
+        {
+            let indent = indent + 1;
+            dump_println!(indent, "'cncv': {} bytes", self.cncv.len());
+            dump_println!(indent, "<offsets>");
+            for (i, offset) in self.offsets.iter().enumerate() {
+                dump_println!(
+                    indent + 1,
+                    "(@{}, {} bytes){}",
+                    offset.0,
+                    offset.1,
+                    if i == 1 { ": preview" } else { "" }
+                );
+            }
+            dump_println!(indent, "</offsets>");
+            dump_println!(
+                indent,
+                "Meta1: {} bytes",
+                self.meta1.as_ref().map(|v| v.len()).unwrap_or(0)
+            );
+            dump_println!(
+                indent,
+                "Meta2: {} bytes",
+                self.meta2.as_ref().map(|v| v.len()).unwrap_or(0)
+            );
+            dump_println!(
+                indent,
+                "Meta3: {} bytes",
+                self.meta3.as_ref().map(|v| v.len()).unwrap_or(0)
+            );
+            dump_println!(
+                indent,
+                "Meta4: {} bytes",
+                self.meta4.as_ref().map(|v| v.len()).unwrap_or(0)
+            );
+            self.thumbnail.print_dump(indent);
+        }
+        dump_println!(indent, "</CRaw header>");
+    }
+}
+
 impl Dump for Container {
     fn print_dump(&self, indent: u32) {
         dump_println!(indent, "<MP4 Iso Container>");
         {
             let indent = indent + 1;
-            dump_println!(indent, "Track count: {}", self.track_count().unwrap_or(0));
+            if let Ok(craw_header) = self.craw_header() {
+                craw_header.print_dump(indent);
+            } else {
+                dump_println!(indent, "ERROR: Craw Header not found");
+            }
+            if let Ok(preview_desc) = self.preview_desc() {
+                // XXX get the data_type
+                // XXX shall the be ThumbDesc impl ?
+                dump_println!(
+                    indent,
+                    "<Preview {} x {}, JPEG {} bytes>",
+                    preview_desc.width,
+                    preview_desc.height,
+                    preview_desc.data.len()
+                );
+                {
+                    let indent = indent + 1;
+                    match preview_desc.data {
+                        thumbnail::Data::Offset(ref offset) => {
+                            if preview_desc.data_type == DataType::Jpeg {
+                                if let Ok(view) =
+                                    Viewer::create_subview(&*self.borrow_view_mut(), offset.offset)
+                                {
+                                    let jpeg = jpeg::Container::new(view, self.raw_type);
+                                    jpeg.print_dump(indent);
+                                } else {
+                                    dump_println!(indent, "Error loading preview");
+                                }
+                            } else {
+                                dump_println!(indent, "Not JPEG");
+                            }
+                        }
+                        _ => dump_println!(indent, "Inline data {} bytes", preview_desc.data.len()),
+                    }
+                }
+                dump_println!(indent, "</Preview>");
+            }
+
+            let track_count = self.track_count().unwrap_or(0);
+            dump_println!(indent, "Track count: {}", track_count);
+
+            for i in 0..track_count {
+                let is_video = self.is_track_video(i).unwrap_or(false);
+                dump_println!(
+                    indent,
+                    "<Track {}: {}>",
+                    i,
+                    if is_video {
+                        if i == 2 {
+                            "main Raw"
+                        } else {
+                            "is video"
+                        }
+                    } else {
+                        "is not video"
+                    }
+                );
+                if is_video {
+                    let indent = indent + 1;
+
+                    if let Ok(raw_track) = self.raw_track(i) {
+                        raw_track.print_dump(indent);
+                    }
+                }
+                dump_println!(indent, "</Track {}>", i);
+            }
+
+            for i in 0..4 {
+                dump_println!(indent, "<Metadata Block {}>", i);
+                {
+                    let indent = indent + 1;
+                    if let Some(holder) = self.metadata_block(i) {
+                        holder.1.print_dump(indent);
+                    }
+                }
+                dump_println!(indent, "</Metadata Block {}>", i);
+            }
         }
         dump_println!(indent, "</MP4 Iso Container>");
     }

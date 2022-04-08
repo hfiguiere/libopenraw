@@ -89,7 +89,7 @@ impl From<u16> for Compression {
 }
 
 /// Type of IFD
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Type {
     /// Main IFD (see TIFF)
     Main,

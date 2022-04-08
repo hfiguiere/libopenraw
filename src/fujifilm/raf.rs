@@ -1,7 +1,7 @@
 //! RAF specific containers and type
 
 use std::cell::{RefCell, RefMut};
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::io::{Read, Seek, SeekFrom};
 
 use byteorder::{BigEndian, ReadBytesExt};
@@ -194,11 +194,11 @@ impl Dump for RafContainer {
             }
             dump_println!(indent, "</Offsets>");
             dump_println!(indent, "JPEG Container TODO");
-            // if let Some(jpeg_preview) = self.jpeg_preview() {
-
-            // } else {
-            //    dump_println!(indent, "ERROR: JPEG Preview not found");
-            // }
+            if let Some(jpeg_preview) = self.jpeg_preview() {
+                jpeg_preview.print_dump(indent);
+            } else {
+                dump_println!(indent, "ERROR: JPEG Preview not found");
+            }
             if let Some(meta_container) = self.meta_container() {
                 meta_container.print_dump(indent);
             } else {
@@ -216,9 +216,19 @@ pub(super) const TAG_SENSOR_DIMENSION: u16 = 0x100;
 pub(super) const TAG_IMG_TOP_LEFT: u16 = 0x110;
 /// Width Height of activate area
 pub(super) const TAG_IMG_HEIGHT_WIDTH: u16 = 0x111;
-//const TAG_OUTPUT_HEIGHT_WIDTH: u16 = 0x121;
+const TAG_OUTPUT_HEIGHT_WIDTH: u16 = 0x121;
 /// some info about the RAW.
 pub(super) const TAG_RAW_INFO: u16 = 0x130;
+
+lazy_static::lazy_static! {
+    static ref META_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+        (TAG_SENSOR_DIMENSION, "SensorDimension"),
+        (TAG_IMG_TOP_LEFT, "ImageTopLeft"),
+        (TAG_IMG_HEIGHT_WIDTH, "ImageHeightWidth"),
+        (TAG_OUTPUT_HEIGHT_WIDTH, "OutputHeightWidth"),
+        (TAG_RAW_INFO, "RawInfo"),
+    ]);
+}
 
 #[derive(Debug)]
 pub(super) enum Value {
@@ -270,14 +280,14 @@ impl std::convert::TryFrom<&Value> for Size {
 
 pub(super) struct MetaContainer {
     view: RefCell<View>,
-    tags: HashMap<u16, Value>,
+    tags: BTreeMap<u16, Value>,
 }
 
 impl MetaContainer {
     fn new(view: View) -> MetaContainer {
         MetaContainer {
             view: RefCell::new(view),
-            tags: HashMap::new(),
+            tags: BTreeMap::new(),
         }
     }
 
@@ -350,7 +360,8 @@ impl Dump for MetaContainer {
         {
             let indent = indent + 1;
             for (tag, value) in &self.tags {
-                dump_println!(indent, "<Meta {}=0x{:x}: {} />", tag, tag, value);
+                let tag_name = META_TAG_NAMES.get(tag).unwrap_or(&"");
+                dump_println!(indent, "<0x{:x}={}> {} = {}", tag, tag, tag_name, value);
             }
         }
         dump_println!(indent, "</RAF Meta Container>");
