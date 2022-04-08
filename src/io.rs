@@ -85,6 +85,10 @@ impl View {
         })
     }
 
+    pub(crate) fn offset(&self) -> u64 {
+        self.offset
+    }
+
     /// Only for test to create a non functional `View`
     #[cfg(test)]
     pub fn new_test() -> Self {

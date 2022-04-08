@@ -160,7 +160,7 @@ impl Container {
 
 impl Dump for Container {
     fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<JPEG Container>");
+        dump_println!(indent, "<JPEG Container @{}>", self.view.borrow().offset());
         {
             let indent = indent + 1;
             dump_println!(

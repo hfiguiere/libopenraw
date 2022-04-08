@@ -358,7 +358,11 @@ impl Dump for craw::CrawHeader {
 
 impl Dump for Container {
     fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<MP4 Iso Container>");
+        dump_println!(
+            indent,
+            "<MP4 Iso Container @{}>",
+            self.view.borrow().offset()
+        );
         {
             let indent = indent + 1;
             if let Ok(craw_header) = self.craw_header() {

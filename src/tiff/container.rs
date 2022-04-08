@@ -297,15 +297,15 @@ impl Dump for Container {
         let dirs = self.dirs();
         dump_println!(
             indent,
-            "<TIFF Container endian={} {} directories>",
+            "<TIFF Container endian={} {} directories @{}>",
             match self.endian() {
                 container::Endian::Little => "II",
                 container::Endian::Big => "MM",
                 _ => "Unknown",
             },
-            dirs.len()
+            dirs.len(),
+            self.view.borrow().offset()
         );
-        // dump directories
         {
             let indent = indent + 1;
             for dir in dirs {

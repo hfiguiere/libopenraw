@@ -178,7 +178,7 @@ impl GenericContainer for RafContainer {
 
 impl Dump for RafContainer {
     fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<RAF Container>");
+        dump_println!(indent, "<RAF Container @{}>", self.view.borrow().offset());
         {
             let indent = indent + 1;
             dump_println!(indent, "Model  = {}", self.model);
@@ -193,7 +193,6 @@ impl Dump for RafContainer {
                 dump_println!(indent, "CFA Len     = {}", self.offsets.cfa_len);
             }
             dump_println!(indent, "</Offsets>");
-            dump_println!(indent, "JPEG Container TODO");
             if let Some(jpeg_preview) = self.jpeg_preview() {
                 jpeg_preview.print_dump(indent);
             } else {
@@ -356,7 +355,11 @@ impl GenericContainer for MetaContainer {
 
 impl Dump for MetaContainer {
     fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<RAF Meta Container>");
+        dump_println!(
+            indent,
+            "<RAF Meta Container @{}>",
+            self.view.borrow().offset()
+        );
         {
             let indent = indent + 1;
             for (tag, value) in &self.tags {

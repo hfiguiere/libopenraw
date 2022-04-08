@@ -490,10 +490,11 @@ impl Dump for Dir {
         };
         dump_println!(
             indent,
-            "<IFD type={:?}{} {} entries>",
+            "<IFD type={:?}{} {} entries next=@{}>",
             self.type_,
             maker_note_id,
-            self.num_entries()
+            self.num_entries(),
+            self.next_ifd()
         );
         {
             let indent = indent + 1;
