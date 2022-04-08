@@ -483,10 +483,16 @@ impl Ifd for Dir {
 
 impl Dump for Dir {
     fn print_dump(&self, indent: u32) {
+        let maker_note_id = if self.type_ == Type::MakerNote {
+            format!(" id={}", self.id)
+        } else {
+            String::default()
+        };
         dump_println!(
             indent,
-            "<IFD type={:?} {} entries>",
+            "<IFD type={:?}{} {} entries>",
             self.type_,
+            maker_note_id,
             self.num_entries()
         );
         {
