@@ -316,7 +316,7 @@ impl RawFileImpl for RafFile {
             tiff::Type::MakerNote => raw_container
                 .jpeg_preview()
                 .and_then(|jpeg| jpeg.exif())
-                .and_then(|exif| exif.mnote_dir(self.type_())),
+                .and_then(|exif| exif.mnote_dir()),
             _ => None,
         }
     }

@@ -34,8 +34,7 @@ use crate::io;
 use crate::io::View;
 use crate::jpeg;
 use crate::thumbnail;
-use crate::tiff::exif;
-use crate::tiff::{Dir, Entry, Ifd, Type};
+use crate::tiff::{Dir, Entry, Type};
 use crate::Type as RawType;
 use crate::{DataType, Dump, Error, Result};
 
@@ -116,7 +115,7 @@ impl Container {
     }
 
     /// Read the dir at the offset
-    fn dir_at(&self, view: &mut View, offset: u32, t: Type) -> Result<Dir> {
+    pub(crate) fn dir_at(&self, view: &mut View, offset: u32, t: Type) -> Result<Dir> {
         match *self.endian.borrow() {
             container::Endian::Little => Dir::read::<LittleEndian>(view, offset, t),
             container::Endian::Big => Dir::read::<BigEndian>(view, offset, t),
@@ -145,7 +144,7 @@ impl Container {
                     Type::Other
                 };
                 if let Ok(dir) = if t == Type::MakerNote {
-                    Dir::create_maker_note(self, dir_offset, self.raw_type)
+                    Dir::create_maker_note(self, dir_offset)
                 } else {
                     self.dir_at(&mut *self.view.borrow_mut(), dir_offset, t)
                 } {
@@ -194,17 +193,7 @@ impl Container {
         self.exif_ifd
             .get_or_init(|| {
                 self.directory(0)
-                    .and_then(|dir| dir.value::<u32>(exif::EXIF_TAG_EXIF_IFD_POINTER))
-                    .and_then(|offset| {
-                        let mut view = self.view.borrow_mut();
-                        self.dir_at(&mut view, offset, Type::Exif)
-                            .map(Rc::new)
-                            .map_err(|e| {
-                                log::warn!("Coudln't get exif dir at {}: {}", offset, e);
-                                e
-                            })
-                            .ok()
-                    })
+                    .and_then(|dir| dir.get_exif_ifd(self))
                     .or_else(|| {
                         log::warn!("Coudln't find Exif IFD");
                         None
@@ -214,24 +203,12 @@ impl Container {
     }
 
     /// Lazily load the MakerNote and return it.
-    pub(crate) fn mnote_dir(&self, raw_type: RawType) -> Option<Rc<Dir>> {
+    pub(crate) fn mnote_dir(&self) -> Option<Rc<Dir>> {
         self.mnote_ifd
             .get_or_init(|| {
                 log::debug!("Loading MakerNote");
                 self.exif_dir()
-                    .and_then(|dir| {
-                        dir.entry(exif::EXIF_TAG_MAKER_NOTE)
-                            .and_then(|e| e.offset())
-                    })
-                    .and_then(|offset| {
-                        Dir::create_maker_note(self, offset, raw_type)
-                            .map_err(|e| {
-                                log::warn!("Coudln't create maker_note: {}", e);
-                                e
-                            })
-                            .map(Rc::new)
-                            .ok()
-                    })
+                    .and_then(|dir| dir.get_mnote_ifd(self))
                     .or_else(|| {
                         log::warn!("Couldn't find MakerNote");
                         None
@@ -311,6 +288,12 @@ impl Dump for Container {
             let indent = indent + 1;
             for dir in dirs {
                 dir.print_dump(indent);
+                if let Some(exif_dir) = dir.get_exif_ifd(self) {
+                    exif_dir.print_dump(indent + 1);
+                    if let Some(mnote_dir) = exif_dir.get_mnote_ifd(self) {
+                        mnote_dir.print_dump(indent + 2);
+                    }
+                }
             }
         }
         dump_println!(indent, "</TIFF Container>");

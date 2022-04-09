@@ -514,7 +514,7 @@ impl RawFileImpl for Cr2File {
                 container.directory(0)
             }
             tiff::Type::Exif => container.exif_dir(),
-            tiff::Type::MakerNote => container.mnote_dir(self.type_()),
+            tiff::Type::MakerNote => container.mnote_dir(),
             _ => None,
         }
     }

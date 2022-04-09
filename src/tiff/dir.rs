@@ -78,8 +78,8 @@ impl Dir {
     pub(crate) fn create_maker_note(
         container: &dyn container::GenericContainer,
         offset: u32,
-        file_type: RawType,
     ) -> Result<Dir> {
+        let file_type = container.raw_type();
         match file_type {
             RawType::Cr2 | RawType::Cr3 | RawType::Crw => {
                 return Dir::new_makernote("Canon", container, offset, 0, &canon::MNOTE_TAG_NAMES)
@@ -407,6 +407,35 @@ impl Dir {
         } else {
             false
         }
+    }
+
+    pub(crate) fn get_exif_ifd(&self, container: &tiff::Container) -> Option<Rc<Dir>> {
+        self.value::<u32>(exif::EXIF_TAG_EXIF_IFD_POINTER)
+            .and_then(|offset| {
+                let mut view = container.borrow_view_mut();
+                container
+                    .dir_at(&mut view, offset, Type::Exif)
+                    .map(Rc::new)
+                    .map_err(|e| {
+                        log::warn!("Coudln't get exif dir at {}: {}", offset, e);
+                        e
+                    })
+                    .ok()
+            })
+    }
+
+    pub(crate) fn get_mnote_ifd(&self, container: &tiff::Container) -> Option<Rc<Dir>> {
+        self.entry(exif::EXIF_TAG_MAKER_NOTE)
+            .and_then(|e| e.offset())
+            .and_then(|offset| {
+                Dir::create_maker_note(container, offset)
+                    .map(Rc::new)
+                    .map_err(|e| {
+                        log::warn!("Coudln't create maker_note: {}", e);
+                        e
+                    })
+                    .ok()
+            })
     }
 
     /// Get sub IFDs.

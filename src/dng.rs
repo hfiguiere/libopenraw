@@ -223,7 +223,7 @@ impl RawFileImpl for DngFile {
                 })
             }
             tiff::Type::Exif => self.container.get().unwrap().exif_dir(),
-            tiff::Type::MakerNote => self.container.get().unwrap().mnote_dir(self.type_()),
+            tiff::Type::MakerNote => self.container.get().unwrap().mnote_dir(),
             _ => None,
         }
     }

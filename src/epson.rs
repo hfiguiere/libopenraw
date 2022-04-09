@@ -146,7 +146,7 @@ impl RawFileImpl for ErfFile {
             }
             tiff::Type::MakerNote => {
                 self.container();
-                self.container.get().unwrap().mnote_dir(self.type_())
+                self.container.get().unwrap().mnote_dir()
             }
             _ => None,
         }
