@@ -43,8 +43,10 @@ use crate::sigma;
 use crate::sony;
 use crate::tiff;
 use crate::tiff::exif;
+#[cfg(feature = "dump")]
+use crate::Dump;
 use crate::Type as RawType;
-use crate::{Dump, Error, Result};
+use crate::{Error, Result};
 
 use super::{Entry, Ifd, Type};
 
@@ -481,6 +483,7 @@ impl Ifd for Dir {
     }
 }
 
+#[cfg(feature = "dump")]
 impl Dump for Dir {
     fn print_dump(&self, indent: u32) {
         let maker_note_id = if self.type_ == Type::MakerNote {

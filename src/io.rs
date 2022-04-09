@@ -85,6 +85,7 @@ impl View {
         })
     }
 
+    #[cfg(feature = "dump")]
     pub(crate) fn offset(&self) -> u64 {
         self.offset
     }

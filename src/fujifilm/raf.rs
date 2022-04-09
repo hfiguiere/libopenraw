@@ -177,6 +177,7 @@ impl GenericContainer for RafContainer {
 }
 
 impl Dump for RafContainer {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         dump_println!(indent, "<RAF Container @{}>", self.view.borrow().offset());
         {
@@ -354,6 +355,7 @@ impl GenericContainer for MetaContainer {
 }
 
 impl Dump for MetaContainer {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         dump_println!(
             indent,

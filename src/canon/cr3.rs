@@ -302,6 +302,7 @@ impl RawFile for Cr3File {
 }
 
 impl Dump for Cr3File {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         dump_println!(indent, "<Canon CR3 File>");
         // dump container

@@ -208,6 +208,7 @@ impl RawFile for ErfFile {
 }
 
 impl Dump for ErfFile {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         dump_println!(indent, "<Epson ERF File>");
         {

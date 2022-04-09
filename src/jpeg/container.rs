@@ -159,6 +159,7 @@ impl Container {
 }
 
 impl Dump for Container {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         dump_println!(indent, "<JPEG Container @{}>", self.view.borrow().offset());
         {

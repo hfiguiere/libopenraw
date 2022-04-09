@@ -29,8 +29,10 @@ use mp4parse::craw;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
+#[cfg(feature = "dump")]
 use crate::container::GenericContainer;
 use crate::io::{View, Viewer};
+#[cfg(feature = "dump")]
 use crate::jpeg;
 use crate::thumbnail;
 use crate::tiff;
@@ -49,6 +51,7 @@ mod capi {
     }
 
     impl crate::Dump for TrackRawInfo {
+        #[cfg(feature = "dump")]
         fn print_dump(&self, indent: u32) {
             dump_println!(indent, "<TrackRawInfo>");
             {
@@ -302,6 +305,7 @@ impl Container {
 }
 
 impl Dump for craw::CanonThumbnail {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         dump_println!(
             indent,
@@ -314,6 +318,7 @@ impl Dump for craw::CanonThumbnail {
 }
 
 impl Dump for craw::CrawHeader {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         dump_println!(indent, "<CRaw header>");
         {
@@ -357,6 +362,7 @@ impl Dump for craw::CrawHeader {
 }
 
 impl Dump for Container {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         dump_println!(
             indent,

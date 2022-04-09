@@ -416,6 +416,7 @@ impl RawFile for RafFile {
 }
 
 impl Dump for RafFile {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         dump_println!(indent, "<Fujifilm RAF File>");
         self.container().print_dump(indent + 1);

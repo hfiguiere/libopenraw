@@ -293,6 +293,7 @@ impl Container {
 }
 
 impl Dump for Container {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         let dirs = self.dirs();
         dump_println!(

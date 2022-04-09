@@ -542,6 +542,7 @@ impl RawFile for Cr2File {
 }
 
 impl Dump for Cr2File {
+    #[cfg(feature = "dump")]
     fn print_dump(&self, indent: u32) {
         dump_println!(indent, "<Canon CR2 File>");
         {

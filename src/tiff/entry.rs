@@ -20,6 +20,7 @@
 
 //! IFD entries.
 
+#[cfg(feature = "dump")]
 use std::collections::HashMap;
 use std::convert::TryFrom;
 use std::io::{Read, Seek, SeekFrom};
@@ -29,7 +30,9 @@ use log::debug;
 
 use crate::container::Endian;
 use crate::io::View;
-use crate::{Dump, Error, Result};
+#[cfg(feature = "dump")]
+use crate::Dump;
+use crate::{Error, Result};
 
 use super::exif;
 use super::exif::{ExifValue, TagType};
@@ -63,7 +66,7 @@ impl DataBytes {
 #[derive(Clone)]
 pub struct Entry {
     /// The tag
-    id: u16,
+    _id: u16,
     /// The type. See `exif::TagType`, use `exif::TagType::try_from()`
     /// to get the enum.
     pub(crate) type_: i16,
@@ -74,7 +77,7 @@ pub struct Entry {
 impl Entry {
     pub fn new(id: u16, type_: i16, count: u32, data: [u8; 4]) -> Self {
         Entry {
-            id,
+            _id: id,
             type_,
             count,
             data: DataBytes::Inline(data),
@@ -294,6 +297,7 @@ impl Entry {
     }
 }
 
+#[cfg(feature = "dump")]
 impl Dump for Entry {
     fn print_dump(&self, indent: u32) {
         self.print_dump_with_args(indent, HashMap::new());
@@ -307,8 +311,8 @@ impl Dump for Entry {
         dump_println!(
             indent,
             "<0x{:x}={}> {} [{}={} {}] = {}",
-            self.id,
-            self.id,
+            self._id,
+            self._id,
             tag_name,
             self.type_,
             type_,

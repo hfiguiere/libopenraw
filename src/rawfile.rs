@@ -314,6 +314,7 @@ mod test {
     }
 
     impl Dump for TestContainer {
+        #[cfg(feature = "dump")]
         fn print_dump(&self, _indent: u32) {}
     }
 
@@ -402,6 +403,7 @@ mod test {
     }
 
     impl Dump for TestRawFile {
+        #[cfg(feature = "dump")]
         fn print_dump(&self, _indent: u32) {}
     }
 
