@@ -161,7 +161,7 @@ private:
     std::vector<uint16_t> m_slices;
 
     MCU *m_mcuROW1, *m_mcuROW2;
-    char *m_buf1,*m_buf2;
+    MCU m_buf1, m_buf2;
 
     /** fill the bit buffer */
     void fillBitBuffer (IO::Stream * s, uint16_t nbits);

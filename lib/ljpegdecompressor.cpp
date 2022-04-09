@@ -373,16 +373,16 @@ LJpegDecompressor::DecoderStructInit (DecompressInfo *dcPtr)
     }
 
     mcuSize=dcPtr->compsInScan * sizeof(ComponentType);
-    if ((m_buf1 = (char *)malloc(dcPtr->imageWidth*mcuSize))==NULL) {
+    if ((m_buf1 = (MCU)malloc(dcPtr->imageWidth * mcuSize)) == NULL) {
         throw DecodingException("Not enough memory for buf1\n");
     }
-    if ((m_buf2 = (char *)malloc(dcPtr->imageWidth*mcuSize))==NULL) {
+    if ((m_buf2 = (MCU)malloc(dcPtr->imageWidth * mcuSize)) == NULL) {
         throw DecodingException("Not enough memory for buf2\n");
     }
 
     for (i=0;i<dcPtr->imageWidth;i++) {
-        m_mcuROW1[i]=(MCU)(m_buf1+i*mcuSize);
-        m_mcuROW2[i]=(MCU)(m_buf2+i*mcuSize);
+        m_mcuROW1[i] = m_buf1 + i * dcPtr->compsInScan;
+        m_mcuROW2[i] = m_buf2 + i * dcPtr->compsInScan;
     }
 }
 
