@@ -182,6 +182,19 @@ impl ExifValue for u32 {
     }
 }
 
+impl ExifValue for i32 {
+    fn exif_type() -> TagType {
+        TagType::SLong
+    }
+
+    fn read<E>(buf: &[u8]) -> Self
+    where
+        E: ByteOrder,
+    {
+        E::read_i32(buf)
+    }
+}
+
 impl ExifValue for f32 {
     fn exif_type() -> TagType {
         TagType::Float
@@ -277,6 +290,12 @@ impl ExifValue for Rational {
     }
 }
 
+impl ToString for Rational {
+    fn to_string(&self) -> String {
+        format!("{}/{}", self.num, self.denom)
+    }
+}
+
 /// Signed rational number (fraction)
 pub struct SRational {
     pub num: i32,
@@ -310,6 +329,12 @@ impl ExifValue for SRational {
             num: E::read_i32(buf),
             denom: E::read_i32(&buf[4..]),
         }
+    }
+}
+
+impl ToString for SRational {
+    fn to_string(&self) -> String {
+        format!("{}/{}", self.num, self.denom)
     }
 }
 

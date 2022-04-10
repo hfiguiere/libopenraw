@@ -535,7 +535,7 @@ impl Dump for Dir {
             for (id, entry) in &self.entries {
                 let tag_name = self.tag_names.get(id).unwrap_or(&"");
                 let args = HashMap::from([("tag_name", String::from(*tag_name))]);
-                entry.print_dump_with_args(indent, args);
+                entry.print_dump_entry(indent, self.endian(), args);
             }
         }
         dump_println!(indent, "</IFD>");

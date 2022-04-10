@@ -30,8 +30,6 @@ use log::debug;
 
 use crate::container::Endian;
 use crate::io::View;
-#[cfg(feature = "dump")]
-use crate::Dump;
 use crate::{Error, Result};
 
 use super::exif;
@@ -198,6 +196,32 @@ impl Entry {
             })
     }
 
+    /// Get the signed int value at index. Ignore typing between SSHORT
+    /// and SLONG
+    fn int_value_at_index<E>(&self, index: u32) -> Option<i32>
+    where
+        E: ByteOrder,
+    {
+        if index >= self.count {
+            log::error!("index {} is >= {}", index, self.count);
+            return None;
+        }
+        exif::TagType::try_from(self.type_)
+            .ok()
+            .and_then(|typ| match typ {
+                TagType::SShort => Some(i16::read::<E>(
+                    &self.data.as_slice()[i16::unit_size() * index as usize..],
+                ) as i32),
+                TagType::SLong => Some(i32::read::<E>(
+                    &self.data.as_slice()[i32::unit_size() * index as usize..],
+                )),
+                _ => {
+                    log::error!("incorrect type {} for uint", self.type_);
+                    None
+                }
+            })
+    }
+
     /// Get the value out of the entry, ignoring the type.
     pub fn value_untyped<T, E>(&self) -> Option<T>
     where
@@ -213,6 +237,14 @@ impl Entry {
         E: ByteOrder,
     {
         self.uint_value_at_index::<E>(0)
+    }
+
+    /// Get an int value out of the entry
+    pub fn int_value<E>(&self) -> Option<i32>
+    where
+        E: ByteOrder,
+    {
+        self.int_value_at_index::<E>(0)
     }
 
     /// Get the value out of the entry.
@@ -295,19 +327,48 @@ impl Entry {
             None
         }
     }
-}
 
-#[cfg(feature = "dump")]
-impl Dump for Entry {
-    fn print_dump(&self, indent: u32) {
-        self.print_dump_with_args(indent, HashMap::new());
-    }
+    #[cfg(feature = "dump")]
+    pub(crate) fn print_dump_entry(
+        &self,
+        indent: u32,
+        endian: Endian,
+        args: HashMap<&str, String>,
+    ) {
+        fn value<E>(e: &Entry) -> String
+        where
+            E: ByteOrder,
+        {
+            use crate::tiff::exif::{Rational, SRational};
 
-    fn print_dump_with_args(&self, indent: u32, args: HashMap<&str, String>) {
+            match TagType::try_from(e.type_) {
+                Ok(TagType::Ascii) => e.value::<String, E>(),
+                Ok(TagType::Byte) => e.value::<u8, E>().map(|v| v.to_string()),
+                Ok(TagType::SByte) => e.value::<i8, E>().map(|v| v.to_string()),
+                Ok(TagType::Short) | Ok(TagType::Long) => {
+                    e.uint_value::<E>().map(|v| v.to_string())
+                }
+                Ok(TagType::SShort) | Ok(TagType::SLong) => {
+                    e.int_value::<E>().map(|v| v.to_string())
+                }
+                Ok(TagType::Rational) => e.value::<Rational, E>().map(|v| v.to_string()),
+                Ok(TagType::SRational) => e.value::<SRational, E>().map(|v| v.to_string()),
+                Err(_) => None,
+                _ => Some("VALUE".to_string()),
+            }
+            .or_else(|| Some("ERROR".to_string()))
+            .unwrap()
+        }
+
         let type_: &str = TagType::try_from(self.type_)
             .map(|t| t.into())
             .unwrap_or("ERROR");
         let tag_name = args.get("tag_name").cloned().unwrap_or_default();
+        let value = match endian {
+            Endian::Little => value::<LittleEndian>(self),
+            Endian::Big => value::<BigEndian>(self),
+            _ => "NO ENDIAN".to_string(),
+        };
         dump_println!(
             indent,
             "<0x{:x}={}> {} [{}={} {}] = {}",
@@ -317,7 +378,7 @@ impl Dump for Entry {
             self.type_,
             type_,
             self.count,
-            "VALUE"
+            value
         );
     }
 }
