@@ -409,6 +409,7 @@ impl Dir {
         }
     }
 
+    /// Get the Exif IFD from the directory
     pub(crate) fn get_exif_ifd(&self, container: &tiff::Container) -> Option<Rc<Dir>> {
         self.value::<u32>(exif::EXIF_TAG_EXIF_IFD_POINTER)
             .and_then(|offset| {
@@ -424,6 +425,7 @@ impl Dir {
             })
     }
 
+    /// Get the MakerNote IFD from the directory
     pub(crate) fn get_mnote_ifd(&self, container: &tiff::Container) -> Option<Rc<Dir>> {
         self.entry(exif::EXIF_TAG_MAKER_NOTE)
             .and_then(|e| e.offset())

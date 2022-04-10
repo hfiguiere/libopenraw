@@ -294,6 +294,11 @@ impl Dump for Container {
                         mnote_dir.print_dump(indent + 2);
                     }
                 }
+                if let Some(subdirs) = dir.get_sub_ifds(self) {
+                    for subdir in subdirs {
+                        subdir.print_dump(indent + 1);
+                    }
+                }
             }
         }
         dump_println!(indent, "</TIFF Container>");
