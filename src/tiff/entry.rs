@@ -297,6 +297,46 @@ impl Entry {
     }
 
     /// Get the value array out of the entry, using `endian`.
+    pub fn int_value_array(&self, endian: Endian) -> Option<Vec<i32>> {
+        let type_ = match exif::TagType::try_from(self.type_) {
+            Ok(t @ TagType::SShort) | Ok(t @ TagType::SLong) => t,
+            _ => {
+                log::error!("incorrect type {} for uint", self.type_);
+                return None;
+            }
+        };
+        let unit_size = match type_ {
+            TagType::SShort => i16::unit_size(),
+            TagType::SLong => i32::unit_size(),
+            _ => unreachable!(),
+        };
+
+        let data_slice = self.data.as_slice();
+        let count = self.count as usize;
+        let mut values = Vec::new();
+        for index in 0..count {
+            let slice = &data_slice[unit_size * index as usize..];
+            let v = match type_ {
+                TagType::SShort => {
+                    (match endian {
+                        Endian::Big => i16::read::<BigEndian>(slice),
+                        Endian::Little => i16::read::<LittleEndian>(slice),
+                        _ => unreachable!(),
+                    }) as i32
+                }
+                TagType::SLong => match endian {
+                    Endian::Big => i32::read::<BigEndian>(slice),
+                    Endian::Little => i32::read::<LittleEndian>(slice),
+                    _ => unreachable!(),
+                },
+                _ => unreachable!(),
+            };
+            values.push(v);
+        }
+        Some(values)
+    }
+
+    /// Get the value array out of the entry, using `endian`.
     pub fn value_array<T>(&self, endian: Endian) -> Option<Vec<T>>
     where
         T: ExifValue,
@@ -335,24 +375,53 @@ impl Entry {
         endian: Endian,
         args: HashMap<&str, String>,
     ) {
-        fn value<E>(e: &Entry) -> String
+        fn array_to_str<V>(array: &Vec<V>) -> String
+        where
+            V: ToString,
+        {
+            if array.len() == 1 {
+                array[0].to_string()
+            } else {
+                let mut s = String::from("[ ");
+                for (i, v) in array.iter().enumerate() {
+                    if i > 0 {
+                        s.push_str(", ");
+                    }
+                    if i > 5 {
+                        s.push_str("...");
+                        break;
+                    }
+                    s.push_str(&v.to_string());
+                }
+                s.push_str(" ]");
+
+                s
+            }
+        }
+
+        fn value<E>(e: &Entry, endian: Endian) -> String
         where
             E: ByteOrder,
         {
             use crate::tiff::exif::{Rational, SRational};
 
             match TagType::try_from(e.type_) {
-                Ok(TagType::Ascii) => e.value::<String, E>(),
-                Ok(TagType::Byte) => e.value::<u8, E>().map(|v| v.to_string()),
-                Ok(TagType::SByte) => e.value::<i8, E>().map(|v| v.to_string()),
+                Ok(TagType::Ascii) => e.value::<String, E>().map(|v| format!("\"{}\"", v)),
+                Ok(TagType::Byte) => e.value_array::<u8>(endian).as_ref().map(array_to_str),
+                Ok(TagType::SByte) => e.value_array::<i8>(endian).as_ref().map(array_to_str),
                 Ok(TagType::Short) | Ok(TagType::Long) => {
-                    e.uint_value::<E>().map(|v| v.to_string())
+                    e.uint_value_array(endian).as_ref().map(array_to_str)
                 }
                 Ok(TagType::SShort) | Ok(TagType::SLong) => {
-                    e.int_value::<E>().map(|v| v.to_string())
+                    e.int_value_array(endian).as_ref().map(array_to_str)
                 }
-                Ok(TagType::Rational) => e.value::<Rational, E>().map(|v| v.to_string()),
-                Ok(TagType::SRational) => e.value::<SRational, E>().map(|v| v.to_string()),
+                Ok(TagType::Rational) => {
+                    e.value_array::<Rational>(endian).as_ref().map(array_to_str)
+                }
+                Ok(TagType::SRational) => e
+                    .value_array::<SRational>(endian)
+                    .as_ref()
+                    .map(array_to_str),
                 Err(_) => None,
                 _ => Some("VALUE".to_string()),
             }
@@ -365,13 +434,13 @@ impl Entry {
             .unwrap_or("ERROR");
         let tag_name = args.get("tag_name").cloned().unwrap_or_default();
         let value = match endian {
-            Endian::Little => value::<LittleEndian>(self),
-            Endian::Big => value::<BigEndian>(self),
+            Endian::Little => value::<LittleEndian>(self, endian),
+            Endian::Big => value::<BigEndian>(self, endian),
             _ => "NO ENDIAN".to_string(),
         };
         dump_println!(
             indent,
-            "<0x{:x}={}> {} [{}={} {}] = {}",
+            "<0x{:04x}={:>5}> {:<30} [{:>2}={:<10} {}] = {}",
             self._id,
             self._id,
             tag_name,
