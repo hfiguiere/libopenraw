@@ -303,6 +303,19 @@ impl Dir {
                 }
 
                 // XXX Minolta
+
+                // Others
+
+                // SilverFast scanner. (Plustek)
+                // Doesn't follow the standard.
+                if &data[0..5] == b"LSI1\0" {
+                    return Err(Error::InvalidFormat);
+                }
+                // Google Pixel
+                // BLOB
+                if &data[0..4] == b"HDRP" {
+                    return Err(Error::InvalidFormat);
+                }
             }
         }
         Dir::new_makernote("", container, offset, 0, &MNOTE_EMPTY_TAGS)
