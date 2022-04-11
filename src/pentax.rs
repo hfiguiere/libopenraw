@@ -148,6 +148,8 @@ lazy_static::lazy_static! {
         (0x215, "CameraInfo"),
         (0x216, "BatteryInfo"),
         (0x21b, "SaturationInfo"),
+        (0x21c, "ColorMatrixA2"),
+        (0x21d, "ColorMatrixB2"),
         (0x21f, "AFInfo"),
         (0x220, "HuffmanTable"),
         (0x221, "KelvinWB"),

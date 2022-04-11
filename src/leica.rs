@@ -83,5 +83,8 @@ lazy_static::lazy_static! {
         (0x34c, "UserProfile"),
         (0x359, "ISOSelected"),
         (0x35a, "FNumber"),
+        (0x35b, "CorrelatedColorTemp"),
+        (0x35c, "ColorTint"),
+        (0x35d, "WhitePoint"),
     ]);
 }
