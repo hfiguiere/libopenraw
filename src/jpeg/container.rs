@@ -97,8 +97,9 @@ impl Container {
                     .exif_data()
                     .and_then(|data| {
                         let data = Vec::from(data);
+                        let length = data.len();
                         let io = Box::new(std::io::Cursor::new(data));
-                        let viewer = Viewer::new(io);
+                        let viewer = Viewer::new(io, length as u64);
                         let view = Viewer::create_view(&viewer, 0)
                             .map_err(|err| {
                                 log::error!("Failed to create view {}", err);

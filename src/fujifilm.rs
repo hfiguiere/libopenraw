@@ -206,7 +206,7 @@ pub(crate) struct RafFile {
 
 impl RafFile {
     pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader);
+        let viewer = Viewer::new(reader, 0);
         Box::new(RafFile {
             reader: viewer,
             container: OnceCell::new(),

@@ -155,7 +155,7 @@ pub(crate) struct DngFile {
 
 impl DngFile {
     pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader);
+        let viewer = Viewer::new(reader, 0);
         Box::new(DngFile {
             reader: viewer,
             container: OnceCell::new(),

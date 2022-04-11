@@ -501,9 +501,10 @@ mod test {
         use crate::io;
 
         let buf = Vec::from(b"abcdedfgijkl".as_slice());
+        let length = buf.len() as u64;
 
         let cursor = Box::new(std::io::Cursor::new(buf));
-        let viewer = std::rc::Rc::new(io::Viewer::new(cursor));
+        let viewer = std::rc::Rc::new(io::Viewer::new(cursor, length));
 
         let view = io::Viewer::create_view(&viewer, 0);
         assert!(view.is_ok());

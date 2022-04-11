@@ -38,19 +38,29 @@ use crate::rawfile::ReadAndSeek;
 /// ```
 pub(crate) struct Viewer {
     inner: RefCell<Box<dyn ReadAndSeek>>,
+    length: u64,
 }
 
 impl Viewer {
     /// Create a new Viewer from an actual I/O.
-    pub fn new(inner: Box<dyn ReadAndSeek>) -> Rc<Self> {
+    pub fn new(mut inner: Box<dyn ReadAndSeek>, length: u64) -> Rc<Self> {
+        let length = if length == 0 {
+            log::warn!("Length of ZERO passed to Viewer::new()");
+            inner.seek(SeekFrom::End(0)).unwrap_or(0)
+            // we assume the position will be reset.
+        } else {
+            length
+        };
+
         Rc::new(Viewer {
             inner: RefCell::new(inner),
+            length,
         })
     }
 
     /// Create a view at offset.
     pub fn create_view(viewer: &Rc<Viewer>, offset: u64) -> Result<View> {
-        View::new(viewer, offset)
+        View::new(viewer, offset, viewer.length() - offset)
     }
 
     /// Create a subview for view.
@@ -58,7 +68,11 @@ impl Viewer {
         view.inner
             .upgrade()
             .ok_or_else(|| Error::new(ErrorKind::Other, "failed to acquire Rc"))
-            .and_then(|viewer| View::new(&viewer, offset))
+            .and_then(|viewer| View::new(&viewer, offset, viewer.length() - offset))
+    }
+
+    fn length(&self) -> u64 {
+        self.length
     }
 
     /// Get the inner io to make an io call
@@ -73,15 +87,18 @@ impl Viewer {
 pub struct View {
     inner: Weak<Viewer>,
     offset: u64,
+    length: u64,
 }
 
 impl View {
     /// Crate a new view. `Viewer::create_view()` should be used instead.
-    fn new(viewer: &Rc<Viewer>, offset: u64) -> Result<Self> {
+    /// Length is the length of the view.
+    fn new(viewer: &Rc<Viewer>, offset: u64, length: u64) -> Result<Self> {
         viewer.get_io().seek(SeekFrom::Start(offset))?;
         Ok(View {
             inner: Rc::downgrade(viewer),
             offset,
+            length,
         })
     }
 
@@ -96,6 +113,7 @@ impl View {
         View {
             inner: Weak::new(),
             offset: 0,
+            length: 0,
         }
     }
 }
@@ -113,7 +131,14 @@ impl std::io::Seek for View {
         let inner = self.inner.upgrade().expect("Couldn't upgrade inner");
         let mut io = inner.get_io();
         io.seek(match pos {
-            SeekFrom::Start(p) => SeekFrom::Start(p + self.offset),
+            SeekFrom::Start(p) => {
+                if p > self.length {
+                    log::error!("Seeking past EOF {}", p);
+                    return Err(std::io::Error::from(std::io::ErrorKind::UnexpectedEof));
+                } else {
+                    SeekFrom::Start(p + self.offset)
+                }
+            }
             _ => pos,
         })
         .map(|i| i - self.offset)
@@ -136,7 +161,7 @@ mod test {
         let mut io = Box::new(std::io::Cursor::new(buffer.as_slice()));
         assert_eq!(io.stream_position().unwrap(), 0);
 
-        let viewer = Viewer::new(io);
+        let viewer = Viewer::new(io, buffer.len() as u64);
 
         let mut view = Viewer::create_view(&viewer, OFFSET).unwrap();
 

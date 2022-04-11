@@ -115,7 +115,7 @@ pub struct Cr3File {
 
 impl Cr3File {
     pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader);
+        let viewer = Viewer::new(reader, 0);
         Box::new(Cr3File {
             reader: viewer,
             container: OnceCell::new(),

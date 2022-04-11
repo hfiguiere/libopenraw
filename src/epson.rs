@@ -73,7 +73,7 @@ pub(crate) struct ErfFile {
 
 impl ErfFile {
     pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader);
+        let viewer = Viewer::new(reader, 0);
         Box::new(ErfFile {
             reader: viewer,
             container: OnceCell::new(),

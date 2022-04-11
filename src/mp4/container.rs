@@ -171,8 +171,9 @@ impl Container {
             data.and_then(|d| {
                 if d.len() >= 4 {
                     // XXX so many copies
+                    let length = d.len();
                     let cursor = Box::new(std::io::Cursor::new(d.clone()));
-                    let viewer = Viewer::new(cursor);
+                    let viewer = Viewer::new(cursor, length as u64);
                     if let Ok(view) = Viewer::create_view(&viewer, 0) {
                         let mut ifd = tiff::Container::new(view, vec![t], raw_type);
                         ifd.load().expect("ifd load");
