@@ -98,7 +98,7 @@ impl Entry {
         self.data = DataBytes::Offset(offset);
     }
 
-    /// Get the offset if it exist
+    /// Get the offset if it exists
     pub(crate) fn offset(&self) -> Option<u32> {
         match self.data {
             DataBytes::Offset(offset) => Some(offset),
@@ -422,6 +422,9 @@ impl Entry {
                     .value_array::<SRational>(endian)
                     .as_ref()
                     .map(array_to_str),
+                Ok(TagType::Float) => e.value_array::<f32>(endian).as_ref().map(array_to_str),
+                Ok(TagType::Double) => e.value_array::<f64>(endian).as_ref().map(array_to_str),
+
                 Err(_) => None,
                 _ => Some("VALUE".to_string()),
             }
