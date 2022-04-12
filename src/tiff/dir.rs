@@ -467,6 +467,10 @@ impl Dir {
 
         let mut ifds = Vec::new();
         for offset in offsets {
+            if offset == 0 {
+                log::warn!("SubIFD with offset 0");
+                continue;
+            }
             if let Ok(dir) = match self.endian() {
                 container::Endian::Little => {
                     let mut view = container.borrow_view_mut();
