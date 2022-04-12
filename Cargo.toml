@@ -24,7 +24,7 @@ serde_derive = "1.0.136"
 serde-xml-rs = "0.5.1"
 
 [features]
-default = []
+default = ["dump"]
 dump = []
 
 [[bin]]
