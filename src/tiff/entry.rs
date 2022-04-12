@@ -112,7 +112,7 @@ impl Entry {
 
     /// Load the data for the entry from the `io::View`.
     /// It doesn't check if the value is inline.
-    pub(crate) fn load_data<E>(&mut self, view: &mut View) -> Result<usize>
+    pub(crate) fn load_data<E>(&mut self, base_offset: u32, view: &mut View) -> Result<usize>
     where
         E: ByteOrder,
     {
@@ -123,7 +123,7 @@ impl Entry {
         let offset = match self.data {
             DataBytes::Offset(offset) => offset,
             _ => E::read_u32(self.data.as_slice()),
-        };
+        } + base_offset;
         let tag_type = TagType::try_from(self.type_).unwrap_or(TagType::Invalid);
         let data_size = exif::tag_unit_size(tag_type) * self.count as usize;
         debug!("Loading data at {}: {} bytes", offset, data_size);
@@ -516,19 +516,19 @@ mod test {
         // Little endian
 
         let mut e = Entry::new(0, TagType::Ascii as i16, 8, [4, 0, 0, 0]);
-        let r = e.load_data::<LittleEndian>(&mut view);
+        let r = e.load_data::<LittleEndian>(0, &mut view);
         assert_eq!(r, Ok(8));
         assert_eq!(
             e.value::<String, LittleEndian>(),
             Some(String::from("edfgijkl"))
         );
         // Trying to load again should fail.
-        let r = e.load_data::<LittleEndian>(&mut view);
+        let r = e.load_data::<LittleEndian>(0, &mut view);
         assert_eq!(r, Err(Error::AlreadyInited));
 
         // Big endian
         let mut e = Entry::new(0, TagType::Ascii as i16, 8, [0, 0, 0, 4]);
-        let r = e.load_data::<BigEndian>(&mut view);
+        let r = e.load_data::<BigEndian>(0, &mut view);
         assert_eq!(r, Ok(8));
         assert_eq!(
             e.value::<String, BigEndian>(),

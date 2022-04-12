@@ -332,11 +332,11 @@ impl Dir {
         if let Ok(mut dir) = match container.endian() {
             container::Endian::Little => {
                 let mut view = container.borrow_view_mut();
-                Dir::read::<LittleEndian>(&mut view, offset, Type::MakerNote)
+                Dir::read::<LittleEndian>(&mut view, offset, mnote_offset, Type::MakerNote)
             }
             container::Endian::Big => {
                 let mut view = container.borrow_view_mut();
-                Dir::read::<BigEndian>(&mut view, offset, Type::MakerNote)
+                Dir::read::<BigEndian>(&mut view, offset, mnote_offset, Type::MakerNote)
             }
             _ => {
                 log::error!("Endian unset to read directory");
@@ -353,7 +353,14 @@ impl Dir {
     }
 
     /// Read an IFD from the view, using endian `E`.
-    pub(crate) fn read<E>(view: &mut View, dir_offset: u32, type_: Type) -> Result<Self>
+    /// `base_offset` is the offset for reading data, like it is used in
+    /// MakerNote. 0 is the default.
+    pub(crate) fn read<E>(
+        view: &mut View,
+        dir_offset: u32,
+        base_offset: u32,
+        type_: Type,
+    ) -> Result<Self>
     where
         E: container::EndianType,
     {
@@ -374,7 +381,7 @@ impl Dir {
                 entry.set_offset(offset);
             } else if !entry.is_inline() {
                 let pos = view.seek(SeekFrom::Current(0))?;
-                entry.load_data::<E>(view)?;
+                entry.load_data::<E>(base_offset, view)?;
                 view.seek(SeekFrom::Start(pos))?;
             }
             entries.insert(id, entry);
@@ -387,7 +394,7 @@ impl Dir {
             entries,
             next,
             id: String::new(),
-            mnote_offset: 0,
+            mnote_offset: base_offset,
             tag_names: &exif::TAG_NAMES,
         })
     }
@@ -463,11 +470,11 @@ impl Dir {
             if let Ok(dir) = match self.endian() {
                 container::Endian::Little => {
                     let mut view = container.borrow_view_mut();
-                    Dir::read::<LittleEndian>(&mut view, offset, Type::SubIfd)
+                    Dir::read::<LittleEndian>(&mut view, offset, self.mnote_offset, Type::SubIfd)
                 }
                 container::Endian::Big => {
                     let mut view = container.borrow_view_mut();
-                    Dir::read::<BigEndian>(&mut view, offset, Type::SubIfd)
+                    Dir::read::<BigEndian>(&mut view, offset, self.mnote_offset, Type::SubIfd)
                 }
                 _ => {
                     log::error!("Endian unset to read directory");
@@ -490,10 +497,10 @@ impl Dir {
             if e.offset().is_some() {
                 match self.endian() {
                     container::Endian::Little => {
-                        e.load_data::<LittleEndian>(view).ok()?;
+                        e.load_data::<LittleEndian>(self.mnote_offset, view).ok()?;
                     }
                     container::Endian::Big => {
-                        e.load_data::<BigEndian>(view).ok()?;
+                        e.load_data::<BigEndian>(self.mnote_offset, view).ok()?;
                     }
                     _ => {
                         log::error!("Endian unset to read Entry");

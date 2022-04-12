@@ -117,8 +117,8 @@ impl Container {
     /// Read the dir at the offset
     pub(crate) fn dir_at(&self, view: &mut View, offset: u32, t: Type) -> Result<Dir> {
         match *self.endian.borrow() {
-            container::Endian::Little => Dir::read::<LittleEndian>(view, offset, t),
-            container::Endian::Big => Dir::read::<BigEndian>(view, offset, t),
+            container::Endian::Little => Dir::read::<LittleEndian>(view, offset, 0, t),
+            container::Endian::Big => Dir::read::<BigEndian>(view, offset, 0, t),
             _ => {
                 error!("Endian unset to read directory");
                 Err(Error::NotFound)
