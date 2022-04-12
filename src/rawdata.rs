@@ -29,6 +29,7 @@ use crate::utils;
 enum Data {
     Data8(Vec<u8>),
     Data16(Vec<u16>),
+    Tiled((Vec<Vec<u8>>, (u32, u32))),
 }
 
 /// RAW Data extracted from the file.
@@ -62,6 +63,27 @@ impl RawData {
             bpc,
             data_type,
             data: Data::Data8(data),
+            active_area: None,
+            white: 0,
+            compression: tiff::Compression::Unknown,
+            photom_int: exif::PhotometricInterpretation::CFA,
+        }
+    }
+
+    pub fn new_tiled(
+        width: u32,
+        height: u32,
+        bpc: u16,
+        data_type: DataType,
+        data: Vec<Vec<u8>>,
+        tile_size: (u32, u32),
+    ) -> Self {
+        RawData {
+            width,
+            height,
+            bpc,
+            data_type,
+            data: Data::Tiled((data, tile_size)),
             active_area: None,
             white: 0,
             compression: tiff::Compression::Unknown,
@@ -104,12 +126,20 @@ impl RawData {
         self.white
     }
 
+    pub fn set_data_type(&mut self, data_type: DataType) {
+        self.data_type = data_type
+    }
+
     pub fn set_white(&mut self, w: u16) {
         self.white = w;
     }
 
     pub fn set_photometric_interpretation(&mut self, photom_int: exif::PhotometricInterpretation) {
         self.photom_int = photom_int;
+    }
+
+    pub fn compression(&self) -> tiff::Compression {
+        self.compression
     }
 
     pub fn set_compression(&mut self, compression: tiff::Compression) {
@@ -124,6 +154,26 @@ impl RawData {
             _ => None,
         }
     }
+
+    pub fn tile_data(&self) -> Option<&[Vec<u8>]> {
+        match self.data {
+            Data::Tiled(ref d) => Some(&d.0),
+            _ => None,
+        }
+    }
+
+    pub fn tile_size(&self) -> Option<(u32, u32)> {
+        match self.data {
+            Data::Tiled(ref d) => Some(d.1),
+            _ => None,
+        }
+    }
+
+    pub fn replace_data(mut self, data: Vec<u16>) -> RawData {
+        self.data = Data::Data16(data);
+
+        self
+    }
 }
 
 impl Bitmap for RawData {
@@ -135,6 +185,7 @@ impl Bitmap for RawData {
         match self.data {
             Data::Data8(ref d) => d.len(),
             Data::Data16(ref d) => d.len() * 2,
+            Data::Tiled(ref d) => d.0.iter().map(|t| t.len()).sum(),
         }
     }
 

@@ -177,6 +177,9 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
         })
         .unwrap_or(0);
 
+    let mut tile_bytes: Option<Vec<u32>> = None;
+    let mut tile_offsets: Option<Vec<u32>> = None;
+    let mut tile_size: Option<(u32, u32)> = None;
     let byte_len = dir
         .value::<u32>(exif::EXIF_TAG_STRIP_OFFSETS)
         .and_then(|v| {
@@ -191,10 +194,18 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
                 .map(|a| a.iter().sum())
         })
         .or_else(|| {
+            tile_bytes = dir
+                .entry(exif::TIFF_TAG_TILE_BYTECOUNTS)
+                .and_then(|e| e.value_array::<u32>(dir.endian()));
+            let tile_bytes_total = tile_bytes.as_ref().map(|a| a.iter().sum()).unwrap_or(0);
+            tile_offsets = dir
+                .entry(exif::TIFF_TAG_TILE_OFFSETS)
+                .and_then(|e| e.value_array::<u32>(dir.endian()));
             // the tile are individual JPEGS....
-            // XXX todo
-            log::error!("Tiles support unimplemented");
-            Some(0_u32)
+            let x = dir.uint_value(exif::TIFF_TAG_TILE_WIDTH).unwrap_or(0);
+            let y = dir.uint_value(exif::TIFF_TAG_TILE_LENGTH).unwrap_or(0);
+            tile_size = Some((x, y));
+            Some(tile_bytes_total)
         })
         .ok_or(Error::NotFound)?;
 
@@ -237,8 +248,17 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
         bpc = 16;
     }
     let mut rawdata = if data_type == DataType::CompressedRaw {
-        let data = container.load_buffer8(offset as u64, byte_len as u64);
-        RawData::new8(x, y, actual_bpc, data_type, data)
+        if tile_bytes.is_some() && tile_offsets.is_some() {
+            let tile_bytes = tile_bytes.as_ref().unwrap();
+            let tile_offsets = tile_offsets.as_ref().unwrap();
+            let data = std::iter::zip(tile_offsets, tile_bytes)
+                .map(|(offset, byte_len)| container.load_buffer8(*offset as u64, *byte_len as u64))
+                .collect();
+            RawData::new_tiled(x, y, actual_bpc, data_type, data, tile_size.unwrap())
+        } else {
+            let data = container.load_buffer8(offset as u64, byte_len as u64);
+            RawData::new8(x, y, actual_bpc, data_type, data)
+        }
     } else if bpc == 16 {
         let data = container.load_buffer16(offset as u64, byte_len as u64);
         RawData::new16(x, y, actual_bpc, data_type, data)

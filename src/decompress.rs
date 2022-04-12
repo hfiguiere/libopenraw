@@ -22,8 +22,10 @@
 
 mod ljpeg;
 mod sliced_buffer;
+mod tiled;
 
 pub(crate) use ljpeg::LJpeg;
+pub(crate) use tiled::TiledLJpeg;
 
 use std::io::{Read, Seek, SeekFrom};
 

@@ -141,6 +141,8 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool) {
         if rawdata.data_type() == DataType::CompressedRaw {
             if let Some(d) = rawdata.data8() {
                 println!("\tRaw data: {} bytes", d.len());
+            } else if let Some(d) = rawdata.tile_data() {
+                println!("\tTiled raw data: {} tiles", d.len());
             } else {
                 println!("\tMissing compressed raw data.");
             }

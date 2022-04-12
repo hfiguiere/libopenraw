@@ -120,7 +120,21 @@ const MAX_PRECISION_BITS: u8 = 16;
 type ComponentType = u16;
 type Mcu = Vec<ComponentType>;
 
-pub struct LJpeg {
+/// A tile
+pub(crate) struct Tile {
+    /// Width of the data
+    pub width: u32,
+    /// Height of the data
+    pub height: u32,
+    /// Useful width
+    pub u_width: u32,
+    /// Useful height
+    pub u_height: u32,
+    pub bpc: u16,
+    pub buf: Vec<u16>,
+}
+
+pub(crate) struct LJpeg {
     /// Canon-style slices. The format of the slices vector is as follow
     /// * N col1 col2
     /// * N is the number of repeat for col1. The total
@@ -153,7 +167,9 @@ impl LJpeg {
         self.slices = Some(v);
     }
 
-    pub fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<RawData> {
+    /// Decompress the LJPEG stream into a tile.
+    /// Pass `true` to `tiled` if it's an actual tiled file.
+    pub fn decompress_buffer(&mut self, reader: &mut dyn ReadAndSeek, tiled: bool) -> Result<Tile> {
         let mut dc_info = DecompressInfo::default();
 
         self.read_file_header(&mut dc_info, reader)?;
@@ -175,22 +191,35 @@ impl LJpeg {
             dc_info.image_width,
             dc_info.image_height
         );
-        // consistently the real width is the JPEG width * numComponent
-        // On CR2 and DNG.
-        let width: u32 = dc_info.image_width as u32 * dc_info.num_components as u32;
+        let width: u32 = if tiled {
+            // Tiled seems to have the actual width.
+            dc_info.image_width as u32
+        } else {
+            // Consistently the real width is the JPEG width * numComponent
+            // On CR2 and untiled DNG.
+            dc_info.image_width as u32 * dc_info.num_components as u32
+        };
         // XXX RawData::set_slices?
         self.decoder_struct_init(&mut dc_info)?;
         self.huff_decoder_init(&mut dc_info)?;
         self.decode_image(&mut dc_info, reader, &mut output)?;
 
-        let mut rawdata = RawData::new16(
+        Ok(Tile {
+            height: dc_info.image_height as u32,
             width,
-            dc_info.image_height as u32,
-            bpc as u16,
-            DataType::Raw,
-            output.into(),
-        );
-        let white: u32 = (1 << bpc) - 1;
+            u_height: dc_info.image_height as u32,
+            u_width: width,
+            bpc: bpc as u16,
+            buf: output.into(),
+        })
+    }
+
+    /// Decompress the LJPEG stream into a RawData.
+    pub fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<RawData> {
+        let tile = self.decompress_buffer(reader, false)?;
+        let mut rawdata =
+            RawData::new16(tile.width, tile.height, tile.bpc, DataType::Raw, tile.buf);
+        let white: u32 = (1 << tile.bpc) - 1;
         rawdata.set_white(white as u16);
         Ok(rawdata)
     }

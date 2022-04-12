@@ -31,12 +31,13 @@ use crate::camera_ids::{
     xiaoyi, zeiss,
 };
 use crate::container::GenericContainer;
+use crate::decompress;
 use crate::io::Viewer;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
-use crate::{Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 lazy_static::lazy_static! {
     /// Make to TypeId map for DNG files.
@@ -162,6 +163,38 @@ impl DngFile {
             thumbnails: OnceCell::new(),
         })
     }
+
+    fn decompress(rawdata: RawData) -> Result<RawData> {
+        match rawdata.data_type() {
+            DataType::Raw => Ok(rawdata),
+            DataType::CompressedRaw => match rawdata.compression() {
+                tiff::Compression::LJpeg => {
+                    if let Some(data) = rawdata.data8() {
+                        let mut decompressor = decompress::LJpeg::new();
+                        let mut io = std::io::Cursor::new(data);
+                        decompressor.decompress(&mut io)
+                    } else if rawdata.tile_data().is_some() {
+                        let decompressor = decompress::TiledLJpeg::new();
+                        decompressor.decompress(rawdata)
+                    } else {
+                        log::error!("No data to decompress LJPEG");
+                        Ok(rawdata)
+                    }
+                }
+                _ => {
+                    log::error!(
+                        "Unsupported compression for DNG: {:?}",
+                        rawdata.compression()
+                    );
+                    Ok(rawdata)
+                }
+            },
+            _ => {
+                log::warn!("Unexpected data type for DNG: {:?}", rawdata.data_type());
+                Ok(rawdata)
+            }
+        }
+    }
 }
 
 impl RawFileImpl for DngFile {
@@ -268,6 +301,7 @@ impl RawFileImpl for DngFile {
                         err
                     })
             })
+            .and_then(Self::decompress)
     }
 
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>> {
