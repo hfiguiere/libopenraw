@@ -132,7 +132,7 @@ impl Dir {
 
                 // XXX Panasonic
 
-                if &data[0..5] == b"Ricoh\0" {
+                if &data[0..6] == b"Ricoh\0" {
                     return Dir::new_makernote(
                         "Ricoh",
                         container,
