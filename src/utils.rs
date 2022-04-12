@@ -42,10 +42,16 @@ pub(crate) fn from_maybe_nul_terminated(buf: &[u8]) -> String {
     if let Ok(cstr) = std::ffi::CStr::from_bytes_with_nul(buf) {
         cstr.to_string_lossy().to_string()
     } else {
-        // We'll try as a fallback.
-        String::from_utf8_lossy(buf)
-            .trim_end_matches(char::from(0))
-            .to_string()
+        // Split at the first NUL in case there is more.
+        let mut s = buf.split(|v| *v == 0);
+        if let Some(buf) = s.next() {
+            String::from_utf8_lossy(buf).to_string()
+        } else {
+            // We'll try as a fallback.
+            String::from_utf8_lossy(buf)
+                .trim_end_matches(char::from(0))
+                .to_string()
+        }
     }
 }
 
@@ -58,9 +64,13 @@ mod test {
         let s1 = b"abcdef\0";
         let s2 = b"abcdef";
         let s3 = b"abcdef\0\0";
+        let s4 = vec![0_u8, 255, 255, 255];
+        let s5 = b"abcdef\0\xff\xff\xff";
 
         assert_eq!(from_maybe_nul_terminated(s1), "abcdef");
         assert_eq!(from_maybe_nul_terminated(s2), "abcdef");
         assert_eq!(from_maybe_nul_terminated(s3), "abcdef");
+        assert_eq!(from_maybe_nul_terminated(&s4), "");
+        assert_eq!(from_maybe_nul_terminated(s5), "abcdef");
     }
 }
