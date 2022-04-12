@@ -478,7 +478,7 @@ impl RawFileImpl for Cr2File {
                 ],
                 self.type_(),
             );
-            container.load().expect("TIFF container error");
+            container.load(None).expect("TIFF container error");
             container
         })
     }

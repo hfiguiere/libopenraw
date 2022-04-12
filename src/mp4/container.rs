@@ -176,7 +176,7 @@ impl Container {
                     let viewer = Viewer::new(cursor, length as u64);
                     if let Ok(view) = Viewer::create_view(&viewer, 0) {
                         let mut ifd = tiff::Container::new(view, vec![t], raw_type);
-                        ifd.load().expect("ifd load");
+                        ifd.load(None).expect("ifd load");
                         return Some((viewer, Rc::new(ifd)));
                     }
                 }

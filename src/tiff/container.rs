@@ -38,6 +38,8 @@ use crate::tiff::{Dir, Entry, Type};
 use crate::Type as RawType;
 use crate::{DataType, Dump, Error, Result};
 
+type CheckMagicHeader = fn(&[u8]) -> Result<container::Endian>;
+
 /// IFD Container for TIFF based file.
 pub(crate) struct Container {
     /// The `io::View`.
@@ -104,12 +106,16 @@ impl Container {
     }
 
     /// load the container.
-    pub(crate) fn load(&mut self) -> Result<()> {
+    pub(crate) fn load(&mut self, check_magic_header: Option<CheckMagicHeader>) -> Result<()> {
         let mut view = self.view.borrow_mut();
         view.seek(SeekFrom::Start(0))?;
         let mut buf = [0_u8; 4];
         view.read_exact(&mut buf)?;
-        self.endian.replace(self.is_magic_header(&buf)?);
+        if let Some(check_magic_header) = check_magic_header {
+            self.endian.replace(check_magic_header(&buf)?);
+        } else {
+            self.endian.replace(Self::is_magic_header(&buf)?);
+        }
 
         Ok(())
     }
@@ -172,15 +178,15 @@ impl Container {
     }
 
     /// Will identify the magic header and return the endian
-    fn is_magic_header(&self, buf: &[u8]) -> Result<container::Endian> {
+    fn is_magic_header(buf: &[u8]) -> Result<container::Endian> {
         if buf.len() < 4 {
             error!("IFD magic header buffer too small: {} bytes", buf.len());
             return Err(Error::BufferTooSmall);
         }
 
-        if buf == b"II\x2a\x00" {
+        if &buf[0..4] == b"II\x2a\x00" {
             Ok(container::Endian::Little)
-        } else if buf == b"MM\x00\x2a" {
+        } else if &buf[0..4] == b"MM\x00\x2a" {
             Ok(container::Endian::Big)
         } else {
             error!("Incorrect IFD magic: {:?}", buf);

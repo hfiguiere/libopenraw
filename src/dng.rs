@@ -210,7 +210,7 @@ impl RawFileImpl for DngFile {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
             let mut container = tiff::Container::new(view, vec![tiff::Type::Main], self.type_());
-            container.load().expect("IFD container error");
+            container.load(None).expect("IFD container error");
             container
         })
     }

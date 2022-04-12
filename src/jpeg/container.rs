@@ -111,7 +111,7 @@ impl Container {
                             vec![Type::Main, Type::Other],
                             self.raw_type,
                         );
-                        exif.load().expect("Failed to load");
+                        exif.load(None).expect("Failed to load");
 
                         Some((exif, viewer))
                     })
