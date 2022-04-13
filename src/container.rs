@@ -107,7 +107,12 @@ pub trait GenericContainer: Dump {
         if view.seek(SeekFrom::Start(offset)).is_err() {
             log::error!("load_buffer8: Seek failed");
         }
-        if view.read_exact(data.as_mut_slice()).is_err() {
+        if let Ok(n) = view.read(data.as_mut_slice()) {
+            if n < len as usize {
+                log::debug!("Short read {} < {}", n, len);
+                data.resize(n, 0);
+            }
+        } else {
             log::error!("load_buffer8: read failed");
         }
 
@@ -125,8 +130,13 @@ pub trait GenericContainer: Dump {
         }
         // XXX do we need to deal with the endian????
         let slice = utils::to_u8_slice_mut(&mut data);
-        if view.read_exact(slice).is_err() {
-            log::error!("load_buffer18: read failed");
+        if let Ok(n) = view.read(slice) {
+            if n < len as usize {
+                log::debug!("Short read {} < {}", n, len);
+                data.resize(n / 2, 0);
+            }
+        } else {
+            log::error!("load_buffer16: read failed");
         }
 
         data

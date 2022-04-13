@@ -130,7 +130,16 @@ impl Dir {
                     );
                 }
 
-                // XXX Panasonic
+                // Panasonic
+                if &data[0..10] == b"Panasonic\0" {
+                    return Dir::new_makernote(
+                        "Panasonic",
+                        container,
+                        offset + 12,
+                        0,
+                        &panasonic::MNOTE_TAG_NAMES,
+                    );
+                }
 
                 if &data[0..6] == b"Ricoh\0" {
                     return Dir::new_makernote(

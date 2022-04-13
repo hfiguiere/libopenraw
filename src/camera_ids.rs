@@ -639,8 +639,7 @@ mod sony {
 
 /// Panasonic type IDs
 #[allow(unused)]
-mod panasonic {
-    pub const UNKNOWN: u16 = 0;
+pub mod panasonic {
     pub const GF1: u16 = 1;
     pub const GF2: u16 = 2;
     pub const FZ30: u16 = 3;

@@ -71,7 +71,7 @@ impl Viewer {
             .and_then(|viewer| View::new(&viewer, offset, viewer.length() - offset))
     }
 
-    fn length(&self) -> u64 {
+    pub fn length(&self) -> u64 {
         self.length
     }
 

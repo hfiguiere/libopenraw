@@ -219,6 +219,7 @@ impl From<&str> for Type {
             "DNG" => Self::Dng,
             "ERF" => Self::Erf,
             "RAF" => Self::Raf,
+            "RW2" => Self::Rw2,
             _ => Self::Unknown,
         }
     }

@@ -37,6 +37,9 @@ lazy_static::lazy_static! {
         (OsString::from("erf"), Type::Erf),
         (OsString::from("gpr"), Type::Gpr),
         (OsString::from("raf"), Type::Raf),
+        (OsString::from("raw"), Type::Rw2),
+        (OsString::from("rw2"), Type::Rw2),
+        (OsString::from("rwl"), Type::Rw2),
     ]);
 }
 
