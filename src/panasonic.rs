@@ -266,6 +266,7 @@ lazy_static::lazy_static! {
         ("DMC-G2", TypeId(vendor::PANASONIC, panasonic::G2)),
         ("DMC-G3", TypeId(vendor::PANASONIC, panasonic::G3)),
         ("DMC-G5", TypeId(vendor::PANASONIC, panasonic::G5)),
+        ("DMC-G7", TypeId(vendor::PANASONIC, panasonic::G7)),
         ("DMC-G10", TypeId(vendor::PANASONIC, panasonic::G10)),
         ("DMC-G80", TypeId(vendor::PANASONIC, panasonic::G80)),
         ("DC-G9", TypeId(vendor::PANASONIC, panasonic::G9)),
@@ -273,12 +274,15 @@ lazy_static::lazy_static! {
         ("DC-G95", TypeId(vendor::PANASONIC, panasonic::DC_G95)),
         ("DC-G99", TypeId(vendor::PANASONIC, panasonic::DC_G99)),
         ("DC-G100", TypeId(vendor::PANASONIC, panasonic::DC_G100)),
+        ("DC-G110", TypeId(vendor::PANASONIC, panasonic::DC_G110)),
         ("DMC-GH1", TypeId(vendor::PANASONIC, panasonic::GH1)),
         ("DMC-GH2", TypeId(vendor::PANASONIC, panasonic::GH2)),
         ("DMC-GH3", TypeId(vendor::PANASONIC, panasonic::GH3)),
         ("DMC-GH4", TypeId(vendor::PANASONIC, panasonic::GH4)),
         ("DC-GH5", TypeId(vendor::PANASONIC, panasonic::GH5)),
         ("DC-GH5S", TypeId(vendor::PANASONIC, panasonic::GH5S)),
+        ("DC-GH5M2", TypeId(vendor::PANASONIC, panasonic::GH5M2)),
+        ("DC-GH6", TypeId(vendor::PANASONIC, panasonic::GH6)),
         ("DMC-GM1", TypeId(vendor::PANASONIC, panasonic::GM1)),
         ("DMC-GM5", TypeId(vendor::PANASONIC, panasonic::GM5)),
         ("DMC-LX1", TypeId(vendor::PANASONIC, panasonic::LX1)),
@@ -326,7 +330,7 @@ lazy_static::lazy_static! {
         ("C (Typ 112)", TypeId(vendor::LEICA, leica::C_TYP112)),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 80] = [
+    static ref MATRICES: [BuiltinMatrix; 83] = [
         BuiltinMatrix::new(
             TypeId(vendor::PANASONIC, panasonic::CM1),
             15,
@@ -508,6 +512,11 @@ lazy_static::lazy_static! {
             0,
             [ 10113, -3400, -1114, -4765, 12683, 2317, -377, 1437, 6710 ] ),
         BuiltinMatrix::new(
+            TypeId(vendor::PANASONIC, panasonic::G7),
+            0,
+            0,
+            [ 7610, -2780, -576, -4614, 12195, 2733, -1375, 2393, 6490 ] ),
+        BuiltinMatrix::new(
             TypeId(vendor::PANASONIC, panasonic::G80),
             15,
             0,
@@ -562,6 +571,16 @@ lazy_static::lazy_static! {
             15,
             0,
             [ 6929, -2355, -708, -4192, 12534, 1828, -1097, 1989, 5195 ] ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PANASONIC, panasonic::GH5M2),
+            15,
+            0,
+            [ 9300, -3659, -755, -2981, 10988, 2287, -190, 1077, 5016 ] ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PANASONIC, panasonic::GH6),
+            15,
+            0,
+            [ 7949, -3491, -710, -3435, 11681, 1977, -503, 1622, 5065 ] ),
         BuiltinMatrix::new(
             TypeId(vendor::PANASONIC, panasonic::GM1),
             15,
