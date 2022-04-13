@@ -1,8 +1,8 @@
 dnl libopenraw configure
 dnl written by Hubert Figuiere
 
-AC_PREREQ(2.50)
-AC_INIT(libopenraw, 0.3.1)
+AC_PREREQ([2.71])
+AC_INIT([libopenraw],[0.3.1])
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2 dist-xz subdir-objects])
@@ -78,7 +78,7 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_INSTALL
-AC_PROG_LIBTOOL
+LT_INIT
 AX_CXX_COMPILE_STDCXX_14(noext,mandatory)
 
 dnl Requirements
@@ -130,7 +130,7 @@ AC_CHECK_FUNCS_ONCE(get_current_dir_name)
 dnl do we want GNOME ?
 #
 AC_ARG_ENABLE([gnome],
-              [AC_HELP_STRING([--disable-gnome],[disable support for Gnome])],,
+              [AS_HELP_STRING([--disable-gnome],[disable support for Gnome])],,
               [enable_gnome=yes])
 #
 # Checks for libgdkpixbuf
@@ -189,7 +189,7 @@ AC_ARG_ENABLE(debug,[  --enable-debug    Turn on debugging],[
 ])
 AM_CONDITIONAL(DEBUG, test x$debug = xtrue)
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_LANG_COMPILER_REQUIRE
 
 AX_APPEND_COMPILE_FLAGS([-fvisibility=hidden])
@@ -228,7 +228,7 @@ AX_APPEND_COMPILE_FLAGS([ \
 
 AC_ARG_ENABLE(asan,[  --enable-asan    Turn on address sanitizer],[
     AX_APPEND_COMPILE_FLAGS([-fsanitize=address -fno-omit-frame-pointer])
-    AC_LANG_C
+    AC_LANG([C])
     AX_APPEND_COMPILE_FLAGS([-fsanitize=address -fno-omit-frame-pointer])
 ]
 ,
@@ -257,7 +257,7 @@ dnl we need to disable gdk pixbuf for distcheck
 DISTCHECK_CONFIGURE_FLAGS="--disable-gnome"
 AC_SUBST([DISTCHECK_CONFIGURE_FLAGS])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 include/Makefile
 include/libopenraw/Makefile
@@ -276,6 +276,7 @@ testsuite/Makefile
 tools/Makefile
 demo/Makefile
 ])
+AC_OUTPUT
 
 
 echo "
