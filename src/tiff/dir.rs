@@ -390,8 +390,14 @@ impl Dir {
                 entry.set_offset(offset);
             } else if !entry.is_inline() {
                 let pos = view.seek(SeekFrom::Current(0))?;
-                entry.load_data::<E>(base_offset, view)?;
+                let r = entry.load_data::<E>(base_offset, view);
                 view.seek(SeekFrom::Start(pos))?;
+                if r.is_err() {
+                    // We'll just stop parsing.
+                    // This is encountered on Somy A100 and is likely
+                    // a bug, but it's also in the C++ code.
+                    break;
+                }
             }
             entries.insert(id, entry);
         }

@@ -549,8 +549,7 @@ pub mod ricoh {
 
 /// Sony type IDs
 #[allow(unused)]
-mod sony {
-    pub const UNKNOWN: u16 = 0;
+pub mod sony {
     pub const A100: u16 = 1;
     pub const A200: u16 = 2;
     pub const A700: u16 = 3;
@@ -571,7 +570,6 @@ mod sony {
     pub const NEXF3: u16 = 18;
     pub const SLTA65: u16 = 19;
     pub const A330: u16 = 21;
-    pub const A350: u16 = 21;
     pub const A450: u16 = 22;
     pub const A580: u16 = 23;
     pub const A850: u16 = 24;
@@ -621,7 +619,6 @@ mod sony {
     pub const A290: u16 = 67;
     pub const RX100M5A: u16 = 68;
     pub const HX99: u16 = 69;
-    pub const HX95: u16 = HX99;
     pub const ILCE6400: u16 = 70;
     pub const RX0M2: u16 = 71;
     pub const ILCE7RM4: u16 = 72;
@@ -635,6 +632,15 @@ mod sony {
     // ARW
     pub const ILCE7SM3: u16 = 79;
     pub const ILCE7C: u16 = 80;
+    pub const ZVE10: u16 = 81;
+    pub const ILCE1: u16 = 82;
+    pub const ILCE7M4: u16 = 83;
+    pub const ILCEQX1: u16 = 84;
+    pub const A350: u16 = 85;
+    pub const A300: u16 = 86;
+    pub const ILCE7RM3A: u16 = 87;
+    pub const ILCE7RM4A: u16 = 88;
+    pub const HX95: u16 = 89;
 }
 
 /// Panasonic type IDs
@@ -849,7 +855,6 @@ pub mod gopro {
 /// Hasselblad
 #[allow(unused)]
 pub mod hasselblad {
-    pub const UNKNOWN: u16 = 0;
     pub const LUNAR: u16 = 1;
     pub const L1D_20C: u16 = 2;
 }

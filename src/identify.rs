@@ -31,6 +31,7 @@ lazy_static::lazy_static! {
     /// Mapping of extensions (lowercase) to a `Type`.
     static ref EXT_TO_TYPE: HashMap<OsString, Type> = HashMap::from([
         // The extension MUST be lowercase
+        (OsString::from("arw"), Type::Arw),
         (OsString::from("cr2"), Type::Cr2),
         (OsString::from("cr3"), Type::Cr3),
         (OsString::from("dng"), Type::Dng),
@@ -40,6 +41,7 @@ lazy_static::lazy_static! {
         (OsString::from("raw"), Type::Rw2),
         (OsString::from("rw2"), Type::Rw2),
         (OsString::from("rwl"), Type::Rw2),
+        (OsString::from("sr2"), Type::Arw),
     ]);
 }
 

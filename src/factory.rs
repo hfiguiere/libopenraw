@@ -31,10 +31,12 @@ use crate::dng::DngFile;
 use crate::epson::ErfFile;
 use crate::fujifilm::RafFile;
 use crate::panasonic::Rw2File;
+use crate::sony::ArwFile;
 
 lazy_static::lazy_static! {
     /// Factory map. This is where new types are registered.
     static ref FACTORY_MAP: HashMap<Type, RawFileFactory> = HashMap::from([
+        (Type::Arw, ArwFile::factory as RawFileFactory),
         (Type::Cr2, Cr2File::factory as RawFileFactory),
         (Type::Cr3, Cr3File::factory as RawFileFactory),
         (Type::Dng, DngFile::factory as RawFileFactory),

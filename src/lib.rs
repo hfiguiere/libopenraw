@@ -214,6 +214,7 @@ pub enum Type {
 impl From<&str> for Type {
     fn from(s: &str) -> Type {
         match s {
+            "ARW" => Self::Arw,
             "CR2" => Self::Cr2,
             "CR3" => Self::Cr3,
             "DNG" => Self::Dng,
