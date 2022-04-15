@@ -69,7 +69,13 @@ impl Results {
         let mut count = 0;
 
         let rawdata = rawfile.raw_data();
-        assert!(rawdata.is_ok());
+        assert_eq!(rawdata.is_ok(), self.raw_data_type.is_some());
+
+        // no raw data, bail out
+        if rawdata.is_err() {
+            return count;
+        }
+
         let rawdata = rawdata.unwrap();
 
         // RAW data type
