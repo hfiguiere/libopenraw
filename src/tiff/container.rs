@@ -93,6 +93,10 @@ impl Container {
         self.exif_correction = correction;
     }
 
+    pub fn exif_correction(&self) -> i32 {
+        self.exif_correction
+    }
+
     /// Read an `u32` based on the container endian.
     fn read_u32(&self, view: &mut View) -> std::io::Result<u32> {
         match *self.endian.borrow() {

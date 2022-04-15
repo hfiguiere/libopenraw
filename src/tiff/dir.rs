@@ -475,6 +475,35 @@ impl Dir {
             })
     }
 
+    /// Get the IFD stored in the entry
+    pub(crate) fn ifd_in_entry(&self, container: &tiff::Container, tag: u16) -> Option<Rc<Dir>> {
+        self.entry(tag).and_then(|e| {
+            if e.type_ == 13 || e.type_ == exif::TagType::Long as i16 {
+                match self.endian() {
+                    container::Endian::Little => e.value_untyped::<u32, LittleEndian>(),
+                    container::Endian::Big => e.value_untyped::<u32, BigEndian>(),
+                    _ => {
+                        log::error!("Endian unset to read directory");
+                        return None;
+                    }
+                }
+                .map(|offset| {
+                    (offset as i64 + container.exif_correction() as i64 + self.mnote_offset as i64)
+                        as u32
+                })
+            } else {
+                e.offset()
+            }
+            .and_then(|val_offset| {
+                let mut view = container.borrow_view_mut();
+                container
+                    .dir_at(&mut view, val_offset, Type::Other)
+                    .map(Rc::new)
+                    .ok()
+            })
+        })
+    }
+
     /// Get sub IFDs.
     pub(crate) fn get_sub_ifds(&self, container: &tiff::Container) -> Option<Vec<Rc<Dir>>> {
         let entry = self.entry(exif::EXIF_TAG_SUB_IFDS)?;
