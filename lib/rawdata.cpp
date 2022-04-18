@@ -349,17 +349,6 @@ uint32_t RawData::compression() const
     return d->compression;
 }
 
-#if 0
-RawData &RawData::append(uint8_t c)
-{
-    assert(d->pos);
-    assert(d->offset < d->data_size);
-    *(d->pos) = c;
-    advance(sizeof(c));
-    return *this;
-}
-#endif
-
 RawData &RawData::append(uint16_t c)
 {
     assert(d->pos);
@@ -370,18 +359,12 @@ RawData &RawData::append(uint16_t c)
     return *this;
 }
 
-void RawData::nextRow()
-{
-    d->nextRow();
-}
-
 void RawData::Private::nextRow()
 {
     uint32_t w = self->width() * 2;
     uint32_t row = offset / w;
     row++;
-    if(row == self->height()) 
-    {
+    if (row == self->height()) {
         // on the last
         nextSlice();
         row = 0;
@@ -404,13 +387,13 @@ void RawData::Private::nextSlice()
         sliceWidth = 0;
     }
 }
-	
+
 void RawData::Private::advance(size_t s)
 {
     if(offset + s - row_offset >= sliceWidth * 2) {
         nextRow();
     }
-    else { 
+    else {
         pos += s;
         offset += s;
     }

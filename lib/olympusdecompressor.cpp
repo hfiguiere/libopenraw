@@ -1,7 +1,7 @@
 /*
  * libopenraw - olympusdecompressor.cpp
  *
- * Copyright (C) 2011-2016 Hubert Figuiere
+ * Copyright (C) 2011-2022 Hubert Figuière
  * Olympus Decompression copied from RawSpeed
  * Copyright (C) 2009 Klaus Post
  *
@@ -32,11 +32,11 @@
 namespace OpenRaw {
 namespace Internals {
 
-static void decompressOlympus(const uint8_t* buffer, size_t size, uint8_t* data,
+static void decompressOlympus(const uint8_t* buffer, size_t size, uint16_t* data16,
                               uint32_t w, uint32_t h);
 
 // decompression ported from RawSpeed.
-static void decompressOlympus(const uint8_t* buffer, size_t size, uint8_t* data,
+static void decompressOlympus(const uint8_t* buffer, size_t size, uint16_t* data16,
                               uint32_t w, uint32_t h)
 {
     int nbits, sign, low, high, i, wo0, n, nw0, wo1, nw1;
@@ -64,7 +64,7 @@ static void decompressOlympus(const uint8_t* buffer, size_t size, uint8_t* data,
     for (uint32_t y = 0; y < h; y++) {
         memset(acarry0, 0, sizeof acarry0);
         memset(acarry1, 0, sizeof acarry1);
-        uint16_t* dest = (uint16_t*)&data[y * pitch];
+        uint16_t* dest = &data16[(y * pitch)/2];
         for (uint32_t x = 0; x < w; x++) {
             //			bits.checkPos();
             //			bits.fill();
@@ -182,7 +182,7 @@ RawDataPtr OlympusDecompressor::decompress()
     RawDataPtr output(new RawData);
 
     output->allocData(m_w * m_h * 2);
-    decompressOlympus(m_buffer, m_size, (uint8_t*)output->data(), m_w, m_h);
+    decompressOlympus(m_buffer, m_size, (uint16_t*)output->data(), m_w, m_h);
 
     // hardcoded 12bits values
     output->setBpc(12);

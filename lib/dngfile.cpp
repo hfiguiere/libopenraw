@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2022 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -89,6 +89,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                  OR_TYPEID_PENTAX_K3_DNG) },
     { "PENTAX K-3 II      ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_K3_II_DNG) },
+    { "PENTAX K-3 Mark III             ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
+                                                 OR_TYPEID_PENTAX_K3_II_DNG) },
     { "PENTAX K-7         ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
                                                  OR_TYPEID_PENTAX_K7_DNG) },
     { "PENTAX K-70        ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,
@@ -121,6 +123,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                OR_TYPEID_LEICA_M10R) },
     { "LEICA M10 MONOCHROM", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                                  OR_TYPEID_LEICA_M10_MONOCHROM) },
+    { "LEICA M11", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+                                       OR_TYPEID_LEICA_M11) },
     { "LEICA X1               ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                                      OR_TYPEID_LEICA_X1) },
     { "LEICA X2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
@@ -159,6 +163,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                           OR_TYPEID_RICOH_GRII) },
     { "RICOH GR III       ",
       OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, OR_TYPEID_RICOH_GRIII) },
+    { "RICOH GR IIIx      ",
+      OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH, OR_TYPEID_RICOH_GRIIIX) },
     { "GXR            ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,
                                              OR_TYPEID_RICOH_GXR) },
     { "GXR A16                                                        ",
@@ -181,6 +187,10 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                          OR_TYPEID_APPLE_IPHONE_7PLUS) },
     { "iPhone 8", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
                                       OR_TYPEID_APPLE_IPHONE_8) },
+    { "iPhone 12 Pro", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
+                                           OR_TYPEID_APPLE_IPHONE_12_PRO) },
+    { "iPhone 13 Pro", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
+                                           OR_TYPEID_APPLE_IPHONE_13_PRO) },
     { "iPhone SE", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
                                        OR_TYPEID_APPLE_IPHONE_SE) },
     { "iPhone XS", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_APPLE,
@@ -190,6 +200,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                          OR_TYPEID_BLACKMAGIC_POCKET_CINEMA) },
     { "SIGMA fp", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SIGMA,
                                       OR_TYPEID_SIGMA_FP) },
+    { "SIGMA fp L", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_SIGMA,
+                                        OR_TYPEID_SIGMA_FP_L) },
     { "L1D-20c", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_HASSELBLAD,
                                      OR_TYPEID_HASSELBLAD_L1D_20C) },
     { "HERO5 Black", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_GOPRO,
@@ -200,8 +212,22 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                       OR_TYPEID_GOPRO_HERO7_BLACK) },
     { "HERO8 Black", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_GOPRO,
                                       OR_TYPEID_GOPRO_HERO8_BLACK) },
+    { "HERO9 Black", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_GOPRO,
+                                      OR_TYPEID_GOPRO_HERO9_BLACK) },
+    { "HERO10 Black", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_GOPRO,
+                                      OR_TYPEID_GOPRO_HERO10_BLACK) },
     { "ZX1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ZEISS,
                                        OR_TYPEID_ZEISS_ZX1) },
+    { "FC220", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
+                                   OR_TYPEID_DJI_FC220) },
+    { "FC350", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
+                                   OR_TYPEID_DJI_FC350) },
+    { "FC6310", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
+                                    OR_TYPEID_DJI_FC6310) },
+    { "FC7303", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
+                                    OR_TYPEID_DJI_FC7303) },
+    { "DJI Osmo Action", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
+                                             OR_TYPEID_DJI_OSMO_ACTION) },
     { 0, OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_ADOBE,
                              OR_TYPEID_ADOBE_DNG_GENERIC) }
 };

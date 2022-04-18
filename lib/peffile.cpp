@@ -1,7 +1,7 @@
 /*
  * libopenraw - peffile.cpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -75,6 +75,7 @@ static const ModelIdMap modelid_map = {
     { 0x13222, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K70_PEF) },
     { 0x1322c, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KP_PEF) },
     { 0x13240, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K1_MKII_PEF) },
+    { 0x13254, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K3_MKIII_PEF) },
 };
 
 /* taken from dcraw, by default */
@@ -136,6 +137,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       { 8542, -2581, -1144, -3995, 12301, 1881, -863, 1514, 5755 } },
     { OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K3_II_PEF),
+      0,
+      0,
+      { 9251, -3817, -1069, -4627, 12667, 2175, -798, 1660, 5633 } },
+    { OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K3_MKIII_PEF),
       0,
       0,
       { 8571, -2590, -1148, -3995, 12301, 1881, -1052, 1844, 7013 } },
@@ -203,6 +208,7 @@ const struct IfdFile::camera_ids_t PEFFile::s_def[] = {
     { "PENTAX K-r         ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KR_PEF) },
     { "PENTAX K-3         ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K3_PEF) },
     { "PENTAX K-3 II      ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K3_II_PEF) },
+    { "PENTAX K-3 Mark III             ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K3_MKIII_PEF) },
     { "PENTAX K-5         ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K5_PEF) },
     { "PENTAX K-5 II      ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K5_II_PEF) },
     { "PENTAX K-5 II s    ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K5_IIS_PEF) },

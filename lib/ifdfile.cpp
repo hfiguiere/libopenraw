@@ -72,7 +72,7 @@ IfdFile::~IfdFile()
 
 IfdDir::Ref IfdFile::_locateCfaIfd()
 {
-  // CFA IFD is the main IFD byt default
+  // CFA IFD is the main IFD by default
   return mainIfd();
 }
 
@@ -105,7 +105,7 @@ void IfdFile::_identifyId()
                 _setTypeId(type_id);
                 return;
             }
-            LOGERR("unknown model ID 0x%x\n", id_value);
+            LOGERR("unknown model ID 0x%x (%u)\n", id_value, id_value);
         }
     }
 

@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr3file.cpp
  *
- * Copyright (C) 2018-2020 Hubert Figuière
+ * Copyright (C) 2018-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -54,6 +54,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 8532, -701, -1167, -4095, 11879, 2508, -797, 2424, 7010 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M50MKII),
+      0,
+      0,
+      { 10463, -2173, -1437, -4856, 12635, 2482, -1216, 2915, 7237 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_M6MKII),
       0,
       0,
@@ -70,6 +74,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 8608, -2097, -1178, -5425, 13265, 2383, -1149, 2238, 5680 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R3),
+      0,
+      0,
+      { 9423, -2839, -1195, -4532, 12377, 2415, -483, 1374, 5276 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R5),
       0,
       0,

@@ -1,5 +1,47 @@
-libopenraw 0.3.1 -
+libopenraw 0.3.1 - 2022/04/19
 
+New features:
+
+  - Added `identify` as a tool to check a file can be open. This is just
+    for development purpose.
+  - Updated the Exif tag list to ExifTool 12.30.
+
+  Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Added Apple iPhone 12 Pro and iPhone 13 Pro.
+  - Added Canon EOS M2*, EOS M50 MarkII* and EOS R3*.
+  - Added DJI Osmo Action, FC220, FC350, FC6310 and FC7303.
+  - Added Fujifilm X-E4*, X-T30 II*, GFX 50S II* and GFX 100S*
+  - Added Leica M11.
+  - Added Nikon Z9* and Zfc*.
+  - Added Olympus E-M10III*.
+  - Added OM Systems OM-1*.
+  - Added Panansonic G7*, GH5II* and GH6*, and alias for Panasonic G110.
+  - Added Pentax K3 MarkIII (DNG and PEF*).
+  - Added Ricoh GR IIIx.
+  - Added Sigma fp L.
+  - Added Sony DSLR-A300*, DSLR-A350*, ILCE-A7R III A*, ILCE-A7R IV A*,
+    DSC-HX95*, ZV-E10*, QX-1*, A-1*, and A-7IV*.
+
+Bug fixes:
+
+  - Sony HX95 was not identified properly.
+  - gnome/libopenraw-gnome-0.3.pc now has the right dependency version.
+    https://github.com/hfiguiere/libopenraw/pull/2
+  - The Doxygen generated documentation is much more usable.
+  - Fix build on BSD (endian header)
+    https://gitlab.freedesktop.org/libopenraw/libopenraw/-/merge_requests/2
+  - Fix build on gcc 11
+    https://gitlab.freedesktop.org/libopenraw/libopenraw/-/issues/6
+
+Internal changes
+
+  - Added a make webdist target to streamline copying the doxygen output.
+  - Removed a few piece of unused code in IFD, MakerNote and ljpeg decompressor.
+  - Use bionic on Travis CI
+  - Minor cleanup in the Sony code.
+  - Updated configure to more modern syntax (autoupdate). Requires autoconf 2.69.
 
 libopenraw 0.3.0 - 2020/12/18
 
