@@ -69,7 +69,11 @@ impl Results {
         let mut count = 0;
 
         let rawdata = rawfile.raw_data();
-        assert_eq!(rawdata.is_ok(), self.raw_data_type.is_some());
+        assert_eq!(
+            rawdata.is_ok(),
+            self.raw_data_type.is_some(),
+            "Expected Raw data wasn't found"
+        );
 
         // no raw data, bail out
         if rawdata.is_err() {
@@ -81,35 +85,63 @@ impl Results {
         // RAW data type
         if let Some(ref raw_data_type) = self.raw_data_type {
             count += 1;
-            assert_eq!(DataType::from(raw_data_type.as_str()), rawdata.data_type());
+            assert_eq!(
+                DataType::from(raw_data_type.as_str()),
+                rawdata.data_type(),
+                "Incorrect type for Raw data"
+            );
         }
         // RAW data size
         if let Some(raw_data_size) = self.raw_data_size {
             count += 1;
-            assert_eq!(raw_data_size as usize, rawdata.data_size());
+            assert_eq!(
+                raw_data_size as usize,
+                rawdata.data_size(),
+                "Incorrect Raw data size"
+            );
         }
 
         // RAW dimensions
         if let Some(ref raw_data_dimensions) = self.raw_data_dimensions {
             count += 1;
             let dims: Vec<&str> = raw_data_dimensions.split(' ').collect();
-            assert_eq!(dims.len(), 2);
-            assert_eq!(dims[0], rawdata.width().to_string());
-            assert_eq!(dims[1], rawdata.height().to_string());
+            assert_eq!(dims.len(), 2, "Incorrect number of Raw dimensions");
+            assert_eq!(dims[0], rawdata.width().to_string(), "Incorrect Raw width");
+            assert_eq!(
+                dims[1],
+                rawdata.height().to_string(),
+                "Incorrect Raw height"
+            );
         }
 
         // RAW active area
         if let Some(ref raw_data_active_area) = self.raw_data_active_area {
             count += 1;
             let dims: Vec<&str> = raw_data_active_area.split(' ').collect();
-            assert_eq!(dims.len(), 4);
+            assert_eq!(dims.len(), 4, "Incorrect active area");
             let active_area = rawdata.active_area();
-            assert!(active_area.is_some());
+            assert!(active_area.is_some(), "No active area found");
             let active_area = active_area.unwrap();
-            assert_eq!(dims[0], active_area.x.to_string());
-            assert_eq!(dims[1], active_area.y.to_string());
-            assert_eq!(dims[2], active_area.width.to_string());
-            assert_eq!(dims[3], active_area.height.to_string());
+            assert_eq!(
+                dims[0],
+                active_area.x.to_string(),
+                "Incorrect active area X"
+            );
+            assert_eq!(
+                dims[1],
+                active_area.y.to_string(),
+                "Incorrect active area Y"
+            );
+            assert_eq!(
+                dims[2],
+                active_area.width.to_string(),
+                "Incorrect active area Width"
+            );
+            assert_eq!(
+                dims[3],
+                active_area.height.to_string(),
+                "Incorrect active area Height"
+            );
         }
 
         // XXX CFA pattern
@@ -117,11 +149,19 @@ impl Results {
         // RAW black and white
         if let Some(raw_min_value) = self.raw_min_value {
             count += 1;
-            assert_eq!(rawdata.black() as u32, raw_min_value);
+            assert_eq!(
+                rawdata.black() as u32,
+                raw_min_value,
+                "Incorrect black point"
+            );
         }
         if let Some(raw_max_value) = self.raw_max_value {
             count += 1;
-            assert_eq!(rawdata.white() as u32, raw_max_value);
+            assert_eq!(
+                rawdata.white() as u32,
+                raw_max_value,
+                "Incorrect white point"
+            );
         }
 
         // RAW data checksum. It's not even a md5.
@@ -129,15 +169,15 @@ impl Results {
             count += 1;
             let buf = if rawdata.data_type() == DataType::CompressedRaw {
                 let buf = rawdata.data8();
-                assert!(buf.is_some());
+                assert!(buf.is_some(), "Compressed Raw data not found");
                 buf.unwrap()
             } else {
                 let buf = rawdata.data16_as_u8();
-                assert!(buf.is_some());
+                assert!(buf.is_some(), "16-bits Raw data not found");
                 buf.unwrap()
             };
             let r = Self::raw_checksum(buf);
-            assert_eq!(raw_md5, r as u32)
+            assert_eq!(raw_md5, r as u32, "Incorrect Raw data checksum");
         }
         count
     }
@@ -148,7 +188,11 @@ impl Results {
         if let Some(thumb_num) = self.thumb_num {
             count += 1;
             let thumbnail_sizes = rawfile.thumbnail_sizes();
-            assert_eq!(thumb_num as usize, thumbnail_sizes.len());
+            assert_eq!(
+                thumb_num as usize,
+                thumbnail_sizes.len(),
+                "Different number of thumbnails"
+            );
         }
 
         if let Some(ref thumb_sizes) = self.thumb_sizes {
@@ -156,10 +200,19 @@ impl Results {
             let thumbnail_sizes = rawfile.thumbnail_sizes();
             let sizes: Vec<&str> = thumb_sizes.split(' ').collect();
 
-            assert_eq!(thumbnail_sizes.len(), sizes.len());
+            assert_eq!(
+                thumbnail_sizes.len(),
+                sizes.len(),
+                "Mismatch number of thumbnails"
+            );
             let mut index = 0;
             for size in sizes {
-                assert_eq!(size, thumbnail_sizes[index].to_string());
+                assert_eq!(
+                    size,
+                    thumbnail_sizes[index].to_string(),
+                    "Incorrect size for thumbnail {}",
+                    index
+                );
                 index += 1;
             }
         }
@@ -169,10 +222,18 @@ impl Results {
             let thumbnails = rawfile.thumbnails();
             let formats: Vec<DataType> = thumb_formats.split(' ').map(DataType::from).collect();
 
-            assert_eq!(thumbnails.len(), formats.len());
+            assert_eq!(
+                thumbnails.len(),
+                formats.len(),
+                "Mismatch number of thumbnail format"
+            );
             let mut index = 0;
             for thumbnail in thumbnails {
-                assert_eq!(thumbnail.1.data_type, formats[index]);
+                assert_eq!(
+                    thumbnail.1.data_type, formats[index],
+                    "Incorrect data type for thumbnail {}",
+                    index
+                );
                 index += 1;
             }
         }
@@ -182,10 +243,19 @@ impl Results {
             let thumbnails = rawfile.thumbnails();
             let data_sizes: Vec<&str> = thumb_data_sizes.split(' ').collect();
 
-            assert_eq!(thumbnails.len(), data_sizes.len());
+            assert_eq!(
+                thumbnails.len(),
+                data_sizes.len(),
+                "Mismatch number of thumbnail data sizes"
+            );
             let mut index = 0;
             for thumbnail in thumbnails {
-                assert_eq!(thumbnail.1.data_size().to_string(), data_sizes[index]);
+                assert_eq!(
+                    thumbnail.1.data_size().to_string(),
+                    data_sizes[index],
+                    "Incorrect data size for thumbnail {}",
+                    index
+                );
                 index += 1;
             }
         }
@@ -195,7 +265,11 @@ impl Results {
             let thumbnails = rawfile.thumbnails();
             let md5s: Vec<&str> = thumb_md5.split(' ').collect();
 
-            assert_eq!(thumbnails.len(), md5s.len());
+            assert_eq!(
+                thumbnails.len(),
+                md5s.len(),
+                "Mismatch number of thumbnail checksum"
+            );
             let mut index = 0;
             for thumbnail_desc in thumbnails {
                 let thumbnail = rawfile
@@ -203,7 +277,12 @@ impl Results {
                     .expect("Thumbnail not found");
                 let buf = thumbnail.data8().unwrap();
                 let r = Self::raw_checksum(buf);
-                assert_eq!(r.to_string(), md5s[index]);
+                assert_eq!(
+                    r.to_string(),
+                    md5s[index],
+                    "Incorrect checksum for thumbnail {}",
+                    index
+                );
                 index += 1;
             }
         }
@@ -218,33 +297,45 @@ impl Results {
         // Check RAW type
         if let Some(ref raw_type) = self.raw_type {
             count += 1;
-            assert_eq!(Type::from(raw_type.as_str()), rawfile.type_())
+            assert_eq!(
+                Type::from(raw_type.as_str()),
+                rawfile.type_(),
+                "Incorrect Raw file type"
+            )
         }
         // Check RAW file ID
         if let Some(raw_type_id) = self.raw_type_id {
             count += 1;
-            assert_eq!(TypeId::from(raw_type_id), rawfile.type_id());
+            assert_eq!(
+                TypeId::from(raw_type_id),
+                rawfile.type_id(),
+                "Incorrect Raw file TypeID"
+            );
         }
         // Check the MakerNote count
         if let Some(maker_note_count) = self.maker_note_count {
             count += 1;
             let maker_note = rawfile.maker_note_ifd();
             if maker_note_count == -1 {
-                assert!(maker_note.is_none());
+                assert!(maker_note.is_none(), "Expected to have no MakerNote");
             } else if maker_note_count < -1 {
                 unreachable!();
             } else {
                 let maker_note = maker_note.unwrap();
-                assert_eq!(maker_note.num_entries(), maker_note_count as usize);
+                assert_eq!(
+                    maker_note.num_entries(),
+                    maker_note_count as usize,
+                    "Incorrect MakerNote count"
+                );
             }
         }
         // Check MakerNote ID
         if let Some(ref maker_note_id) = self.maker_note_id {
             count += 1;
             let maker_note = rawfile.maker_note_ifd();
-            assert!(maker_note.is_some());
+            assert!(maker_note.is_some(), "Expected MakerNote");
             let maker_note = maker_note.unwrap();
-            assert_eq!(maker_note.id(), maker_note_id);
+            assert_eq!(maker_note.id(), maker_note_id, "Incorrect MakerNote ID");
         }
 
         count += self.thumbnail_test(rawfile);
@@ -359,7 +450,7 @@ fn test_regression_suite() {
 
     let testsuite = load_testsuite("testsuite/testsuite.xml");
 
-    assert!(testsuite.is_some());
+    assert!(testsuite.is_some(), "Expected testsuite to load");
     let mut testsuite = testsuite.unwrap();
 
     testsuite.load_overrides("testsuite/testsuite.xml.overrides");
