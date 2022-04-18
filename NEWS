@@ -17,7 +17,7 @@ New features:
   - Added Nikon Z9* and Zfc*.
   - Added Olympus E-M10III*.
   - Added OM Systems OM-1*.
-  - Added Panansonic G7*, GH5II* and GH6, and alias for Panasonic G110.
+  - Added Panansonic G7*, GH5II* and GH6*, and alias for Panasonic G110.
   - Added Pentax K3 MarkIII (DNG and PEF*).
   - Added Ricoh GR IIIx.
   - Added Sigma fp L.
@@ -41,6 +41,7 @@ Internal changes
   - Removed a few piece of unused code in IFD, MakerNote and ljpeg decompressor.
   - Use bionic on Travis CI
   - Minor cleanup in the Sony code.
+  - Updated configure to more modern syntax (autoupdate).
 
 libopenraw 0.3.0 - 2020/12/18
 
