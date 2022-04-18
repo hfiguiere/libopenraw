@@ -41,7 +41,7 @@ Internal changes
   - Removed a few piece of unused code in IFD, MakerNote and ljpeg decompressor.
   - Use bionic on Travis CI
   - Minor cleanup in the Sony code.
-  - Updated configure to more modern syntax (autoupdate).
+  - Updated configure to more modern syntax (autoupdate). Requires autoconf 2.69.
 
 libopenraw 0.3.0 - 2020/12/18
 
