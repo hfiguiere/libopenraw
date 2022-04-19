@@ -54,7 +54,7 @@ fn unpack_bento16(input: &[u8], n: u16, out_len: usize, out_data: &mut Vec<u16>)
 /// Unpack 12-bits into 16-bits values
 /// For performance `out_data` should have reserved size
 /// Return the number of elements written.
-fn unpack_be12to16(
+pub(crate) fn unpack_be12to16(
     input: &[u8],
     out_data: &mut Vec<u16>,
     compression: tiff::Compression,
@@ -68,12 +68,12 @@ fn unpack_be12to16(
     let rest = input.len() % (15 + pad);
     let mut src = 0_usize; // index in source
 
-    if pad == 1 && (input.len() % 16) != 0 {
-        log::error!("be12to16 incorrect padding.");
+    if pad != 0 && (input.len() % 16) != 0 {
+        log::error!("be12to16 incorrect padding for {:?}.", compression);
         return Err(Error::Decompression);
     }
     if (rest % 3) != 0 {
-        log::error!("be12to16 incorrect rest.");
+        log::error!("be12to16 incorrect rest for {:?}.", compression);
         return Err(Error::Decompression);
     }
 
@@ -120,13 +120,7 @@ pub(crate) fn unpack(
         compression
     );
     let block_size: usize = match bpc {
-        10 => {
-            if compression == tiff::Compression::NikonPack {
-                ((width / 4 * 5) + width / 10) as usize
-            } else {
-                (width / 4 * 5) as usize
-            }
-        }
+        10 => (width / 4 * 5) as usize,
         12 => {
             if compression == tiff::Compression::NikonPack {
                 ((width / 2 * 3) + width / 10) as usize
@@ -134,13 +128,7 @@ pub(crate) fn unpack(
                 (width / 2 * 3) as usize
             }
         }
-        14 => {
-            if compression == tiff::Compression::NikonPack {
-                ((width / 4 * 7) + width / 10) as usize
-            } else {
-                (width / 4 * 7) as usize
-            }
-        }
+        14 => (width / 4 * 7) as usize,
         _ => {
             log::warn!("Invalid BPC {}", bpc);
             return Err(Error::InvalidFormat);

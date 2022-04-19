@@ -97,13 +97,49 @@ impl Container {
         self.exif_correction
     }
 
+    pub fn read_u16_array(
+        &self,
+        view: &mut View,
+        array: &mut [u16],
+        count: usize,
+    ) -> std::io::Result<usize> {
+        assert!(array.len() >= count);
+        match *self.endian.borrow() {
+            container::Endian::Little => {
+                for item in array.iter_mut().take(count) {
+                    *item = view.read_u16::<LittleEndian>()?
+                }
+                Ok(count)
+            }
+            container::Endian::Big => {
+                for item in array.iter_mut().take(count) {
+                    *item = view.read_u16::<BigEndian>()?
+                }
+                Ok(count)
+            }
+            container::Endian::Unset => {
+                unreachable!("endian unset");
+            }
+        }
+    }
+
+    /// Read an `u16` based on the container endian.
+    pub fn read_u16(&self, view: &mut View) -> std::io::Result<u16> {
+        match *self.endian.borrow() {
+            container::Endian::Little => view.read_u16::<LittleEndian>(),
+            container::Endian::Big => view.read_u16::<BigEndian>(),
+            container::Endian::Unset => {
+                unreachable!("endian unset");
+            }
+        }
+    }
+
     /// Read an `u32` based on the container endian.
     fn read_u32(&self, view: &mut View) -> std::io::Result<u32> {
         match *self.endian.borrow() {
             container::Endian::Little => view.read_u32::<LittleEndian>(),
             container::Endian::Big => view.read_u32::<BigEndian>(),
             container::Endian::Unset => {
-                error!("Endian is unset. PANIC");
                 unreachable!("endian unset");
             }
         }

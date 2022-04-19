@@ -30,6 +30,7 @@ use crate::canon::Cr3File;
 use crate::dng::DngFile;
 use crate::epson::ErfFile;
 use crate::fujifilm::RafFile;
+use crate::nikon::NefFile;
 use crate::panasonic::Rw2File;
 use crate::sony::ArwFile;
 
@@ -42,6 +43,8 @@ lazy_static::lazy_static! {
         (Type::Dng, DngFile::factory as RawFileFactory),
         (Type::Erf, ErfFile::factory as RawFileFactory),
         (Type::Gpr, DngFile::factory as RawFileFactory),
+        (Type::Nef, NefFile::factory as RawFileFactory),
+        (Type::Nrw, NefFile::factory as RawFileFactory),
         (Type::Raf, RafFile::factory as RawFileFactory),
         (Type::Rw2, Rw2File::factory as RawFileFactory),
     ]);

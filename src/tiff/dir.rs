@@ -36,6 +36,7 @@ use crate::epson;
 use crate::fujifilm;
 use crate::io::View;
 use crate::leica;
+use crate::nikon;
 use crate::panasonic;
 use crate::pentax;
 use crate::ricoh;
@@ -94,7 +95,47 @@ impl Dir {
                     view.seek(SeekFrom::Start(offset as u64))?;
                     view.read_exact(&mut data)?;
                 }
-                // XXX missing other
+                if &data[0..6] == b"Nikon\0" {
+                    if data[6] == 1 {
+                        return Dir::new_makernote(
+                            "Nikon2",
+                            container,
+                            offset + 8,
+                            offset + 8,
+                            &nikon::MNOTE_TAG_NAMES_2,
+                        );
+                    } else if data[6] == 2 {
+                        // this one has an endian / TIFF header after the magic
+                        return Dir::new_makernote(
+                            "Nikon",
+                            container,
+                            offset + 18,
+                            offset + 10,
+                            &nikon::MNOTE_TAG_NAMES,
+                        );
+                    } else {
+                        log::error!("Unidentified Nikon makernote");
+                        return Dir::new_makernote(
+                            "",
+                            container,
+                            offset,
+                            offset,
+                            &MNOTE_EMPTY_TAGS,
+                        );
+                    }
+                }
+                // Headerless Nikon.
+                if file_type == RawType::Nef {
+                    return Dir::new_makernote(
+                        "Nikon",
+                        container,
+                        offset,
+                        offset,
+                        &nikon::MNOTE_TAG_NAMES,
+                    );
+                }
+
+                // XXX missing Olympus
 
                 // EPSON R-D1, use Olympus
                 // XXX deal with endian.

@@ -56,7 +56,7 @@ pub enum Compression {
     Deflate = 8,
     /// Sony ARW compression
     Arw = 32767,
-    /// Nikon packed
+    /// Nikon packed, also used by Epson ERF.
     NikonPack = 32769,
     /// Nikon quantized
     NikonQuantized = 34713,
@@ -80,7 +80,7 @@ impl From<u16> for Compression {
             7 => LJpeg,
             32767 => Arw,
             32769 => NikonPack,
-            34712 => NikonQuantized,
+            34713 => NikonQuantized,
             65535 => Custom,
             // 65536 => Olympus,
             _ => Unknown,
@@ -238,6 +238,8 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
         Compression::NikonPack => DataType::Raw,
         _ => DataType::CompressedRaw,
     };
+    // Here a D100 would have compression = NikonQuantized.
+    // But it'll trickle down the Nikon code.
 
     // XXX get mosaic info
 

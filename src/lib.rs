@@ -37,6 +37,7 @@ mod io;
 mod jpeg;
 mod leica;
 mod mp4;
+mod nikon;
 mod olympus;
 mod panasonic;
 mod pentax;
@@ -219,6 +220,8 @@ impl From<&str> for Type {
             "CR3" => Self::Cr3,
             "DNG" => Self::Dng,
             "ERF" => Self::Erf,
+            "NEF" => Self::Nef,
+            "NRW" => Self::Nrw,
             "RAF" => Self::Raf,
             "RW2" => Self::Rw2,
             _ => Self::Unknown,

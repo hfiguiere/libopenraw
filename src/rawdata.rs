@@ -46,6 +46,8 @@ pub struct RawData {
     bpc: u16,
     /// White point
     white: u16,
+    /// Black point
+    black: u16,
     ///
     photom_int: exif::PhotometricInterpretation,
     ///
@@ -65,6 +67,7 @@ impl RawData {
             data: Data::Data8(data),
             active_area: None,
             white: 0,
+            black: 0,
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
         }
@@ -86,6 +89,7 @@ impl RawData {
             data: Data::Tiled((data, tile_size)),
             active_area: None,
             white: 0,
+            black: 0,
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
         }
@@ -101,6 +105,7 @@ impl RawData {
             data: Data::Data16(data),
             active_area: None,
             white: 0,
+            black: 0,
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
         }
@@ -116,22 +121,30 @@ impl RawData {
         self.active_area = rect;
     }
 
+    /// Set the width of the Rawdata. Use with caution.
+    pub fn set_width(&mut self, width: u32) {
+        self.width = width;
+    }
+
     /// Black value
     pub fn black(&self) -> u16 {
-        // XXX implement
-        0
+        self.black
+    }
+
+    pub fn set_black(&mut self, b: u16) {
+        self.black = b;
     }
 
     pub fn white(&self) -> u16 {
         self.white
     }
 
-    pub fn set_data_type(&mut self, data_type: DataType) {
-        self.data_type = data_type
-    }
-
     pub fn set_white(&mut self, w: u16) {
         self.white = w;
+    }
+
+    pub fn set_data_type(&mut self, data_type: DataType) {
+        self.data_type = data_type
     }
 
     pub fn set_photometric_interpretation(&mut self, photom_int: exif::PhotometricInterpretation) {
