@@ -296,8 +296,14 @@ impl NefFile {
     }
 
     fn is_nrw(&self) -> bool {
-        // XXX
-        false
+        // XXX cache?
+        self.ifd(tiff::Type::MakerNote)
+            .and_then(|mnote| {
+                mnote
+                    .value::<String>(exif::MNOTE_NIKON_QUALITY)
+                    .map(|value| value == "NRW")
+            })
+            .unwrap_or(false)
     }
 
     /// The Raw file is from a D100.
@@ -531,7 +537,7 @@ impl RawFileImpl for NefFile {
             let container = self.container.get().unwrap();
             let mut thumbnails = tiff::tiff_thumbnails(container);
 
-            // XXX get the preview in the makernote
+            // Get the preview in the makernote
             if let Some(mnote) = self.ifd(tiff::Type::MakerNote) {
                 mnote
                     .ifd_in_entry(container, exif::MNOTE_NIKON_PREVIEW_IFD)

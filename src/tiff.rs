@@ -70,7 +70,7 @@ pub enum Compression {
 }
 
 impl From<u16> for Compression {
-    /// 0 and any unknown value will yiel `Unknown`
+    /// 0 and any unknown value will yield `Unknown`
     fn from(v: u16) -> Compression {
         use Compression::*;
 
@@ -85,6 +85,12 @@ impl From<u16> for Compression {
             // 65536 => Olympus,
             _ => Unknown,
         }
+    }
+}
+
+impl From<u32> for Compression {
+    fn from(v: u32) -> Compression {
+        Compression::from(v as u16)
     }
 }
 
@@ -229,7 +235,7 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
         .unwrap_or(exif::PhotometricInterpretation::CFA);
 
     let compression = dir
-        .value::<u16>(exif::EXIF_TAG_COMPRESSION)
+        .uint_value(exif::EXIF_TAG_COMPRESSION)
         .map(Compression::from)
         .unwrap_or(Compression::None);
 

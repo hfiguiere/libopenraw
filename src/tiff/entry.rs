@@ -167,7 +167,13 @@ impl Entry {
                 &self.data.as_slice()[T::unit_size() * index as usize..],
             ));
         }
-        log::error!("incorrect type {} for {:?}", self.type_, T::exif_type());
+        log::error!(
+            "Entry {:x}({}) incorrect type {} for {:?}",
+            self._id,
+            self._id,
+            self.type_,
+            T::exif_type()
+        );
         None
     }
 
