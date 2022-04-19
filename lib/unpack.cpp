@@ -1,7 +1,7 @@
 /*
  * libopenraw - unpack.cpp
  *
- * Copyright (C) 2008-2016 Hubert Figuiere
+ * Copyright (C) 2008-2022 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -38,7 +38,7 @@ Unpack::Unpack(uint32_t w, uint32_t t)
 }
 
 /* Return the size of an image row. */
-size_t Unpack::block_size()
+size_t Unpack::block_size() const
 {
   size_t bs;
   if(m_type == IFD::COMPRESS_NIKON_PACK) {
@@ -56,7 +56,7 @@ size_t Unpack::block_size()
  * the source must correspond to an image row.
  */
 or_error Unpack::unpack_be12to16(uint16_t *dest, size_t destsize, const uint8_t *src,
-                                 size_t size, size_t & out)
+                                 size_t size, size_t & out) const
 {
   or_error err = OR_ERROR_NONE;
   uint16_t *dest16 = reinterpret_cast<uint16_t *>(dest);

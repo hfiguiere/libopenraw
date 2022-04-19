@@ -1,7 +1,7 @@
 /*
- * libopenraw - unpack.h
+ * libopenraw - unpack.hpp
  *
- * Copyright (C) 2008-2013 Hubert Figuiere
+ * Copyright (C) 2008-2022 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -19,33 +19,31 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef OR_INTERNALS_UNPACK_H_
-#define OR_INTERNALS_UNPACK_H_
+#pragma once
 
 #include <stdint.h>
 #include <stddef.h>
 
 #include <libopenraw/consts.h>
 
-namespace OpenRaw {	namespace Internals {
+namespace OpenRaw {
+namespace Internals {
 
-	/** Unpack class. Because we need to maintain a state */
-	class Unpack
-	{
-	public:
-		Unpack(uint32_t w, uint32_t t);
-		// noncopyable
-		Unpack(const Unpack&) = delete;
-		Unpack & operator=(const Unpack&) = delete;
+/** Unpack class. Because we need to maintain a state */
+class Unpack
+{
+public:
+    Unpack(uint32_t w, uint32_t t);
+    // noncopyable
+    Unpack(const Unpack&) = delete;
+    Unpack & operator=(const Unpack&) = delete;
 
-		size_t block_size();
-		or_error unpack_be12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & outsize);
-	private:
-		uint32_t m_w;
-		uint32_t m_type;
-	};
+    size_t block_size() const;
+    or_error unpack_be12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & outsize) const;
+private:
+    uint32_t m_w;
+    uint32_t m_type;
+};
 
-} }
-
-#endif
+}
+}
