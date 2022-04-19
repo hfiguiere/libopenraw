@@ -27,7 +27,7 @@
 namespace OpenRaw {
 namespace Internals {
 
-void HuffmanDecoder::printTable_(std::string prefix, unsigned int pos)  const
+void HuffmanDecoder::printTable_(const std::string& prefix, unsigned int pos)  const
 {
 	const HuffmanNode &cur = m_p[pos];
 	if (cur.isLeaf) {

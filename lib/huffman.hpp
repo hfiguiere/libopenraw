@@ -37,7 +37,7 @@ struct HuffmanNode {
 class HuffmanDecoder {
 	const HuffmanNode * const m_p;
 
-	void printTable_(std::string, unsigned int) const;
+	void printTable_(const std::string&, unsigned int) const;
 public:
 	HuffmanDecoder(const HuffmanNode* const);
 	void printTable() const;
