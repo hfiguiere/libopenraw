@@ -35,6 +35,8 @@ namespace Internals {
 
 #define OR_MAKE_PENTAX_TYPEID(camid) \
     OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_PENTAX,camid)
+#define OR_MAKE_RICOH_TYPEID(camid) \
+    OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_RICOH,camid)
 
 static const ModelIdMap modelid_map = {
     { 0x12994, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_IST_D_PEF) },
@@ -65,7 +67,7 @@ static const ModelIdMap modelid_map = {
     // K-50
     { 0x12fc0, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_K3_PEF) },
     // K-500
-    { 0x13010, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645Z_PEF) },
+    { 0x13010, OR_MAKE_RICOH_TYPEID(OR_TYPEID_PENTAX_645Z_PEF) },
     { 0x1301a, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KS1_PEF) },
     { 0x13024, OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KS2_PEF) },
     // Q-S1
@@ -184,7 +186,7 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0x3e00,
       { 10646, -3593, -1158, -3329, 11699, 1831, -667, 2874, 6287 } },
-    { OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645Z_PEF),
+    { OR_MAKE_RICOH_TYPEID(OR_TYPEID_PENTAX_645Z_PEF),
       0,
       0x3fff,
       { 9519, -3591, -664, -4074, 11725, 2671, -624, 1501, 6653 } },
@@ -219,7 +221,7 @@ const struct IfdFile::camera_ids_t PEFFile::s_def[] = {
     { "PENTAX K-x         ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KX_PEF) },
     { "PENTAX KP          ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_KP_PEF) },
     { "PENTAX 645D        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645D_PEF) },
-    { "PENTAX 645Z        ", OR_MAKE_PENTAX_TYPEID(OR_TYPEID_PENTAX_645Z_PEF) },
+    { "PENTAX 645Z        ", OR_MAKE_RICOH_TYPEID(OR_TYPEID_PENTAX_645Z_PEF) },
     { 0, 0 }
 };
 
