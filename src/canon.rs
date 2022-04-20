@@ -225,7 +225,7 @@ fn get_typeid_for_modelid(model_id: u32) -> TypeId {
     CANON_MODEL_ID_MAP
         .get(&model_id)
         .copied()
-        .unwrap_or(TypeId(vendor::CANON, canon::UNKNOWN))
+        .unwrap_or(TypeId(vendor::CANON, 0))
 }
 
 pub(crate) fn identify_from_maker_note(maker_note: Rc<tiff::Dir>) -> TypeId {

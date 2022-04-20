@@ -53,15 +53,12 @@ pub mod vendor {
     pub const NOKIA: u16 = 23;
 }
 
-/// Generic camera ID. All camera IDs are `u16` and are in `TypeId::1`
 pub mod generic {
     pub const UNKNOWN: u16 = 0;
 }
 
 /// Adobe type IDs
-#[allow(unused)]
 pub mod adobe {
-    pub const UNKNOWN: u16 = 0;
     /// Generic DNG file.
     pub const DNG_GENERIC: u16 = 1;
 }
@@ -69,18 +66,23 @@ pub mod adobe {
 /// Canon type IDs
 #[allow(unused)]
 pub mod canon {
-    pub const UNKNOWN: u16 = 0;
     pub const EOS_20D: u16 = 1;
     pub const EOS_30D: u16 = 2;
     pub const EOS_40D: u16 = 3;
     pub const EOS_350D: u16 = 4;
+    #[allow(unused)]
     pub const REBEL_XT: u16 = EOS_350D;
+    #[allow(unused)]
     pub const KISS_DIGITAL_N: u16 = EOS_350D;
     pub const EOS_400D: u16 = 5;
+    #[allow(unused)]
     pub const REBEL_XTI: u16 = EOS_400D;
+    #[allow(unused)]
     pub const KISS_DIGITAL_X: u16 = EOS_400D;
     pub const EOS_450D: u16 = 6;
+    #[allow(unused)]
     pub const REBEL_XSI: u16 = EOS_450D;
+    #[allow(unused)]
     pub const KISS_X2: u16 = EOS_450D;
     pub const EOS_5D: u16 = 7;
     pub const EOS_1D: u16 = 8;
@@ -90,6 +92,7 @@ pub mod canon {
     pub const EOS_1DSMKII: u16 = 12;
     pub const EOS_1DSMKIII: u16 = 13;
     pub const EOS_300D: u16 = 14;
+    #[allow(unused)]
     pub const DIGITAL_REBEL: u16 = EOS_300D;
     pub const EOS_D30: u16 = 15;
     pub const EOS_D60: u16 = 16;
@@ -108,14 +111,20 @@ pub mod canon {
     pub const G11: u16 = 29;
     pub const EOS_1DMKIV: u16 = 30;
     pub const EOS_500D: u16 = 31;
+    #[allow(unused)]
     pub const REBEL_T1I: u16 = EOS_500D;
+    #[allow(unused)]
     pub const KISS_X3: u16 = EOS_500D;
     pub const EOS_5DMKII: u16 = 32;
     pub const EOS_550D: u16 = 33;
+    #[allow(unused)]
     pub const REBEL_T2I: u16 = EOS_550D;
+    #[allow(unused)]
     pub const KISS_X4: u16 = EOS_550D;
     pub const EOS_1000D: u16 = 34;
+    #[allow(unused)]
     pub const REBEL_XS: u16 = EOS_1000D;
+    #[allow(unused)]
     pub const KISS_F: u16 = EOS_1000D;
     pub const G10: u16 = 35;
     pub const EOS_50D: u16 = 36;
@@ -124,10 +133,14 @@ pub mod canon {
     pub const G12: u16 = 38;
     pub const S95: u16 = 39;
     pub const EOS_600D: u16 = 40;
+    #[allow(unused)]
     pub const REBEL_T3I: u16 = EOS_600D;
+    #[allow(unused)]
     pub const KISS_X5: u16 = EOS_600D;
     pub const EOS_1100D: u16 = 41;
+    #[allow(unused)]
     pub const REBEL_T3: u16 = EOS_1100D;
+    #[allow(unused)]
     pub const KISS_X50: u16 = EOS_1100D;
     pub const G1X: u16 = 42;
     pub const S100: u16 = 43;
@@ -135,7 +148,9 @@ pub mod canon {
     pub const EOS_1DX: u16 = 45;
     pub const EOS_60DA: u16 = 46;
     pub const EOS_650D: u16 = 47;
+    #[allow(unused)]
     pub const REBEL_T4I: u16 = EOS_650D;
+    #[allow(unused)]
     pub const KISS_X6I: u16 = EOS_650D;
     pub const G15: u16 = 48;
     pub const EOS_6D: u16 = 49;
@@ -143,10 +158,14 @@ pub mod canon {
     pub const SX50_HS: u16 = 51;
     pub const S110: u16 = 52;
     pub const EOS_100D: u16 = 53;
+    #[allow(unused)]
     pub const REBEL_SL1: u16 = EOS_100D;
+    #[allow(unused)]
     pub const KISS_X7: u16 = EOS_100D;
     pub const EOS_700D: u16 = 54;
+    #[allow(unused)]
     pub const REBEL_T5I: u16 = EOS_700D;
+    #[allow(unused)]
     pub const KISS_X7I: u16 = EOS_700D;
     pub const G16: u16 = 55;
     pub const EOS_70D: u16 = 56;
@@ -154,10 +173,14 @@ pub mod canon {
     pub const G7X: u16 = 58;
     pub const G1XMKII: u16 = 59;
     pub const EOS_750D: u16 = 60;
+    #[allow(unused)]
     pub const REBEL_T6I: u16 = EOS_750D;
+    #[allow(unused)]
     pub const KISS_X8I: u16 = EOS_750D;
     pub const EOS_760D: u16 = 61;
+    #[allow(unused)]
     pub const REBEL_T6S: u16 = EOS_760D;
+    #[allow(unused)]
     pub const EOS_8000D: u16 = EOS_760D;
     pub const EOS_5DS_R: u16 = 62;
     pub const G3X: u16 = 63;
@@ -167,46 +190,62 @@ pub mod canon {
     pub const G5X: u16 = 67;
     pub const G7XMKII: u16 = 68;
     pub const EOS_1300D: u16 = 69;
+    #[allow(unused)]
     pub const REBEL_T6: u16 = EOS_1300D;
+    #[allow(unused)]
     pub const KISS_X80: u16 = EOS_1300D;
     pub const EOS_M3: u16 = 70;
     pub const EOS_1DXMKII: u16 = 71;
     pub const EOS_80D: u16 = 72;
     pub const EOS_1200D: u16 = 73;
+    #[allow(unused)]
     pub const REBEL_T5: u16 = EOS_1200D;
+    #[allow(unused)]
     pub const KISS_X70: u16 = EOS_1200D;
     pub const G9X: u16 = 74;
     pub const EOS_M10: u16 = 75;
     pub const EOS_800D: u16 = 76;
+    #[allow(unused)]
     pub const REBEL_T7I: u16 = EOS_800D;
+    #[allow(unused)]
     pub const KISS_X9I: u16 = EOS_800D;
     pub const EOS_77D: u16 = 77;
+    #[allow(unused)]
     pub const EOS_9000D: u16 = EOS_77D;
     pub const EOS_M6: u16 = 78;
     pub const EOS_M100: u16 = 79;
     pub const EOS_6DMKII: u16 = 80;
     pub const EOS_200D: u16 = 81;
+    #[allow(unused)]
     pub const REBEL_SL2: u16 = EOS_200D;
+    #[allow(unused)]
     pub const KISS_X9: u16 = EOS_200D;
     pub const G1XMKIII: u16 = 82;
     pub const EOS_5DS: u16 = 83;
     pub const EOS_M50: u16 = 84;
+    #[allow(unused)]
     pub const KISS_M: u16 = EOS_M50;
     pub const SX1_IS: u16 = 85;
     pub const S120: u16 = 86;
     pub const SX60_HS: u16 = 87;
     pub const EOS_2000D: u16 = 88;
+    #[allow(unused)]
     pub const REBEL_T7: u16 = EOS_2000D;
+    #[allow(unused)]
     pub const KISS_X90: u16 = EOS_2000D;
     pub const EOS_R: u16 = 89;
     pub const EOS_3000D: u16 = 90;
+    #[allow(unused)]
     pub const T100: u16 = EOS_3000D;
+    #[allow(unused)]
     pub const EOS_4000D: u16 = EOS_3000D;
     pub const EOS_1DMKIIN: u16 = 91;
     pub const SX70_HS: u16 = 92;
     pub const EOS_RP: u16 = 93;
     pub const EOS_250D: u16 = 94;
+    #[allow(unused)]
     pub const REBEL_SL3: u16 = EOS_250D;
+    #[allow(unused)]
     pub const KISS_X10: u16 = EOS_250D;
     pub const G7XMKIII: u16 = 95;
     pub const G5XMKII: u16 = 96;
@@ -226,18 +265,19 @@ pub mod canon {
     pub const PRO70: u16 = 110;
     pub const PRO90: u16 = 111;
     pub const EOS_850D: u16 = 112;
+    #[allow(unused)]
     pub const REBEL_T8I: u16 = EOS_850D;
+    #[allow(unused)]
     pub const KISS_X10I: u16 = EOS_850D;
     pub const EOS_M2: u16 = 113;
     pub const EOS_M50MKII: u16 = 114;
+    #[allow(unused)]
     pub const KISS_M2: u16 = EOS_M50MKII;
     pub const EOS_R3: u16 = 115;
 }
 
 /// Nikon type IDs
-#[allow(unused)]
 pub mod nikon {
-    pub const UNKNOWN: u16 = 0;
     pub const E5700: u16 = 1;
     pub const D1: u16 = 2;
     pub const D1X: u16 = 3;
@@ -325,9 +365,7 @@ pub mod nikon {
 }
 
 /// Leica type IDs
-#[allow(unused)]
 pub mod leica {
-    pub const UNKNOWN: u16 = 0;
     /* DNG */
     pub const DMR: u16 = 1;
     pub const M8: u16 = 2;
@@ -380,9 +418,7 @@ pub mod leica {
 }
 
 /// Pentax type IDs
-#[allow(unused)]
 pub mod pentax {
-    pub const UNKNOWN: u16 = 0;
     pub const K10D_PEF: u16 = 1;
     pub const K10D_DNG: u16 = 2;
     pub const IST_D_PEF: u16 = 3;
@@ -399,7 +435,7 @@ pub mod pentax {
     pub const K2000_DNG: u16 = 14;
     pub const Q_DNG: u16 = 15;
     pub const K200D_DNG: u16 = 16;
-    pub const KM_PEF: u16 = 17;
+    pub const _KM_PEF: u16 = 17;
     pub const KX_DNG: u16 = 18;
     pub const KR_DNG: u16 = 19;
     pub const K01_DNG: u16 = 20;
@@ -424,7 +460,7 @@ pub mod pentax {
     pub const KS2_PEF: u16 = 39;
     pub const KS2_DNG: u16 = 40;
     pub const QS1_DNG: u16 = 41;
-    pub const QS1_PEF: u16 = 42;
+    pub const _QS1_PEF: u16 = 42;
     pub const KP_PEF: u16 = 43;
     pub const KP_DNG: u16 = 44;
     pub const K1_MKII_PEF: u16 = 45;
@@ -437,15 +473,13 @@ pub mod pentax {
     pub const K3_II_PEF: u16 = 52;
     pub const K110D_PEF: u16 = 53;
     pub const K3_MKIII_PEF: u16 = 54;
-    pub const K3_MKIII_DNG: u16 = 55;
+    pub const _K3_MKIII_DNG: u16 = 55;
     pub const K5_DNG: u16 = 56;
     pub const K20D_DNG: u16 = 57;
 }
 
 /// Epson type IDs
-#[allow(unused)]
 pub mod epson {
-    pub const UNKNOWN: u16 = 0;
     pub const RD1: u16 = 1;
     pub const RD1S: u16 = 2;
 }
@@ -535,9 +569,7 @@ pub mod samsung {
 ///
 /// Following the merger with Pentax newer cameras may be Pentax.
 ///
-#[allow(unused)]
 pub mod ricoh {
-    pub const UNKNOWN: u16 = 0;
     pub const GR2: u16 = 1;
     pub const GXR: u16 = 2;
     pub const GXR_A16: u16 = 3;
@@ -552,7 +584,6 @@ pub mod ricoh {
 }
 
 /// Sony type IDs
-#[allow(unused)]
 pub mod sony {
     pub const A100: u16 = 1;
     pub const A200: u16 = 2;
@@ -648,7 +679,6 @@ pub mod sony {
 }
 
 /// Panasonic type IDs
-#[allow(unused)]
 pub mod panasonic {
     pub const GF1: u16 = 1;
     pub const GF2: u16 = 2;
@@ -683,6 +713,7 @@ pub mod panasonic {
     pub const LX100: u16 = 31;
     pub const GM5: u16 = 32;
     pub const G80: u16 = 33;
+    #[allow(unused)]
     pub const G85: u16 = G80;
     pub const LX10: u16 = 34;
     pub const LX15: u16 = LX10;
@@ -694,6 +725,7 @@ pub mod panasonic {
     pub const TZ100: u16 = ZS100;
     pub const TZ110: u16 = ZS100;
     pub const GX80: u16 = 38;
+    #[allow(unused)]
     pub const GX85: u16 = GX80;
     pub const GH5: u16 = 39;
     pub const GX850: u16 = 40;
@@ -716,6 +748,7 @@ pub mod panasonic {
     pub const FZ150: u16 = 56;
     pub const FZ35: u16 = 57;
     pub const ZS200: u16 = 58;
+    #[allow(unused)]
     pub const TX2: u16 = ZS200;
     pub const TZ202: u16 = ZS200;
     pub const GX7MK2: u16 = 59;
@@ -808,25 +841,19 @@ pub mod fujifilm {
 }
 
 /// Black Magic
-#[allow(unused)]
 pub mod blackmagic {
-    pub const UNKNOWN: u16 = 0;
     pub const POCKET_CINEMA: u16 = 1;
 }
 
 /// Xiaoyi
-#[allow(unused)]
 pub mod xiaoyi {
-    pub const UNKNOWN: u16 = 0;
     pub const M1: u16 = 1;
     pub const YDXJ_2: u16 = 2;
     pub const YIAC_3: u16 = 3;
 }
 
 /// Apple (iPhones)
-#[allow(unused)]
 pub mod apple {
-    pub const UNKNOWN: u16 = 0;
     pub const IPHONE_6SPLUS: u16 = 1;
     pub const IPHONE_7PLUS: u16 = 2;
     pub const IPHONE_SE: u16 = 3;
@@ -837,17 +864,13 @@ pub mod apple {
 }
 
 /// Sigma
-#[allow(unused)]
 pub mod sigma {
-    pub const UNKNOWN: u16 = 0;
     pub const FP: u16 = 1;
     pub const FP_L: u16 = 2;
 }
 
 /// GoPro
-#[allow(unused)]
 pub mod gopro {
-    pub const UNKNOWN: u16 = 0;
     pub const HERO5_BLACK: u16 = 1;
     pub const HERO6_BLACK: u16 = 2;
     pub const HERO7_BLACK: u16 = 3;
@@ -857,23 +880,18 @@ pub mod gopro {
 }
 
 /// Hasselblad
-#[allow(unused)]
 pub mod hasselblad {
     pub const LUNAR: u16 = 1;
     pub const L1D_20C: u16 = 2;
 }
 
 /// Zeiss
-#[allow(unused)]
 pub mod zeiss {
-    pub const UNKNOWN: u16 = 0;
     pub const ZX1: u16 = 1;
 }
 
 /// DJI
-#[allow(unused)]
 pub mod dji {
-    pub const UNKNOWN: u16 = 0;
     pub const FC350: u16 = 1;
     pub const FC7303: u16 = 2;
     pub const OSMO_ACTION: u16 = 3;
