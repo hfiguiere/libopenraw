@@ -97,7 +97,7 @@ impl RawFileImpl for ErfFile {
     fn identify_id(&self) -> TypeId {
         self.container();
         let container = self.container.get().unwrap();
-        tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(0, 0))
+        tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(vendor::EPSON, 0))
     }
 
     /// Return a lazily loaded `tiff::Container`

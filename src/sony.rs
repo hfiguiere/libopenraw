@@ -830,7 +830,7 @@ impl RawFileImpl for ArwFile {
             // The A100 is broken we use a fallback
             // But when it's no longer broken, we might be able to get away with this
             let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(0, 0))
+            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(vendor::SONY, 0))
         })
     }
 

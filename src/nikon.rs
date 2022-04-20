@@ -515,7 +515,7 @@ impl RawFileImpl for NefFile {
         *self.type_id.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(0, 0))
+            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(vendor::NIKON, 0))
         })
     }
 

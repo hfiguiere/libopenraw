@@ -27,8 +27,8 @@ use once_cell::unsync::OnceCell;
 
 use crate::bitmap::{Bitmap, Rect};
 use crate::camera_ids::{
-    apple, blackmagic, dji, gopro, hasselblad, leica, nokia, pentax, ricoh, samsung, sigma, vendor,
-    xiaoyi, zeiss,
+    adobe, apple, blackmagic, dji, gopro, hasselblad, leica, nokia, pentax, ricoh, samsung, sigma,
+    vendor, xiaoyi, zeiss,
 };
 use crate::container::GenericContainer;
 use crate::decompress;
@@ -201,7 +201,8 @@ impl RawFileImpl for DngFile {
     fn identify_id(&self) -> TypeId {
         self.container();
         let container = self.container.get().unwrap();
-        tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(0, 0))
+        tiff::identify_with_exif(container, &MAKE_TO_ID_MAP)
+            .unwrap_or(TypeId(vendor::ADOBE, adobe::DNG_GENERIC))
     }
 
     /// Return a lazily loaded `tiff::Container`

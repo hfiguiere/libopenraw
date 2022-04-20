@@ -235,7 +235,7 @@ pub(crate) fn identify_from_maker_note(maker_note: Rc<tiff::Dir>) -> TypeId {
     } else {
         log::error!("Canon model ID tag not found");
     }
-    TypeId(0, 0)
+    TypeId(vendor::CANON, 0)
 }
 
 /// SensorInfo currently only contain the active area (x, y, w, h)

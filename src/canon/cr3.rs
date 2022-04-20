@@ -130,7 +130,7 @@ impl RawFileImpl for Cr3File {
             super::identify_from_maker_note(maker_note)
         } else {
             log::error!("MakerNote not found");
-            TypeId(0, 0)
+            TypeId(vendor::CANON, 0)
         }
     }
 

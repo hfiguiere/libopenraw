@@ -527,7 +527,10 @@ impl RawFileImpl for RafFile {
         self.container();
         let container = self.container.get().unwrap();
         let model = container.get_model();
-        MAKE_TO_ID_MAP.get(&model).copied().unwrap_or(TypeId(0, 0))
+        MAKE_TO_ID_MAP
+            .get(&model)
+            .copied()
+            .unwrap_or(TypeId(vendor::FUJIFILM, 0))
     }
 
     fn container(&self) -> &dyn GenericContainer {
