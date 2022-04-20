@@ -22,6 +22,7 @@
 
 mod diffiterator;
 mod huffman;
+mod matrices;
 
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
@@ -32,7 +33,6 @@ use once_cell::unsync::OnceCell;
 
 use crate::bitmap::Bitmap;
 use crate::camera_ids::{nikon, vendor};
-use crate::colour::BuiltinMatrix;
 use crate::container::GenericContainer;
 use crate::decompress;
 use crate::io::Viewer;
@@ -44,6 +44,7 @@ use crate::tiff::{Dir, Ifd};
 use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 use diffiterator::{CfaIterator, DiffIterator};
+use matrices::MATRICES;
 
 lazy_static::lazy_static! {
     /// Nikon1 MakerNote tag names
@@ -256,9 +257,6 @@ lazy_static::lazy_static! {
         ("NIKON 1 S2", TypeId(vendor::NIKON, nikon::NIKON1_S2)),
         ("NIKON 1 AW1", TypeId(vendor::NIKON, nikon::NIKON1_AW1)),
     ]);
-
-    static ref MATRICES: [BuiltinMatrix; 0] = [
-    ];
 }
 
 struct CompressionInfo {
