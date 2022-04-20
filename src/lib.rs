@@ -222,6 +222,7 @@ impl From<&str> for Type {
             "ERF" => Self::Erf,
             "NEF" => Self::Nef,
             "NRW" => Self::Nrw,
+            "PEF" => Self::Pef,
             "RAF" => Self::Raf,
             "RW2" => Self::Rw2,
             _ => Self::Unknown,

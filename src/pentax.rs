@@ -21,6 +21,20 @@
 //! Pentax camera support.
 
 use std::collections::HashMap;
+use std::rc::Rc;
+
+use once_cell::unsync::OnceCell;
+
+use crate::bitmap::{Point, Rect, Size};
+use crate::camera_ids::{pentax, ricoh, vendor};
+use crate::colour::BuiltinMatrix;
+use crate::container::GenericContainer;
+use crate::io::Viewer;
+use crate::rawfile::ReadAndSeek;
+use crate::thumbnail;
+use crate::tiff;
+use crate::tiff::{exif, Dir, Ifd};
+use crate::{Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 lazy_static::lazy_static! {
     pub static ref MNOTE_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
@@ -178,4 +192,405 @@ lazy_static::lazy_static! {
         (0x405, "UnknownBlock"),
         (0xe00, "PrintIM"),
     ]);
+
+    static ref PENTAX_MODEL_ID_MAP: HashMap<u32, TypeId> = HashMap::from([
+        (0x12994, TypeId(vendor::PENTAX, pentax::IST_D_PEF)),
+        (0x12aa2, TypeId(vendor::PENTAX, pentax::IST_DS_PEF)),
+        (0x12b1a, TypeId(vendor::PENTAX, pentax::IST_DL_PEF)),
+        // *ist DS2
+        (0x12b7e, TypeId(vendor::PENTAX, pentax::IST_DL2_PEF)),
+        (0x12b9c, TypeId(vendor::PENTAX, pentax::K100D_PEF)),
+        (0x12b9d, TypeId(vendor::PENTAX, pentax::K110D_PEF)),
+        (0x12ba2, TypeId(vendor::PENTAX, pentax::K100D_SUPER_PEF)),
+        (0x12c1e, TypeId(vendor::PENTAX, pentax::K10D_PEF)),
+        (0x12cd2, TypeId(vendor::PENTAX, pentax::K20D_PEF)),
+        (0x12cfa, TypeId(vendor::PENTAX, pentax::K200D_PEF)),
+        // K2000
+        // K-m
+        (0x12db8, TypeId(vendor::PENTAX, pentax::K7_PEF)),
+        (0x12dfe, TypeId(vendor::PENTAX, pentax::KX_PEF)),
+        (0x12e08, TypeId(vendor::PENTAX, pentax::PENTAX_645D_PEF)),
+        (0x12e6c, TypeId(vendor::PENTAX, pentax::KR_PEF)),
+        (0x12e76, TypeId(vendor::PENTAX, pentax::K5_PEF)),
+        // Q
+        // K-01
+        // K-30
+        // Q10
+        (0x12f70, TypeId(vendor::PENTAX, pentax::K5_II_PEF)),
+        (0x12f71, TypeId(vendor::PENTAX, pentax::K5_IIS_PEF)),
+        // Q7
+        // K-50
+        (0x12fc0, TypeId(vendor::PENTAX, pentax::K3_PEF)),
+        // K-500
+        (0x13010, TypeId(vendor::RICOH, ricoh::PENTAX_645Z_PEF)),
+        (0x1301a, TypeId(vendor::PENTAX, pentax::KS1_PEF)),
+        (0x13024, TypeId(vendor::PENTAX, pentax::KS2_PEF)),
+        // Q-S1
+        (0x13092, TypeId(vendor::PENTAX, pentax::K1_PEF)),
+        (0x1309c, TypeId(vendor::PENTAX, pentax::K3_II_PEF)),
+        // GR III
+        (0x13222, TypeId(vendor::PENTAX, pentax::K70_PEF)),
+        (0x1322c, TypeId(vendor::PENTAX, pentax::KP_PEF)),
+        (0x13240, TypeId(vendor::PENTAX, pentax::K1_MKII_PEF)),
+        (0x13254, TypeId(vendor::PENTAX, pentax::K3_MKIII_PEF)),
+    ]);
+
+    static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
+        ("PENTAX *ist D      ", TypeId(vendor::PENTAX, pentax::IST_D_PEF)),
+        ("PENTAX *ist DL     ", TypeId(vendor::PENTAX, pentax::IST_DL_PEF)),
+        ("PENTAX *ist DL2    ", TypeId(vendor::PENTAX, pentax::IST_DL2_PEF)),
+        ("PENTAX *ist DS     ", TypeId(vendor::PENTAX, pentax::IST_DS_PEF)),
+        ("PENTAX K10D        ", TypeId(vendor::PENTAX, pentax::K10D_PEF)),
+        ("PENTAX K100D       ", TypeId(vendor::PENTAX, pentax::K100D_PEF)),
+        ("PENTAX K100D Super ", TypeId(vendor::PENTAX, pentax::K100D_SUPER_PEF)),
+        ("PENTAX K110D       ", TypeId(vendor::PENTAX, pentax::K110D_PEF)),
+        ("PENTAX K20D        ", TypeId(vendor::PENTAX, pentax::K20D_PEF)),
+        ("PENTAX K200D       ", TypeId(vendor::PENTAX, pentax::K200D_PEF)),
+        ("PENTAX K-1         ", TypeId(vendor::PENTAX, pentax::K1_PEF)),
+        ("PENTAX K-1 Mark II ", TypeId(vendor::PENTAX, pentax::K1_MKII_PEF)),
+        ("PENTAX K-r         ", TypeId(vendor::PENTAX, pentax::KR_PEF)),
+        ("PENTAX K-3         ", TypeId(vendor::PENTAX, pentax::K3_PEF)),
+        ("PENTAX K-3 II      ", TypeId(vendor::PENTAX, pentax::K3_II_PEF)),
+        ("PENTAX K-3 Mark III             ", TypeId(vendor::PENTAX, pentax::K3_MKIII_PEF)),
+        ("PENTAX K-5         ", TypeId(vendor::PENTAX, pentax::K5_PEF)),
+        ("PENTAX K-5 II      ", TypeId(vendor::PENTAX, pentax::K5_II_PEF)),
+        ("PENTAX K-5 II s    ", TypeId(vendor::PENTAX, pentax::K5_IIS_PEF)),
+        ("PENTAX K-7         ", TypeId(vendor::PENTAX, pentax::K7_PEF)),
+        ("PENTAX K-70        ", TypeId(vendor::PENTAX, pentax::K70_PEF)),
+        ("PENTAX K-S1        ", TypeId(vendor::PENTAX, pentax::KS1_PEF)),
+        ("PENTAX K-S2        ", TypeId(vendor::PENTAX, pentax::KS2_PEF)),
+        ("PENTAX K-x         ", TypeId(vendor::PENTAX, pentax::KX_PEF)),
+        ("PENTAX KP          ", TypeId(vendor::PENTAX, pentax::KP_PEF)),
+        ("PENTAX 645D        ", TypeId(vendor::PENTAX, pentax::PENTAX_645D_PEF)),
+        ("PENTAX 645Z        ", TypeId(vendor::RICOH, ricoh::PENTAX_645Z_PEF)),
+    ]);
+
+    pub(super) static ref MATRICES: [BuiltinMatrix; 27] = [
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::IST_D_PEF),
+            0,
+            0,
+            [9651, -2059, -1189, -8881, 16512, 2487, -1460, 1345, 10687],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::IST_DL_PEF),
+            0,
+            0,
+            [10829, -2838, -1115, -8339, 15817, 2696, -837, 680, 11939],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::IST_DL2_PEF),
+            0,
+            0,
+            [10504, -2439, -1189, -8603, 16208, 2531, -1022, 863, 12242],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::IST_DS_PEF),
+            0,
+            0,
+            [10371, -2333, -1206, -8688, 16231, 2602, -1230, 1116, 11282],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K10D_PEF),
+            0,
+            0,
+            [9566, -2863, -803, -7170, 15172, 2112, -818, 803, 9705],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K1_PEF),
+            0,
+            0,
+            [8566, -2746, -1201, -3612, 12204, 1550, -893, 1680, 6264],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K1_MKII_PEF),
+            0,
+            0,
+            [8596, -2981, -639, -4202, 12046, 2431, -685, 1424, 6122],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K100D_PEF),
+            0,
+            0,
+            [11095, -3157, -1324, -8377, 15834, 2720, -1108, 947, 11688],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K100D_SUPER_PEF),
+            0,
+            0,
+            [11095, -3157, -1324, -8377, 15834, 2720, -1108, 947, 11688],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K110D_PEF),
+            0,
+            0,
+            [11095, -3157, -1324, -8377, 15834, 2720, -1108, 947, 11688],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K20D_PEF),
+            0,
+            0,
+            [9427, -2714, -868, -7493, 16092, 1373, -2199, 3264, 7180],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K200D_PEF),
+            0,
+            0,
+            [9186, -2678, -907, -8693, 16517, 2260, -1129, 1094, 8524],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::KR_PEF),
+            0,
+            0,
+            [9895, -3077, -850, -5304, 13035, 2521, -883, 1768, 6936],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K3_PEF),
+            0,
+            0,
+            [8542, -2581, -1144, -3995, 12301, 1881, -863, 1514, 5755],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K3_II_PEF),
+            0,
+            0,
+            [9251, -3817, -1069, -4627, 12667, 2175, -798, 1660, 5633],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K3_MKIII_PEF),
+            0,
+            0,
+            [8571, -2590, -1148, -3995, 12301, 1881, -1052, 1844, 7013],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K5_PEF),
+            0,
+            0,
+            [8713, -2833, -743, -4342, 11900, 2772, -722, 1543, 6247],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K5_II_PEF),
+            0,
+            0,
+            [8435, -2549, -1130, -3995, 12301, 1881, -989, 1734, 6591],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K5_IIS_PEF),
+            0,
+            0,
+            [8170, -2725, -639, -4440, 12017, 2744, -771, 1465, 6599],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K7_PEF),
+            0,
+            0,
+            [9142, -2947, -678, -8648, 16967, 1663, -2224, 2898, 8615],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::K70_PEF),
+            0,
+            0,
+            [8766, -3149, -747, -3976, 11943, 2292, -517, 1259, 5552],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::KX_PEF),
+            0,
+            0,
+            [8843, -2837, -625, -5025, 12644, 2668, -411, 1234, 7410],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::KS1_PEF),
+            0,
+            0,
+            [7989, -2511, -1137, -3882, 12350, 1689, -862, 1524, 6444],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::KS2_PEF),
+            0,
+            0,
+            [8662, -3280, -798, -3928, 11771, 2444, -586, 1232, 6054],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::KP_PEF),
+            0,
+            0,
+            [8617, -3228, -1034, -4674, 12821, 2044, -803, 1577, 5728],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::PENTAX, pentax::PENTAX_645D_PEF),
+            0,
+            0x3e00,
+            [10646, -3593, -1158, -3329, 11699, 1831, -667, 2874, 6287],
+        ),
+        BuiltinMatrix::new(
+            TypeId(vendor::RICOH, ricoh::PENTAX_645Z_PEF),
+            0,
+            0x3fff,
+            [9519, -3591, -664, -4074, 11725, 2671, -624, 1501, 6653],
+        ),
+    ];
+}
+
+pub(crate) struct PefFile {
+    reader: Rc<Viewer>,
+    type_id: OnceCell<TypeId>,
+    container: OnceCell<tiff::Container>,
+    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+}
+
+impl PefFile {
+    pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
+        let viewer = Viewer::new(reader, 0);
+        Box::new(PefFile {
+            reader: viewer,
+            type_id: OnceCell::new(),
+            container: OnceCell::new(),
+            thumbnails: OnceCell::new(),
+        })
+    }
+}
+
+impl RawFileImpl for PefFile {
+    fn identify_id(&self) -> TypeId {
+        *self.type_id.get_or_init(|| {
+            if let Some(maker_note) = self.maker_note_ifd() {
+                if let Some(id) = maker_note.uint_value(exif::MNOTE_PENTAX_MODEL_ID) {
+                    log::debug!("Pentax model ID: {:x} ({})", id, id);
+                    return PENTAX_MODEL_ID_MAP
+                        .get(&id)
+                        .copied()
+                        .unwrap_or(TypeId(vendor::PENTAX, 0));
+                } else {
+                    log::error!("Pentax model ID tag not found");
+                }
+            }
+            let container = self.container.get().unwrap();
+            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP)
+                .unwrap_or(TypeId(vendor::PENTAX, 0))
+        })
+    }
+
+    fn container(&self) -> &dyn GenericContainer {
+        self.container.get_or_init(|| {
+            // XXX we should be faillible here.
+            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
+            let mut container = tiff::Container::new(
+                view,
+                vec![tiff::Type::Main, tiff::Type::Other, tiff::Type::Other],
+                self.type_(),
+            );
+            container.load(None).expect("PEF container error");
+            container
+        })
+    }
+
+    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+        self.thumbnails.get_or_init(|| {
+            self.container();
+            let container = self.container.get().unwrap();
+            let mut thumbnails = tiff::tiff_thumbnails(container);
+
+            self.ifd(tiff::Type::MakerNote).and_then(|mnote| {
+                // The MakerNote has a MNOTE_PENTAX_PREVIEW_IMAGE_SIZE
+                // That contain w in [0] and h in [1]
+                let start =
+                    mnote.uint_value(exif::MNOTE_PENTAX_PREVIEW_IMAGE_START)? + mnote.mnote_offset;
+                let len = mnote.uint_value(exif::MNOTE_PENTAX_PREVIEW_IMAGE_LENGTH)?;
+                container
+                    .add_thumbnail_from_stream(start, len, &mut thumbnails)
+                    .ok()
+            });
+
+            thumbnails
+        })
+    }
+
+    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<Dir>> {
+        self.container();
+        let container = self.container.get().unwrap();
+        match ifd_type {
+            tiff::Type::Main | tiff::Type::Cfa => container.directory(0),
+            tiff::Type::Exif => self
+                .ifd(tiff::Type::Main)
+                .and_then(|dir| dir.get_exif_ifd(container)),
+            tiff::Type::MakerNote => self
+                .ifd(tiff::Type::Exif)
+                .and_then(|dir| dir.get_mnote_ifd(container)),
+            _ => None,
+        }
+    }
+
+    fn load_rawdata(&self) -> Result<RawData> {
+        self.container();
+        let container = self.container.get().unwrap();
+        self.ifd(tiff::Type::Cfa)
+            .ok_or(Error::NotFound)
+            .and_then(|dir| tiff::tiff_get_rawdata(container, &dir))
+            .map(|mut rawdata| {
+                if let Some(mnote) = self.ifd(tiff::Type::MakerNote) {
+                    mnote
+                        .entry(exif::MNOTE_PENTAX_IMAGEAREAOFFSET)
+                        .and_then(|e| {
+                            let pt = e.value_array::<u16>(container.endian()).and_then(|a| {
+                                if a.len() < 2 {
+                                    return None;
+                                }
+                                Some(Point {
+                                    x: a[0] as u32,
+                                    y: a[1] as u32,
+                                })
+                            })?;
+                            let e = mnote.entry(exif::MNOTE_PENTAX_RAWIMAGESIZE)?;
+                            if let Some(sz) =
+                                e.value_array::<u16>(container.endian()).and_then(|a| {
+                                    if a.len() < 2 {
+                                        return None;
+                                    }
+                                    Some(Size {
+                                        width: a[0] as u32,
+                                        height: a[1] as u32,
+                                    })
+                                })
+                            {
+                                rawdata.set_active_area(Some(Rect::new(pt, sz)));
+                            }
+
+                            Some(())
+                        });
+
+                    if let Some(white) = mnote.uint_value(exif::MNOTE_PENTAX_WHITELEVEL) {
+                        rawdata.set_white(white as u16);
+                    }
+                }
+                // XXX decompress
+
+                rawdata
+            })
+    }
+
+    fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>> {
+        MATRICES
+            .iter()
+            .find(|m| m.camera == self.type_id())
+            .map(|m| Vec::from(m.matrix))
+            .ok_or(Error::NotFound)
+    }
+}
+
+impl RawFile for PefFile {
+    fn type_(&self) -> Type {
+        Type::Pef
+    }
+}
+
+impl Dump for PefFile {
+    #[cfg(feature = "dump")]
+    fn print_dump(&self, indent: u32) {
+        dump_println!(indent, "<Pentax PEF File>");
+        {
+            let indent = indent + 1;
+            self.container().print_dump(indent);
+        }
+        dump_println!(indent, "</Pentax PEF File>");
+    }
 }

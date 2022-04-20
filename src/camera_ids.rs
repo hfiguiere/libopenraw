@@ -436,8 +436,10 @@ pub mod pentax {
     pub const K3_PEF: u16 = 51;
     pub const K3_II_PEF: u16 = 52;
     pub const K110D_PEF: u16 = 53;
-    pub const K5_DNG: u16 = 54;
-    pub const K20D_DNG: u16 = 55;
+    pub const K3_MKIII_PEF: u16 = 54;
+    pub const K3_MKIII_DNG: u16 = 55;
+    pub const K5_DNG: u16 = 56;
+    pub const K20D_DNG: u16 = 57;
 }
 
 /// Epson type IDs
