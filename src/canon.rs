@@ -22,6 +22,7 @@
 
 mod cr2;
 mod cr3;
+mod matrices;
 
 use std::collections::HashMap;
 use std::rc::Rc;

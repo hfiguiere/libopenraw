@@ -25,7 +25,7 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::camera_ids::{canon, vendor};
+use crate::camera_ids::vendor;
 use crate::container::GenericContainer;
 use crate::io::Viewer;
 use crate::mp4;
@@ -35,76 +35,7 @@ use crate::tiff;
 use crate::tiff::Dir;
 use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Rect, Result, Type, TypeId};
 
-use crate::colour::BuiltinMatrix;
-
-lazy_static::lazy_static! {
-    static ref MATRICES: [BuiltinMatrix; 16] = [
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_M200),
-      0,
-      0,
-      [ 10463, -2173, -1437, -4856, 12635, 2482, -1216, 2915, 7237 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_M50),
-      0,
-      0,
-      [ 8532, -701, -1167, -4095, 11879, 2508, -797, 2424, 7010 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_M50MKII),
-      0,
-      0,
-      [ 10463, -2173, -1437, -4856, 12635, 2482, -1216, 2915, 7237 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_M6MKII),
-      0,
-      0,
-      [ 11498, -3759, -1516, -5073, 12954, 2349, -892, 1867, 6118 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_90D),
-      0,
-      0,
-      [ 11498, -3759, -1516, -5073, 12954, 2349, -892, 1867, 6118 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_R),
-      0,
-      0,
-      [ 6446, -366, -864, -4436, 12204, 2513, -952, 2496, 6348 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_RP),
-      0,
-      0,
-      [ 8608, -2097, -1178, -5425, 13265, 2383, -1149, 2238, 5680 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_R3),
-      0,
-      0,
-      [ 9423, -2839, -1195, -4532, 12377, 2415, -483, 1374, 5276 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_R5),
-      0,
-      0,
-      [ 9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_R6),
-      0,
-      0,
-      [ 8293, -1611, -1132, -4759, 12711, 2275, -1013, 2415, 5509 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::SX70_HS),
-      0,
-      0,
-      [ 18285, -8907, -1951, -1845, 10688, 1323, 364, 1101, 5139 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_250D),
-      0,
-      0,
-      [ 9079, -1923, -1236, -4677, 12454, 2492, -922, 2319, 5565 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_850D),
-      0,
-      0,
-      [ 9079, -1923, -1236, -4677, 12454, 2492, -922, 2319, 5565 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::G5XMKII),
-      0,
-      0,
-      [ 11629, -5713, -914, -2706, 11090, 1842, -206, 1225, 5515 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::G7XMKIII),
-      0,
-      0,
-      [ 11629, -5713, -914, -2706, 11090, 1842, -206, 1225, 5515 ] ),
-    BuiltinMatrix::new( TypeId(vendor::CANON, canon::EOS_1DXMKIII),
-      0,
-      0,
-      [ 8971, -2022, -1242, -5405, 13249, 2380, -1280, 2483, 6072 ] ),
-    ];
-}
+use super::matrices::MATRICES;
 
 /// Canon CR3 File
 pub struct Cr3File {
