@@ -753,6 +753,7 @@ lazy_static::lazy_static! {
 /// Panasonic Rw2 File
 pub struct Rw2File {
     reader: Rc<Viewer>,
+    type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
 }
@@ -762,6 +763,7 @@ impl Rw2File {
         let viewer = Viewer::new(reader, 0);
         Box::new(Rw2File {
             reader: viewer,
+            type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
         })
@@ -809,9 +811,12 @@ impl Rw2File {
 
 impl RawFileImpl for Rw2File {
     fn identify_id(&self) -> TypeId {
-        self.container();
-        let container = self.container.get().unwrap();
-        tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(vendor::PANASONIC, 0))
+        *self.type_id.get_or_init(|| {
+            self.container();
+            let container = self.container.get().unwrap();
+            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP)
+                .unwrap_or(TypeId(vendor::PANASONIC, 0))
+        })
     }
 
     fn container(&self) -> &dyn GenericContainer {

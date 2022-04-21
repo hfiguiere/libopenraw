@@ -40,6 +40,7 @@ use super::matrices::MATRICES;
 /// Canon CR3 File
 pub struct Cr3File {
     reader: Rc<Viewer>,
+    type_id: OnceCell<TypeId>,
     container: OnceCell<mp4::Container>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
 }
@@ -49,6 +50,7 @@ impl Cr3File {
         let viewer = Viewer::new(reader, 0);
         Box::new(Cr3File {
             reader: viewer,
+            type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
         })
@@ -57,12 +59,14 @@ impl Cr3File {
 
 impl RawFileImpl for Cr3File {
     fn identify_id(&self) -> TypeId {
-        if let Some(maker_note) = self.maker_note_ifd() {
-            super::identify_from_maker_note(maker_note)
-        } else {
-            log::error!("MakerNote not found");
-            TypeId(vendor::CANON, 0)
-        }
+        *self.type_id.get_or_init(|| {
+            if let Some(maker_note) = self.maker_note_ifd() {
+                super::identify_from_maker_note(maker_note)
+            } else {
+                log::error!("MakerNote not found");
+                TypeId(vendor::CANON, 0)
+            }
+        })
     }
 
     /// Return a lazily loaded `mp4::Container`

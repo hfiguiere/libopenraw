@@ -42,6 +42,7 @@ use super::matrices::MATRICES;
 /// Canon CR2 File
 pub struct Cr2File {
     reader: Rc<Viewer>,
+    type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
 }
@@ -51,6 +52,7 @@ impl Cr2File {
         let viewer = Viewer::new(reader, 0);
         Box::new(Cr2File {
             reader: viewer,
+            type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
         })
@@ -138,12 +140,14 @@ impl Cr2File {
 
 impl RawFileImpl for Cr2File {
     fn identify_id(&self) -> TypeId {
-        if let Some(maker_note) = self.maker_note_ifd() {
-            super::identify_from_maker_note(maker_note)
-        } else {
-            log::error!("MakerNote not found");
-            TypeId(vendor::CANON, 0)
-        }
+        *self.type_id.get_or_init(|| {
+            if let Some(maker_note) = self.maker_note_ifd() {
+                super::identify_from_maker_note(maker_note)
+            } else {
+                log::error!("MakerNote not found");
+                TypeId(vendor::CANON, 0)
+            }
+        })
     }
 
     /// Return a lazily loaded `tiff::Container`

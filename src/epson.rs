@@ -66,6 +66,7 @@ lazy_static::lazy_static! {
 /// ERF RAW file support
 pub(crate) struct ErfFile {
     reader: Rc<Viewer>,
+    type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
     cfa: OnceCell<Option<Rc<tiff::Dir>>>,
@@ -76,6 +77,7 @@ impl ErfFile {
         let viewer = Viewer::new(reader, 0);
         Box::new(ErfFile {
             reader: viewer,
+            type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
             cfa: OnceCell::new(),
@@ -95,9 +97,11 @@ impl ErfFile {
 
 impl RawFileImpl for ErfFile {
     fn identify_id(&self) -> TypeId {
-        self.container();
-        let container = self.container.get().unwrap();
-        tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(vendor::EPSON, 0))
+        *self.type_id.get_or_init(|| {
+            self.container();
+            let container = self.container.get().unwrap();
+            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(vendor::EPSON, 0))
+        })
     }
 
     /// Return a lazily loaded `tiff::Container`

@@ -150,6 +150,7 @@ lazy_static::lazy_static! {
 
 pub(crate) struct DngFile {
     reader: Rc<Viewer>,
+    type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
 }
@@ -159,6 +160,7 @@ impl DngFile {
         let viewer = Viewer::new(reader, 0);
         Box::new(DngFile {
             reader: viewer,
+            type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
         })
@@ -199,10 +201,12 @@ impl DngFile {
 
 impl RawFileImpl for DngFile {
     fn identify_id(&self) -> TypeId {
-        self.container();
-        let container = self.container.get().unwrap();
-        tiff::identify_with_exif(container, &MAKE_TO_ID_MAP)
-            .unwrap_or(TypeId(vendor::ADOBE, adobe::DNG_GENERIC))
+        *self.type_id.get_or_init(|| {
+            self.container();
+            let container = self.container.get().unwrap();
+            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP)
+                .unwrap_or(TypeId(vendor::ADOBE, adobe::DNG_GENERIC))
+        })
     }
 
     /// Return a lazily loaded `tiff::Container`
