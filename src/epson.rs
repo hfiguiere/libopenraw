@@ -85,11 +85,11 @@ impl ErfFile {
     }
 
     /// Return the CFA dir
-    fn cfa_dir(&self) -> Option<&Rc<tiff::Dir>> {
+    fn raw_dir(&self) -> Option<&Rc<tiff::Dir>> {
         self.cfa
             .get_or_init(|| {
                 self.container();
-                tiff::tiff_locate_cfa_ifd(self.container.get().unwrap())
+                tiff::tiff_locate_raw_ifd(self.container.get().unwrap())
             })
             .as_ref()
     }
@@ -140,15 +140,14 @@ impl RawFileImpl for ErfFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<tiff::Dir>> {
-        // XXX todo
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>> {
         match ifd_type {
-            tiff::Type::Cfa => self.cfa_dir().cloned(),
-            tiff::Type::Exif => {
+            tiff::IfdType::Raw => self.raw_dir().cloned(),
+            tiff::IfdType::Exif => {
                 self.container();
                 self.container.get().unwrap().exif_dir()
             }
-            tiff::Type::MakerNote => {
+            tiff::IfdType::MakerNote => {
                 self.container();
                 self.container.get().unwrap().mnote_dir()
             }
@@ -157,7 +156,7 @@ impl RawFileImpl for ErfFile {
     }
 
     fn load_rawdata(&self) -> Result<RawData> {
-        self.ifd(tiff::Type::Cfa)
+        self.ifd(tiff::IfdType::Raw)
             .ok_or_else(|| {
                 log::error!("CFA not found");
                 Error::NotFound

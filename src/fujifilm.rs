@@ -304,19 +304,19 @@ impl RawFileImpl for RafFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<tiff::Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>> {
         self.container();
         let raw_container = self.container.get().unwrap();
         match ifd_type {
-            tiff::Type::Main => raw_container
+            tiff::IfdType::Main => raw_container
                 .jpeg_preview()
                 .and_then(|jpeg| jpeg.exif())
                 .and_then(|exif| exif.directory(0)),
-            tiff::Type::Exif => raw_container
+            tiff::IfdType::Exif => raw_container
                 .jpeg_preview()
                 .and_then(|jpeg| jpeg.exif())
                 .and_then(|exif| exif.exif_dir()),
-            tiff::Type::MakerNote => raw_container
+            tiff::IfdType::MakerNote => raw_container
                 .jpeg_preview()
                 .and_then(|jpeg| jpeg.exif())
                 .and_then(|exif| exif.mnote_dir()),

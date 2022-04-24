@@ -789,7 +789,7 @@ impl Rw2File {
     }
 
     fn jpeg_data_offset(&self) -> Option<thumbnail::DataOffset> {
-        self.ifd(tiff::Type::Main).and_then(|dir| {
+        self.ifd(tiff::IfdType::Main).and_then(|dir| {
             dir.entry(exif::RW2_TAG_JPEG_FROM_RAW).and_then(|entry| {
                 let offset = entry.offset()? as u64;
                 let len = entry.count as u64;
@@ -826,10 +826,10 @@ impl RawFileImpl for Rw2File {
             let mut container = tiff::Container::new(
                 view,
                 vec![
-                    tiff::Type::Main,
-                    tiff::Type::Other,
-                    tiff::Type::Other,
-                    tiff::Type::Other,
+                    tiff::IfdType::Main,
+                    tiff::IfdType::Other,
+                    tiff::IfdType::Other,
+                    tiff::IfdType::Other,
                 ],
                 self.type_(),
             );
@@ -891,12 +891,12 @@ impl RawFileImpl for Rw2File {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
-            tiff::Type::Main | tiff::Type::Cfa => container.directory(0),
-            tiff::Type::Exif => self
+            tiff::IfdType::Main | tiff::IfdType::Raw => container.directory(0),
+            tiff::IfdType::Exif => self
                 .jpeg_preview()
                 .ok()
                 .and_then(|jpeg| jpeg.exif().and_then(|exif| exif.directory(0)))
@@ -905,7 +905,7 @@ impl RawFileImpl for Rw2File {
                         .directory(0)
                         .and_then(|dir| dir.get_exif_ifd(container))
                 }),
-            tiff::Type::MakerNote => self
+            tiff::IfdType::MakerNote => self
                 .jpeg_preview()
                 .ok()
                 .and_then(|jpeg| jpeg.exif().and_then(|exif| exif.mnote_dir())),
@@ -914,7 +914,7 @@ impl RawFileImpl for Rw2File {
     }
 
     fn load_rawdata(&self) -> Result<RawData> {
-        if let Some(cfa) = self.ifd(tiff::Type::Cfa) {
+        if let Some(cfa) = self.ifd(tiff::IfdType::Raw) {
             let offset: thumbnail::DataOffset =
                 if let Some(offset) = cfa.uint_value(exif::RW2_TAG_STRIP_OFFSETS) {
                     let len = self.reader.length() - offset as u64;

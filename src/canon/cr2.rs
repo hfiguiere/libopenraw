@@ -87,7 +87,7 @@ impl Cr2File {
         self.container();
         let container = self.container.get().unwrap();
 
-        let cfa_ifd = self.ifd(tiff::Type::Cfa).ok_or_else(|| {
+        let cfa_ifd = self.ifd(tiff::IfdType::Raw).ok_or_else(|| {
             log::debug!("CFA IFD not found");
             Error::NotFound
         })?;
@@ -124,7 +124,7 @@ impl Cr2File {
         let mut rawdata = self.get_raw_bytes(offset as u64, byte_len as u64, &slices)?;
 
         let sensor_info = self
-            .ifd(tiff::Type::MakerNote)
+            .ifd(tiff::IfdType::MakerNote)
             .and_then(super::SensorInfo::new)
             .map(|sensor_info| bitmap::Rect {
                 x: sensor_info.0[0],
@@ -159,10 +159,10 @@ impl RawFileImpl for Cr2File {
                 // XXX non CR2 have a different layout
                 view,
                 vec![
-                    tiff::Type::Main,
-                    tiff::Type::Other,
-                    tiff::Type::Other,
-                    tiff::Type::Cfa,
+                    tiff::IfdType::Main,
+                    tiff::IfdType::Other,
+                    tiff::IfdType::Other,
+                    tiff::IfdType::Raw,
                 ],
                 self.type_(),
             );
@@ -184,25 +184,25 @@ impl RawFileImpl for Cr2File {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
-            tiff::Type::Cfa => {
+            tiff::IfdType::Raw => {
                 if !self.is_cr2() {
-                    self.ifd(tiff::Type::MakerNote)
+                    self.ifd(tiff::IfdType::MakerNote)
                 } else {
                     // XXX todo set the IFD to type Cfa
                     container.directory(3)
                 }
             }
-            tiff::Type::Main =>
+            tiff::IfdType::Main =>
             // XXX todo set the IFD to type Main
             {
                 container.directory(0)
             }
-            tiff::Type::Exif => container.exif_dir(),
-            tiff::Type::MakerNote => container.mnote_dir(),
+            tiff::IfdType::Exif => container.exif_dir(),
+            tiff::IfdType::MakerNote => container.mnote_dir(),
             _ => None,
         }
     }

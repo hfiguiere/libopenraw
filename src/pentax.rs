@@ -476,7 +476,11 @@ impl RawFileImpl for PefFile {
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
             let mut container = tiff::Container::new(
                 view,
-                vec![tiff::Type::Main, tiff::Type::Other, tiff::Type::Other],
+                vec![
+                    tiff::IfdType::Main,
+                    tiff::IfdType::Other,
+                    tiff::IfdType::Other,
+                ],
                 self.type_(),
             );
             container.load(None).expect("PEF container error");
@@ -490,7 +494,7 @@ impl RawFileImpl for PefFile {
             let container = self.container.get().unwrap();
             let mut thumbnails = tiff::tiff_thumbnails(container);
 
-            self.ifd(tiff::Type::MakerNote).and_then(|mnote| {
+            self.ifd(tiff::IfdType::MakerNote).and_then(|mnote| {
                 // The MakerNote has a MNOTE_PENTAX_PREVIEW_IMAGE_SIZE
                 // That contain w in [0] and h in [1]
                 let start =
@@ -505,16 +509,16 @@ impl RawFileImpl for PefFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
-            tiff::Type::Main | tiff::Type::Cfa => container.directory(0),
-            tiff::Type::Exif => self
-                .ifd(tiff::Type::Main)
+            tiff::IfdType::Main | tiff::IfdType::Raw => container.directory(0),
+            tiff::IfdType::Exif => self
+                .ifd(tiff::IfdType::Main)
                 .and_then(|dir| dir.get_exif_ifd(container)),
-            tiff::Type::MakerNote => self
-                .ifd(tiff::Type::Exif)
+            tiff::IfdType::MakerNote => self
+                .ifd(tiff::IfdType::Exif)
                 .and_then(|dir| dir.get_mnote_ifd(container)),
             _ => None,
         }
@@ -523,11 +527,11 @@ impl RawFileImpl for PefFile {
     fn load_rawdata(&self) -> Result<RawData> {
         self.container();
         let container = self.container.get().unwrap();
-        self.ifd(tiff::Type::Cfa)
+        self.ifd(tiff::IfdType::Raw)
             .ok_or(Error::NotFound)
             .and_then(|dir| tiff::tiff_get_rawdata(container, &dir))
             .map(|mut rawdata| {
-                if let Some(mnote) = self.ifd(tiff::Type::MakerNote) {
+                if let Some(mnote) = self.ifd(tiff::IfdType::MakerNote) {
                     mnote
                         .entry(exif::MNOTE_PENTAX_IMAGEAREAOFFSET)
                         .and_then(|e| {

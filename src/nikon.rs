@@ -295,7 +295,7 @@ impl NefFile {
 
     fn is_nrw(&self) -> bool {
         // XXX cache?
-        self.ifd(tiff::Type::MakerNote)
+        self.ifd(tiff::IfdType::MakerNote)
             .and_then(|mnote| {
                 mnote
                     .value::<String>(exif::MNOTE_NIKON_QUALITY)
@@ -352,7 +352,7 @@ impl NefFile {
     }
 
     fn get_compression_curve(&self, rawdata: &mut RawData) -> Result<CompressionInfo> {
-        self.ifd(tiff::Type::MakerNote)
+        self.ifd(tiff::IfdType::MakerNote)
             .ok_or_else(|| {
                 log::error!("No MakerNote");
                 Error::NotFound
@@ -523,7 +523,7 @@ impl RawFileImpl for NefFile {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = tiff::Container::new(view, vec![tiff::Type::Main], self.type_());
+            let mut container = tiff::Container::new(view, vec![tiff::IfdType::Main], self.type_());
             container.load(None).expect("NEF container error");
             container
         })
@@ -536,7 +536,7 @@ impl RawFileImpl for NefFile {
             let mut thumbnails = tiff::tiff_thumbnails(container);
 
             // Get the preview in the makernote
-            if let Some(mnote) = self.ifd(tiff::Type::MakerNote) {
+            if let Some(mnote) = self.ifd(tiff::IfdType::MakerNote) {
                 mnote
                     .ifd_in_entry(container, exif::MNOTE_NIKON_PREVIEW_IFD)
                     .and_then(|dir| {
@@ -552,24 +552,24 @@ impl RawFileImpl for NefFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
-            tiff::Type::Main => container.directory(0),
-            tiff::Type::Cfa => tiff::tiff_locate_cfa_ifd(container),
-            tiff::Type::Exif => self
-                .ifd(tiff::Type::Main)
+            tiff::IfdType::Main => container.directory(0),
+            tiff::IfdType::Raw => tiff::tiff_locate_raw_ifd(container),
+            tiff::IfdType::Exif => self
+                .ifd(tiff::IfdType::Main)
                 .and_then(|dir| dir.get_exif_ifd(container)),
-            tiff::Type::MakerNote => self
-                .ifd(tiff::Type::Exif)
+            tiff::IfdType::MakerNote => self
+                .ifd(tiff::IfdType::Exif)
                 .and_then(|dir| dir.get_mnote_ifd(container)),
             _ => None,
         }
     }
 
     fn load_rawdata(&self) -> Result<RawData> {
-        self.ifd(tiff::Type::Cfa)
+        self.ifd(tiff::IfdType::Raw)
             .ok_or_else(|| {
                 log::error!("CFA not found");
                 Error::NotFound

@@ -838,7 +838,7 @@ impl RawFileImpl for ArwFile {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = tiff::Container::new(view, vec![tiff::Type::Main], self.type_());
+            let mut container = tiff::Container::new(view, vec![tiff::IfdType::Main], self.type_());
             container.load(None).expect("Arw container error");
             container
         })
@@ -852,23 +852,23 @@ impl RawFileImpl for ArwFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
-            tiff::Type::Main => container.directory(0),
-            tiff::Type::Cfa => {
+            tiff::IfdType::Main => container.directory(0),
+            tiff::IfdType::Raw => {
                 if self.is_a100() {
                     container.directory(0)
                 } else {
-                    tiff::tiff_locate_cfa_ifd(container)
+                    tiff::tiff_locate_raw_ifd(container)
                 }
             }
-            tiff::Type::Exif => self
-                .ifd(tiff::Type::Main)
+            tiff::IfdType::Exif => self
+                .ifd(tiff::IfdType::Main)
                 .and_then(|dir| dir.get_exif_ifd(container)),
-            tiff::Type::MakerNote => self
-                .ifd(tiff::Type::Exif)
+            tiff::IfdType::MakerNote => self
+                .ifd(tiff::IfdType::Exif)
                 .and_then(|dir| dir.get_mnote_ifd(container)),
             _ => None,
         }
@@ -878,7 +878,7 @@ impl RawFileImpl for ArwFile {
         if self.is_a100() {
             Err(Error::NotFound)
         } else {
-            self.ifd(tiff::Type::Cfa)
+            self.ifd(tiff::IfdType::Raw)
                 .ok_or(Error::NotFound)
                 .and_then(|dir| tiff::tiff_get_rawdata(self.container.get().unwrap(), &dir))
         }

@@ -75,7 +75,7 @@ pub trait RawFileImpl {
     }
 
     /// Get the ifd with type
-    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<tiff::Dir>>;
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>>;
 
     /// Load the RawData and return it.
     fn load_rawdata(&self) -> Result<RawData>;
@@ -235,17 +235,17 @@ pub trait RawFile: RawFileImpl + Dump {
 
     /// Get the main IFD
     fn main_ifd(&self) -> Option<Rc<tiff::Dir>> {
-        self.ifd(tiff::Type::Main)
+        self.ifd(tiff::IfdType::Main)
     }
 
     /// Get the Exif IFD
     fn exif_ifd(&self) -> Option<Rc<tiff::Dir>> {
-        self.ifd(tiff::Type::Exif)
+        self.ifd(tiff::IfdType::Exif)
     }
 
     /// Get the MakerNote
     fn maker_note_ifd(&self) -> Option<Rc<tiff::Dir>> {
-        self.ifd(tiff::Type::MakerNote)
+        self.ifd(tiff::IfdType::MakerNote)
     }
 
     /// Return the colour matrix for the file.
@@ -383,7 +383,7 @@ mod test {
             }
         }
 
-        fn ifd(&self, _ifd_type: tiff::Type) -> Option<Rc<tiff::Dir>> {
+        fn ifd(&self, _ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>> {
             None
         }
 

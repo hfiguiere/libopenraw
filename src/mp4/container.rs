@@ -165,7 +165,7 @@ impl Container {
     pub(crate) fn metadata_block(&self, idx: u32) -> Option<IfdHolder> {
         fn make_ifd_holder(
             data: Option<&Vec<u8>>,
-            t: tiff::Type,
+            t: tiff::IfdType,
             raw_type: RawType,
         ) -> Option<IfdHolder> {
             data.and_then(|d| {
@@ -189,10 +189,14 @@ impl Container {
             .get_or_init(|| {
                 if let Ok(craw) = self.craw_header() {
                     vec![
-                        make_ifd_holder(craw.meta1.as_ref(), tiff::Type::Main, self.raw_type),
-                        make_ifd_holder(craw.meta2.as_ref(), tiff::Type::Exif, self.raw_type),
-                        make_ifd_holder(craw.meta3.as_ref(), tiff::Type::MakerNote, self.raw_type),
-                        make_ifd_holder(craw.meta4.as_ref(), tiff::Type::Other, self.raw_type),
+                        make_ifd_holder(craw.meta1.as_ref(), tiff::IfdType::Main, self.raw_type),
+                        make_ifd_holder(craw.meta2.as_ref(), tiff::IfdType::Exif, self.raw_type),
+                        make_ifd_holder(
+                            craw.meta3.as_ref(),
+                            tiff::IfdType::MakerNote,
+                            self.raw_type,
+                        ),
+                        make_ifd_holder(craw.meta4.as_ref(), tiff::IfdType::Other, self.raw_type),
                     ]
                 } else {
                     vec![None; 4]

@@ -96,11 +96,11 @@ impl From<u32> for Compression {
 
 /// Type of IFD
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum Type {
+pub enum IfdType {
     /// Main IFD (see TIFF)
     Main,
-    /// CFA specific IFD
-    Cfa,
+    /// Raw specific IFD
+    Raw,
     /// Exif IFD
     Exif,
     /// MakerNote IFD
@@ -114,7 +114,7 @@ pub enum Type {
 /// Trait for Ifd
 pub trait Ifd {
     /// Return the type if IFD
-    fn ifd_type(&self) -> Type;
+    fn ifd_type(&self) -> IfdType;
 
     fn endian(&self) -> Endian;
 
@@ -159,8 +159,8 @@ pub(crate) fn identify_with_exif(container: &Container, map: &MakeToIdMap) -> Op
     })
 }
 
-/// Find the CFA IFD
-pub(crate) fn tiff_locate_cfa_ifd(container: &Container) -> Option<Rc<Dir>> {
+/// Find the Raw IFD
+pub(crate) fn tiff_locate_raw_ifd(container: &Container) -> Option<Rc<Dir>> {
     let dir = container.directory(0)?;
 
     if dir.is_primary() {
@@ -318,7 +318,7 @@ pub(crate) fn tiff_thumbnails(container: &Container) -> Vec<(u32, thumbnail::Thu
 
     let dirs = container.dirs();
     for dir in dirs {
-        if dir.ifd_type() == Type::Cfa {
+        if dir.ifd_type() == IfdType::Raw {
             continue;
         }
         ifd_locate_thumbnail(container, dir, &mut thumbnails);
@@ -344,7 +344,7 @@ pub(crate) fn ifd_locate_thumbnail(
     let subtype = if let Some(subtype) = dir.value::<u32>(exif::EXIF_TAG_NEW_SUBFILE_TYPE) {
         subtype
     } else {
-        // XXX check if we are in the CFA IFD. We don't know this here.
+        // XXX check if we are in the Raw IFD. We don't know this here.
         1
     };
     if subtype == 1 {

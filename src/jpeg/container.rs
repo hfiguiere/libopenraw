@@ -29,7 +29,6 @@ use once_cell::unsync::OnceCell;
 use crate::container;
 use crate::io::{View, Viewer};
 use crate::tiff;
-use crate::tiff::Type;
 use crate::Dump;
 use crate::Type as RawType;
 
@@ -108,7 +107,7 @@ impl Container {
                             .ok()?;
                         let mut exif = tiff::Container::new(
                             view,
-                            vec![Type::Main, Type::Other],
+                            vec![tiff::IfdType::Main, tiff::IfdType::Other],
                             self.raw_type,
                         );
                         exif.load(None).expect("Failed to load");

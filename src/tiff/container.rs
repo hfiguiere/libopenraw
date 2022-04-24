@@ -34,7 +34,7 @@ use crate::io;
 use crate::io::View;
 use crate::jpeg;
 use crate::thumbnail;
-use crate::tiff::{Dir, Entry, Type};
+use crate::tiff::{Dir, Entry, IfdType};
 use crate::Type as RawType;
 use crate::{DataType, Dump, Error, Result};
 
@@ -49,7 +49,7 @@ pub(crate) struct Container {
     /// IFD.
     dirs: OnceCell<Vec<Rc<Dir>>>,
     /// index to `Type` map
-    dir_map: Vec<Type>,
+    dir_map: Vec<IfdType>,
     /// offset correction for Exif. 0 in most cases.
     exif_correction: i32,
     /// The Exif IFD
@@ -75,7 +75,7 @@ impl container::RawContainer for Container {
 
 impl Container {
     /// Create a new container for the view.
-    pub(crate) fn new(view: View, dir_map: Vec<Type>, raw_type: RawType) -> Self {
+    pub(crate) fn new(view: View, dir_map: Vec<IfdType>, raw_type: RawType) -> Self {
         Self {
             view: RefCell::new(view),
             endian: RefCell::new(container::Endian::Unset),
@@ -161,7 +161,7 @@ impl Container {
     }
 
     /// Read the dir at the offset
-    pub(crate) fn dir_at(&self, view: &mut View, offset: u32, t: Type) -> Result<Dir> {
+    pub(crate) fn dir_at(&self, view: &mut View, offset: u32, t: IfdType) -> Result<Dir> {
         match *self.endian.borrow() {
             container::Endian::Little => Dir::read::<LittleEndian>(view, offset, 0, t),
             container::Endian::Big => Dir::read::<BigEndian>(view, offset, 0, t),
@@ -187,9 +187,9 @@ impl Container {
                 let t = if index < self.dir_map.len() {
                     self.dir_map[index]
                 } else {
-                    Type::Other
+                    IfdType::Other
                 };
-                if let Ok(dir) = if t == Type::MakerNote {
+                if let Ok(dir) = if t == IfdType::MakerNote {
                     Dir::create_maker_note(self, dir_offset)
                 } else {
                     self.dir_at(&mut *self.view.borrow_mut(), dir_offset, t)

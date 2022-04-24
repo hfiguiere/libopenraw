@@ -49,7 +49,7 @@ use crate::Dump;
 use crate::Type as RawType;
 use crate::{Error, Result};
 
-use super::{Entry, Ifd, Type};
+use super::{Entry, Ifd, IfdType};
 
 lazy_static::lazy_static! {
     /// Empty tag list
@@ -62,7 +62,7 @@ pub struct Dir {
     /// Endian for the IFD
     endian: container::Endian,
     /// Type of IFD
-    type_: Type,
+    type_: IfdType,
     /// All the IFD entries
     entries: BTreeMap<u16, Entry>,
     /// Position of the next IFD
@@ -382,11 +382,11 @@ impl Dir {
         if let Ok(mut dir) = match container.endian() {
             container::Endian::Little => {
                 let mut view = container.borrow_view_mut();
-                Dir::read::<LittleEndian>(&mut view, offset, mnote_offset, Type::MakerNote)
+                Dir::read::<LittleEndian>(&mut view, offset, mnote_offset, IfdType::MakerNote)
             }
             container::Endian::Big => {
                 let mut view = container.borrow_view_mut();
-                Dir::read::<BigEndian>(&mut view, offset, mnote_offset, Type::MakerNote)
+                Dir::read::<BigEndian>(&mut view, offset, mnote_offset, IfdType::MakerNote)
             }
             _ => {
                 log::error!("Endian unset to read directory");
@@ -409,7 +409,7 @@ impl Dir {
         view: &mut View,
         dir_offset: u32,
         base_offset: u32,
-        type_: Type,
+        type_: IfdType,
     ) -> Result<Self>
     where
         E: container::EndianType,
@@ -491,7 +491,7 @@ impl Dir {
             .and_then(|offset| {
                 let mut view = container.borrow_view_mut();
                 container
-                    .dir_at(&mut view, offset, Type::Exif)
+                    .dir_at(&mut view, offset, IfdType::Exif)
                     .map(Rc::new)
                     .map_err(|e| {
                         log::warn!("Coudln't get exif dir at {}: {}", offset, e);
@@ -538,7 +538,7 @@ impl Dir {
             .and_then(|val_offset| {
                 let mut view = container.borrow_view_mut();
                 container
-                    .dir_at(&mut view, val_offset, Type::Other)
+                    .dir_at(&mut view, val_offset, IfdType::Other)
                     .map(Rc::new)
                     .ok()
             })
@@ -559,11 +559,11 @@ impl Dir {
             if let Ok(dir) = match self.endian() {
                 container::Endian::Little => {
                     let mut view = container.borrow_view_mut();
-                    Dir::read::<LittleEndian>(&mut view, offset, self.mnote_offset, Type::SubIfd)
+                    Dir::read::<LittleEndian>(&mut view, offset, self.mnote_offset, IfdType::SubIfd)
                 }
                 container::Endian::Big => {
                     let mut view = container.borrow_view_mut();
-                    Dir::read::<BigEndian>(&mut view, offset, self.mnote_offset, Type::SubIfd)
+                    Dir::read::<BigEndian>(&mut view, offset, self.mnote_offset, IfdType::SubIfd)
                 }
                 _ => {
                     log::error!("Endian unset to read directory");
@@ -604,7 +604,7 @@ impl Dir {
 }
 
 impl Ifd for Dir {
-    fn ifd_type(&self) -> Type {
+    fn ifd_type(&self) -> IfdType {
         self.type_
     }
 
@@ -626,7 +626,7 @@ impl Ifd for Dir {
 #[cfg(feature = "dump")]
 impl Dump for Dir {
     fn print_dump(&self, indent: u32) {
-        let maker_note_id = if self.type_ == Type::MakerNote {
+        let maker_note_id = if self.type_ == IfdType::MakerNote {
             format!(" id={}", self.id)
         } else {
             String::default()

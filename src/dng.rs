@@ -214,7 +214,7 @@ impl RawFileImpl for DngFile {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = tiff::Container::new(view, vec![tiff::Type::Main], self.type_());
+            let mut container = tiff::Container::new(view, vec![tiff::IfdType::Main], self.type_());
             container.load(None).expect("IFD container error");
             container
         })
@@ -241,14 +241,14 @@ impl RawFileImpl for DngFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<tiff::Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>> {
         self.container();
         match ifd_type {
-            tiff::Type::Main => self.container.get().unwrap().directory(0),
-            tiff::Type::Cfa => {
+            tiff::IfdType::Main => self.container.get().unwrap().directory(0),
+            tiff::IfdType::Raw => {
                 // This is the TIFF/EP way.
                 // XXX eventually refactor for NEF
-                self.ifd(tiff::Type::Main).and_then(|dir| {
+                self.ifd(tiff::IfdType::Main).and_then(|dir| {
                     // Leica Monochrom has the main IFD being primary.
                     if dir.is_primary() {
                         Some(dir)
@@ -260,14 +260,14 @@ impl RawFileImpl for DngFile {
                     }
                 })
             }
-            tiff::Type::Exif => self.container.get().unwrap().exif_dir(),
-            tiff::Type::MakerNote => self.container.get().unwrap().mnote_dir(),
+            tiff::IfdType::Exif => self.container.get().unwrap().exif_dir(),
+            tiff::IfdType::MakerNote => self.container.get().unwrap().mnote_dir(),
             _ => None,
         }
     }
 
     fn load_rawdata(&self) -> Result<RawData> {
-        self.ifd(tiff::Type::Cfa)
+        self.ifd(tiff::IfdType::Raw)
             .ok_or_else(|| {
                 log::error!("DNG: couldn't find CFA ifd");
                 Error::NotFound

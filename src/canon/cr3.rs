@@ -147,13 +147,13 @@ impl RawFileImpl for Cr3File {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::Type) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
-            tiff::Type::Main => container.metadata_block(0).and_then(|c| c.1.directory(0)),
-            tiff::Type::Exif => container.metadata_block(1).and_then(|c| c.1.directory(0)),
-            tiff::Type::MakerNote => container.metadata_block(2).and_then(|c| c.1.directory(0)),
+            tiff::IfdType::Main => container.metadata_block(0).and_then(|c| c.1.directory(0)),
+            tiff::IfdType::Exif => container.metadata_block(1).and_then(|c| c.1.directory(0)),
+            tiff::IfdType::MakerNote => container.metadata_block(2).and_then(|c| c.1.directory(0)),
             _ => None,
         }
     }
