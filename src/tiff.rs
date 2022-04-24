@@ -30,7 +30,7 @@ use std::rc::Rc;
 
 use byteorder::{BigEndian, LittleEndian};
 
-use crate::container::{Endian, GenericContainer};
+use crate::container::{Endian, RawContainer};
 use crate::decompress;
 use crate::io;
 use crate::jpeg;
@@ -336,7 +336,7 @@ pub(crate) fn tiff_thumbnails(container: &Container) -> Vec<(u32, thumbnail::Thu
 }
 
 pub(crate) fn ifd_locate_thumbnail(
-    container: &dyn GenericContainer,
+    container: &dyn RawContainer,
     dir: &Rc<Dir>,
     thumbnails: &mut Vec<(u32, thumbnail::ThumbDesc)>,
 ) {

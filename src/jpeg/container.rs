@@ -47,7 +47,7 @@ pub(crate) struct Container {
     raw_type: RawType,
 }
 
-impl container::GenericContainer for Container {
+impl container::RawContainer for Container {
     fn endian(&self) -> container::Endian {
         container::Endian::Big
     }

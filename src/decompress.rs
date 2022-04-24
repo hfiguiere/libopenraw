@@ -29,7 +29,7 @@ pub(crate) use tiled::TiledLJpeg;
 
 use std::io::{Read, Seek, SeekFrom};
 
-use crate::container::GenericContainer;
+use crate::container::RawContainer;
 use crate::tiff;
 use crate::{Error, Result};
 
@@ -104,7 +104,7 @@ pub(crate) fn unpack_be12to16(
 
 /// Unpack data at `offset` into a 16-bits buffer.
 pub(crate) fn unpack(
-    container: &dyn GenericContainer,
+    container: &dyn RawContainer,
     width: u32,
     height: u32,
     bpc: u16,

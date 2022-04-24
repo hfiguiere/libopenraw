@@ -26,7 +26,7 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 
 use crate::camera_ids::vendor;
-use crate::container::GenericContainer;
+use crate::container::RawContainer;
 use crate::io::Viewer;
 use crate::mp4;
 use crate::rawfile::ReadAndSeek;
@@ -70,7 +70,7 @@ impl RawFileImpl for Cr3File {
     }
 
     /// Return a lazily loaded `mp4::Container`
-    fn container(&self) -> &dyn GenericContainer {
+    fn container(&self) -> &dyn RawContainer {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");

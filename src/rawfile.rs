@@ -26,7 +26,7 @@ use std::rc::Rc;
 use log::{debug, error};
 
 use super::{Dump, Error, RawData, Result, Type, TypeId};
-use crate::container::GenericContainer;
+use crate::container::RawContainer;
 use crate::factory;
 use crate::identify;
 use crate::thumbnail::{ThumbDesc, Thumbnail};
@@ -50,7 +50,7 @@ pub trait RawFileImpl {
     fn identify_id(&self) -> TypeId;
 
     /// Return the main continer.
-    fn container(&self) -> &dyn GenericContainer;
+    fn container(&self) -> &dyn RawContainer;
 
     /// Return the thumbnails. Implementation lazy load them
     fn thumbnails(&self) -> &Vec<(u32, ThumbDesc)>;
@@ -285,7 +285,7 @@ mod test {
 
     use super::{RawData, RawFile, RawFileImpl};
     use crate::bitmap::Bitmap;
-    use crate::container::GenericContainer;
+    use crate::container::RawContainer;
     use crate::io::View;
     use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
     use crate::tiff;
@@ -303,7 +303,7 @@ mod test {
         }
     }
 
-    impl GenericContainer for TestContainer {
+    impl RawContainer for TestContainer {
         fn borrow_view_mut(&self) -> RefMut<'_, View> {
             self.view.borrow_mut()
         }
@@ -336,7 +336,7 @@ mod test {
             TypeId::default()
         }
 
-        fn container(&self) -> &dyn GenericContainer {
+        fn container(&self) -> &dyn RawContainer {
             &self.container
         }
 

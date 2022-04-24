@@ -31,7 +31,7 @@ use log::debug;
 use crate::apple;
 use crate::canon;
 use crate::container;
-use crate::container::GenericContainer;
+use crate::container::RawContainer;
 use crate::epson;
 use crate::fujifilm;
 use crate::io::View;
@@ -77,7 +77,7 @@ pub struct Dir {
 
 impl Dir {
     pub(crate) fn create_maker_note(
-        container: &dyn container::GenericContainer,
+        container: &dyn container::RawContainer,
         offset: u32,
     ) -> Result<Dir> {
         let file_type = container.raw_type();
@@ -374,7 +374,7 @@ impl Dir {
     ///
     pub(crate) fn new_makernote(
         id: &str,
-        container: &dyn container::GenericContainer,
+        container: &dyn container::RawContainer,
         offset: u32,
         mnote_offset: u32,
         tag_names: &'static HashMap<u16, &'static str>,

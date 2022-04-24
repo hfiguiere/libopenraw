@@ -29,7 +29,7 @@ use log::error;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
-use crate::container::GenericContainer;
+use crate::container::RawContainer;
 use crate::io;
 use crate::io::View;
 use crate::jpeg;
@@ -59,7 +59,7 @@ pub(crate) struct Container {
     raw_type: RawType,
 }
 
-impl container::GenericContainer for Container {
+impl container::RawContainer for Container {
     fn endian(&self) -> container::Endian {
         *self.endian.borrow()
     }

@@ -30,7 +30,7 @@ use once_cell::unsync::OnceCell;
 
 use crate::container;
 #[cfg(feature = "dump")]
-use crate::container::GenericContainer;
+use crate::container::RawContainer;
 use crate::io::{View, Viewer};
 #[cfg(feature = "dump")]
 use crate::jpeg;
@@ -88,7 +88,7 @@ pub(crate) struct Container {
     raw_type: RawType,
 }
 
-impl container::GenericContainer for Container {
+impl container::RawContainer for Container {
     fn endian(&self) -> container::Endian {
         container::Endian::Big
     }

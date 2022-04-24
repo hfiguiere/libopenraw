@@ -31,7 +31,7 @@ use once_cell::unsync::OnceCell;
 
 use crate::bitmap::{Point, Rect, Size};
 use crate::camera_ids::{fujifilm, vendor};
-use crate::container::GenericContainer;
+use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
 use crate::rawfile::ReadAndSeek;
@@ -230,7 +230,7 @@ impl RawFileImpl for RafFile {
             .unwrap_or(TypeId(vendor::FUJIFILM, 0))
     }
 
-    fn container(&self) -> &dyn GenericContainer {
+    fn container(&self) -> &dyn RawContainer {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");

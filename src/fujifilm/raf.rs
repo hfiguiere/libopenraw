@@ -9,7 +9,7 @@ use once_cell::unsync::OnceCell;
 
 use crate::bitmap::{Point, Size};
 use crate::container;
-use crate::container::GenericContainer;
+use crate::container::RawContainer;
 use crate::io::{View, Viewer};
 use crate::jpeg;
 use crate::utils;
@@ -162,7 +162,7 @@ impl RafContainer {
     }
 }
 
-impl GenericContainer for RafContainer {
+impl RawContainer for RafContainer {
     fn endian(&self) -> container::Endian {
         container::Endian::Big
     }
@@ -340,7 +340,7 @@ impl MetaContainer {
     }
 }
 
-impl GenericContainer for MetaContainer {
+impl RawContainer for MetaContainer {
     fn endian(&self) -> container::Endian {
         container::Endian::Big
     }

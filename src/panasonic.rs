@@ -28,7 +28,7 @@ use once_cell::unsync::OnceCell;
 use crate::bitmap;
 use crate::camera_ids::{leica, panasonic, vendor};
 use crate::colour::BuiltinMatrix;
-use crate::container::{Endian, GenericContainer};
+use crate::container::{Endian, RawContainer};
 use crate::io::Viewer;
 use crate::jpeg;
 use crate::rawfile::ReadAndSeek;
@@ -819,7 +819,7 @@ impl RawFileImpl for Rw2File {
         })
     }
 
-    fn container(&self) -> &dyn GenericContainer {
+    fn container(&self) -> &dyn RawContainer {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
@@ -852,7 +852,7 @@ impl RawFileImpl for Rw2File {
                             dir.value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH)? as u64;
                         let offset =
                             dir.value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT)? as u64;
-                        // XXX this +12 shoul be "calculated"
+                        // XXX this +12 should be "calculated"
                         let offset = jpeg_offset.offset + offset as u64 + 12;
                         // XXX as a shortcut we assume it's Exif 160x120
                         thumbnails.push((

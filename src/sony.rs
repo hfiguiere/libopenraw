@@ -27,7 +27,7 @@ use once_cell::unsync::OnceCell;
 
 use crate::camera_ids::{hasselblad, sony, vendor};
 use crate::colour::BuiltinMatrix;
-use crate::container::GenericContainer;
+use crate::container::RawContainer;
 use crate::io::Viewer;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
@@ -834,7 +834,7 @@ impl RawFileImpl for ArwFile {
         })
     }
 
-    fn container(&self) -> &dyn GenericContainer {
+    fn container(&self) -> &dyn RawContainer {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
