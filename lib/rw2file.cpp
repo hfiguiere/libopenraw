@@ -684,18 +684,18 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref& dir, uint32_t & len
     size_t real_size = m_container->fetchData(p, offset,
                                               byte_length);
 
-    if (real_size / (x * 8 / 7) == y) {
+    bool packed = false;
+    if ((x * y * 2) == real_size) {
+        data.setDataType(OR_DATA_TYPE_RAW);
+    } else if ((x * y * 3 / 2) == real_size) {
+        data.setDataType(OR_DATA_TYPE_RAW);
+        packed = true;
+    } else {
         data.setDataType(OR_DATA_TYPE_COMPRESSED_RAW);
         auto v = _cfaIfd->getValue<uint16_t>(RW2_TAG_IMAGE_COMPRESSION);
         if (v) {
             data.setCompression(v.value());
         }
-    } else if (real_size < byte_length) {
-        LOGWARN("Size mismatch for data: expected %u got %lu ignoring.\n",
-                byte_length, (LSIZE)real_size);
-        return OR_ERROR_NOT_FOUND;
-    } else {
-        data.setDataType(OR_DATA_TYPE_RAW);
     }
     // It seems that they are all RGB
     auto pattern = _cfaIfd->getValue<uint16_t>(RW2_TAG_IMAGE_CFAPATTERN);

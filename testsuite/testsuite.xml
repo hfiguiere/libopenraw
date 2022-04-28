@@ -1161,7 +1161,7 @@
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>9480 764928</thumbDataSizes>
       <thumbMd5>28863 51492</thumbMd5>
-      <rawDataType>RAW</rawDataType>
+      <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>
       <rawDataActiveArea>8 8 4608 3456</rawDataActiveArea>
@@ -1188,7 +1188,7 @@
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>5203 462848</thumbDataSizes>
       <thumbMd5>1722 37053</thumbMd5>
-      <rawDataType>RAW</rawDataType>
+      <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>
       <rawDataActiveArea>8 8 4608 3456</rawDataActiveArea>
