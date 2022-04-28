@@ -192,7 +192,7 @@ pub const RW2_TAG_IMAGE_BITSPERSAMPLE: u16 = 0x000a;
 pub const RW2_TAG_IMAGE_COMPRESSION: u16 = 0x000b;
 pub const RW2_TAG_IMAGE_RAWFORMAT: u16 = 0x002d;
 pub const RW2_TAG_JPEG_FROM_RAW: u16 = 0x002e;
-pub const RW2_TAG_STRIP_OFFSETS: u16 = 0x0118;
+pub const RW2_TAG_RAW_OFFSET: u16 = 0x0118;
 
 /* Pentax MakerNote tags */
 pub const MNOTE_PENTAX_PREVIEW_IMAGE_SIZE: u16 = 0x02;

@@ -29,6 +29,7 @@ use crate::bitmap;
 use crate::camera_ids::{leica, panasonic, vendor};
 use crate::colour::BuiltinMatrix;
 use crate::container::{Endian, RawContainer};
+use crate::decompress;
 use crate::io::Viewer;
 use crate::jpeg;
 use crate::rawfile::ReadAndSeek;
@@ -916,8 +917,9 @@ impl RawFileImpl for Rw2File {
     fn load_rawdata(&self) -> Result<RawData> {
         if let Some(cfa) = self.ifd(tiff::IfdType::Raw) {
             let offset: thumbnail::DataOffset =
-                if let Some(offset) = cfa.uint_value(exif::RW2_TAG_STRIP_OFFSETS) {
+                if let Some(offset) = cfa.uint_value(exif::RW2_TAG_RAW_OFFSET) {
                     let len = self.reader.length() - offset as u64;
+                    log::debug!("Panasonic Raw offset: {}", offset);
                     thumbnail::DataOffset {
                         offset: offset as u64,
                         len,
@@ -929,6 +931,7 @@ impl RawFileImpl for Rw2File {
                     let len = cfa
                         .uint_value(exif::EXIF_TAG_STRIP_BYTE_COUNTS)
                         .ok_or(Error::NotFound)? as u64;
+                    log::debug!("Panasonic TIFF Raw offset: {} {} bytes", offset, len);
                     thumbnail::DataOffset { offset, len }
                 };
             let width = cfa
@@ -941,21 +944,18 @@ impl RawFileImpl for Rw2File {
                 .value::<u16>(exif::RW2_TAG_IMAGE_BITSPERSAMPLE)
                 .unwrap_or(16);
 
-            // this is were things are complicated. The real size of the raw
-            // data is whatever is read (if compressed)
-            // ie. raw.len() <= offset.len
+            // in the case of TIFF Raw offset, the byte count is incorrect
             let real_len = self.reader.length() - offset.offset;
-            let data_type = if real_len / (width * 8 / 7) as u64 == height as u64 {
-                DataType::CompressedRaw
-            } else if real_len < offset.len {
-                log::warn!(
-                    "Size mismatch for data: expected {} got {} ignoring.",
-                    offset.len,
-                    real_len
-                );
-                return Err(Error::NotFound);
-            } else {
+            log::debug!("real_len {} width {} height {}", real_len, width, height);
+            let mut packed = false;
+            let data_type = if real_len > (width * height * 2) as u64 {
                 DataType::Raw
+            } else if real_len > (width * height * 3 / 2) as u64 {
+                // Need to unpack
+                packed = true;
+                DataType::Raw
+            } else {
+                DataType::CompressedRaw
             };
             let mut raw_data = match data_type {
                 DataType::CompressedRaw => {
@@ -963,7 +963,14 @@ impl RawFileImpl for Rw2File {
                     RawData::new8(width, height, bpc, data_type, raw)
                 }
                 DataType::Raw => {
-                    let raw = self.container().load_buffer16(offset.offset, offset.len);
+                    let raw = if packed {
+                        let raw = self.container().load_buffer8(offset.offset, offset.len);
+                        let mut out = Vec::with_capacity(width as usize * height as usize);
+                        decompress::unpack_be12to16(&raw, &mut out, tiff::Compression::None)?;
+                        out
+                    } else {
+                        self.container().load_buffer16(offset.offset, offset.len)
+                    };
                     RawData::new16(width, height, bpc, data_type, raw)
                 }
                 _ => return Err(Error::NotFound),
