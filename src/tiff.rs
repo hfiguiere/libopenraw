@@ -150,12 +150,13 @@ pub type MakeToIdMap = std::collections::HashMap<&'static str, TypeId>;
 /// Identify a files using the Exif data
 pub(crate) fn identify_with_exif(container: &Container, map: &MakeToIdMap) -> Option<TypeId> {
     container.directory(0).and_then(|dir| {
-        if let Some(e) = dir.entry(exif::EXIF_TAG_MODEL) {
-            e.value::<String, LittleEndian>()
-                .and_then(|s| map.get(s.as_str()).copied())
-        } else {
-            None
-        }
+        dir.entry(exif::EXIF_TAG_MODEL)
+            // Files like Black Magic's DNG don't have a Model.
+            .or_else(|| dir.entry(exif::DNG_TAG_UNIQUE_CAMERA_MODEL))
+            .and_then(|e| {
+                e.value::<String, LittleEndian>()
+                    .and_then(|s| map.get(s.as_str()).copied())
+            })
     })
 }
 
