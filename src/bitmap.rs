@@ -40,7 +40,7 @@ pub trait Bitmap {
 }
 
 /// Rectangle struct.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Rect {
     pub x: u32,
     pub y: u32,

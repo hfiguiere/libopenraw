@@ -175,6 +175,11 @@ impl DngFile {
                         let mut decompressor = decompress::LJpeg::new();
                         let mut io = std::io::Cursor::new(data);
                         decompressor.decompress(&mut io)
+                            .map(|mut rawdata2| {
+                                rawdata2.set_active_area(rawdata.active_area().cloned());
+
+                                rawdata2
+                            })
                     } else if rawdata.tile_data().is_some() {
                         let decompressor = decompress::TiledLJpeg::new();
                         decompressor.decompress(rawdata)
@@ -277,7 +282,6 @@ impl RawFileImpl for DngFile {
                 let container = self.container.get().unwrap();
                 tiff::tiff_get_rawdata(container, &dir)
                     .map(|mut rawdata| {
-                        dir.value::<u16>(exif::EXIF_TAG_COMPRESSION);
                         let active_area = dir
                             .entry(exif::DNG_TAG_ACTIVE_AREA)
                             .and_then(|e| e.uint_value_array(container.endian()))
