@@ -25,7 +25,7 @@ use getopts::Options;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
 
-use libopenraw::raw_file_from_file;
+use libopenraw::rawfile_from_file;
 
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -55,7 +55,7 @@ pub fn main() {
         if !p.is_file() {
             continue;
         }
-        let rawfile = raw_file_from_file(&p, None);
+        let rawfile = rawfile_from_file(&p, None);
         match rawfile {
             Ok(ref rawfile) => {
                 println!("{} {}", name, rawfile.type_id());

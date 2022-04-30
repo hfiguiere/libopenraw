@@ -23,7 +23,7 @@ use log::{info, LevelFilter};
 use simple_logger::SimpleLogger;
 
 use libopenraw::Bitmap;
-use libopenraw::{raw_file_from_file, DataType, Error, Ifd, RawData, RawFile, Result, Thumbnail};
+use libopenraw::{rawfile_from_file, DataType, Error, Ifd, RawData, RawFile, Result, Thumbnail};
 
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -168,7 +168,7 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool) {
 }
 
 fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool) {
-    let rawfile = raw_file_from_file(p, None);
+    let rawfile = rawfile_from_file(p, None);
 
     info!("Diags {}", p);
 

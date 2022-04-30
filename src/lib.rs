@@ -58,7 +58,7 @@ pub use rawfile::RawFileImpl;
 pub use thumbnail::Thumbnail;
 pub use tiff::Ifd;
 
-pub use rawfile::raw_file_from_file;
+pub use rawfile::rawfile_from_file;
 
 /// Standard Result for libopenraw
 pub type Result<T> = std::result::Result<T, Error>;

@@ -126,7 +126,7 @@ fn from_io(
     }
 
     let hint = type_hint.unwrap();
-    if let Some(f) = factory::get_raw_file_factory(hint) {
+    if let Some(f) = factory::get_rawfile_factory(hint) {
         Ok(f(readable))
     } else {
         Err(Error::UnrecognizedFormat)
@@ -134,7 +134,7 @@ fn from_io(
 }
 
 /// Create a RawFile object from a file
-pub fn raw_file_from_file<P>(filename: P, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
+pub fn rawfile_from_file<P>(filename: P, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
 where
     P: AsRef<Path>,
 {
@@ -409,23 +409,23 @@ mod test {
 
     #[test]
     fn test_thumbnail() {
-        let raw_file = TestRawFile::new();
-        let t = raw_file.thumbnail(160);
+        let rawfile = TestRawFile::new();
+        let t = rawfile.thumbnail(160);
         assert!(t.is_ok());
         let t = t.unwrap();
         assert_eq!(t.width(), 160);
 
-        let t = raw_file.thumbnail(1024);
+        let t = rawfile.thumbnail(1024);
         assert!(t.is_ok());
         let t = t.unwrap();
         assert_eq!(t.width(), 1024);
 
-        let t = raw_file.thumbnail(512);
+        let t = rawfile.thumbnail(512);
         assert!(t.is_ok());
         let t = t.unwrap();
         assert_eq!(t.width(), 1024);
 
-        let t = raw_file.thumbnail(8192);
+        let t = rawfile.thumbnail(8192);
         assert!(t.is_ok());
         let t = t.unwrap();
         assert_eq!(t.width(), 4096);

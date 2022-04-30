@@ -55,6 +55,6 @@ lazy_static::lazy_static! {
 }
 
 /// Get the factory for a type.
-pub(crate) fn get_raw_file_factory(t: Type) -> Option<&'static RawFileFactory> {
+pub(crate) fn get_rawfile_factory(t: Type) -> Option<&'static RawFileFactory> {
     FACTORY_MAP.get(&t)
 }

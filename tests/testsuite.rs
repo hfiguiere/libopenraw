@@ -355,7 +355,7 @@ struct Test {
 
 impl Test {
     fn run(&self) {
-        let rawfile = libopenraw::raw_file_from_file(self.file.clone(), None);
+        let rawfile = libopenraw::rawfile_from_file(self.file.clone(), None);
         match rawfile {
             Ok(rawfile) => {
                 print!("Test '{}'", &self.name);

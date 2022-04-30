@@ -22,7 +22,7 @@ use getopts::Options;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
 
-use libopenraw::raw_file_from_file;
+use libopenraw::rawfile_from_file;
 
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -54,7 +54,7 @@ pub fn main() {
 }
 
 fn process_file(p: &str) {
-    if let Ok(rawfile) = raw_file_from_file(p, None) {
+    if let Ok(rawfile) = rawfile_from_file(p, None) {
         log::info!("Dumping raw file {}", p);
 
         rawfile.print_dump(0);
