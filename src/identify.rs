@@ -36,6 +36,8 @@ lazy_static::lazy_static! {
         (OsString::from("cr3"), Type::Cr3),
         (OsString::from("dng"), Type::Dng),
         (OsString::from("erf"), Type::Erf),
+        (OsString::from("jpg"), Type::Jpeg),
+        (OsString::from("jpeg"), Type::Jpeg),
         (OsString::from("gpr"), Type::Gpr),
         (OsString::from("nef"), Type::Nef),
         (OsString::from("nrw"), Type::Nrw),
@@ -66,6 +68,10 @@ pub(crate) fn type_for_content(content: &mut dyn ReadAndSeek) -> Result<Option<T
     let len = content.read(&mut buf)?;
     if len <= 4 {
         return Err(Error::BufferTooSmall);
+    }
+
+    if &buf[0..4] == [0xff, 0xd8, 0xff, 0xdb] {
+        return Ok(Some(Jpeg));
     }
 
     if &buf[0..4] == b"\0MRM" {

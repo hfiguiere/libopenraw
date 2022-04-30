@@ -51,6 +51,8 @@ pub mod vendor {
     pub const ZEISS: u16 = 21;
     pub const DJI: u16 = 22;
     pub const NOKIA: u16 = 23;
+    /// JPEG isn't a vendor.
+    pub const JPEG: u16 = 1000;
 }
 
 pub mod generic {

@@ -205,6 +205,8 @@ pub enum Type {
     Rw2,
     /// Sony RAW (old)
     Sr2,
+    /// JPEG (definitely not a Raw)
+    Jpeg,
     /// Unknown vendor
     Unknown,
     #[cfg(test)]
