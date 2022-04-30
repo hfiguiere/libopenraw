@@ -640,13 +640,13 @@
       <rawTypeId>983041</rawTypeId>
       <thumbNum>0</thumbNum>
       <rawDataType>RAW</rawDataType>
-      <rawDataSize>2170624</rawDataSize>
-      <rawDataDimensions>1952 556</rawDataDimensions>
+      <rawDataSize>4341248</rawDataSize>
+      <rawDataDimensions>1952 1112</rawDataDimensions>
       <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
       <metaOrientation>1</metaOrientation>
-      <rawMd5>727</rawMd5>
+      <rawMd5>38734</rawMd5>
     </results>
   </test>
   <test>

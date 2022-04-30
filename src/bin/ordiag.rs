@@ -146,10 +146,10 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool) {
             } else {
                 println!("\tMissing compressed raw data.");
             }
-        } else if let Some(d) = rawdata.data16() {
-            println!("\tRaw data: {} bytes", d.len() * 2);
+        } else if let Some(_) = rawdata.data16() {
+            println!("\tRaw data: {} bytes", rawdata.data_size());
         } else {
-            println!("\tNo raw data found.");
+            println!("\tNo 16bits Raw data found.");
         }
         if let Ok(matrix) = rawfile.colour_matrix(1) {
             println!("\tColour matrix 1: {:?}", matrix);
