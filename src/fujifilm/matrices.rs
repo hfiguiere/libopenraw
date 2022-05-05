@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
 //! Fujifilm colour matrices
 
 use crate::camera_ids::{fujifilm, vendor};

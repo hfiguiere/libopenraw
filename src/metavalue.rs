@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 /*
- * libopenraw - colour.rs
+ * libopenraw - metavalue.rs
  *
  * Copyright (C) 2022 Hubert Figuière
  *
@@ -19,8 +19,33 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-//! Everything about colour
+pub enum Value {
+    UInt(u64),
+    SInt(i64),
+    Float(f64),
+    Byte(u8),
+    SByte(i8),
+    Str(String),
+}
 
-mod matrix;
+/// Metadata value
+pub struct MetaValue {
+    values: Vec<Value>,
+}
 
-pub use matrix::BuiltinMatrix;
+impl MetaValue {
+
+    /// Return the item count
+    pub fn count(&self) -> usize {
+        self.values.len()
+    }
+}
+
+impl From<&Entry> for MetaValue {
+    fn from(e: &entry) -> MetaValue {
+        
+    }
+}
+
+
+

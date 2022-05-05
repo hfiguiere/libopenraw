@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
 //! RAF specific containers and type
 
 use std::cell::{RefCell, RefMut};
