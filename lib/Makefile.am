@@ -96,7 +96,6 @@ endif
 CARGO_TARGET_DIR=@abs_top_builddir@/lib/mp4/target
 RUST_PATH=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@
 RUST_LIB=$(RUST_PATH)/libmp4.a
-RUST_LIBADD=-L$(RUST_PATH) -lmp4
 
 mp4/mp4parse.h: $(RUST_LIB)
 
@@ -109,10 +108,12 @@ clean-local:
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo clean $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
 	rm -f $(CARGO_TARGET_DIR)/.rustc_info.json
 
+# The use of --all-static is necesary for the RUST_LIB
 libopenraw_la_LDFLAGS = \
 	-version-info @LIBOPENRAW_VERSION_INFO@ \
+	--all-static \
 	-lpthread -ldl
-libopenraw_la_LIBADD = -ljpeg $(RUST_LIBADD) libopenraw_internals.la
+libopenraw_la_LIBADD = -ljpeg $(RUST_LIB) libopenraw_internals.la
 libopenraw_la_SOURCES = \
 	capi/capi.h \
 	capi/capi.cpp \
