@@ -1,6 +1,8 @@
 What's (visibly) new in 0.3.2
 =============================
 
+- Fix detection of compression for Panasonic Rw2.
+- Some linking issues with the libtool `.la` files should be solved.
 - 15 new cameras listed.
 
 What's (visibly) new in 0.3.1
