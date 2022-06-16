@@ -71,7 +71,7 @@ pub(crate) fn type_for_content(content: &mut dyn ReadAndSeek) -> Result<Option<T
         return Err(Error::BufferTooSmall);
     }
 
-    if &buf[0..4] == [0xff, 0xd8, 0xff, 0xdb] {
+    if buf[0..4] == [0xff, 0xd8, 0xff, 0xdb] {
         return Ok(Some(Jpeg));
     }
 

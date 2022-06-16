@@ -175,12 +175,11 @@ impl DngFile {
                     if let Some(data) = rawdata.data8() {
                         let mut decompressor = decompress::LJpeg::new();
                         let mut io = std::io::Cursor::new(data);
-                        decompressor.decompress(&mut io)
-                            .map(|mut rawdata2| {
-                                rawdata2.set_active_area(rawdata.active_area().cloned());
+                        decompressor.decompress(&mut io).map(|mut rawdata2| {
+                            rawdata2.set_active_area(rawdata.active_area().cloned());
 
-                                rawdata2
-                            })
+                            rawdata2
+                        })
                     } else if rawdata.tile_data().is_some() {
                         let decompressor = decompress::TiledLJpeg::new();
                         decompressor.decompress(rawdata)

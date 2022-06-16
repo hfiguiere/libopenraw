@@ -147,7 +147,7 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool) {
             } else {
                 println!("\tMissing compressed raw data.");
             }
-        } else if let Some(_) = rawdata.data16() {
+        } else if rawdata.data16().is_some() {
             println!("\tRaw data: {} bytes", rawdata.data_size());
         } else {
             println!("\tNo 16bits Raw data found.");
