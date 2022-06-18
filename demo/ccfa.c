@@ -76,13 +76,13 @@ main(int argc, char** argv)
         f = fopen("image.cfa", "wb");
     }
     /* Convert data byte order to most significant byte first */
-    if(or_rawdata_bpc(rawdata) == 16) {
+    if(or_rawdata_bpc(rawdata) > 8) {
         size_t size = or_rawdata_data_size(rawdata);
         uint8_t* buf = (uint8_t*)malloc(size);
         uint8_t* p = buf;
         uint16_t* n = (uint16_t*)or_rawdata_data(rawdata);
         size_t i;
-        
+
         for(i = 0; i < size / 2; i++) {
             unsigned char lo = n[i] & 0xFF;
             unsigned char hi = n[i] >> 8;
@@ -103,9 +103,9 @@ main(int argc, char** argv)
         }
     }
     fclose(f);
-    
+
     or_rawdata_release(rawdata);
-    
+
     return 0;
 }
 
