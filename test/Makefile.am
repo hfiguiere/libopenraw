@@ -1,5 +1,5 @@
 
-TESTS = fileio testoption ljpegtest testunpack extensions
+TESTS = fileio testoption ljpegtest testunpack extensions testbititerator
 TESTS_ENVIRONMENT =
 
 OPENRAW_LIB = $(top_builddir)/lib/libopenraw.la
@@ -15,7 +15,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/lib
 
 check_PROGRAMS = fileio testoption ciffcontainertest ljpegtest testunpack\
-	extensions missingcoefficients
+	extensions missingcoefficients testbititerator
 
 EXTRA_DIST = ljpegtest1.jpg
 
@@ -24,6 +24,10 @@ fileio_LDADD = $(INTERNAL_OPENRAW_LIB)
 
 testoption_SOURCES = option.t.cpp
 testoption_LDFLAGS = @BOOST_UNIT_TEST_FRAMEWORK_LDFLAGS@
+
+testbititerator_SOURCES = bititerator.t.cpp
+testbititerator_LDADD = $(INTERNAL_OPENRAW_LIB)
+testbititerator_LDFLAGS = @BOOST_UNIT_TEST_FRAMEWORK_LDFLAGS@
 
 extensions_SOURCES = extensions.cpp
 extensions_LDADD = $(OPENRAW_LIB)
