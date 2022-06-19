@@ -19,8 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNAL_BITITERATOR_H_
-#define OR_INTERNAL_BITITERATOR_H_
+#pragma once
 
 #include <stdint.h>
 #include <stddef.h>
@@ -29,12 +28,14 @@ namespace OpenRaw {
 namespace Internals {
 
 class BitIterator {
+private:
     const uint8_t* m_p;
     size_t m_size;
 
     uint32_t m_bitBuffer;
     size_t m_bitsOnBuffer;
     void load(size_t numBits);
+    void addByte(uint8_t byte);
 
 public:
     BitIterator(const uint8_t *p, size_t s);
@@ -45,5 +46,3 @@ public:
 
 }
 }
-
-#endif

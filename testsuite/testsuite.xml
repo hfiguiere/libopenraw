@@ -698,7 +698,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>40898</rawMd5>
+      <rawMd5>25902</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -826,7 +826,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>32693</rawMd5>
+      <rawMd5>55379</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -852,7 +852,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>49207</rawMd5>
+      <rawMd5>1062</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -877,7 +877,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>15791</rawMd5>
+      <rawMd5>9783</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -903,7 +903,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
-      <rawMd5>16536</rawMd5>
+      <rawMd5>19233</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
