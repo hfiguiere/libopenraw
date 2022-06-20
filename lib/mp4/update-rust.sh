@@ -3,8 +3,10 @@
 # Copiesd from
 #  https://hg.mozilla.org/mozilla-central/raw-file/tip/media/mp4parse-rust/update-rust.sh
 
+which -s cbindgen
+
 # Default version.
-VER="4ac561edef1b4321bdded4ba058faf7c6fad7974"
+VER="fe7852f59255a73303c1c1dc6a1cf36bf2310a8a"
 
 # Accept version or commit from the command line.
 if test -n "$1"; then
@@ -20,6 +22,7 @@ git checkout ${VER}
 echo "Verifying sources..."
 cargo build
 #cargo test
+cd mp4parse_capi && cbindgen  --output mp4parse_ffi.h
 popd
 rm -rf mp4parse
 mkdir -p mp4parse/src
@@ -28,19 +31,15 @@ cp _upstream/mp4parse/mp4parse/src/*.rs mp4parse/src/
 mkdir -p mp4parse/tests
 cp _upstream/mp4parse/mp4parse/tests/*.rs mp4parse/tests/
 cp _upstream/mp4parse/mp4parse/tests/*.mp4 mp4parse/tests/
+cp _upstream/mp4parse/mp4parse_capi/mp4parse_ffi.h .
+
 
 # Remove everything but the cbindgen.toml, since it's needed to configure the
 # creation of the bindings as part of moz.build
 find mp4parse_capi -not -name cbindgen.toml -delete
 mkdir -p mp4parse_capi/src
 cp _upstream/mp4parse/mp4parse_capi/Cargo.toml mp4parse_capi/
-cp _upstream/mp4parse/mp4parse_capi/build.rs mp4parse_capi/
 cp _upstream/mp4parse/mp4parse_capi/src/*.rs mp4parse_capi/src/
-cp _upstream/mp4parse/mp4parse_capi/include/mp4parse.h .
-
-echo "Applying patches..."
-#patch -p3 < mp4parse-cargo.patch
-patch -p3 < build-rs.patch
 
 echo "Cleaning up..."
 rm -rf _upstream

@@ -47,14 +47,14 @@ pub struct CrawHeader {
 
 #[derive(Debug, Clone)]
 pub struct CanonCRAWEntry {
-    data_reference_index: u16,
+    pub data_reference_index: u16,
     pub width: u16,
     pub height: u16,
     pub is_jpeg: bool,
 }
 
 /// Parse the CRAW entry inside the video sample entry.
-pub fn read_craw_entry<T: Read>(
+pub(crate) fn read_craw_entry<T: Read>(
     src: &mut BMFFBox<T>,
     width: u16,
     height: u16,
@@ -82,14 +82,14 @@ pub fn read_craw_entry<T: Read>(
     check_parser_state!(src.content);
 
     Ok(super::SampleEntry::CanonCRAW(CanonCRAWEntry {
-        data_reference_index: data_reference_index,
-        width: width,
-        height: height,
-        is_jpeg: is_jpeg,
+        data_reference_index,
+        width,
+        height,
+        is_jpeg,
     }))
 }
 
-pub fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> super::Result<CrawHeader> {
+pub(crate) fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> super::Result<CrawHeader> {
     let mut header = CrawHeader::default();
     let mut iter = f.box_iter();
     while let Some(mut b) = iter.next_box()? {
@@ -139,8 +139,8 @@ pub fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> super::Result<CrawHeade
                 }
                 let data = read_buf(&mut b, jpeg_size as u64)?;
                 header.thumbnail = CanonThumbnail {
-                    width: width,
-                    height: height,
+                    width,
+                    height,
                     data: data.to_vec(),
                 };
                 skip_box_remain(&mut b)?;

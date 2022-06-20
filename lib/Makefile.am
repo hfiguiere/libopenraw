@@ -5,15 +5,13 @@ RUST_FILES = mp4/Cargo.lock \
 	mp4/Cargo.toml \
 	mp4/lib.rs \
 	mp4/mp4parse_capi/src/lib.rs \
-	mp4/mp4parse_capi/build.rs \
 	mp4/mp4parse_capi/Cargo.toml \
-	mp4/mp4parse_capi/Cargo.lock \
 	mp4/mp4parse/src/boxes.rs \
-	mp4/mp4parse/src/fallible.rs \
 	mp4/mp4parse/src/lib.rs \
 	mp4/mp4parse/src/macros.rs \
 	mp4/mp4parse/src/tests.rs \
 	mp4/mp4parse/src/craw.rs \
+	mp4/mp4parse/src/unstable.rs \
 	mp4/mp4parse/Cargo.toml \
 	$(NULL)
 
@@ -33,10 +31,11 @@ check_PROGRAMS = teststream
 teststream_SOURCES = io/teststream.cpp
 teststream_LDADD = libopenraw_internals.la
 
-BUILT_SOURCES = mp4/mp4parse.h
-CLEANFILES = mp4/mp4parse.h mp4/target/CACHEDIR.TAG
+CLEANFILES = mp4/target/CACHEDIR.TAG
 
 noinst_HEADERS = \
+	mp4/mp4parse.h \
+	mp4/mp4parse_ffi.h \
 	trace.hpp	\
 	option.hpp \
 	rawcontainer.hpp \
