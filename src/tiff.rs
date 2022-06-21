@@ -396,6 +396,7 @@ pub(crate) fn ifd_locate_thumbnail(
                             let jpeg = jpeg::Container::new(view, container.raw_type());
                             x = jpeg.width() as u32;
                             y = jpeg.height() as u32;
+                            log::debug!("Found JPEG dimensions x={} y={}", x, y);
                         } else {
                             // XXX load the JFIF stream and get the dimensions.
                             log::error!("Couldn't get JPEG dimensions.");
@@ -436,18 +437,20 @@ pub(crate) fn ifd_locate_thumbnail(
         }
         if data_type != DataType::Unknown {
             let dim = std::cmp::max(x, y);
-            // XXX compute
-            // offset += offset();
-            let desc = thumbnail::ThumbDesc {
-                width: x,
-                height: y,
-                data_type,
-                data: thumbnail::Data::Offset(thumbnail::DataOffset {
-                    offset: offset as u64,
-                    len: byte_count as u64,
-                }),
-            };
-            thumbnails.push((dim, desc));
+            if dim > 0 {
+                // XXX compute
+                // offset += offset();
+                let desc = thumbnail::ThumbDesc {
+                    width: x,
+                    height: y,
+                    data_type,
+                    data: thumbnail::Data::Offset(thumbnail::DataOffset {
+                        offset: offset as u64,
+                        len: byte_count as u64,
+                    }),
+                };
+                thumbnails.push((dim, desc));
+            }
         }
     }
 }

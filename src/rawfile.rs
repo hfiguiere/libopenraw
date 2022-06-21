@@ -184,6 +184,11 @@ pub trait RawFile: RawFileImpl + Dump {
 
         debug!("Requested thumbnail of size {}", tsize);
 
+        if tsize == 0 {
+            error!("0 is an invalid size");
+            return Err(Error::InvalidParam);
+        }
+
         let sizes = self.list_thumbnail_sizes();
         if sizes.is_empty() {
             error!("No thumbnail available");
