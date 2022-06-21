@@ -683,7 +683,10 @@ uint32_t Rw2File::_getJpegThumbnailOffset(const IfdDir::Ref& dir, uint32_t & len
     void *p = data.allocData(byte_length);
     size_t real_size = m_container->fetchData(p, offset,
                                               byte_length);
-
+    if (real_size < byte_length) {
+        LOGDBG1("adjusting size");
+        data.adjustSize(real_size);
+    }
     bool packed = false;
     if ((x * y * 2) == real_size) {
         data.setDataType(OR_DATA_TYPE_RAW);

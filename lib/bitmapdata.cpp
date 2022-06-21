@@ -122,6 +122,13 @@ size_t BitmapData::size() const
     return d->data_size;
 }
 
+void BitmapData::adjustSize(size_t size)
+{
+    if (size < d->data_size) {
+        d->data_size = size;
+    }
+}
+
 void *BitmapData::data() const
 {
     return d->data;
