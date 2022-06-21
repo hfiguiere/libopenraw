@@ -59,6 +59,10 @@ public:
 	/** @brief Set the pixel dimensions of the bitmap */
 	virtual void setDimensions(uint32_t x, uint32_t y);
 
+	/** Adjust the size after allocation. If size is bigger
+	 *  than allocated size, then it's a no-op.
+	 */
+	void adjustSize(size_t size);
 private:
 	class Private;
 	BitmapData::Private *d;

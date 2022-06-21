@@ -1134,13 +1134,13 @@
       <thumbDataSizes>8210 720384</thumbDataSizes>
       <thumbMd5>6490 9520</thumbMd5>
       <rawDataType>COMP_RAW</rawDataType>
-      <rawDataSize>20412420</rawDataSize>
+      <rawDataSize>11664384</rawDataSize>
       <rawDataDimensions>3710 2751</rawDataDimensions>
       <rawDataActiveArea>16 7 3648 2736</rawDataActiveArea>
       <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
       <rawMaxValue>0</rawMaxValue>
-      <rawMd5>55840</rawMd5>
+      <rawMd5>36847</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
