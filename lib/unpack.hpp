@@ -1,7 +1,7 @@
 /*
- * libopenraw - unpack.h
+ * libopenraw - unpack.hpp
  *
- * Copyright (C) 2008-2013 Hubert Figuiere
+ * Copyright (C) 2008-2022 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -41,6 +41,8 @@ namespace OpenRaw {	namespace Internals {
 
 		size_t block_size();
 		or_error unpack_be12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & outsize);
+		or_error unpack_le12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & out);
+
 	private:
 		uint32_t m_w;
 		uint32_t m_type;
