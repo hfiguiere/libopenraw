@@ -160,6 +160,14 @@ impl RawData {
         self.compression = compression;
     }
 
+    pub fn set_bpc(&mut self, bpc: u16) {
+        self.bpc = bpc;
+    }
+
+    pub fn set_data16(&mut self, data: Vec<u16>) {
+        self.data = Data::Data16(data)
+    }
+
     /// Provide the 16bits data as a u8 slice.
     /// Use with caution
     pub fn data16_as_u8(&self) -> Option<&[u8]> {

@@ -36,12 +36,12 @@ use crate::decompress;
 use crate::io;
 use crate::jpeg;
 use crate::thumbnail;
-use crate::{DataType, Error, RawData, Result, TypeId};
+use crate::{DataType, Error, RawData, Result, Type, TypeId};
 pub(crate) use container::Container;
 pub(crate) use dir::Dir;
 pub(crate) use entry::Entry;
 
-#[repr(u16)]
+#[repr(u32)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 /// TIFF (a RAW) compression values
 pub enum Compression {
@@ -67,12 +67,12 @@ pub enum Compression {
     Custom = 65535,
     // XXX figure out Olympus compression value
     // Olympus compression
-    //Olympus = 65536
+    Olympus = 65536,
 }
 
-impl From<u16> for Compression {
+impl From<u32> for Compression {
     /// 0 and any unknown value will yield `Unknown`
-    fn from(v: u16) -> Compression {
+    fn from(v: u32) -> Compression {
         use Compression::*;
 
         match v {
@@ -83,15 +83,9 @@ impl From<u16> for Compression {
             32769 => NikonPack,
             34713 => NikonQuantized,
             65535 => Custom,
-            // 65536 => Olympus,
+            65536 => Olympus,
             _ => Unknown,
         }
-    }
-}
-
-impl From<u32> for Compression {
-    fn from(v: u32) -> Compression {
-        Compression::from(v as u16)
     }
 }
 
@@ -174,7 +168,11 @@ pub(crate) fn tiff_locate_raw_ifd(container: &Container) -> Option<Rc<Dir>> {
 }
 
 /// Get the raw data
-pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<RawData> {
+pub(crate) fn tiff_get_rawdata(
+    container: &Container,
+    dir: &Rc<Dir>,
+    file_type: Type,
+) -> Result<RawData> {
     let mut offset = 0_u32;
 
     let mut bpc = dir
@@ -239,6 +237,15 @@ pub(crate) fn tiff_get_rawdata(container: &Container, dir: &Rc<Dir>) -> Result<R
     let compression = dir
         .uint_value(exif::EXIF_TAG_COMPRESSION)
         .map(Compression::from)
+        .map(|compression| {
+            if file_type == Type::Orf && byte_len < x * y * 2 {
+                log::debug!("ORF, setting bpc to 12 and data to compressed.");
+                bpc = 12;
+                Compression::Olympus
+            } else {
+                compression
+            }
+        })
         .unwrap_or(Compression::None);
 
     let data_type = match compression {

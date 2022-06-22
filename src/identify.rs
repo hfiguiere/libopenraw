@@ -42,6 +42,7 @@ lazy_static::lazy_static! {
         (OsString::from("gpr"), Type::Gpr),
         (OsString::from("nef"), Type::Nef),
         (OsString::from("nrw"), Type::Nrw),
+        (OsString::from("orf"), Type::Orf),
         (OsString::from("pef"), Type::Pef),
         (OsString::from("raf"), Type::Raf),
         (OsString::from("raw"), Type::Rw2),
@@ -84,7 +85,7 @@ pub(crate) fn type_for_content(content: &mut dyn ReadAndSeek) -> Result<Option<T
     if len >= 14 && &buf[0..14] == b"II\x1a\0\0\0HEAPCCDR" {
         return Ok(Some(Crw));
     }
-    if &buf[0..4] == b"IIRO" {
+    if &buf[0..4] == b"IIRO" || &buf[0..4] == b"IIRS" {
         return Ok(Some(Orf));
     }
     if &buf[0..4] == b"IIU\0" {

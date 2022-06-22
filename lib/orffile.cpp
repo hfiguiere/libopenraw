@@ -429,7 +429,7 @@ OrfFile::~OrfFile()
     // packed bits
     if (data.size() == (y * ((x * 12 / 8) + ((x + 2) / 10)))) {
         // unpack with control le version of NikonPack
-        printf("ORF: unpack with control\n");
+        LOGDBG1("ORF: unpack with control\n");
         RawDataPtr output(new RawData);
 
         uint32_t current_offset = 0;
@@ -453,7 +453,6 @@ OrfFile::~OrfFile()
             outdata += out / 2;
             outsize -= out;
             if (ret != OR_ERROR_NONE) {
-                printf("Error");
                 break;
             }
         } while(current_offset < data.size());
@@ -464,7 +463,7 @@ OrfFile::~OrfFile()
         data.setWhiteLevel((1 << 12) - 1);
     } else {
 
-        printf("ORF: decompress\n");
+        LOGDBG1("ORF: decompress\n");
         // Otherwise it's compressed.
         OlympusDecompressor decomp((const uint8_t*)data.data(),
                                    data.size(), m_container, x, y);

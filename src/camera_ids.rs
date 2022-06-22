@@ -503,9 +503,7 @@ mod minolta {
 }
 
 /// Olympus type IDs
-#[allow(unused)]
-mod olympus {
-    pub const UNKNOWN: u16 = 0;
+pub mod olympus {
     pub const E1: u16 = 1;
     pub const E10: u16 = 2;
     pub const E3: u16 = 3;
@@ -557,6 +555,8 @@ mod olympus {
     pub const EPL10: u16 = 49;
     pub const EM1III: u16 = 50;
     pub const EM10IV: u16 = 51;
+    pub const EM10IIIS: u16 = 52;
+    pub const OM1: u16 = 53;
 }
 
 /// Samsung type IDs

@@ -881,7 +881,9 @@ impl RawFileImpl for ArwFile {
         } else {
             self.ifd(tiff::IfdType::Raw)
                 .ok_or(Error::NotFound)
-                .and_then(|dir| tiff::tiff_get_rawdata(self.container.get().unwrap(), &dir))
+                .and_then(|dir| {
+                    tiff::tiff_get_rawdata(self.container.get().unwrap(), &dir, self.type_())
+                })
         }
     }
 

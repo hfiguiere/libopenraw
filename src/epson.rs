@@ -29,6 +29,7 @@ use once_cell::unsync::OnceCell;
 use crate::bitmap;
 use crate::camera_ids;
 use crate::camera_ids::vendor;
+use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
 use crate::rawfile::ReadAndSeek;
@@ -39,8 +40,6 @@ use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, 
 
 /// The MakerNote tag names. It's actually the same as Olympus.
 pub(crate) use crate::olympus::MNOTE_TAG_NAMES;
-
-use crate::colour::BuiltinMatrix;
 
 lazy_static::lazy_static! {
     /// EPSON built-in colour matrices
@@ -54,9 +53,7 @@ lazy_static::lazy_static! {
             [ 6827, -1878, -732, -8429, 16012, 2564, -704, 592, 7145 ]
         ),
     ];
-}
 
-lazy_static::lazy_static! {
     /// Make to TypeId map for ERF files.
     static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
         ( "R-D1", TypeId(vendor::EPSON, camera_ids::epson::RD1) ),
@@ -164,35 +161,37 @@ impl RawFileImpl for ErfFile {
             })
             .and_then(|ref ifd| {
                 self.container();
-                tiff::tiff_get_rawdata(self.container.get().unwrap(), ifd).map(|mut rawdata| {
-                    self.maker_note_ifd().and_then(|mnote| {
-                        mnote
-                            .entry_cloned(
-                                exif::MNOTE_EPSON_SENSORAREA,
-                                &mut self.container().borrow_view_mut(),
-                            )
-                            // the data type is `Undefined`
-                            .and_then(|e| e.value_array::<u16>(mnote.endian()))
-                            .or_else(|| {
-                                log::error!("Failed to read sensor area");
-                                None
-                            })
-                            .and_then(|a| {
-                                if a.len() >= 4 {
-                                    rawdata.set_active_area(Some(bitmap::Rect {
-                                        x: a[0] as u32,
-                                        y: a[1] as u32,
-                                        width: a[2] as u32,
-                                        height: a[3] as u32,
-                                    }));
-                                    Some(())
-                                } else {
+                tiff::tiff_get_rawdata(self.container.get().unwrap(), ifd, self.type_()).map(
+                    |mut rawdata| {
+                        self.maker_note_ifd().and_then(|mnote| {
+                            mnote
+                                .entry_cloned(
+                                    exif::MNOTE_EPSON_SENSORAREA,
+                                    &mut self.container().borrow_view_mut(),
+                                )
+                                // the data type is `Undefined`
+                                .and_then(|e| e.value_array::<u16>(mnote.endian()))
+                                .or_else(|| {
+                                    log::error!("Failed to read sensor area");
                                     None
-                                }
-                            })
-                    });
-                    rawdata
-                })
+                                })
+                                .and_then(|a| {
+                                    if a.len() >= 4 {
+                                        rawdata.set_active_area(Some(bitmap::Rect {
+                                            x: a[0] as u32,
+                                            y: a[1] as u32,
+                                            width: a[2] as u32,
+                                            height: a[3] as u32,
+                                        }));
+                                        Some(())
+                                    } else {
+                                        None
+                                    }
+                                })
+                        });
+                        rawdata
+                    },
+                )
             })
     }
 

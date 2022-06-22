@@ -52,7 +52,7 @@ fn unpack_bento16(input: &[u8], n: u16, out_len: usize, out_data: &mut Vec<u16>)
     Ok(written)
 }
 
-/// Unpack 12-bits into 16-bits values
+/// Unpack 12-bits into 16-bits values BigEndian
 /// For performance `out_data` should have reserved size
 /// Return the number of elements written.
 pub(crate) fn unpack_be12to16(
@@ -103,6 +103,55 @@ pub(crate) fn unpack_be12to16(
     Ok(written)
 }
 
+/// Unpack 12-bits into 16-bits values LittleEndia
+/// For performance `out_data` should have reserved size
+/// Return the number of elements written.
+pub(crate) fn unpack_le12to16(
+    input: &[u8],
+    out_data: &mut Vec<u16>,
+    compression: tiff::Compression,
+) -> Result<usize> {
+    let pad = if compression == tiff::Compression::Olympus {
+        1_usize
+    } else {
+        0_usize
+    };
+    let n = input.len() / (15 + pad);
+    let rest = input.len() % (15 + pad);
+    let mut src = 0_usize; // index in source
+
+    if pad != 0 && (input.len() % 16) != 0 {
+        log::error!("le12to16 incorrect padding for {:?}.", compression);
+        return Err(Error::Decompression);
+    }
+    if (rest % 3) != 0 {
+        log::error!(";e12to16 incorrect rest for {:?}.", compression);
+        return Err(Error::Decompression);
+    }
+
+    let mut written = 0_usize;
+    for i in 0..=n {
+        let m = if i == n { rest / 3 } else { 5 };
+        // XXX check overflow
+        for _ in 0..m {
+            let b1 = input[src] as u16;
+            src += 1;
+
+            let b2 = input[src] as u16;
+            src += 1;
+
+            let b3 = input[src] as u16;
+            src += 1;
+
+            out_data.push(((b2 & 0xf) << 8) | b1);
+            out_data.push((b3 << 4) | (b2 >> 4));
+            written += 2;
+        }
+        src += pad;
+    }
+    Ok(written)
+}
+
 /// Unpack data at `offset` into a 16-bits buffer.
 pub(crate) fn unpack(
     container: &dyn RawContainer,
@@ -111,6 +160,21 @@ pub(crate) fn unpack(
     bpc: u16,
     compression: tiff::Compression,
     offset: u64,
+    byte_len: usize,
+) -> Result<Vec<u16>> {
+    let mut view = container.borrow_view_mut();
+    view.seek(SeekFrom::Start(offset))?;
+
+    unpack_from_reader(&mut *view, width, height, bpc, compression, byte_len)
+}
+
+/// Unpack from a reader into a 16-bits buffer.
+pub(crate) fn unpack_from_reader(
+    reader: &mut dyn Read,
+    width: u32,
+    height: u32,
+    bpc: u16,
+    compression: tiff::Compression,
     byte_len: usize,
 ) -> Result<Vec<u16>> {
     log::debug!(
@@ -123,7 +187,9 @@ pub(crate) fn unpack(
     let block_size: usize = match bpc {
         10 => (width / 4 * 5) as usize,
         12 => {
-            if compression == tiff::Compression::NikonPack {
+            if compression == tiff::Compression::NikonPack
+                || compression == tiff::Compression::Olympus
+            {
                 ((width / 2 * 3) + width / 10) as usize
             } else {
                 (width / 2 * 3) as usize
@@ -143,16 +209,23 @@ pub(crate) fn unpack(
     let mut fetched = 0_usize;
     let mut written = 0_usize;
 
-    let mut view = container.borrow_view_mut();
-    view.seek(SeekFrom::Start(offset))?;
-
     let byte_len = std::cmp::min(byte_len, block_size * height as usize);
     while fetched < byte_len {
-        view.read_exact(block.as_mut_slice())?;
+        reader.read_exact(block.as_mut_slice())?;
         fetched += block.len();
         match bpc {
             n @ 10 | n @ 14 => written += unpack_bento16(&block, n, width as usize, &mut out_data)?,
-            12 => written += unpack_be12to16(&block, &mut out_data, compression)?,
+            12 => {
+                written += match compression {
+                    tiff::Compression::NikonPack | tiff::Compression::None => {
+                        unpack_be12to16(&block, &mut out_data, compression)?
+                    }
+                    tiff::Compression::Olympus => {
+                        unpack_le12to16(&block, &mut out_data, compression)?
+                    }
+                    _ => unreachable!(),
+                }
+            }
             _ => unreachable!(),
         }
     }

@@ -530,7 +530,7 @@ impl RawFileImpl for PefFile {
         let container = self.container.get().unwrap();
         self.ifd(tiff::IfdType::Raw)
             .ok_or(Error::NotFound)
-            .and_then(|dir| tiff::tiff_get_rawdata(container, &dir))
+            .and_then(|dir| tiff::tiff_get_rawdata(container, &dir, self.type_()))
             .map(|mut rawdata| {
                 if let Some(mnote) = self.ifd(tiff::IfdType::MakerNote) {
                     mnote

@@ -280,7 +280,7 @@ impl RawFileImpl for DngFile {
             .and_then(|dir| {
                 self.container();
                 let container = self.container.get().unwrap();
-                tiff::tiff_get_rawdata(container, &dir)
+                tiff::tiff_get_rawdata(container, &dir, self.type_())
                     .map(|mut rawdata| {
                         let active_area = dir
                             .entry(exif::DNG_TAG_ACTIVE_AREA)

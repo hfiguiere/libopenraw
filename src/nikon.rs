@@ -576,7 +576,7 @@ impl RawFileImpl for NefFile {
                 Error::NotFound
             })
             .and_then(|ref dir| {
-                tiff::tiff_get_rawdata(self.container.get().unwrap(), dir)
+                tiff::tiff_get_rawdata(self.container.get().unwrap(), dir, self.type_())
                     .map_err(|err| {
                         log::error!("NEF get rawdata failed {}", err);
                         err

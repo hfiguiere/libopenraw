@@ -977,7 +977,7 @@ impl RawFileImpl for Rw2File {
                 _ => return Err(Error::NotFound),
             };
             if let Some(compression) = cfa.value::<u16>(exif::RW2_TAG_IMAGE_COMPRESSION) {
-                raw_data.set_compression(compression.into());
+                raw_data.set_compression((compression as u32).into());
             }
             let x = cfa
                 .value::<u16>(exif::RW2_TAG_SENSOR_LEFTBORDER)

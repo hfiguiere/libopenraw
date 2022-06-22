@@ -38,6 +38,7 @@ use crate::fujifilm;
 use crate::io::View;
 use crate::leica;
 use crate::nikon;
+use crate::olympus;
 use crate::panasonic;
 use crate::pentax;
 use crate::ricoh;
@@ -90,12 +91,15 @@ impl Dir {
                 return Dir::new_makernote("Sony5", container, offset, 0, &sony::MNOTE_TAG_NAMES)
             }
             _ => {
+                // The size of this buffer should be adjusted depending on
+                // what the various detection need.
                 let mut data = [0_u8; 16];
                 {
                     let mut view = container.borrow_view_mut();
                     view.seek(SeekFrom::Start(offset as u64))?;
                     view.read_exact(&mut data)?;
                 }
+
                 if &data[0..6] == b"Nikon\0" {
                     if data[6] == 1 {
                         return Dir::new_makernote(
@@ -136,7 +140,35 @@ impl Dir {
                     );
                 }
 
-                // XXX missing Olympus
+                if &data[0..8] == b"OLYMPUS\0" {
+                    return Dir::new_makernote(
+                        "Olympus2",
+                        container,
+                        offset + 12,
+                        offset,
+                        &olympus::MNOTE_TAG_NAMES,
+                    );
+                }
+
+                if &data[0..9] == b"OM SYSTEM" {
+                    return Dir::new_makernote(
+                        "Olympus2",
+                        container,
+                        offset + 16,
+                        offset,
+                        &olympus::MNOTE_TAG_NAMES,
+                    );
+                }
+
+                if &data[0..6] == b"OLYMP\0" {
+                    return Dir::new_makernote(
+                        "Olympus",
+                        container,
+                        offset + 8,
+                        0,
+                        &olympus::MNOTE_TAG_NAMES,
+                    );
+                }
 
                 // EPSON R-D1, use Olympus
                 // XXX deal with endian.
