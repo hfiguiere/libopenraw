@@ -2,7 +2,7 @@
 /*
  * libopenraw - orffile.hpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2022 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -56,6 +56,7 @@ protected:
     virtual ::or_error _getRawData(RawData &data, uint32_t options) override;
 
 private:
+    ::or_error decompress(uint32_t x, uint32_t y, RawData& data);
     ::or_error addThumbnail(std::vector<uint32_t>& list, uint32_t offset, uint32_t len);
     static RawFile::TypeId _typeIdFromModel(const std::string &model);
 

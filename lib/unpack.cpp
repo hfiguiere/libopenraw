@@ -41,7 +41,7 @@ Unpack::Unpack(uint32_t w, uint32_t t)
 size_t Unpack::block_size() const
 {
   size_t bs;
-  if(m_type == IFD::COMPRESS_NIKON_PACK) {
+  if(m_type == IFD::COMPRESS_NIKON_PACK || m_type == IFD::COMPRESS_OLYMPUS) {
     bs = (m_w / 2 * 3) + (m_w / 10);
   }
   else {
@@ -100,6 +100,64 @@ or_error Unpack::unpack_be12to16(uint16_t *dest, size_t destsize, const uint8_t 
       dest16++;
 
       *dest16 = t & 0xfff;
+      dest16++;
+    }
+
+    src += pad;
+  }
+
+  out = ret;
+  return err;
+}
+
+/** source is in LE byte order
+ * the output is always 16-bits values in native (host) byte order.
+ * the source must correspond to an image row.
+ */
+or_error Unpack::unpack_le12to16(uint16_t *dest, size_t destsize, const uint8_t *src,
+                                 size_t size, size_t & out) const
+{
+  or_error err = OR_ERROR_NONE;
+  uint16_t *dest16 = reinterpret_cast<uint16_t *>(dest);
+  size_t pad = (m_type == IFD::COMPRESS_OLYMPUS) ? 1 : 0;
+  size_t n = size / (15 + pad);
+  size_t rest = size % (15 + pad);
+  size_t ret = n * 20 + rest / 3 * 4;
+
+  out = 0;
+
+  /* The inner loop advances 10 columns, which corresponds to 15 input
+     bytes, 20 output bytes and, in a Nikon pack, one padding byte.*/
+  if (pad) {
+    if ((size % 16) != 0) {
+      LOGERR("le12to16 incorrect padding.\n");
+      return OR_ERROR_DECOMPRESSION;
+    }
+  }
+  if ((rest % 3) != 0) {
+    LOGERR("le12to16 incorrect rest.\n");
+    return OR_ERROR_DECOMPRESSION;
+  }
+
+  for (size_t i = 0; i < n + 1; i++) {
+    size_t m = (i == n) ? rest / 3 : 5;
+    if ((dest16 - dest) + (m * 4) >  destsize) {
+      err = OR_ERROR_DECOMPRESSION;
+      LOGERR("overflow !\n");
+      break;
+    }
+    for (size_t j = 0; j < m; j++) {
+      /* Read 3 bytes */
+      //// this block is the only different part
+      uint16_t b1 = *src++;
+      uint16_t b2 = *src++;
+      uint16_t b3 = *src++;
+
+      /* Write two 16 bit values. */
+      *dest16 = ((b2 & 0xf) << 8) | b1;
+      dest16++;
+
+      *dest16 = (b3 << 4) | (b2 >> 4);
       dest16++;
     }
 

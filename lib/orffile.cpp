@@ -43,6 +43,7 @@
 #include "rawfile_private.hpp"
 #include "io/streamclone.hpp"
 #include "jfifcontainer.hpp"
+#include "unpack.hpp"
 
 using namespace Debug;
 
@@ -443,15 +444,7 @@ OrfFile::~OrfFile()
         switch(compression) {
         case IFD::COMPRESS_OLYMPUS:
             if((options & OR_OPTIONS_DONT_DECOMPRESS) == 0) {
-                OlympusDecompressor decomp((const uint8_t*)data.data(),
-                                           data.size(), m_container, x, y);
-                RawDataPtr dData = decomp.decompress();
-                if (dData) {
-                    dData->setCfaPatternType(data.mosaicInfo()->patternType());
-                    data.swap(*dData);
-                    data.setDataType(OR_DATA_TYPE_RAW);
-                    data.setDimensions(x, y);
-                }
+                err = decompress(x, y, data);
             }
             break;
         default:
@@ -459,6 +452,61 @@ OrfFile::~OrfFile()
         }
     }
     return err;
+}
+
+::or_error OrfFile::decompress(uint32_t x, uint32_t y, RawData& data)
+{
+    // packed bits
+    if (data.size() == (y * ((x * 12 / 8) + ((x + 2) / 10)))) {
+        // unpack with control le version of NikonPack
+        LOGDBG1("ORF: unpack with control\n");
+        RawDataPtr output(new RawData);
+
+        uint32_t current_offset = 0;
+        Unpack unpack(x, IFD::COMPRESS_OLYMPUS);
+        const size_t blocksize = unpack.block_size();
+        LOGDBG1("Block size = %lu\n", (LSIZE)blocksize);
+        LOGDBG1("dimensions (x, y) %u, %u\n", x, y);
+        auto pdata = (uint8_t*)data.data();
+
+        size_t outsize = x * y * 2;
+        uint16_t* outdata = (uint16_t*)output->allocData(outsize);
+        LOGDBG1("offset of RAW data = %u\n", current_offset);
+        do {
+
+            size_t out;
+            auto ret = unpack.unpack_le12to16(outdata, outsize,
+                                              pdata,
+                                              blocksize, out);
+            pdata += blocksize;
+            current_offset += blocksize;
+            outdata += out / 2;
+            outsize -= out;
+            if (ret != OR_ERROR_NONE) {
+                break;
+            }
+        } while(current_offset < data.size());
+
+        output->setCfaPatternType(data.mosaicInfo()->patternType());
+        data.swap(*output);
+        data.setBpc(12);
+        data.setWhiteLevel((1 << 12) - 1);
+    } else {
+
+        LOGDBG1("ORF: decompress\n");
+        // Otherwise it's compressed.
+        OlympusDecompressor decomp((const uint8_t*)data.data(),
+                                   data.size(), m_container, x, y);
+        RawDataPtr dData = decomp.decompress();
+        if (dData) {
+            dData->setCfaPatternType(data.mosaicInfo()->patternType());
+            data.swap(*dData);
+        }
+    }
+
+    data.setDataType(OR_DATA_TYPE_RAW);
+    data.setDimensions(x, y);
+    return OR_ERROR_NONE;
 }
 
 }

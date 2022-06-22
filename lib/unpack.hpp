@@ -40,6 +40,7 @@ public:
 
     size_t block_size() const;
     or_error unpack_be12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & outsize) const;
+    or_error unpack_le12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & out) const;
 private:
     uint32_t m_w;
     uint32_t m_type;
