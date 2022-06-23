@@ -18,6 +18,8 @@ Bug fixes:
   - Fixed the demo/ccfa to output properly the byte stream.
   - Fixed BitIterator code to peek past the number of bits
     for Olympus decoding.
+  - Fixed decompression of packed Olympus ORF files.
+  - Fixed over reported size of Panasonic compressed Raw data.
 
 Internal changes:
 
