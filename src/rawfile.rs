@@ -148,14 +148,12 @@ where
 }
 
 /// Create a RawFile object from a buffer
-// XXX figure out the lifetime issue
-//    fn from_memory<B>(buffer: B, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
-//    where
-//        B: AsRef<[u8]>,
-//        Self: Sized,
-//    {
-//        from_io(Box::new(std::io::Cursor::new(buffer.as_ref())), type_hint)
-//    }
+pub fn rawfile_from_io(
+    io: Box<dyn ReadAndSeek>,
+    type_hint: Option<Type>,
+) -> Result<Box<dyn RawFile>> {
+    from_io(io, type_hint)
+}
 
 /// Standard trait for RAW files.
 /// Mostly using the default implementation
