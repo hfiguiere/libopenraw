@@ -59,6 +59,9 @@ pub use rawfile::RawFileImpl;
 pub use thumbnail::Thumbnail;
 pub use tiff::Ifd;
 
+#[cfg(feature = "fuzzing")]
+pub use decompress::LJpeg;
+
 pub use rawfile::rawfile_from_file;
 pub use rawfile::rawfile_from_io;
 
@@ -89,7 +92,7 @@ pub enum Error {
     /// Invalid format: wrong kind of data found
     InvalidFormat,
     /// Decompression error.
-    Decompression,
+    Decompression(String),
     /// MP4 parse error. Can't use native error as it doesn't do `PartialEq`
     Mp4Parse(String),
     /// Jpeg decompress
@@ -131,7 +134,7 @@ impl std::fmt::Display for Error {
             Self::AlreadyInited => write!(f, "Already Inited"),
             Self::InvalidParam => write!(f, "Invalid parameter"),
             Self::InvalidFormat => write!(f, "Invalid format"),
-            Self::Decompression => write!(f, "Decompression error"),
+            Self::Decompression(ref reason) => write!(f, "Decompression error: {}", reason),
             Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {}", err),
             Self::JpegFormat(ref err) => write!(f, "JPEG error: {}", err),
             Self::BitReaderError(ref err) => write!(f, "BitReader error: {}", err),

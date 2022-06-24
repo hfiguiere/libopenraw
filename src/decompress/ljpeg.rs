@@ -122,7 +122,7 @@ type ComponentType = u16;
 type Mcu = Vec<ComponentType>;
 
 /// A tile
-pub(crate) struct Tile {
+pub struct Tile {
     /// Width of the data
     pub width: u32,
     /// Height of the data
@@ -135,13 +135,13 @@ pub(crate) struct Tile {
     pub buf: Vec<u16>,
 }
 
-pub(crate) struct LJpeg {
+pub struct LJpeg {
     /// Canon-style slices. The format of the slices vector is as follow
     /// * N col1 col2
     /// * N is the number of repeat for col1. The total
     /// number of slices is always N+1
     /// This is for Canon CR2.
-    slices: Option<Vec<u16>>,
+    slices: Option<Vec<u32>>,
     cur_row: usize,
     prev_row: usize,
     mcu_row: Vec<Vec<Mcu>>,
@@ -159,7 +159,7 @@ impl LJpeg {
         }
     }
 
-    pub fn set_slices(&mut self, slices: &[u16]) {
+    pub fn set_slices(&mut self, slices: &[u32]) {
         let mut v = Vec::new();
         let n = slices[0] as usize;
         v.resize(n + 1, slices[1]);
@@ -176,10 +176,22 @@ impl LJpeg {
         self.read_file_header(&mut dc_info, reader)?;
         self.read_scan_header(&mut dc_info, reader)?;
 
+        if dc_info.image_width == 0 || dc_info.image_height == 0 {
+            return Err(Error::JpegFormat(format!(
+                "LJPEG: incorrect dimensions {}x{}",
+                dc_info.image_width, dc_info.image_height
+            )));
+        }
+        if dc_info.num_components > 4 {
+            return Err(Error::JpegFormat(format!(
+                "LJPEG: unsupported number of components {}",
+                dc_info.num_components
+            )));
+        }
         let bpc = dc_info.data_precision;
         let mut output: SlicedBuffer<ComponentType> = SlicedBuffer::new(
-            dc_info.image_width * dc_info.num_components as u16,
-            dc_info.image_height,
+            dc_info.image_width as u32 * dc_info.num_components as u32,
+            dc_info.image_height as u32,
             self.slices.clone().as_deref(),
         );
         output.reserve(
@@ -235,8 +247,10 @@ impl LJpeg {
         let c = reader.read_u8()?;
         let c2 = reader.read_u8()?;
         if c != 0xff || c2 != M_SOI {
-            log::error!("Not a JPEG file. Marker is {:x} {:x}", c, c2);
-            return Err(Error::Decompression);
+            return Err(Error::Decompression(format!(
+                "LJPEG: Not a JPEG file. Marker is {:x} {:x}",
+                c, c2
+            )));
         }
         dc.get_soi();
         // Process markers until SOF
@@ -275,8 +289,9 @@ impl LJpeg {
         for ci in 0..dc.num_components {
             let comp_ptr = &dc.comp_info[ci as usize];
             if comp_ptr.h_samp_factor != 1 || comp_ptr.v_samp_factor != 1 {
-                log::error!("Downsampling is not supported");
-                return Err(Error::Decompression);
+                return Err(Error::JpegFormat(
+                    "LJPEG: Downsampling is not supported".into(),
+                ));
             }
         }
 
@@ -285,8 +300,9 @@ impl LJpeg {
             dc.mcu_membership[0] = 0
         } else {
             if dc.comps_in_scan > 4 {
-                log::error!("Too many components for interleaved scan");
-                return Err(Error::Decompression);
+                return Err(Error::JpegFormat(
+                    "LJPEG: Too many components for interleaved scan".into(),
+                ));
             }
             for ci in 0..dc.comps_in_scan {
                 dc.mcu_membership[ci as usize] = ci;
@@ -311,15 +327,20 @@ impl LJpeg {
 
         for ci in 0..dc.comps_in_scan {
             let compptr = &dc.cur_comp_info[ci as usize];
+            if compptr.dc_tbl_no as usize >= dc.dc_huff_tbl_ptrs.len() {
+                return Err(Error::JpegFormat("LJPEG: invalid dc_tbl_no".into()));
+            }
             // Make sure requested tables are present
             if let Some(table) = dc.dc_huff_tbl_ptrs[compptr.dc_tbl_no as usize].as_mut() {
                 // Compute derived values for Huffman tables.
                 // We may do this more than once for same table, but it's not a
                 // big deal
-                table.fix();
+                table.fix()?;
             } else {
-                log::error!("Use of undefined Huffman table");
-                return Err(Error::Decompression);
+                log::error!("LJPEG: Use of undefined Huffman table");
+                return Err(Error::Decompression(
+                    "LJPEG: Use of undefined Huffman table".into(),
+                ));
             }
         }
 
@@ -403,6 +424,9 @@ impl LJpeg {
                 for cur_comp in 0..comps_in_scan {
                     let ci = dc.mcu_membership[cur_comp as usize];
                     let compptr = &dc.cur_comp_info[ci as usize];
+                    if compptr.dc_tbl_no as usize >= dc.dc_huff_tbl_ptrs.len() {
+                        return Err(Error::JpegFormat("LJPEG: invalid dc_tbl_no".into()));
+                    }
                     if let Some(ref dctbl) = &dc.dc_huff_tbl_ptrs[compptr.dc_tbl_no as usize] {
                         // Section F.2.2.1: decode the difference
                         let s = self.huff_decode(dctbl, reader)? as u8;
@@ -469,8 +493,9 @@ impl LJpeg {
         if c != (M_RST0 + dc.next_restart_num) {
             // Uh-oh, the restart markers have been messed up too.
             // Just bail out.
-            log::error!("Corrupt JPEG data. Aborting decoding...");
-            return Err(Error::Decompression);
+            return Err(Error::JpegFormat(
+                "LJPEG: Corrupt JPEG data. Aborting decoding...".into(),
+            ));
         }
 
         // Update restart state
@@ -509,6 +534,9 @@ impl LJpeg {
 
                 // Add the predictor to the difference.
                 let cur_row_buf = &mut self.mcu_row[self.cur_row];
+                if pr < pt + 1 {
+                    return Err(Error::JpegFormat("LJPEG: Invalid predictors.".into()));
+                }
                 cur_row_buf[0][cur_comp as usize] = (d + (1 << (pr - pt - 1))) as u16;
             } else {
                 return Err(Error::JpegFormat("Huffman table is None".to_string()));
@@ -666,10 +694,15 @@ impl BitReader {
 
     #[inline]
     fn get_bits(&mut self, reader: &mut dyn ReadAndSeek, nbits: u8) -> Result<u16> {
+        if nbits >= 17 {
+            return Err(Error::Decompression(format!(
+                "LJPEG: Tried to request {} bits (max 16), JPEG is likely corrupt",
+                nbits
+            )));
+        }
         if self.bits_left < nbits {
             self.fill_bit_buffer(reader, nbits)?;
         }
-
         self.bits_left -= nbits;
         Ok((self.buffer >> self.bits_left) as u16 & BMASK[nbits as usize])
     }
@@ -766,7 +799,7 @@ impl HuffmanTable {
         0x0000000f, 0x00000007, 0x00000003, 0x00000001,
     ];
 
-    pub(crate) fn fix(&mut self) {
+    pub(crate) fn fix(&mut self) -> Result<()> {
         let mut huffsize = [0_u8; 257];
         let mut huffcode = [0_u16; 257];
 
@@ -784,14 +817,17 @@ impl HuffmanTable {
 
         // Figure C.2: generate the codes themselves
         // Note that this is in code-length order.
-        let mut code = 0_u16;
+        let mut code: u32 = 0; // is u16, but we must check for overflow.
         let mut si = huffsize[0];
         let mut p = 0;
         while huffsize[p] != 0 {
             while huffsize[p] == si {
-                huffcode[p] = code;
+                huffcode[p] = code as u16;
                 p += 1;
                 code += 1;
+                if code > u16::MAX as u32 {
+                    return Err(Error::JpegFormat("LJPEG: Huffman code overflow".into()));
+                }
             }
             code <<= 1;
             si += 1;
@@ -808,12 +844,15 @@ impl HuffmanTable {
         }
 
         // Figure F.15: generate decoding tables
-        let mut p: u8 = 0;
+        let mut p: u16 = 0;
         for l in 1..=16_usize {
             if self.bits[l] != 0 {
                 self.valptr[l] = p as u16;
                 self.mincode[l] = huffcode[p as usize] as i32;
-                p += self.bits[l];
+                p += self.bits[l] as u16;
+                if p > 256 {
+                    return Err(Error::JpegFormat("LJPEG: huffcode index overflow".into()));
+                }
                 self.maxcode[l] = huffcode[p as usize - 1] as i32;
             } else {
                 self.maxcode[l] = -1;
@@ -833,19 +872,26 @@ impl HuffmanTable {
             let size = huffsize[p];
             if size <= 8 {
                 let value = self.huffval[p];
-                code = huffcode[p];
-                let ll: u32 = (code as u32) << (8 - size);
+                code = huffcode[p] as u32;
+                let ll: u32 = code << (8 - size);
                 let ul = if size < 8 {
                     ll | Self::BIT_MASK[24 + size as usize]
                 } else {
                     ll
                 };
+                if ll as usize >= self.numbits.len() {
+                    return Err(Error::JpegFormat(
+                        "LJPEG: invalid value in Huffman table".into(),
+                    ));
+                }
                 for i in ll..=ul {
                     self.numbits[i as usize] = size;
                     self.value[i as usize] = value;
                 }
             }
         }
+
+        Ok(())
     }
 }
 
@@ -957,18 +1003,19 @@ impl DecompressInfo {
         // specified as 0 and is later redefined by DNL.  As long as we
         // have to check that, might as well have a general sanity check.
         if self.image_height == 0 || self.image_width == 0 || self.num_components == 0 {
-            log::warn!("Empty JPEG image (DNL not supported)");
-            return Err(Error::Decompression);
+            return Err(Error::JpegFormat(
+                "LJPEG: Empty JPEG image (DNL not supported)".into(),
+            ));
         }
 
         if self.data_precision < MIN_PRECISION_BITS || self.data_precision > MAX_PRECISION_BITS {
-            log::warn!("Unsupported JPEG data precision");
-            return Err(Error::Decompression);
+            return Err(Error::JpegFormat(
+                "LJPEG: Unsupported JPEG data precision".into(),
+            ));
         }
 
         if length != (self.num_components as u16 * 3 + 8) {
-            log::warn!("Bogus SOF length");
-            return Err(Error::Decompression);
+            return Err(Error::JpegFormat("LJPEG: Bogus SOF length".into()));
         }
 
         self.comp_info
@@ -994,8 +1041,10 @@ impl DecompressInfo {
             let index = reader.read_u8()?;
 
             if index >= 4 {
-                log::error!("Bogus DHT index {}", index);
-                return Err(Error::Decompression);
+                return Err(Error::JpegFormat(format!(
+                    "LJPEG: Bogus DHT index {}",
+                    index
+                )));
             }
 
             if self.dc_huff_tbl_ptrs[index as usize].is_none() {
@@ -1011,8 +1060,7 @@ impl DecompressInfo {
             }
 
             if count > 256 {
-                log::error!("Bogus DHT counts");
-                return Err(Error::Decompression);
+                return Err(Error::JpegFormat("LJPEG: Bogus DHT counts".into()));
             }
             for i in 0_usize..count as usize {
                 htblptr.huffval[i] = reader.read_u8()?;
@@ -1023,7 +1071,11 @@ impl DecompressInfo {
     }
 
     fn skip_variable(&self, reader: &mut dyn ReadAndSeek) -> Result<()> {
-        let length = reader.read_u16::<BigEndian>()? - 2;
+        let length = reader.read_u16::<BigEndian>()?;
+        if length < 2 {
+            return Err(Error::JpegFormat("LJPEG: invalid variable length".into()));
+        }
+        let length = length - 2;
         reader.seek(SeekFrom::Current(length as i64))?;
 
         Ok(())
@@ -1053,8 +1105,7 @@ impl DecompressInfo {
 
     fn get_dri(&mut self, reader: &mut dyn ReadAndSeek) -> Result<()> {
         if reader.read_u16::<BigEndian>()? != 4 {
-            log::error!("Bogus length in DRI");
-            return Err(Error::Decompression);
+            return Err(Error::JpegFormat("LJPEG: Invalid DRI length.".into()));
         }
         self.restart_interval = reader.read_u16::<BigEndian>()?;
         Ok(())
@@ -1062,21 +1113,27 @@ impl DecompressInfo {
 
     /// Process APP0 marker.
     fn get_app0(&self, reader: &mut dyn ReadAndSeek) -> Result<()> {
-        let length = reader.read_u16::<BigEndian>()? - 2;
+        let length = reader.read_u16::<BigEndian>()?;
+        if length < 2 {
+            return Err(Error::JpegFormat("LJPEG: Invalid APP0 length.".into()));
+        }
+        let length = length - 2;
         reader.seek(SeekFrom::Current(length as i64))?;
         Ok(())
     }
 
     fn get_sos(&mut self, reader: &mut dyn ReadAndSeek) -> Result<()> {
         let mut length = reader.read_u16::<BigEndian>()?;
+        if length < 3 {
+            return Err(Error::JpegFormat("LJPEG: invalid SOS length".into()));
+        }
 
         let n = reader.read_u8()?;
         self.comps_in_scan = n as u16;
         length -= 3;
 
         if length != (n as u16 * 2 + 3) || n < 1 || n > 4 {
-            log::error!("Bogus SOS length {}", n);
-            return Err(Error::Decompression);
+            return Err(Error::JpegFormat(format!("LJPEG: Bogus SOS length {}", n)));
         }
 
         for i in 0..n {
@@ -1092,8 +1149,9 @@ impl DecompressInfo {
                 ci += 1;
             }
             if ci >= self.num_components {
-                log::error!("Invalid component number in SOS");
-                return Err(Error::Decompression);
+                return Err(Error::JpegFormat(
+                    "LJPEG: Invalid component number in SOS".into(),
+                ));
             }
 
             let compptr = &mut self.comp_info[ci as usize];

@@ -41,8 +41,8 @@
 /// Sliced buffer, ie buffer with Canon slices
 /// For raw.
 pub(crate) struct SlicedBuffer<T: Copy> {
-    width: u16,
-    height: u16,
+    width: u32,
+    height: u32,
     buffer: Vec<T>,
     /// Width of each slice.
     slices: Vec<usize>,
@@ -62,7 +62,7 @@ impl<T: Copy> From<SlicedBuffer<T>> for Vec<T> {
 }
 
 impl<T: Copy + Default> SlicedBuffer<T> {
-    pub fn new(width: u16, height: u16, slices: Option<&[u16]>) -> SlicedBuffer<T> {
+    pub fn new(width: u32, height: u32, slices: Option<&[u32]>) -> SlicedBuffer<T> {
         let slices = slices.map(Vec::from).unwrap_or_else(|| vec![width]);
 
         let mut buffer: Vec<T> = Vec::new();
@@ -71,7 +71,7 @@ impl<T: Copy + Default> SlicedBuffer<T> {
             width,
             height,
             buffer,
-            slices: slices.iter().map(|v| usize::from(*v)).collect(),
+            slices: slices.iter().map(|v| *v as usize).collect(),
             slice: 0,
             slice_offset: 0,
             slice_width: slices[0] as usize,
@@ -154,10 +154,10 @@ mod test {
 
     #[test]
     fn test_advance_sliced_buffer() {
-        let w = 298_u16;
-        let h = 100_u16;
+        let w = 298_u32;
+        let h = 100_u32;
 
-        let slices = vec![128_u16, 128_u16, 42_u16];
+        let slices = vec![128_u32, 128, 42];
         let mut buffer: SlicedBuffer<u16> = SlicedBuffer::new(w, h, Some(&slices));
 
         assert_eq!(buffer.pos, 0);
@@ -183,16 +183,16 @@ mod test {
 
     #[test]
     fn test_sliced_buffer() {
-        let w = 298_u16;
-        let h = 100_u16;
+        let w = 298_u32;
+        let h = 100_u32;
 
         let mut source = vec![1_u16; 12800];
         source.extend_from_slice(&[2_u16; 12800]);
         source.extend_from_slice(&[3_u16; 4200]);
         assert_eq!(source.len(), w as usize * h as usize);
 
-        let slices = vec![128_u16, 128_u16, 42_u16];
-        assert_eq!(w, slices.iter().copied().sum::<u16>());
+        let slices = vec![128_u32, 128, 42];
+        assert_eq!(w, slices.iter().copied().sum::<u32>());
 
         let mut buffer: SlicedBuffer<u16> = SlicedBuffer::new(w, h, Some(&slices));
         for v in source {

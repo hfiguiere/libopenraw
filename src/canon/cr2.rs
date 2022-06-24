@@ -65,7 +65,7 @@ impl Cr2File {
     }
 
     /// Get the raw bytes.
-    fn get_raw_bytes(&self, offset: u64, byte_len: u64, slices: &[u16]) -> Result<RawData> {
+    fn get_raw_bytes(&self, offset: u64, byte_len: u64, slices: &[u32]) -> Result<RawData> {
         let data = self.container().load_buffer8(offset, byte_len);
         if (data.len() as u64) != byte_len {
             log::warn!("Size mismatch for data. Moving on");
@@ -110,7 +110,7 @@ impl Cr2File {
                 log::debug!("CR2 slice not found");
                 None
             })
-            .and_then(|entry| entry.value_array::<u16>(container.endian()))
+            .and_then(|entry| entry.uint_value_array(container.endian()))
             .or_else(|| {
                 log::debug!("CR2 slice value not found");
                 None

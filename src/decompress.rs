@@ -25,7 +25,7 @@ mod ljpeg;
 mod sliced_buffer;
 mod tiled;
 
-pub(crate) use ljpeg::LJpeg;
+pub use ljpeg::LJpeg;
 pub(crate) use tiled::TiledLJpeg;
 
 use std::io::{Read, Seek, SeekFrom};
@@ -71,11 +71,17 @@ pub(crate) fn unpack_be12to16(
 
     if pad != 0 && (input.len() % 16) != 0 {
         log::error!("be12to16 incorrect padding for {:?}.", compression);
-        return Err(Error::Decompression);
+        return Err(Error::Decompression(format!(
+            "be12to16 incorrect padding for {:?}.",
+            compression
+        )));
     }
     if (rest % 3) != 0 {
         log::error!("be12to16 incorrect rest for {:?}.", compression);
-        return Err(Error::Decompression);
+        return Err(Error::Decompression(format!(
+            "be12to16 incorrect rest for {:?}.",
+            compression
+        )));
     }
 
     let mut written = 0_usize;
@@ -122,11 +128,17 @@ pub(crate) fn unpack_le12to16(
 
     if pad != 0 && (input.len() % 16) != 0 {
         log::error!("le12to16 incorrect padding for {:?}.", compression);
-        return Err(Error::Decompression);
+        return Err(Error::Decompression(format!(
+            "le12to16 incorrect padding for {:?}.",
+            compression
+        )));
     }
     if (rest % 3) != 0 {
-        log::error!(";e12to16 incorrect rest for {:?}.", compression);
-        return Err(Error::Decompression);
+        log::error!("le12to16 incorrect rest for {:?}.", compression);
+        return Err(Error::Decompression(format!(
+            "le12to16 incorrect rest for {:?}.",
+            compression
+        )));
     }
 
     let mut written = 0_usize;
