@@ -19,35 +19,32 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef OR_INTERNALS_UNPACK_H_
-#define OR_INTERNALS_UNPACK_H_
+#pragma once
 
 #include <stdint.h>
 #include <stddef.h>
 
 #include <libopenraw/consts.h>
 
-namespace OpenRaw {	namespace Internals {
+namespace OpenRaw {
+namespace Internals {
 
-	/** Unpack class. Because we need to maintain a state */
-	class Unpack
-	{
-	public:
-		Unpack(uint32_t w, uint32_t t);
-		// noncopyable
-		Unpack(const Unpack&) = delete;
-		Unpack & operator=(const Unpack&) = delete;
+/** Unpack class. Because we need to maintain a state */
+class Unpack
+{
+public:
+    Unpack(uint32_t w, uint32_t t);
+    // noncopyable
+    Unpack(const Unpack&) = delete;
+    Unpack & operator=(const Unpack&) = delete;
 
-		size_t block_size();
-		or_error unpack_be12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & outsize);
-		or_error unpack_le12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & out);
+    size_t block_size() const;
+    or_error unpack_be12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & outsize) const;
+    or_error unpack_le12to16(uint16_t *dest, size_t destsize, const uint8_t *src, size_t size, size_t & out) const;
+private:
+    uint32_t m_w;
+    uint32_t m_type;
+};
 
-	private:
-		uint32_t m_w;
-		uint32_t m_type;
-	};
-
-} }
-
-#endif
+}
+}

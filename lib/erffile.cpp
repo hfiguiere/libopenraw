@@ -38,9 +38,11 @@ namespace Internals {
 /* taken from dcraw, by default */
 static const BuiltinColourMatrix s_matrices[] = {
     { OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON, OR_TYPEID_EPSON_RD1), 0, 0,
-      { 6827,-1878,-732,-8429,16012,2564,-704,592,7145 } },
+      { 6827, -1878, -732, -8429, 16012, 2564, -704, 592, 7145 } },
     { OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON, OR_TYPEID_EPSON_RD1S), 0, 0,
-      { 6827,-1878,-732,-8429,16012,2564,-704,592,7145 } },
+      { 6827, -1878, -732, -8429, 16012, 2564, -704, 592, 7145 } },
+    { OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON, OR_TYPEID_EPSON_RD1X), 0, 0,
+      { 6827, -1878, -732, -8429, 16012, 2564, -704, 592, 7145 } },
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 };
 
@@ -48,7 +50,10 @@ const IfdFile::camera_ids_t ERFFile::s_def[] = {
     { "R-D1", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
                                   OR_TYPEID_EPSON_RD1) },
     { "R-D1s", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
-                                   OR_TYPEID_EPSON_RD1S) },			{ 0, 0 }
+                                   OR_TYPEID_EPSON_RD1S) },
+    { "R-D1x", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_EPSON,
+                                   OR_TYPEID_EPSON_RD1X) },
+    { 0, 0 }
 };
 
 RawFile *ERFFile::factory(const IO::Stream::Ptr &s)

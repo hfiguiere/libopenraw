@@ -1,3 +1,32 @@
+libopenraw 0.3.2 - 2022/06/24
+
+New features:
+
+  Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Added Epson RD-1X*.
+  - Added Leica DIGILUX3*.
+  - Added Nikon D1H*, D7500*, D850* and P7800*.
+  - Added Olympus E30*, E420*, E450*, E520*, E600* and E-P5*.
+  - Added Pentax K2000* and K-m* (PEF).
+
+Bug fixes:
+
+  - Properly detect compressed data for Panasonic.
+  - Fix the linkage of the mp4parse library with libtool.
+  - Fixed the demo/ccfa to output properly the byte stream.
+  - Fixed BitIterator code to peek past the number of bits
+    for Olympus decoding.
+  - Fixed decompression of packed Olympus ORF files.
+  - Fixed over reported size of Panasonic compressed Raw data.
+
+Internal changes:
+
+  - Refactored the Olympus decompressor: less code.
+  - Update Mozilla mp4parser to the latest 0.12.0 (rebased) for
+    the CR3 parser.
+
 libopenraw 0.3.1 - 2022/04/19
 
 New features:
@@ -35,7 +64,7 @@ Bug fixes:
   - Fix build on gcc 11
     https://gitlab.freedesktop.org/libopenraw/libopenraw/-/issues/6
 
-Internal changes
+Internal changes:
 
   - Added a make webdist target to streamline copying the doxygen output.
   - Removed a few piece of unused code in IFD, MakerNote and ljpeg decompressor.

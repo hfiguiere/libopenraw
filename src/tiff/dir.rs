@@ -131,8 +131,9 @@ impl Dir {
                 }
                 // Headerless Nikon.
                 if file_type == RawType::Nef {
+                    // Found on D1, D1X, D1H
                     return Dir::new_makernote(
-                        "Nikon",
+                        "Nikon (Headerless)",
                         container,
                         offset,
                         offset,

@@ -14,7 +14,7 @@ getopts = "0.2.21"
 jpeg-decoder = "0.2.6"
 lazy_static = "1.4.0"
 log = "0.4.14"
-mp4parse = { path = "lib/mp4/mp4parse", version = "0.11.4", features = [ "craw" ] }
+mp4parse = { path = "lib/mp4/mp4parse", version = "0.12.0", features = [ "craw" ] }
 once_cell = "1.12.0"
 simple_logger = { version = "2.1.0", default-features = false }
 

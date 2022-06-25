@@ -39,15 +39,18 @@ static void decompressOlympus(const uint8_t* buffer, size_t size, uint16_t* data
 static void decompressOlympus(const uint8_t* buffer, size_t size, uint16_t* data16,
                               uint32_t w, uint32_t h)
 {
-    int nbits, sign, low, high, i, wo0, n, nw0, wo1, nw1;
-    int acarry0[3], acarry1[3], pred, diff;
+    int nbits, sign, low, high, n;
+    // These are for handling even and odd rows.
+    int wo[2] = { 0, 0 };
+    int nw[2] = { 0, 0 };
+    int acarry[2][3], pred, diff;
 
-    int pitch = w * 2; //(((w * 2/*bpp*/) + 15) / 16) * 16; // TODO make that
-                       //part of the outer datas
+    // The pitch is for the predictor: two row up.
+    int pitch = w * 2;
 
     /* Build a table to quickly look up "high" value */
     char bittable[4096];
-    for (i = 0; i < 4096; i++) {
+    for (int i = 0; i < 4096; i++) {
         int b = i;
         for (high = 0; high < 12; high++) {
             if ((b >> (11 - high)) & 1) {
@@ -56,123 +59,71 @@ static void decompressOlympus(const uint8_t* buffer, size_t size, uint16_t* data
         }
         bittable[i] = high;
     }
-    wo0 = nw0 = wo1 = nw1 = 0;
+
     buffer += 7;
 
     BitIterator bits(buffer, size - 7);
 
     for (uint32_t y = 0; y < h; y++) {
-        memset(acarry0, 0, sizeof acarry0);
-        memset(acarry1, 0, sizeof acarry1);
+        memset(acarry, 0, sizeof acarry);
+
         uint16_t* dest = &data16[(y * pitch)/2];
-        for (uint32_t x = 0; x < w; x++) {
-            //			bits.checkPos();
-            //			bits.fill();
-            i = 2 * (acarry0[2] < 3);
-            for (nbits = 2 + i; (uint16_t)acarry0[0] >> (nbits + i); nbits++) {
-            }
-
-            uint32_t b = bits.peek(15);
-            sign = (b >> 14) * -1;
-            low = (b >> 12) & 3;
-            high = bittable[b & 4095];
-            // Skip bits used above.
-            bits.skip(std::min(12 + 3, high + 1 + 3));
-
-            if (high == 12) {
-                high = bits.get(16 - nbits) >> 1;
-            }
-
-            acarry0[0] = (high << nbits) | bits.get(nbits);
-            diff = (acarry0[0] ^ sign) + acarry0[1];
-            acarry0[1] = (diff * 3 + acarry0[1]) >> 5;
-            acarry0[2] = acarry0[0] > 16 ? 0 : acarry0[2] + 1;
-
-            if (y < 2 || x < 2) {
-                if (y < 2 && x < 2) {
-                    pred = 0;
-                } else if (y < 2) {
-                    pred = wo0;
-                } else {
-                    pred = dest[-pitch + ((int)x)];
-                    nw0 = pred;
+        for (uint32_t x = 0; x < w / 2; x++) {
+            auto col = x * 2;
+            for (int p = 0; p < 2; p++) {
+                int i = 2 * (acarry[p][2] < 3);
+                for (nbits = 2 + i; (uint16_t)acarry[p][0] >> (nbits + i); nbits++) {
                 }
-                dest[x] = pred + ((diff << 2) | low);
-                // Set predictor
-                wo0 = dest[x];
-            } else {
-                n = dest[-pitch + ((int)x)];
-                if (((wo0 < nw0) & (nw0 < n)) | ((n < nw0) & (nw0 < wo0))) {
-                    if (abs(wo0 - nw0) > 32 || abs(n - nw0) > 32) {
-                        pred = wo0 + n - nw0;
+
+                uint32_t b = bits.peek(15);
+                sign = (b >> 14) * -1;
+                low = (b >> 12) & 3;
+                high = bittable[b & 4095];
+                // Skip bits used above.
+                bits.skip(std::min(12 + 3, high + 1 + 3));
+
+                if (high == 12) {
+                    high = bits.get(16 - nbits) >> 1;
+                }
+
+                acarry[p][0] = (high << nbits) | bits.get(nbits);
+                diff = (acarry[p][0] ^ sign) + acarry[p][1];
+                acarry[p][1] = (diff * 3 + acarry[p][1]) >> 5;
+                acarry[p][2] = acarry[p][0] > 16 ? 0 : acarry[p][2] + 1;
+
+                if (y < 2 || col < 2) {
+                    if (y < 2 && col < 2) {
+                        pred = 0;
+                    } else if (y < 2) {
+                        pred = wo[p];
                     } else {
-                        pred = (wo0 + n) >> 1;
+                        // The (int) cast is required as col is unsigned
+                        // and cause type promotion of the negative index.
+                        pred = dest[-pitch + (int)(col + p)];
+                        nw[p] = pred;
                     }
+                    dest[col + p] = pred + ((diff << 2) | low);
+                    // Set predictor
+                    wo[p] = dest[col + p];
                 } else {
-                    pred = abs(wo0 - nw0) > abs(n - nw0) ? wo0 : n;
-                }
-
-                dest[x] = pred + ((diff << 2) | low);
-                // Set predictors
-                wo0 = dest[x];
-                nw0 = n;
-            }
-            //      _ASSERTE(0 == dest[x] >> 12) ;
-
-            // ODD PIXELS
-            x += 1;
-            //			bits.checkPos();
-            //			bits.fill();
-            i = 2 * (acarry1[2] < 3);
-            for (nbits = 2 + i; (uint16_t)acarry1[0] >> (nbits + i); nbits++) {
-            }
-            b = bits.peek(15);
-            sign = (b >> 14) * -1;
-            low = (b >> 12) & 3;
-            high = bittable[b & 4095];
-            // Skip bits used above.
-            bits.skip(std::min(12 + 3, high + 1 + 3));
-
-            if (high == 12) {
-                high = bits.get(16 - nbits) >> 1;
-            }
-
-            acarry1[0] = (high << nbits) | bits.get(nbits);
-            diff = (acarry1[0] ^ sign) + acarry1[1];
-            acarry1[1] = (diff * 3 + acarry1[1]) >> 5;
-            acarry1[2] = acarry1[0] > 16 ? 0 : acarry1[2] + 1;
-
-            if (y < 2 || x < 2) {
-                if (y < 2 && x < 2) {
-                    pred = 0;
-                } else if (y < 2) {
-                    pred = wo1;
-                } else {
-                    pred = dest[-pitch + ((int)x)];
-                    nw1 = pred;
-                }
-                dest[x] = pred + ((diff << 2) | low);
-                // Set predictor
-                wo1 = dest[x];
-            } else {
-                n = dest[-pitch + ((int)x)];
-                if (((wo1 < nw1) & (nw1 < n)) | ((n < nw1) & (nw1 < wo1))) {
-                    if (abs(wo1 - nw1) > 32 || abs(n - nw1) > 32) {
-                        pred = wo1 + n - nw1;
+                    // See above for the cast.
+                    n = dest[-pitch + (int)(col + p)];
+                    if (((wo[p] < nw[p]) & (nw[p] < n)) | ((n < nw[p]) & (nw[p] < wo[p]))) {
+                        if (abs(wo[p] - nw[p]) > 32 || abs(n - nw[p]) > 32) {
+                            pred = wo[p] + n - nw[p];
+                        } else {
+                            pred = (wo[p] + n) >> 1;
+                        }
                     } else {
-                        pred = (wo1 + n) >> 1;
+                        pred = abs(wo[p] - nw[p]) > abs(n - nw[p]) ? wo[p] : n;
                     }
-                } else {
-                    pred = abs(wo1 - nw1) > abs(n - nw1) ? wo1 : n;
+
+                    dest[col + p] = pred + ((diff << 2) | low);
+                    // Set predictors
+                    wo[p] = dest[col + p];
+                    nw[p] = n;
                 }
-
-                dest[x] = pred + ((diff << 2) | low);
-
-                // Set predictors
-                wo1 = dest[x];
-                nw1 = n;
             }
-            //      _ASSERTE(0 == dest[x] >> 12) ;
         }
     }
 }

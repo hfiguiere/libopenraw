@@ -83,7 +83,7 @@ type IfdHolder = (Rc<Viewer>, Rc<tiff::Container>);
 /// A container for ISO Media, aka MPEG4.
 pub(crate) struct Container {
     view: RefCell<View>,
-    context: mp4parse::MediaContext,
+    context: RefCell<mp4parse::MediaContext>,
     /// The metadata IFDs, and their viewer.
     meta_ifds: OnceCell<Vec<Option<IfdHolder>>>,
     raw_type: RawType,
@@ -109,14 +109,15 @@ impl Container {
     pub fn new(view: View, raw_type: RawType) -> Self {
         Self {
             view: RefCell::new(view),
-            context: mp4parse::MediaContext::new(),
+            context: RefCell::default(),
             meta_ifds: OnceCell::new(),
             raw_type,
         }
     }
 
     pub(crate) fn load(&mut self) -> Result<()> {
-        mp4parse::read_mp4(self.view.get_mut(), &mut self.context)?;
+        let context = mp4parse::read_mp4(self.view.get_mut())?;
+        self.context.replace(context);
         Ok(())
     }
 
@@ -216,7 +217,7 @@ impl Container {
 
     /// Number of tracks in the ISO container
     pub(crate) fn track_count(&self) -> Result<usize> {
-        let len = self.context.tracks.len();
+        let len = self.context.borrow().tracks.len();
         if len > u32::max_value as usize {
             return Err(Error::FormatError);
         }
@@ -225,10 +226,11 @@ impl Container {
 
     /// Check if the track at index is a video track
     pub(crate) fn is_track_video(&self, index: usize) -> Result<bool> {
-        if index >= self.context.tracks.len() {
+        let tracks = &self.context.borrow().tracks;
+        if index >= tracks.len() {
             return Err(Error::NotFound);
         }
-        let track = &self.context.tracks[index];
+        let track = &tracks[index];
         if track.track_type == mp4parse::TrackType::Unknown {
             return Err(Error::NotFound);
         }
@@ -244,10 +246,11 @@ impl Container {
     /// Get the track at index if it is a CRaw.
     pub(crate) fn raw_track(&self, index: usize) -> Result<capi::TrackRawInfo> {
         let mut track_info = capi::TrackRawInfo::default();
-        if index >= self.context.tracks.len() {
+        let tracks = &self.context.borrow().tracks;
+        if index >= tracks.len() {
             return Err(Error::NotFound);
         }
-        let track = &self.context.tracks[index];
+        let track = &tracks[index];
         match track.track_type {
             mp4parse::TrackType::Video => {}
             _ => return Err(Error::NotFound),
@@ -287,21 +290,23 @@ impl Container {
     }
 
     /// Get the Craw header
-    pub(crate) fn craw_header(&self) -> Result<&craw::CrawHeader> {
-        if self.context.craw.is_none() {
+    pub(crate) fn craw_header(&self) -> Result<std::cell::Ref<craw::CrawHeader>> {
+        let craw = std::cell::Ref::map(self.context.borrow(), |context| &context.craw);
+        if craw.is_none() {
             return Err(Error::FormatError);
         }
 
-        Ok(self.context.craw.as_ref().unwrap())
+        Ok(std::cell::Ref::map(craw, |craw| craw.as_ref().unwrap()))
     }
 
     /// Return an entry from the Craw table as index.
     /// The entry contains offset, size tuple.
     fn craw_table_entry(&self, index: usize) -> Result<(u64, u64)> {
-        if self.context.craw.is_none() {
+        let craw = &self.context.borrow().craw;
+        if craw.is_none() {
             return Err(Error::FormatError);
         }
-        let craw = self.context.craw.as_ref().unwrap();
+        let craw = craw.as_ref().unwrap();
         if craw.offsets.len() <= index {
             return Err(Error::NotFound);
         }
