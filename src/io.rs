@@ -108,6 +108,10 @@ impl View {
         })
     }
 
+    pub(crate) fn len(&self) -> u64 {
+        self.length
+    }
+
     #[cfg(feature = "dump")]
     pub(crate) fn offset(&self) -> u64 {
         self.offset

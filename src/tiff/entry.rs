@@ -121,15 +121,19 @@ impl Entry {
             return Err(Error::AlreadyInited);
         }
 
-        let offset = match self.data {
+        let offset = (match self.data {
             DataBytes::Offset(offset) => offset,
             _ => E::read_u32(self.data.as_slice()),
-        } + base_offset;
+        } + base_offset) as u64;
         let tag_type = TagType::try_from(self.type_).unwrap_or(TagType::Invalid);
         let data_size = exif::tag_unit_size(tag_type) * self.count as usize;
         debug!("Loading data at {}: {} bytes", offset, data_size);
 
-        view.seek(SeekFrom::Start(offset as u64))?;
+        view.seek(SeekFrom::Start(offset))?;
+        if data_size > (view.len() - offset) as usize {
+            log::error!("TIFFEntry: data size too large");
+            return Err(Error::FormatError);
+        }
         let mut data = Vec::with_capacity(data_size);
         // Avoiding initialization of the big buffer.
         // This is deliberate.
