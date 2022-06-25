@@ -28,3 +28,9 @@ the test element allow just testing the data.
 `fuzz-ljpeg` for fuzzing and `test-ljpeg` for debugging:
 
 Takes as an input the LJPEG stream.
+
+### Rawfile
+
+`fuzz-rawfile` for fuzzing and `test-rawfile` for debugging:
+
+Takes as an input a valid Raw file.

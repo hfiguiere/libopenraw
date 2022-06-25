@@ -69,7 +69,12 @@ impl Viewer {
         view.inner
             .upgrade()
             .ok_or_else(|| Error::new(ErrorKind::Other, "failed to acquire Rc"))
-            .and_then(|viewer| View::new(&viewer, offset, viewer.length() - offset))
+            .and_then(|viewer| {
+                if offset > viewer.length() {
+                    return Err(Error::new(ErrorKind::Other, "offset beyond EOF."));
+                }
+                View::new(&viewer, offset, viewer.length() - offset)
+            })
     }
 
     pub fn length(&self) -> u64 {
