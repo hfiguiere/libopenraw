@@ -276,6 +276,10 @@ impl Entry {
                 return None;
             }
         };
+        if let DataBytes::Offset(_) = self.data {
+            log::error!("Entry::uint_value_array<>(): data is offset, file likely corrupt.");
+            return None;
+        }
         let unit_size = match type_ {
             TagType::Short => u16::unit_size(),
             TagType::Long => u32::unit_size(),
@@ -316,6 +320,10 @@ impl Entry {
                 return None;
             }
         };
+        if let DataBytes::Offset(_) = self.data {
+            log::error!("Entry::int_value_array<>(): data is offset, file likely corrupt.");
+            return None;
+        }
         let unit_size = match type_ {
             TagType::SShort => i16::unit_size(),
             TagType::SLong => i32::unit_size(),
@@ -352,6 +360,10 @@ impl Entry {
     where
         T: ExifValue,
     {
+        if let DataBytes::Offset(_) = self.data {
+            log::error!("Entry::value_array<>(): data is offset, file likely corrupt.");
+            return None;
+        }
         let data_slice = self.data.as_slice();
         let count = if self.type_ == TagType::Undefined as i16 {
             // count is in bytes
