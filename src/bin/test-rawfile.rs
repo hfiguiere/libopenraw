@@ -1,5 +1,3 @@
-#[macro_use]
-extern crate afl;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
