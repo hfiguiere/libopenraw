@@ -258,6 +258,11 @@ pub(crate) fn tiff_get_rawdata(
 
     // XXX get mosaic info
 
+    // More that 32bits per component is invalid: corrupt file likely.
+    if bpc > 32 {
+        log::error!("TIFF: bpc {} is invalid", bpc);
+        return Err(Error::FormatError);
+    }
     let actual_bpc = bpc;
     if (bpc == 12 || bpc == 14) && (compression == Compression::None) && byte_len == (x * y * 2) {
         // it's 12 or 14 bpc, but we have 16 bpc data.
