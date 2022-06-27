@@ -195,15 +195,20 @@ pub(crate) fn tiff_get_rawdata(
                 // XXX this might trigger the or_else below
                 None
             })?;
+            // In case of overflow, we'll return None
             entry
                 .value_array::<u32>(dir.endian())
-                .map(|a| a.iter().sum())
+                .map(|a| a.iter().try_fold(0_u32, |sum, &x| sum.checked_add(x)))?
         })
         .or_else(|| {
             tile_bytes = dir
                 .entry(exif::TIFF_TAG_TILE_BYTECOUNTS)
                 .and_then(|e| e.value_array::<u32>(dir.endian()));
-            let tile_bytes_total = tile_bytes.as_ref().map(|a| a.iter().sum()).unwrap_or(0);
+            // In case of overflow, we'll return 0 via the unwrap().
+            let tile_bytes_total = tile_bytes
+                .as_ref()
+                .and_then(|a| a.iter().try_fold(0_u32, |sum, &x| sum.checked_add(x)))
+                .unwrap_or(0);
             tile_offsets = dir
                 .entry(exif::TIFF_TAG_TILE_OFFSETS)
                 .and_then(|e| e.value_array::<u32>(dir.endian()));
