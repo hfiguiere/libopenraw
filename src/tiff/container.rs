@@ -195,9 +195,14 @@ impl Container {
                 } else {
                     self.dir_at(&mut *self.view.borrow_mut(), dir_offset, t)
                 } {
-                    dir_offset = dir.next_ifd();
+                    let next_offset = dir.next_ifd();
                     dirs.push(Rc::new(dir));
-                    index += 1
+                    index += 1;
+                    if next_offset != 0 && next_offset <= dir_offset {
+                        error!("Trying to read dirs backwards");
+                        break;
+                    }
+                    dir_offset = next_offset;
                 } else {
                     error!("Endian couldn't read directory");
                     break;
