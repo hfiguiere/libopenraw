@@ -61,6 +61,8 @@ pub use tiff::Ifd;
 
 #[cfg(feature = "fuzzing")]
 pub use decompress::LJpeg;
+#[cfg(feature = "fuzzing")]
+pub use olympus::decompress::decompress_olympus;
 
 pub use rawfile::rawfile_from_file;
 pub use rawfile::rawfile_from_io;

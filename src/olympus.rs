@@ -21,7 +21,7 @@
 
 //! Olympus ORF support
 
-mod decompress;
+pub mod decompress;
 mod matrices;
 
 use std::collections::HashMap;

@@ -49,3 +49,7 @@ required-features = ["fuzzing"]
 [[bin]]
 name = "fuzz-rawfile"
 required-features = ["fuzzing"]
+
+[[bin]]
+name = "fuzz-olymdecompress"
+required-features = ["fuzzing"]
