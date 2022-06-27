@@ -111,9 +111,13 @@ impl Container {
                             vec![tiff::IfdType::Main, tiff::IfdType::Other],
                             self.raw_type,
                         );
-                        exif.load(None).expect("Failed to load");
-
-                        Some((exif, viewer))
+                        exif.load(None)
+                            .map(|_| (exif, viewer))
+                            .map_err(|err| {
+                                log::warn!("Failed to load Exif: {}", err);
+                                err
+                            })
+                            .ok()
                     })
                     .or_else(|| {
                         log::warn!("Error loading exif (likely there is none)");
