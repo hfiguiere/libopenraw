@@ -234,6 +234,8 @@ pub(crate) fn tiff_get_rawdata(
             None
         })
         .ok_or(Error::NotFound)?;
+    // This will fail if the multiply overflow.
+    let pixel_count = x.checked_mul(y).ok_or(Error::FormatError)?;
     let photom_int = dir
         .uint_value(exif::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
         .and_then(|v| exif::PhotometricInterpretation::try_from(v).ok())
@@ -243,7 +245,7 @@ pub(crate) fn tiff_get_rawdata(
         .uint_value(exif::EXIF_TAG_COMPRESSION)
         .map(Compression::from)
         .map(|compression| {
-            if file_type == Type::Orf && byte_len < x * y * 2 {
+            if file_type == Type::Orf && byte_len < pixel_count.checked_mul(2).unwrap_or(0) {
                 log::debug!("ORF, setting bpc to 12 and data to compressed.");
                 bpc = 12;
                 Compression::Olympus
@@ -269,7 +271,10 @@ pub(crate) fn tiff_get_rawdata(
         return Err(Error::FormatError);
     }
     let actual_bpc = bpc;
-    if (bpc == 12 || bpc == 14) && (compression == Compression::None) && byte_len == (x * y * 2) {
+    if (bpc == 12 || bpc == 14)
+        && (compression == Compression::None)
+        && byte_len == (pixel_count * 2)
+    {
         // it's 12 or 14 bpc, but we have 16 bpc data.
         log::debug!("setting bpc from {} to 16", bpc);
         bpc = 16;
@@ -396,10 +401,11 @@ pub(crate) fn ifd_locate_thumbnail(
                 // workaround for CR2 files where 8RGB data is marked
                 // as JPEG. Check the real data size.
                 if x != 0 && y != 0 {
-                    if byte_count >= (x * y * 3) {
+                    let pixel_count = x.checked_mul(y).and_then(|count| count.checked_mul(3));
+                    if pixel_count.is_none() || byte_count >= pixel_count.unwrap() {
                         // We ignore this, it's 8RGB in a Canon CR2 file.
                         // See bug 72270
-                        log::debug!("8RGB as JPEG. Will ignore.");
+                        log::debug!("8RGB as JPEG or invalid pixel count. Will ignore.");
                         data_type = DataType::Unknown
                     } else {
                         data_type = DataType::Jpeg;
