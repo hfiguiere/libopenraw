@@ -29,7 +29,9 @@ use crate::{Error, Result};
 
 pub fn decompress_olympus(input: &[u8], w: usize, h: usize) -> Result<Vec<u16>> {
     if input.len() < 8 {
-        return Err(Error::Decompression("ORF: Compressed data too small.".into()));
+        return Err(Error::Decompression(
+            "ORF: Compressed data too small.".into(),
+        ));
     }
     let mut output: Vec<u16> = vec![0; h * w];
     let data = output.as_mut_slice();

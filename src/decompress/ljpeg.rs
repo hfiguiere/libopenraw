@@ -148,6 +148,12 @@ pub struct LJpeg {
     bit_reader: BitReader,
 }
 
+impl Default for LJpeg {
+    fn default() -> LJpeg {
+        LJpeg::new()
+    }
+}
+
 impl LJpeg {
     pub fn new() -> LJpeg {
         LJpeg {
