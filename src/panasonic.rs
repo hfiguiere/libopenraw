@@ -948,6 +948,10 @@ impl RawFileImpl for Rw2File {
                 .unwrap_or(16);
 
             // in the case of TIFF Raw offset, the byte count is incorrect
+            if offset.offset > self.reader.length() {
+                log::error!("RW2: wanting to read past the EOF");
+                return Err(Error::FormatError);
+            }
             let real_len = self.reader.length() - offset.offset;
             log::debug!("real_len {} width {} height {}", real_len, width, height);
             let mut packed = false;
