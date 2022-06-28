@@ -802,12 +802,11 @@ impl Rw2File {
 
     fn jpeg_preview(&self) -> Result<jpeg::Container> {
         self.jpeg_data_offset()
-            .map(|offset| {
-                let view =
-                    Viewer::create_view(&self.reader, offset.offset as u64).expect("Created view");
-                jpeg::Container::new(view, self.type_())
-            })
             .ok_or(Error::NotFound)
+            .and_then(|offset| {
+                let view = Viewer::create_view(&self.reader, offset.offset as u64)?;
+                Ok(jpeg::Container::new(view, self.type_()))
+            })
     }
 }
 
@@ -919,6 +918,9 @@ impl RawFileImpl for Rw2File {
         if let Some(cfa) = self.ifd(tiff::IfdType::Raw) {
             let offset: thumbnail::DataOffset =
                 if let Some(offset) = cfa.uint_value(exif::RW2_TAG_RAW_OFFSET) {
+                    if offset as u64 > self.reader.length() {
+                        return Err(Error::FormatError);
+                    }
                     let len = self.reader.length() - offset as u64;
                     log::debug!("Panasonic Raw offset: {}", offset);
                     thumbnail::DataOffset {

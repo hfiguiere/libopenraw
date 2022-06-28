@@ -61,6 +61,12 @@ impl Viewer {
 
     /// Create a view at offset.
     pub fn create_view(viewer: &Rc<Viewer>, offset: u64) -> Result<View> {
+        if offset > viewer.length() {
+            return Err(Error::new(
+                ErrorKind::Other,
+                "create_view: offset beyond EOF.",
+            ));
+        }
         View::new(viewer, offset, viewer.length() - offset)
     }
 
@@ -71,7 +77,10 @@ impl Viewer {
             .ok_or_else(|| Error::new(ErrorKind::Other, "failed to acquire Rc"))
             .and_then(|viewer| {
                 if offset > viewer.length() {
-                    return Err(Error::new(ErrorKind::Other, "offset beyond EOF."));
+                    return Err(Error::new(
+                        ErrorKind::Other,
+                        "create_subview: offset beyond EOF.",
+                    ));
                 }
                 View::new(&viewer, offset, viewer.length() - offset)
             })
