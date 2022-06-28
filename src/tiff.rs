@@ -235,7 +235,11 @@ pub(crate) fn tiff_get_rawdata(
         })
         .ok_or(Error::NotFound)?;
     // This will fail if the multiply overflow.
-    let pixel_count = x.checked_mul(y).ok_or(Error::FormatError)?;
+    let pixel_count = x
+        .checked_mul(y)
+        // if v overflow when muliplied my 2, then it's too big.
+        .and_then(|v| if v > u32::MAX / 2 { None } else { Some(v) })
+        .ok_or(Error::FormatError)?;
     let photom_int = dir
         .uint_value(exif::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
         .and_then(|v| exif::PhotometricInterpretation::try_from(v).ok())
