@@ -30,7 +30,7 @@ use crate::io::View;
 use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
 use crate::utils;
 use crate::Type as RawType;
-use crate::{Dump, Result};
+use crate::{Dump, Error, Result};
 
 /// Endian of the container
 #[derive(Clone, Copy, Debug)]
@@ -81,6 +81,10 @@ pub trait RawContainer: Dump {
             Data::Bytes(ref b) => b.clone(),
             Data::Offset(ref offset) => {
                 let mut view = self.borrow_view_mut();
+                if offset.offset + offset.len > view.len() {
+                    log::error!("Thumbmail too big");
+                    return Err(Error::FormatError);
+                }
                 let mut data = Vec::new();
                 data.resize(offset.len as usize, 0);
                 view.seek(SeekFrom::Start(offset.offset))?;
