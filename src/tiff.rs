@@ -240,6 +240,12 @@ pub(crate) fn tiff_get_rawdata(
         // if v overflow when muliplied my 2, then it's too big.
         .and_then(|v| if v > u32::MAX / 2 { None } else { Some(v) })
         .ok_or(Error::FormatError)?;
+    // Check for excessively large byte_len
+    // pixel_count * 2 should be a proper limit.
+    if byte_len > pixel_count * 2 {
+        log::error!("TIFF: byte length too large");
+        return Err(Error::FormatError);
+    }
     let photom_int = dir
         .uint_value(exif::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
         .and_then(|v| exif::PhotometricInterpretation::try_from(v).ok())
