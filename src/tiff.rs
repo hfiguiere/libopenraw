@@ -243,7 +243,11 @@ pub(crate) fn tiff_get_rawdata(
     // Check for excessively large byte_len
     // pixel_count * 2 should be a proper limit.
     if byte_len > pixel_count * 2 {
-        log::error!("TIFF: byte length too large");
+        log::error!("TIFF: Raw byte length too large for pixel count.");
+        return Err(Error::FormatError);
+    }
+    if byte_len as u64 > container.borrow_view_mut().len() {
+        log::error!("TIFF: Raw byte length too large for file size.");
         return Err(Error::FormatError);
     }
     let photom_int = dir
