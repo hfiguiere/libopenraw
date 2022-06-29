@@ -90,8 +90,8 @@ public:
     bool readFrom(CIFFContainer *);
     char       byteOrder[2]; /**< byte order 'MM' for Motorola,'II' for Intel */
     uint32_t   headerLength; /**< length of header (in bytes) */
-    char       type[4]; /**< File type. Value is 'heap' */
-    char       subType[4]; /**< Sub type. */
+    char       type[4]; /**< File type. Value is 'HEAP' */
+    char       subType[4]; /**< Sub type. Value is 'CCDR' */
     uint32_t   version; /**< version higher word: 0x0001, Lower word: 0x0002. */
     /* uint32_t   reserved1; */
     /* uint32_t   reserved2; */

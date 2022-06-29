@@ -140,7 +140,7 @@ public:
             return 0;
         }
     /** Offset of the data in the Heap
-     * @return 0 if the data in in-record. Otherwise the offse in the heap
+     * @return 0 if the data in in-record. Otherwise the offset in the heap
      */
     uint32_t offset() const
         {
