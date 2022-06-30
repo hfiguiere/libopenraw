@@ -298,7 +298,19 @@ pub(crate) fn tiff_get_rawdata(
             let tile_bytes = tile_bytes.as_ref().unwrap();
             let tile_offsets = tile_offsets.as_ref().unwrap();
             let data = std::iter::zip(tile_offsets, tile_bytes)
-                .map(|(offset, byte_len)| container.load_buffer8(*offset as u64, *byte_len as u64))
+                .map(|(offset, byte_len)| {
+                    // If we exceed file boundaries, return empty buffers
+                    if *offset as u64 > container.borrow_view_mut().len() {
+                        log::error!("TIFF: trying to load tile past EOF");
+                        vec![]
+                    } else if *byte_len as u64 + *offset as u64 > container.borrow_view_mut().len()
+                    {
+                        log::error!("TIFF: byte length for tile exceed file size");
+                        vec![]
+                    } else {
+                        container.load_buffer8(*offset as u64, *byte_len as u64)
+                    }
+                })
                 .collect();
             RawData::new_tiled(x, y, actual_bpc, data_type, data, tile_size.unwrap())
         } else {
