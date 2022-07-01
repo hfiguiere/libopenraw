@@ -136,8 +136,8 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool) {
         println!("\tBpc: {}", bpc);
         println!(
             "\tValues: white = {} black = {}",
-            rawfile.white(),
-            rawfile.black()
+            rawdata.white(),
+            rawdata.black()
         );
         if rawdata.data_type() == DataType::CompressedRaw {
             if let Some(d) = rawdata.data8() {

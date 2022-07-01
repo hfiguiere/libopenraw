@@ -83,16 +83,6 @@ pub trait RawFileImpl {
 
     /// Get the builtin colour matrix for this file.
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>>;
-
-    /// Return the value for white
-    fn white(&self) -> u16 {
-        0xffff
-    }
-
-    /// Return the value for black
-    fn black(&self) -> u16 {
-        0
-    }
 }
 
 /// Identify the RAW file type from file extension

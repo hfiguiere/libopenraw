@@ -213,22 +213,6 @@ impl RawFileImpl for Cr3File {
             .map(|m| Vec::from(m.matrix))
             .ok_or(Error::NotFound)
     }
-
-    fn white(&self) -> u16 {
-        MATRICES
-            .iter()
-            .find(|m| m.camera == self.type_id())
-            .map(|m| m.white)
-            .unwrap_or(0xffff)
-    }
-
-    fn black(&self) -> u16 {
-        MATRICES
-            .iter()
-            .find(|m| m.camera == self.type_id())
-            .map(|m| m.black)
-            .unwrap_or(0)
-    }
 }
 
 impl RawFile for Cr3File {
