@@ -946,6 +946,10 @@ impl RawFileImpl for Rw2File {
             let bpc = cfa
                 .value::<u16>(exif::RW2_TAG_IMAGE_BITSPERSAMPLE)
                 .unwrap_or(16);
+            let pixel_count = width.checked_mul(height).ok_or_else(|| {
+                log::error!("Panasonic: dimensions too large");
+                Error::FormatError
+            })?;
 
             // in the case of TIFF Raw offset, the byte count is incorrect
             if offset.offset > self.reader.length() {
@@ -955,9 +959,9 @@ impl RawFileImpl for Rw2File {
             let real_len = self.reader.length() - offset.offset;
             log::debug!("real_len {} width {} height {}", real_len, width, height);
             let mut packed = false;
-            let data_type = if real_len > (width * height * 2) as u64 {
+            let data_type = if real_len > (pixel_count * 2) as u64 {
                 DataType::Raw
-            } else if real_len > (width * height * 3 / 2) as u64 {
+            } else if real_len > (pixel_count * 3 / 2) as u64 {
                 // Need to unpack
                 packed = true;
                 DataType::Raw
