@@ -227,6 +227,7 @@ impl From<&str> for Type {
             "ARW" => Self::Arw,
             "CR2" => Self::Cr2,
             "CR3" => Self::Cr3,
+            "CRW" => Self::Crw,
             "DNG" => Self::Dng,
             "ERF" => Self::Erf,
             "NEF" => Self::Nef,

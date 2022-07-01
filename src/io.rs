@@ -22,10 +22,14 @@
 //! Abstract the IO to allow for "stacking".
 
 use std::cell::{RefCell, RefMut};
-use std::io::{Error, ErrorKind, Result, SeekFrom};
+use std::io::{Error, ErrorKind, Read, Result, SeekFrom};
 use std::rc::{Rc, Weak};
 
+use byteorder::{BigEndian, ByteOrder, LittleEndian, ReadBytesExt};
+
+use crate::container::Endian;
 use crate::rawfile::ReadAndSeek;
+use crate::utils;
 
 /// Wrap the IO for views.
 ///
@@ -115,6 +119,75 @@ impl View {
             offset,
             length,
         })
+    }
+
+    /// Read an `u16` based on endian.
+    pub fn read_endian_u16(&mut self, endian: Endian) -> std::io::Result<u16> {
+        match endian {
+            Endian::Little => self.read_u16::<LittleEndian>(),
+            Endian::Big => self.read_u16::<BigEndian>(),
+            Endian::Unset => {
+                unreachable!("endian unset");
+            }
+        }
+    }
+
+    /// Read an array of `u16` with endian
+    pub fn read_endian_u16_array(
+        &mut self,
+        arr: &mut [u16],
+        endian: Endian,
+    ) -> std::io::Result<()> {
+        let bytes = utils::to_u8_slice_mut(arr);
+        self.read_exact(bytes)?;
+        match endian {
+            Endian::Little => LittleEndian::from_slice_u16(arr),
+            Endian::Big => BigEndian::from_slice_u16(arr),
+            Endian::Unset => {
+                unreachable!("endian unset");
+            }
+        }
+        Ok(())
+    }
+
+    /// Read an `u32` based on endian.
+    pub fn read_endian_u32(&mut self, endian: Endian) -> std::io::Result<u32> {
+        match endian {
+            Endian::Little => self.read_u32::<LittleEndian>(),
+            Endian::Big => self.read_u32::<BigEndian>(),
+            Endian::Unset => {
+                unreachable!("endian unset");
+            }
+        }
+    }
+
+    /// Read an array of `u32` with endian
+    pub fn read_endian_u32_array(
+        &mut self,
+        arr: &mut [u32],
+        endian: Endian,
+    ) -> std::io::Result<()> {
+        let bytes = utils::to_u8_slice_mut(arr);
+        self.read_exact(bytes)?;
+        match endian {
+            Endian::Little => LittleEndian::from_slice_u32(arr),
+            Endian::Big => BigEndian::from_slice_u32(arr),
+            Endian::Unset => {
+                unreachable!("endian unset");
+            }
+        }
+        Ok(())
+    }
+
+    /// Read an `i32` based on endian.
+    pub fn read_endian_i32(&mut self, endian: Endian) -> std::io::Result<i32> {
+        match endian {
+            Endian::Little => self.read_i32::<LittleEndian>(),
+            Endian::Big => self.read_i32::<BigEndian>(),
+            Endian::Unset => {
+                unreachable!("endian unset");
+            }
+        }
     }
 
     pub(crate) fn len(&self) -> u64 {

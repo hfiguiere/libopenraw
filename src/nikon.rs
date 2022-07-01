@@ -385,7 +385,7 @@ impl NefFile {
                 let mut curve = CompressionInfo::new();
                 for i in 0..2 {
                     for j in 0..2 {
-                        curve.vpred[i][j] = container.read_u16(&mut view)?;
+                        curve.vpred[i][j] = view.read_endian_u16(container.endian())?;
                     }
                 }
 
@@ -420,7 +420,7 @@ impl NefFile {
                     return Err(Error::FormatError);
                 }
 
-                let nelems = container.read_u16(&mut view).unwrap_or(0);
+                let nelems = view.read_endian_u16(container.endian()).unwrap_or(0);
                 log::debug!("Num elems {}", nelems);
 
                 let mut ceiling: u16 = 1 << bpc & 0x7fff;
@@ -432,7 +432,7 @@ impl NefFile {
 
                 if header0 == 0x44 && header1 == 0x20 && step > 0 {
                     for i in 0..nelems {
-                        let value = container.read_u16(&mut view)?;
+                        let value = view.read_endian_u16(container.endian())?;
                         curve.curve[i as usize * step as usize] = value;
                     }
                     for i in 0..ceiling as usize {

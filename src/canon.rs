@@ -23,6 +23,7 @@
 
 mod cr2;
 mod cr3;
+mod crw;
 mod matrices;
 
 use std::collections::HashMap;
@@ -36,6 +37,7 @@ use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 pub use cr2::Cr2File;
 pub use cr3::Cr3File;
+pub use crw::CrwFile;
 
 lazy_static! {
     /// Map the Canon IDs to `TypeId`. This is the most reliable way for Canon

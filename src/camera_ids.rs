@@ -95,7 +95,6 @@ pub mod canon {
     pub const EOS_1DSMKII: u16 = 12;
     pub const EOS_1DSMKIII: u16 = 13;
     pub const EOS_300D: u16 = 14;
-    #[allow(unused)]
     pub const DIGITAL_REBEL: u16 = EOS_300D;
     pub const EOS_D30: u16 = 15;
     pub const EOS_D60: u16 = 16;

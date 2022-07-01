@@ -124,29 +124,6 @@ impl Container {
         }
     }
 
-    /// Read an `u16` based on the container endian.
-    pub fn read_u16(&self, view: &mut View) -> std::io::Result<u16> {
-        match *self.endian.borrow() {
-            container::Endian::Little => view.read_u16::<LittleEndian>(),
-            container::Endian::Big => view.read_u16::<BigEndian>(),
-            container::Endian::Unset => {
-                unreachable!("endian unset");
-            }
-        }
-    }
-
-    /// Read an `u32` based on the container endian.
-    fn read_u32(&self, view: &mut View) -> std::io::Result<u32> {
-        match *self.endian.borrow() {
-            container::Endian::Little => view.read_u32::<LittleEndian>(),
-            container::Endian::Big => view.read_u32::<BigEndian>(),
-            container::Endian::Unset => {
-                unreachable!("endian unset");
-            }
-        }
-    }
-
-    /// load the container.
     pub(crate) fn load(&mut self, check_magic_header: Option<CheckMagicHeader>) -> Result<()> {
         let mut view = self.view.borrow_mut();
         view.seek(SeekFrom::Start(0))?;
@@ -182,7 +159,7 @@ impl Container {
             let mut dir_offset = {
                 let mut view = self.view.borrow_mut();
                 view.seek(SeekFrom::Start(4)).expect("Seek failed");
-                self.read_u32(&mut view).unwrap_or(0)
+                view.read_endian_u32(self.endian()).unwrap_or(0)
             };
             while dir_offset != 0 {
                 let t = if index < self.dir_map.len() {

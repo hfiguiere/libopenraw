@@ -28,6 +28,7 @@ use super::Type;
 
 use crate::canon::Cr2File;
 use crate::canon::Cr3File;
+use crate::canon::CrwFile;
 use crate::dng::DngFile;
 use crate::epson::ErfFile;
 use crate::fujifilm::RafFile;
@@ -44,6 +45,7 @@ lazy_static::lazy_static! {
         (Type::Arw, ArwFile::factory as RawFileFactory),
         (Type::Cr2, Cr2File::factory as RawFileFactory),
         (Type::Cr3, Cr3File::factory as RawFileFactory),
+        (Type::Crw, CrwFile::factory as RawFileFactory),
         (Type::Dng, DngFile::factory as RawFileFactory),
         (Type::Erf, ErfFile::factory as RawFileFactory),
         (Type::Jpeg, JpegFile::factory as RawFileFactory),

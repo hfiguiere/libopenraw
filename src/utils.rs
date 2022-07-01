@@ -21,14 +21,24 @@
 
 //! Various utilities
 
-/// Create an mut u8 slice from a mut u16.
-pub(crate) fn to_u8_slice_mut(slice: &mut [u16]) -> &mut [u8] {
-    unsafe { std::slice::from_raw_parts_mut(slice.as_mut_ptr().cast::<u8>(), 2 * slice.len()) }
+/// Create an mut u8 slice from a mut [T].
+pub(crate) fn to_u8_slice_mut<T>(slice: &mut [T]) -> &mut [u8] {
+    unsafe {
+        std::slice::from_raw_parts_mut(
+            slice.as_mut_ptr().cast::<u8>(),
+            std::mem::size_of::<T>() * slice.len(),
+        )
+    }
 }
 
-/// Create an u8 slice from an u16.
-pub(crate) fn to_u8_slice(slice: &[u16]) -> &[u8] {
-    unsafe { std::slice::from_raw_parts(slice.as_ptr().cast::<u8>(), 2 * slice.len()) }
+/// Create an u8 slice from a [T].
+pub(crate) fn to_u8_slice<T>(slice: &[T]) -> &[u8] {
+    unsafe {
+        std::slice::from_raw_parts(
+            slice.as_ptr().cast::<u8>(),
+            std::mem::size_of::<T>() * slice.len(),
+        )
+    }
 }
 
 /// Will take the slice and create a string from the nul terminated
