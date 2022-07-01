@@ -110,7 +110,7 @@ impl RawFileImpl for JpegFile {
         }
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, _: bool) -> Result<RawData> {
         Err(Error::NotSupported)
     }
 

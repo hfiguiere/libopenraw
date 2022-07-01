@@ -26,7 +26,7 @@ mod ciff;
 mod decompress;
 
 use std::collections::HashMap;
-use std::io::{Seek, SeekFrom};
+use std::io::{Read, Seek, SeekFrom};
 use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
@@ -157,13 +157,12 @@ impl RawFileImpl for CrwFile {
         None
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompression: bool) -> Result<RawData> {
         self.container();
         let container = self.container.get().unwrap();
 
         let mut component_bit_depth = 12;
-        // XXX this is unused
-        let (_x, _y) = container
+        let (x, y) = container
             .image_spec()
             .map(|spec| {
                 component_bit_depth = spec.component_bit_depth;
@@ -214,39 +213,44 @@ impl RawFileImpl for CrwFile {
                     .raw_data_record()
                     .ok_or(Error::NotFound)
                     .and_then(|r| {
-                        if let ciff::Record::InHeap((pos, _)) = r.data {
-                            let mut decompressor =
-                                Decompress::new(decoder_table as usize, cfa_x as u32, cfa_y as u32);
-                            let mut view =
-                                Viewer::create_subview(&container.borrow_view_mut(), pos as u64)?;
-                            decompressor
-                                .decompress(&mut view)
-                                .map(|mut rawdata| {
-                                    rawdata.set_white((1 << 10) - 1);
-                                    rawdata.set_active_area(sensor_info);
-                                    rawdata
-                                })
-                                .map_err(|err| {
-                                    log::error!("CRW error: {:?}", err);
-                                    err
-                                })
-                            /* don't decompress
-                            let view = container.borrow_view_mut()
-                            view.seek(SeekFrom::Start(pos as u64))
-                                .ok()?;
-                            let mut data = vec![0; len as usize];
-                            view.read_exact(&mut data).ok()?;
+                        if let ciff::Record::InHeap((pos, len)) = r.data {
                             // XXX pattern is RGGB
-                            let mut rawdata = RawData::new8(
-                                x,
-                                y,
-                                component_bit_depth as u16,
-                                DataType::CompressedRaw,
-                                data,
-                            );
-                            rawdata.set_active_area(sensor_info);
-                            Some(rawdata)
-                             */
+                            if skip_decompression {
+                                let mut view = container.borrow_view_mut();
+                                view.seek(SeekFrom::Start(pos as u64))?;
+                                let mut data = vec![0; len as usize];
+                                view.read_exact(&mut data)?;
+                                let mut rawdata = RawData::new8(
+                                    x,
+                                    y,
+                                    component_bit_depth as u16,
+                                    DataType::CompressedRaw,
+                                    data,
+                                );
+                                rawdata.set_active_area(sensor_info);
+                                Ok(rawdata)
+                            } else {
+                                let mut decompressor = Decompress::new(
+                                    decoder_table as usize,
+                                    cfa_x as u32,
+                                    cfa_y as u32,
+                                );
+                                let mut view = Viewer::create_subview(
+                                    &container.borrow_view_mut(),
+                                    pos as u64,
+                                )?;
+                                decompressor
+                                    .decompress(&mut view)
+                                    .map(|mut rawdata| {
+                                        rawdata.set_white((1 << 10) - 1);
+                                        rawdata.set_active_area(sensor_info);
+                                        rawdata
+                                    })
+                                    .map_err(|err| {
+                                        log::error!("CRW error: {:?}", err);
+                                        err
+                                    })
+                            }
                         } else {
                             Err(Error::NotFound)
                         }

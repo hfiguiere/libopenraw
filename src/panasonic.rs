@@ -914,7 +914,7 @@ impl RawFileImpl for Rw2File {
         }
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawData> {
         if let Some(cfa) = self.ifd(tiff::IfdType::Raw) {
             let offset: thumbnail::DataOffset =
                 if let Some(offset) = cfa.uint_value(exif::RW2_TAG_RAW_OFFSET) {

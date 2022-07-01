@@ -525,7 +525,7 @@ impl RawFileImpl for PefFile {
         }
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawData> {
         self.container();
         let container = self.container.get().unwrap();
         self.ifd(tiff::IfdType::Raw)

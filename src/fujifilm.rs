@@ -325,7 +325,7 @@ impl RawFileImpl for RafFile {
         }
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawData> {
         self.container();
         let raw_container = self.container.get().unwrap();
         raw_container

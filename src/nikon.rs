@@ -569,7 +569,7 @@ impl RawFileImpl for NefFile {
         }
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
         self.ifd(tiff::IfdType::Raw)
             .ok_or_else(|| {
                 log::error!("CFA not found");
@@ -592,11 +592,15 @@ impl RawFileImpl for NefFile {
                         } else if compression == tiff::Compression::None {
                             Ok(rawdata)
                         } else if compression == tiff::Compression::NikonQuantized {
-                            log::debug!("Nikon quantized");
-                            self.decompress_nikon_quantized(rawdata).map_err(|err| {
-                                log::error!("NEF quantized {}", err);
-                                err
-                            })
+                            if !skip_decompress {
+                                log::debug!("Nikon quantized");
+                                self.decompress_nikon_quantized(rawdata).map_err(|err| {
+                                    log::error!("NEF quantized {}", err);
+                                    err
+                                })
+                            } else {
+                                Ok(rawdata)
+                            }
                         } else {
                             log::error!("Invalid compression {:?}", compression);
                             Err(Error::InvalidFormat)

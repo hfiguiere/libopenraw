@@ -69,7 +69,7 @@ impl Results {
     fn raw_test(&self, rawfile: &dyn RawFile) -> u32 {
         let mut count = 0;
 
-        let rawdata = rawfile.raw_data();
+        let rawdata = rawfile.raw_data(false);
         assert_eq!(
             rawdata.is_ok(),
             self.raw_data_type.is_some(),

@@ -79,7 +79,8 @@ pub trait RawFileImpl {
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>>;
 
     /// Load the RawData and return it.
-    fn load_rawdata(&self) -> Result<RawData>;
+    /// If `skip_decompress` is true then the decompression will not be performed.
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData>;
 
     /// Get the builtin colour matrix for this file.
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>>;
@@ -223,8 +224,8 @@ pub trait RawFile: RawFileImpl + Dump {
     }
 
     /// Get the RAW data
-    fn raw_data(&self) -> Result<RawData> {
-        self.load_rawdata()
+    fn raw_data(&self, skip_decompression: bool) -> Result<RawData> {
+        self.load_rawdata(skip_decompression)
     }
 
     /// Get the main IFD
@@ -381,7 +382,7 @@ mod test {
             None
         }
 
-        fn load_rawdata(&self) -> Result<RawData> {
+        fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawData> {
             Err(Error::NotFound)
         }
 

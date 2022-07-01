@@ -33,6 +33,7 @@ pub fn main() {
     opts.optflag("d", "", "Debug");
     opts.optflag("t", "", "Extract thumbnails");
     opts.optflag("R", "", "Extract Raw data");
+    opts.optflag("n", "", "No decompression");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -52,9 +53,10 @@ pub fn main() {
 
     let extract_thumbnails = matches.opt_present("t");
     let extract_raw = matches.opt_present("R");
+    let skip_decompress = matches.opt_present("n");
 
     for name in matches.free.iter() {
-        process_file(name, extract_thumbnails, extract_raw);
+        process_file(name, extract_thumbnails, extract_raw, skip_decompress);
     }
 }
 
@@ -122,9 +124,9 @@ fn save_raw(p: &str, rawdata: &RawData) -> Result<usize> {
     }
 }
 
-fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool) {
+fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decompress: bool) {
     let before = std::time::Instant::now();
-    let rawdata = rawfile.raw_data();
+    let rawdata = rawfile.raw_data(skip_decompress);
     println!("Elapsed time: {:.2?}", before.elapsed());
 
     if let Ok(rawdata) = rawdata {
@@ -168,7 +170,7 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool) {
     }
 }
 
-fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool) {
+fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool, skip_decompress: bool) {
     let rawfile = rawfile_from_file(p, None);
 
     info!("Diags {}", p);
@@ -202,7 +204,7 @@ fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool) {
                 }
             }
 
-            extract_rawdata(p, rawfile.as_ref(), extract_raw);
+            extract_rawdata(p, rawfile.as_ref(), extract_raw, skip_decompress);
 
             let exif_ifd = rawfile.exif_ifd();
             println!("Has Exif: {}", exif_ifd.is_some());

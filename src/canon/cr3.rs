@@ -160,7 +160,7 @@ impl RawFileImpl for Cr3File {
     }
 
     /// Load the RawData and return it.
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, _skip_decompression: bool) -> Result<RawData> {
         self.container();
         let container = self.container.get().unwrap();
 

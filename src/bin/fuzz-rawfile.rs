@@ -11,7 +11,7 @@ fn main() {
                 let _ = rawfile.thumbnail(size)?;
             }
 
-            let _ = rawfile.raw_data()?;
+            let _ = rawfile.raw_data(false)?;
 
             Ok(())
         });

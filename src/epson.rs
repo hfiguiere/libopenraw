@@ -153,7 +153,7 @@ impl RawFileImpl for ErfFile {
         }
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, _skip_decompression: bool) -> Result<RawData> {
         self.ifd(tiff::IfdType::Raw)
             .ok_or_else(|| {
                 log::error!("CFA not found");

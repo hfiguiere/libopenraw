@@ -271,7 +271,7 @@ impl RawFileImpl for DngFile {
         }
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
         self.ifd(tiff::IfdType::Raw)
             .ok_or_else(|| {
                 log::error!("DNG: couldn't find CFA ifd");
@@ -310,7 +310,13 @@ impl RawFileImpl for DngFile {
                         err
                     })
             })
-            .and_then(Self::decompress)
+            .and_then(|rawdata| {
+                if !skip_decompress {
+                    Self::decompress(rawdata)
+                } else {
+                    Ok(rawdata)
+                }
+            })
     }
 
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>> {

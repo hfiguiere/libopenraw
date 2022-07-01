@@ -875,7 +875,7 @@ impl RawFileImpl for ArwFile {
         }
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawData> {
         if self.is_a100() {
             Err(Error::NotFound)
         } else {

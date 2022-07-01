@@ -36,7 +36,7 @@ use crate::thumbnail;
 use crate::thumbnail::ThumbDesc;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
-use crate::{Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 use super::matrices::MATRICES;
 
@@ -65,26 +65,43 @@ impl Cr2File {
     }
 
     /// Get the raw bytes.
-    fn get_raw_bytes(&self, offset: u64, byte_len: u64, slices: &[u32]) -> Result<RawData> {
+    fn get_raw_bytes(
+        &self,
+        width: u32,
+        height: u32,
+        offset: u64,
+        byte_len: u64,
+        slices: &[u32],
+        skip_decompress: bool,
+    ) -> Result<RawData> {
         let data = self.container().load_buffer8(offset, byte_len);
         if (data.len() as u64) != byte_len {
             log::warn!("Size mismatch for data. Moving on");
         }
 
-        // XXX handle the don't decompress option
-        let mut decompressor = decompress::LJpeg::new();
-        // in fact on Canon CR2 files slices either do not exists
-        // or is 3.
-        if slices.len() > 1 {
-            decompressor.set_slices(slices);
-        }
+        if skip_decompress {
+            Ok(RawData::new8(
+                width,
+                height,
+                8,
+                DataType::CompressedRaw,
+                data,
+            ))
+        } else {
+            let mut decompressor = decompress::LJpeg::new();
+            // in fact on Canon CR2 files slices either do not exists
+            // or is 3.
+            if slices.len() > 1 {
+                decompressor.set_slices(slices);
+            }
 
-        let mut io = std::io::Cursor::new(data);
-        decompressor.decompress(&mut io)
+            let mut io = std::io::Cursor::new(data);
+            decompressor.decompress(&mut io)
+        }
     }
 
     /// Load the `RawData` for actual CR2 files.
-    fn load_cr2_rawdata(&self) -> Result<RawData> {
+    fn load_cr2_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
         self.container();
         let container = self.container.get().unwrap();
 
@@ -121,8 +138,22 @@ impl Cr2File {
         // and exif::EXIF_TAG_PIXEL_Y_DIMENSION from the Exif IFD
         // contain X & Y but we don't need them right now.
         // We'll use the active area and the JPEG stream.
+        // But we need this if we skip decompression.
+        let width = cfa_ifd
+            .uint_value(exif::EXIF_TAG_PIXEL_X_DIMENSION)
+            .unwrap_or_default();
+        let height = cfa_ifd
+            .uint_value(exif::EXIF_TAG_PIXEL_Y_DIMENSION)
+            .unwrap_or_default();
 
-        let mut rawdata = self.get_raw_bytes(offset as u64, byte_len as u64, &slices)?;
+        let mut rawdata = self.get_raw_bytes(
+            width,
+            height,
+            offset as u64,
+            byte_len as u64,
+            &slices,
+            skip_decompress,
+        )?;
 
         let sensor_info = self
             .ifd(tiff::IfdType::MakerNote)
@@ -208,9 +239,9 @@ impl RawFileImpl for Cr2File {
         }
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
         if self.is_cr2() {
-            return self.load_cr2_rawdata();
+            return self.load_cr2_rawdata(skip_decompress);
         }
         Err(Error::NotSupported)
     }

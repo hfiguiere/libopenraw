@@ -398,7 +398,7 @@ impl RawFileImpl for OrfFile {
         }
     }
 
-    fn load_rawdata(&self) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
         self.ifd(IfdType::Raw)
             .ok_or(Error::NotFound)
             .and_then(|ref cfa| {
@@ -416,7 +416,13 @@ impl RawFileImpl for OrfFile {
                     data.compression()
                 };
                 let mut data = match compression {
-                    tiff::Compression::Olympus => self.decompress(data),
+                    tiff::Compression::Olympus => {
+                        if !skip_decompress {
+                            self.decompress(data)
+                        } else {
+                            data
+                        }
+                    }
                     _ => data,
                 };
                 data.set_bpc(12);
