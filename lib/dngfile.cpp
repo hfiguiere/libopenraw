@@ -224,6 +224,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                    OR_TYPEID_DJI_FC220) },
     { "FC350", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
                                    OR_TYPEID_DJI_FC350) },
+    { "FC3582", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
+                                    OR_TYPEID_DJI_FC3582) },
     { "FC6310", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
                                     OR_TYPEID_DJI_FC6310) },
     { "FC7303", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_DJI,
