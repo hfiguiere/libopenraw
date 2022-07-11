@@ -1,3 +1,9 @@
+What's (visibly) new in 0.3.3
+=============================
+
+- Some fixes to the build system related to autotools. Issue #11.
+- 6 new cameras listed.
+
 What's (visibly) new in 0.3.2
 =============================
 

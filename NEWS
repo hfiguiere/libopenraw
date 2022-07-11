@@ -1,3 +1,21 @@
+libopenraw 0.3.3 -
+
+New features:
+
+  Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Added Canon EOS R7* and EOS R10*.
+  - Added DJI Mini 3 Pro / FC-3582 (DNG).
+  - Added Fujifilm XH2S*.
+  - Added Hasselblad L2D-20c / DJI Mavic 3 Cine (DNG).
+  - Added Olympus C5060WZ*.
+
+Bug fixes:
+
+  - autoconf-archive is no longer required for development. Issue #11.
+  - The tarball will have up to date autoconf files.
+
 libopenraw 0.3.2 - 2022/06/24
 
 New features:
