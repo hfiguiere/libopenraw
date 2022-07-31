@@ -8,10 +8,8 @@ Makefile.in
 .deps
 .dirstamp
 .AppleDouble
+.DS_Store
 :2e_*
-CMakeCache.txt
-CMakeFiles
-*.cmake
 stamp-*
 progress.make
 aclocal.m4
@@ -25,10 +23,13 @@ config.h
 configure
 autogen.err
 missing
-ltmain.sh
-libtool
-install-sh
-depcomp
+/ltmain.sh
+/libtool
+/install-sh
+/Cargo.lock
+/compile
+/depcomp
+/test-driver
 *.pc
 demo/ccfa
 demo/cfa
@@ -39,7 +40,8 @@ demo/ppmload
 lib/teststream
 lib/*.log
 lib/*.trs
-lib/mp4/target
+m4/libtool.m4
+m4/lt*.m4
 test/ljpegtest
 test/extensions
 test/testunpack
@@ -54,6 +56,7 @@ testsuite/testsuite
 testsuite/*.log
 testsuite/*.trs
 
+lib/mp4/target
 lib/mp4/mp4parse/tests/bipbop_cbcs_audio_init.mp4
 lib/mp4/mp4parse/tests/bipbop_cbcs_video_init.mp4
 lib/mp4/mp4parse/tests/metadata.mp4
