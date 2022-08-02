@@ -264,7 +264,7 @@ impl From<u32> for TypeId {
 }
 impl From<TypeId> for u32 {
     fn from(type_id: TypeId) -> u32 {
-        ((type_id.0 as u32) << 16) & type_id.1 as u32
+        ((type_id.0 as u32) << 16) | type_id.1 as u32
     }
 }
 
@@ -276,5 +276,11 @@ mod test {
     fn test_typeid_from_u32() {
         let id = 0x0001_0042;
         assert_eq!(TypeId(1, 0x42), TypeId::from(id));
+    }
+
+    #[test]
+    fn test_typeid_to_u32() {
+        let id: u32 = TypeId(1, 0x42).into();
+        assert_eq!(id, 0x0001_0042);
     }
 }
