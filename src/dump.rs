@@ -34,8 +34,7 @@ pub fn dump_indent(indent: u32) -> String {
 macro_rules! dump_println {
     ( $indent:expr, $( $x:expr ),* ) => {
         {
-            use crate::dump::dump_indent;
-            print!("{}", dump_indent( $indent ));
+            print!("{}", $crate::dump::dump_indent( $indent ));
             println!($( $x ),*);
         }
     };
