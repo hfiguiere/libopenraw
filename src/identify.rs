@@ -22,7 +22,6 @@
 //! Indentification of RAW files.
 
 use std::collections::HashMap;
-use std::ffi::{OsStr, OsString};
 
 use super::{Error, Result, Type};
 use crate::fujifilm;
@@ -30,31 +29,31 @@ use crate::rawfile::ReadAndSeek;
 
 lazy_static::lazy_static! {
     /// Mapping of extensions (lowercase) to a `Type`.
-    static ref EXT_TO_TYPE: HashMap<OsString, Type> = HashMap::from([
+    pub(crate) static ref EXT_TO_TYPE: HashMap<&'static str, Type> = HashMap::from([
         // The extension MUST be lowercase
-        (OsString::from("arw"), Type::Arw),
-        (OsString::from("cr2"), Type::Cr2),
-        (OsString::from("cr3"), Type::Cr3),
-        (OsString::from("dng"), Type::Dng),
-        (OsString::from("erf"), Type::Erf),
-        (OsString::from("jpg"), Type::Jpeg),
-        (OsString::from("jpeg"), Type::Jpeg),
-        (OsString::from("gpr"), Type::Gpr),
-        (OsString::from("nef"), Type::Nef),
-        (OsString::from("nrw"), Type::Nrw),
-        (OsString::from("orf"), Type::Orf),
-        (OsString::from("pef"), Type::Pef),
-        (OsString::from("raf"), Type::Raf),
-        (OsString::from("raw"), Type::Rw2),
-        (OsString::from("rw2"), Type::Rw2),
-        (OsString::from("rwl"), Type::Rw2),
-        (OsString::from("sr2"), Type::Arw),
+        ("arw", Type::Arw),
+        ("cr2", Type::Cr2),
+        ("cr3", Type::Cr3),
+        ("dng", Type::Dng),
+        ("erf", Type::Erf),
+        ("jpg", Type::Jpeg),
+        ("jpeg", Type::Jpeg),
+        ("gpr", Type::Gpr),
+        ("nef", Type::Nef),
+        ("nrw", Type::Nrw),
+        ("orf", Type::Orf),
+        ("pef", Type::Pef),
+        ("raf", Type::Raf),
+        ("raw", Type::Rw2),
+        ("rw2", Type::Rw2),
+        ("rwl", Type::Rw2),
+        ("sr2", Type::Arw),
     ]);
 }
 
 /// Get the type associated to the extension.
 /// `ext` must be lowercase ASCII.
-pub(crate) fn type_for_extension(ext: &OsStr) -> Option<Type> {
+pub(crate) fn type_for_extension(ext: &str) -> Option<Type> {
     EXT_TO_TYPE.get(ext).cloned()
 }
 
@@ -112,14 +111,12 @@ pub(crate) fn type_for_content(content: &mut dyn ReadAndSeek) -> Result<Option<T
 mod test {
     #[test]
     fn test_type_for_extension() {
-        use std::ffi::OsString;
-
         use super::type_for_extension;
         use crate::Type;
 
-        assert_eq!(type_for_extension(&OsString::from("CR3")), None);
-        assert_eq!(type_for_extension(&OsString::from("cr3")), Some(Type::Cr3));
-        assert_eq!(type_for_extension(&OsString::from("NOPE")), None);
+        assert_eq!(type_for_extension("CR3"), None);
+        assert_eq!(type_for_extension("cr3"), Some(Type::Cr3));
+        assert_eq!(type_for_extension("NOPE"), None);
     }
 
     #[test]

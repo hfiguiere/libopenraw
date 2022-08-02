@@ -95,7 +95,7 @@ where
     let file_path = filename.as_ref();
     file_path
         .extension()
-        .and_then(|e| identify::type_for_extension(&e.to_ascii_lowercase()))
+        .and_then(|e| identify::type_for_extension(e.to_ascii_lowercase().to_str().unwrap()))
 }
 
 /// Crate RawFile object from IO.
