@@ -178,47 +178,48 @@ impl From<&str> for DataType {
 /// RAW file type. This list the type of files, which
 /// coincidentally match the vendor, except for DNG.
 ///
+/// The value match the enum on the C++ headers.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[repr(u32)]
 pub enum Type {
-    /// Sony Alpha
-    Arw,
-    /// Canon RAW CIFF based
-    Crw,
-    /// Canon RAW TIFF based
-    Cr2,
-    /// Canon RAW MPEG4 ISO based
-    Cr3,
-    /// Adobe Digital Negative
-    Dng,
-    /// Epson RAW
-    Erf,
-    /// GoPro RAW
-    Gpr,
-    /// Minolta RAW
-    Mrw,
-    /// Nikon RAW
-    Nef,
-    /// Nikon RAW (NRW variant)
-    Nrw,
-    /// Olympus RAW
-    Orf,
-    /// Pentax RAW
-    Pef,
-    /// Fujfilm RAW
-    Raf,
-    /// Panasonic RAW (old)
-    Raw,
-    /// Panasonic RAW
-    Rw2,
-    /// Sony RAW (old)
-    Sr2,
-    /// JPEG (definitely not a Raw)
-    Jpeg,
     /// Unknown vendor
-    Unknown,
+    Unknown = 0,
+    /// Sony Alpha
+    Arw = 5,
+    /// Canon RAW CIFF based
+    Crw = 2,
+    /// Canon RAW TIFF based
+    Cr2 = 1,
+    /// Canon RAW MPEG4 ISO based
+    Cr3 = 14,
+    /// Adobe Digital Negative
+    Dng = 6,
+    /// Epson RAW
+    Erf = 9,
+    /// GoPro RAW
+    Gpr = 15,
+    /// Minolta RAW
+    Mrw = 4,
+    /// Nikon RAW
+    Nef = 3,
+    /// Nikon RAW (NRW variant)
+    Nrw = 11,
+    /// Olympus RAW
+    Orf = 7,
+    /// Pentax RAW
+    Pef = 8,
+    /// Fujfilm RAW
+    Raf = 13,
+    /// Panasonic RAW
+    Rw2 = 12,
+    /// Sony RAW (old)
+    Sr2 = 16,
+    /// JPEG (definitely not a Raw)
+    Jpeg = 100,
+    Tiff = 10,
     #[cfg(test)]
     /// Value for testing only
-    Test,
+    Test = 200,
 }
 
 impl From<&str> for Type {
