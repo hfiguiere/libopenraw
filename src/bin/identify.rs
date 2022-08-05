@@ -26,13 +26,14 @@ use getopts::Options;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
 
-use libopenraw::rawfile_from_file;
+use libopenraw::{rawfile_from_file, Type};
 
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();
 
     let mut opts = Options::new();
     opts.optflag("d", "", "Debug");
+    opts.optopt("f", "", "Raw Format (for debugging purpose)", "FORMAT");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -45,6 +46,10 @@ pub fn main() {
         LevelFilter::Error
     };
 
+    let format = matches
+        .opt_str("f")
+        .map(|format| Type::from(format.as_str()));
+
     SimpleLogger::new()
         .with_module_level("mp4parse", LevelFilter::Error)
         .with_module_level("libopenraw", loglevel)
@@ -56,7 +61,7 @@ pub fn main() {
         if !p.is_file() {
             continue;
         }
-        let rawfile = rawfile_from_file(&p, None);
+        let rawfile = rawfile_from_file(&p, format);
         match rawfile {
             Ok(ref rawfile) => {
                 println!("{} {}", name, rawfile.type_id());
