@@ -21,7 +21,7 @@
 
 //! Various utilities
 
-/// Create an mut u8 slice from a mut [T].
+/// Create an mut u8 slice from a `mut [T]`.
 pub(crate) fn to_u8_slice_mut<T>(slice: &mut [T]) -> &mut [u8] {
     unsafe {
         std::slice::from_raw_parts_mut(
@@ -31,7 +31,7 @@ pub(crate) fn to_u8_slice_mut<T>(slice: &mut [T]) -> &mut [u8] {
     }
 }
 
-/// Create an u8 slice from a [T].
+/// Create an u8 slice from a `[T]`.
 pub(crate) fn to_u8_slice<T>(slice: &[T]) -> &[u8] {
     unsafe {
         std::slice::from_raw_parts(

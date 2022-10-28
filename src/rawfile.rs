@@ -78,7 +78,8 @@ pub trait RawFileImpl {
     /// Get the ifd with type
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>>;
 
-    /// Load the RawData and return it.
+    /// Load the [`RawData`] and return it.
+    ///
     /// If `skip_decompress` is true then the decompression will not be performed.
     fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData>;
 

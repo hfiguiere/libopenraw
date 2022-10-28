@@ -21,6 +21,8 @@
 
 //! Canon CR3 format, the 3rd generation of Canon RAW format, based on
 //! the ISOMedia (MP4) container format.
+//!
+#![doc = include_str!("../../doc/cr3.md")]
 
 use std::rc::Rc;
 
@@ -70,7 +72,7 @@ impl RawFileImpl for Cr3File {
         })
     }
 
-    /// Return a lazily loaded `mp4::Container`
+    /// Returns a lazily loaded [`mp4::Container`].
     fn container(&self) -> &dyn RawContainer {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
@@ -81,7 +83,7 @@ impl RawFileImpl for Cr3File {
         })
     }
 
-    /// Return a lazily loaded set of thumbnails
+    /// Returns a lazily loaded set of [thumbnails][thumbnail::ThumbDesc].
     fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
         self.thumbnails.get_or_init(|| {
             use thumbnail::{Data, DataOffset};
@@ -159,7 +161,7 @@ impl RawFileImpl for Cr3File {
         }
     }
 
-    /// Load the RawData and return it.
+    /// Load the [`RawData`] and return it.
     fn load_rawdata(&self, _skip_decompression: bool) -> Result<RawData> {
         self.container();
         let container = self.container.get().unwrap();
