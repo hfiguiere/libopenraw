@@ -397,6 +397,8 @@ enum _OR_TYPEID_VENDOR_LEICA {
     OR_TYPEID_LEICA_M11 = 38,
     /* Panasonic RAW */
     OR_TYPEID_LEICA_DIGILUX3 = 39,
+    /* RWL */
+    OR_TYPEID_LEICA_DLUX_6 = 40,
     _OR_TYPEID_LEICA_LAST
 };
 
