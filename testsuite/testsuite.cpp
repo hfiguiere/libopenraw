@@ -898,6 +898,7 @@ int TestSuite::load_overrides(const std::string & overrides_file)
 
 namespace {
 
+#if HAVE_CURL
 void set_file_override(xmlNode *test, const std::string & path)
 {
     xmlNode * childrens = test->children;
@@ -913,7 +914,6 @@ void set_file_override(xmlNode *test, const std::string & path)
 }
 
 
-#if HAVE_CURL
 int download(const std::string & source, const std::string& referer,
              CURL* handle,
              const std::string & download_dir, std::string & dest)
