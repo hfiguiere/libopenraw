@@ -956,6 +956,7 @@ int download(const std::string & source, const std::string& referer,
             }
             curl_easy_setopt(handle, CURLOPT_URL, source.c_str());
             curl_easy_setopt(handle, CURLOPT_FAILONERROR, 1L);
+            curl_easy_setopt(handle, CURLOPT_FOLLOWLOCATION, 1L);
             error = curl_easy_perform(handle);
             if (hlist) {
                 curl_slist_free_all(hlist);
