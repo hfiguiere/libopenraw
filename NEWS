@@ -22,6 +22,9 @@ Bug fixes:
 
   - autoconf-archive is no longer required for development. Issue #11.
   - The tarball will have up to date autoconf files.
+  - Test suite bootstrap no longer crashes.
+  - Test suite bootstrap no longer leave 0 bytes files.
+  - Test suite build without warning if CURL is disabled (no bootstrap).
 
 libopenraw 0.3.2 - 2022/06/24
 
