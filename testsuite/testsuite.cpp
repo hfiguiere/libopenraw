@@ -959,6 +959,7 @@ int download(const std::string & source, const std::string& referer,
             curl_easy_setopt(handle, CURLOPT_FOLLOWLOCATION, 1L);
             error = curl_easy_perform(handle);
             if (hlist) {
+                curl_easy_setopt(handle, CURLOPT_HTTPHEADER, nullptr);
                 curl_slist_free_all(hlist);
             }
             fclose(fp);
