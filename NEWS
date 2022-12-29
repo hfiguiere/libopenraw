@@ -1,3 +1,11 @@
+libopenraw 0.3.4 -
+
+New features:
+
+  Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+
 libopenraw 0.3.3 - 2022/12/28
 
 New features:
