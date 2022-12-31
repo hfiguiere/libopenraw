@@ -1,3 +1,10 @@
+What's (visibly) new in 0.3.3
+=============================
+
+- Some fixes to the build system related to autotools. Issue #11.
+- 40 new cameras listed.
+- Improvements to the testsuite.
+
 What's (visibly) new in 0.3.2
 =============================
 
@@ -16,7 +23,7 @@ What's (visibly) new in 0.3.1
 For more details see the NEWS file.
 
 - Fixes to the release notes for 0.3.0.
-- Fix gnome/libopenraw-gnome-0.3.pc so that it depends in the right
+- Fix gnome/libopenraw-gnome-0.3.pc so that it depends on the right
   version.
 - Generated documentation with Doxygen is much more usable.
 - Fix correct endian header on BSD.

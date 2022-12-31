@@ -134,13 +134,13 @@ public:
      */
     int32_t exifOrientation() const;
 
-    uint32_t imageWidth; /**< Width (horizantal) in pixel. */
+    uint32_t imageWidth; /**< Width (horizontal) in pixel. */
     uint32_t imageHeight; /**< Height (vertical) in pixel. */
     uint32_t /*float32*/pixelAspectRatio; /**< Pixel aspect ratio. */
     int32_t rotationAngle; /**< Rotation angle in degrees. */
     uint32_t componentBitDepth; /**< bit depth per component. */
     uint32_t colorBitDepth; /**< bit depth for colour. */
-    uint32_t colorBW;  /**< colorr or B&W. See CIFF spec. */
+    uint32_t colorBW;  /**< colour or B&W. See CIFF spec. */
 };
 
 

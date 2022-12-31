@@ -397,7 +397,7 @@
   <test>
     <name>NEF-test D1</name>
     <file>/home/hub/samples/nef/D1/DSC_0489.nef</file>
-    <source>http://www.steves-digicams.com/sdc-classic/nikond1/samples/dsc_0489.nef</source>
+    <source disabled="1">http://www.steves-digicams.com/sdc-classic/nikond1/samples/dsc_0489.nef</source>
     <results>
       <rawType>NEF</rawType>
       <rawTypeId>131074</rawTypeId>

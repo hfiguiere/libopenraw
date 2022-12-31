@@ -1,3 +1,31 @@
+libopenraw 0.3.3 - 2022/12/28
+
+New features:
+
+  Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Added Canon 200D Mk II*, EOS R6 MKII*, EOS R7* and EOS R10*.
+  - Added DJI Mini 3 Pro / FC-3582 (DNG).
+  - Added Fujifilm X-H2*, X-H2S*, X-T5*, S6000fd*, SL1000* and HS50EXR*.
+  - Added Hasselblad L2D-20c / DJI Mavic 3 Cine (DNG).
+  - Added Olympus C5060WZ*, SP570UZ* and E-P7*.
+  - Added OM Systems OM-5*.
+  - Added Panasonic FZ38*, FZ300*, FZ70, FZ72*, G6*, G70*, G81*, G90*,
+    GM1S*, GX7 Mk3*, GX85*, LF1*, TZ71*, TZ81*, TZ90*, TZ96*, TZ101*,
+    ZS40*/TZ60*/TZ61*.
+  - Added Sony 7RM5*.
+  - Added Leica D-LUX 6*.
+  - Added Nikon Z 30*.
+
+Bug fixes:
+
+  - autoconf-archive is no longer required for development. Issue #11.
+  - The tarball will have up to date autoconf files.
+  - Test suite bootstrap no longer crashes.
+  - Test suite bootstrap no longer leave 0 bytes files.
+  - Test suite build without warning if CURL is disabled (no bootstrap).
+
 libopenraw 0.3.2 - 2022/06/24
 
 New features:

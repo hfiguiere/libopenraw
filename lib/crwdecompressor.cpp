@@ -47,7 +47,7 @@ CrwDecompressor::CrwDecompressor(IO::Stream * stream,
     : Decompressor(stream, container),
       m_table(0),
       m_height(0), m_width(0),
-      m_free(0), m_leaf(0),
+      m_free(nullptr), m_leaf(0),
       m_bitbuf(0), m_vbits(0)
 {
 }
@@ -109,7 +109,7 @@ void CrwDecompressor::make_decoder(decode_t *dest, const uint8_t *source,
 {
     int i, next;
 
-    if (level==0) {
+    if (level == 0) {
         m_free = dest;
         m_leaf = 0;
     }
@@ -117,16 +117,16 @@ void CrwDecompressor::make_decoder(decode_t *dest, const uint8_t *source,
 /*
   At what level should the next leaf appear?
 */
-    for (i=next=0; i <= m_leaf && next < 16; ) {
+    for (i = next = 0; i <= m_leaf && next < 16; ) {
         i += source[next++];
     }
 
     if (i > m_leaf) {
         if (level < next) {		/* Are we there yet? */
             dest->branch[0] = m_free;
-            make_decoder(m_free,source,level+1);
+            make_decoder(m_free, source, level + 1);
             dest->branch[1] = m_free;
-            make_decoder(m_free,source,level+1);
+            make_decoder(m_free, source, level + 1);
         }
         else {
             dest->leaf = source[16 + m_leaf++];
@@ -199,9 +199,9 @@ void CrwDecompressor::init_tables(uint32_t table_idx)
 
     if (table_idx > 2)
         table_idx = 2;
-    memset( m_first_decode, 0, sizeof(m_first_decode));
+    memset(m_first_decode, 0, sizeof(m_first_decode));
     memset(m_second_decode, 0, sizeof(m_second_decode));
-    make_decoder(m_first_decode,  first_tree[table_idx], 0);
+    make_decoder(m_first_decode, first_tree[table_idx], 0);
     make_decoder(m_second_decode, second_tree[table_idx], 0);
 }
 
@@ -209,25 +209,26 @@ void CrwDecompressor::init_tables(uint32_t table_idx)
   getbits(-1) initializes the buffer
   getbits(n) where 0 <= n <= 25 returns an n-bit integer
 */
-uint32_t CrwDecompressor::getbits(IO::Stream * s, int nbits)
+uint32_t CrwDecompressor::getbits(IO::Stream* s, int nbits)
 {
     uint32_t ret = 0;
-    uint8_t c;
-		
-    if (nbits == 0) 
+
+    if (nbits == 0) {
         return 0;
-    if (nbits == -1)
+    }
+    if (nbits == -1) {
         ret = m_bitbuf = m_vbits = 0;
-    else {
+    } else {
         ret = m_bitbuf << (32 - m_vbits) >> (32 - nbits);
         m_vbits -= nbits;
     }
     while (m_vbits < 25) {
         try {
-            c = s->readByte();
+            uint8_t c = s->readByte();
             m_bitbuf = (m_bitbuf << 8) + c;
-            if (c == 0xff) 
+            if (c == 0xff) {
                 s->readByte();	/* always extra 00 after ff */
+            }
             m_vbits += 8;
         }
         catch(const Internals::IOException &)
@@ -241,20 +242,22 @@ uint32_t CrwDecompressor::getbits(IO::Stream * s, int nbits)
 namespace {
 
 static
-int canon_has_lowbits(IO::Stream * s)
+int canon_has_lowbits(IO::Stream* s)
 {
     uint8_t test[0x4000 - 26];
     int ret=1;
     uint32_t i;
-		
+
     s->seek (0, SEEK_SET);
     s->read (test, sizeof(test));
-    for (i=514; i < sizeof(test) - 1; i++)
+    for (i = 514; i < sizeof(test) - 1; i++) {
         if (test[i] == 0xff) {
-            if (test[i+1]) 
+            if (test[i + 1]) {
                 return 1;
-            ret=0;
+            }
+            ret = 0;
         }
+    }
     return ret;
 }
 
@@ -265,11 +268,9 @@ int canon_has_lowbits(IO::Stream * s)
 RawDataPtr CrwDecompressor::decompress()
 {
     decode_t *decode, *dindex;
-    int i, j, leaf, len, diff, diffbuf[64], r, save;
     int carry = 0, base[2] = {0, 0};
-    uint32_t  column = 0;
+    uint32_t column = 0;
     uint16_t outbuf[64];
-    uint8_t c;
 
     RawDataPtr bitmap(new RawData);
 
@@ -292,14 +293,15 @@ RawDataPtr CrwDecompressor::decompress()
     getbits(m_stream, -1);			/* Prime the bit buffer */
 
     while (column < m_width * m_height) {
+        int diffbuf[64];
         memset(diffbuf, 0, sizeof(diffbuf));
         decode = m_first_decode;
-        for (i = 0; i < 64; i++ ) {
+        for (int i = 0; i < 64; i++ ) {
 
             for (dindex = decode; dindex->branch[0]; ) {
                 dindex = dindex->branch[getbits(m_stream, 1)];
             }
-            leaf = dindex->leaf;
+            int leaf = dindex->leaf;
             decode = m_second_decode;
 
             if (leaf == 0 && i) {
@@ -309,12 +311,12 @@ RawDataPtr CrwDecompressor::decompress()
                 continue;
             }
             i  += leaf >> 4;
-            len = leaf & 15;
+            int len = leaf & 15;
             if (len == 0) {
                 continue;
             }
-            diff = getbits(m_stream, len);
-            if ((diff & (1 << (len-1))) == 0) {
+            int diff = getbits(m_stream, len);
+            if ((diff & (1 << (len - 1))) == 0) {
                 diff -= (1 << len) - 1;
             }
             if (i < 64) {
@@ -323,21 +325,21 @@ RawDataPtr CrwDecompressor::decompress()
         }
         diffbuf[0] += carry;
         carry = diffbuf[0];
-        for (i=0; i < 64; i++ ) {
+        for (int i = 0; i < 64; i++ ) {
             if (column++ % m_width == 0) {
                 base[0] = base[1] = 512;
             }
             outbuf[i] = (base[i & 1] += diffbuf[i]);
         }
         if (lowbits) {
-            save = m_stream->seek(0, SEEK_CUR);
-            m_stream->seek((column-64)/4, SEEK_SET);
-            for (i=j=0; j < 64/4; j++ ) {
-                c = m_stream->readByte();
-                for (r = 0; r < 8; r += 2) {
+            auto save = m_stream->seek(0, SEEK_CUR);
+            m_stream->seek((column - 64) / 4, SEEK_SET);
+            for (int j, i = j = 0; j < 64 / 4; j++ ) {
+                uint8_t c = m_stream->readByte();
+                for (int r = 0; r < 8; r += 2) {
                     // outbuf is 64, so we must check for it to not
                     // overflow (read out of bounds)
-                    uint16_t next = i < 63 ? outbuf[i+1] : 0;
+                    uint16_t next = i < 63 ? outbuf[i + 1] : 0;
                     outbuf[i] = (next << 2) + ((c >> r) & 3);
                     i++;
                 }

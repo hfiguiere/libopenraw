@@ -898,6 +898,7 @@ int TestSuite::load_overrides(const std::string & overrides_file)
 
 namespace {
 
+#if HAVE_CURL
 void set_file_override(xmlNode *test, const std::string & path)
 {
     xmlNode * childrens = test->children;
@@ -913,7 +914,6 @@ void set_file_override(xmlNode *test, const std::string & path)
 }
 
 
-#if HAVE_CURL
 int download(const std::string & source, const std::string& referer,
              CURL* handle,
              const std::string & download_dir, std::string & dest)
@@ -956,17 +956,23 @@ int download(const std::string & source, const std::string& referer,
             }
             curl_easy_setopt(handle, CURLOPT_URL, source.c_str());
             curl_easy_setopt(handle, CURLOPT_FAILONERROR, 1L);
+            curl_easy_setopt(handle, CURLOPT_FOLLOWLOCATION, 1L);
             error = curl_easy_perform(handle);
             if (hlist) {
+                curl_easy_setopt(handle, CURLOPT_HTTPHEADER, nullptr);
                 curl_slist_free_all(hlist);
             }
+            auto written = ftell(fp);
             fclose(fp);
 
-            if(!error) {
+            if (!error && written > 0) {
                 std::cout << " DONE\n";
-            }
-            else {
-                std::cout << " CURL Error " << error << std::endl;
+            } else {
+                if (error) {
+                    std::cout << " CURL Error " << error << std::endl;
+                } else {
+                    std::cout << " Empty file\n";
+                }
                 unlink(dest.c_str());
                 dest = "";
                 return -1;

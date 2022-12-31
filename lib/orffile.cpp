@@ -139,6 +139,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0xffe,
       { 11856, -4470, -1159, -4814, 12368, 2756, -994, 1780, 5589 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_SP570UZ),
+      0,
+      0xffe,
+      { 11522, -4044, -1145, -4737, 12172, 2903, -987, 1829, 6039 } },
     { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EP1),
       0,
       0xffd,
@@ -155,6 +159,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 8380, -2630, -639, -2887, 10725, 2496, -627, 1427, 5438 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EP7),
+      0,
+      0,
+      { 9476, -3182, -765, -2613, 10958, 1893, -449, 1315, 5268 } },
     { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPL1),
       0,
       0,
@@ -263,6 +271,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 9488, -3984, -714, -2887, 10945, 2229, -137, 960, 5786 } },
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_OM5),
+      0,
+      0,
+      { 11896, -5110, -1076, -3181, 11378, 2048, -519, 1224, 5166 } },
     { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1),
       0,
       0,
@@ -291,7 +303,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 10899, -3833, -1082, -2112, 10736, 1575, -267, 1452, 5269 } },
-
+    { OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_C5060WZ),
+      0,
+      0,
+      { 10445, -3362, -1307, -7662, 15690, 2058, -1135, 1176, 7602 } },
     { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
 
 };
@@ -318,10 +333,12 @@ const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
     { "SP510UZ"         , OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_SP510UZ) },
     { "SP550UZ                ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_SP550UZ) },
     { "SP565UZ                ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_SP565UZ) },
+    { "SP570UZ                ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_SP570UZ) },
     { "E-P1            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EP1) },
     { "E-P2            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EP2) },
     { "E-P3            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EP3) },
     { "E-P5            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EP5) },
+    { "E-P7            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EP7) },
     { "E-PL1           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPL1) },
     { "E-PL2           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPL2) },
     { "E-PL3           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EPL3) },
@@ -349,6 +366,7 @@ const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
     { "E-M10MarkIIIS   ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10IIIS) },
     { "E-M10MarkIV     ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_EM10IV) },
     { "OM-1            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_OM1) },
+    { "OM-5            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_OM5) },
     { "STYLUS1         ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1) },
     { "STYLUS1,1s      ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_STYLUS1_1S) },
     { "PEN-F           ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_PEN_F) },
@@ -356,6 +374,7 @@ const struct IfdFile::camera_ids_t OrfFile::s_def[] = {
     { "TG-4            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_TG4) },
     { "TG-5            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_TG5) },
     { "TG-6            ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_TG6) },
+    { "C5060WZ", OR_MAKE_OLYMPUS_TYPEID(OR_TYPEID_OLYMPUS_C5060WZ) },
     { 0, 0 }
 };
 
