@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-Copyright: (C) 2022-2023 Hubert Figuière
 
 //! RAF specific containers and type
 
@@ -241,7 +242,7 @@ pub(super) enum Value {
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Int(n) => write!(f, "{:x}", n),
+            Self::Int(n) => write!(f, "{n:x}"),
             Self::Bytes(b) => write!(f, "bytes len={}", b.len()),
         }
     }
@@ -251,12 +252,9 @@ impl std::convert::TryFrom<&Value> for Point {
     fn try_from(v: &Value) -> Result<Self> {
         match v {
             Value::Int(n) => {
-                let h = (n & 0xffff0000) >> 16;
-                let w = n & 0x0000ffff;
-                Ok(Point {
-                    x: w as u32,
-                    y: h as u32,
-                })
+                let y = (n & 0xffff0000) >> 16;
+                let x = n & 0x0000ffff;
+                Ok(Point { x, y })
             }
             _ => Err(Error::InvalidFormat),
         }
@@ -268,12 +266,9 @@ impl std::convert::TryFrom<&Value> for Size {
     fn try_from(v: &Value) -> Result<Self> {
         match v {
             Value::Int(n) => {
-                let h = (n & 0xffff0000) >> 16;
-                let w = n & 0x0000ffff;
-                Ok(Size {
-                    width: w as u32,
-                    height: h as u32,
-                })
+                let height = (n & 0xffff0000) >> 16;
+                let width = n & 0x0000ffff;
+                Ok(Size { width, height })
             }
             _ => Err(Error::InvalidFormat),
         }

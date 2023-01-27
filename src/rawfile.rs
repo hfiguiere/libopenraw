@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawfile.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -113,7 +113,7 @@ fn from_io(
     };
     readable.rewind()?;
 
-    if type_hint == None {
+    if type_hint.is_none() {
         return Err(Error::UnrecognizedFormat);
     }
 

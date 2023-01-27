@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/dir.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -464,7 +464,7 @@ impl Dir {
                 let offset = data.as_slice().read_u32::<E>()?;
                 entry.set_offset(offset);
             } else if !entry.is_inline() {
-                let pos = view.seek(SeekFrom::Current(0))?;
+                let pos = view.stream_position()?;
                 let r = entry.load_data::<E>(base_offset, view);
                 view.seek(SeekFrom::Start(pos))?;
                 if r.is_err() {

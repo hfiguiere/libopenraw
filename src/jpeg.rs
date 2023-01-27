@@ -2,7 +2,7 @@
 /*
  * libopenraw - jpeg.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -81,7 +81,7 @@ impl RawFileImpl for JpegFile {
                 let len = dir.value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH)? as u64;
                 let offset = dir.value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT)? as u64;
                 // XXX this +12 should be "calculated"
-                let offset = offset as u64 + 12;
+                let offset = offset + 12;
                 // XXX as a shortcut we assume it's Exif 160x120
                 thumbnails.push((
                     160,

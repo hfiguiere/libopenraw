@@ -2,7 +2,7 @@
 /*
  * libopenraw - lib.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -131,15 +131,15 @@ impl std::fmt::Display for Error {
             Self::NotFound => write!(f, "Data not found"),
             Self::BufferTooSmall => write!(f, "Buffer is too small"),
             Self::UnexpectedEOF => write!(f, "Unexpected end-of-file"),
-            Self::IoError(ref err) => write!(f, "IO Error: {}", err),
+            Self::IoError(ref err) => write!(f, "IO Error: {err}"),
             Self::FormatError => write!(f, "Format error"),
             Self::AlreadyInited => write!(f, "Already Inited"),
             Self::InvalidParam => write!(f, "Invalid parameter"),
             Self::InvalidFormat => write!(f, "Invalid format"),
-            Self::Decompression(ref reason) => write!(f, "Decompression error: {}", reason),
-            Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {}", err),
-            Self::JpegFormat(ref err) => write!(f, "JPEG error: {}", err),
-            Self::BitReaderError(ref err) => write!(f, "BitReader error: {}", err),
+            Self::Decompression(ref reason) => write!(f, "Decompression error: {reason}"),
+            Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {err}"),
+            Self::JpegFormat(ref err) => write!(f, "JPEG error: {err}"),
+            Self::BitReaderError(ref err) => write!(f, "BitReader error: {err}"),
             Self::Unknown => write!(f, "Unknown error"),
         }
     }

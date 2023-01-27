@@ -2,7 +2,7 @@
 /*
  * libopenraw - test/testsuite.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,11 +21,9 @@
 
 use std::path::Path;
 
-use crc;
 use serde_derive::Deserialize;
 use serde_xml_rs::from_reader;
 
-use libopenraw;
 use libopenraw::{Bitmap, DataType, Ifd, RawFile, Type, TypeId};
 
 #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -206,15 +204,12 @@ impl Results {
                 sizes.len(),
                 "Mismatch number of thumbnails"
             );
-            let mut index = 0;
-            for size in sizes {
+            for (index, size) in sizes.iter().enumerate() {
                 assert_eq!(
                     size,
-                    thumbnail_sizes[index].to_string(),
-                    "Incorrect size for thumbnail {}",
-                    index
+                    &thumbnail_sizes[index].to_string(),
+                    "Incorrect size for thumbnail {index}"
                 );
-                index += 1;
             }
         }
 
@@ -228,14 +223,11 @@ impl Results {
                 formats.len(),
                 "Mismatch number of thumbnail format"
             );
-            let mut index = 0;
-            for thumbnail in thumbnails {
+            for (index, thumbnail) in thumbnails.iter().enumerate() {
                 assert_eq!(
                     thumbnail.1.data_type, formats[index],
-                    "Incorrect data type for thumbnail {}",
-                    index
+                    "Incorrect data type for thumbnail {index}"
                 );
-                index += 1;
             }
         }
 
@@ -249,15 +241,12 @@ impl Results {
                 data_sizes.len(),
                 "Mismatch number of thumbnail data sizes"
             );
-            let mut index = 0;
-            for thumbnail in thumbnails {
+            for (index, thumbnail) in thumbnails.iter().enumerate() {
                 assert_eq!(
                     thumbnail.1.data_size().to_string(),
                     data_sizes[index],
-                    "Incorrect data size for thumbnail {}",
-                    index
+                    "Incorrect data size for thumbnail {index}"
                 );
-                index += 1;
             }
         }
 
@@ -271,8 +260,7 @@ impl Results {
                 md5s.len(),
                 "Mismatch number of thumbnail checksum"
             );
-            let mut index = 0;
-            for thumbnail_desc in thumbnails {
+            for (index, thumbnail_desc) in thumbnails.iter().enumerate() {
                 let thumbnail = rawfile
                     .thumbnail(thumbnail_desc.0)
                     .expect("Thumbnail not found");
@@ -281,10 +269,8 @@ impl Results {
                 assert_eq!(
                     r.to_string(),
                     md5s[index],
-                    "Incorrect checksum for thumbnail {}",
-                    index
+                    "Incorrect checksum for thumbnail {index}"
                 );
-                index += 1;
             }
         }
 
@@ -317,17 +303,17 @@ impl Results {
         if let Some(maker_note_count) = self.maker_note_count {
             count += 1;
             let maker_note = rawfile.maker_note_ifd();
-            if maker_note_count == -1 {
-                assert!(maker_note.is_none(), "Expected to have no MakerNote");
-            } else if maker_note_count < -1 {
-                unreachable!();
-            } else {
-                let maker_note = maker_note.unwrap();
-                assert_eq!(
-                    maker_note.num_entries(),
-                    maker_note_count as usize,
-                    "Incorrect MakerNote count"
-                );
+            match maker_note_count {
+                -1 => assert!(maker_note.is_none(), "Expected to have no MakerNote"),
+                ..=-2 => unreachable!(),
+                _ => {
+                    let maker_note = maker_note.unwrap();
+                    assert_eq!(
+                        maker_note.num_entries(),
+                        maker_note_count as usize,
+                        "Incorrect MakerNote count"
+                    );
+                }
             }
         }
         // Check MakerNote ID
@@ -361,7 +347,7 @@ impl Test {
             Ok(rawfile) => {
                 print!("Test '{}'", &self.name);
                 let count = self.results.run(rawfile.as_ref());
-                println!(" produced {} results", count);
+                println!(" produced {count} results");
             }
             Err(err) => println!("Test '{}' skipped: {}", &self.name, err),
         }
@@ -435,7 +421,7 @@ where
     let file = std::fs::File::open(path).expect("Failed to open");
     let testsuite = from_reader(file).expect("Deserialization");
 
-    return Some(testsuite);
+    Some(testsuite)
 }
 
 #[test]

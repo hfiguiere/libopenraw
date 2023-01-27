@@ -2,7 +2,7 @@
 /*
  * libopenraw - decompress.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -72,15 +72,13 @@ pub(crate) fn unpack_be12to16(
     if pad != 0 && (input.len() % 16) != 0 {
         log::error!("be12to16 incorrect padding for {:?}.", compression);
         return Err(Error::Decompression(format!(
-            "be12to16 incorrect padding for {:?}.",
-            compression
+            "be12to16 incorrect padding for {compression:?}.",
         )));
     }
     if (rest % 3) != 0 {
         log::error!("be12to16 incorrect rest for {:?}.", compression);
         return Err(Error::Decompression(format!(
-            "be12to16 incorrect rest for {:?}.",
-            compression
+            "be12to16 incorrect rest for {compression:?}.",
         )));
     }
 
@@ -129,15 +127,13 @@ pub(crate) fn unpack_le12to16(
     if pad != 0 && (input.len() % 16) != 0 {
         log::error!("le12to16 incorrect padding for {:?}.", compression);
         return Err(Error::Decompression(format!(
-            "le12to16 incorrect padding for {:?}.",
-            compression
+            "le12to16 incorrect padding for {compression:?}.",
         )));
     }
     if (rest % 3) != 0 {
         log::error!("le12to16 incorrect rest for {:?}.", compression);
         return Err(Error::Decompression(format!(
-            "le12to16 incorrect rest for {:?}.",
-            compression
+            "le12to16 incorrect rest for {compression:?}.",
         )));
     }
 
@@ -271,7 +267,7 @@ mod test {
 
         assert_eq!(result, Ok(20));
         for i in 0..2 {
-            assert_eq!(unpacked[10 * i + 0], 0x0123);
+            assert_eq!(unpacked[10 * i], 0x0123);
             assert_eq!(unpacked[10 * i + 1], 0x0456);
             assert_eq!(unpacked[10 * i + 2], 0x0789);
             assert_eq!(unpacked[10 * i + 3], 0x00ab);

@@ -2,7 +2,7 @@
 /*
  * libopenraw - panasonic.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -804,7 +804,7 @@ impl Rw2File {
         self.jpeg_data_offset()
             .ok_or(Error::NotFound)
             .and_then(|offset| {
-                let view = Viewer::create_view(&self.reader, offset.offset as u64)?;
+                let view = Viewer::create_view(&self.reader, offset.offset)?;
                 Ok(jpeg::Container::new(view, self.type_()))
             })
     }
@@ -854,7 +854,7 @@ impl RawFileImpl for Rw2File {
                         let offset =
                             dir.value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT)? as u64;
                         // XXX this +12 should be "calculated"
-                        let offset = jpeg_offset.offset + offset as u64 + 12;
+                        let offset = jpeg_offset.offset + offset + 12;
                         // XXX as a shortcut we assume it's Exif 160x120
                         thumbnails.push((
                             160,

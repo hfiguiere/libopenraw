@@ -2,7 +2,7 @@
 /*
  * libopenraw - nikon.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -433,7 +433,7 @@ impl NefFile {
                 if header0 == 0x44 && header1 == 0x20 && step > 0 {
                     for i in 0..nelems {
                         let value = view.read_endian_u16(container.endian())?;
-                        curve.curve[i as usize * step as usize] = value;
+                        curve.curve[i as usize * step] = value;
                     }
                     for i in 0..ceiling as usize {
                         curve.curve[i] = ((curve.curve[i - i % step] as usize * (step - i % step)

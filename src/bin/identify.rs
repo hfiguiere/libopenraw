@@ -2,7 +2,7 @@
 /*
  * libopenraw - bin/identify.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -67,7 +67,7 @@ pub fn main() {
                 println!("{} {}", name, rawfile.type_id());
             }
             Err(err) => {
-                println!("Error {}: {}", name, err);
+                println!("Error {name}: {err}");
             }
         }
     }

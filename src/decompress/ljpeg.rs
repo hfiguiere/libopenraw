@@ -2,7 +2,7 @@
 /*
  * libopenraw - decompress/ljpeg.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -254,8 +254,7 @@ impl LJpeg {
         let c2 = reader.read_u8()?;
         if c != 0xff || c2 != M_SOI {
             return Err(Error::Decompression(format!(
-                "LJPEG: Not a JPEG file. Marker is {:x} {:x}",
-                c, c2
+                "LJPEG: Not a JPEG file. Marker is {c:x} {c2:x}"
             )));
         }
         dc.get_soi();
@@ -449,7 +448,7 @@ impl LJpeg {
                             psv,
                         );
                         self.mcu_row[self.cur_row][col as usize][cur_comp as usize] =
-                            (d as i32 + predictor) as u16;
+                            (d + predictor) as u16;
                     } else {
                         return Err(Error::JpegFormat("Huffman table is None".to_string()));
                     }
@@ -702,8 +701,7 @@ impl BitReader {
     fn get_bits(&mut self, reader: &mut dyn ReadAndSeek, nbits: u8) -> Result<u16> {
         if nbits >= 17 {
             return Err(Error::Decompression(format!(
-                "LJPEG: Tried to request {} bits (max 16), JPEG is likely corrupt",
-                nbits
+                "LJPEG: Tried to request {nbits} bits (max 16), JPEG is likely corrupt"
             )));
         }
         if self.bits_left < nbits {
@@ -853,7 +851,7 @@ impl HuffmanTable {
         let mut p: u16 = 0;
         for l in 1..=16_usize {
             if self.bits[l] != 0 {
-                self.valptr[l] = p as u16;
+                self.valptr[l] = p;
                 self.mincode[l] = huffcode[p as usize] as i32;
                 p += self.bits[l] as u16;
                 if p > 256 {
@@ -1047,10 +1045,7 @@ impl DecompressInfo {
             let index = reader.read_u8()?;
 
             if index >= 4 {
-                return Err(Error::JpegFormat(format!(
-                    "LJPEG: Bogus DHT index {}",
-                    index
-                )));
+                return Err(Error::JpegFormat(format!("LJPEG: Bogus DHT index {index}")));
             }
 
             if self.dc_huff_tbl_ptrs[index as usize].is_none() {
@@ -1138,8 +1133,8 @@ impl DecompressInfo {
         self.comps_in_scan = n as u16;
         length -= 3;
 
-        if length != (n as u16 * 2 + 3) || n < 1 || n > 4 {
-            return Err(Error::JpegFormat(format!("LJPEG: Bogus SOS length {}", n)));
+        if length != (n as u16 * 2 + 3) || !(1..=4).contains(&n) {
+            return Err(Error::JpegFormat(format!("LJPEG: Bogus SOS length {n}")));
         }
 
         for i in 0..n {

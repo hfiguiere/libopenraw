@@ -2,7 +2,7 @@
 /*
  * libopenraw - mp4/container.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -403,7 +403,7 @@ impl Dump for Container {
                         thumbnail::Data::Offset(ref offset) => {
                             if preview_desc.data_type == DataType::Jpeg {
                                 if let Ok(view) =
-                                    Viewer::create_subview(&*self.borrow_view_mut(), offset.offset)
+                                    Viewer::create_subview(&self.borrow_view_mut(), offset.offset)
                                 {
                                     let jpeg = jpeg::Container::new(view, self.raw_type);
                                     jpeg.print_dump(indent);

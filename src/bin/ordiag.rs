@@ -2,7 +2,7 @@
 /*
  * libopenraw - bin/ordiag.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -84,7 +84,7 @@ fn save_thumbnail(p: &str, thumb: &Thumbnail) {
                 if let Some(d) = thumb.data8() {
                     let mut f = std::fs::File::create(&fname).expect("Couldn't open file");
                     let amount = f.write(d).expect("Couldn't write thumbnail");
-                    println!("Written {:?}: {} bytes", fname, amount);
+                    println!("Written {fname:?}: {amount} bytes");
                 }
             }
         }
@@ -105,7 +105,7 @@ fn save_raw(p: &str, rawdata: &RawData) -> Result<usize> {
         use byteorder::WriteBytesExt;
 
         let mut amount = 0;
-        let raw = std::path::PathBuf::from(format!("{}_RAW.pgm", stem));
+        let raw = std::path::PathBuf::from(format!("{stem}_RAW.pgm"));
         if let Some(d) = rawdata.data16() {
             let mut f = std::fs::File::create(&raw)?;
             amount += f.write(b"P5\n")?;
@@ -115,7 +115,7 @@ fn save_raw(p: &str, rawdata: &RawData) -> Result<usize> {
                 f.write_u16::<BigEndian>(*b)?;
                 amount += 2;
             }
-            println!("Written Raw {:?}: {} bytes", raw, amount);
+            println!("Written Raw {raw:?}: {amount} bytes");
         }
 
         Ok(amount)
@@ -135,7 +135,7 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
         println!("\tSize: {}x{}", rawdata.width(), rawdata.height());
         println!("\tActive area: {:?}", rawdata.active_area());
         let bpc = rawdata.bpc();
-        println!("\tBpc: {}", bpc);
+        println!("\tBpc: {bpc}");
         println!(
             "\tValues: white = {} black = {}",
             rawdata.white(),
@@ -155,14 +155,14 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
             println!("\tNo 16bits Raw data found.");
         }
         if let Ok(matrix) = rawfile.colour_matrix(1) {
-            println!("\tColour matrix 1: {:?}", matrix);
+            println!("\tColour matrix 1: {matrix:?}");
         }
         if let Ok(matrix) = rawfile.colour_matrix(2) {
-            println!("\tColour matrix 2: {:?}", matrix);
+            println!("\tColour matrix 2: {matrix:?}");
         }
         if extract_raw {
             if let Err(err) = save_raw(p, &rawdata) {
-                println!("Saving raw failed: {}", err);
+                println!("Saving raw failed: {err}");
             }
         }
     } else {
@@ -199,7 +199,7 @@ fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool, skip_decom
                         }
                     }
                     Err(err) => {
-                        println!("Failed to fetch preview for {}: {}", size, err);
+                        println!("Failed to fetch preview for {size}: {err}");
                     }
                 }
             }
@@ -217,7 +217,7 @@ fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool, skip_decom
             }
         }
         Err(err) => {
-            println!("Failed to open raw file: {}", err);
+            println!("Failed to open raw file: {err}");
         }
     }
 }

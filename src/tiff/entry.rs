@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/entry.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -290,7 +290,7 @@ impl Entry {
         let count = self.count as usize;
         let mut values = Vec::new();
         for index in 0..count {
-            let slice = &data_slice[unit_size * index as usize..];
+            let slice = &data_slice[unit_size * index..];
             let v = match type_ {
                 TagType::Short => {
                     (match endian {
@@ -334,7 +334,7 @@ impl Entry {
         let count = self.count as usize;
         let mut values = Vec::new();
         for index in 0..count {
-            let slice = &data_slice[unit_size * index as usize..];
+            let slice = &data_slice[unit_size * index..];
             let v = match type_ {
                 TagType::SShort => {
                     (match endian {
@@ -376,7 +376,7 @@ impl Entry {
         {
             let mut values = Vec::new();
             for index in 0..count {
-                let slice = &data_slice[T::unit_size() * index as usize..];
+                let slice = &data_slice[T::unit_size() * index..];
                 let v = match endian {
                     Endian::Big => T::read::<BigEndian>(slice),
                     Endian::Little => T::read::<LittleEndian>(slice),
@@ -429,7 +429,7 @@ impl Entry {
             use crate::tiff::exif::{Rational, SRational};
 
             match TagType::try_from(e.type_) {
-                Ok(TagType::Ascii) => e.value::<String, E>().map(|v| format!("\"{}\"", v)),
+                Ok(TagType::Ascii) => e.value::<String, E>().map(|v| format!("\"{v}\"")),
                 Ok(TagType::Byte) => e.value_array::<u8>(endian).as_ref().map(array_to_str),
                 Ok(TagType::SByte) => e.value_array::<i8>(endian).as_ref().map(array_to_str),
                 Ok(TagType::Short) | Ok(TagType::Long) => {
@@ -513,13 +513,13 @@ mod test {
         assert_eq!(e.value::<String, LittleEndian>(), Some(String::from("asc")));
 
         let mut buf = [0_u8; 4];
-        LittleEndian::write_f32(&mut buf, 3.14);
+        LittleEndian::write_f32(&mut buf, 3.15);
         let e = Entry::new(0, TagType::Float as i16, 1, buf);
-        assert_eq!(e.value::<f32, LittleEndian>(), Some(3.14));
+        assert_eq!(e.value::<f32, LittleEndian>(), Some(3.15));
 
-        BigEndian::write_f32(&mut buf, 3.14);
+        BigEndian::write_f32(&mut buf, 3.15);
         let e = Entry::new(0, TagType::Float as i16, 1, buf);
-        assert_eq!(e.value::<f32, BigEndian>(), Some(3.14));
+        assert_eq!(e.value::<f32, BigEndian>(), Some(3.15));
     }
 
     #[test]

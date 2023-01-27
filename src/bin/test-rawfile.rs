@@ -15,7 +15,7 @@ fn main() {
             Ok(())
         })
         .map_err(|e| {
-            println!("Error decoding raw file {}", e);
+            println!("Error decoding raw file {e}");
             e
         });
 }

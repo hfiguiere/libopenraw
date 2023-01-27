@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/crw/decompress.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -220,7 +220,7 @@ fn make_decoder(
 fn canon_has_lowbits(reader: &mut dyn ReadAndSeek) -> Result<bool> {
     let mut test = [0_u8; 0x4000 - 26];
     let mut ret = false;
-    reader.seek(SeekFrom::Start(0))?;
+    reader.rewind()?;
     reader.read_exact(&mut test)?;
     for i in 514..test.len() - 1 {
         if test[i] == 0xff {
@@ -288,7 +288,7 @@ impl Decompress {
                             diff -= (1 << len) - 1;
                         }
                         if i < 64 {
-                            diffbuf[i] = diff as i32;
+                            diffbuf[i] = diff;
                         }
                     }
                 }
@@ -371,6 +371,6 @@ mod test {
         let mut decoder = [DecoderNode::default(); 32];
         let mut state = State::default();
         make_decoder(&mut state, &mut decoder, 0, &table, 0);
-        println!("tree {:?}", decoder);
+        println!("tree {decoder:?}");
     }
 }

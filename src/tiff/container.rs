@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/container.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -170,7 +170,7 @@ impl Container {
                 if let Ok(dir) = if t == IfdType::MakerNote {
                     Dir::create_maker_note(self, dir_offset)
                 } else {
-                    self.dir_at(&mut *self.view.borrow_mut(), dir_offset, t)
+                    self.dir_at(&mut self.view.borrow_mut(), dir_offset, t)
                 } {
                     let next_offset = dir.next_ifd();
                     dirs.push(Rc::new(dir));
