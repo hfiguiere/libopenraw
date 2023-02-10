@@ -51,7 +51,7 @@ Trailing is the media data box "mdat".
 This represent a box with type 'xxxx' as defined in the ISO Base
 Media. Data is in Big-Endian.
 
-```
+```text
 | (type) # description
 ```
 
