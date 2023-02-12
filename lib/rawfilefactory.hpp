@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfilefactory.hpp
  *
- * Copyright (C) 2006-2018 Hubert Figuiere
+ * Copyright (C) 2006-2023 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -43,10 +43,14 @@ public:
     RawFileFactory() = delete;
     ~RawFileFactory() = delete;
 
-    /** access the table. Ensure that it has been constructed. */
-    static Table &table();
-    /** access the extensions table. Ensure that it has been constructed. */
-    static Extensions &extensions();
+    /** Access the table. Ensure that it has been constructed. */
+    static const Table &table() {
+        return table_mut();
+    }
+    /** Access the extensions table. Ensure that it has been constructed. */
+    static const Extensions &extensions() {
+        return extensions_mut();
+    }
 
     /** access the the list of file extenstions registered. */
     static const char **fileExtensions();
@@ -60,25 +64,15 @@ public:
      */
     static void registerType(RawFile::Type type, const raw_file_factory_t &fn,
                              const char *ext);
+private:
+    /** Access the table mutably. Ensure that it has been constructed. */
+    static Table &table_mut();
+    /** Access the extensions table mutably. Ensure that it has been constructed. */
+    static Extensions &extensions_mut();
+    /** Unregister type from the table. */
     static void unRegisterType(RawFile::Type type);
 };
 
-/** accessor. This make sure the instance has been
- * constructed when needed
- */
-inline RawFileFactory::Table &RawFileFactory::table()
-{
-    /** the factory table */
-    static Table rawFactoryTable;
-    return rawFactoryTable;
-}
-
-inline RawFileFactory::Extensions &RawFileFactory::extensions()
-{
-    /** the factory table */
-    static Extensions rawExtensionsTable;
-    return rawExtensionsTable;
-}
 }
 }
 /*
