@@ -1,7 +1,7 @@
 /*
  * libopenraw - cameraids.h
  *
- * Copyright (C) 2012-2022 Hubert Figuière
+ * Copyright (C) 2012-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -801,6 +801,8 @@ enum _OR_TYPEID_VENDOR_PANASONIC {
     OR_TYPEID_PANASONIC_TZ71 = OR_TYPEID_PANASONIC_ZS50,
     OR_TYPEID_PANASONIC_ZS70 = 83,
     OR_TYPEID_PANASONIC_TZ90 = OR_TYPEID_PANASONIC_ZS70,
+    OR_TYPEID_PANASONIC_DC_G95D = 84,
+    OR_TYPEID_PANASONIC_DC_S5M2 = 85,
     _OR_TYPEID_PANASONIC_LAST
 };
 
