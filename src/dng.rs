@@ -2,7 +2,7 @@
 /*
  * libopenraw - dng.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -177,7 +177,7 @@ impl DngFile {
                         let mut io = std::io::Cursor::new(data);
                         decompressor.decompress(&mut io).map(|mut rawdata2| {
                             rawdata2.set_active_area(rawdata.active_area().cloned());
-
+                            rawdata2.set_mosaic_pattern(rawdata.mosaic_pattern().clone());
                             rawdata2
                         })
                     } else if rawdata.tile_data().is_some() {

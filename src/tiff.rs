@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,6 +35,7 @@ use crate::container::{Endian, RawContainer};
 use crate::decompress;
 use crate::io;
 use crate::jpeg;
+use crate::mosaic::Pattern;
 use crate::thumbnail;
 use crate::{DataType, Error, RawData, Result, Type, TypeId};
 pub(crate) use container::Container;
@@ -167,6 +168,43 @@ pub(crate) fn tiff_locate_raw_ifd(container: &Container) -> Option<Rc<Dir>> {
         .and_then(|subifds| subifds.iter().find(|d| d.is_primary()).cloned())
 }
 
+fn convert_cfa_pattern(dir: &Rc<Dir>, entry: &Entry) -> Option<Pattern> {
+    let a = entry.value_array::<u8>(dir.endian())?;
+    Pattern::try_from(a.as_slice()).ok()
+}
+
+fn convert_new_cfa_pattern(container: &Container, dir: &Rc<Dir>, entry: &Entry) -> Option<Pattern> {
+    if entry.count < 4 {
+        return None;
+    }
+
+    let mut view = container.borrow_view_mut();
+    let result = match dir.endian() {
+        Endian::Big => entry.get_data::<BigEndian>(0, &mut view),
+        Endian::Little => entry.get_data::<LittleEndian>(0, &mut view),
+        _ => unreachable!(),
+    };
+    let data = result.ok()?;
+
+    let h = data[0];
+    let v = data[1];
+    if h != 2 && v != 2 {
+        log::error!("Invalid CFA pattern size {}x{}", h, v);
+        return None;
+    }
+
+    Pattern::try_from(&data[4..=7]).ok()
+}
+
+fn get_mosaic_info(container: &Container, dir: &Rc<Dir>) -> Option<Pattern> {
+    dir.entry(exif::EXIF_TAG_CFA_PATTERN)
+        .and_then(|e| convert_cfa_pattern(dir, e))
+        .or_else(|| {
+            dir.entry(exif::EXIF_TAG_NEW_CFA_PATTERN)
+                .and_then(|e| convert_new_cfa_pattern(container, dir, e))
+        })
+}
+
 /// Get the raw data
 pub(crate) fn tiff_get_rawdata(
     container: &Container,
@@ -277,7 +315,15 @@ pub(crate) fn tiff_get_rawdata(
     // Here a D100 would have compression = NikonQuantized.
     // But it'll trickle down the Nikon code.
 
-    // XXX get mosaic info
+    // Get the mosaic info
+    let mosaic_pattern = get_mosaic_info(container, dir).or_else(|| {
+        log::debug!("Trying mosaic data in Exif");
+        container
+            .exif_dir()
+            .as_ref()
+            .and_then(|exif| get_mosaic_info(container, exif))
+    });
+    log::debug!("mosaic_pattern {:?}", mosaic_pattern);
 
     // More that 32bits per component is invalid: corrupt file likely.
     if bpc > 32 {
@@ -312,14 +358,36 @@ pub(crate) fn tiff_get_rawdata(
                     }
                 })
                 .collect();
-            RawData::new_tiled(x, y, actual_bpc, data_type, data, tile_size.unwrap())
+            RawData::new_tiled(
+                x,
+                y,
+                actual_bpc,
+                data_type,
+                data,
+                tile_size.unwrap(),
+                mosaic_pattern.unwrap_or_default(),
+            )
         } else {
             let data = container.load_buffer8(offset as u64, byte_len as u64);
-            RawData::new8(x, y, actual_bpc, data_type, data)
+            RawData::new8(
+                x,
+                y,
+                actual_bpc,
+                data_type,
+                data,
+                mosaic_pattern.unwrap_or_default(),
+            )
         }
     } else if bpc == 16 {
         let data = container.load_buffer16(offset as u64, byte_len as u64);
-        RawData::new16(x, y, actual_bpc, data_type, data)
+        RawData::new16(
+            x,
+            y,
+            actual_bpc,
+            data_type,
+            data,
+            mosaic_pattern.unwrap_or_default(),
+        )
     } else if bpc == 10 || bpc == 12 || bpc == 14 {
         let data = decompress::unpack(
             container,
@@ -330,7 +398,14 @@ pub(crate) fn tiff_get_rawdata(
             offset as u64,
             byte_len as usize,
         )?;
-        RawData::new16(x, y, actual_bpc, data_type, data)
+        RawData::new16(
+            x,
+            y,
+            actual_bpc,
+            data_type,
+            data,
+            mosaic_pattern.unwrap_or_default(),
+        )
     } else if bpc == 8 {
         let data = container.load_buffer8(offset as u64, byte_len as u64);
         // XXX is this efficient?
@@ -340,12 +415,12 @@ pub(crate) fn tiff_get_rawdata(
             bpc,
             data_type,
             data.iter().map(|v| *v as u16).collect(),
+            mosaic_pattern.unwrap_or_default(),
         )
     } else {
         log::error!("Invalid RAW format, unsupported bpc {}", bpc);
         return Err(Error::InvalidFormat);
     };
-    // XXX set mosaic_info
 
     // XXX maybe we don't need the if
     rawdata.set_compression(if data_type == DataType::CompressedRaw {

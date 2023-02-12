@@ -33,6 +33,7 @@ use crate::container::{Endian, RawContainer};
 use crate::decompress;
 use crate::io::Viewer;
 use crate::jpeg;
+use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::tiff;
@@ -951,6 +952,16 @@ impl RawFileImpl for Rw2File {
                 Error::FormatError
             })?;
 
+            let mosaic_pattern =
+                cfa.value::<u16>(exif::RW2_TAG_IMAGE_CFAPATTERN)
+                    .map(|p| match p {
+                        1 => Pattern::Rggb,
+                        2 => Pattern::Grbg,
+                        3 => Pattern::Gbrg,
+                        4 => Pattern::Bggr,
+                        _ => Pattern::default(),
+                    });
+
             // in the case of TIFF Raw offset, the byte count is incorrect
             if offset.offset > self.reader.length() {
                 log::error!("RW2: wanting to read past the EOF");
@@ -971,7 +982,14 @@ impl RawFileImpl for Rw2File {
             let mut raw_data = match data_type {
                 DataType::CompressedRaw => {
                     let raw = self.container().load_buffer8(offset.offset, offset.len);
-                    RawData::new8(width, height, bpc, data_type, raw)
+                    RawData::new8(
+                        width,
+                        height,
+                        bpc,
+                        data_type,
+                        raw,
+                        mosaic_pattern.unwrap_or_default(),
+                    )
                 }
                 DataType::Raw => {
                     let raw = if packed {
@@ -982,7 +1000,14 @@ impl RawFileImpl for Rw2File {
                     } else {
                         self.container().load_buffer16(offset.offset, offset.len)
                     };
-                    RawData::new16(width, height, bpc, data_type, raw)
+                    RawData::new16(
+                        width,
+                        height,
+                        bpc,
+                        data_type,
+                        raw,
+                        mosaic_pattern.unwrap_or_default(),
+                    )
                 }
                 _ => return Err(Error::NotFound),
             };

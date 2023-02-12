@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/crw.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -37,6 +37,7 @@ use crate::canon::SensorInfo;
 use crate::container::RawContainer;
 use crate::io::Viewer;
 use crate::jpeg;
+use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::thumbnail::{Data, ThumbDesc};
@@ -226,6 +227,7 @@ impl RawFileImpl for CrwFile {
                                     component_bit_depth as u16,
                                     DataType::CompressedRaw,
                                     data,
+                                    Pattern::Rggb,
                                 );
                                 rawdata.set_active_area(sensor_info);
                                 Ok(rawdata)
@@ -244,6 +246,7 @@ impl RawFileImpl for CrwFile {
                                     .map(|mut rawdata| {
                                         rawdata.set_white((1 << 10) - 1);
                                         rawdata.set_active_area(sensor_info);
+                                        rawdata.set_mosaic_pattern(Pattern::Rggb);
                                         rawdata
                                     })
                                     .map_err(|err| {

@@ -143,7 +143,15 @@ impl Results {
             );
         }
 
-        // XXX CFA pattern
+        // CFA pattern
+        if let Some(ref raw_cfa_pattern) = self.raw_cfa_pattern {
+            count += 1;
+            assert_eq!(
+                &rawdata.mosaic_pattern().to_string(),
+                raw_cfa_pattern,
+                "Incorrect CFA pattern"
+            );
+        }
 
         // RAW black and white
         if let Some(raw_min_value) = self.raw_min_value {

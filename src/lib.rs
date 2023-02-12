@@ -37,6 +37,7 @@ mod identify;
 mod io;
 mod jpeg;
 mod leica;
+mod mosaic;
 mod mp4;
 mod nikon;
 mod olympus;

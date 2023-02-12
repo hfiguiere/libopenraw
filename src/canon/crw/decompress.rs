@@ -23,6 +23,7 @@ use std::io::SeekFrom;
 
 use byteorder::ReadBytesExt;
 
+use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
 use crate::{DataType, RawData, Result};
 
@@ -332,6 +333,7 @@ impl Decompress {
             10,
             DataType::Raw,
             data,
+            Pattern::default(),
         ))
     }
 

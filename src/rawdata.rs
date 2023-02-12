@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawdata.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,6 +22,7 @@
 //! RAW data
 
 use super::{Bitmap, DataType, Rect};
+use crate::mosaic::Pattern;
 use crate::tiff;
 use crate::tiff::exif;
 use crate::utils;
@@ -55,11 +56,20 @@ pub struct RawData {
     compression: tiff::Compression,
     /// Sensor active area
     active_area: Option<Rect>,
+    /// The mosaic pattern
+    mosaic_pattern: Pattern,
 }
 
 impl RawData {
     /// New `RawData` with 8 bit data.
-    pub fn new8(width: u32, height: u32, bpc: u16, data_type: DataType, data: Vec<u8>) -> Self {
+    pub fn new8(
+        width: u32,
+        height: u32,
+        bpc: u16,
+        data_type: DataType,
+        data: Vec<u8>,
+        mosaic_pattern: Pattern,
+    ) -> Self {
         RawData {
             width,
             height,
@@ -71,6 +81,7 @@ impl RawData {
             black: 0,
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
+            mosaic_pattern,
         }
     }
 
@@ -81,6 +92,7 @@ impl RawData {
         data_type: DataType,
         data: Vec<Vec<u8>>,
         tile_size: (u32, u32),
+        mosaic_pattern: Pattern,
     ) -> Self {
         RawData {
             width,
@@ -93,11 +105,19 @@ impl RawData {
             black: 0,
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
+            mosaic_pattern,
         }
     }
 
     /// New `RawData` with 16 bit data.
-    pub fn new16(width: u32, height: u32, bpc: u16, data_type: DataType, data: Vec<u16>) -> Self {
+    pub fn new16(
+        width: u32,
+        height: u32,
+        bpc: u16,
+        data_type: DataType,
+        data: Vec<u16>,
+        mosaic_pattern: Pattern,
+    ) -> Self {
         RawData {
             width,
             height,
@@ -109,6 +129,7 @@ impl RawData {
             black: 0,
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
+            mosaic_pattern,
         }
     }
 
@@ -195,6 +216,16 @@ impl RawData {
         self.data = Data::Data16(data);
 
         self
+    }
+
+    /// Set the mosaic pattern.
+    pub fn set_mosaic_pattern(&mut self, pattern: Pattern) {
+        self.mosaic_pattern = pattern;
+    }
+
+    /// Return the mosaic pattern for the RAW data.
+    pub fn mosaic_pattern(&self) -> &Pattern {
+        &self.mosaic_pattern
     }
 }
 

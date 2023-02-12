@@ -111,16 +111,24 @@ impl Entry {
         self.data.as_slice()
     }
 
-    /// Load the data for the entry from the `io::View`.
-    /// It doesn't check if the value is inline.
-    pub(crate) fn load_data<E>(&mut self, base_offset: u32, view: &mut View) -> Result<usize>
+    /// Load the data for an immutable entry.
+    /// If it is already load, just return it.
+    pub(crate) fn get_data<E>(&self, base_offset: u32, view: &mut View) -> Result<Vec<u8>>
     where
         E: ByteOrder,
     {
-        if let DataBytes::External(_) = self.data {
-            return Err(Error::AlreadyInited);
+        if let DataBytes::External(data) = &self.data {
+            Ok(data.clone())
+        } else {
+            self.load_data_impl::<E>(base_offset, view)
         }
+    }
 
+    /// implementation for `get_data` and `load_data`.
+    fn load_data_impl<E>(&self, base_offset: u32, view: &mut View) -> Result<Vec<u8>>
+    where
+        E: ByteOrder,
+    {
         let offset = (match self.data {
             DataBytes::Offset(offset) => offset,
             _ => E::read_u32(self.data.as_slice()),
@@ -142,7 +150,24 @@ impl Entry {
             data.set_len(data_size);
         }
 
-        let bytes = view.read(&mut data)?;
+        view.read_exact(&mut data)?;
+
+        Ok(data)
+    }
+
+    /// Load the data for the entry from the `io::View`.
+    /// It doesn't check if the value is inline.
+    pub(crate) fn load_data<E>(&mut self, base_offset: u32, view: &mut View) -> Result<usize>
+    where
+        E: ByteOrder,
+    {
+        if let DataBytes::External(_) = self.data {
+            return Err(Error::AlreadyInited);
+        }
+
+        let data = self.load_data_impl::<E>(base_offset, view)?;
+
+        let bytes = data.len();
         self.data = DataBytes::External(data);
 
         Ok(bytes)
@@ -163,7 +188,10 @@ impl Entry {
         T: ExifValue,
         E: ByteOrder,
     {
-        if untyped || (self.type_ == T::exif_type() as i16) {
+        if untyped
+            || self.type_ == exif::TagType::Undefined as i16
+            || (self.type_ == T::exif_type() as i16)
+        {
             if index >= self.count {
                 log::error!("index {} is >= {}", index, self.count);
                 return None;

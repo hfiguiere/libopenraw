@@ -134,6 +134,7 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
         println!("\tFormat: {:?}", rawdata.data_type());
         println!("\tSize: {}x{}", rawdata.width(), rawdata.height());
         println!("\tActive area: {:?}", rawdata.active_area());
+        println!("\tBayer Type: {:?}", rawdata.mosaic_pattern());
         let bpc = rawdata.bpc();
         println!("\tBpc: {bpc}");
         println!(

@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/cr2.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -31,6 +31,7 @@ use crate::camera_ids::vendor;
 use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
+use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::thumbnail::ThumbDesc;
@@ -86,6 +87,7 @@ impl Cr2File {
                 8,
                 DataType::CompressedRaw,
                 data,
+                Pattern::default(),
             ))
         } else {
             let mut decompressor = decompress::LJpeg::new();
@@ -165,6 +167,9 @@ impl Cr2File {
                 height: sensor_info.0[3],
             });
         rawdata.set_active_area(sensor_info);
+        // XXX they are not all RGGB.
+        // XXX but I don't seem to see where this is encoded.
+        rawdata.set_mosaic_pattern(Pattern::Rggb);
 
         Ok(rawdata)
     }

@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/cr3.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -31,6 +31,7 @@ use once_cell::unsync::OnceCell;
 use crate::camera_ids::vendor;
 use crate::container::RawContainer;
 use crate::io::Viewer;
+use crate::mosaic::Pattern;
 use crate::mp4;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
@@ -188,6 +189,7 @@ impl RawFileImpl for Cr3File {
                 8,
                 DataType::CompressedRaw,
                 data,
+                Pattern::default(),
             );
 
             let sensor_info = self

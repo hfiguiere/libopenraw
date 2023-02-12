@@ -61,6 +61,7 @@ use std::io::SeekFrom;
 use byteorder::{BigEndian, ReadBytesExt};
 
 use super::sliced_buffer::SlicedBuffer;
+use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
 use crate::{DataType, Error, RawData, Result};
 
@@ -236,8 +237,14 @@ impl LJpeg {
     /// Decompress the LJPEG stream into a RawData.
     pub fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<RawData> {
         let tile = self.decompress_buffer(reader, false)?;
-        let mut rawdata =
-            RawData::new16(tile.width, tile.height, tile.bpc, DataType::Raw, tile.buf);
+        let mut rawdata = RawData::new16(
+            tile.width,
+            tile.height,
+            tile.bpc,
+            DataType::Raw,
+            tile.buf,
+            Pattern::default(),
+        );
         let white: u32 = (1 << tile.bpc) - 1;
         rawdata.set_white(white as u16);
         Ok(rawdata)
