@@ -1,3 +1,9 @@
+What's (visibly) new in 0.3.4
+=============================
+
+- Fixed a crash when using libopenraw in a multithreaded context.
+- 4 new camera listed.
+
 What's (visibly) new in 0.3.3
 =============================
 

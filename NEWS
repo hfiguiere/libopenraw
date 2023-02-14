@@ -1,10 +1,21 @@
-libopenraw 0.3.4 -
+libopenraw 0.3.4 - 2023/02/13
 
 New features:
 
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
+  - Added Canon R8 and R50.
+  - Added Fujifilm G95D* and S5M2.
+
+Bug fixes:
+
+  - Ensure that RawFile::init() is never called twice. This would
+    cause crashes if it was called concurrently.
+
+Internal changes:
+
+  - Change mutability of access to the factory and the extensions.
 
 libopenraw 0.3.3 - 2022/12/28
 
