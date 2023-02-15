@@ -24,11 +24,23 @@ crc = "2.1.0"
 serde = "1.0.136"
 serde_derive = "1.0.136"
 serde-xml-rs = "0.5.1"
+criterion = "0.4.0"
 
 [features]
 default = ["dump"]
 dump = []
 fuzzing = ["afl"]
+
+# For flamegraph
+[profile.release]
+debug = true
+
+[lib]
+bench = false
+
+[[bench]]
+name = "the_benchmark"
+harness = false
 
 [[bin]]
 name = "ordiag"
@@ -38,19 +50,24 @@ bench = false
 [[bin]]
 name = "ordump"
 required-features = ["dump"]
+bench = false
 
 [[bin]]
 name = "fuzz-ljpeg"
 required-features = ["fuzzing"]
+bench = false
 
 [[bin]]
 name = "test-ljpeg"
 required-features = ["fuzzing"]
+bench = false
 
 [[bin]]
 name = "fuzz-rawfile"
 required-features = ["fuzzing"]
+bench = false
 
 [[bin]]
 name = "fuzz-olymdecompress"
 required-features = ["fuzzing"]
+bench = false
