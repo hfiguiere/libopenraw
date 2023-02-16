@@ -37,7 +37,7 @@ use crate::tiff::{exif, Ifd};
 /// The trait for any IO
 pub trait ReadAndSeek: std::io::Read + std::io::Seek {}
 
-impl ReadAndSeek for std::fs::File {}
+impl ReadAndSeek for std::io::BufReader<std::fs::File> {}
 impl ReadAndSeek for std::io::Cursor<&[u8]> {}
 impl ReadAndSeek for std::io::Cursor<Vec<u8>> {}
 
@@ -135,8 +135,9 @@ where
         Some(_) => type_hint,
         None => identify_extension(&filename),
     };
-    let file = Box::new(std::fs::File::open(filename)?);
-    from_io(file, type_hint)
+    let file = std::fs::File::open(filename)?;
+    let buffered = Box::new(std::io::BufReader::new(file));
+    from_io(buffered, type_hint)
 }
 
 /// Create a RawFile object from a buffer

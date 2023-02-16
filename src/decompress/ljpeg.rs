@@ -1261,8 +1261,9 @@ mod test {
 
         let io = std::fs::File::open("test/ljpegtest1.jpg");
         assert!(io.is_ok());
-        let mut io = io.unwrap();
-        let rawdata = decompressor.decompress(&mut io);
+        let io = io.unwrap();
+        let mut buffered = std::io::BufReader::new(io);
+        let rawdata = decompressor.decompress(&mut buffered);
 
         assert!(rawdata.is_ok());
         let rawdata = rawdata.unwrap();
