@@ -11,7 +11,7 @@ afl = { version = "0.12.4", optional = true }
 bitreader = "0.3.6"
 byteorder = "1.4.3"
 getopts = "0.2.21"
-jpeg-decoder = "0.2.6"
+jpeg-decoder = "0.3.0"
 lazy_static = "1.4.0"
 log = "0.4.14"
 mp4parse = { path = "lib/mp4/mp4parse", version = "0.12.0", features = [ "craw" ] }
