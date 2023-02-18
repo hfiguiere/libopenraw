@@ -56,7 +56,7 @@ pub fn dump_indent(indent: u32) -> String {
 macro_rules! dump_writeln {
     ( $out:expr, $indent:expr, $( $x:expr ),* ) => {
         {
-            write!($out, "{}", $crate::dump::dump_indent( $indent )).unwrap();
+            $out.write_all(&$crate::dump::dump_indent( $indent ).into_bytes()).unwrap();
             writeln!($out, $( $x ),*).unwrap();
         }
     };
