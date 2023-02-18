@@ -121,16 +121,26 @@ impl<T: Copy + Default> SlicedBuffer<T> {
     }
 
     /// Append data to the buffer.
-    pub fn append(&mut self, data: &[T]) {
+    pub fn extend<I>(&mut self, mut iter: I)
+    where
+        I: Iterator<Item = T>,
+    {
         if self.slices.len() == 1 {
-            let new_pos = self.pos + data.len();
-            self.buffer.as_mut_slice()[self.pos..new_pos].copy_from_slice(data);
+            let mut new_pos = self.pos;
+            for b in self.buffer.as_mut_slice()[self.pos..].iter_mut() {
+                if let Some(d) = iter.next() {
+                    *b = d;
+                    new_pos += 1;
+                } else {
+                    break;
+                }
+            }
             self.pos = new_pos;
         } else {
-            for d in data {
-                self.buffer[self.pos] = *d;
+            iter.for_each(|d| {
+                self.buffer[self.pos] = d;
                 self.pos = self.advance();
-            }
+            })
         }
     }
 }
@@ -147,7 +157,7 @@ mod test {
 
         assert_eq!(buffer.slices.len(), 1);
         assert_eq!(buffer.slices[0], 160);
-        buffer.append(bytes);
+        buffer.extend(bytes.iter().copied());
 
         assert_eq!(buffer.pos, bytes.len());
     }
@@ -195,9 +205,8 @@ mod test {
         assert_eq!(w, slices.iter().copied().sum::<u32>());
 
         let mut buffer: SlicedBuffer<u16> = SlicedBuffer::new(w, h, Some(&slices));
-        for v in source {
-            buffer.append(&[v]);
-        }
+        buffer.extend(source.iter().copied());
+
         assert_eq!(buffer.buffer.len(), 29800);
         assert_eq!(buffer.buffer[0], 1);
         assert_eq!(buffer.buffer[128], 2);

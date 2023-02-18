@@ -656,11 +656,10 @@ impl LJpeg {
         output: &mut SlicedBuffer<ComponentType>,
     ) {
         for col in 0..num_col {
-            output.append(
-                &row_buf[col as usize][0..num_comp as usize]
+            output.extend(
+                row_buf[col as usize][0..num_comp as usize]
                     .iter()
-                    .map(|v| v << pt)
-                    .collect::<Vec<u16>>(),
+                    .map(|v| v << pt),
             );
         }
     }
