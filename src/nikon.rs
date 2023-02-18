@@ -26,7 +26,7 @@ mod huffman;
 mod matrices;
 
 use std::collections::HashMap;
-use std::io::{Read, Seek, SeekFrom};
+use std::io::{Seek, SeekFrom};
 use std::rc::Rc;
 
 use byteorder::ReadBytesExt;
@@ -327,10 +327,8 @@ impl NefFile {
         };
         log::debug!("block_size {} width {} ", block_size, width);
 
-        let mut data = rawdata.data8().ok_or(Error::NotFound)?;
+        let data = rawdata.data8().ok_or(Error::NotFound)?;
 
-        let mut block = Vec::new();
-        block.resize(block_size, 0);
         let out_size = width as usize * height as usize;
         let mut out_data = Vec::with_capacity(out_size);
         let mut fetched = 0_usize;
@@ -338,11 +336,11 @@ impl NefFile {
 
         let byte_len = std::cmp::min(data.len(), block_size * height as usize);
         while fetched < byte_len {
-            data.read_exact(block.as_mut_slice())?;
+            let block = &data[fetched..fetched + block_size];
             fetched += block.len();
 
             written +=
-                decompress::unpack_be12to16(&block, &mut out_data, tiff::Compression::NikonPack)?;
+                decompress::unpack_be12to16(block, &mut out_data, tiff::Compression::NikonPack)?;
         }
         log::debug!("Unpacked {} pixels", written);
 

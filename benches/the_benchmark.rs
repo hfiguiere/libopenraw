@@ -21,7 +21,7 @@
 
 #![doc = include_str!("../doc/benchmarks.md")]
 
-const FILES: [&str; 11] = [
+const FILES: [&str; 12] = [
     "Apple/iPhone XS/IMG_1105.dng",
     "Canon/EOS 10D/CRW_7673.CRW",
     "Canon/EOS 20D/IMG_3893.CR2",
@@ -29,6 +29,9 @@ const FILES: [&str; 11] = [
     "Epson/R-D1/_EPS0672.ERF",
     "Fujifilm/X-Pro1/DSCF2131.RAF",
     "Leica/M8/L1030132.DNG",
+    // Nikon unpack
+    "Nikon/D100/DSC_2376.NEF",
+    // Nikon Quantized
     "Nikon/D60/DSC_8294.NEF",
     "Olympus/E-P1/P1080385.ORF",
     "Pentax/K100D/IMGP1754.PEF",
