@@ -321,13 +321,7 @@ impl MetaContainer {
                 let v = view.read_u32::<BigEndian>()?;
                 Value::Int(v)
             } else {
-                let mut v = Vec::with_capacity(sz as usize);
-                // Avoiding initialization of the big buffer.
-                // This is deliberate.
-                #[allow(clippy::uninit_vec)]
-                unsafe {
-                    v.set_len(sz as usize);
-                }
+                let mut v = uninit_vec!(sz as usize);
                 view.read_exact(&mut v)?;
                 Value::Bytes(v)
             };

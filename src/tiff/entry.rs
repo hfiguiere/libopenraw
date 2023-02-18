@@ -142,14 +142,7 @@ impl Entry {
             log::error!("TIFFEntry: data size too large");
             return Err(Error::FormatError);
         }
-        let mut data = Vec::with_capacity(data_size);
-        // Avoiding initialization of the big buffer.
-        // This is deliberate.
-        #[allow(clippy::uninit_vec)]
-        unsafe {
-            data.set_len(data_size);
-        }
-
+        let mut data = uninit_vec!(data_size);
         view.read_exact(&mut data)?;
 
         Ok(data)

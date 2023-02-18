@@ -2,7 +2,7 @@
 /*
  * libopenraw - utils.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,6 +20,20 @@
  */
 
 //! Various utilities
+
+#[macro_export]
+/// Create a vecto with size but not initialized.
+/// Use with caution.
+macro_rules! uninit_vec {
+    ( $len:expr ) => {{
+        let mut v = Vec::with_capacity($len);
+        #[allow(clippy::uninit_vec)]
+        unsafe {
+            v.set_len($len)
+        };
+        v
+    }};
+}
 
 /// Create an mut u8 slice from a `mut [T]`.
 pub(crate) fn to_u8_slice_mut<T>(slice: &mut [T]) -> &mut [u8] {

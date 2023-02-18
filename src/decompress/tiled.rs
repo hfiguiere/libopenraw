@@ -2,7 +2,7 @@
 /*
  * libopenraw - decompress/tiled.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -36,13 +36,7 @@ impl TiledLJpeg {
     /// Combine tiles into the final buffer.
     fn combine_tiles(width: usize, height: usize, tiles: &[Option<Tile>]) -> Vec<u16> {
         let data_size = width * height;
-        let mut buffer = Vec::with_capacity(data_size);
-        // Avoiding initialization of the big buffer.
-        // This is deliberate.
-        #[allow(clippy::uninit_vec)]
-        unsafe {
-            buffer.set_len(data_size);
-        }
+        let mut buffer = uninit_vec!(data_size);
 
         let mut first_row = 0_usize;
         let mut first_col = 0_usize;

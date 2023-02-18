@@ -2,7 +2,7 @@
 /*
  * libopenraw - container.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -85,8 +85,7 @@ pub trait RawContainer {
                     log::error!("Thumbmail too big");
                     return Err(Error::FormatError);
                 }
-                let mut data = Vec::new();
-                data.resize(offset.len as usize, 0);
+                let mut data = uninit_vec!(offset.len as usize);
                 view.seek(SeekFrom::Start(offset.offset))?;
                 view.read_exact(data.as_mut_slice())?;
                 data
@@ -105,10 +104,9 @@ pub trait RawContainer {
 
     /// Load an 8bit buffer at `offset` and of `len` bytes.
     fn load_buffer8(&self, offset: u64, len: u64) -> Vec<u8> {
-        let mut data = Vec::new();
+        let mut data = uninit_vec!(len as usize);
 
         let mut view = self.borrow_view_mut();
-        data.resize(len as usize, 0);
         if view.seek(SeekFrom::Start(offset)).is_err() {
             log::error!("load_buffer8: Seek failed");
         }
@@ -126,10 +124,9 @@ pub trait RawContainer {
 
     /// Load an 16 bit buffer at `offset` and of `len` bytes.
     fn load_buffer16(&self, offset: u64, len: u64) -> Vec<u16> {
-        let mut data = Vec::new();
+        let mut data = uninit_vec!((len / 2) as usize);
 
         let mut view = self.borrow_view_mut();
-        data.resize((len / 2) as usize, 0);
         if view.seek(SeekFrom::Start(offset)).is_err() {
             log::error!("load_buffer16: Seek failed");
         }

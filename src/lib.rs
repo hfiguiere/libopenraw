@@ -21,6 +21,8 @@
 
 #[macro_use]
 mod dump;
+#[macro_use]
+mod utils;
 
 mod apple;
 mod bitmap;
@@ -50,7 +52,6 @@ mod sigma;
 mod sony;
 mod thumbnail;
 pub mod tiff;
-mod utils;
 
 pub use bitmap::{Bitmap, Rect};
 pub use dump::Dump;

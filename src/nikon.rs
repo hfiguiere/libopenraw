@@ -488,6 +488,7 @@ impl NefFile {
                     DiffIterator::new(curve.huffman.unwrap(), rawdata.data8().as_ref().unwrap());
                 let mut iter = CfaIterator::new(diffs, raw_columns, curve.vpred);
 
+                // Using uninit_vec! here is slower.
                 let mut new_data = vec![0; rows * columns];
                 for i in 0..rows {
                     for j in 0..raw_columns {
