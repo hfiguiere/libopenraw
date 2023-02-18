@@ -21,6 +21,8 @@
 
 //! Tiled JPEG decompression
 
+use rayon::prelude::*;
+
 use crate::bitmap::Bitmap;
 use crate::{DataType, RawData, Result};
 
@@ -69,13 +71,13 @@ impl TiledLJpeg {
     /// Decompress the RawData into a new RawData.
     pub fn decompress(&self, rawdata: RawData) -> Result<RawData> {
         if let Some(tiles) = rawdata.tile_data() {
-            let mut decompressor = LJpeg::new();
             let tile_size = rawdata.tile_size();
             let dec_tiles: Vec<Option<Tile>> = tiles
-                .iter()
+                .par_iter()
                 .map(|tile| {
                     log::debug!("Decompressing tile");
                     let mut buffer = std::io::Cursor::new(tile.as_slice());
+                    let mut decompressor = LJpeg::new();
                     decompressor.decompress_buffer(&mut buffer, true).ok()
                 })
                 .map(|tile| {
