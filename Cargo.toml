@@ -27,7 +27,8 @@ serde-xml-rs = "0.5.1"
 criterion = "0.4.0"
 
 [features]
-default = ["dump"]
+default = ["dump", "bench"]
+bench = []
 dump = []
 fuzzing = ["afl"]
 
@@ -40,6 +41,8 @@ bench = false
 
 [[bench]]
 name = "the_benchmark"
+path = "benches/the_benchmark.rs"
+required-features = ["bench"]
 harness = false
 
 [[bin]]

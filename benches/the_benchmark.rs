@@ -36,13 +36,13 @@ const FILES: [&str; 11] = [
 ];
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use libopenraw::rawfile_from_file;
+use libopenraw::{rawfile_from_file, LJpeg};
 
 pub fn ordiag_benchmark(c: &mut Criterion) {
     let dataset = std::env::var("RAWFILES_ROOT").expect("RAWFILES_ROOT not set");
     let dataset = std::path::PathBuf::from(dataset);
     for file in FILES {
-        let bench_name = format!("ordiag-{}", file);
+        let bench_name = format!("ordiag-{file}");
         let file = dataset.join(file);
         c.bench_function(&bench_name, |b| {
             b.iter(|| {
@@ -50,9 +50,9 @@ pub fn ordiag_benchmark(c: &mut Criterion) {
                 if let Ok(rawfile) = rawfile {
                     let sizes = rawfile.thumbnail_sizes();
                     for size in sizes {
-                        let thumb = rawfile.thumbnail(size);
+                        let _ = rawfile.thumbnail(size);
                     }
-                    let raw_data = rawfile.raw_data(false);
+                    let _ = rawfile.raw_data(false);
                 }
             })
         });
@@ -63,16 +63,27 @@ pub fn dump_benchmark(c: &mut Criterion) {
     let dataset = std::env::var("RAWFILES_ROOT").expect("RAWFILES_ROOT not set");
     let dataset = std::path::PathBuf::from(dataset);
     for file in FILES {
-        let bench_name = format!("dump-{}", file);
+        let bench_name = format!("dump-{file}");
         let file = dataset.join(file);
         c.bench_function(&bench_name, |b| {
             b.iter(|| {
-                let rawfile = rawfile_from_file(&file, None).expect("RAW didn't decoded");
+                let rawfile = rawfile_from_file(&file, None).expect("RAW didn't decode");
                 rawfile.dump_file(&mut std::io::sink());
             });
         });
     }
 }
 
-criterion_group!(benches, ordiag_benchmark, dump_benchmark);
+fn ljpeg_benchmark(c: &mut Criterion) {
+    c.bench_function("ljpeg", |b| {
+        b.iter(|| {
+            let mut decompressor = LJpeg::new();
+            let io = std::fs::File::open("test/ljpegtest1.jpg").expect("Couldn't open");
+            let mut buffered = std::io::BufReader::new(io);
+            let _ = decompressor.decompress(&mut buffered);
+        });
+    });
+}
+
+criterion_group!(benches, ordiag_benchmark, dump_benchmark, ljpeg_benchmark);
 criterion_main!(benches);

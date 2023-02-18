@@ -60,9 +60,9 @@ pub use rawfile::RawFileImpl;
 pub use thumbnail::Thumbnail;
 pub use tiff::Ifd;
 
-#[cfg(feature = "fuzzing")]
+#[cfg(any(feature = "fuzzing", feature = "bench"))]
 pub use decompress::LJpeg;
-#[cfg(feature = "fuzzing")]
+#[cfg(any(feature = "fuzzing", feature = "bench"))]
 pub use olympus::decompress::decompress_olympus;
 
 pub use rawfile::rawfile_from_file;
