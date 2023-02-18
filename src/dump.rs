@@ -5,17 +5,39 @@
 #[cfg(feature = "dump")]
 use std::collections::HashMap;
 
+pub trait DumpFile {
+    #[cfg(feature = "dump")]
+    fn dump_file(&self, out: &mut dyn std::io::Write);
+}
+
+#[macro_export]
+macro_rules! dumpfile_impl {
+    ( $t:ty ) => {
+        impl $crate::dump::DumpFile for $t {
+            #[cfg(feature = "dump")]
+            fn dump_file(&self, out: &mut dyn std::io::Write) {
+                self.write_dump(out, 0);
+            }
+        }
+    };
+}
+
 /// Trait to dump a container.
 /// XXX invert the default methods
 pub trait Dump {
     #[cfg(feature = "dump")]
     /// Print dump the container as `indent`
-    fn print_dump(&self, indent: u32);
+    fn write_dump<W>(&self, out: &mut W, indent: u32)
+    where
+        W: std::io::Write + ?Sized;
 
     #[cfg(feature = "dump")]
     /// Pass args to the print_dump
-    fn print_dump_with_args(&self, indent: u32, _args: HashMap<&str, String>) {
-        self.print_dump(indent);
+    fn write_dump_with_args<W>(&self, out: &mut W, indent: u32, _args: HashMap<&str, String>)
+    where
+        W: std::io::Write + ?Sized,
+    {
+        self.write_dump(out, indent);
     }
 }
 
@@ -31,11 +53,11 @@ pub fn dump_indent(indent: u32) -> String {
 }
 
 #[macro_export]
-macro_rules! dump_println {
-    ( $indent:expr, $( $x:expr ),* ) => {
+macro_rules! dump_writeln {
+    ( $out:expr, $indent:expr, $( $x:expr ),* ) => {
         {
-            print!("{}", $crate::dump::dump_indent( $indent ));
-            println!($( $x ),*);
+            write!($out, "{}", $crate::dump::dump_indent( $indent )).unwrap();
+            writeln!($out, $( $x ),*).unwrap();
         }
     };
 }

@@ -626,12 +626,15 @@ impl RawFile for NefFile {
 
 impl Dump for NefFile {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<Nikon NEF File>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<Nikon NEF File>");
         {
             let indent = indent + 1;
-            self.container().print_dump(indent);
+            self.container();
+            self.container.get().unwrap().write_dump(out, indent);
         }
-        dump_println!(indent, "</Nikon NEF File>");
+        dump_writeln!(out, indent, "</Nikon NEF File>");
     }
 }
+
+dumpfile_impl!(NefFile);

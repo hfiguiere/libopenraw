@@ -904,12 +904,18 @@ impl RawFile for ArwFile {
 
 impl Dump for ArwFile {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<Sony ARW File>");
+    fn write_dump<W>(&self, out: &mut W, indent: u32)
+    where
+        W: std::io::Write + ?Sized,
+    {
+        dump_writeln!(out, indent, "<Sony ARW File>");
         {
             let indent = indent + 1;
-            self.container().print_dump(indent);
+            self.container();
+            self.container.get().unwrap().write_dump(out, indent);
         }
-        dump_println!(indent, "</Sony ARW File>");
+        dump_writeln!(out, indent, "</Sony ARW File>");
     }
 }
+
+dumpfile_impl!(ArwFile);

@@ -420,12 +420,15 @@ impl Entry {
     }
 
     #[cfg(feature = "dump")]
-    pub(crate) fn print_dump_entry(
+    pub(crate) fn write_dump_entry<W>(
         &self,
+        out: &mut W,
         indent: u32,
         endian: Endian,
         args: HashMap<&str, String>,
-    ) {
+    ) where
+        W: std::io::Write + ?Sized,
+    {
         fn array_to_str<V>(array: &Vec<V>) -> String
         where
             V: ToString,
@@ -492,7 +495,8 @@ impl Entry {
             Endian::Big => value::<BigEndian>(self, endian),
             _ => "NO ENDIAN".to_string(),
         };
-        dump_println!(
+        dump_writeln!(
+            out,
             indent,
             "<0x{:04x}={:>5}> {:<30} [{:>2}={:<10} {}] = {}",
             self._id,

@@ -30,7 +30,7 @@ use crate::io::View;
 use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
 use crate::utils;
 use crate::Type as RawType;
-use crate::{Dump, Error, Result};
+use crate::{Error, Result};
 
 /// Endian of the container
 #[derive(Clone, Copy, Debug)]
@@ -66,7 +66,7 @@ impl EndianType for BigEndian {
 }
 
 /// Container abstract trait
-pub trait RawContainer: Dump {
+pub trait RawContainer {
     /// Return the endian of the container
     fn endian(&self) -> Endian {
         Endian::Unset

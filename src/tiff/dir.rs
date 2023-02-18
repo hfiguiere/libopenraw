@@ -659,13 +659,17 @@ impl Ifd for Dir {
 
 #[cfg(feature = "dump")]
 impl Dump for Dir {
-    fn print_dump(&self, indent: u32) {
+    fn write_dump<W>(&self, out: &mut W, indent: u32)
+    where
+        W: std::io::Write + ?Sized,
+    {
         let maker_note_id = if self.type_ == IfdType::MakerNote {
             format!(" id={}", self.id)
         } else {
             String::default()
         };
-        dump_println!(
+        dump_writeln!(
+            out,
             indent,
             "<IFD type={:?}{} {} entries next=@{}>",
             self.type_,
@@ -678,9 +682,9 @@ impl Dump for Dir {
             for (id, entry) in &self.entries {
                 let tag_name = self.tag_names.get(id).unwrap_or(&"");
                 let args = HashMap::from([("tag_name", String::from(*tag_name))]);
-                entry.print_dump_entry(indent, self.endian(), args);
+                entry.write_dump_entry(out, indent, self.endian(), args);
             }
         }
-        dump_println!(indent, "</IFD>");
+        dump_writeln!(out, indent, "</IFD>");
     }
 }

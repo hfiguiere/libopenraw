@@ -181,35 +181,40 @@ impl RawContainer for RafContainer {
 
 impl Dump for RafContainer {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<RAF Container @{}>", self.view.borrow().offset());
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(
+            out,
+            indent,
+            "<RAF Container @{}>",
+            self.view.borrow().offset()
+        );
         {
             let indent = indent + 1;
-            dump_println!(indent, "Model  = {}", self.model);
-            dump_println!(indent, "<Offsets>");
+            dump_writeln!(out, indent, "Model  = {}", self.model);
+            dump_writeln!(out, indent, "<Offsets>");
             {
                 let indent = indent + 1;
-                dump_println!(indent, "JPEG Offset = {}", self.offsets.jpeg_offset);
-                dump_println!(indent, "JPEG Len    = {}", self.offsets.jpeg_len);
-                dump_println!(indent, "Meta Offset = {}", self.offsets.meta_offset);
-                dump_println!(indent, "Meta Len    = {}", self.offsets.meta_len);
-                dump_println!(indent, "CFA Offset  = {}", self.offsets.cfa_offset);
-                dump_println!(indent, "CFA Len     = {}", self.offsets.cfa_len);
+                dump_writeln!(out, indent, "JPEG Offset = {}", self.offsets.jpeg_offset);
+                dump_writeln!(out, indent, "JPEG Len    = {}", self.offsets.jpeg_len);
+                dump_writeln!(out, indent, "Meta Offset = {}", self.offsets.meta_offset);
+                dump_writeln!(out, indent, "Meta Len    = {}", self.offsets.meta_len);
+                dump_writeln!(out, indent, "CFA Offset  = {}", self.offsets.cfa_offset);
+                dump_writeln!(out, indent, "CFA Len     = {}", self.offsets.cfa_len);
             }
-            dump_println!(indent, "</Offsets>");
+            dump_writeln!(out, indent, "</Offsets>");
             if let Some(jpeg_preview) = self.jpeg_preview() {
-                jpeg_preview.print_dump(indent);
+                jpeg_preview.write_dump(out, indent);
             } else {
-                dump_println!(indent, "ERROR: JPEG Preview not found");
+                dump_writeln!(out, indent, "ERROR: JPEG Preview not found");
             }
             if let Some(meta_container) = self.meta_container() {
-                meta_container.print_dump(indent);
+                meta_container.write_dump(out, indent);
             } else {
-                dump_println!(indent, "ERROR: Meta container not found");
+                dump_writeln!(out, indent, "ERROR: Meta container not found");
             }
-            dump_println!(indent, "CFA Container TODO");
+            dump_writeln!(out, indent, "CFA Container TODO");
         }
-        dump_println!(indent, "</RAF Container>");
+        dump_writeln!(out, indent, "</RAF Container>");
     }
 }
 
@@ -353,8 +358,9 @@ impl RawContainer for MetaContainer {
 
 impl Dump for MetaContainer {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(
+            out,
             indent,
             "<RAF Meta Container @{}>",
             self.view.borrow().offset()
@@ -363,10 +369,18 @@ impl Dump for MetaContainer {
             let indent = indent + 1;
             for (tag, value) in &self.tags {
                 let tag_name = META_TAG_NAMES.get(tag).unwrap_or(&"");
-                dump_println!(indent, "<0x{:x}={}> {} = {}", tag, tag, tag_name, value);
+                dump_writeln!(
+                    out,
+                    indent,
+                    "<0x{:x}={}> {} = {}",
+                    tag,
+                    tag,
+                    tag_name,
+                    value
+                );
             }
         }
-        dump_println!(indent, "</RAF Meta Container>");
+        dump_writeln!(out, indent, "</RAF Meta Container>");
     }
 }
 

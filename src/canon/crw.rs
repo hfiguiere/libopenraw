@@ -278,12 +278,15 @@ impl RawFile for CrwFile {
 
 impl Dump for CrwFile {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<Canon CRW File>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<Canon CRW File>");
         {
             let indent = indent + 1;
-            self.container().print_dump(indent);
+            self.container();
+            self.container.get().unwrap().write_dump(out, indent);
         }
-        dump_println!(indent, "</Canon CRW File>");
+        dump_writeln!(out, indent, "</Canon CRW File>");
     }
 }
+
+dumpfile_impl!(CrwFile);

@@ -227,13 +227,16 @@ impl RawFile for Cr3File {
 
 impl Dump for Cr3File {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<Canon CR3 File>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<Canon CR3 File>");
         // dump container
         {
             let indent = indent + 1;
-            self.container().print_dump(indent);
+            self.container();
+            self.container.get().unwrap().write_dump(out, indent);
         }
-        dump_println!(indent, "</Canon CR3 File>");
+        dump_writeln!(out, indent, "</Canon CR3 File>");
     }
 }
+
+dumpfile_impl!(Cr3File);

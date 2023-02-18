@@ -2,7 +2,7 @@
 /*
  * libopenraw - jpeg/container.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -165,23 +165,29 @@ impl Container {
 
 impl Dump for Container {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<JPEG Container @{}>", self.view.borrow().offset());
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(
+            out,
+            indent,
+            "<JPEG Container @{}>",
+            self.view.borrow().offset()
+        );
         {
             let indent = indent + 1;
-            dump_println!(
+            dump_writeln!(
+                out,
                 indent,
                 "Width = {} Height = {}",
                 self.width(),
                 self.height()
             );
             if let Some(exif) = self.exif() {
-                dump_println!(indent, "Exif: ");
-                exif.print_dump(indent);
+                dump_writeln!(out, indent, "Exif: ");
+                exif.write_dump(out, indent);
             } else {
-                dump_println!(indent, "No Exif");
+                dump_writeln!(out, indent, "No Exif");
             }
         }
-        dump_println!(indent, "</JPEG Container>");
+        dump_writeln!(out, indent, "</JPEG Container>");
     }
 }

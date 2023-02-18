@@ -53,18 +53,20 @@ mod capi {
 
     impl crate::Dump for TrackRawInfo {
         #[cfg(feature = "dump")]
-        fn print_dump(&self, indent: u32) {
-            dump_println!(indent, "<TrackRawInfo>");
+        fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+            dump_writeln!(out, indent, "<TrackRawInfo>");
             {
                 let indent = indent + 1;
 
-                dump_println!(
+                dump_writeln!(
+                    out,
                     indent,
                     "Image: Width {} x {}",
                     self.image_width,
                     self.image_height
                 );
-                dump_println!(
+                dump_writeln!(
+                    out,
                     indent,
                     "{}: {} bytes @{}",
                     if self.is_jpeg { "JPEG" } else { "Raw" },
@@ -72,7 +74,7 @@ mod capi {
                     self.offset
                 );
             }
-            dump_println!(indent, "</TrackRawInfo>");
+            dump_writeln!(out, indent, "</TrackRawInfo>");
         }
     }
 }
@@ -317,8 +319,9 @@ impl Container {
 
 impl Dump for craw::CanonThumbnail {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(
+            out,
             indent,
             "Thumbnail: {}x{} {} bytes",
             self.width,
@@ -330,14 +333,15 @@ impl Dump for craw::CanonThumbnail {
 
 impl Dump for craw::CrawHeader {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<CRaw header>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<CRaw header>");
         {
             let indent = indent + 1;
-            dump_println!(indent, "'cncv': {} bytes", self.cncv.len());
-            dump_println!(indent, "<offsets>");
+            dump_writeln!(out, indent, "'cncv': {} bytes", self.cncv.len());
+            dump_writeln!(out, indent, "<offsets>");
             for (i, offset) in self.offsets.iter().enumerate() {
-                dump_println!(
+                dump_writeln!(
+                    out,
                     indent + 1,
                     "(@{}, {} bytes){}",
                     offset.0,
@@ -345,37 +349,42 @@ impl Dump for craw::CrawHeader {
                     if i == 1 { ": preview" } else { "" }
                 );
             }
-            dump_println!(indent, "</offsets>");
-            dump_println!(
+            dump_writeln!(out, indent, "</offsets>");
+            dump_writeln!(
+                out,
                 indent,
                 "Meta1: {} bytes",
                 self.meta1.as_ref().map(|v| v.len()).unwrap_or(0)
             );
-            dump_println!(
+            dump_writeln!(
+                out,
                 indent,
                 "Meta2: {} bytes",
                 self.meta2.as_ref().map(|v| v.len()).unwrap_or(0)
             );
-            dump_println!(
+            dump_writeln!(
+                out,
                 indent,
                 "Meta3: {} bytes",
                 self.meta3.as_ref().map(|v| v.len()).unwrap_or(0)
             );
-            dump_println!(
+            dump_writeln!(
+                out,
                 indent,
                 "Meta4: {} bytes",
                 self.meta4.as_ref().map(|v| v.len()).unwrap_or(0)
             );
-            self.thumbnail.print_dump(indent);
+            self.thumbnail.write_dump(out, indent);
         }
-        dump_println!(indent, "</CRaw header>");
+        dump_writeln!(out, indent, "</CRaw header>");
     }
 }
 
 impl Dump for Container {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(
+            out,
             indent,
             "<MP4 Iso Container @{}>",
             self.view.borrow().offset()
@@ -383,14 +392,15 @@ impl Dump for Container {
         {
             let indent = indent + 1;
             if let Ok(craw_header) = self.craw_header() {
-                craw_header.print_dump(indent);
+                craw_header.write_dump(out, indent);
             } else {
-                dump_println!(indent, "ERROR: Craw Header not found");
+                dump_writeln!(out, indent, "ERROR: Craw Header not found");
             }
             if let Ok(preview_desc) = self.preview_desc() {
                 // XXX get the data_type
                 // XXX shall the be ThumbDesc impl ?
-                dump_println!(
+                dump_writeln!(
+                    out,
                     indent,
                     "<Preview {} x {}, JPEG {} bytes>",
                     preview_desc.width,
@@ -406,26 +416,32 @@ impl Dump for Container {
                                     Viewer::create_subview(&self.borrow_view_mut(), offset.offset)
                                 {
                                     let jpeg = jpeg::Container::new(view, self.raw_type);
-                                    jpeg.print_dump(indent);
+                                    jpeg.write_dump(out, indent);
                                 } else {
-                                    dump_println!(indent, "Error loading preview");
+                                    dump_writeln!(out, indent, "Error loading preview");
                                 }
                             } else {
-                                dump_println!(indent, "Not JPEG");
+                                dump_writeln!(out, indent, "Not JPEG");
                             }
                         }
-                        _ => dump_println!(indent, "Inline data {} bytes", preview_desc.data.len()),
+                        _ => dump_writeln!(
+                            out,
+                            indent,
+                            "Inline data {} bytes",
+                            preview_desc.data.len()
+                        ),
                     }
                 }
-                dump_println!(indent, "</Preview>");
+                dump_writeln!(out, indent, "</Preview>");
             }
 
             let track_count = self.track_count().unwrap_or(0);
-            dump_println!(indent, "Track count: {}", track_count);
+            dump_writeln!(out, indent, "Track count: {}", track_count);
 
             for i in 0..track_count {
                 let is_video = self.is_track_video(i).unwrap_or(false);
-                dump_println!(
+                dump_writeln!(
+                    out,
                     indent,
                     "<Track {}: {}>",
                     i,
@@ -443,23 +459,23 @@ impl Dump for Container {
                     let indent = indent + 1;
 
                     if let Ok(raw_track) = self.raw_track(i) {
-                        raw_track.print_dump(indent);
+                        raw_track.write_dump(out, indent);
                     }
                 }
-                dump_println!(indent, "</Track {}>", i);
+                dump_writeln!(out, indent, "</Track {}>", i);
             }
 
             for i in 0..4 {
-                dump_println!(indent, "<Metadata Block {}>", i);
+                dump_writeln!(out, indent, "<Metadata Block {}>", i);
                 {
                     let indent = indent + 1;
                     if let Some(holder) = self.metadata_block(i) {
-                        holder.1.print_dump(indent);
+                        holder.1.write_dump(out, indent);
                     }
                 }
-                dump_println!(indent, "</Metadata Block {}>", i);
+                dump_writeln!(out, indent, "</Metadata Block {}>", i);
             }
         }
-        dump_println!(indent, "</MP4 Iso Container>");
+        dump_writeln!(out, indent, "</MP4 Iso Container>");
     }
 }

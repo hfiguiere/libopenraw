@@ -58,6 +58,6 @@ fn process_file(p: &str) {
     if let Ok(rawfile) = rawfile_from_file(p, None) {
         log::info!("Dumping raw file {}", p);
 
-        rawfile.print_dump(0);
+        rawfile.dump_file(&mut std::io::stdout());
     }
 }

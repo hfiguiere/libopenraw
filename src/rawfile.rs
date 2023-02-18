@@ -26,7 +26,7 @@ use std::rc::Rc;
 
 use log::{debug, error};
 
-use super::{Dump, Error, RawData, Result, Type, TypeId};
+use super::{Error, RawData, Result, Type, TypeId};
 use crate::container::RawContainer;
 use crate::factory;
 use crate::identify;
@@ -149,7 +149,7 @@ pub fn rawfile_from_io(
 
 /// Standard trait for RAW files.
 /// Mostly using the default implementation
-pub trait RawFile: RawFileImpl + Dump {
+pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
     /// Return the type for the RAW file
     fn type_(&self) -> Type;
 
@@ -311,7 +311,7 @@ mod test {
 
     impl Dump for TestContainer {
         #[cfg(feature = "dump")]
-        fn print_dump(&self, _indent: u32) {}
+        fn write_dump<W: std::io::Write + ?Sized>(&self, _out: &mut W, _indent: u32) {}
     }
 
     struct TestRawFile {
@@ -400,8 +400,10 @@ mod test {
 
     impl Dump for TestRawFile {
         #[cfg(feature = "dump")]
-        fn print_dump(&self, _indent: u32) {}
+        fn write_dump<W: std::io::Write + ?Sized>(&self, _out: &mut W, _indent: u32) {}
     }
+
+    dumpfile_impl!(TestRawFile);
 
     #[test]
     fn test_thumbnail() {

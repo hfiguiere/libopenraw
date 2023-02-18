@@ -2,7 +2,7 @@
 /*
  * libopenraw - epson.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -212,12 +212,15 @@ impl RawFile for ErfFile {
 
 impl Dump for ErfFile {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<Epson ERF File>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<Epson ERF File>");
         {
             let indent = indent + 1;
-            self.container().print_dump(indent);
+            self.container();
+            self.container.get().unwrap().write_dump(out, indent);
         }
-        dump_println!(indent, "</Epson ERF File>");
+        dump_writeln!(out, indent, "</Epson ERF File>");
     }
 }
+
+dumpfile_impl!(ErfFile);

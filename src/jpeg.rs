@@ -127,12 +127,15 @@ impl RawFile for JpegFile {
 
 impl Dump for JpegFile {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<JPEG File>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<JPEG File>");
         {
             let indent = indent + 1;
-            self.container().print_dump(indent);
+            self.container();
+            self.container.get().unwrap().write_dump(out, indent);
         }
-        dump_println!(indent, "</JPEG File>");
+        dump_writeln!(out, indent, "</JPEG File>");
     }
 }
+
+dumpfile_impl!(JpegFile);

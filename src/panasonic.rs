@@ -1066,12 +1066,18 @@ impl RawFile for Rw2File {
 
 impl Dump for Rw2File {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<Panasonic RW2 File>");
+    fn write_dump<W>(&self, out: &mut W, indent: u32)
+    where
+        W: std::io::Write + ?Sized,
+    {
+        dump_writeln!(out, indent, "<Panasonic RW2 File>");
         {
             let indent = indent + 1;
-            self.container().print_dump(indent);
+            self.container();
+            self.container.get().unwrap().write_dump(out, indent);
         }
-        dump_println!(indent, "</Panasonic RW2 File>");
+        dump_writeln!(out, indent, "</Panasonic RW2 File>");
     }
 }
+
+dumpfile_impl!(Rw2File);

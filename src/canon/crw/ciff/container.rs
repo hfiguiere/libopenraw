@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/crw/ciff/container.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -237,17 +237,17 @@ impl Container {
 
 impl Dump for Container {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<CIFF Container>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<CIFF Container>");
         {
             let indent = indent + 1;
 
             let header = self.header();
-            header.print_dump(indent);
+            header.write_dump(out, indent);
 
             let heap = self.heap();
-            heap.print_dump(indent, self);
+            heap.write_dump(out, indent, self);
         }
-        dump_println!(indent, "</CIFF Container>");
+        dump_writeln!(out, indent, "</CIFF Container>");
     }
 }

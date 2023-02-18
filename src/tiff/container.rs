@@ -300,9 +300,13 @@ impl Container {
 
 impl Dump for Container {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
+    fn write_dump<W>(&self, out: &mut W, indent: u32)
+    where
+        W: std::io::Write + ?Sized,
+    {
         let dirs = self.dirs();
-        dump_println!(
+        dump_writeln!(
+            out,
             indent,
             "<TIFF Container endian={} {} directories @{}>",
             match self.endian() {
@@ -316,20 +320,20 @@ impl Dump for Container {
         {
             let indent = indent + 1;
             for dir in dirs {
-                dir.print_dump(indent);
+                dir.write_dump(out, indent);
                 if let Some(exif_dir) = dir.get_exif_ifd(self) {
-                    exif_dir.print_dump(indent + 1);
+                    exif_dir.write_dump(out, indent + 1);
                     if let Some(mnote_dir) = exif_dir.get_mnote_ifd(self) {
-                        mnote_dir.print_dump(indent + 2);
+                        mnote_dir.write_dump(out, indent + 2);
                     }
                 }
                 if let Some(subdirs) = dir.get_sub_ifds(self) {
                     for subdir in subdirs {
-                        subdir.print_dump(indent + 1);
+                        subdir.write_dump(out, indent + 1);
                     }
                 }
             }
         }
-        dump_println!(indent, "</TIFF Container>");
+        dump_writeln!(out, indent, "</TIFF Container>");
     }
 }

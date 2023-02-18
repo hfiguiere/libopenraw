@@ -283,9 +283,15 @@ impl RecordEntry {
     }
 
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32, container: &Container) {
+    fn write_dump<W: std::io::Write + ?Sized>(
+        &self,
+        out: &mut W,
+        indent: u32,
+        container: &Container,
+    ) {
         let type_ = self.type_();
-        dump_println!(
+        dump_writeln!(
+            out,
             indent,
             "<Record '{:?}' = 0x{:x}, type: {:?}>",
             self.type_code,
@@ -296,7 +302,7 @@ impl RecordEntry {
             let indent = indent + 1;
             match self.data {
                 Record::InHeap((pos, len)) => {
-                    dump_println!(indent, "In heap at {}, {} bytes", pos, len);
+                    dump_writeln!(out, indent, "In heap at {}, {} bytes", pos, len);
                     match type_ {
                         RecordType::Ascii => {
                             let mut s = vec![0; len as usize];
@@ -308,7 +314,7 @@ impl RecordEntry {
                                     for s in s.split(|b| *b == 0) {
                                         let s = utils::from_maybe_nul_terminated(s);
                                         if !s.is_empty() {
-                                            dump_println!(indent, "'{}'", s);
+                                            dump_writeln!(out, indent, "'{}'", s);
                                         }
                                     }
                                 });
@@ -320,7 +326,7 @@ impl RecordEntry {
                                 let _ = view
                                     .read_endian_u16_array(&mut values, container.endian())
                                     .map(|_| {
-                                        dump_println!(indent, "{:?}", values);
+                                        dump_writeln!(out, indent, "{:?}", values);
                                     });
                             }
                         }
@@ -331,7 +337,7 @@ impl RecordEntry {
                                 let _ = view
                                     .read_endian_u32_array(&mut values, container.endian())
                                     .map(|_| {
-                                        dump_println!(indent, "{:?}", values);
+                                        dump_writeln!(out, indent, "{:?}", values);
                                     });
                             }
                         }
@@ -342,22 +348,22 @@ impl RecordEntry {
                             // Can't map directly the result because
                             // of the borrow_view_mut()
                             if result.is_ok() {
-                                heap.print_dump(indent, container);
+                                heap.write_dump(out, indent, container);
                             };
                         }
                         _ => {
                             if let Some(count) = self.count() {
-                                dump_println!(indent, "Count: {}", count);
+                                dump_writeln!(out, indent, "Count: {}", count);
                             }
                         }
                     }
                 }
                 Record::InRec(d) => {
-                    dump_println!(indent, "In record");
+                    dump_writeln!(out, indent, "In record");
                     match type_ {
                         RecordType::Ascii => {
                             let s = utils::from_maybe_nul_terminated(&d);
-                            dump_println!(indent, "'{}'", s);
+                            dump_writeln!(out, indent, "'{}'", s);
                         }
                         RecordType::Word => {
                             let mut io = std::io::Cursor::new(d);
@@ -375,7 +381,7 @@ impl RecordEntry {
                                     values.push(v);
                                 });
                             }
-                            dump_println!(indent, "{:?}", values);
+                            dump_writeln!(out, indent, "{:?}", values);
                         }
                         RecordType::DWord => {
                             let mut io = std::io::Cursor::new(d);
@@ -393,15 +399,17 @@ impl RecordEntry {
                                     values.push(v);
                                 });
                             }
-                            dump_println!(indent, "{:?}", values);
+                            dump_writeln!(out, indent, "{:?}", values);
                         }
-                        RecordType::Byte | RecordType::Byte2 => dump_println!(indent, "{:?}", d),
+                        RecordType::Byte | RecordType::Byte2 => {
+                            dump_writeln!(out, indent, "{:?}", d)
+                        }
                         _ => {}
                     }
                 }
             }
         }
-        dump_println!(indent, "</Record>");
+        dump_writeln!(out, indent, "</Record>");
     }
 }
 
@@ -460,16 +468,21 @@ impl Heap {
     }
 
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32, container: &Container) {
-        dump_println!(indent, "<HEAP pos={} len={}>", self.pos, self.len);
+    fn write_dump<W: std::io::Write + ?Sized>(
+        &self,
+        out: &mut W,
+        indent: u32,
+        container: &Container,
+    ) {
+        dump_writeln!(out, indent, "<HEAP pos={} len={}>", self.pos, self.len);
         {
             let indent = indent + 1;
-            dump_println!(indent, "Num records: {}", self.records.len());
+            dump_writeln!(out, indent, "Num records: {}", self.records.len());
             for record in self.records().values() {
-                record.print_dump(indent, container);
+                record.write_dump(out, indent, container);
             }
         }
-        dump_println!(indent, "</HEAP");
+        dump_writeln!(out, indent, "</HEAP");
     }
 }
 
@@ -513,25 +526,32 @@ impl HeapFileHeader {
 
 impl Dump for HeapFileHeader {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<Header>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<Header>");
         {
             let indent = indent + 1;
-            dump_println!(indent, "Endian: {:?}", self.endian);
-            dump_println!(indent, "Len: {}", self.len);
-            dump_println!(indent, "Type: {:?}", String::from_utf8_lossy(&self.type_));
-            dump_println!(
+            dump_writeln!(out, indent, "Endian: {:?}", self.endian);
+            dump_writeln!(out, indent, "Len: {}", self.len);
+            dump_writeln!(
+                out,
+                indent,
+                "Type: {:?}",
+                String::from_utf8_lossy(&self.type_)
+            );
+            dump_writeln!(
+                out,
                 indent,
                 "Subtype: {:?}",
                 String::from_utf8_lossy(&self.sub_type)
             );
-            dump_println!(
+            dump_writeln!(
+                out,
                 indent,
                 "Version: 0x{:0>4x} 0x{:0>4x}",
                 (self.version & 0xffff0000) >> 16,
                 self.version & 0x0000ffff
             );
         }
-        dump_println!(indent, "</Header>");
+        dump_writeln!(out, indent, "</Header>");
     }
 }

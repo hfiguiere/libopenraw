@@ -478,9 +478,12 @@ impl RawFile for RafFile {
 
 impl Dump for RafFile {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<Fujifilm RAF File>");
-        self.container().print_dump(indent + 1);
-        dump_println!(indent, "</Fujfilm RAF File>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<Fujifilm RAF File>");
+        self.container();
+        self.container.get().unwrap().write_dump(out, indent + 1);
+        dump_writeln!(out, indent, "</Fujfilm RAF File>");
     }
 }
+
+dumpfile_impl!(RafFile);

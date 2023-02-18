@@ -2,7 +2,7 @@
 /*
  * libopenraw - olympus.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -454,12 +454,15 @@ impl RawFile for OrfFile {
 
 impl Dump for OrfFile {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<Olympus ORF File>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<Olympus ORF File>");
         {
             let indent = indent + 1;
-            self.container().print_dump(indent);
+            self.container();
+            self.container.get().unwrap().write_dump(out, indent);
         }
-        dump_println!(indent, "</Olympus ORF File>");
+        dump_writeln!(out, indent, "</Olympus ORF File>");
     }
 }
+
+dumpfile_impl!(OrfFile);

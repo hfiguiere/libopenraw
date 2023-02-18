@@ -332,12 +332,15 @@ impl RawFile for DngFile {
 
 impl Dump for DngFile {
     #[cfg(feature = "dump")]
-    fn print_dump(&self, indent: u32) {
-        dump_println!(indent, "<DNG File>");
+    fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
+        dump_writeln!(out, indent, "<DNG File>");
         {
             let indent = indent + 1;
-            self.container().print_dump(indent);
+            self.container();
+            self.container.get().unwrap().write_dump(out, indent);
         }
-        dump_println!(indent, "</DNG File>");
+        dump_writeln!(out, indent, "</DNG File>");
     }
 }
+
+dumpfile_impl!(DngFile);
