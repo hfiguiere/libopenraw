@@ -98,13 +98,13 @@ mod test {
         let decoder = HuffmanDecoder::new(&LOSSY_12BIT);
         let mut bitreader = bitreader::BitReader::new(&bits);
 
-        assert_eq!(decoder.decode(&mut bitreader), Ok(5));
-        assert_eq!(decoder.decode(&mut bitreader), Ok(4));
-        assert_eq!(decoder.decode(&mut bitreader), Ok(3));
-        assert_eq!(decoder.decode(&mut bitreader), Ok(6));
-        assert_eq!(decoder.decode(&mut bitreader), Ok(2));
-        assert_eq!(decoder.decode(&mut bitreader), Ok(7));
-        assert_eq!(decoder.decode(&mut bitreader), Ok(3));
-        assert_eq!(decoder.decode(&mut bitreader), Ok(6));
+        assert!(matches!(decoder.decode(&mut bitreader), Ok(5)));
+        assert!(matches!(decoder.decode(&mut bitreader), Ok(4)));
+        assert!(matches!(decoder.decode(&mut bitreader), Ok(3)));
+        assert!(matches!(decoder.decode(&mut bitreader), Ok(6)));
+        assert!(matches!(decoder.decode(&mut bitreader), Ok(2)));
+        assert!(matches!(decoder.decode(&mut bitreader), Ok(7)));
+        assert!(matches!(decoder.decode(&mut bitreader), Ok(3)));
+        assert!(matches!(decoder.decode(&mut bitreader), Ok(6)));
     }
 }

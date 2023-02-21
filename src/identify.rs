@@ -126,25 +126,25 @@ mod test {
         use std::io::Cursor;
 
         let mut four_bytes = Cursor::new([0_u8; 4].as_slice());
-        assert_eq!(
+        assert!(matches!(
             type_for_content(&mut four_bytes),
             Err(Error::BufferTooSmall)
-        );
+        ));
 
         // Canon
         let mut crw = Cursor::new(include_bytes!("../testdata/identify/content_crw").as_slice());
-        assert_eq!(type_for_content(&mut crw), Ok(Some(Type::Crw)));
+        assert!(matches!(type_for_content(&mut crw), Ok(Some(Type::Crw))));
 
         let mut cr2 = Cursor::new(include_bytes!("../testdata/identify/content_cr2").as_slice());
-        assert_eq!(type_for_content(&mut cr2), Ok(Some(Type::Cr2)));
+        assert!(matches!(type_for_content(&mut cr2), Ok(Some(Type::Cr2))));
 
         let mut cr3 = Cursor::new(include_bytes!("../testdata/identify/content_cr3").as_slice());
-        assert_eq!(type_for_content(&mut cr3), Ok(Some(Type::Cr3)));
+        assert!(matches!(type_for_content(&mut cr3), Ok(Some(Type::Cr3))));
 
         let mut mrw = Cursor::new(include_bytes!("../testdata/identify/content_mrw").as_slice());
-        assert_eq!(type_for_content(&mut mrw), Ok(Some(Type::Mrw)));
+        assert!(matches!(type_for_content(&mut mrw), Ok(Some(Type::Mrw))));
 
         let mut raf = Cursor::new(include_bytes!("../testdata/identify/content_raf").as_slice());
-        assert_eq!(type_for_content(&mut raf), Ok(Some(Type::Raf)));
+        assert!(matches!(type_for_content(&mut raf), Ok(Some(Type::Raf))));
     }
 }

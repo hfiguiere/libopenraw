@@ -565,19 +565,19 @@ mod test {
 
         let mut e = Entry::new(0, TagType::Ascii as i16, 8, [4, 0, 0, 0]);
         let r = e.load_data::<LittleEndian>(0, &mut view);
-        assert_eq!(r, Ok(8));
+        assert!(matches!(r, Ok(8)));
         assert_eq!(
             e.value::<String, LittleEndian>(),
             Some(String::from("edfgijkl"))
         );
         // Trying to load again should fail.
         let r = e.load_data::<LittleEndian>(0, &mut view);
-        assert_eq!(r, Err(Error::AlreadyInited));
+        assert!(matches!(r, Err(Error::AlreadyInited)));
 
         // Big endian
         let mut e = Entry::new(0, TagType::Ascii as i16, 8, [0, 0, 0, 4]);
         let r = e.load_data::<BigEndian>(0, &mut view);
-        assert_eq!(r, Ok(8));
+        assert!(matches!(r, Ok(8)));
         assert_eq!(
             e.value::<String, BigEndian>(),
             Some(String::from("edfgijkl"))

@@ -72,82 +72,55 @@ pub use rawfile::rawfile_from_io;
 /// Standard Result for libopenraw
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// Standard Error for libopenraw
-#[derive(Debug, PartialEq)]
+/// Standard `Error` for libopenraw
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
     /// File format is unrecognized
+    #[error("Unrecognized format")]
     UnrecognizedFormat,
     /// Not supported
+    #[error("Operation not supported")]
     NotSupported,
     /// Not found in file
+    #[error("Data not found")]
     NotFound,
     /// Buffer too small: we expect a bigger amount of data
+    #[error("Buffer is too small")]
     BufferTooSmall,
-    /// Unextepected end of file
+    /// Unexpected end of file
+    #[error("Unexpected end-of-file")]
     UnexpectedEOF,
     /// IO Error
-    IoError(String),
+    #[error("IO Error: {0}")]
+    IoError(#[from] std::io::Error),
     /// Error parsing format
+    #[error("Format error")]
     FormatError,
     /// Already inited
+    #[error("Already Inited")]
     AlreadyInited,
     /// Invalid parameter
+    #[error("Invalid parameter")]
     InvalidParam,
     /// Invalid format: wrong kind of data found
+    #[error("Invalid format")]
     InvalidFormat,
     /// Decompression error.
+    #[error("Decompression error: {0}")]
     Decompression(String),
-    /// MP4 parse error. Can't use native error as it doesn't do `PartialEq`
-    Mp4Parse(String),
+    /// MP4 parse error
+    #[error("MP4 Parse Error: {0}")]
+    Mp4Parse(#[from] mp4parse::Error),
     /// Jpeg decompress
+    #[error("JPEG error: {0}")]
     JpegFormat(String),
     /// Bit reader error.
-    BitReaderError(bitreader::BitReaderError),
+    #[error("BitReader error: {0}")]
+    BitReaderError(#[from] bitreader::BitReaderError),
     /// Unknown error: placeholder for anything else.
+    #[error("Unknown error")]
     Unknown,
 }
-
-impl From<std::io::Error> for Error {
-    fn from(err: std::io::Error) -> Error {
-        Error::IoError(err.to_string())
-    }
-}
-
-impl From<bitreader::BitReaderError> for Error {
-    fn from(err: bitreader::BitReaderError) -> Error {
-        Error::BitReaderError(err)
-    }
-}
-
-impl From<mp4parse::Error> for Error {
-    fn from(err: mp4parse::Error) -> Error {
-        Error::Mp4Parse(err.to_string())
-    }
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match *self {
-            Self::UnrecognizedFormat => write!(f, "Unrecognized format"),
-            Self::NotSupported => write!(f, "Operation not supported"),
-            Self::NotFound => write!(f, "Data not found"),
-            Self::BufferTooSmall => write!(f, "Buffer is too small"),
-            Self::UnexpectedEOF => write!(f, "Unexpected end-of-file"),
-            Self::IoError(ref err) => write!(f, "IO Error: {err}"),
-            Self::FormatError => write!(f, "Format error"),
-            Self::AlreadyInited => write!(f, "Already Inited"),
-            Self::InvalidParam => write!(f, "Invalid parameter"),
-            Self::InvalidFormat => write!(f, "Invalid format"),
-            Self::Decompression(ref reason) => write!(f, "Decompression error: {reason}"),
-            Self::Mp4Parse(ref err) => write!(f, "MP4 Parse Error: {err}"),
-            Self::JpegFormat(ref err) => write!(f, "JPEG error: {err}"),
-            Self::BitReaderError(ref err) => write!(f, "BitReader error: {err}"),
-            Self::Unknown => write!(f, "Unknown error"),
-        }
-    }
-}
-
-impl std::error::Error for Error {}
 
 /// What type is the data.
 ///

@@ -265,7 +265,7 @@ mod test {
             tiff::Compression::NikonPack,
         );
 
-        assert_eq!(result, Ok(20));
+        assert!(matches!(result, Ok(20)));
         for i in 0..2 {
             assert_eq!(unpacked[10 * i], 0x0123);
             assert_eq!(unpacked[10 * i + 1], 0x0456);
@@ -288,7 +288,7 @@ mod test {
 
         let result = unpack_be12to16(packed.as_slice(), &mut unpacked, tiff::Compression::None);
 
-        assert_eq!(result, Ok(2));
+        assert!(matches!(result, Ok(2)));
         assert_eq!(unpacked[0], 0x0123);
         assert_eq!(unpacked[1], 0x0456);
     }
@@ -308,7 +308,7 @@ mod test {
         let mut unpacked: Vec<u16> = Vec::with_capacity(4);
 
         let result = unpack_bento16(buf.as_slice(), 14, 4, &mut unpacked);
-        assert_eq!(result, Ok(4));
+        assert!(matches!(result, Ok(4)));
         assert_eq!(unpacked[0], 0b0011_1111_1111_1111);
         assert_eq!(unpacked[1], 0b0000_0000_0000_0000);
         assert_eq!(unpacked[2], 0b0011_1111_1111_1111);

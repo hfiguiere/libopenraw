@@ -1228,27 +1228,27 @@ mod test {
         assert_eq!(br.buffer, 0);
         assert_eq!(br.bits_left, 0);
 
-        assert_eq!(br.show_bits8(&mut io), Ok(0b1010_1010));
+        assert!(matches!(br.show_bits8(&mut io), Ok(0b1010_1010)));
         assert_eq!(br.bits_left, 32);
         assert_eq!(br.buffer, 0b1010_1010_0101_0101_1101_1011_0011_0011);
-        assert_eq!(br.show_bits8(&mut io), Ok(0b1010_1010));
+        assert!(matches!(br.show_bits8(&mut io), Ok(0b1010_1010)));
 
         assert_eq!(br.discard_bits(), 4);
         // this doesn't clear the buffer
         assert_eq!(br.bits_left, 0);
 
-        assert_eq!(br.fill_bit_buffer(&mut io, 8), Ok(()));
+        assert!(matches!(br.fill_bit_buffer(&mut io, 8), Ok(())));
         assert_eq!(br.bits_left, 32);
         assert_eq!(br.buffer, 0b1010_1010_0101_0101_1101_1011_0011_0011);
-        assert_eq!(br.show_bits8(&mut io), Ok(0b1010_1010));
+        assert!(matches!(br.show_bits8(&mut io), Ok(0b1010_1010)));
 
-        assert_eq!(br.get_bits(&mut io, 8), Ok(0b1010_1010));
+        assert!(matches!(br.get_bits(&mut io, 8), Ok(0b1010_1010)));
         assert_eq!(br.bits_left, 24);
         assert_eq!(br.buffer, 0b1010_1010_0101_0101_1101_1011_0011_0011);
 
-        assert_eq!(br.get_bit(&mut io), Ok(0));
+        assert!(matches!(br.get_bit(&mut io), Ok(0)));
         assert_eq!(br.bits_left, 23);
-        assert_eq!(br.get_bit(&mut io), Ok(1));
+        assert!(matches!(br.get_bit(&mut io), Ok(1)));
         assert_eq!(br.bits_left, 22);
 
         // XXX test fill_bit_buffer encountering 0xff
