@@ -341,6 +341,7 @@ impl ToString for SRational {
 
 /// Exif photometric interpretation
 #[repr(u16)]
+#[derive(Debug)]
 pub enum PhotometricInterpretation {
     BlackIsZero = 1,
     Rgb = 2,

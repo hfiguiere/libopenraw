@@ -34,7 +34,18 @@ enum Data {
     Tiled((Vec<Vec<u8>>, (u32, u32))),
 }
 
+impl std::fmt::Debug for Data {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        f.write_str(&match *self {
+            Self::Data8(ref v) => format!("Data(Data8([{}]))", v.len()),
+            Self::Data16(ref v) => format!("Data(Data16([{}]))", v.len()),
+            Self::Tiled((ref v, sz)) => format!("Data(Tiled([{}], {:?}))", v.len(), sz),
+        })
+    }
+}
+
 /// RAW Data extracted from the file.
+#[derive(Debug)]
 pub struct RawData {
     /// Thumbnail width
     width: u32,
