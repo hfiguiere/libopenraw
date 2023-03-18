@@ -2,8 +2,19 @@ libopenraw 0.3.5 -
 
 New features:
 
+  - The Rust crates are vendored for the tarball. Note: resulting
+    tarball is bigger.
+
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Added coefficients for Canon R8* and R50*.
+  - Added coefficients for Panasonic S5M2*.
+
+Bug fixes:
+
+  - Fix a missing include with gcc 13. Issue #12.
+    https://gitlab.freedesktop.org/libopenraw/libopenraw/-/issues/12
 
 libopenraw 0.3.4 - 2023/02/13
 
@@ -13,7 +24,7 @@ New features:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
   - Added Canon R8 and R50.
-  - Added Fujifilm G95D* and S5M2.
+  - Added Panasonic G95D* and S5M2.
 
 Bug fixes:
 
