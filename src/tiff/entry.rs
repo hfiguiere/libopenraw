@@ -133,6 +133,12 @@ impl Entry {
             DataBytes::Offset(offset) => offset,
             _ => E::read_u32(self.data.as_slice()),
         } + base_offset) as u64;
+
+        self.load_data_impl_(offset, view)
+    }
+
+    /// monomorphic implementation of load_data_impl<E>
+    fn load_data_impl_(&self, offset: u64, view: &mut View) -> Result<Vec<u8>> {
         let tag_type = TagType::try_from(self.type_).unwrap_or(TagType::Invalid);
         let data_size = exif::tag_unit_size(tag_type) * self.count as usize;
         debug!("Loading data at {}: {} bytes", offset, data_size);
