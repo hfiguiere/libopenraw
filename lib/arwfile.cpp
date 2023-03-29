@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.cpp
  *
- * Copyright (C) 2006-2022 Hubert Figuière
+ * Copyright (C) 2006-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -133,6 +133,7 @@ static const ModelIdMap modelid_map = {
     { 387, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7RM4A) },
     { 388, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7M4) },
     { 390, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7RM5) },
+    { 393, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZVE1) },
 };
 
 /* taken from dcraw, by default */
@@ -592,6 +593,7 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { "ILCE-9M2", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE9M2) },
     { "ILCE-QX1", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCEQX1) },
     { "ZV-1", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZV1) },
+    { "ZV-E1", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZVE1) },
     { "ZV-E10", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZVE10) },
 
     { "Lunar", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_HASSELBLAD,
