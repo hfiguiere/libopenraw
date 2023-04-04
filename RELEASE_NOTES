@@ -2,6 +2,7 @@ What's (visibly) new in 0.3.5
 =============================
 
 - Added coefficients for 3 cameras.
+- 1 new camera listed.
 - The tarball contain the Rust crates and can be built offline.
 - Fix a build issue with recent compilers. Issue #12.
 
