@@ -35,7 +35,7 @@ impl TiledLJpeg {
         TiledLJpeg {}
     }
 
-    /// Combine tiles into the final buffer.
+    /// Combine tiles into the final buffer. `width` and `height` are the final dimensions.
     fn combine_tiles(width: usize, height: usize, tiles: &[Option<Tile>]) -> Vec<u16> {
         let data_size = width * height;
         let mut buffer = uninit_vec!(data_size);
@@ -46,14 +46,23 @@ impl TiledLJpeg {
         let buf_slice = buffer.as_mut_slice();
         for tile in tiles {
             if tile.is_none() {
+                log::error!("tile is none");
                 continue;
             }
             let tile = tile.as_ref().unwrap();
+            // Edge tiles might be wider than necessary, ie width
+            // isn't a multiple of the image width.
+            let row_len = std::cmp::min(tile.width as usize, width - first_col);
             for r in 0..tile.height as usize {
+                if first_row + r >= height {
+                    // We are past the last row. This is because the
+                    // tiles aren't necessarily a multiple of the
+                    // image size. Mostly in DNG converted.
+                    break;
+                }
                 let pos = (first_row + r) * width + first_col;
                 let tile_pos = r * tile.width as usize;
-                buf_slice[pos..pos + tile.u_width as usize]
-                    .copy_from_slice(&tile.buf[tile_pos..tile_pos + tile.u_width as usize]);
+                buf_slice[pos..][..row_len].copy_from_slice(&tile.buf[tile_pos..][..row_len]);
             }
             first_col += tile.u_width as usize;
             if first_col >= width {
