@@ -227,6 +227,8 @@ pub(super) const TAG_IMG_HEIGHT_WIDTH: u16 = 0x111;
 const TAG_OUTPUT_HEIGHT_WIDTH: u16 = 0x121;
 /// some info about the RAW.
 pub(super) const TAG_RAW_INFO: u16 = 0x130;
+/// Colour Filter Array pattern
+pub(super) const TAG_CFA_PATTERN: u16 = 0x131;
 
 lazy_static::lazy_static! {
     static ref META_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
@@ -235,6 +237,7 @@ lazy_static::lazy_static! {
         (TAG_IMG_HEIGHT_WIDTH, "ImageHeightWidth"),
         (TAG_OUTPUT_HEIGHT_WIDTH, "OutputHeightWidth"),
         (TAG_RAW_INFO, "RawInfo"),
+        (TAG_CFA_PATTERN, "CfaPattern"),
     ]);
 }
 
@@ -247,8 +250,14 @@ pub(super) enum Value {
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Int(n) => write!(f, "{n:x}"),
-            Self::Bytes(b) => write!(f, "bytes len={}", b.len()),
+            Self::Int(n) => write!(f, "0x{n:x}"),
+            Self::Bytes(b) => {
+                if b.len() > 36 {
+                    write!(f, "bytes len={}", b.len())
+                } else {
+                    write!(f, "bytes {b:?} len={}", b.len())
+                }
+            }
         }
     }
 }

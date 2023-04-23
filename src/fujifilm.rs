@@ -35,7 +35,7 @@ use crate::camera_ids::{fujifilm, vendor};
 use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
-use crate::mosaic::{Pattern, PatternColour as PatC};
+use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::thumbnail::{Data, DataOffset};
@@ -200,16 +200,6 @@ lazy_static::lazy_static! {
     ]);
 }
 
-#[rustfmt::skip]
-const XTRANS_PATTERN: [PatC; 36] = [
-  PatC::Red,   PatC::Blue,  PatC::Green, PatC::Blue,  PatC::Red,   PatC::Green,
-  PatC::Green, PatC::Green, PatC::Red,   PatC::Green, PatC::Green, PatC::Blue,
-  PatC::Green, PatC::Green, PatC::Blue,  PatC::Green, PatC::Green, PatC::Red,
-  PatC::Blue,  PatC::Red,   PatC::Green, PatC::Red,   PatC::Blue,  PatC::Green,
-  PatC::Green, PatC::Green, PatC::Blue,  PatC::Green, PatC::Green, PatC::Red,
-  PatC::Green, PatC::Green, PatC::Red,   PatC::Green, PatC::Green, PatC::Blue
-];
-
 pub(crate) struct RafFile {
     reader: Rc<Viewer>,
     container: OnceCell<raf::RafContainer>,
@@ -224,43 +214,6 @@ impl RafFile {
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
         })
-    }
-
-    fn is_xtrans(&self) -> bool {
-        match self.type_id() {
-            TypeId(vendor::FUJIFILM, fujifilm::XPRO1) |
-            TypeId(vendor::FUJIFILM, fujifilm::XPRO2) |
-            TypeId(vendor::FUJIFILM, fujifilm::XPRO3) |
-            TypeId(vendor::FUJIFILM, fujifilm::XE1) |
-            TypeId(vendor::FUJIFILM, fujifilm::XE2) |
-            TypeId(vendor::FUJIFILM, fujifilm::XE2S) |
-            TypeId(vendor::FUJIFILM, fujifilm::XE3) |
-            TypeId(vendor::FUJIFILM, fujifilm::XE4) |
-            TypeId(vendor::FUJIFILM, fujifilm::XH1) |
-//            TypeId(vendor::FUJIFILM, fujifilm::XH2) |
-//            TypeId(vendor::FUJIFILM, fujifilm::XH2S) |
-            TypeId(vendor::FUJIFILM, fujifilm::XM1) |
-            TypeId(vendor::FUJIFILM, fujifilm::XQ1) |
-            TypeId(vendor::FUJIFILM, fujifilm::XQ2) |
-            TypeId(vendor::FUJIFILM, fujifilm::XT1) |
-            TypeId(vendor::FUJIFILM, fujifilm::XT10) |
-            TypeId(vendor::FUJIFILM, fujifilm::XT2) |
-            TypeId(vendor::FUJIFILM, fujifilm::XT20) |
-            TypeId(vendor::FUJIFILM, fujifilm::XT3) |
-            TypeId(vendor::FUJIFILM, fujifilm::XT30) |
-            TypeId(vendor::FUJIFILM, fujifilm::XT30_II) |
-            TypeId(vendor::FUJIFILM, fujifilm::XT4) |
-//            TypeId(vendor::FUJIFILM, fujifilm::XT5) |
-            TypeId(vendor::FUJIFILM, fujifilm::X100S) |
-            TypeId(vendor::FUJIFILM, fujifilm::X100T) |
-            TypeId(vendor::FUJIFILM, fujifilm::X100F) |
-            TypeId(vendor::FUJIFILM, fujifilm::X100V) |
-            TypeId(vendor::FUJIFILM, fujifilm::X20) |
-            TypeId(vendor::FUJIFILM, fujifilm::X30) |
-            TypeId(vendor::FUJIFILM, fujifilm::X70) |
-            TypeId(vendor::FUJIFILM, fujifilm::XS10) => true,
-            _ => false,
-        }
     }
 }
 
@@ -406,6 +359,13 @@ impl RawFileImpl for RafFile {
                         }
                     })
                     .ok_or(Error::FormatError)?;
+
+                // It's an XTrans if there is a `TAG_CFA_PATTERN` and it has 36 elements.
+                let pattern = container.value(raf::TAG_CFA_PATTERN).and_then(|v| match v {
+                    raf::Value::Bytes(pattern) => Some(pattern),
+                    _ => None,
+                });
+
                 log::debug!("RAF raw props {:x}", raw_props);
                 // let layout = raw_props & 0xff000000 >> 24 >> 7;
                 let compressed = ((raw_props & 0xff0000) >> 18 & 8) != 0;
@@ -415,8 +375,18 @@ impl RawFileImpl for RafFile {
                 // XXX use a tiff container instead.
                 let cfa_offset = raw_container.cfa_offset() as u64 + 2048;
                 let cfa_len = raw_container.cfa_len() as u64 - 2048;
-                let mosaic = if self.is_xtrans() {
-                    Pattern::NonRgb22(XTRANS_PATTERN.into())
+
+                let mosaic = if let Some(pattern) = pattern {
+                    // In the RAF file the pattern is inverted.
+                    Pattern::try_from(
+                        pattern
+                            .iter()
+                            .rev()
+                            .copied()
+                            .collect::<Vec<u8>>()
+                            .as_slice(),
+                    )
+                    .map_err(|_| Error::FormatError)?
                 } else {
                     Pattern::Gbrg
                 };
