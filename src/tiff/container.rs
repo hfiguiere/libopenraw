@@ -176,12 +176,13 @@ impl Container {
                     dirs.push(Rc::new(dir));
                     index += 1;
                     if next_offset != 0 && next_offset <= dir_offset {
-                        error!("Trying to read dirs backwards");
-                        break;
+                        error!("Trying to read dirs backwards from {dir_offset} to {next_offset}");
+                        // We should be ok to deal with this. ARW for
+                        // DSLR-A550 and NEX-3 do that.
                     }
                     dir_offset = next_offset;
                 } else {
-                    error!("Endian couldn't read directory");
+                    error!("Couldn't read directory");
                     break;
                 }
             }
