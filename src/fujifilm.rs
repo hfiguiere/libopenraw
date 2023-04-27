@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 /*
- * libopenraw - fuji.rs
+ * libopenraw - fujifilm.rs
  *
  * Copyright (C) 2022-2023 Hubert Figuière
  *
@@ -366,16 +366,6 @@ impl RawFileImpl for RafFile {
                     _ => None,
                 });
 
-                log::debug!("RAF raw props {:x}", raw_props);
-                // let layout = raw_props & 0xff000000 >> 24 >> 7;
-                let compressed = ((raw_props & 0xff0000) >> 18 & 8) != 0;
-
-                // XXX the cfa is actually stored in a TIFF and 2048
-                // seems to be the value of the next_ifd.
-                // XXX use a tiff container instead.
-                let cfa_offset = raw_container.cfa_offset() as u64 + 2048;
-                let cfa_len = raw_container.cfa_len() as u64 - 2048;
-
                 let mosaic = if let Some(pattern) = pattern {
                     // In the RAF file the pattern is inverted.
                     Pattern::try_from(
@@ -390,12 +380,44 @@ impl RawFileImpl for RafFile {
                 } else {
                     Pattern::Gbrg
                 };
+
+                log::debug!("RAF raw props {:x}", raw_props);
+                // let layout = raw_props & 0xff000000 >> 24 >> 7;
+                let compressed = ((raw_props & 0xff0000) >> 18 & 8) != 0;
+                log::debug!("compressed {compressed}");
+
+                let mut cfa_offset: u64 = 0;
+                let mut cfa_len: u64 = 0;
+                let mut bps: u16 = 12;
+
+                if let Some(cfa_container) = raw_container.cfa_container() {
+                    if let Some(dir) = cfa_container
+                        .directory(0)
+                        .and_then(|dir| dir.ifd_in_entry(cfa_container, raf::FUJI_TAG_RAW_SUBIFD))
+                    {
+                        cfa_offset = dir
+                            .value::<u32>(raf::FUJI_TAG_RAW_OFFSET)
+                            .map(|v| v + raw_container.cfa_offset())
+                            .unwrap_or(0) as u64;
+                        cfa_len = dir.value::<u32>(raf::FUJI_TAG_RAW_BYTE_LEN).unwrap_or(0) as u64;
+                        bps = dir.value::<u32>(raf::FUJI_TAG_RAW_BPS).unwrap_or(0) as u16;
+                    }
+                } else {
+                    cfa_offset = raw_container.cfa_offset() as u64 + 2048;
+                    cfa_len = raw_container.cfa_len() as u64 - 2048;
+                    bps = if compressed { 12 } else { 16 };
+                }
+                // Invalid value.
+                if cfa_offset == 0 || cfa_len == 0 {
+                    return Err(Error::NotFound);
+                }
+
                 let mut rawdata = if !compressed {
                     let unpacked = decompress::unpack(
                         raw_container,
                         raw_size.width,
                         raw_size.height,
-                        12,
+                        bps,
                         tiff::Compression::None,
                         cfa_offset,
                         cfa_len as usize,
@@ -418,7 +440,7 @@ impl RawFileImpl for RafFile {
                     RawData::new8(
                         raw_size.width,
                         raw_size.height,
-                        16,
+                        bps,
                         DataType::CompressedRaw,
                         raw,
                         mosaic,

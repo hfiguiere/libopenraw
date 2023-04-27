@@ -15,6 +15,7 @@ use crate::container;
 use crate::container::RawContainer;
 use crate::io::{View, Viewer};
 use crate::jpeg;
+use crate::tiff;
 use crate::utils;
 use crate::Type as RawType;
 use crate::{Dump, Error, Result};
@@ -28,24 +29,32 @@ struct RafOffsetDirectory {
     meta_len: u32,
     cfa_offset: u32,
     cfa_len: u32,
+    extra_meta_offset: u32,
+    extra_meta_len: u32,
 }
 
 pub(super) struct RafContainer {
     view: RefCell<View>,
     model: String,
+    version: u32,
     offsets: RafOffsetDirectory,
     meta: OnceCell<Option<MetaContainer>>,
+    extra_meta: OnceCell<Option<MetaContainer>>,
     jpeg_preview: OnceCell<Option<jpeg::Container>>,
+    cfa: OnceCell<Option<tiff::Container>>,
 }
 
 impl RafContainer {
     pub fn new(view: View) -> Self {
         RafContainer {
             view: RefCell::new(view),
-            model: String::from(""),
+            model: String::default(),
+            version: 0,
             offsets: RafOffsetDirectory::default(),
             meta: OnceCell::new(),
+            extra_meta: OnceCell::new(),
             jpeg_preview: OnceCell::new(),
+            cfa: OnceCell::new(),
         }
     }
 
@@ -80,6 +89,13 @@ impl RafContainer {
     ///    | | cfa_offset: u32     | |
     ///    | | cfa_len: u32        | |
     ///    | +---------------------+ |
+    ///    | 12 bytes unknown (Skip) |
+    ///120 +-------------------------+
+    ///    | if jpeg_offset > 120    |
+    ///    | +---------------------+ |
+    ///    | | extra_offset: u32   | |
+    ///    | | extra_len: u32      | |
+    ///    | +---------------------+ |
     ///    +-------------------------+
     /// ```
     pub fn load(&mut self) -> Result<()> {
@@ -98,38 +114,80 @@ impl RafContainer {
         self.model = utils::from_maybe_nul_terminated(&model);
 
         // looks like it is "0100" in ASCII
-        let _version = view.read_u32::<BigEndian>()?;
+        self.version = view.read_u32::<BigEndian>()?;
         view.seek(SeekFrom::Current(20))?;
 
+        // offset 84
         self.offsets.jpeg_offset = view.read_u32::<BigEndian>()?;
         self.offsets.jpeg_len = view.read_u32::<BigEndian>()?;
+        // offset 92
         self.offsets.meta_offset = view.read_u32::<BigEndian>()?;
         self.offsets.meta_len = view.read_u32::<BigEndian>()?;
+        // offset 100
         self.offsets.cfa_offset = view.read_u32::<BigEndian>()?;
         self.offsets.cfa_len = view.read_u32::<BigEndian>()?;
-
+        // offset 108
+        view.seek(SeekFrom::Current(12))?;
+        // offset 120
+        if self.offsets.jpeg_offset > 120 {
+            self.offsets.extra_meta_offset = view.read_u32::<BigEndian>()?;
+            self.offsets.extra_meta_len = view.read_u32::<BigEndian>()?;
+        }
         Ok(())
+    }
+
+    pub fn cfa_container(&self) -> Option<&tiff::Container> {
+        self.cfa
+            .get_or_init(|| {
+                if self.offsets.cfa_offset == 0 || self.offsets.cfa_len == 0 {
+                    return None;
+                }
+                let meta = self.meta_container()?;
+                if meta.value(TAG_WB_OLD).is_some() {
+                    log::debug!("Found old WB, no container");
+                    return None;
+                }
+                let container =
+                    Viewer::create_subview(&self.view.borrow_mut(), self.offsets.cfa_offset as u64)
+                        .map_err(Error::from)
+                        .map(|view| tiff::Container::new(view, vec![], RawType::Raf))
+                        .and_then(|mut container| {
+                            container.load(None)?;
+                            Ok(container)
+                        })
+                        .ok();
+
+                container
+            })
+            .as_ref()
+    }
+
+    fn meta_container_at(&self, offset: u32, len: u32) -> Option<MetaContainer> {
+        if offset == 0 || len == 0 {
+            return None;
+        }
+        let container = Viewer::create_subview(&self.view.borrow_mut(), offset as u64)
+            .map_err(Error::from)
+            .map(MetaContainer::new)
+            .and_then(|mut container| {
+                container.load()?;
+                Ok(container)
+            })
+            .ok();
+
+        container
     }
 
     pub fn meta_container(&self) -> Option<&MetaContainer> {
         self.meta
-            .get_or_init(|| {
-                if self.offsets.meta_offset == 0 || self.offsets.meta_len == 0 {
-                    return None;
-                }
-                let container = Viewer::create_subview(
-                    &self.view.borrow_mut(),
-                    self.offsets.meta_offset as u64,
-                )
-                .map_err(Error::from)
-                .map(MetaContainer::new)
-                .and_then(|mut container| {
-                    container.load()?;
-                    Ok(container)
-                })
-                .ok();
+            .get_or_init(|| self.meta_container_at(self.offsets.meta_offset, self.offsets.meta_len))
+            .as_ref()
+    }
 
-                container
+    pub fn extra_meta_container(&self) -> Option<&MetaContainer> {
+        self.extra_meta
+            .get_or_init(|| {
+                self.meta_container_at(self.offsets.extra_meta_offset, self.offsets.extra_meta_len)
             })
             .as_ref()
     }
@@ -190,7 +248,8 @@ impl Dump for RafContainer {
         );
         {
             let indent = indent + 1;
-            dump_writeln!(out, indent, "Model  = {}", self.model);
+            dump_writeln!(out, indent, "Model   = {}", self.model);
+            dump_writeln!(out, indent, "Version = {}", self.version);
             dump_writeln!(out, indent, "<Offsets>");
             {
                 let indent = indent + 1;
@@ -198,6 +257,13 @@ impl Dump for RafContainer {
                 dump_writeln!(out, indent, "JPEG Len    = {}", self.offsets.jpeg_len);
                 dump_writeln!(out, indent, "Meta Offset = {}", self.offsets.meta_offset);
                 dump_writeln!(out, indent, "Meta Len    = {}", self.offsets.meta_len);
+                dump_writeln!(
+                    out,
+                    indent,
+                    "Extra Offset= {}",
+                    self.offsets.extra_meta_offset
+                );
+                dump_writeln!(out, indent, "Extra Len   = {}", self.offsets.extra_meta_len);
                 dump_writeln!(out, indent, "CFA Offset  = {}", self.offsets.cfa_offset);
                 dump_writeln!(out, indent, "CFA Len     = {}", self.offsets.cfa_len);
             }
@@ -212,23 +278,69 @@ impl Dump for RafContainer {
             } else {
                 dump_writeln!(out, indent, "ERROR: Meta container not found");
             }
-            dump_writeln!(out, indent, "CFA Container TODO");
+            if let Some(extra_meta_container) = self.extra_meta_container() {
+                extra_meta_container.write_dump(out, indent);
+            } else if self.offsets.extra_meta_offset != 0 && self.offsets.extra_meta_len != 0 {
+                dump_writeln!(out, indent, "ERROR: Extra meta container not found");
+            }
+            dump_writeln!(out, indent, "<CFA @{}>", self.offsets.cfa_offset);
+            {
+                let indent = indent + 1;
+                if let Some(cfa_container) = self.cfa_container() {
+                    cfa_container.write_dump(out, indent);
+                    if let Some(dir) = cfa_container
+                        .directory(0)
+                        .and_then(|dir| dir.ifd_in_entry(cfa_container, FUJI_TAG_RAW_SUBIFD))
+                    {
+                        dir.write_dump(out, indent);
+                    }
+                } else {
+                    dump_writeln!(out, indent, "ERROR: CFA container not found");
+                }
+            }
+            dump_writeln!(out, indent, "</CFA>");
         }
         dump_writeln!(out, indent, "</RAF Container>");
     }
 }
 
-/// the RAW dimensions
+/// The RAW dimensions
 pub(super) const TAG_SENSOR_DIMENSION: u16 = 0x100;
 /// Top Left of activate area
 pub(super) const TAG_IMG_TOP_LEFT: u16 = 0x110;
 /// Width Height of activate area
 pub(super) const TAG_IMG_HEIGHT_WIDTH: u16 = 0x111;
 const TAG_OUTPUT_HEIGHT_WIDTH: u16 = 0x121;
-/// some info about the RAW.
+/// Some info about the RAW. Sametime called "layout".
 pub(super) const TAG_RAW_INFO: u16 = 0x130;
 /// Colour Filter Array pattern
 pub(super) const TAG_CFA_PATTERN: u16 = 0x131;
+/// White balance, "old style". The presence of this seems to
+/// correlate with the raw data no being a TIFF container.
+pub(super) const TAG_WB_OLD: u16 = 0x2ff0;
+
+// TIFF tags
+
+/// The subifd containing the raw data.
+pub(super) const FUJI_TAG_RAW_SUBIFD: u16 = 0xf000;
+/// Width of the raw image.
+#[allow(dead_code)]
+pub(super) const FUJI_TAG_RAW_WIDTH: u16 = 0xf001;
+/// Height of the raw image.
+#[allow(dead_code)]
+pub(super) const FUJI_TAG_RAW_HEIGHT: u16 = 0xf002;
+/// Bits per sample.
+pub(super) const FUJI_TAG_RAW_BPS: u16 = 0xf003;
+/// Offset of the raw image.
+pub(super) const FUJI_TAG_RAW_OFFSET: u16 = 0xf007;
+/// Byte len of the raw image.
+pub(super) const FUJI_TAG_RAW_BYTE_LEN: u16 = 0xf008;
+/// Black level (GRB?)
+#[allow(dead_code)]
+pub(super) const FUJI_TAG_RAW_BLACK_LEVEL_GRB: u16 = 0xf00a;
+/// White balance coefficients.
+#[allow(dead_code)]
+pub(super) const FUJI_TAG_RAW_WB_GRB: u16 = 0xf00e;
 
 lazy_static::lazy_static! {
     static ref META_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
@@ -238,6 +350,7 @@ lazy_static::lazy_static! {
         (TAG_OUTPUT_HEIGHT_WIDTH, "OutputHeightWidth"),
         (TAG_RAW_INFO, "RawInfo"),
         (TAG_CFA_PATTERN, "CfaPattern"),
+        (TAG_WB_OLD, "WhiteBalanceOld"),
     ]);
 }
 
@@ -250,7 +363,7 @@ pub(super) enum Value {
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Int(n) => write!(f, "0x{n:x}"),
+            Self::Int(n) => write!(f, "0x{n:08x}"),
             Self::Bytes(b) => {
                 if b.len() > 36 {
                     write!(f, "bytes len={}", b.len())
