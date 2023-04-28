@@ -242,6 +242,7 @@ lazy_static! {
         (0x4021, "MultiExp"),
         (0x4024, "FilterInfo"),
         (0x4025, "HDRInfo"),
+        (0x4026, "LogInfo"),
         (0x4028, "AFConfig"),
         (0x403f, "RawBurstModeRoll"),
     ]);
