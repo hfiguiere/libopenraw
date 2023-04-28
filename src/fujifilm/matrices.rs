@@ -13,7 +13,7 @@ macro_rules! fuji {
 }
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 60] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 67] = [
         BuiltinMatrix::new(
             fuji!(F550EXR),
             0,
@@ -65,10 +65,20 @@ lazy_static::lazy_static! {
             0,
             [ 10491, -3423, -1145, -7385, 15027, 2538, -1809, 2275, 8692 ] ),
         BuiltinMatrix::new(
+            fuji!(S6000FD),
+            0,
+            0,
+            [ 12628, -4887, -1401, -6861, 14996, 1962, -2198, 2782, 7091 ] ),
+        BuiltinMatrix::new(
             fuji!(S6500FD),
             0,
             0,
             [ 12628, -4887, -1401, -6861, 14996, 1962, -2198, 2782, 7091 ] ),
+        BuiltinMatrix::new(
+            fuji!(SL1000),
+            0,
+            0,
+            [ 11705, -4262, -1107, -2282, 10791, 1709, -555, 1713, 4945 ] ),
         BuiltinMatrix::new(
             fuji!(HS10),
             0,
@@ -80,6 +90,11 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 1369, -5358, -1474, -3369, 11600, 1998, -132, 1554, 4395 ] ),
+        BuiltinMatrix::new(
+            fuji!(HS50EXR),
+            0,
+            0,
+            [ 12085, -4727, -953, -3257, 11489, 2002, -511, 2046, 4592 ] ),
         BuiltinMatrix::new(
             fuji!(X100),
             0,
@@ -146,6 +161,11 @@ lazy_static::lazy_static! {
             0,
             [ 11086, -4555, -839, -3512, 11310, 2517, -815, 1341, 5940 ] ),
         BuiltinMatrix::new(
+            fuji!(XA10),
+            0,
+            0,
+            [ 11540, -4999, -991, -2949, 10963, 2278, -382, 1049, 5605 ] ),
+        BuiltinMatrix::new(
             fuji!(XA2),
             0,
             0,
@@ -206,6 +226,16 @@ lazy_static::lazy_static! {
             0,
             [ 11434, -4948, -1210, -3746, 12042, 1903, -666, 1479, 5235 ] ),
         BuiltinMatrix::new(
+            fuji!(XH2),
+            0,
+            0,
+            [ 11809, -5358, -1141, -4248, 12164, 2343, -514, 1097, 5848 ] ),
+        BuiltinMatrix::new(
+            fuji!(XH2S),
+            0,
+            0,
+            [ 12836, -5909, -1032, -3087, 11132, 2236, -35, 872, 5330 ] ),
+        BuiltinMatrix::new(
             fuji!(XM1),
             0,
             0,
@@ -260,6 +290,11 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 13426, -6334, -1177, -4244, 12136, 2371, -580, 1303, 5980 ] ),
+        BuiltinMatrix::new(
+            fuji!(XT5),
+            0,
+            0,
+            [ 11809, -5358, -1141, -4248, 12164, 2343, -514, 1097, 5848 ] ),
         BuiltinMatrix::new(
             fuji!(XS1),
             0,

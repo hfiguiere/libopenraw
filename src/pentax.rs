@@ -236,8 +236,8 @@ lazy_static::lazy_static! {
         pentax!(0x12c1e, K10D_PEF),
         pentax!(0x12cd2, K20D_PEF),
         pentax!(0x12cfa, K200D_PEF),
-        // K2000
-        // K-m
+        pentax!(0x12d72, K2000_PEF),
+        pentax!(0x12d73, KM_PEF),
         pentax!(0x12db8, K7_PEF),
         pentax!(0x12dfe, KX_PEF),
         pentax!(0x12e08, PENTAX_645D_PEF),
@@ -277,6 +277,7 @@ lazy_static::lazy_static! {
         pentax!("PENTAX K110D       ", K110D_PEF),
         pentax!("PENTAX K20D        ", K20D_PEF),
         pentax!("PENTAX K200D       ", K200D_PEF),
+        pentax!("PENTAX K2000       ", K2000_PEF),
         pentax!("PENTAX K-1         ", K1_PEF),
         pentax!("PENTAX K-1 Mark II ", K1_MKII_PEF),
         pentax!("PENTAX K-r         ", KR_PEF),
@@ -290,13 +291,14 @@ lazy_static::lazy_static! {
         pentax!("PENTAX K-70        ", K70_PEF),
         pentax!("PENTAX K-S1        ", KS1_PEF),
         pentax!("PENTAX K-S2        ", KS2_PEF),
+        pentax!("PENTAX K-m         ", KM_PEF),
         pentax!("PENTAX K-x         ", KX_PEF),
         pentax!("PENTAX KP          ", KP_PEF),
         pentax!("PENTAX 645D        ", PENTAX_645D_PEF),
         ricoh!("PENTAX 645Z        ", PENTAX_645Z_PEF),
     ]);
 
-    pub(super) static ref MATRICES: [BuiltinMatrix; 27] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 29] = [
         BuiltinMatrix::new(
             pentax!(IST_D_PEF),
             0,
@@ -370,6 +372,12 @@ lazy_static::lazy_static! {
             [9186, -2678, -907, -8693, 16517, 2260, -1129, 1094, 8524],
         ),
         BuiltinMatrix::new(
+            pentax!(K2000_PEF),
+            0,
+            0,
+            [9730, -2989, -970, -8527, 16258, 2381, -1060, 970, 8362],
+        ),
+        BuiltinMatrix::new(
             pentax!(KR_PEF),
             0,
             0,
@@ -422,6 +430,12 @@ lazy_static::lazy_static! {
             0,
             0,
             [8766, -3149, -747, -3976, 11943, 2292, -517, 1259, 5552],
+        ),
+        BuiltinMatrix::new(
+            pentax!(KM_PEF),
+            0,
+            0,
+            [9730, -2989, -970, -8527, 16258, 2381, -1060, 970, 8362],
         ),
         BuiltinMatrix::new(
             pentax!(KX_PEF),

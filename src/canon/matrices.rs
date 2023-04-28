@@ -41,7 +41,7 @@ macro_rules! canon {
 }
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 109] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 112] = [
     /* CRW */
     BuiltinMatrix::new( canon!(EOS_D30),
       0,
@@ -462,6 +462,18 @@ lazy_static::lazy_static! {
       0,
       0,
       [ 8293, -1611, -1132, -4759, 12711, 2275, -1013, 2415, 5509 ] ),
+    BuiltinMatrix::new( canon!(EOS_R6MKII),
+      0,
+      0,
+      [ 9539, -2795, -1224, -4175, 11998, 2458, -465, 1755, 6048 ] ),
+    BuiltinMatrix::new( canon!(EOS_R7),
+      0,
+      0,
+      [ 10424, -3138, -1300, -4221, 11938, 2584, -547, 1658, 6183 ] ),
+    BuiltinMatrix::new( canon!(EOS_R10),
+      0,
+      0,
+      [ 9269, -2012, -1107, -3990, 11762, 2527, -569, 2093, 4913 ] ),
     BuiltinMatrix::new( canon!(SX70_HS),
       0,
       0,

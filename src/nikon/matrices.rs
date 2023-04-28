@@ -32,7 +32,7 @@ macro_rules! nikon {
 }
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 83] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 88] = [
         BuiltinMatrix::new(
             nikon!(D1),
             0,
@@ -44,6 +44,12 @@ lazy_static::lazy_static! {
             0,
             0,
             [5902, -933, -782, -8983, 16719, 2354, -1402, 1455, 6464],
+        ),
+        BuiltinMatrix::new(
+            nikon!(D1H),
+            0,
+            0,
+            [11540, -4999, -991, -2949, 10963, 2278, -382, 1049, 5605],
         ),
         BuiltinMatrix::new(
             nikon!(D1X),
@@ -292,6 +298,12 @@ lazy_static::lazy_static! {
             [9020, -2890, -715, -4535, 12436, 2348, -934, 1919, 7086],
         ),
         BuiltinMatrix::new(
+            nikon!(D7500),
+            0,
+            0,
+            [8813, -3210, -1036, -4703, 12868, 2021, -1054, 1940, 6129],
+        ),
+        BuiltinMatrix::new(
             nikon!(D780),
             0,
             0,
@@ -322,10 +334,22 @@ lazy_static::lazy_static! {
             [9369, -3195, -791, -4488, 12430, 2301, -893, 1796, 6872],
         ),
         BuiltinMatrix::new(
+            nikon!(D850),
+            0,
+            0,
+            [10405, -3755, -1270, -5461, 13787, 1793, -1040, 2015, 6785],
+        ),
+        BuiltinMatrix::new(
             nikon!(D90),
             0,
             0xf00,
             [7309, -1403, -519, -8474, 16008, 2622, -2434, 2826, 8064],
+        ),
+        BuiltinMatrix::new(
+            nikon!(Z30),
+            0,
+            0,
+            [10339, -3822, -890, -4183, 12023, 2436, -671, 1638, 7049],
         ),
         BuiltinMatrix::new(
             nikon!(Z6),
@@ -449,6 +473,12 @@ lazy_static::lazy_static! {
         ),
         BuiltinMatrix::new(
             nikon!(COOLPIX_P7700),
+            0,
+            0,
+            [10321, -3920, -931, -2750, 11146, 1824, -442, 1545, 5539],
+        ),
+        BuiltinMatrix::new(
+            nikon!(COOLPIX_P7800),
             0,
             0,
             [10321, -3920, -931, -2750, 11146, 1824, -442, 1545, 5539],

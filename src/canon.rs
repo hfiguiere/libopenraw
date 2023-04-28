@@ -154,6 +154,9 @@ lazy_static! {
         canon!(0x80000435, EOS_850D),
         canon!(0x80000468, EOS_M50MKII),
         canon!(0x80000450, EOS_R3),
+        canon!(0x80000464, EOS_R7),
+        canon!(0x80000465, EOS_R10),
+        canon!(0x80000481, EOS_R6MKII),
     ]);
 
     /// Canon MakerNote tag names

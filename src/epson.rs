@@ -52,7 +52,7 @@ macro_rules! epson {
 
 lazy_static::lazy_static! {
     /// EPSON built-in colour matrices
-    static ref MATRICES: [BuiltinMatrix; 2] = [
+    static ref MATRICES: [BuiltinMatrix; 3] = [
         BuiltinMatrix::new(
             epson!(RD1), 0, 0,
             [ 6827, -1878, -732, -8429, 16012, 2564, -704, 592, 7145 ]
@@ -61,12 +61,17 @@ lazy_static::lazy_static! {
             epson!(RD1S), 0, 0,
             [ 6827, -1878, -732, -8429, 16012, 2564, -704, 592, 7145 ]
         ),
+        BuiltinMatrix::new(
+            epson!(RD1X), 0, 0,
+            [ 6827, -1878, -732, -8429, 16012, 2564, -704, 592, 7145 ]
+        ),
     ];
 
     /// Make to TypeId map for ERF files.
     static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
         epson!("R-D1", RD1),
         epson!("R-D1s", RD1S),
+        epson!("R-D1x", RD1X),
     ]);
 }
 

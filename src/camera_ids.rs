@@ -2,7 +2,7 @@
 /*
  * libopenraw - camera_ids.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -249,6 +249,8 @@ pub mod canon {
     pub const REBEL_SL3: u16 = EOS_250D;
     #[allow(unused)]
     pub const KISS_X10: u16 = EOS_250D;
+    #[allow(unused)]
+    pub const EOS_200DMKII: u16 = EOS_250D;
     pub const G7XMKIII: u16 = 95;
     pub const G5XMKII: u16 = 96;
     pub const EOS_M6MKII: u16 = 97;
@@ -276,6 +278,9 @@ pub mod canon {
     #[allow(unused)]
     pub const KISS_M2: u16 = EOS_M50MKII;
     pub const EOS_R3: u16 = 115;
+    pub const EOS_R7: u16 = 116;
+    pub const EOS_R10: u16 = 117;
+    pub const EOS_R6MKII: u16 = 118;
 }
 
 /// Nikon type IDs
@@ -364,6 +369,11 @@ pub mod nikon {
     pub const Z7_2: u16 = 82;
     pub const ZFC: u16 = 83;
     pub const Z9: u16 = 84;
+    pub const D1H: u16 = 85;
+    pub const D7500: u16 = 86;
+    pub const D850: u16 = 87;
+    pub const COOLPIX_P7800: u16 = 88;
+    pub const Z30: u16 = 89;
 }
 
 /// Leica type IDs
@@ -417,6 +427,10 @@ pub mod leica {
     pub const SL2S: u16 = 36;
     pub const Q2_MONOCHROM: u16 = 37;
     pub const M11: u16 = 38;
+    /* RW2 */
+    pub const DIGILUX3: u16 = 39;
+    /* RWL */
+    pub const DLUX_6: u16 = 40;
 }
 
 /// Pentax type IDs
@@ -437,7 +451,7 @@ pub mod pentax {
     pub const K2000_DNG: u16 = 14;
     pub const Q_DNG: u16 = 15;
     pub const K200D_DNG: u16 = 16;
-    pub const _KM_PEF: u16 = 17;
+    pub const KM_PEF: u16 = 17;
     pub const KX_DNG: u16 = 18;
     pub const KR_DNG: u16 = 19;
     pub const K01_DNG: u16 = 20;
@@ -476,14 +490,16 @@ pub mod pentax {
     pub const K110D_PEF: u16 = 53;
     pub const K3_MKIII_PEF: u16 = 54;
     pub const _K3_MKIII_DNG: u16 = 55;
-    pub const K5_DNG: u16 = 56;
-    pub const K20D_DNG: u16 = 57;
+    pub const K2000_PEF: u16 = 56;
+    pub const K5_DNG: u16 = 57;
+    pub const K20D_DNG: u16 = 58;
 }
 
 /// Epson type IDs
 pub mod epson {
     pub const RD1: u16 = 1;
     pub const RD1S: u16 = 2;
+    pub const RD1X: u16 = 3;
 }
 
 /// Minolta type IDs
@@ -556,6 +572,16 @@ pub mod olympus {
     pub const EM10IV: u16 = 51;
     pub const EM10IIIS: u16 = 52;
     pub const OM1: u16 = 53;
+    pub const E30: u16 = 54;
+    pub const EP5: u16 = 55;
+    pub const E420: u16 = 56;
+    pub const E450: u16 = 57;
+    pub const E520: u16 = 58;
+    pub const E600: u16 = 59;
+    pub const C5060WZ: u16 = 60;
+    pub const SP570UZ: u16 = 61;
+    pub const EP7: u16 = 62;
+    pub const OM5: u16 = 63;
 }
 
 /// Samsung type IDs
@@ -678,6 +704,7 @@ pub mod sony {
     pub const ILCE7RM3A: u16 = 87;
     pub const ILCE7RM4A: u16 = 88;
     pub const HX95: u16 = 89;
+    pub const ILCE7RM5: u16 = 90;
 }
 
 /// Panasonic type IDs
@@ -711,6 +738,7 @@ pub mod panasonic {
     pub const GF6: u16 = 27;
     pub const GX7: u16 = 28;
     pub const GM1: u16 = 29;
+    pub const GM1S: u16 = GM1;
     pub const GH4: u16 = 30;
     pub const LX100: u16 = 31;
     pub const GM5: u16 = 32;
@@ -725,9 +753,9 @@ pub mod panasonic {
     pub const ZS100: u16 = 37;
     pub const TX1: u16 = ZS100;
     pub const TZ100: u16 = ZS100;
+    pub const TZ101: u16 = ZS100;
     pub const TZ110: u16 = ZS100;
     pub const GX80: u16 = 38;
-    #[allow(unused)]
     pub const GX85: u16 = GX80;
     pub const GH5: u16 = 39;
     pub const GX850: u16 = 40;
@@ -737,10 +765,12 @@ pub mod panasonic {
     pub const TZ70: u16 = 43;
     pub const ZS60: u16 = 44;
     pub const TZ80: u16 = ZS60;
+    pub const TZ81: u16 = ZS60;
 
     pub const GF7: u16 = 46;
     pub const CM1: u16 = 47;
     pub const GX9: u16 = 48;
+    pub const GX7MK3: u16 = GX9;
     pub const GX800: u16 = 49;
 
     pub const G9: u16 = 52;
@@ -749,6 +779,7 @@ pub mod panasonic {
     pub const LX1: u16 = 55;
     pub const FZ150: u16 = 56;
     pub const FZ35: u16 = 57;
+    pub const FZ38: u16 = FZ35;
     pub const ZS200: u16 = 58;
     #[allow(unused)]
     pub const TX2: u16 = ZS200;
@@ -764,9 +795,11 @@ pub mod panasonic {
     pub const DC_FZ1000M2: u16 = 66;
     pub const DC_ZS80: u16 = 67;
     pub const DC_TZ95: u16 = DC_ZS80;
+    pub const DC_TZ96: u16 = DC_ZS80;
     pub const GF10: u16 = 68;
     pub const GX880: u16 = GF10;
     pub const DC_G99: u16 = 69;
+    pub const DC_G90: u16 = DC_G99;
     pub const DC_G91: u16 = DC_G99;
     pub const DC_S1H: u16 = 70;
     pub const DC_G100: u16 = 71;
@@ -775,6 +808,21 @@ pub mod panasonic {
     pub const GH5M2: u16 = 73;
     pub const GH6: u16 = 74;
     pub const G7: u16 = 75;
+    pub const G70: u16 = G7;
+    pub const ZS40: u16 = 76;
+    pub const TZ60: u16 = ZS40;
+    pub const TZ61: u16 = ZS40;
+    pub const G6: u16 = 77;
+    pub const G8: u16 = 78;
+    pub const G81: u16 = G8;
+    pub const LF1: u16 = 79;
+    pub const FZ300: u16 = 80;
+    pub const FZ70: u16 = 81;
+    pub const FZ72: u16 = FZ70;
+    pub const ZS50: u16 = 82;
+    pub const TZ71: u16 = ZS50;
+    pub const ZS70: u16 = 83;
+    pub const TZ90: u16 = ZS70;
 }
 
 /// Fujifilm type IDs
@@ -840,6 +888,13 @@ pub mod fujifilm {
     pub const GFX50S_II: u16 = 58;
     pub const GFX100S: u16 = 59;
     pub const XE4: u16 = 60;
+    pub const XA10: u16 = 61;
+    pub const XH2S: u16 = 62;
+    pub const XH2: u16 = 63;
+    pub const XT5: u16 = 64;
+    pub const HS50EXR: u16 = 65;
+    pub const S6000FD: u16 = 66;
+    pub const SL1000: u16 = 67;
 }
 
 /// Black Magic
@@ -885,6 +940,7 @@ pub mod gopro {
 pub mod hasselblad {
     pub const LUNAR: u16 = 1;
     pub const L1D_20C: u16 = 2;
+    pub const L2D_20C: u16 = 3;
 }
 
 /// Zeiss
@@ -899,6 +955,7 @@ pub mod dji {
     pub const OSMO_ACTION: u16 = 3;
     pub const FC220: u16 = 4;
     pub const FC6310: u16 = 5;
+    pub const FC3582: u16 = 6;
 }
 
 pub mod nokia {

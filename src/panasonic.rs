@@ -255,8 +255,10 @@ lazy_static::lazy_static! {
         panasonic!("DMC-GX1", GX1),
         panasonic!("DMC-GX7", GX7),
         panasonic!("DMC-GX7MK2", GX7MK2),
+        panasonic!("DC-GX7MK3", GX7MK3),
         panasonic!("DMC-GX8", GX8),
         panasonic!("DMC-GX80", GX80),
+        panasonic!("DMC-GX85", GX85),
         panasonic!("DC-GX800", GX800),
         panasonic!("DC-GX850", GX850),
         panasonic!("DC-GX880", GX880),
@@ -269,12 +271,16 @@ lazy_static::lazy_static! {
         panasonic!("DMC-FZ150", FZ150),
         panasonic!("DMC-FZ28", FZ28),
         panasonic!("DMC-FZ30", FZ30),
+        panasonic!("DMC-FZ300", FZ300),
         panasonic!("DMC-FZ35", FZ35),
+        panasonic!("DMC-FZ38", FZ38),
         panasonic!("DMC-FZ40", DMC_FZ40),
         panasonic!("DMC-FZ45", DMC_FZ45),
         // Not the same as above
         panasonic!("DC-FZ45", DC_FZ45),
         panasonic!("DMC-FZ50", FZ50),
+        panasonic!("DMC-FZ70", FZ70),
+        panasonic!("DMC-FZ72", FZ72),
         panasonic!("DMC-FZ100", FZ100),
         panasonic!("DMC-FZ200", FZ200),
         panasonic!("DMC-FZ2500", FZ2500),
@@ -287,10 +293,14 @@ lazy_static::lazy_static! {
         panasonic!("DMC-G2", G2),
         panasonic!("DMC-G3", G3),
         panasonic!("DMC-G5", G5),
+        panasonic!("DMC-G6", G6),
         panasonic!("DMC-G7", G7),
+        panasonic!("DMC-G70", G70),
         panasonic!("DMC-G10", G10),
         panasonic!("DMC-G80", G80),
+        panasonic!("DMC-G81", G81),
         panasonic!("DC-G9", G9),
+        panasonic!("DC-G90", DC_G90),
         panasonic!("DC-G91", DC_G91),
         panasonic!("DC-G95", DC_G95),
         panasonic!("DC-G99", DC_G99),
@@ -305,7 +315,9 @@ lazy_static::lazy_static! {
         panasonic!("DC-GH5M2", GH5M2),
         panasonic!("DC-GH6", GH6),
         panasonic!("DMC-GM1", GM1),
+        panasonic!("DMC-GM1S", GM1S),
         panasonic!("DMC-GM5", GM5),
+        panasonic!("DMC-LF1", LF1),
         panasonic!("DMC-LX1", LX1),
         panasonic!("DMC-LX2", LX2),
         panasonic!("DMC-LX3", LX3),
@@ -323,12 +335,14 @@ lazy_static::lazy_static! {
         panasonic!("DC-S5", DC_S5),
         panasonic!("DMC-TZ70", TZ70),
         panasonic!("DMC-ZS60", ZS60),
-        // Aliases to DMC-ZS60
+        // Aliases to DMC-ZS60 (2)
         panasonic!("DMC-TZ80", TZ80),
+        panasonic!("DMC-TZ81", TZ81),
         panasonic!("DMC-ZS100", ZS100),
         // Aliases to DMC-ZS100
         panasonic!("DMC-TX1", TX1),
         panasonic!("DMC-TZ100", TZ100),
+        panasonic!("DMC-TZ101", TZ101),
         panasonic!("DMC-TZ110", TZ110),
         panasonic!("DC-ZS200", ZS200),
         // Aliases to DMC-ZS200
@@ -336,11 +350,22 @@ lazy_static::lazy_static! {
         panasonic!("DC-ZS80", DC_ZS80),
         // Aliases to DC-ZS80
         panasonic!("DC-TZ95", DC_TZ95),
+        panasonic!("DC-TZ96", DC_TZ96),
+        panasonic!("DMC-ZS40", ZS40),
+        // Aliases to DMC-ZS40
+        panasonic!("DMC-TZ60", TZ60),
+        panasonic!("DMC-TZ61", TZ61),
+        // Aliases to DMC-ZS50
+        panasonic!("DMC-TZ71", TZ71),
+        // Aliases to DMC-ZS70
+        panasonic!("DMC-TZ90", TZ90),
 
         leica!("DIGILUX 2", DIGILUX2),
+        leica!("DIGILUX 3", DIGILUX3),
         leica!("D-LUX 3", DLUX_3),
         leica!("D-LUX 4", DLUX_4),
         leica!("D-LUX 5", DLUX_5),
+        leica!("D-LUX 6", DLUX_6),
         leica!("D-Lux 7", DLUX_7),
         leica!("V-LUX 1", VLUX_1),
         leica!("D-LUX (Typ 109)", DLUX_TYP109),
@@ -351,7 +376,7 @@ lazy_static::lazy_static! {
         leica!("C (Typ 112)", C_TYP112),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 83] = [
+    static ref MATRICES: [BuiltinMatrix; 93] = [
         BuiltinMatrix::new(
             panasonic!(CM1),
             15,
@@ -461,7 +486,12 @@ lazy_static::lazy_static! {
             panasonic!(FZ30),
             0,
             0xf94,
-            [ 10976,-4029,-1141,-7918,15491,2600,-1670,2071,8246 ] ),
+            [ 10976, -4029, -1141, -7918, 15491, 2600, -1670, 2071, 8246 ] ),
+        BuiltinMatrix::new(
+            panasonic!(FZ300),
+            15,
+            0,
+            [ 8378, -2798, -769, -3068, 11410, 1877, -538, 1792, 4623 ] ),
         BuiltinMatrix::new(
             panasonic!(FZ330),
             15,
@@ -482,6 +512,11 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 7906, -2709, -594, -6231, 13351, 3220, -1922, 2631, 6537 ] ),
+        BuiltinMatrix::new(
+            panasonic!(FZ70),
+            0,
+            0,
+            [ 11532, -4324, -1066, -2375, 10847, 1749, -564, 1699, 4351 ] ),
         BuiltinMatrix::new(
             panasonic!(FZ100),
             143,
@@ -533,8 +568,18 @@ lazy_static::lazy_static! {
             0,
             [ 10113, -3400, -1114, -4765, 12683, 2317, -377, 1437, 6710 ] ),
         BuiltinMatrix::new(
+            panasonic!(G6),
+            143,
+            0xfff,
+            [ 8294, -2891, -651, -3869, 11590, 2595, -1183, 2267, 5352 ] ),
+        BuiltinMatrix::new(
             panasonic!(G7),
             0,
+            0,
+            [ 7610, -2780, -576, -4614, 12195, 2733, -1375, 2393, 6490 ] ),
+        BuiltinMatrix::new(
+            panasonic!(G8),
+            15,
             0,
             [ 7610, -2780, -576, -4614, 12195, 2733, -1375, 2393, 6490 ] ),
         BuiltinMatrix::new(
@@ -613,6 +658,11 @@ lazy_static::lazy_static! {
             0,
             [ 8238, -3244, -679, -3921, 11814, 2384, -836, 2022, 5852 ] ),
         BuiltinMatrix::new(
+            panasonic!(LF1),
+            0,
+            0,
+            [ 9379, -3267, -816, -3227, 11560, 1881, -926, 1928, 5340 ] ),
+        BuiltinMatrix::new(
             panasonic!(LX1),
             0,
             0,
@@ -668,6 +718,16 @@ lazy_static::lazy_static! {
             0,
             [ 8802, -3135, -789, -3151, 11468, 1904, -550, 1745, 4810 ] ),
         BuiltinMatrix::new(
+            panasonic!(ZS40),
+            15,
+            0,
+            [ 8607, -2822, -808, -3755, 11930, 2049, -820, 2060, 5224 ] ),
+        BuiltinMatrix::new(
+            panasonic!(ZS50),
+            15,
+            0,
+            [ 8802, -3135, -789, -3151, 11468, 1904, -550, 1745, 4810 ] ),
+        BuiltinMatrix::new(
             panasonic!(ZS60),
             15,
             0,
@@ -703,6 +763,11 @@ lazy_static::lazy_static! {
             0,
             [ 9744, -3905, -779, -4899, 12807, 2324, -798, 1630, 5827 ] ),
         BuiltinMatrix::new(
+            panasonic!(ZS70),
+            0,
+            0,
+            [ 9052, -3117, -883, -3045, 11346, 1927, -205, 1520, 4730 ] ),
+        BuiltinMatrix::new(
             panasonic!(DC_ZS80),
             0,
             0,
@@ -713,6 +778,11 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 11340, -4069, -1275, -7555, 15266, 2448, -2960, 3426, 7685 ] ),
+        BuiltinMatrix::new(
+            leica!(DIGILUX3),
+            0,
+            0,
+            [ 8054, -1886, -1025, -8348, 16367, 2040, -2805, 3542, 7630 ] ),
         BuiltinMatrix::new(
             leica!(DLUX_3),
             0,
@@ -758,6 +828,11 @@ lazy_static::lazy_static! {
             15,
             0,
             [ 7790, -2736, -755, -3452, 11870, 1769, -628, 1647, 4898 ] ),
+        BuiltinMatrix::new(
+            leica!(DLUX_6),
+            0,
+            0,
+            [ 10148, -3743, -991, -2837, 11366, 1659, -701, 1893, 4899 ] ),
         BuiltinMatrix::new(
             leica!(DLUX_7),
             0,
