@@ -281,6 +281,8 @@ pub mod canon {
     pub const EOS_R7: u16 = 116;
     pub const EOS_R10: u16 = 117;
     pub const EOS_R6MKII: u16 = 118;
+    pub const EOS_R8: u16 = 119;
+    pub const EOS_R50: u16 = 120;
 }
 
 /// Nikon type IDs
@@ -705,6 +707,7 @@ pub mod sony {
     pub const ILCE7RM4A: u16 = 88;
     pub const HX95: u16 = 89;
     pub const ILCE7RM5: u16 = 90;
+    pub const ZVE1: u16 = 91;
 }
 
 /// Panasonic type IDs
@@ -801,6 +804,7 @@ pub mod panasonic {
     pub const DC_G99: u16 = 69;
     pub const DC_G90: u16 = DC_G99;
     pub const DC_G91: u16 = DC_G99;
+    pub const DC_G95D: u16 = DC_G99;
     pub const DC_S1H: u16 = 70;
     pub const DC_G100: u16 = 71;
     pub const DC_G110: u16 = DC_G100;
@@ -823,6 +827,7 @@ pub mod panasonic {
     pub const TZ71: u16 = ZS50;
     pub const ZS70: u16 = 83;
     pub const TZ90: u16 = ZS70;
+    pub const DC_S5M2: u16 = 84;
 }
 
 /// Fujifilm type IDs
