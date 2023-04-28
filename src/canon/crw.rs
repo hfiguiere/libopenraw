@@ -32,7 +32,7 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap;
-use crate::camera_ids::{canon, vendor};
+use crate::camera_ids::vendor;
 use crate::canon::SensorInfo;
 use crate::container::RawContainer;
 use crate::io::Viewer;
@@ -49,29 +49,47 @@ use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, 
 use super::matrices::MATRICES;
 use decompress::Decompress;
 
+macro_rules! canon {
+    ($id:expr, $model:ident) => {
+        (
+            $id,
+            TypeId(
+                $crate::camera_ids::vendor::CANON,
+                $crate::camera_ids::canon::$model,
+            ),
+        )
+    };
+    ($model:ident) => {
+        TypeId(
+            $crate::camera_ids::vendor::CANON,
+            $crate::camera_ids::canon::$model,
+        )
+    };
+}
+
 lazy_static::lazy_static! {
     static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
-        ( "Canon EOS D30" , TypeId(vendor::CANON, canon::EOS_D30) ),
-        ( "Canon EOS D60" , TypeId(vendor::CANON, canon::EOS_D60) ),
-        ( "Canon EOS 10D" , TypeId(vendor::CANON, canon::EOS_10D) ),
-        ( "Canon EOS DIGITAL REBEL", TypeId(vendor::CANON, canon::DIGITAL_REBEL) ),
-        ( "Canon EOS 300D DIGITAL", TypeId(vendor::CANON, canon::EOS_300D) ),
-        ( "Canon PowerShot G1", TypeId(vendor::CANON, canon::G1) ),
-        ( "Canon PowerShot G2", TypeId(vendor::CANON, canon::G2) ),
-        ( "Canon PowerShot G3", TypeId(vendor::CANON, canon::G3) ),
-        ( "Canon PowerShot G5", TypeId(vendor::CANON, canon::G5) ),
-        ( "Canon PowerShot G6", TypeId(vendor::CANON, canon::G6) ),
+        canon!("Canon EOS D30" , EOS_D30),
+        canon!("Canon EOS D60" , EOS_D60),
+        canon!("Canon EOS 10D" , EOS_10D),
+        canon!("Canon EOS DIGITAL REBEL", DIGITAL_REBEL),
+        canon!("Canon EOS 300D DIGITAL", EOS_300D),
+        canon!("Canon PowerShot G1", G1),
+        canon!("Canon PowerShot G2", G2),
+        canon!("Canon PowerShot G3", G3),
+        canon!("Canon PowerShot G5", G5),
+        canon!("Canon PowerShot G6", G6),
         // G7 is CHDK, So remove from the list from now.
-        //    ( "Canon PowerShot G7", TypeId(vendor::CANON, canon::G7) ),
-        ( "Canon PowerShot Pro1", TypeId(vendor::CANON, canon::PRO1) ),
-        ( "Canon PowerShot Pro70", TypeId(vendor::CANON, canon::PRO70) ),
-        ( "Canon PowerShot Pro90 IS", TypeId(vendor::CANON, canon::PRO90) ),
-        ( "Canon PowerShot S30", TypeId(vendor::CANON, canon::S30) ),
-        ( "Canon PowerShot S40", TypeId(vendor::CANON, canon::S40) ),
-        ( "Canon PowerShot S45", TypeId(vendor::CANON, canon::S45) ),
-        ( "Canon PowerShot S50", TypeId(vendor::CANON, canon::S50) ),
-        ( "Canon PowerShot S60", TypeId(vendor::CANON, canon::S60) ),
-        ( "Canon PowerShot S70", TypeId(vendor::CANON, canon::S70) ),
+        //    canon!("Canon PowerShot G7", G7),
+        canon!("Canon PowerShot Pro1", PRO1),
+        canon!("Canon PowerShot Pro70", PRO70),
+        canon!("Canon PowerShot Pro90 IS", PRO90),
+        canon!("Canon PowerShot S30", S30),
+        canon!("Canon PowerShot S40", S40),
+        canon!("Canon PowerShot S45", S45),
+        canon!("Canon PowerShot S50", S50),
+        canon!("Canon PowerShot S60", S60),
+        canon!("Canon PowerShot S70", S70),
     ]);
 }
 

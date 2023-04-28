@@ -41,23 +41,32 @@ use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, 
 /// The MakerNote tag names. It's actually the same as Olympus.
 pub(crate) use crate::olympus::MNOTE_TAG_NAMES;
 
+macro_rules! epson {
+    ($id:expr, $model:ident) => {
+        ($id, TypeId(vendor::EPSON, camera_ids::epson::$model))
+    };
+    ($model:ident) => {
+        TypeId(vendor::EPSON, camera_ids::epson::$model)
+    };
+}
+
 lazy_static::lazy_static! {
     /// EPSON built-in colour matrices
     static ref MATRICES: [BuiltinMatrix; 2] = [
         BuiltinMatrix::new(
-            TypeId(vendor::EPSON, camera_ids::epson::RD1), 0, 0,
+            epson!(RD1), 0, 0,
             [ 6827, -1878, -732, -8429, 16012, 2564, -704, 592, 7145 ]
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::EPSON, camera_ids::epson::RD1S), 0, 0,
+            epson!(RD1S), 0, 0,
             [ 6827, -1878, -732, -8429, 16012, 2564, -704, 592, 7145 ]
         ),
     ];
 
     /// Make to TypeId map for ERF files.
     static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
-        ( "R-D1", TypeId(vendor::EPSON, camera_ids::epson::RD1) ),
-        ( "R-D1s", TypeId(vendor::EPSON, camera_ids::epson::RD1S) ),
+        epson!("R-D1", RD1),
+        epson!("R-D1s", RD1S),
     ]);
 }
 

@@ -27,7 +27,7 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap::{Point, Rect, Size};
-use crate::camera_ids::{pentax, ricoh, vendor};
+use crate::camera_ids::vendor;
 use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
@@ -36,6 +36,36 @@ use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::{Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+
+macro_rules! pentax {
+    ($id:expr, $model:ident) => {
+        (
+            $id,
+            TypeId(
+                $crate::camera_ids::vendor::PENTAX,
+                $crate::camera_ids::pentax::$model,
+            ),
+        )
+    };
+    ($model:ident) => {
+        TypeId(
+            $crate::camera_ids::vendor::PENTAX,
+            $crate::camera_ids::pentax::$model,
+        )
+    };
+}
+
+macro_rules! ricoh {
+    ($id:expr, $model:ident) => {
+        (
+            $id,
+            TypeId(vendor::RICOH, $crate::camera_ids::ricoh::$model),
+        )
+    };
+    ($model:ident) => {
+        TypeId(vendor::RICOH, $crate::camera_ids::ricoh::$model)
+    };
+}
 
 lazy_static::lazy_static! {
     pub static ref MNOTE_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
@@ -195,236 +225,236 @@ lazy_static::lazy_static! {
     ]);
 
     static ref PENTAX_MODEL_ID_MAP: HashMap<u32, TypeId> = HashMap::from([
-        (0x12994, TypeId(vendor::PENTAX, pentax::IST_D_PEF)),
-        (0x12aa2, TypeId(vendor::PENTAX, pentax::IST_DS_PEF)),
-        (0x12b1a, TypeId(vendor::PENTAX, pentax::IST_DL_PEF)),
+        pentax!(0x12994, IST_D_PEF),
+        pentax!(0x12aa2, IST_DS_PEF),
+        pentax!(0x12b1a, IST_DL_PEF),
         // *ist DS2
-        (0x12b7e, TypeId(vendor::PENTAX, pentax::IST_DL2_PEF)),
-        (0x12b9c, TypeId(vendor::PENTAX, pentax::K100D_PEF)),
-        (0x12b9d, TypeId(vendor::PENTAX, pentax::K110D_PEF)),
-        (0x12ba2, TypeId(vendor::PENTAX, pentax::K100D_SUPER_PEF)),
-        (0x12c1e, TypeId(vendor::PENTAX, pentax::K10D_PEF)),
-        (0x12cd2, TypeId(vendor::PENTAX, pentax::K20D_PEF)),
-        (0x12cfa, TypeId(vendor::PENTAX, pentax::K200D_PEF)),
+        pentax!(0x12b7e, IST_DL2_PEF),
+        pentax!(0x12b9c, K100D_PEF),
+        pentax!(0x12b9d, K110D_PEF),
+        pentax!(0x12ba2, K100D_SUPER_PEF),
+        pentax!(0x12c1e, K10D_PEF),
+        pentax!(0x12cd2, K20D_PEF),
+        pentax!(0x12cfa, K200D_PEF),
         // K2000
         // K-m
-        (0x12db8, TypeId(vendor::PENTAX, pentax::K7_PEF)),
-        (0x12dfe, TypeId(vendor::PENTAX, pentax::KX_PEF)),
-        (0x12e08, TypeId(vendor::PENTAX, pentax::PENTAX_645D_PEF)),
-        (0x12e6c, TypeId(vendor::PENTAX, pentax::KR_PEF)),
-        (0x12e76, TypeId(vendor::PENTAX, pentax::K5_PEF)),
+        pentax!(0x12db8, K7_PEF),
+        pentax!(0x12dfe, KX_PEF),
+        pentax!(0x12e08, PENTAX_645D_PEF),
+        pentax!(0x12e6c, KR_PEF),
+        pentax!(0x12e76, K5_PEF),
         // Q
         // K-01
         // K-30
         // Q10
-        (0x12f70, TypeId(vendor::PENTAX, pentax::K5_II_PEF)),
-        (0x12f71, TypeId(vendor::PENTAX, pentax::K5_IIS_PEF)),
+        pentax!(0x12f70, K5_II_PEF),
+        pentax!(0x12f71, K5_IIS_PEF),
         // Q7
         // K-50
-        (0x12fc0, TypeId(vendor::PENTAX, pentax::K3_PEF)),
+        pentax!(0x12fc0, K3_PEF),
         // K-500
-        (0x13010, TypeId(vendor::RICOH, ricoh::PENTAX_645Z_PEF)),
-        (0x1301a, TypeId(vendor::PENTAX, pentax::KS1_PEF)),
-        (0x13024, TypeId(vendor::PENTAX, pentax::KS2_PEF)),
+        ricoh!(0x13010, PENTAX_645Z_PEF),
+        pentax!(0x1301a, KS1_PEF),
+        pentax!(0x13024, KS2_PEF),
         // Q-S1
-        (0x13092, TypeId(vendor::PENTAX, pentax::K1_PEF)),
-        (0x1309c, TypeId(vendor::PENTAX, pentax::K3_II_PEF)),
+        pentax!(0x13092, K1_PEF),
+        pentax!(0x1309c, K3_II_PEF),
         // GR III
-        (0x13222, TypeId(vendor::PENTAX, pentax::K70_PEF)),
-        (0x1322c, TypeId(vendor::PENTAX, pentax::KP_PEF)),
-        (0x13240, TypeId(vendor::PENTAX, pentax::K1_MKII_PEF)),
-        (0x13254, TypeId(vendor::PENTAX, pentax::K3_MKIII_PEF)),
+        pentax!(0x13222, K70_PEF),
+        pentax!(0x1322c, KP_PEF),
+        pentax!(0x13240, K1_MKII_PEF),
+        pentax!(0x13254, K3_MKIII_PEF),
     ]);
 
     static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
-        ("PENTAX *ist D      ", TypeId(vendor::PENTAX, pentax::IST_D_PEF)),
-        ("PENTAX *ist DL     ", TypeId(vendor::PENTAX, pentax::IST_DL_PEF)),
-        ("PENTAX *ist DL2    ", TypeId(vendor::PENTAX, pentax::IST_DL2_PEF)),
-        ("PENTAX *ist DS     ", TypeId(vendor::PENTAX, pentax::IST_DS_PEF)),
-        ("PENTAX K10D        ", TypeId(vendor::PENTAX, pentax::K10D_PEF)),
-        ("PENTAX K100D       ", TypeId(vendor::PENTAX, pentax::K100D_PEF)),
-        ("PENTAX K100D Super ", TypeId(vendor::PENTAX, pentax::K100D_SUPER_PEF)),
-        ("PENTAX K110D       ", TypeId(vendor::PENTAX, pentax::K110D_PEF)),
-        ("PENTAX K20D        ", TypeId(vendor::PENTAX, pentax::K20D_PEF)),
-        ("PENTAX K200D       ", TypeId(vendor::PENTAX, pentax::K200D_PEF)),
-        ("PENTAX K-1         ", TypeId(vendor::PENTAX, pentax::K1_PEF)),
-        ("PENTAX K-1 Mark II ", TypeId(vendor::PENTAX, pentax::K1_MKII_PEF)),
-        ("PENTAX K-r         ", TypeId(vendor::PENTAX, pentax::KR_PEF)),
-        ("PENTAX K-3         ", TypeId(vendor::PENTAX, pentax::K3_PEF)),
-        ("PENTAX K-3 II      ", TypeId(vendor::PENTAX, pentax::K3_II_PEF)),
-        ("PENTAX K-3 Mark III             ", TypeId(vendor::PENTAX, pentax::K3_MKIII_PEF)),
-        ("PENTAX K-5         ", TypeId(vendor::PENTAX, pentax::K5_PEF)),
-        ("PENTAX K-5 II      ", TypeId(vendor::PENTAX, pentax::K5_II_PEF)),
-        ("PENTAX K-5 II s    ", TypeId(vendor::PENTAX, pentax::K5_IIS_PEF)),
-        ("PENTAX K-7         ", TypeId(vendor::PENTAX, pentax::K7_PEF)),
-        ("PENTAX K-70        ", TypeId(vendor::PENTAX, pentax::K70_PEF)),
-        ("PENTAX K-S1        ", TypeId(vendor::PENTAX, pentax::KS1_PEF)),
-        ("PENTAX K-S2        ", TypeId(vendor::PENTAX, pentax::KS2_PEF)),
-        ("PENTAX K-x         ", TypeId(vendor::PENTAX, pentax::KX_PEF)),
-        ("PENTAX KP          ", TypeId(vendor::PENTAX, pentax::KP_PEF)),
-        ("PENTAX 645D        ", TypeId(vendor::PENTAX, pentax::PENTAX_645D_PEF)),
-        ("PENTAX 645Z        ", TypeId(vendor::RICOH, ricoh::PENTAX_645Z_PEF)),
+        pentax!("PENTAX *ist D      ", IST_D_PEF),
+        pentax!("PENTAX *ist DL     ", IST_DL_PEF),
+        pentax!("PENTAX *ist DL2    ", IST_DL2_PEF),
+        pentax!("PENTAX *ist DS     ", IST_DS_PEF),
+        pentax!("PENTAX K10D        ", K10D_PEF),
+        pentax!("PENTAX K100D       ", K100D_PEF),
+        pentax!("PENTAX K100D Super ", K100D_SUPER_PEF),
+        pentax!("PENTAX K110D       ", K110D_PEF),
+        pentax!("PENTAX K20D        ", K20D_PEF),
+        pentax!("PENTAX K200D       ", K200D_PEF),
+        pentax!("PENTAX K-1         ", K1_PEF),
+        pentax!("PENTAX K-1 Mark II ", K1_MKII_PEF),
+        pentax!("PENTAX K-r         ", KR_PEF),
+        pentax!("PENTAX K-3         ", K3_PEF),
+        pentax!("PENTAX K-3 II      ", K3_II_PEF),
+        pentax!("PENTAX K-3 Mark III             ", K3_MKIII_PEF),
+        pentax!("PENTAX K-5         ", K5_PEF),
+        pentax!("PENTAX K-5 II      ", K5_II_PEF),
+        pentax!("PENTAX K-5 II s    ", K5_IIS_PEF),
+        pentax!("PENTAX K-7         ", K7_PEF),
+        pentax!("PENTAX K-70        ", K70_PEF),
+        pentax!("PENTAX K-S1        ", KS1_PEF),
+        pentax!("PENTAX K-S2        ", KS2_PEF),
+        pentax!("PENTAX K-x         ", KX_PEF),
+        pentax!("PENTAX KP          ", KP_PEF),
+        pentax!("PENTAX 645D        ", PENTAX_645D_PEF),
+        ricoh!("PENTAX 645Z        ", PENTAX_645Z_PEF),
     ]);
 
     pub(super) static ref MATRICES: [BuiltinMatrix; 27] = [
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::IST_D_PEF),
+            pentax!(IST_D_PEF),
             0,
             0,
             [9651, -2059, -1189, -8881, 16512, 2487, -1460, 1345, 10687],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::IST_DL_PEF),
+            pentax!(IST_DL_PEF),
             0,
             0,
             [10829, -2838, -1115, -8339, 15817, 2696, -837, 680, 11939],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::IST_DL2_PEF),
+            pentax!(IST_DL2_PEF),
             0,
             0,
             [10504, -2439, -1189, -8603, 16208, 2531, -1022, 863, 12242],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::IST_DS_PEF),
+            pentax!(IST_DS_PEF),
             0,
             0,
             [10371, -2333, -1206, -8688, 16231, 2602, -1230, 1116, 11282],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K10D_PEF),
+            pentax!(K10D_PEF),
             0,
             0,
             [9566, -2863, -803, -7170, 15172, 2112, -818, 803, 9705],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K1_PEF),
+            pentax!(K1_PEF),
             0,
             0,
             [8566, -2746, -1201, -3612, 12204, 1550, -893, 1680, 6264],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K1_MKII_PEF),
+            pentax!(K1_MKII_PEF),
             0,
             0,
             [8596, -2981, -639, -4202, 12046, 2431, -685, 1424, 6122],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K100D_PEF),
+            pentax!(K100D_PEF),
             0,
             0,
             [11095, -3157, -1324, -8377, 15834, 2720, -1108, 947, 11688],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K100D_SUPER_PEF),
+            pentax!(K100D_SUPER_PEF),
             0,
             0,
             [11095, -3157, -1324, -8377, 15834, 2720, -1108, 947, 11688],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K110D_PEF),
+            pentax!(K110D_PEF),
             0,
             0,
             [11095, -3157, -1324, -8377, 15834, 2720, -1108, 947, 11688],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K20D_PEF),
+            pentax!(K20D_PEF),
             0,
             0,
             [9427, -2714, -868, -7493, 16092, 1373, -2199, 3264, 7180],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K200D_PEF),
+            pentax!(K200D_PEF),
             0,
             0,
             [9186, -2678, -907, -8693, 16517, 2260, -1129, 1094, 8524],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::KR_PEF),
+            pentax!(KR_PEF),
             0,
             0,
             [9895, -3077, -850, -5304, 13035, 2521, -883, 1768, 6936],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K3_PEF),
+            pentax!(K3_PEF),
             0,
             0,
             [8542, -2581, -1144, -3995, 12301, 1881, -863, 1514, 5755],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K3_II_PEF),
+            pentax!(K3_II_PEF),
             0,
             0,
             [9251, -3817, -1069, -4627, 12667, 2175, -798, 1660, 5633],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K3_MKIII_PEF),
+            pentax!(K3_MKIII_PEF),
             0,
             0,
             [8571, -2590, -1148, -3995, 12301, 1881, -1052, 1844, 7013],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K5_PEF),
+            pentax!(K5_PEF),
             0,
             0,
             [8713, -2833, -743, -4342, 11900, 2772, -722, 1543, 6247],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K5_II_PEF),
+            pentax!(K5_II_PEF),
             0,
             0,
             [8435, -2549, -1130, -3995, 12301, 1881, -989, 1734, 6591],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K5_IIS_PEF),
+            pentax!(K5_IIS_PEF),
             0,
             0,
             [8170, -2725, -639, -4440, 12017, 2744, -771, 1465, 6599],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K7_PEF),
+            pentax!(K7_PEF),
             0,
             0,
             [9142, -2947, -678, -8648, 16967, 1663, -2224, 2898, 8615],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::K70_PEF),
+            pentax!(K70_PEF),
             0,
             0,
             [8766, -3149, -747, -3976, 11943, 2292, -517, 1259, 5552],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::KX_PEF),
+            pentax!(KX_PEF),
             0,
             0,
             [8843, -2837, -625, -5025, 12644, 2668, -411, 1234, 7410],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::KS1_PEF),
+            pentax!(KS1_PEF),
             0,
             0,
             [7989, -2511, -1137, -3882, 12350, 1689, -862, 1524, 6444],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::KS2_PEF),
+            pentax!(KS2_PEF),
             0,
             0,
             [8662, -3280, -798, -3928, 11771, 2444, -586, 1232, 6054],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::KP_PEF),
+            pentax!(KP_PEF),
             0,
             0,
             [8617, -3228, -1034, -4674, 12821, 2044, -803, 1577, 5728],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::PENTAX, pentax::PENTAX_645D_PEF),
+            pentax!(PENTAX_645D_PEF),
             0,
             0x3e00,
             [10646, -3593, -1158, -3329, 11699, 1831, -667, 2874, 6287],
         ),
         BuiltinMatrix::new(
-            TypeId(vendor::RICOH, ricoh::PENTAX_645Z_PEF),
+            ricoh!(PENTAX_645Z_PEF),
             0,
             0x3fff,
             [9519, -3591, -664, -4074, 11725, 2671, -624, 1501, 6653],
