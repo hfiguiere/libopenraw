@@ -2,7 +2,7 @@ What's (visibly) new in 0.3.5
 =============================
 
 - Added coefficients for 3 cameras.
-- 1 new camera listed.
+- 3 new cameras listed.
 - The tarball contain the Rust crates and can be built offline.
 - Fix a build issue with recent compilers. Issue #12.
 
@@ -10,7 +10,7 @@ What's (visibly) new in 0.3.4
 =============================
 
 - Fixed a crash when using libopenraw in a multithreaded context.
-- 4 new camera listed.
+- 4 new cameras listed.
 
 What's (visibly) new in 0.3.3
 =============================
