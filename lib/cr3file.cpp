@@ -2,7 +2,7 @@
 /*
  * libopenraw - cr3file.cpp
  *
- * Copyright (C) 2018-2022 Hubert Figuière
+ * Copyright (C) 2018-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -82,6 +82,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R50),
+      0,
+      0,
+      { 9269, -2012, -1107, -3990, 11762, 2527, -569, 2093, 4913 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R6),
       0,
       0,
@@ -94,6 +98,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       0,
       0,
       { 10424, -3138, -1300, -4221, 11938, 2584, -547, 1658, 6183 } },
+    { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R8),
+      0,
+      0,
+      { 9539, -2795, -1224, -4175, 11998, 2458, -465, 1755, 6048 } },
     { OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R10),
       0,
       0,
@@ -135,7 +143,9 @@ const RawFile::camera_ids_t Cr3File::s_def[] = {
     { "Canon EOS R6", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R6) },
     { "Canon EOS R6 m2", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R6MKII) },
     { "Canon EOS R7", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R7) },
+    { "Canon EOS R8", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R8) },
     { "Canon EOS R10", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R10) },
+    { "Canon EOS R50", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_EOS_R50) },
     { "Canon EOS 250D", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_250D) },
     { "Canon EOS Rebel SL3", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_250D) },
     { "Canon EOS 850D", OR_MAKE_CANON_TYPEID(OR_TYPEID_CANON_850D) },

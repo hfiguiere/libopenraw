@@ -1,3 +1,42 @@
+libopenraw 0.3.5 - 2023/04/28
+
+New features:
+
+  - The Rust crates are vendored for the tarball. Note: resulting
+    tarball is bigger.
+
+  Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Added coefficients for Canon R8* and R50*.
+  - Added coefficients for Panasonic S5M2*.
+  - Added Panasonic GF8*.
+  - Added Sony ZV-E1*, ILME-FX30*.
+
+Bug fixes:
+
+  - Fix a missing include with gcc 13. Issue #12.
+    https://gitlab.freedesktop.org/libopenraw/libopenraw/-/issues/12
+
+libopenraw 0.3.4 - 2023/02/13
+
+New features:
+
+  Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Added Canon R8 and R50.
+  - Added Panasonic G95D* and S5M2.
+
+Bug fixes:
+
+  - Ensure that RawFile::init() is never called twice. This would
+    cause crashes if it was called concurrently.
+
+Internal changes:
+
+  - Change mutability of access to the factory and the extensions.
+
 libopenraw 0.3.3 - 2022/12/28
 
 New features:

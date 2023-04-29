@@ -2,7 +2,7 @@
  * libopenraw - rawfile.cpp
  *
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,6 +26,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <utility>
 #include <vector>
@@ -76,61 +77,66 @@ class BitmapData;
 
 using Internals::RawFileFactory;
 
+static std::once_flag inited;
+
+/* This function is designed to be reentrant. */
 void init(void)
 {
-    using namespace std::placeholders;
+    std::call_once(inited, [] {
+        using namespace std::placeholders;
 
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_CR2,
-                                 std::bind(&Internals::Cr2File::factory, _1),
-                                 "cr2");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_NEF,
-                                 std::bind(&Internals::NefFile::factory, _1),
-                                 "nef");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_NRW,
-                                 std::bind(&Internals::NefFile::factory, _1),
-                                 "nrw");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_ARW,
-                                 std::bind(&Internals::ArwFile::factory, _1),
-                                 "arw");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_SR2,
-                                 std::bind(&Internals::ArwFile::factory, _1),
-                                 "sr2");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_ORF,
-                                 std::bind(&Internals::OrfFile::factory, _1),
-                                 "orf");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_DNG,
-                                 std::bind(&Internals::DngFile::factory, _1),
-                                 "dng");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_GPR,
-                                 std::bind(&Internals::DngFile::factory, _1),
-                                 "gpr");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_PEF,
-                                 std::bind(&Internals::PEFFile::factory, _1),
-                                 "pef");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_CRW,
-                                 std::bind(&Internals::CRWFile::factory, _1),
-                                 "crw");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_ERF,
-                                 std::bind(&Internals::ERFFile::factory, _1),
-                                 "erf");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_MRW,
-                                 std::bind(&Internals::MRWFile::factory, _1),
-                                 "mrw");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_RW2,
-                                 std::bind(&Internals::Rw2File::factory, _1),
-                                 "raw");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_RW2,
-                                 std::bind(&Internals::Rw2File::factory, _1),
-                                 "rw2");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_RW2,
-                                 std::bind(&Internals::Rw2File::factory, _1),
-                                 "rwl");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_RAF,
-                                 std::bind(&Internals::RafFile::factory, _1),
-                                 "raf");
-    RawFileFactory::registerType(OR_RAWFILE_TYPE_CR3,
-                                 std::bind(&Internals::Cr3File::factory, _1),
-                                 "cr3");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_CR2,
+                                     std::bind(&Internals::Cr2File::factory, _1),
+                                     "cr2");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_NEF,
+                                     std::bind(&Internals::NefFile::factory, _1),
+                                     "nef");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_NRW,
+                                     std::bind(&Internals::NefFile::factory, _1),
+                                     "nrw");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_ARW,
+                                     std::bind(&Internals::ArwFile::factory, _1),
+                                     "arw");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_SR2,
+                                     std::bind(&Internals::ArwFile::factory, _1),
+                                     "sr2");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_ORF,
+                                     std::bind(&Internals::OrfFile::factory, _1),
+                                     "orf");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_DNG,
+                                     std::bind(&Internals::DngFile::factory, _1),
+                                     "dng");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_GPR,
+                                     std::bind(&Internals::DngFile::factory, _1),
+                                     "gpr");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_PEF,
+                                     std::bind(&Internals::PEFFile::factory, _1),
+                                     "pef");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_CRW,
+                                     std::bind(&Internals::CRWFile::factory, _1),
+                                     "crw");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_ERF,
+                                     std::bind(&Internals::ERFFile::factory, _1),
+                                     "erf");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_MRW,
+                                     std::bind(&Internals::MRWFile::factory, _1),
+                                     "mrw");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_RW2,
+                                     std::bind(&Internals::Rw2File::factory, _1),
+                                     "raw");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_RW2,
+                                     std::bind(&Internals::Rw2File::factory, _1),
+                                     "rw2");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_RW2,
+                                     std::bind(&Internals::Rw2File::factory, _1),
+                                     "rwl");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_RAF,
+                                     std::bind(&Internals::RafFile::factory, _1),
+                                     "raf");
+        RawFileFactory::registerType(OR_RAWFILE_TYPE_CR3,
+                                     std::bind(&Internals::Cr3File::factory, _1),
+                                     "cr3");
+    });
 }
 
 class RawFile::Private {
@@ -254,7 +260,7 @@ RawFile::Type RawFile::identify(const char* _filename)
 
     boost::to_lower(extension);
 
-    RawFileFactory::Extensions& extensions = RawFileFactory::extensions();
+    const auto& extensions = RawFileFactory::extensions();
     auto iter = extensions.find(extension);
     if (iter == extensions.end()) {
         return OR_RAWFILE_TYPE_UNKNOWN;

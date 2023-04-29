@@ -1,7 +1,7 @@
 /*
  * libopenraw - arwfile.cpp
  *
- * Copyright (C) 2006-2022 Hubert Figuière
+ * Copyright (C) 2006-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -133,6 +133,8 @@ static const ModelIdMap modelid_map = {
     { 387, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7RM4A) },
     { 388, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7M4) },
     { 390, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7RM5) },
+    { 391, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILME_FX30) },
+    { 393, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZVE1) },
 };
 
 /* taken from dcraw, by default */
@@ -483,10 +485,18 @@ static const BuiltinColourMatrix s_matrices[] = {
       128,
       0,
       { 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILME_FX30),
+      128,
+      0,
+      { 6972, -2408, -600, -4330, 12101, 2515, -388, 1277, 5847 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZV1),
       128,
       0,
       { 8280, -2987, -703, -3531, 11645, 2133, -550, 1542, 5312 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZVE1),
+      128,
+      0,
+      { 6912, -2127, -469, -4470, 12175, 2587, -398, 1478, 6492 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZVE10),
       128,
       0,
@@ -592,6 +602,7 @@ const IfdFile::camera_ids_t ArwFile::s_def[] = {
     { "ILCE-9M2", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE9M2) },
     { "ILCE-QX1", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCEQX1) },
     { "ZV-1", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZV1) },
+    { "ZV-E1", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZVE1) },
     { "ZV-E10", OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZVE10) },
 
     { "Lunar", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_HASSELBLAD,

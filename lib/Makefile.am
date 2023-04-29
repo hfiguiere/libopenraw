@@ -15,6 +15,16 @@ RUST_FILES = mp4/Cargo.lock \
 	mp4/mp4parse/Cargo.toml \
 	$(NULL)
 
+DISTCLEANFILES = mp4/.cargo/config.toml
+
+dist-hook:
+	mkdir -p $(distdir)/mp4/
+	(cd mp4 && $(shell pwd)/$(top_srcdir)/build-aux/cargo-vendor.sh $(shell pwd)/$(top_srcdir)/lib/mp4/Cargo.toml)
+	cp -av mp4/vendor $(distdir)/mp4/
+
+distclean-local:
+	rm -fr mp4/vendor/*
+
 EXTRA_DIST = libopenraw.sym io/testfile.tmp \
 	exif/exif-tags.pl \
 	$(RUST_FILES)

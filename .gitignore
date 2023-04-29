@@ -42,6 +42,9 @@ lib/*.log
 lib/*.trs
 m4/libtool.m4
 m4/lt*.m4
+lib/mp4/.cargo
+lib/mp4/target
+lib/mp4/vendor
 test/ljpegtest
 test/extensions
 test/testunpack
