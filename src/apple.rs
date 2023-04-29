@@ -29,7 +29,9 @@ lazy_static::lazy_static! {
         (0x8, "AccelerationVector"),
         (0xa, "HDRImageType"),
         (0xb, "BurstUUID"),
+        (0xc, "FocusDistanceRange"),
         (0x11, "ContentIdentifier"),
         (0x15, "ImageUniqueID"),
+        (0x17, "LivePhotoVideoIndex"),
     ]);
 }

@@ -104,6 +104,7 @@ lazy_static::lazy_static! {
         (0x39, "LocationInfo"),
         (0x3d, "BlackLevel"),
         (0x3e, "ImageSizeRAW"),
+        (0x3f, "WhiteBalanceFineTune"),
         (0x45, "CropArea"),
         (0x4e, "NikonSettings"),
         (0x4f, "ColorTemperatureAuto"),

@@ -697,7 +697,7 @@ lazy_static::lazy_static! {
         (0xc7ee, "EnhanceParams"),
         (0xcd2d, "ProfileGainTableMap"),
         (0xcd2e, "SemanticName"),
-        (0xcd30, "SemanticInstanceIFD"),
+        (0xcd30, "SemanticInstanceID"),
         (0xcd31, "CalibrationIlluminant3"),
         (0xcd32, "CameraCalibration3"),
         (0xcd33, "ColorMatrix3"),

@@ -228,6 +228,8 @@ lazy_static::lazy_static! {
         (0xd2, "MonochromeGrainEffect"),
         (0xd6, "NoiseReductionStrength"),
         (0xe4, "LensTypeModel"),
+        (0xe8, "MinimumISO"),
+        (0xee, "DynamicRangeBoost"),
         (0xe00, "PrintIM"),
         (0x2003, "TimeInfo"),
         (0x8000, "MakerNoteVersion"),
