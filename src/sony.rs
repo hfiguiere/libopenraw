@@ -269,6 +269,7 @@ lazy_static::lazy_static! {
         sony!(387, ILCE7RM4A),
         sony!(388, ILCE7M4),
         sony!(390, ILCE7RM5),
+        sony!(391, ILME_FX30),
         sony!(393, ZVE1),
     ]);
 
@@ -360,13 +361,14 @@ lazy_static::lazy_static! {
         sony!("ILCE-7SM3", ILCE7SM3),
         sony!("ILCE-9", ILCE9),
         sony!("ILCE-9M2", ILCE9M2),
+        sony!("ILME-FX30", ILME_FX30),
         sony!("ZV-1", ZV1),
         sony!("ZV-E1", ZVE1),
         sony!("ZV-E10", ZVE10),
         ("Lunar", TypeId(vendor::HASSELBLAD, hasselblad::LUNAR)),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 90] = [
+    static ref MATRICES: [BuiltinMatrix; 91] = [
         BuiltinMatrix::new(
             sony!(A100),
             0,
@@ -799,6 +801,11 @@ lazy_static::lazy_static! {
             128,
             0,
             [ 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 ] ),
+        BuiltinMatrix::new(
+            sony!(ILME_FX30),
+            128,
+            0,
+            [ 6972, -2408, -600, -4330, 12101, 2515, -388, 1277, 5847 ] ),
         BuiltinMatrix::new(
             sony!(ZV1),
             128,
