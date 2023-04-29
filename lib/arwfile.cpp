@@ -133,6 +133,7 @@ static const ModelIdMap modelid_map = {
     { 387, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7RM4A) },
     { 388, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7M4) },
     { 390, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILCE7RM5) },
+    { 391, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILME_FX30) },
     { 393, OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZVE1) },
 };
 
@@ -484,6 +485,10 @@ static const BuiltinColourMatrix s_matrices[] = {
       128,
       0,
       { 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 } },
+    { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ILME_FX30),
+      128,
+      0,
+      { 6972, -2408, -600, -4330, 12101, 2515, -388, 1277, 5847 } },
     { OR_MAKE_SONY_TYPEID(OR_TYPEID_SONY_ZV1),
       128,
       0,
