@@ -251,6 +251,7 @@ lazy_static::lazy_static! {
         panasonic!("DMC-GF5", GF5),
         panasonic!("DMC-GF6", GF6),
         panasonic!("DMC-GF7", GF7),
+        panasonic!("DMC-GF8", GF8),
         panasonic!("DC-GF10", GF10),
         panasonic!("DMC-GX1", GX1),
         panasonic!("DMC-GX7", GX7),
@@ -378,7 +379,7 @@ lazy_static::lazy_static! {
         leica!("C (Typ 112)", C_TYP112),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 94] = [
+    static ref MATRICES: [BuiltinMatrix; 95] = [
         BuiltinMatrix::new(
             panasonic!(CM1),
             15,
@@ -411,6 +412,11 @@ lazy_static::lazy_static! {
             [ 8130, -2801, -946, -3520, 11289, 2552, -1314, 2511, 5791 ] ),
         BuiltinMatrix::new(
             panasonic!(GF7),
+            15,
+            0,
+            [ 7610, -2780, -576, -4614, 12195, 2733, -1375, 2393, 6490 ] ),
+        BuiltinMatrix::new(
+            panasonic!(GF8),
             15,
             0,
             [ 7610, -2780, -576, -4614, 12195, 2733, -1375, 2393, 6490 ] ),
