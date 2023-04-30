@@ -45,16 +45,6 @@ impl From<&Pattern> for PatternType {
     }
 }
 
-impl PatternType {
-    /// Tell if the pattern is a 2x2 RGB
-    fn is_2x2_rgb(&self) -> bool {
-        matches!(
-            *self,
-            PatternType::Rggb | PatternType::Gbrg | PatternType::Bggr | PatternType::Grbg
-        )
-    }
-}
-
 /// A pattern colour component.
 #[derive(Clone, Copy, Debug, PartialEq, TryFromPrimitive)]
 #[repr(u8)]
@@ -145,11 +135,6 @@ impl Pattern {
     /// Return a `PatternType`, mostly for C API.
     pub fn pattern_type(&self) -> PatternType {
         self.into()
-    }
-
-    /// Pattern is 2x2 rgb
-    pub fn is_2x2_rgb(&self) -> bool {
-        matches!(*self, Self::Rggb | Self::Gbrg | Self::Bggr | Self::Grbg)
     }
 
     /// Return the pattern colour array
