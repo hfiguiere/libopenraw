@@ -51,8 +51,6 @@ pub(crate) struct Container {
     dirs: OnceCell<Vec<Rc<Dir>>>,
     /// index to `Type` map
     dir_map: Vec<IfdType>,
-    /// offset correction for Exif. 0 in most cases.
-    exif_correction: i32,
     /// The Exif IFD
     exif_ifd: OnceCell<Option<Rc<Dir>>>,
     /// The MakerNote IFD
@@ -82,20 +80,10 @@ impl Container {
             endian: RefCell::new(container::Endian::Unset),
             dirs: OnceCell::new(),
             dir_map,
-            exif_correction: 0,
             exif_ifd: OnceCell::new(),
             mnote_ifd: OnceCell::new(),
             raw_type,
         }
-    }
-
-    /// The the Exif correction.
-    pub fn set_exif_correction(&mut self, correction: i32) {
-        self.exif_correction = correction;
-    }
-
-    pub fn exif_correction(&self) -> i32 {
-        self.exif_correction
     }
 
     pub fn read_u16_array(

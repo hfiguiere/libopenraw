@@ -505,8 +505,7 @@ pub mod epson {
 }
 
 /// Minolta type IDs
-#[allow(unused)]
-mod minolta {
+pub mod minolta {
     pub const UNKNOWN: u16 = 0;
     pub const A1: u16 = 1;
     pub const A2: u16 = 2;

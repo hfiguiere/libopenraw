@@ -39,6 +39,7 @@ mod identify;
 mod io;
 mod jpeg;
 mod leica;
+mod minolta;
 mod mosaic;
 mod mp4;
 mod nikon;
@@ -206,6 +207,7 @@ impl From<&str> for Type {
             "CRW" => Self::Crw,
             "DNG" => Self::Dng,
             "ERF" => Self::Erf,
+            "MRW" => Self::Mrw,
             "NEF" => Self::Nef,
             "NRW" => Self::Nrw,
             "ORF" => Self::Orf,

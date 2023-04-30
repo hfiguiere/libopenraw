@@ -37,6 +37,7 @@ use crate::epson;
 use crate::fujifilm;
 use crate::io::View;
 use crate::leica;
+use crate::minolta;
 use crate::nikon;
 use crate::olympus;
 use crate::panasonic;
@@ -386,7 +387,15 @@ impl Dir {
                     );
                 }
 
-                // XXX Minolta
+                if &data[10..14] == b"MLT0" {
+                    return Dir::new_makernote(
+                        "Minolta",
+                        container,
+                        offset,
+                        offset,
+                        &minolta::MNOTE_TAG_NAMES,
+                    );
+                }
 
                 // Others
 
@@ -562,10 +571,7 @@ impl Dir {
                         return None;
                     }
                 }
-                .map(|offset| {
-                    (offset as i64 + container.exif_correction() as i64 + self.mnote_offset as i64)
-                        as u32
-                })
+                .map(|offset| (offset as i64 + self.mnote_offset as i64) as u32)
             } else {
                 e.offset()
             }

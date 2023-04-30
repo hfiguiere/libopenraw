@@ -138,7 +138,7 @@ pub const EXIF_TAG_BODY_SERIAL_NUMBER: u16 = 0xa431;
 pub const EXIF_TAG_BODY_LENS_MAKE: u16 = 0xa433;
 pub const EXIF_TAG_BODY_LENS_MODEL: u16 = 0xa434;
 pub const EXIF_TAG_GAMMA: u16 = 0xa500;
-pub const EXIF_TAG_UNKNOWN_C4A5: u16 = 0xc4a5;
+pub const EXIF_TAG_PRINT_IM: u16 = 0xc4a5;
 /* DNG tags */
 pub const TIFF_TAG_DNG_VERSION: u16 = 0xc612;
 pub const DNG_TAG_UNIQUE_CAMERA_MODEL: u16 = 0xc614;
@@ -223,8 +223,14 @@ pub const MNOTE_NIKON_NEFDECODETABLE2: u16 = 0x96;
 pub const MNOTE_NIKON_PREVIEWIFD_START: u16 = 0x201;
 pub const MNOTE_NIKON_PREVIEWIFD_LENGTH: u16 = 0x202;
 
-/* Sony MakerNode */
+/* Sony MakerNote */
 pub const MNOTE_SONY_MODEL_ID: u16 = 0xb001;
+
+/* Minolta MakerNote */
+/// Offset to Thumbnail data (early Minolta cameras only).
+pub const MNOTE_MINOLTA_THUMBNAIL: u16 = 0x0081;
+pub const MNOTE_MINOLTA_THUMBNAIL_OFFSET: u16 = 0x0088;
+pub const MNOTE_MINOLTA_THUMBNAIL_LENGTH: u16 = 0x0089;
 
 lazy_static::lazy_static! {
     /// Exif tag names

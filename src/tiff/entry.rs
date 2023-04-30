@@ -112,7 +112,7 @@ impl Entry {
     }
 
     /// Load the data for an immutable entry.
-    /// If it is already load, just return it.
+    /// If it is already loaded, just return it.
     pub(crate) fn get_data<E>(&self, base_offset: u32, view: &mut View) -> Result<Vec<u8>>
     where
         E: ByteOrder,
