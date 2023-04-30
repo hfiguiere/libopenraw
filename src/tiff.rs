@@ -25,6 +25,7 @@ mod container;
 mod dir;
 mod entry;
 pub mod exif;
+mod iterator;
 
 use std::convert::TryFrom;
 
@@ -37,9 +38,10 @@ use crate::jpeg;
 use crate::mosaic::Pattern;
 use crate::thumbnail;
 use crate::{DataType, Error, RawData, Result, Type, TypeId};
-pub(crate) use container::Container;
+pub(crate) use container::{Container, DirIterator};
 pub(crate) use dir::Dir;
 pub(crate) use entry::Entry;
+pub(crate) use iterator::Iterator;
 
 #[repr(u32)]
 #[derive(Clone, Copy, Debug, PartialEq)]

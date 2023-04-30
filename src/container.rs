@@ -27,6 +27,7 @@ use std::io::{Read, Seek, SeekFrom};
 use byteorder::{BigEndian, ByteOrder, LittleEndian, NativeEndian, ReadBytesExt};
 
 use crate::io::View;
+use crate::metadata;
 use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
 use crate::Type as RawType;
 use crate::{Error, Result};
@@ -65,6 +66,11 @@ pub trait RawContainer {
     /// Return the endian of the container
     fn endian(&self) -> Endian {
         Endian::Unset
+    }
+
+    /// Return an dir metadata iterator.
+    fn dir_iterator(&self) -> metadata::Iterator {
+        metadata::Iterator::default()
     }
 
     /// Return the rawtype for which this was created

@@ -357,7 +357,7 @@ impl Test {
                 let count = self.results.run(rawfile.as_ref());
                 println!(" produced {count} results");
             }
-            Err(err) => println!("Test '{}' skipped: {}", &self.name, err),
+            Err(err) => println!("Test '{}' skipped ({}): {}", &self.name, self.file, err),
         }
     }
 }

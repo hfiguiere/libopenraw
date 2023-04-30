@@ -39,6 +39,7 @@ mod identify;
 mod io;
 mod jpeg;
 mod leica;
+pub mod metadata;
 mod minolta;
 mod mosaic;
 mod mp4;

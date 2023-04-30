@@ -48,13 +48,12 @@ pub enum TagType {
     Invalid = 13,
 }
 
-impl std::convert::TryFrom<i16> for TagType {
-    type Error = &'static str;
-    fn try_from(value: i16) -> Result<Self, Self::Error> {
+impl std::convert::From<i16> for TagType {
+    fn from(value: i16) -> Self {
         if value <= 0 || value > 13 {
-            Err("Value out of range")
+            Self::Invalid
         } else {
-            Ok(unsafe { std::mem::transmute(value) })
+            unsafe { std::mem::transmute(value) }
         }
     }
 }
@@ -263,6 +262,7 @@ impl ExifValue for Vec<u8> {
 }
 
 /// Unsigned rational number (fraction)
+#[derive(Debug)]
 pub struct Rational {
     pub num: u32,
     pub denom: u32,
@@ -295,6 +295,7 @@ impl ToString for Rational {
 }
 
 /// Signed rational number (fraction)
+#[derive(Debug)]
 pub struct SRational {
     pub num: i32,
     pub denom: i32,
@@ -367,28 +368,25 @@ impl std::convert::TryFrom<u32> for PhotometricInterpretation {
 
 #[cfg(test)]
 mod test {
-
-    use std::convert::TryFrom;
-
     use byteorder::LittleEndian;
 
     use super::{ExifValue, Rational, SRational, TagType};
 
     #[test]
     fn test_tag_type_convert() {
-        let tag = TagType::try_from(1);
-        assert_eq!(tag, Ok(TagType::Byte));
+        let tag = TagType::from(1);
+        assert_eq!(tag, TagType::Byte);
 
-        let tag = TagType::try_from(4);
-        assert_eq!(tag, Ok(TagType::Long));
-
-        // Invalid value
-        let tag = TagType::try_from(-1);
-        assert!(tag.is_err());
+        let tag = TagType::from(4);
+        assert_eq!(tag, TagType::Long);
 
         // Invalid value
-        let tag = TagType::try_from(42);
-        assert!(tag.is_err());
+        let tag = TagType::from(-1);
+        assert_eq!(tag, TagType::Invalid);
+
+        // Invalid value
+        let tag = TagType::from(42);
+        assert_eq!(tag, TagType::Invalid);
     }
 
     #[test]

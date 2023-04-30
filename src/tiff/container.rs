@@ -33,12 +33,15 @@ use crate::container::RawContainer;
 use crate::io;
 use crate::io::View;
 use crate::jpeg;
+use crate::metadata;
 use crate::thumbnail;
 use crate::tiff::{Dir, Entry, IfdType};
 use crate::Type as RawType;
 use crate::{DataType, Dump, Error, Result};
 
 type CheckMagicHeader = fn(&[u8]) -> Result<container::Endian>;
+
+pub(crate) type DirIterator<'a> = std::slice::Iter<'a, Dir>;
 
 /// IFD Container for TIFF based file.
 pub(crate) struct Container {
@@ -68,6 +71,11 @@ impl container::RawContainer for Container {
 
     fn raw_type(&self) -> RawType {
         self.raw_type
+    }
+
+    /// Return an dir metadata iterator.
+    fn dir_iterator(&self) -> metadata::Iterator {
+        self.dirs().iter().into()
     }
 }
 

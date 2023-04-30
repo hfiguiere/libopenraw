@@ -29,6 +29,7 @@ use super::{Error, RawData, Result, Type, TypeId};
 use crate::container::RawContainer;
 use crate::factory;
 use crate::identify;
+use crate::metadata;
 use crate::thumbnail::{ThumbDesc, Thumbnail};
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
@@ -242,6 +243,12 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
     /// Get the MakerNote
     fn maker_note_ifd(&self) -> Option<&tiff::Dir> {
         self.ifd(tiff::IfdType::MakerNote)
+    }
+
+    /// Get a metadata iterator. This will iterate over
+    /// all the metadata for the raw file.
+    fn metadata(&self) -> metadata::Iterator {
+        self.container().dir_iterator()
     }
 
     /// Return the colour matrix for the file.

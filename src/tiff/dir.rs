@@ -31,8 +31,7 @@ use once_cell::unsync::OnceCell;
 
 use crate::apple;
 use crate::canon;
-use crate::container;
-use crate::container::RawContainer;
+use crate::container::{self, RawContainer};
 use crate::epson;
 use crate::fujifilm;
 use crate::io::View;
@@ -63,11 +62,11 @@ lazy_static::lazy_static! {
 /// Also handle MakerNotes
 pub struct Dir {
     /// Endian for the IFD
-    endian: container::Endian,
+    pub(crate) endian: container::Endian,
     /// Type of IFD
-    type_: IfdType,
+    pub(crate) type_: IfdType,
     /// All the IFD entries
-    entries: BTreeMap<u16, Entry>,
+    pub(crate) entries: BTreeMap<u16, Entry>,
     /// Position of the next IFD
     next: u32,
     /// The MakerNote ID
@@ -75,12 +74,16 @@ pub struct Dir {
     /// Offset in MakerNote
     pub mnote_offset: u32,
     /// Tag names to decode.
-    tag_names: &'static HashMap<u16, &'static str>,
+    pub(crate) tag_names: &'static HashMap<u16, &'static str>,
     /// SubIFs
     sub_ifds: OnceCell<Vec<Dir>>,
 }
 
 impl Dir {
+    pub(crate) fn iter(&self) -> super::Iterator {
+        super::Iterator::new(self)
+    }
+
     pub(crate) fn create_maker_note(
         container: &dyn container::RawContainer,
         offset: u32,
@@ -704,5 +707,30 @@ impl Dump for Dir {
             }
         }
         dump_writeln!(out, indent, "</IFD>");
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use log;
+    use simple_logger;
+
+    use crate::io::Viewer;
+    use crate::tiff;
+    use crate::Type;
+
+    #[test]
+    fn test_ifd_iterator() {
+        simple_logger::init_with_level(log::Level::Debug).unwrap();
+
+        let reader = std::fs::File::open("sample.tiff").expect("Couldn't open file");
+        let viewer = Viewer::new(Box::new(std::io::BufReader::new(reader)), 0);
+        let view = Viewer::create_view(&viewer, 0).expect("Couldn't create view");
+        let mut container = tiff::Container::new(view, vec![tiff::IfdType::Main], Type::Jpeg);
+        container.load(None).expect("Failed to load IFD");
+        let dir = container.directory(0).expect("Couldn't get directory");
+        for meta in dir.iter() {
+            println!("meta {:?}", meta);
+        }
     }
 }
