@@ -65,13 +65,7 @@ fn make_thumbnail_name(p: &str, thumb: &Thumbnail) -> Option<std::path::PathBuf>
         .file_stem()
         .and_then(|s| s.to_str())
         .map(|stem| {
-            let thumbnail = std::path::PathBuf::from(format!(
-                "{}_{}x{}.jpg",
-                stem,
-                thumb.width(),
-                thumb.height()
-            ));
-            thumbnail
+            std::path::PathBuf::from(format!("{}_{}x{}.jpg", stem, thumb.width(), thumb.height()))
         })
 }
 
