@@ -31,7 +31,6 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap::{Point, Rect, Size};
-use crate::camera_ids::{fujifilm, vendor};
 use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
@@ -47,12 +46,22 @@ use matrices::MATRICES;
 
 pub(crate) const RAF_MAGIC: &[u8] = b"FUJIFILMCCD-RAW ";
 
+#[macro_export]
 macro_rules! fuji {
     ($id:expr, $model:ident) => {
-        ($id, TypeId(vendor::FUJIFILM, fujifilm::$model))
+        (
+            $id,
+            TypeId(
+                $crate::camera_ids::vendor::FUJIFILM,
+                $crate::camera_ids::fujifilm::$model,
+            ),
+        )
     };
     ($model:ident) => {
-        TypeId(vendor::FUJIFILM, fujifilm::$model)
+        TypeId(
+            $crate::camera_ids::vendor::FUJIFILM,
+            $crate::camera_ids::fujifilm::$model,
+        )
     };
 }
 
@@ -245,7 +254,7 @@ impl RawFileImpl for RafFile {
         MAKE_TO_ID_MAP
             .get(&model)
             .copied()
-            .unwrap_or(TypeId(vendor::FUJIFILM, 0))
+            .unwrap_or(fuji!(UNKNOWN))
     }
 
     fn container(&self) -> &dyn RawContainer {

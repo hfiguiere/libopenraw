@@ -23,6 +23,25 @@
 
 use std::collections::HashMap;
 
+#[macro_export]
+macro_rules! leica {
+    ($id:expr, $model:ident) => {
+        (
+            $id,
+            TypeId(
+                $crate::camera_ids::vendor::LEICA,
+                $crate::camera_ids::leica::$model,
+            ),
+        )
+    };
+    ($model:ident) => {
+        TypeId(
+            $crate::camera_ids::vendor::LEICA,
+            $crate::camera_ids::leica::$model,
+        )
+    };
+}
+
 lazy_static::lazy_static! {
     pub static ref MNOTE_TAG_NAMES_2: HashMap<u16, &'static str> = HashMap::from([
         (0x300, "Quality"),

@@ -33,7 +33,6 @@ use byteorder::ReadBytesExt;
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap::Bitmap;
-use crate::camera_ids::{nikon, vendor};
 use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
@@ -47,12 +46,22 @@ use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, 
 use diffiterator::{CfaIterator, DiffIterator};
 use matrices::MATRICES;
 
+#[macro_export]
 macro_rules! nikon {
     ($id:expr, $model:ident) => {
-        ($id, TypeId(vendor::NIKON, nikon::$model))
+        (
+            $id,
+            TypeId(
+                $crate::camera_ids::vendor::NIKON,
+                $crate::camera_ids::nikon::$model,
+            ),
+        )
     };
     ($model:ident) => {
-        TypeId(vendor::NIKON, nikon::$model)
+        TypeId(
+            $crate::camera_ids::vendor::NIKON,
+            $crate::camera_ids::nikon::$model,
+        )
     };
 }
 
@@ -530,7 +539,7 @@ impl RawFileImpl for NefFile {
         *self.type_id.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(TypeId(vendor::NIKON, 0))
+            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(nikon!(UNKNOWN))
         })
     }
 

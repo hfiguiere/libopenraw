@@ -21,15 +21,9 @@
 
 //! Nikon xyz to rgb matrices.
 
-use crate::camera_ids::{nikon, vendor};
 use crate::colour::BuiltinMatrix;
+use crate::nikon;
 use crate::TypeId;
-
-macro_rules! nikon {
-    ($model:ident) => {
-        TypeId(vendor::NIKON, nikon::$model)
-    };
-}
 
 lazy_static::lazy_static! {
     pub(super) static ref MATRICES: [BuiltinMatrix; 88] = [

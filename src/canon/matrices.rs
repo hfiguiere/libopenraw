@@ -19,26 +19,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+use crate::canon;
 use crate::colour::BuiltinMatrix;
 use crate::TypeId;
-
-macro_rules! canon {
-    ($id:expr, $model:ident) => {
-        (
-            $id,
-            TypeId(
-                $crate::camera_ids::vendor::CANON,
-                $crate::camera_ids::canon::$model,
-            ),
-        )
-    };
-    ($model:ident) => {
-        TypeId(
-            $crate::camera_ids::vendor::CANON,
-            $crate::camera_ids::canon::$model,
-        )
-    };
-}
 
 lazy_static::lazy_static! {
     pub(super) static ref MATRICES: [BuiltinMatrix; 114] = [

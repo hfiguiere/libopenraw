@@ -20,15 +20,9 @@
 
 //! Olympus matrices
 
-use crate::camera_ids::{olympus, vendor};
 use crate::colour::BuiltinMatrix;
+use crate::olympus;
 use crate::TypeId;
-
-macro_rules! olympus {
-    ($model:ident) => {
-        TypeId(vendor::OLYMPUS, olympus::$model)
-    };
-}
 
 lazy_static::lazy_static! {
     pub(super) static ref MATRICES: [BuiltinMatrix; 63] = [

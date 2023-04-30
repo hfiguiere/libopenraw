@@ -27,7 +27,6 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap::{Point, Rect, Size};
-use crate::camera_ids::vendor;
 use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
@@ -37,6 +36,7 @@ use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::{Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
+#[macro_export]
 macro_rules! pentax {
     ($id:expr, $model:ident) => {
         (
@@ -55,15 +55,22 @@ macro_rules! pentax {
     };
 }
 
+#[macro_export]
 macro_rules! ricoh {
     ($id:expr, $model:ident) => {
         (
             $id,
-            TypeId(vendor::RICOH, $crate::camera_ids::ricoh::$model),
+            TypeId(
+                $crate::camera_ids::vendor::RICOH,
+                $crate::camera_ids::ricoh::$model,
+            ),
         )
     };
     ($model:ident) => {
-        TypeId(vendor::RICOH, $crate::camera_ids::ricoh::$model)
+        TypeId(
+            $crate::camera_ids::vendor::RICOH,
+            $crate::camera_ids::ricoh::$model,
+        )
     };
 }
 
@@ -504,14 +511,13 @@ impl RawFileImpl for PefFile {
                     return PENTAX_MODEL_ID_MAP
                         .get(&id)
                         .copied()
-                        .unwrap_or(TypeId(vendor::PENTAX, 0));
+                        .unwrap_or(pentax!(UNKNOWN));
                 } else {
                     log::error!("Pentax model ID tag not found");
                 }
             }
             let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP)
-                .unwrap_or(TypeId(vendor::PENTAX, 0))
+            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(pentax!(UNKNOWN))
         })
     }
 

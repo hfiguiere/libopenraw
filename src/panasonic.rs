@@ -27,12 +27,12 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap;
-use crate::camera_ids::{leica, panasonic, vendor};
 use crate::colour::BuiltinMatrix;
 use crate::container::{Endian, RawContainer};
 use crate::decompress;
 use crate::io::Viewer;
 use crate::jpeg;
+use crate::leica;
 use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
@@ -41,21 +41,21 @@ use crate::tiff::exif;
 use crate::tiff::{Dir, Ifd};
 use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
-macro_rules! leica {
-    ($id:expr, $model:ident) => {
-        ($id, TypeId(vendor::LEICA, leica::$model))
-    };
-    ($model:ident) => {
-        TypeId(vendor::LEICA, leica::$model)
-    };
-}
-
 macro_rules! panasonic {
     ($id:expr, $model:ident) => {
-        ($id, TypeId(vendor::PANASONIC, panasonic::$model))
+        (
+            $id,
+            TypeId(
+                $crate::camera_ids::vendor::PANASONIC,
+                $crate::camera_ids::panasonic::$model,
+            ),
+        )
     };
     ($model:ident) => {
-        TypeId(vendor::PANASONIC, panasonic::$model)
+        TypeId(
+            $crate::camera_ids::vendor::PANASONIC,
+            $crate::camera_ids::panasonic::$model,
+        )
     };
 }
 
@@ -924,8 +924,7 @@ impl RawFileImpl for Rw2File {
         *self.type_id.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP)
-                .unwrap_or(TypeId(vendor::PANASONIC, 0))
+            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(panasonic!(UNKNOWN))
         })
     }
 

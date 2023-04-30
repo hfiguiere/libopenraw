@@ -32,7 +32,7 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap;
-use crate::camera_ids::vendor;
+use crate::canon;
 use crate::canon::SensorInfo;
 use crate::container::RawContainer;
 use crate::io::Viewer;
@@ -48,24 +48,6 @@ use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, 
 
 use super::matrices::MATRICES;
 use decompress::Decompress;
-
-macro_rules! canon {
-    ($id:expr, $model:ident) => {
-        (
-            $id,
-            TypeId(
-                $crate::camera_ids::vendor::CANON,
-                $crate::camera_ids::canon::$model,
-            ),
-        )
-    };
-    ($model:ident) => {
-        TypeId(
-            $crate::camera_ids::vendor::CANON,
-            $crate::camera_ids::canon::$model,
-        )
-    };
-}
 
 lazy_static::lazy_static! {
     static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
@@ -121,7 +103,7 @@ impl RawFileImpl for CrwFile {
             container
                 .make_or_model(exif::EXIF_TAG_MODEL)
                 .and_then(|model| MAKE_TO_ID_MAP.get(model.as_str()).copied())
-                .unwrap_or(TypeId(vendor::CANON, 0))
+                .unwrap_or(canon!(UNKNOWN))
         })
     }
 

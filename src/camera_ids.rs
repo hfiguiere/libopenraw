@@ -69,6 +69,7 @@ pub mod adobe {
 /// Canon type IDs
 #[allow(unused)]
 pub mod canon {
+    pub const UNKNOWN: u16 = 0;
     pub const EOS_20D: u16 = 1;
     pub const EOS_30D: u16 = 2;
     pub const EOS_40D: u16 = 3;
@@ -287,6 +288,7 @@ pub mod canon {
 
 /// Nikon type IDs
 pub mod nikon {
+    pub const UNKNOWN: u16 = 0;
     pub const E5700: u16 = 1;
     pub const D1: u16 = 2;
     pub const D1X: u16 = 3;
@@ -437,6 +439,7 @@ pub mod leica {
 
 /// Pentax type IDs
 pub mod pentax {
+    pub const UNKNOWN: u16 = 0;
     pub const K10D_PEF: u16 = 1;
     pub const K10D_DNG: u16 = 2;
     pub const IST_D_PEF: u16 = 3;
@@ -499,6 +502,7 @@ pub mod pentax {
 
 /// Epson type IDs
 pub mod epson {
+    pub const UNKNOWN: u16 = 0;
     pub const RD1: u16 = 1;
     pub const RD1S: u16 = 2;
     pub const RD1X: u16 = 3;
@@ -520,6 +524,7 @@ pub mod minolta {
 
 /// Olympus type IDs
 pub mod olympus {
+    pub const UNKNOWN: u16 = 0;
     pub const E1: u16 = 1;
     pub const E10: u16 = 2;
     pub const E3: u16 = 3;
@@ -614,6 +619,7 @@ pub mod ricoh {
 
 /// Sony type IDs
 pub mod sony {
+    pub const UNKNOWN: u16 = 0;
     pub const A100: u16 = 1;
     pub const A200: u16 = 2;
     pub const A700: u16 = 3;
@@ -712,6 +718,7 @@ pub mod sony {
 
 /// Panasonic type IDs
 pub mod panasonic {
+    pub const UNKNOWN: u16 = 0;
     pub const GF1: u16 = 1;
     pub const GF2: u16 = 2;
     pub const FZ30: u16 = 3;
@@ -833,6 +840,7 @@ pub mod panasonic {
 
 /// Fujifilm type IDs
 pub mod fujifilm {
+    pub const UNKNOWN: u16 = 0;
     pub const F700: u16 = 1;
     pub const E900: u16 = 2;
     pub const S2PRO: u16 = 3;

@@ -2,15 +2,9 @@
 
 //! Fujifilm colour matrices
 
-use crate::camera_ids::{fujifilm, vendor};
 use crate::colour::BuiltinMatrix;
+use crate::fuji;
 use crate::TypeId;
-
-macro_rules! fuji {
-    ($model:ident) => {
-        TypeId(vendor::FUJIFILM, fujifilm::$model)
-    };
-}
 
 lazy_static::lazy_static! {
     pub(super) static ref MATRICES: [BuiltinMatrix; 67] = [

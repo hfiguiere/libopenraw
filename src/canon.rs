@@ -32,13 +32,13 @@ use std::rc::Rc;
 use lazy_static::lazy_static;
 
 use super::TypeId;
-use crate::camera_ids::vendor;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 pub use cr2::Cr2File;
 pub use cr3::Cr3File;
 pub use crw::CrwFile;
 
+#[macro_export]
 macro_rules! canon {
     ($id:expr, $model:ident) => {
         (
@@ -253,7 +253,7 @@ fn get_typeid_for_modelid(model_id: u32) -> TypeId {
     CANON_MODEL_ID_MAP
         .get(&model_id)
         .copied()
-        .unwrap_or(TypeId(vendor::CANON, 0))
+        .unwrap_or(canon!(UNKNOWN))
 }
 
 pub(crate) fn identify_from_maker_note(maker_note: Rc<tiff::Dir>) -> TypeId {
@@ -263,7 +263,7 @@ pub(crate) fn identify_from_maker_note(maker_note: Rc<tiff::Dir>) -> TypeId {
     } else {
         log::error!("Canon model ID tag not found");
     }
-    TypeId(vendor::CANON, 0)
+    canon!(UNKNOWN)
 }
 
 /// SensorInfo currently only contain the active area (x, y, w, h)

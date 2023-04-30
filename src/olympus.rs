@@ -30,8 +30,6 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap::{Bitmap, Rect};
-use crate::camera_ids;
-use crate::camera_ids::vendor;
 use crate::container;
 use crate::container::RawContainer;
 use crate::io::Viewer;
@@ -45,12 +43,22 @@ use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, 
 use decompress::decompress_olympus;
 use matrices::MATRICES;
 
+#[macro_export]
 macro_rules! olympus {
     ($id:expr, $model:ident) => {
-        ($id, TypeId(vendor::OLYMPUS, camera_ids::olympus::$model))
+        (
+            $id,
+            TypeId(
+                $crate::camera_ids::vendor::OLYMPUS,
+                $crate::camera_ids::olympus::$model,
+            ),
+        )
     };
     ($model:ident) => {
-        TypeId(vendor::OLYMPUS, camera_ids::olympus::$model)
+        TypeId(
+            $crate::camera_ids::vendor::OLYMPUS,
+            $crate::camera_ids::olympus::$model,
+        )
     };
 }
 
@@ -339,8 +347,7 @@ impl RawFileImpl for OrfFile {
         *self.type_id.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP)
-                .unwrap_or(TypeId(vendor::OLYMPUS, 0))
+            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(olympus!(UNKNOWN))
         })
     }
 

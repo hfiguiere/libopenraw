@@ -28,7 +28,7 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::camera_ids::vendor;
+use crate::canon;
 use crate::container::RawContainer;
 use crate::io::Viewer;
 use crate::mosaic::Pattern;
@@ -68,7 +68,7 @@ impl RawFileImpl for Cr3File {
                 super::identify_from_maker_note(maker_note)
             } else {
                 log::error!("MakerNote not found");
-                TypeId(vendor::CANON, 0)
+                canon!(UNKNOWN)
             }
         })
     }
