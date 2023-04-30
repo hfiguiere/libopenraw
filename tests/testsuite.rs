@@ -313,7 +313,7 @@ impl Results {
             let maker_note = rawfile.maker_note_ifd();
             match maker_note_count {
                 -1 => assert!(maker_note.is_none(), "Expected to have no MakerNote"),
-                ..=-2 => unreachable!(),
+                c if c < -1 => unreachable!(),
                 _ => {
                     let maker_note = maker_note.unwrap();
                     assert_eq!(
