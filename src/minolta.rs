@@ -600,6 +600,34 @@ impl MrwContainer {
     fn raw_data_offset(&self) -> u64 {
         DATA_BLOCK_HEADER_LENGTH + self.mrm.as_ref().map(|mrm| mrm.length).unwrap_or(0)
     }
+
+    #[cfg(feature = "dump")]
+    fn dump_datablock_property_u16<W: std::io::Write + ?Sized>(
+        &self,
+        out: &mut W,
+        indent: u32,
+        block: &DataBlock,
+        name: &str,
+        prop: u64,
+    ) {
+        if let Some(value) = block.uint16_value(prop, self) {
+            dump_writeln!(out, indent, "{name}@{prop} = {value}");
+        }
+    }
+
+    #[cfg(feature = "dump")]
+    fn dump_datablock_property_u8<W: std::io::Write + ?Sized>(
+        &self,
+        out: &mut W,
+        indent: u32,
+        block: &DataBlock,
+        name: &str,
+        prop: u64,
+    ) {
+        if let Some(value) = block.uint8_value(prop, self) {
+            dump_writeln!(out, indent, "{name}@{prop} = {value}");
+        }
+    }
 }
 
 impl RawContainer for MrwContainer {
@@ -625,13 +653,67 @@ impl Dump for MrwContainer {
                 let indent = indent + 1;
                 dump_writeln!(out, indent, "version = {:?}", self.version);
                 if let Some(block) = &self.prd {
-                    dump_writeln!(
-                        out,
-                        indent,
-                        "<PRD @{}, len={} />",
-                        block.offset,
-                        block.length
-                    );
+                    dump_writeln!(out, indent, "<PRD @{}, len={}>", block.offset, block.length);
+                    {
+                        let indent = indent + 1;
+                        self.dump_datablock_property_u16(
+                            out,
+                            indent,
+                            block,
+                            "SensorLength",
+                            Prd::SensorLength as u64,
+                        );
+                        self.dump_datablock_property_u16(
+                            out,
+                            indent,
+                            block,
+                            "SensorWidth",
+                            Prd::SensorWidth as u64,
+                        );
+                        self.dump_datablock_property_u16(
+                            out,
+                            indent,
+                            block,
+                            "ImageLength",
+                            Prd::ImageLength as u64,
+                        );
+                        self.dump_datablock_property_u16(
+                            out,
+                            indent,
+                            block,
+                            "ImageWidth",
+                            Prd::ImageWidth as u64,
+                        );
+                        self.dump_datablock_property_u8(
+                            out,
+                            indent,
+                            block,
+                            "DataSize",
+                            Prd::DataSize as u64,
+                        );
+                        self.dump_datablock_property_u8(
+                            out,
+                            indent,
+                            block,
+                            "PixelSize",
+                            Prd::PixelSize as u64,
+                        );
+                        self.dump_datablock_property_u8(
+                            out,
+                            indent,
+                            block,
+                            "StorageType",
+                            Prd::StorageType as u64,
+                        );
+                        self.dump_datablock_property_u16(
+                            out,
+                            indent,
+                            block,
+                            "BayerPattern",
+                            Prd::BayerPattern as u64,
+                        );
+                    }
+                    dump_writeln!(out, indent, "</PRD>");
                 }
                 if let Some(block) = &self.wbg {
                     dump_writeln!(
