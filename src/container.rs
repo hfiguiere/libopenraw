@@ -24,11 +24,10 @@
 use std::cell::RefMut;
 use std::io::{Read, Seek, SeekFrom};
 
-use byteorder::{BigEndian, ByteOrder, LittleEndian};
+use byteorder::{BigEndian, ByteOrder, LittleEndian, NativeEndian, ReadBytesExt};
 
 use crate::io::View;
 use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
-use crate::utils;
 use crate::Type as RawType;
 use crate::{Error, Result};
 
@@ -122,25 +121,33 @@ pub trait RawContainer {
         data
     }
 
-    /// Load an 16 bit buffer at `offset` and of `len` bytes.
+    /// Load an 16 bit buffer at `offset` and of `len` bytes in the native endian.
     fn load_buffer16(&self, offset: u64, len: u64) -> Vec<u16> {
-        let mut data = uninit_vec!((len / 2) as usize);
-
         let mut view = self.borrow_view_mut();
-        if view.seek(SeekFrom::Start(offset)).is_err() {
-            log::error!("load_buffer16: Seek failed");
-        }
-        // XXX do we need to deal with the endian????
-        let slice = utils::to_u8_slice_mut(&mut data);
-        if let Ok(n) = view.read(slice) {
-            if n < len as usize {
-                log::debug!("Short read {} < {}", n, len);
-                data.resize(n / 2, 0);
-            }
-        } else {
-            log::error!("load_buffer16: read failed");
-        }
-
-        data
+        load_buffer16_endian::<NativeEndian>(&mut view, offset, len)
     }
+
+    /// Load an 16 bit buffer at `offset` and of `len` bytes, from Big Endian
+    fn load_buffer16_be(&self, offset: u64, len: u64) -> Vec<u16> {
+        let mut view = self.borrow_view_mut();
+        load_buffer16_endian::<BigEndian>(&mut view, offset, len)
+    }
+}
+
+/// Load an 16 bit buffer at `offset` and of `len` bytes following endian `E`.
+fn load_buffer16_endian<E>(view: &mut View, offset: u64, len: u64) -> Vec<u16>
+where
+    E: ByteOrder,
+{
+    let mut data = uninit_vec!((len / 2) as usize);
+
+    if let Err(err) = view.seek(SeekFrom::Start(offset)) {
+        log::error!("load_buffer16: Seek failed: {err}");
+    }
+
+    if let Err(err) = view.read_u16_into::<E>(&mut data) {
+        log::error!("load_buffer16: {err}");
+    }
+
+    data
 }

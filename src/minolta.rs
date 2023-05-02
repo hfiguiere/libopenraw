@@ -309,7 +309,7 @@ impl RawFileImpl for MrwFile {
                     RawData::new16(x, y, 16, DataType::Raw, unpacked, mosaic)
                 }
             } else {
-                let raw = container.load_buffer16(cfa_offset, cfa_len);
+                let raw = container.load_buffer16_be(cfa_offset, cfa_len);
                 RawData::new16(x, y, bps, DataType::Raw, raw, mosaic)
             };
             if let Some((black, white)) = MATRICES
