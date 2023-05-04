@@ -243,6 +243,11 @@ void MRWFile::_identifyId()
     off_t offset = mc->pixelDataOffset();
     if (!is_compressed || (options & OR_OPTIONS_DONT_DECOMPRESS)) {
         fetched = m_container->fetchData(p, offset, datalen);
+        uint16_t* pixels = (uint16_t*)p;
+        for (auto i = 0; i < x * y; i++) {
+            *pixels = be16toh(*pixels);
+            pixels++;
+        }
     } else {
         Unpack unpack(x, IFD::COMPRESS_NONE);
         size_t blocksize = unpack.block_size();
