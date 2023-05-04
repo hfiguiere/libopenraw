@@ -279,10 +279,10 @@ void MRWFile::_identifyId()
     or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
     switch (bpat)
     {
-    case 0x0001:
+    case MRW::BAYER_PATTERN_RGGB:
         cfa_pattern = OR_CFA_PATTERN_RGGB;
         break;
-    case 0x0004:
+    case MRW::BAYER_PATTERN_GBRG:
         cfa_pattern = OR_CFA_PATTERN_GBRG;
         break;
     default:
