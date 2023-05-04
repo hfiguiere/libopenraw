@@ -6,6 +6,9 @@ other contributors. See the respective files.
 It is licensed under LGPLv3 or later. See files COPYING
 and COPYING.LESSER
 
+mp4parse is released under MPL-2.0 license. See the MPL-2.0 file.
+It is a modified version of https://github.com/mozilla/mp4parse-rust
+
 Code of Conduct:
 ================
 
