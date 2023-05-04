@@ -289,18 +289,15 @@ impl RawFileImpl for MrwFile {
                 2 * x * y
             } as u64;
             let mut rawdata = if is_compressed {
+                let raw = container.load_buffer8(cfa_offset, cfa_len);
                 if skip_decompress {
-                    let raw = container.load_buffer8(cfa_offset, cfa_len);
                     RawData::new8(x, y, bps, DataType::CompressedRaw, raw, mosaic)
                 } else {
-                    let unpacked = decompress::unpack(
-                        container,
-                        x,
-                        y,
-                        bps,
+                    let mut unpacked = Vec::with_capacity((x * y) as usize);
+                    decompress::unpack_be12to16(
+                        &raw,
+                        &mut unpacked,
                         tiff::Compression::None,
-                        cfa_offset,
-                        cfa_len as usize,
                     )
                     .map_err(|err| {
                         log::error!("RAF failed to unpack {}", err);
