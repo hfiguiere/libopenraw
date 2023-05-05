@@ -87,19 +87,18 @@ pub(crate) fn unpack_be12to16(
         let m = if i == n { rest / 3 } else { 5 };
         // XXX check overflow
         for _ in 0..m {
-            let mut t: u32 = input[src] as u32;
+            let i0 = input[src] as u16;
             src += 1;
-            t <<= 8;
-
-            t |= input[src] as u32;
+            let i1 = input[src] as u16;
             src += 1;
-            t <<= 8;
-
-            t |= input[src] as u32;
+            let i2 = input[src] as u16;
             src += 1;
 
-            out_data.push(((t & (0xfff << 12)) >> 12) as u16);
-            out_data.push((t & 0xfff) as u16);
+            let o0 = i0 << 4 | i1 >> 4;
+            let o1 = (i1 & 0xf) << 8 | i2;
+
+            out_data.push(o0);
+            out_data.push(o1);
             written += 2;
         }
         src += pad;
