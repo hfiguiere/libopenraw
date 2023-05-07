@@ -259,7 +259,6 @@ pub(crate) struct OrfFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
-    cfa: OnceCell<Option<Rc<tiff::Dir>>>,
 }
 
 impl OrfFile {
@@ -270,18 +269,13 @@ impl OrfFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
-            cfa: OnceCell::new(),
         })
     }
 
     /// Return the CFA dir
-    fn cfa_dir(&self) -> Option<&Rc<tiff::Dir>> {
-        self.cfa
-            .get_or_init(|| {
-                self.container();
-                self.container.get().unwrap().directory(0)
-            })
-            .as_ref()
+    fn cfa_dir(&self) -> Option<&tiff::Dir> {
+        self.container();
+        self.container.get().unwrap().directory(0)
     }
 
     /// Will identify the magic header for Olympus and return the endian
@@ -409,9 +403,9 @@ impl RawFileImpl for OrfFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
         match ifd_type {
-            tiff::IfdType::Raw => self.cfa_dir().cloned(),
+            tiff::IfdType::Raw => self.cfa_dir(),
             tiff::IfdType::Exif => {
                 self.container();
                 self.container.get().unwrap().exif_dir()
@@ -427,7 +421,7 @@ impl RawFileImpl for OrfFile {
     fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
         self.ifd(IfdType::Raw)
             .ok_or(Error::NotFound)
-            .and_then(|ref cfa| {
+            .and_then(|cfa| {
                 self.container();
                 tiff::tiff_get_rawdata(self.container.get().unwrap(), cfa, self.type_())
             })

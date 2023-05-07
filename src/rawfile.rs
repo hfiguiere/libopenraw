@@ -22,7 +22,6 @@
 //! Camera RAW file
 
 use std::path::Path;
-use std::rc::Rc;
 
 use log::{debug, error};
 
@@ -76,7 +75,7 @@ pub trait RawFileImpl {
     }
 
     /// Get the ifd with type
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>>;
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir>;
 
     /// Load the [`RawData`] and return it.
     ///
@@ -231,17 +230,17 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
     }
 
     /// Get the main IFD
-    fn main_ifd(&self) -> Option<Rc<tiff::Dir>> {
+    fn main_ifd(&self) -> Option<&tiff::Dir> {
         self.ifd(tiff::IfdType::Main)
     }
 
     /// Get the Exif IFD
-    fn exif_ifd(&self) -> Option<Rc<tiff::Dir>> {
+    fn exif_ifd(&self) -> Option<&tiff::Dir> {
         self.ifd(tiff::IfdType::Exif)
     }
 
     /// Get the MakerNote
-    fn maker_note_ifd(&self) -> Option<Rc<tiff::Dir>> {
+    fn maker_note_ifd(&self) -> Option<&tiff::Dir> {
         self.ifd(tiff::IfdType::MakerNote)
     }
 
@@ -276,7 +275,6 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
 #[cfg(test)]
 mod test {
     use std::cell::{RefCell, RefMut};
-    use std::rc::Rc;
 
     use once_cell::unsync::OnceCell;
 
@@ -380,7 +378,7 @@ mod test {
             }
         }
 
-        fn ifd(&self, _ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>> {
+        fn ifd(&self, _ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
             None
         }
 

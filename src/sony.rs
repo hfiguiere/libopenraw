@@ -892,7 +892,7 @@ impl RawFileImpl for ArwFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
@@ -904,12 +904,8 @@ impl RawFileImpl for ArwFile {
                     tiff::tiff_locate_raw_ifd(container)
                 }
             }
-            tiff::IfdType::Exif => self
-                .ifd(tiff::IfdType::Main)
-                .and_then(|dir| dir.get_exif_ifd(container)),
-            tiff::IfdType::MakerNote => self
-                .ifd(tiff::IfdType::Exif)
-                .and_then(|dir| dir.get_mnote_ifd(container)),
+            tiff::IfdType::Exif => container.exif_dir(),
+            tiff::IfdType::MakerNote => container.mnote_dir(),
             _ => None,
         }
     }
@@ -921,7 +917,7 @@ impl RawFileImpl for ArwFile {
             self.ifd(tiff::IfdType::Raw)
                 .ok_or(Error::NotFound)
                 .and_then(|dir| {
-                    tiff::tiff_get_rawdata(self.container.get().unwrap(), &dir, self.type_())
+                    tiff::tiff_get_rawdata(self.container.get().unwrap(), dir, self.type_())
                 })
         }
     }

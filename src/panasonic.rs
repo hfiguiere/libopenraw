@@ -867,6 +867,7 @@ pub struct Rw2File {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    jpeg_preview: OnceCell<Option<jpeg::Container>>,
 }
 
 impl Rw2File {
@@ -877,6 +878,7 @@ impl Rw2File {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            jpeg_preview: OnceCell::new(),
         })
     }
 
@@ -909,13 +911,15 @@ impl Rw2File {
         })
     }
 
-    fn jpeg_preview(&self) -> Result<jpeg::Container> {
-        self.jpeg_data_offset()
-            .ok_or(Error::NotFound)
-            .and_then(|offset| {
-                let view = Viewer::create_view(&self.reader, offset.offset)?;
-                Ok(jpeg::Container::new(view, self.type_()))
+    fn jpeg_preview(&self) -> Option<&jpeg::Container> {
+        self.jpeg_preview
+            .get_or_init(|| {
+                self.jpeg_data_offset().and_then(|offset| {
+                    let view = Viewer::create_view(&self.reader, offset.offset).ok()?;
+                    Some(jpeg::Container::new(view, self.type_()))
+                })
             })
+            .as_ref()
     }
 }
 
@@ -952,7 +956,7 @@ impl RawFileImpl for Rw2File {
     fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
         self.thumbnails.get_or_init(|| {
             let mut thumbnails = vec![];
-            if let Ok(jpeg) = self.jpeg_preview() {
+            if let Some(jpeg) = self.jpeg_preview() {
                 if let Some(jpeg_offset) = self.jpeg_data_offset() {
                     // The JPEG preview has a preview.
                     jpeg.exif().and_then(|exif| {
@@ -1000,24 +1004,16 @@ impl RawFileImpl for Rw2File {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main | tiff::IfdType::Raw => container.directory(0),
             tiff::IfdType::Exif => self
                 .jpeg_preview()
-                .ok()
-                .and_then(|jpeg| jpeg.exif().and_then(|exif| exif.directory(0)))
-                .or_else(|| {
-                    container
-                        .directory(0)
-                        .and_then(|dir| dir.get_exif_ifd(container))
-                }),
-            tiff::IfdType::MakerNote => self
-                .jpeg_preview()
-                .ok()
-                .and_then(|jpeg| jpeg.exif().and_then(|exif| exif.mnote_dir())),
+                .and_then(|jpeg| jpeg.exif_dir())
+                .or_else(|| container.exif_dir()),
+            tiff::IfdType::MakerNote => self.jpeg_preview().and_then(|jpeg| jpeg.mnote_dir()),
             _ => None,
         }
     }

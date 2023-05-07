@@ -24,10 +24,10 @@
 
 use std::collections::{BTreeMap, HashMap};
 use std::io::{Read, Seek, SeekFrom};
-use std::rc::Rc;
 
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
 use log::debug;
+use once_cell::unsync::OnceCell;
 
 use crate::apple;
 use crate::canon;
@@ -76,6 +76,8 @@ pub struct Dir {
     pub mnote_offset: u32,
     /// Tag names to decode.
     tag_names: &'static HashMap<u16, &'static str>,
+    /// SubIFs
+    sub_ifds: OnceCell<Vec<Dir>>,
 }
 
 impl Dir {
@@ -495,6 +497,7 @@ impl Dir {
             id: String::new(),
             mnote_offset: base_offset,
             tag_names: &exif::TAG_NAMES,
+            sub_ifds: OnceCell::new(),
         })
     }
 
@@ -529,13 +532,12 @@ impl Dir {
     }
 
     /// Get the Exif IFD from the directory
-    pub(crate) fn get_exif_ifd(&self, container: &tiff::Container) -> Option<Rc<Dir>> {
+    pub(crate) fn get_exif_ifd(&self, container: &tiff::Container) -> Option<Dir> {
         self.value::<u32>(exif::EXIF_TAG_EXIF_IFD_POINTER)
             .and_then(|offset| {
                 let mut view = container.borrow_view_mut();
                 container
                     .dir_at(&mut view, offset, IfdType::Exif)
-                    .map(Rc::new)
                     .map_err(|e| {
                         log::warn!("Coudln't get exif dir at {}: {}", offset, e);
                         e
@@ -545,12 +547,11 @@ impl Dir {
     }
 
     /// Get the MakerNote IFD from the directory
-    pub(crate) fn get_mnote_ifd(&self, container: &tiff::Container) -> Option<Rc<Dir>> {
+    pub(crate) fn get_mnote_ifd(&self, container: &tiff::Container) -> Option<Dir> {
         self.entry(exif::EXIF_TAG_MAKER_NOTE)
             .and_then(|e| e.offset())
             .and_then(|offset| {
                 Dir::create_maker_note(container, offset)
-                    .map(Rc::new)
                     .map_err(|e| {
                         log::warn!("Coudln't create maker_note: {}", e);
                         e
@@ -560,7 +561,7 @@ impl Dir {
     }
 
     /// Get the IFD stored in the entry
-    pub(crate) fn ifd_in_entry(&self, container: &tiff::Container, tag: u16) -> Option<Rc<Dir>> {
+    pub(crate) fn ifd_in_entry(&self, container: &tiff::Container, tag: u16) -> Option<Dir> {
         self.entry(tag).and_then(|e| {
             if e.type_ == 13 || e.type_ == exif::TagType::Long as i16 {
                 match self.endian() {
@@ -577,43 +578,54 @@ impl Dir {
             }
             .and_then(|val_offset| {
                 let mut view = container.borrow_view_mut();
-                container
-                    .dir_at(&mut view, val_offset, IfdType::Other)
-                    .map(Rc::new)
-                    .ok()
+                container.dir_at(&mut view, val_offset, IfdType::Other).ok()
             })
         })
     }
 
-    /// Get sub IFDs.
-    pub(crate) fn get_sub_ifds(&self, container: &tiff::Container) -> Option<Vec<Rc<Dir>>> {
-        let entry = self.entry(exif::EXIF_TAG_SUB_IFDS)?;
-        let offsets = entry.value_array::<u32>(self.endian())?;
-
-        let mut ifds = Vec::new();
-        for offset in offsets {
-            if offset == 0 {
-                log::warn!("SubIFD with offset 0");
-                continue;
+    /// Get sub IFDs. The vec is empty if none is found.
+    pub(crate) fn get_sub_ifds(&self, container: &tiff::Container) -> &Vec<Dir> {
+        self.sub_ifds.get_or_init(|| {
+            let mut ifds = Vec::new();
+            if let Some(offsets) = self
+                .entry(exif::EXIF_TAG_SUB_IFDS)
+                .and_then(|entry| entry.value_array::<u32>(self.endian()))
+            {
+                for offset in offsets {
+                    if offset == 0 {
+                        log::warn!("SubIFD with offset 0");
+                        continue;
+                    }
+                    if let Ok(dir) = match self.endian() {
+                        container::Endian::Little => {
+                            let mut view = container.borrow_view_mut();
+                            Dir::read::<LittleEndian>(
+                                &mut view,
+                                offset,
+                                self.mnote_offset,
+                                IfdType::SubIfd,
+                            )
+                        }
+                        container::Endian::Big => {
+                            let mut view = container.borrow_view_mut();
+                            Dir::read::<BigEndian>(
+                                &mut view,
+                                offset,
+                                self.mnote_offset,
+                                IfdType::SubIfd,
+                            )
+                        }
+                        _ => {
+                            log::error!("Endian unset to read directory");
+                            Err(Error::NotFound)
+                        }
+                    } {
+                        ifds.push(dir);
+                    };
+                }
             }
-            if let Ok(dir) = match self.endian() {
-                container::Endian::Little => {
-                    let mut view = container.borrow_view_mut();
-                    Dir::read::<LittleEndian>(&mut view, offset, self.mnote_offset, IfdType::SubIfd)
-                }
-                container::Endian::Big => {
-                    let mut view = container.borrow_view_mut();
-                    Dir::read::<BigEndian>(&mut view, offset, self.mnote_offset, IfdType::SubIfd)
-                }
-                _ => {
-                    log::error!("Endian unset to read directory");
-                    Err(Error::NotFound)
-                }
-            } {
-                ifds.push(Rc::new(dir));
-            };
-        }
-        Some(ifds)
+            ifds
+        })
     }
 
     /// Return the cloned entry for the `tag`.

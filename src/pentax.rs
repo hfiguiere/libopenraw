@@ -560,17 +560,13 @@ impl RawFileImpl for PefFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main | tiff::IfdType::Raw => container.directory(0),
-            tiff::IfdType::Exif => self
-                .ifd(tiff::IfdType::Main)
-                .and_then(|dir| dir.get_exif_ifd(container)),
-            tiff::IfdType::MakerNote => self
-                .ifd(tiff::IfdType::Exif)
-                .and_then(|dir| dir.get_mnote_ifd(container)),
+            tiff::IfdType::Exif => container.exif_dir(),
+            tiff::IfdType::MakerNote => container.mnote_dir(),
             _ => None,
         }
     }
@@ -580,7 +576,7 @@ impl RawFileImpl for PefFile {
         let container = self.container.get().unwrap();
         self.ifd(tiff::IfdType::Raw)
             .ok_or(Error::NotFound)
-            .and_then(|dir| tiff::tiff_get_rawdata(container, &dir, self.type_()))
+            .and_then(|dir| tiff::tiff_get_rawdata(container, dir, self.type_()))
             .map(|mut rawdata| {
                 if let Some(mnote) = self.ifd(tiff::IfdType::MakerNote) {
                     mnote

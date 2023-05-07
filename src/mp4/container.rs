@@ -80,7 +80,7 @@ mod capi {
 }
 
 /// Type to hold the IFD and its `Viewer`.
-type IfdHolder = (Rc<Viewer>, Rc<tiff::Container>);
+type IfdHolder = (Rc<Viewer>, tiff::Container);
 
 /// A container for ISO Media, aka MPEG4.
 pub(crate) struct Container {
@@ -166,7 +166,7 @@ impl Container {
     }
 
     /// Get the metadata at `idx`
-    pub(crate) fn metadata_block(&self, idx: u32) -> Option<IfdHolder> {
+    pub(crate) fn metadata_block(&self, idx: u32) -> Option<&IfdHolder> {
         fn make_ifd_holder(
             data: Option<&Vec<u8>>,
             t: tiff::IfdType,
@@ -181,7 +181,7 @@ impl Container {
                     if let Ok(view) = Viewer::create_view(&viewer, 0) {
                         let mut ifd = tiff::Container::new(view, vec![t], raw_type);
                         ifd.load(None).expect("ifd load");
-                        return Some((viewer, Rc::new(ifd)));
+                        return Some((viewer, ifd));
                     }
                 }
                 None
@@ -203,7 +203,7 @@ impl Container {
                         make_ifd_holder(craw.meta4.as_ref(), tiff::IfdType::Other, self.raw_type),
                     ]
                 } else {
-                    vec![None; 4]
+                    vec![]
                 }
             })
             .len();
@@ -211,9 +211,7 @@ impl Container {
         if len < idx as usize {
             None
         } else {
-            self.meta_ifds
-                .get()
-                .and_then(|v| v[idx as usize].as_ref().cloned())
+            self.meta_ifds.get().and_then(|v| v[idx as usize].as_ref())
         }
     }
 

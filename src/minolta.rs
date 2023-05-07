@@ -240,7 +240,7 @@ impl RawFileImpl for MrwFile {
 
     /// In a MRW file, all comes out of the IFD container from the `TTW`
     /// block.
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
         self.container();
         let ifd = self.container.get().unwrap().ifd_container();
         match ifd_type {
@@ -402,6 +402,7 @@ enum BayerPattern {
 }
 
 /// Known offsets in WBG block.
+/// The order is RGGB, or GBRG depending on the `BayerPattern`.
 #[allow(unused)]
 enum Wbg {
     DenominatorR = 0,  /* 1 byte,  log2(denominator)-6 */

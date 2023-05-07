@@ -23,7 +23,6 @@
 
 use std::cell::{RefCell, RefMut};
 use std::io::{Read, Seek, SeekFrom};
-use std::rc::Rc;
 
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
 use log::error;
@@ -48,13 +47,13 @@ pub(crate) struct Container {
     /// Endian of the container.
     endian: RefCell<container::Endian>,
     /// IFD.
-    dirs: OnceCell<Vec<Rc<Dir>>>,
+    dirs: OnceCell<Vec<Dir>>,
     /// index to `Type` map
     dir_map: Vec<IfdType>,
     /// The Exif IFD
-    exif_ifd: OnceCell<Option<Rc<Dir>>>,
+    exif_ifd: OnceCell<Option<Dir>>,
     /// The MakerNote IFD
-    mnote_ifd: OnceCell<Option<Rc<Dir>>>,
+    mnote_ifd: OnceCell<Option<Dir>>,
     raw_type: RawType,
 }
 
@@ -139,7 +138,7 @@ impl Container {
     }
 
     /// Get the directories. They get loaded once as needed.
-    pub(crate) fn dirs(&self) -> &Vec<Rc<Dir>> {
+    pub(crate) fn dirs(&self) -> &Vec<Dir> {
         self.dirs.get_or_init(|| {
             let mut dirs = vec![];
 
@@ -161,7 +160,7 @@ impl Container {
                     self.dir_at(&mut self.view.borrow_mut(), dir_offset, t)
                 } {
                     let next_offset = dir.next_ifd();
-                    dirs.push(Rc::new(dir));
+                    dirs.push(dir);
                     index += 1;
                     if next_offset != 0 && next_offset <= dir_offset {
                         error!("Trying to read dirs backwards from {dir_offset} to {next_offset}");
@@ -180,13 +179,13 @@ impl Container {
     }
 
     /// Get the indexed `tiff::Dir` from the container
-    pub fn directory(&self, idx: usize) -> Option<Rc<Dir>> {
+    pub fn directory(&self, idx: usize) -> Option<&Dir> {
         let dirs = self.dirs();
         if dirs.len() <= idx {
             return None;
         }
 
-        Some(dirs[idx].clone())
+        Some(&dirs[idx])
     }
 
     /// Will identify the magic header and return the endian
@@ -207,7 +206,7 @@ impl Container {
     }
 
     /// Lazily load the Exif dir and return it.
-    pub(crate) fn exif_dir(&self) -> Option<Rc<Dir>> {
+    pub(crate) fn exif_dir(&self) -> Option<&Dir> {
         self.exif_ifd
             .get_or_init(|| {
                 self.directory(0)
@@ -217,11 +216,11 @@ impl Container {
                         None
                     })
             })
-            .clone()
+            .as_ref()
     }
 
     /// Lazily load the MakerNote and return it.
-    pub(crate) fn mnote_dir(&self) -> Option<Rc<Dir>> {
+    pub(crate) fn mnote_dir(&self) -> Option<&Dir> {
         self.mnote_ifd
             .get_or_init(|| {
                 log::debug!("Loading MakerNote");
@@ -232,7 +231,7 @@ impl Container {
                         None
                     })
             })
-            .clone()
+            .as_ref()
     }
 
     /// Add the thumbnail from data in the container
@@ -316,10 +315,9 @@ impl Dump for Container {
                         mnote_dir.write_dump(out, indent + 2);
                     }
                 }
-                if let Some(subdirs) = dir.get_sub_ifds(self) {
-                    for subdir in subdirs {
-                        subdir.write_dump(out, indent + 1);
-                    }
+                let subdirs = dir.get_sub_ifds(self);
+                for subdir in subdirs {
+                    subdir.write_dump(out, indent + 1);
                 }
             }
         }

@@ -248,7 +248,7 @@ impl RawFileImpl for DngFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
         self.container();
         match ifd_type {
             tiff::IfdType::Main => self.container.get().unwrap().directory(0),
@@ -261,9 +261,8 @@ impl RawFileImpl for DngFile {
                         Some(dir)
                     } else {
                         dir.get_sub_ifds(self.container.get().unwrap())
-                            .and_then(|subifds| {
-                                subifds.iter().find(|subdir| subdir.is_primary()).cloned()
-                            })
+                            .iter()
+                            .find(|subdir| subdir.is_primary())
                     }
                 })
             }
@@ -282,7 +281,7 @@ impl RawFileImpl for DngFile {
             .and_then(|dir| {
                 self.container();
                 let container = self.container.get().unwrap();
-                tiff::tiff_get_rawdata(container, &dir, self.type_())
+                tiff::tiff_get_rawdata(container, dir, self.type_())
                     .map(|mut rawdata| {
                         let active_area = dir
                             .entry(exif::DNG_TAG_ACTIVE_AREA)

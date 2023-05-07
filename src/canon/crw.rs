@@ -154,7 +154,7 @@ impl RawFileImpl for CrwFile {
         })
     }
 
-    fn ifd(&self, _ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
+    fn ifd(&self, _ifd_type: tiff::IfdType) -> Option<&Dir> {
         None
     }
 

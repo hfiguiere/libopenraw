@@ -27,7 +27,6 @@ mod crw;
 mod matrices;
 
 use std::collections::HashMap;
-use std::rc::Rc;
 
 use lazy_static::lazy_static;
 
@@ -256,7 +255,7 @@ fn get_typeid_for_modelid(model_id: u32) -> TypeId {
         .unwrap_or(canon!(UNKNOWN))
 }
 
-pub(crate) fn identify_from_maker_note(maker_note: Rc<tiff::Dir>) -> TypeId {
+pub(crate) fn identify_from_maker_note(maker_note: &tiff::Dir) -> TypeId {
     if let Some(id) = maker_note.value::<u32>(exif::MNOTE_CANON_MODEL_ID) {
         log::debug!("Canon model ID: {:x}", id);
         return get_typeid_for_modelid(id);
@@ -271,7 +270,7 @@ pub(crate) struct SensorInfo([u32; 4]);
 
 impl SensorInfo {
     /// Load the `SensorInfo` from the MakerNote
-    pub fn new(maker_note: Rc<Dir>) -> Option<SensorInfo> {
+    pub fn new(maker_note: &Dir) -> Option<SensorInfo> {
         maker_note
             .entry(exif::MNOTE_CANON_SENSORINFO)
             .and_then(|e| e.value_array(maker_note.endian()))

@@ -27,7 +27,6 @@ mod entry;
 pub mod exif;
 
 use std::convert::TryFrom;
-use std::rc::Rc;
 
 use byteorder::{BigEndian, LittleEndian};
 
@@ -157,23 +156,22 @@ pub(crate) fn identify_with_exif(container: &Container, map: &MakeToIdMap) -> Op
 }
 
 /// Find the Raw IFD
-pub(crate) fn tiff_locate_raw_ifd(container: &Container) -> Option<Rc<Dir>> {
+pub(crate) fn tiff_locate_raw_ifd(container: &Container) -> Option<&Dir> {
     let dir = container.directory(0)?;
 
     if dir.is_primary() {
         log::debug!("dir0 is primary");
         return Some(dir);
     }
-    dir.get_sub_ifds(container)
-        .and_then(|subifds| subifds.iter().find(|d| d.is_primary()).cloned())
+    dir.get_sub_ifds(container).iter().find(|d| d.is_primary())
 }
 
-fn convert_cfa_pattern(dir: &Rc<Dir>, entry: &Entry) -> Option<Pattern> {
+fn convert_cfa_pattern(dir: &Dir, entry: &Entry) -> Option<Pattern> {
     let a = entry.value_array::<u8>(dir.endian())?;
     Pattern::try_from(a.as_slice()).ok()
 }
 
-fn convert_new_cfa_pattern(container: &Container, dir: &Rc<Dir>, entry: &Entry) -> Option<Pattern> {
+fn convert_new_cfa_pattern(container: &Container, dir: &Dir, entry: &Entry) -> Option<Pattern> {
     if entry.count < 4 {
         return None;
     }
@@ -196,7 +194,7 @@ fn convert_new_cfa_pattern(container: &Container, dir: &Rc<Dir>, entry: &Entry) 
     Pattern::try_from(&data[4..=7]).ok()
 }
 
-fn get_mosaic_info(container: &Container, dir: &Rc<Dir>) -> Option<Pattern> {
+fn get_mosaic_info(container: &Container, dir: &Dir) -> Option<Pattern> {
     dir.entry(exif::EXIF_TAG_CFA_PATTERN)
         .and_then(|e| convert_cfa_pattern(dir, e))
         .or_else(|| {
@@ -208,7 +206,7 @@ fn get_mosaic_info(container: &Container, dir: &Rc<Dir>) -> Option<Pattern> {
 /// Get the raw data
 pub(crate) fn tiff_get_rawdata(
     container: &Container,
-    dir: &Rc<Dir>,
+    dir: &Dir,
     file_type: Type,
 ) -> Result<RawData> {
     let mut offset = 0_u32;
@@ -448,10 +446,9 @@ pub(crate) fn tiff_thumbnails(container: &Container) -> Vec<(u32, thumbnail::Thu
         }
         ifd_locate_thumbnail(container, dir, &mut thumbnails);
 
-        if let Some(subdirs) = dir.get_sub_ifds(container) {
-            for subdir in subdirs {
-                ifd_locate_thumbnail(container, &subdir, &mut thumbnails);
-            }
+        let subdirs = dir.get_sub_ifds(container);
+        for subdir in subdirs {
+            ifd_locate_thumbnail(container, subdir, &mut thumbnails);
         }
     }
 
@@ -462,7 +459,7 @@ pub(crate) fn tiff_thumbnails(container: &Container) -> Vec<(u32, thumbnail::Thu
 
 pub(crate) fn ifd_locate_thumbnail(
     container: &dyn RawContainer,
-    dir: &Rc<Dir>,
+    dir: &Dir,
     thumbnails: &mut Vec<(u32, thumbnail::ThumbDesc)>,
 ) {
     let mut data_type = DataType::Unknown;

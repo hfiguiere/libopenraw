@@ -80,6 +80,14 @@ impl Container {
         })
     }
 
+    pub fn exif_dir(&self) -> Option<&tiff::Dir> {
+        self.exif().and_then(|container| container.exif_dir())
+    }
+
+    pub fn mnote_dir(&self) -> Option<&tiff::Dir> {
+        self.exif().and_then(|container| container.mnote_dir())
+    }
+
     pub fn exif(&self) -> Option<&tiff::Container> {
         self.exif
             .get_or_init(|| {

@@ -81,7 +81,6 @@ pub(crate) struct ErfFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
-    cfa: OnceCell<Option<Rc<tiff::Dir>>>,
 }
 
 impl ErfFile {
@@ -92,18 +91,7 @@ impl ErfFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
-            cfa: OnceCell::new(),
         })
-    }
-
-    /// Return the CFA dir
-    fn raw_dir(&self) -> Option<&Rc<tiff::Dir>> {
-        self.cfa
-            .get_or_init(|| {
-                self.container();
-                tiff::tiff_locate_raw_ifd(self.container.get().unwrap())
-            })
-            .as_ref()
     }
 }
 
@@ -152,17 +140,13 @@ impl RawFileImpl for ErfFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
+        self.container();
+        let container = self.container.get().unwrap();
         match ifd_type {
-            tiff::IfdType::Raw => self.raw_dir().cloned(),
-            tiff::IfdType::Exif => {
-                self.container();
-                self.container.get().unwrap().exif_dir()
-            }
-            tiff::IfdType::MakerNote => {
-                self.container();
-                self.container.get().unwrap().mnote_dir()
-            }
+            tiff::IfdType::Raw => tiff::tiff_locate_raw_ifd(container),
+            tiff::IfdType::Exif => container.exif_dir(),
+            tiff::IfdType::MakerNote => container.mnote_dir(),
             _ => None,
         }
     }
@@ -173,7 +157,7 @@ impl RawFileImpl for ErfFile {
                 log::error!("CFA not found");
                 Error::NotFound
             })
-            .and_then(|ref ifd| {
+            .and_then(|ifd| {
                 self.container();
                 tiff::tiff_get_rawdata(self.container.get().unwrap(), ifd, self.type_()).map(
                     |mut rawdata| {

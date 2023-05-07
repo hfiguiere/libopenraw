@@ -576,18 +576,14 @@ impl RawFileImpl for NefFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main => container.directory(0),
             tiff::IfdType::Raw => tiff::tiff_locate_raw_ifd(container),
-            tiff::IfdType::Exif => self
-                .ifd(tiff::IfdType::Main)
-                .and_then(|dir| dir.get_exif_ifd(container)),
-            tiff::IfdType::MakerNote => self
-                .ifd(tiff::IfdType::Exif)
-                .and_then(|dir| dir.get_mnote_ifd(container)),
+            tiff::IfdType::Exif => container.exif_dir(),
+            tiff::IfdType::MakerNote => container.mnote_dir(),
             _ => None,
         }
     }
@@ -598,7 +594,7 @@ impl RawFileImpl for NefFile {
                 log::error!("CFA not found");
                 Error::NotFound
             })
-            .and_then(|ref dir| {
+            .and_then(|dir| {
                 tiff::tiff_get_rawdata(self.container.get().unwrap(), dir, self.type_())
                     .map_err(|err| {
                         log::error!("NEF get rawdata failed {}", err);

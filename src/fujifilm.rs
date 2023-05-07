@@ -331,7 +331,7 @@ impl RawFileImpl for RafFile {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<tiff::Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
         self.container();
         let raw_container = self.container.get().unwrap();
         match ifd_type {

@@ -221,7 +221,7 @@ impl RawFileImpl for Cr2File {
         })
     }
 
-    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<Rc<Dir>> {
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
