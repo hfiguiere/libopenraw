@@ -45,23 +45,19 @@ pub enum Endian {
 /// ```no_compile
 /// use byteorder::{BigEndian, LittleEndian};
 ///
-/// let endian = LittleEndian::endian();
-/// let endian = BigEndian::endian();
+/// let endian = LittleEndian::ENDIAN;
+/// let endian = BigEndian::ENDIAN;
 /// ```
 pub(crate) trait EndianType: ByteOrder {
-    fn endian() -> Endian;
+    const ENDIAN: Endian;
 }
 
 impl EndianType for LittleEndian {
-    fn endian() -> Endian {
-        Endian::Little
-    }
+    const ENDIAN: Endian = Endian::Little;
 }
 
 impl EndianType for BigEndian {
-    fn endian() -> Endian {
-        Endian::Big
-    }
+    const ENDIAN: Endian = Endian::Big;
 }
 
 /// Container abstract trait

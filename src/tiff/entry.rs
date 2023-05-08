@@ -26,7 +26,7 @@ use std::collections::HashMap;
 use std::convert::TryFrom;
 use std::io::{Read, Seek, SeekFrom};
 
-use byteorder::{BigEndian, ByteOrder, LittleEndian};
+use byteorder::{BigEndian, ByteOrder, LittleEndian, NativeEndian};
 use log::debug;
 
 use crate::container::Endian;
@@ -285,6 +285,21 @@ impl Entry {
         self.int_value_at_index::<E>(0)
     }
 
+    /// Get the string value out of the entry.
+    pub fn string_value(&self) -> Option<String> {
+        if self.type_ == exif::TagType::Ascii as i16 {
+            return Some(String::read::<NativeEndian>(self.data.as_slice()));
+        }
+        log::error!(
+            "Entry {:x}({}) incorrect type {} for {:?}",
+            self._id,
+            self._id,
+            self.type_,
+            exif::TagType::Ascii
+        );
+        None
+    }
+
     /// Get the value out of the entry.
     pub fn value<T, E>(&self) -> Option<T>
     where
@@ -452,14 +467,11 @@ impl Entry {
             }
         }
 
-        fn value<E>(e: &Entry, endian: Endian) -> String
-        where
-            E: ByteOrder,
-        {
+        fn value(e: &Entry, endian: Endian) -> String {
             use crate::tiff::exif::{Rational, SRational};
 
             match TagType::try_from(e.type_) {
-                Ok(TagType::Ascii) => e.value::<String, E>().map(|v| format!("\"{v}\"")),
+                Ok(TagType::Ascii) => e.string_value().map(|v| format!("\"{v}\"")),
                 Ok(TagType::Byte) => e.value_array::<u8>(endian).as_ref().map(array_to_str),
                 Ok(TagType::SByte) => e.value_array::<i8>(endian).as_ref().map(array_to_str),
                 Ok(TagType::Short) | Ok(TagType::Long) => {
@@ -489,11 +501,7 @@ impl Entry {
             .map(|t| t.into())
             .unwrap_or("ERROR");
         let tag_name = args.get("tag_name").cloned().unwrap_or_default();
-        let value = match endian {
-            Endian::Little => value::<LittleEndian>(self, endian),
-            Endian::Big => value::<BigEndian>(self, endian),
-            _ => "NO ENDIAN".to_string(),
-        };
+        let value = value(self, endian);
         dump_writeln!(
             out,
             indent,
@@ -534,14 +542,11 @@ mod test {
 
         // test Ascii to `String`
         let e = Entry::new(0, TagType::Ascii as i16, 4, *b"asci");
-        assert_eq!(
-            e.value::<String, LittleEndian>(),
-            Some(String::from("asci"))
-        );
+        assert_eq!(e.string_value(), Some(String::from("asci")));
 
         // test Ascii with trailing NUL to `String`
         let e = Entry::new(0, TagType::Ascii as i16, 4, *b"asc\0");
-        assert_eq!(e.value::<String, LittleEndian>(), Some(String::from("asc")));
+        assert_eq!(e.string_value(), Some(String::from("asc")));
 
         let mut buf = [0_u8; 4];
         LittleEndian::write_f32(&mut buf, 3.15);
@@ -572,10 +577,7 @@ mod test {
         let mut e = Entry::new(0, TagType::Ascii as i16, 8, [4, 0, 0, 0]);
         let r = e.load_data::<LittleEndian>(0, &mut view);
         assert!(matches!(r, Ok(8)));
-        assert_eq!(
-            e.value::<String, LittleEndian>(),
-            Some(String::from("edfgijkl"))
-        );
+        assert_eq!(e.string_value(), Some(String::from("edfgijkl")));
         // Trying to load again should fail.
         let r = e.load_data::<LittleEndian>(0, &mut view);
         assert!(matches!(r, Err(Error::AlreadyInited)));
@@ -584,10 +586,7 @@ mod test {
         let mut e = Entry::new(0, TagType::Ascii as i16, 8, [0, 0, 0, 4]);
         let r = e.load_data::<BigEndian>(0, &mut view);
         assert!(matches!(r, Ok(8)));
-        assert_eq!(
-            e.value::<String, BigEndian>(),
-            Some(String::from("edfgijkl"))
-        );
+        assert_eq!(e.string_value(), Some(String::from("edfgijkl")));
         assert_eq!(e.uint_value::<LittleEndian>(), None);
 
         // Undefined

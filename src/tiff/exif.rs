@@ -235,10 +235,7 @@ impl ExifValue for String {
         true
     }
 
-    fn read<E>(buf: &[u8]) -> Self
-    where
-        E: ByteOrder,
-    {
+    fn read<E>(buf: &[u8]) -> Self {
         // According to the Exif spec, the string is NUL terminated
         utils::from_maybe_nul_terminated(buf)
     }

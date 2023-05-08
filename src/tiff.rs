@@ -148,10 +148,7 @@ pub(crate) fn identify_with_exif(container: &Container, map: &MakeToIdMap) -> Op
         dir.entry(exif::EXIF_TAG_MODEL)
             // Files like Black Magic's DNG don't have a Model.
             .or_else(|| dir.entry(exif::DNG_TAG_UNIQUE_CAMERA_MODEL))
-            .and_then(|e| {
-                e.value::<String, LittleEndian>()
-                    .and_then(|s| map.get(s.as_str()).copied())
-            })
+            .and_then(|e| e.string_value().and_then(|s| map.get(s.as_str()).copied()))
     })
 }
 

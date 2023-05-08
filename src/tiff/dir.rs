@@ -490,7 +490,7 @@ impl Dir {
 
         let next = view.read_u32::<E>()?;
         Ok(Dir {
-            endian: E::endian(),
+            endian: E::ENDIAN,
             type_,
             entries,
             next,
