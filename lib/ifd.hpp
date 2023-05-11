@@ -1,7 +1,7 @@
 /*
  * libopenraw - ifd.hpp
  *
- * Copyright (C) 2006-2007, 2012-2020 Hubert Figuière
+ * Copyright (C) 2006-2007, 2012-2023 Hubert Figuière
  *
  * Defintions taken from libexif:
  * Copyright (C) 2001 Lutz Müller <lutz@users.sourceforge.net>
@@ -58,6 +58,7 @@ typedef enum {
     COMPRESS_LJPEG = 7, /**< Lossless JPEG, see DNG */
     COMPRESS_ARW = 32767, /**< Sony ARW compression */
     COMPRESS_NIKON_PACK = 32769, /**< Nikon packed */
+    COMPRESS_PENTAX_PACK = 32773, /**< Pentax packed */
     COMPRESS_NIKON_QUANTIZED = 34713, /**< Nikon quantized */
     COMPRESS_CUSTOM = 65535, /**< The value everybody seems to use */
     COMPRESS_OLYMPUS = 65536 /**< Olympus compression */

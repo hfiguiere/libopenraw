@@ -623,6 +623,7 @@ const MosaicInfo *_getMosaicInfo(const IfdDir::Ref & dir)
     data_type = OR_DATA_TYPE_RAW;
     break;
   case IFD::COMPRESS_NIKON_PACK:
+  case IFD::COMPRESS_PENTAX_PACK:
     data_type = OR_DATA_TYPE_RAW;
     break;
   default:

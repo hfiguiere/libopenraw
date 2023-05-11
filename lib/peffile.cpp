@@ -325,6 +325,21 @@ bool PEFFile::vendorCameraIdLocation(Internals::IfdDir::Ref& ifd, uint16_t& inde
                 // TODO decompress
             }
             break;
+        case IFD::COMPRESS_PENTAX_PACK:
+            break;
+        case IFD::COMPRESS_NONE:
+        {
+            // Pentax a big endian. This should be done in _getRawDataFromDir() according
+            // to the container endian.
+            auto p = data.data();
+            uint16_t* pixels = (uint16_t*)p;
+            for (size_t i = 0; i < data.size() / 2; i++) {
+                *pixels = be16toh(*pixels);
+                pixels++;
+            }
+        }
+        break;
+
         default:
             break;
         }
