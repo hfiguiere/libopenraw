@@ -32,7 +32,7 @@ use crate::Type as RawType;
 use crate::{Error, Result};
 
 /// Endian of the container
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Endian {
     Unset,
     Big,
@@ -121,6 +121,12 @@ pub trait RawContainer {
     fn load_buffer16(&self, offset: u64, len: u64) -> Vec<u16> {
         let mut view = self.borrow_view_mut();
         load_buffer16_endian::<NativeEndian>(&mut view, offset, len)
+    }
+
+    /// Load an 16 bit buffer at `offset` and of `len` bytes, from Little Endian
+    fn load_buffer16_le(&self, offset: u64, len: u64) -> Vec<u16> {
+        let mut view = self.borrow_view_mut();
+        load_buffer16_endian::<LittleEndian>(&mut view, offset, len)
     }
 
     /// Load an 16 bit buffer at `offset` and of `len` bytes, from Big Endian

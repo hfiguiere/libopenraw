@@ -59,6 +59,8 @@ pub enum Compression {
     Arw = 32767,
     /// Nikon packed, also used by Epson ERF.
     NikonPack = 32769,
+    /// Pentax packed (12be)
+    PentaxPack = 32773,
     /// Nikon quantized
     NikonQuantized = 34713,
     /// DNG Lossy JPEG
@@ -81,6 +83,7 @@ impl From<u32> for Compression {
             7 => LJpeg,
             32767 => Arw,
             32769 => NikonPack,
+            32773 => PentaxPack,
             34713 => NikonQuantized,
             65535 => Custom,
             65536 => Olympus,
@@ -303,8 +306,7 @@ pub(crate) fn tiff_get_rawdata(
         .unwrap_or(Compression::None);
 
     let data_type = match compression {
-        Compression::None => DataType::Raw,
-        Compression::NikonPack => DataType::Raw,
+        Compression::None | Compression::NikonPack | Compression::PentaxPack => DataType::Raw,
         _ => DataType::CompressedRaw,
     };
     // Here a D100 would have compression = NikonQuantized.
@@ -374,7 +376,11 @@ pub(crate) fn tiff_get_rawdata(
             )
         }
     } else if bpc == 16 {
-        let data = container.load_buffer16(offset as u64, byte_len as u64);
+        let data = if container.endian() == Endian::Big {
+            container.load_buffer16_be(offset as u64, byte_len as u64)
+        } else {
+            container.load_buffer16_le(offset as u64, byte_len as u64)
+        };
         RawData::new16(
             x,
             y,

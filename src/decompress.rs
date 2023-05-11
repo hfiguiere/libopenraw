@@ -224,7 +224,9 @@ pub(crate) fn unpack_from_reader(
             n @ 10 | n @ 14 => written += unpack_bento16(&block, n, width as usize, &mut out_data)?,
             12 => {
                 written += match compression {
-                    tiff::Compression::NikonPack | tiff::Compression::None => {
+                    tiff::Compression::NikonPack
+                    | tiff::Compression::PentaxPack
+                    | tiff::Compression::None => {
                         unpack_be12to16(&block, &mut out_data, compression)?
                     }
                     tiff::Compression::Olympus => {
