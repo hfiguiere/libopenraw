@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwfile.cpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2023 Hubert Figuière
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -100,10 +100,6 @@ MRWFile::MRWFile(const IO::Stream::Ptr &_f)
     m_container = new MRWContainer (m_io, 0);
 }
 
-MRWFile::~MRWFile()
-{
-}
-
 IfdDir::Ref  MRWFile::_locateCfaIfd()
 {
     // in MRW the CFA IFD is the main IFD
@@ -138,21 +134,18 @@ void MRWFile::_identifyId()
 }
 
 
-/* This code only knows about Dimage 5/7, in which the thumbnail position is special. */
+/* This code only knows about Dimage 5/7, in which the thumbnail position is
+ * special. */
 ::or_error MRWFile::_enumThumbnailSizes(std::vector<uint32_t> &list)
 {
-    ::or_error err = OR_ERROR_NOT_FOUND;
     list.push_back(640);
-    err = OR_ERROR_NONE;
-    return err;
+    return OR_ERROR_NONE;
 }
 
-/* This code only knows about Dimage 5/7, in which the thumbnail position is special. */
+/* This code only knows about Dimage 5/7, in which the thumbnail position is
+ * special. */
 ::or_error MRWFile::_getThumbnail(uint32_t /*size*/, Thumbnail & thumbnail)
 {
-    IfdEntry::Ref thumb_ent;	/* Thumbnail data directory entry. */
-    MRWContainer *mc = (MRWContainer *)m_container;
-
     auto mnote = makerNoteIfd();
     if (!mnote) {
         LOGWARN("No MakerNote found\n");
@@ -161,7 +154,7 @@ void MRWFile::_identifyId()
 
     uint32_t tnail_offset = 0;
     uint32_t tnail_len = 0;
-    thumb_ent = mnote->getEntry(MRW::MRWTAG_THUMBNAIL);
+    IfdEntry::Ref thumb_ent = mnote->getEntry(MRW::MRWTAG_THUMBNAIL);
     if (thumb_ent) {
         tnail_offset = thumb_ent->offset();
         tnail_len = thumb_ent->count();
@@ -184,6 +177,7 @@ void MRWFile::_identifyId()
     LOGDBG1("thumbnail offset found, offset == %u count == %u\n",
             tnail_offset, tnail_len);
     void *p = thumbnail.allocData(tnail_len);
+    MRWContainer *mc = (MRWContainer *)m_container;
     size_t fetched = m_container->fetchData(p, mc->ttw->offset()
                                             + MRW::DataBlockHeaderLength
                                             + tnail_offset,
@@ -213,7 +207,7 @@ void MRWFile::_identifyId()
     uint16_t x = mc->prd->uint16_val(MRW::PRD_SENSOR_WIDTH).value_or(0);
     uint8_t bpc = mc->prd->uint8_val(MRW::PRD_PIXEL_SIZE).value_or(0);
 
-    bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE).value_or(0) == 0x59);
+    bool is_compressed = (mc->prd->uint8_val(MRW::PRD_STORAGE_TYPE).value_or(MRW::STORAGE_TYPE_UNPACKED) == MRW::STORAGE_TYPE_PACKED);
     /* Allocate space for and retrieve pixel data.
      * Currently only for cameras that don't compress pixel data.
      */
@@ -280,7 +274,8 @@ void MRWFile::_identifyId()
         LOGWARN("Fetched only %lu of %u: continuing anyway.\n", (LSIZE)fetched,
                 datalen);
     }
-    uint16_t bpat = mc->prd->uint16_val(MRW::PRD_BAYER_PATTERN).value_or(0);
+    uint16_t bpat = mc->prd->uint16_val(MRW::PRD_BAYER_PATTERN)
+        .value_or(MRW::BAYER_PATTERN_RGGB);
     or_cfa_pattern cfa_pattern = OR_CFA_PATTERN_NONE;
     switch (bpat)
     {

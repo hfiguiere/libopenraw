@@ -46,7 +46,6 @@ class MRWFile
 public:
     static RawFile *factory(const IO::Stream::Ptr&);
     MRWFile(const IO::Stream::Ptr &);
-    virtual ~MRWFile();
 
     MRWFile(const MRWFile&) = delete;
     MRWFile & operator=(const MRWFile&) = delete;

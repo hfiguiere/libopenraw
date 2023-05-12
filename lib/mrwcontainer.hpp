@@ -2,7 +2,7 @@
 /*
  * libopenraw - mrwcontainer.hpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2023 Hubert Figuière
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -20,8 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_MRW_CONTAINER_H_
-#define OR_INTERNALS_MRW_CONTAINER_H_
+#pragma once
 
 #include <stdint.h>
 #include <sys/types.h>
@@ -50,8 +49,6 @@ class DataBlock {
 public:
     /** Shared pointer to %DataBlock */
     typedef std::shared_ptr<DataBlock> Ref;
-    /** Vector of shared pointer to %DataBlock */
-    typedef std::vector<Ref> RefVec;
 
     /** Construct a datablock from a location in the container
      * @param start the begin address relative to the container.
@@ -61,15 +58,15 @@ public:
 
     /** Return the offset of the data block from the begining of its container.
      */
-    off_t offset() { return m_start; }
+    off_t offset() const { return m_start; }
 
     /** Return the length of the data block, excluding the block header.
      */
-    off_t length() { return m_length; }
+    off_t length() const { return m_length; }
 
     /** Return the name of the data block.
      */
-    std::string name() {
+    std::string name() const {
         char id[4];
         id[0] = m_name[1];
         id[1] = m_name[2];
@@ -78,30 +75,24 @@ public:
         return std::string(id);
     }
 
-    /** Return a signed 8-bit quantity at offset bytes from the start of the
-     * data block.
-     */
-    Option<int8_t> int8_val(off_t offset);
-
     /** Return an unsigned 8-bit quantity at offset bytes from the start of the
      * data block.
      */
-    Option<uint8_t> uint8_val(off_t offset);
+    Option<uint8_t> uint8_val(off_t offset) const;
 
     /** Return an unsigned 16-bit quantity at offset bytes from the start of the
      * data block.
      */
-    Option<uint16_t> uint16_val(off_t offset);
+    Option<uint16_t> uint16_val(off_t offset) const;
     /** Return a string value at offset bytes fro the start of the data block */
-    Option<std::string> string_val(off_t offset);
+    Option<std::string> string_val(off_t offset) const;
 
     /** Return if the data block was loaded. */
     bool loaded() const { return m_loaded; }
 
 private:
-    /* DRM: protection from copies. */
-    DataBlock(const DataBlock &);
-    DataBlock &operator=(const DataBlock &);
+    DataBlock(const DataBlock &) = delete;
+    DataBlock &operator=(const DataBlock &) = delete;
 
     off_t m_start;
     char m_name[4];
@@ -220,8 +211,6 @@ enum {
 class MRWContainer : public IfdFileContainer {
 public:
     MRWContainer(const IO::Stream::Ptr &file, off_t offset = 0);
-    /** destructor */
-    virtual ~MRWContainer();
 
     MRWContainer(const MRWContainer &) = delete;
     MRWContainer &operator=(const MRWContainer &) = delete;
@@ -241,7 +230,7 @@ public:
 
     /** Return offset of pixel array data from start of file.
      */
-    off_t pixelDataOffset() {
+    off_t pixelDataOffset() const {
         /* The pixel data immediately follows the MRM datablock. */
         return mrm->offset() + MRW::DataBlockHeaderLength + mrm->length();
     }
@@ -255,5 +244,3 @@ private:
 };
 }
 }
-
-#endif

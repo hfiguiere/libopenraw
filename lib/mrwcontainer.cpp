@@ -1,7 +1,7 @@
 /*
  * libopenraw - mrwcontainer.cpp
  *
- * Copyright (C) 2006-2020 Hubert Figuière
+ * Copyright (C) 2006-2023 Hubert Figuière
  * Copyright (C) 2008 Bradley Broom
  *
  * This library is free software: you can redistribute it and/or
@@ -56,16 +56,8 @@ DataBlock::DataBlock(off_t start, MRWContainer *_container)
     m_loaded = true;
 }
 
-Option<int8_t>
-DataBlock::int8_val(off_t off)
-{
-    MRWContainer *mc = m_container;
-    mc->file()->seek(m_start + DataBlockHeaderLength + off, SEEK_SET);
-    return mc->readInt8(mc->file());
-}
-
 Option<uint8_t>
-DataBlock::uint8_val(off_t off)
+DataBlock::uint8_val(off_t off) const
 {
     MRWContainer *mc = m_container;
     mc->file()->seek(m_start + DataBlockHeaderLength + off, SEEK_SET);
@@ -73,7 +65,7 @@ DataBlock::uint8_val(off_t off)
 }
 
 Option<uint16_t>
-DataBlock::uint16_val(off_t off)
+DataBlock::uint16_val(off_t off) const
 {
     MRWContainer *mc = m_container;
     mc->file()->seek(m_start + DataBlockHeaderLength + off, SEEK_SET);
@@ -81,7 +73,7 @@ DataBlock::uint16_val(off_t off)
 }
 
 Option<std::string>
-DataBlock::string_val(off_t off)
+DataBlock::string_val(off_t off) const
 {
     char buf[9];
     size_t s;
@@ -98,10 +90,6 @@ DataBlock::string_val(off_t off)
 
 MRWContainer::MRWContainer(const IO::Stream::Ptr &_file, off_t _offset)
     : IfdFileContainer(_file, _offset)
-{
-}
-
-MRWContainer::~MRWContainer()
 {
 }
 
