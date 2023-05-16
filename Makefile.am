@@ -8,4 +8,4 @@ dox:
 webdist: dox
 	$(top_srcdir)/scripts/webdist.sh ${top_builddir} ${VERSION}
 
-EXTRA_DIST = RELEASE_NOTES build-aux/cargo-vendor.sh
+EXTRA_DIST = MPL-2.0 RELEASE_NOTES build-aux/cargo-vendor.sh
