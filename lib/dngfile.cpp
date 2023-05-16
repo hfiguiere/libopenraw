@@ -125,6 +125,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                  OR_TYPEID_LEICA_M10_MONOCHROM) },
     { "LEICA M11", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                        OR_TYPEID_LEICA_M11) },
+    { "LEICA M11 Monochrom", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+                                                 OR_TYPEID_LEICA_M11_MONOCHROM) },
     { "LEICA X1               ", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                                      OR_TYPEID_LEICA_X1) },
     { "LEICA X2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
