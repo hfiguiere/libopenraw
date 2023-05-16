@@ -88,6 +88,7 @@ lazy_static::lazy_static! {
         leica!("LEICA M10-R", M10R),
         leica!("LEICA M10 MONOCHROM", M10_MONOCHROM),
         leica!("LEICA M11", M11),
+        leica!("LEICA M11 Monochrom", M11_MONOCHROM),
         leica!("LEICA X1               ", X1),
         leica!("LEICA X2", X2),
         leica!("Leica S2", S2),
