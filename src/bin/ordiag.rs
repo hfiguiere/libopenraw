@@ -23,6 +23,7 @@ use getopts::Options;
 use log::{info, LevelFilter};
 use simple_logger::SimpleLogger;
 
+use libopenraw::metadata::Value;
 use libopenraw::Bitmap;
 use libopenraw::{rawfile_from_file, DataType, Error, Ifd, RawData, RawFile, Result, Thumbnail};
 
@@ -175,6 +176,27 @@ fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool, skip_decom
             println!("Raw type: {:?}", rawfile.type_());
             println!("Vendor id: {}", rawfile.vendor_id());
             println!("Type id: {:?}", rawfile.type_id());
+            if let Some(make) = rawfile
+                .metadata_value(&"Exif.Image.Make".to_string())
+                .as_ref()
+                .and_then(Value::string)
+            {
+                println!("Make: {:?}", make);
+            }
+            if let Some(model) = rawfile
+                .metadata_value(&"Exif.Image.Model".to_string())
+                .as_ref()
+                .and_then(Value::string)
+            {
+                println!("Model: {:?}", model);
+            }
+            if let Some(unique) = rawfile
+                .metadata_value(&"Exif.Image.UniqueCameraModel".to_string())
+                .as_ref()
+                .and_then(Value::string)
+            {
+                println!("Unique Camera Model: {:?}", unique);
+            }
 
             let sizes = rawfile.thumbnail_sizes();
             println!("Thumbnail sizes: {:?}", &sizes);

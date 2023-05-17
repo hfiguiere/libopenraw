@@ -251,6 +251,14 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
         self.container().dir_iterator()
     }
 
+    /// Get the metadata value
+    fn metadata_value(&self, key: &metadata::Key) -> Option<metadata::Value> {
+        self.main_ifd()
+            .map(|ifd| ifd.iter().into())
+            .and_then(|mut iter: metadata::Iterator| iter.find(|item| &item.0 == key))
+            .map(|item| item.1)
+    }
+
     /// Return the colour matrix for the file.
     fn colour_matrix(&self, index: u32) -> Result<Vec<f64>> {
         let tag = match index {

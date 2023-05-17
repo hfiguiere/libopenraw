@@ -21,6 +21,9 @@
 
 use crate::tiff::{self, exif};
 
+/// The key type. Currently an alias to `String`.
+pub type Key = String;
+
 #[derive(Debug)]
 pub enum Value {
     Int(Vec<u32>),
@@ -67,7 +70,7 @@ pub struct Iterator<'a> {
 }
 
 impl<'a> std::iter::Iterator for Iterator<'a> {
-    type Item = (String, Value);
+    type Item = (Key, Value);
 
     fn next(&mut self) -> Option<Self::Item> {
         let next = match self.inner {
