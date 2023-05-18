@@ -350,7 +350,7 @@ impl RawFileImpl for OrfFile {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = tiff::Container::new(view, vec![], self.type_());
+            let mut container = tiff::Container::new(view, vec![IfdType::Main], self.type_());
             container
                 .load(Some(OrfFile::is_magic_header))
                 .expect("Olympus IFD container error");
@@ -404,16 +404,13 @@ impl RawFileImpl for OrfFile {
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
+        self.container();
+        let container = self.container.get().unwrap();
         match ifd_type {
+            tiff::IfdType::Main => container.directory(0),
             tiff::IfdType::Raw => self.cfa_dir(),
-            tiff::IfdType::Exif => {
-                self.container();
-                self.container.get().unwrap().exif_dir()
-            }
-            tiff::IfdType::MakerNote => {
-                self.container();
-                self.container.get().unwrap().mnote_dir()
-            }
+            tiff::IfdType::Exif => container.exif_dir(),
+            tiff::IfdType::MakerNote => container.mnote_dir(),
             _ => None,
         }
     }
