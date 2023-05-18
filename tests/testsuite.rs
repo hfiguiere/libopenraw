@@ -21,8 +21,8 @@
 
 use std::path::Path;
 
-use serde_derive::Deserialize;
-use serde_xml_rs::from_reader;
+use serde::Deserialize;
+use serde_xml_rs::{de::Deserializer, from_reader};
 
 use libopenraw::{Bitmap, DataType, Ifd, RawFile, Type, TypeId};
 
@@ -427,7 +427,12 @@ where
     P: AsRef<Path>,
 {
     let file = std::fs::File::open(path).expect("Failed to open");
-    let testsuite = from_reader(file).expect("Deserialization");
+    // By default serde will trim the whitespace at the end of CDATA.
+    // We need it not to for the testsuite.
+    let config = serde_xml_rs::ParserConfig::new().trim_whitespace(false);
+    let event_reader = serde_xml_rs::EventReader::new_with_config(file, config);
+    let testsuite =
+        TestSuite::deserialize(&mut Deserializer::new(event_reader)).expect("Deserialization");
 
     Some(testsuite)
 }
