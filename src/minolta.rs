@@ -36,7 +36,7 @@ use crate::io::{View, Viewer};
 use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
-use crate::tiff::{self, exif, Ifd};
+use crate::tiff::{self, exif, Ifd, IfdType};
 use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 macro_rules! minolta {
@@ -583,7 +583,7 @@ impl MrwContainer {
             let ttw = self.ttw.as_ref().expect("no TTW in the file");
             let view = Viewer::create_subview(&self.view.borrow(), ttw.offset + 8)
                 .expect("Couldn't create view");
-            let mut ifd = tiff::Container::new(view, vec![], Type::Raf);
+            let mut ifd = tiff::Container::new(view, vec![IfdType::Main], Type::Mrw);
             ifd.load(None).expect("Failed to load IFD container");
 
             ifd
