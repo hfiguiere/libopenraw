@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/crw/ciff.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,7 +25,6 @@ use std::collections::BTreeMap;
 use std::convert::TryFrom;
 use std::io::{Read, Seek, SeekFrom};
 
-use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
 use crate::container::{Endian, RawContainer};
@@ -46,7 +45,9 @@ const FORMAT_MASK: u16 = 0x3800;
 ///
 /// List made by a combination of the CIFF spec and
 /// what exifprobe by Duane H. Hesser has.
-#[derive(Copy, Clone, Debug, Ord, Eq, PartialEq, PartialOrd, TryFromPrimitive, IntoPrimitive)]
+#[derive(
+    Copy, Clone, Debug, Ord, Eq, PartialEq, PartialOrd, TryFromPrimitive, IntoPrimitive, Hash,
+)]
 #[repr(u16)]
 pub(super) enum Tag {
     NullRecord = 0x0000,
@@ -173,7 +174,7 @@ pub(crate) struct ImageSpec {
     /*float32*/
     _pixel_aspect_ratio: u32,
     /// Rotation angle in degrees.
-    _rotation_angle: i32,
+    rotation_angle: i32,
     /// Bit depth per component.
     pub(crate) component_bit_depth: u32,
     /// Bit depth for colour.
@@ -196,11 +197,22 @@ impl ImageSpec {
             image_width,
             image_height,
             _pixel_aspect_ratio: pixel_aspect_ratio,
-            _rotation_angle: rotation_angle,
+            rotation_angle,
             component_bit_depth,
             _colour_bit_depth: colour_bit_depth,
             _colour_bw: colour_bw,
         })
+    }
+
+    /// Convert the rotation to an exif orientation.
+    fn exif_orientation(&self) -> u16 {
+        match self.rotation_angle {
+            0 => 1,
+            90 => 6,
+            180 => 3,
+            270 => 8,
+            _ => 0,
+        }
     }
 }
 
@@ -214,7 +226,7 @@ pub(crate) enum Record {
 }
 
 #[repr(u16)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 enum RecordType {
     Byte = 0x0000,
     Ascii = 0x0800,
@@ -230,6 +242,14 @@ enum RecordType {
 pub(crate) struct RecordEntry {
     type_code: Tag,
     pub(crate) data: Record,
+}
+
+pub(crate) enum RecordData {
+    Byte(Vec<u8>),
+    Ascii(Vec<String>),
+    Word(Vec<u16>),
+    DWord(Vec<u32>),
+    Heap(Heap),
 }
 
 /// Tell if the `type_code` as data inline. (`InRec`)
@@ -267,16 +287,122 @@ impl RecordEntry {
         self.type_code.record_type()
     }
 
+    /// Return if the record a heap or not
+    fn is_heap(&self) -> bool {
+        self.type_() == RecordType::Heap1 || self.type_() == RecordType::Heap2
+    }
+
     fn count(&self) -> Option<u32> {
         if let Record::InHeap((_, length)) = self.data {
             match self.type_() {
-                RecordType::Byte => Some(length),
+                RecordType::Byte | RecordType::Byte2 => Some(length),
                 RecordType::Ascii => Some(length),
                 RecordType::Word => Some(length / 2),
                 RecordType::DWord => Some(length / 4),
                 RecordType::Unknown => None,
                 _ => Some(length),
             }
+        } else {
+            None
+        }
+    }
+
+    fn inrec_read<T: io::FromBuf>(data: &[u8], endian: Endian) -> Result<Vec<T>> {
+        let mut values = Vec::new();
+        let count = 8 / std::mem::size_of::<T>();
+        for i in 0..count {
+            let v = match endian {
+                Endian::Big => T::be_bytes(&data[i * std::mem::size_of::<T>()..]),
+                Endian::Little => T::le_bytes(&data[i * std::mem::size_of::<T>()..]),
+                _ => {
+                    return Err(Error::IoError(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        "invalid endian",
+                    )))
+                }
+            };
+            values.push(v);
+        }
+        Ok(values)
+    }
+
+    fn inline_data(&self, container: &Container) -> Option<RecordData> {
+        if let Record::InRec(data) = self.data {
+            match self.type_() {
+                RecordType::Byte | RecordType::Byte2 => Some(RecordData::Byte(data.to_vec())),
+                RecordType::Ascii => {
+                    let s = utils::from_maybe_nul_terminated(&data);
+                    Some(RecordData::Ascii(vec![s]))
+                }
+                RecordType::Word => {
+                    let values = Self::inrec_read::<u16>(&data, container.endian()).ok()?;
+                    Some(RecordData::Word(values))
+                }
+                RecordType::DWord => {
+                    let values = Self::inrec_read::<u32>(&data, container.endian()).ok()?;
+                    Some(RecordData::DWord(values))
+                }
+                RecordType::Unknown | RecordType::Heap1 | RecordType::Heap2 => None,
+            }
+        } else {
+            None
+        }
+    }
+
+    fn data(&self, container: &Container) -> Option<RecordData> {
+        match self.data {
+            Record::InRec(_) => self.inline_data(container),
+            Record::InHeap((pos, len)) => match self.type_() {
+                RecordType::Byte | RecordType::Byte2 => {
+                    let mut bytes = vec![0; len as usize];
+                    let mut view = container.borrow_view_mut();
+                    view.seek(SeekFrom::Start(pos as u64))
+                        .and_then(|_| view.read_exact(&mut bytes))
+                        .ok()
+                        .map(|_| RecordData::Byte(bytes))
+                }
+                RecordType::Ascii => {
+                    let mut s = vec![0; len as usize];
+                    let mut view = container.borrow_view_mut();
+                    view.seek(SeekFrom::Start(pos as u64)).ok()?;
+                    view.read_exact(&mut s).ok()?;
+                    Some(RecordData::Ascii(
+                        s.split(|b| *b == 0)
+                            .map(utils::from_maybe_nul_terminated)
+                            .collect(),
+                    ))
+                }
+                RecordType::Word => {
+                    let count = self.count()?;
+                    let mut values = vec![0_u16; count as usize];
+                    let mut view = container.borrow_view_mut();
+                    view.seek(SeekFrom::Start(pos as u64)).ok()?;
+                    view.read_endian_u16_array(&mut values, container.endian())
+                        .ok()?;
+                    Some(RecordData::Word(values))
+                }
+                RecordType::DWord => {
+                    let count = self.count()?;
+                    let mut values = vec![0_u32; count as usize];
+                    let mut view = container.borrow_view_mut();
+                    view.seek(SeekFrom::Start(pos as u64)).ok()?;
+                    view.read_endian_u32_array(&mut values, container.endian())
+                        .ok()?;
+                    Some(RecordData::DWord(values))
+                }
+                RecordType::Heap1 | RecordType::Heap2 => self.heap(container).map(RecordData::Heap),
+                RecordType::Unknown => None,
+            },
+        }
+    }
+
+    fn heap(&self, container: &Container) -> Option<Heap> {
+        if let Record::InHeap((pos, len)) = self.data {
+            let mut heap = Heap::new(pos, len);
+            let mut view = container.borrow_view_mut();
+            heap.load(&mut view, container.endian())
+                .expect("Failed to load heap");
+            Some(heap)
         } else {
             None
         }
@@ -303,108 +429,39 @@ impl RecordEntry {
             match self.data {
                 Record::InHeap((pos, len)) => {
                     dump_writeln!(out, indent, "In heap at {}, {} bytes", pos, len);
-                    match type_ {
-                        RecordType::Ascii => {
-                            let mut s = vec![0; len as usize];
-                            let mut view = container.borrow_view_mut();
-                            let _ = view
-                                .seek(SeekFrom::Start(pos as u64))
-                                .and_then(|_| view.read_exact(&mut s))
-                                .map(|_| {
-                                    for s in s.split(|b| *b == 0) {
-                                        let s = utils::from_maybe_nul_terminated(s);
-                                        if !s.is_empty() {
-                                            dump_writeln!(out, indent, "'{}'", s);
-                                        }
-                                    }
-                                });
-                        }
-                        RecordType::Word => {
-                            if let Some(count) = self.count() {
-                                let mut values = vec![0_u16; count as usize];
-                                let mut view = container.borrow_view_mut();
-                                let _ = view
-                                    .read_endian_u16_array(&mut values, container.endian())
-                                    .map(|_| {
-                                        dump_writeln!(out, indent, "{:?}", values);
-                                    });
+                }
+                Record::InRec(_) => {
+                    dump_writeln!(out, indent, "In record");
+                }
+            }
+            match type_ {
+                RecordType::Ascii => {
+                    if let Some(RecordData::Ascii(s)) = self.data(container) {
+                        s.iter().for_each(|s| {
+                            if !s.is_empty() {
+                                dump_writeln!(out, indent, "'{}'", s);
                             }
-                        }
-                        RecordType::DWord => {
-                            if let Some(count) = self.count() {
-                                let mut values = vec![0_u32; count as usize];
-                                let mut view = container.borrow_view_mut();
-                                let _ = view
-                                    .read_endian_u32_array(&mut values, container.endian())
-                                    .map(|_| {
-                                        dump_writeln!(out, indent, "{:?}", values);
-                                    });
-                            }
-                        }
-                        RecordType::Heap1 | RecordType::Heap2 => {
-                            let mut heap = Heap::new(pos, len);
-                            let result =
-                                heap.load(&mut container.borrow_view_mut(), container.endian());
-                            // Can't map directly the result because
-                            // of the borrow_view_mut()
-                            if result.is_ok() {
-                                heap.write_dump(out, indent, container);
-                            };
-                        }
-                        _ => {
-                            if let Some(count) = self.count() {
-                                dump_writeln!(out, indent, "Count: {}", count);
-                            }
-                        }
+                        })
                     }
                 }
-                Record::InRec(d) => {
-                    dump_writeln!(out, indent, "In record");
-                    match type_ {
-                        RecordType::Ascii => {
-                            let s = utils::from_maybe_nul_terminated(&d);
-                            dump_writeln!(out, indent, "'{}'", s);
-                        }
-                        RecordType::Word => {
-                            let mut io = std::io::Cursor::new(d);
-                            let mut values = Vec::new();
-                            for _ in 0..4 {
-                                let _ = match container.endian() {
-                                    Endian::Big => io.read_u16::<BigEndian>(),
-                                    Endian::Little => io.read_u16::<LittleEndian>(),
-                                    _ => Err(std::io::Error::new(
-                                        std::io::ErrorKind::Other,
-                                        "invalid endian",
-                                    )),
-                                }
-                                .map(|v| {
-                                    values.push(v);
-                                });
-                            }
-                            dump_writeln!(out, indent, "{:?}", values);
-                        }
-                        RecordType::DWord => {
-                            let mut io = std::io::Cursor::new(d);
-                            let mut values = Vec::new();
-                            for _ in 0..2 {
-                                let _ = match container.endian() {
-                                    Endian::Big => io.read_u32::<BigEndian>(),
-                                    Endian::Little => io.read_u32::<LittleEndian>(),
-                                    _ => Err(std::io::Error::new(
-                                        std::io::ErrorKind::Other,
-                                        "invalid endian",
-                                    )),
-                                }
-                                .map(|v| {
-                                    values.push(v);
-                                });
-                            }
-                            dump_writeln!(out, indent, "{:?}", values);
-                        }
-                        RecordType::Byte | RecordType::Byte2 => {
-                            dump_writeln!(out, indent, "{:?}", d)
-                        }
-                        _ => {}
+                RecordType::Word => {
+                    if let Some(RecordData::Word(values)) = self.data(container) {
+                        dump_writeln!(out, indent, "{:?}", values);
+                    }
+                }
+                RecordType::DWord => {
+                    if let Some(RecordData::DWord(values)) = self.data(container) {
+                        dump_writeln!(out, indent, "{:?}", values);
+                    }
+                }
+                RecordType::Heap1 | RecordType::Heap2 => {
+                    if let Some(RecordData::Heap(heap)) = self.data(container) {
+                        heap.write_dump(out, indent, container);
+                    }
+                }
+                _ => {
+                    if let Some(count) = self.count() {
+                        dump_writeln!(out, indent, "Count: {}", count);
                     }
                 }
             }

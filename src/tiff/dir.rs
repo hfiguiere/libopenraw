@@ -504,6 +504,19 @@ impl Dir {
         })
     }
 
+    pub(crate) fn new(endian: container::Endian, type_: IfdType) -> Self {
+        Dir {
+            endian,
+            type_,
+            entries: BTreeMap::new(),
+            id: String::new(),
+            next: 0,
+            mnote_offset: 0,
+            tag_names: &exif::TAG_NAMES,
+            sub_ifds: OnceCell::new(),
+        }
+    }
+
     pub fn id(&self) -> &str {
         &self.id
     }

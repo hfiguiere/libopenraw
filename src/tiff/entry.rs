@@ -65,7 +65,7 @@ impl DataBytes {
 #[derive(Clone)]
 pub struct Entry {
     /// The tag
-    _id: u16,
+    pub(crate) id: u16,
     /// The type. See `exif::TagType`, use `exif::TagType::try_from()`
     /// to get the enum.
     pub(crate) type_: i16,
@@ -76,10 +76,28 @@ pub struct Entry {
 impl Entry {
     pub fn new(id: u16, type_: i16, count: u32, data: [u8; 4]) -> Self {
         Entry {
-            _id: id,
+            id,
             type_,
             count,
             data: DataBytes::Inline(data),
+        }
+    }
+
+    pub fn new_with_data(id: u16, type_: i16, count: u32, data: Vec<u8>) -> Self {
+        Entry {
+            id,
+            type_,
+            count,
+            data: DataBytes::External(data),
+        }
+    }
+
+    pub fn from_string(id: u16, string: &str) -> Self {
+        Entry {
+            id,
+            type_: TagType::Ascii as i16,
+            count: string.as_bytes().len() as u32,
+            data: DataBytes::External(string.as_bytes().to_vec()),
         }
     }
 
@@ -201,8 +219,8 @@ impl Entry {
         }
         log::error!(
             "Entry {:x}({}) incorrect type {} for {:?}",
-            self._id,
-            self._id,
+            self.id,
+            self.id,
             self.type_,
             T::exif_type()
         );
@@ -292,8 +310,8 @@ impl Entry {
         }
         log::error!(
             "Entry {:x}({}) incorrect type {} for {:?}",
-            self._id,
-            self._id,
+            self.id,
+            self.id,
             self.type_,
             exif::TagType::Ascii
         );
@@ -506,8 +524,8 @@ impl Entry {
             out,
             indent,
             "<0x{:04x}={:>5}> {:<30} [{:>2}={:<10} {}] = {}",
-            self._id,
-            self._id,
+            self.id,
+            self.id,
             tag_name,
             self.type_,
             type_,

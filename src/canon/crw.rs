@@ -22,7 +22,7 @@
 //! Canon CRW format, the 2nd generation of Canon RAW format, based on
 //! CIFF.
 
-mod ciff;
+pub(crate) mod ciff;
 mod decompress;
 
 use std::collections::HashMap;
@@ -154,8 +154,14 @@ impl RawFileImpl for CrwFile {
         })
     }
 
-    fn ifd(&self, _ifd_type: tiff::IfdType) -> Option<&Dir> {
-        None
+    fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
+        self.container();
+        let container = self.container.get().unwrap();
+        match ifd_type {
+            tiff::IfdType::Main => container.main_ifd(),
+            tiff::IfdType::Exif => container.exif_ifd(),
+            _ => None,
+        }
     }
 
     fn load_rawdata(&self, skip_decompression: bool) -> Result<RawData> {

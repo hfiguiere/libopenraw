@@ -41,6 +41,7 @@ use crate::{DataType, Error, RawData, Result, Type, TypeId};
 pub(crate) use container::{Container, DirIterator};
 pub(crate) use dir::Dir;
 pub(crate) use entry::Entry;
+pub(crate) use exif::TagType;
 pub(crate) use iterator::Iterator;
 
 #[repr(u32)]

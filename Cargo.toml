@@ -12,6 +12,7 @@ rust-version = "1.64"
 afl = { version = "0.12.4", optional = true }
 bitreader = "0.3.6"
 byteorder = "1.4.3"
+chrono = "0.4.24"
 getopts = "0.2.21"
 jpeg-decoder = "0.3.0"
 lazy_static = "1.4.0"
