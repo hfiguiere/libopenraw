@@ -35,7 +35,7 @@ use crate::io::Viewer;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
 use crate::tiff;
-use crate::tiff::{exif, Ifd};
+use crate::tiff::{exif, Ifd, IfdType};
 use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
 
 /// The MakerNote tag names. It's actually the same as Olympus.
@@ -109,7 +109,7 @@ impl RawFileImpl for ErfFile {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = tiff::Container::new(view, vec![], self.type_());
+            let mut container = tiff::Container::new(view, vec![IfdType::Main], self.type_());
             container.load(None).expect("IFD container error");
             container
         })
@@ -144,6 +144,7 @@ impl RawFileImpl for ErfFile {
         self.container();
         let container = self.container.get().unwrap();
         match ifd_type {
+            tiff::IfdType::Main => container.directory(0),
             tiff::IfdType::Raw => tiff::tiff_locate_raw_ifd(container),
             tiff::IfdType::Exif => container.exif_dir(),
             tiff::IfdType::MakerNote => container.mnote_dir(),
