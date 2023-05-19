@@ -24,6 +24,7 @@ use std::path::Path;
 use serde::Deserialize;
 use serde_xml_rs::{de::Deserializer, from_reader};
 
+use libopenraw::metadata::Value;
 use libopenraw::{Bitmap, DataType, Ifd, RawFile, Type, TypeId};
 
 #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -307,6 +308,25 @@ impl Results {
                 "Incorrect Raw file TypeID"
             );
         }
+
+        if let Some(exif_make) = &self.exif_make {
+            let make = rawfile.metadata_value(&"Exif.Image.Make".to_string());
+            assert!(make.is_some());
+            let make = make.as_ref().and_then(Value::string);
+            assert!(make.is_some());
+            let make = make.unwrap();
+            assert_eq!(&make, exif_make);
+        }
+
+        if let Some(exif_model) = &self.exif_model {
+            let model = rawfile.metadata_value(&"Exif.Image.Model".to_string());
+            assert!(model.is_some());
+            let model = model.as_ref().and_then(Value::string);
+            assert!(model.is_some());
+            let model = model.unwrap();
+            assert_eq!(&model, exif_model);
+        }
+
         // Check the MakerNote count
         if let Some(maker_note_count) = self.maker_note_count {
             count += 1;
