@@ -33,6 +33,7 @@ use crate::colour::BuiltinMatrix;
 use crate::container::{self, RawContainer};
 use crate::decompress;
 use crate::io::{View, Viewer};
+use crate::metadata;
 use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
 use crate::thumbnail;
@@ -635,6 +636,10 @@ impl RawContainer for MrwContainer {
 
     fn raw_type(&self) -> Type {
         Type::Mrw
+    }
+
+    fn dir_iterator(&self) -> metadata::Iterator {
+        self.ifd_container().dirs().iter().into()
     }
 }
 
