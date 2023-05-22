@@ -15,6 +15,7 @@ use crate::container;
 use crate::container::RawContainer;
 use crate::io::{View, Viewer};
 use crate::jpeg;
+use crate::metadata;
 use crate::tiff;
 use crate::utils;
 use crate::Type as RawType;
@@ -234,6 +235,12 @@ impl RawContainer for RafContainer {
 
     fn raw_type(&self) -> RawType {
         RawType::Raf
+    }
+
+    fn dir_iterator(&self) -> metadata::Iterator {
+        self.jpeg_preview()
+            .map(|preview| preview.dir_iterator())
+            .unwrap_or_default()
     }
 }
 

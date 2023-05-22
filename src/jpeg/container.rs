@@ -29,6 +29,7 @@ use once_cell::unsync::OnceCell;
 
 use crate::container;
 use crate::io::{View, Viewer};
+use crate::metadata;
 use crate::tiff;
 use crate::Dump;
 use crate::Type as RawType;
@@ -58,6 +59,12 @@ impl container::RawContainer for Container {
 
     fn raw_type(&self) -> RawType {
         self.raw_type
+    }
+
+    fn dir_iterator(&self) -> metadata::Iterator {
+        self.exif()
+            .map(|exif| exif.dirs().iter().into())
+            .unwrap_or_default()
     }
 }
 
