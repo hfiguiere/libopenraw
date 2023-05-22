@@ -31,6 +31,41 @@ use crate::container::Endian;
 use crate::rawfile::ReadAndSeek;
 use crate::utils;
 
+/// This trait exists because `from_le_bytes()` and `from_be_bytes`
+/// can't be used on a generics `T` as there is no bound for primitive types.
+/// And `byteorder` crate doesn't have generics over type.
+/// Implement the trait as needed.
+pub trait FromBuf {
+    /// Read from LittleEndian bytes.
+    fn le_bytes(bytes: &[u8]) -> Self;
+    /// Read from BigEndian bytes.
+    fn be_bytes(bytes: &[u8]) -> Self;
+}
+
+impl FromBuf for u32 {
+    #[inline]
+    fn le_bytes(bytes: &[u8]) -> Self {
+        LittleEndian::read_u32(bytes)
+    }
+
+    #[inline]
+    fn be_bytes(bytes: &[u8]) -> Self {
+        BigEndian::read_u32(bytes)
+    }
+}
+
+impl FromBuf for u16 {
+    #[inline]
+    fn le_bytes(bytes: &[u8]) -> Self {
+        LittleEndian::read_u16(bytes)
+    }
+
+    #[inline]
+    fn be_bytes(bytes: &[u8]) -> Self {
+        BigEndian::read_u16(bytes)
+    }
+}
+
 /// Wrap the IO for views.
 ///
 /// ```no_compile
