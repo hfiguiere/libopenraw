@@ -271,8 +271,8 @@ impl Dir {
 
                     if data[5] == 0 && data[7] == 0 {
                         match data[6] {
-                            0x08 | 0x09 =>
-                            // Leica Q Typ 116 and SL (Type 601)
+                            0x08 | 0x09 | 0x0a =>
+                            // Leica Q Typ 116, SL (Type 601), Q3 (0x0a)
                                 return Dir::new_makernote(
                                     "Leica5",
                                     container,
