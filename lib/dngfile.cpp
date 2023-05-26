@@ -1,7 +1,7 @@
 /*
  * libopenraw - dngfile.cpp
  *
- * Copyright (C) 2006-2022 Hubert Figuière
+ * Copyright (C) 2006-2023 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -149,6 +149,8 @@ const IfdFile::camera_ids_t DngFile::s_def[] = {
                                                OR_TYPEID_LEICA_Q_TYP116) },
     { "LEICA Q2", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                       OR_TYPEID_LEICA_Q2) },
+    { "LEICA Q3", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
+                                      OR_TYPEID_LEICA_Q3) },
     { "LEICA CL", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,
                                                OR_TYPEID_LEICA_CL) },
     { "LEICA SL2-S", OR_MAKE_FILE_TYPEID(OR_TYPEID_VENDOR_LEICA,

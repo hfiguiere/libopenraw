@@ -160,8 +160,8 @@ MakerNoteDir::createMakerNote(off_t offset,
         if (data[5] == 0 && data[7] == 0) {
             switch (data[6]) {
             case 0x08:
-            case 0x09:
-                // Leica Q Typ 116 and SL (Type 601)
+            case 0x09: // Leica Q Typ 116 and SL (Type 601)
+            case 0x0a: // Leica Q3
                 return std::make_shared<MakerNoteDir>(
                     offset + 8, container, 0, "Leica5", mnote_leica5_tag_names);
             case 0x01: // Leica X1
