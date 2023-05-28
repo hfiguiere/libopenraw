@@ -19,6 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! Metatadata
+
 use crate::tiff::{self, exif};
 
 /// The key type. Currently an alias to `String`.

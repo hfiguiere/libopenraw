@@ -27,6 +27,7 @@ use bitreader::BitReader;
 
 use crate::{Error, Result};
 
+/// Decompress the Olympus raw data.
 pub fn decompress_olympus(input: &[u8], w: usize, h: usize) -> Result<Vec<u16>> {
     if input.len() < 8 {
         return Err(Error::Decompression(

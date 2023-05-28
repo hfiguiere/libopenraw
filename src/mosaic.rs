@@ -19,6 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//! CFA Mosaic
+
 use num_enum::TryFromPrimitive;
 
 /// C friendly enum for Pattern types.

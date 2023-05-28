@@ -136,6 +136,7 @@ pub struct Tile {
     pub buf: Vec<u16>,
 }
 
+/// Lossless JPEG decompressor. Used by CR2 and DNG.
 pub struct LJpeg {
     /// Canon-style slices. The format of the slices vector is as follow
     /// * N col1 col2
@@ -156,6 +157,7 @@ impl Default for LJpeg {
 }
 
 impl LJpeg {
+    /// Create a new lossless JPEG decompressor.
     pub fn new() -> LJpeg {
         LJpeg {
             slices: None,
@@ -166,6 +168,7 @@ impl LJpeg {
         }
     }
 
+    /// Set the slices for Canon CR2.
     pub fn set_slices(&mut self, slices: &[u32]) {
         let mut v = Vec::new();
         let n = slices[0] as usize;
