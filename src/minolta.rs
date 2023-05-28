@@ -155,7 +155,7 @@ lazy_static::lazy_static! {
 /// The MRW file format was produced by Minolta cameras until
 /// Konica-Minolta was purchased by Sony. This will not change.
 ///
-/// Sources http://www.dalibor.cz/software/minolta-raw-mrw-file-format
+/// Sources <http://www.dalibor.cz/software/minolta-raw-mrw-file-format>
 pub(crate) struct MrwFile {
     reader: Rc<Viewer>,
     container: OnceCell<MrwContainer>,

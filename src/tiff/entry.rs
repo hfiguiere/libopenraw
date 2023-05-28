@@ -155,7 +155,7 @@ impl Entry {
         self.load_data_impl_(offset, view)
     }
 
-    /// monomorphic implementation of load_data_impl<E>
+    /// monomorphic implementation of `load_data_impl<E>`
     fn load_data_impl_(&self, offset: u64, view: &mut View) -> Result<Vec<u8>> {
         let tag_type = TagType::try_from(self.type_).unwrap_or(TagType::Invalid);
         let data_size = exif::tag_unit_size(tag_type) * self.count as usize;
