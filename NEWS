@@ -1,9 +1,21 @@
-libopenraw 0.3.6 -
+libopenraw 0.3.6 - 2023/06/10
 
 New features:
 
   Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Added Leica M11 Monochrom, Q3.
+
+Bug fixes:
+
+  - Properly decode uncompressed big endian 16 bit raw data from
+    Pentax PEF. Issue #2.  Including PENTAX *ist DS.
+    https://gitlab.freedesktop.org/libopenraw/libopenraw/-/issues/2
+  - Added missing MPL-2.0 license to tarball.
+    https://gitlab.freedesktop.org/libopenraw/libopenraw/-/issues/15
+  - Fix build issue with Rust 1.70.
+  - Fix offline Rust build from tarball.
 
 libopenraw 0.3.5 - 2023/04/28
 

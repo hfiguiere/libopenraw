@@ -1,6 +1,11 @@
 What's (visibly) new in 0.3.6
 =============================
 
+- Fixed Pentax decoding of unpacked raw data. Issue #2.
+- Fixed the offline build from tarball.
+- Fixed Rust 1.70 compatibility.
+- 2 new camera listed.
+
 What's (visibly) new in 0.3.5
 =============================
 
