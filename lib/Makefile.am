@@ -21,6 +21,7 @@ dist-hook:
 	mkdir -p $(distdir)/mp4/
 	(cd mp4 && $(shell pwd)/$(top_srcdir)/build-aux/cargo-vendor.sh $(shell pwd)/$(top_srcdir)/lib/mp4/Cargo.toml)
 	cp -av mp4/vendor $(distdir)/mp4/
+	cp -av mp4/.cargo $(distdir)/mp4/
 
 distclean-local:
 	rm -fr mp4/vendor/*
