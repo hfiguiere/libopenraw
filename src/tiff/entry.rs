@@ -46,17 +46,16 @@ enum DataBytes {
     External(Vec<u8>),
     /// Offset of the data in the container. This is only for
     /// `Undefined` entry types. Use `Entry::offset()` to retrieve it.
-    Offset(u32),
+    Offset(u32, Vec<u8>),
 }
 
 impl DataBytes {
     /// Convert the data buffer into a slice
-    /// Will panic if it is an offset.
     pub fn as_slice(&self) -> &[u8] {
         match *self {
             Self::Inline(ref b) => b,
             Self::External(ref v) => v.as_slice(),
-            _ => unreachable!("Entry data is offset"),
+            Self::Offset(_, ref v) => v.as_slice(),
         }
     }
 }
@@ -104,23 +103,19 @@ impl Entry {
     /// Return wether the entry is inline.
     pub fn is_inline(&self) -> bool {
         let tag_type = TagType::try_from(self.type_).unwrap_or(TagType::Invalid);
-        if tag_type == TagType::Undefined {
-            false
-        } else {
-            let data_size = exif::tag_unit_size(tag_type) * self.count as usize;
-            data_size <= 4
-        }
+        let data_size = exif::tag_unit_size(tag_type) * self.count as usize;
+        data_size <= 4
     }
 
     /// Set the entry as containing an offset.
-    pub(crate) fn set_offset(&mut self, offset: u32) {
-        self.data = DataBytes::Offset(offset);
+    pub(crate) fn set_offset(&mut self, offset: u32, data: Vec<u8>) {
+        self.data = DataBytes::Offset(offset, data);
     }
 
     /// Get the offset if it exists
     pub(crate) fn offset(&self) -> Option<u32> {
         match self.data {
-            DataBytes::Offset(offset) => Some(offset),
+            DataBytes::Offset(offset, _) => Some(offset),
             _ => None,
         }
     }
@@ -129,34 +124,8 @@ impl Entry {
         self.data.as_slice()
     }
 
-    /// Load the data for an immutable entry.
-    /// If it is already loaded, just return it.
-    pub(crate) fn get_data<E>(&self, base_offset: u32, view: &mut View) -> Result<Vec<u8>>
-    where
-        E: ByteOrder,
-    {
-        if let DataBytes::External(data) = &self.data {
-            Ok(data.clone())
-        } else {
-            self.load_data_impl::<E>(base_offset, view)
-        }
-    }
-
-    /// implementation for `get_data` and `load_data`.
-    fn load_data_impl<E>(&self, base_offset: u32, view: &mut View) -> Result<Vec<u8>>
-    where
-        E: ByteOrder,
-    {
-        let offset = (match self.data {
-            DataBytes::Offset(offset) => offset,
-            _ => E::read_u32(self.data.as_slice()),
-        } + base_offset) as u64;
-
-        self.load_data_impl_(offset, view)
-    }
-
-    /// monomorphic implementation of `load_data_impl<E>`
-    fn load_data_impl_(&self, offset: u64, view: &mut View) -> Result<Vec<u8>> {
+    /// monomorphic implementation of `load_data<E>`
+    fn load_data_impl(&self, offset: u64, view: &mut View) -> Result<Vec<u8>> {
         let tag_type = TagType::try_from(self.type_).unwrap_or(TagType::Invalid);
         let data_size = exif::tag_unit_size(tag_type) * self.count as usize;
         debug!("Loading data at {}: {} bytes", offset, data_size);
@@ -182,10 +151,16 @@ impl Entry {
             return Err(Error::AlreadyInited);
         }
 
-        let data = self.load_data_impl::<E>(base_offset, view)?;
+        let offset = E::read_u32(self.data.as_slice());
+        let actual_offset = (offset + base_offset) as u64;
+        let data = self.load_data_impl(actual_offset, view)?;
 
         let bytes = data.len();
-        self.data = DataBytes::External(data);
+        if self.type_ == TagType::Undefined as i16 {
+            self.set_offset(offset, data);
+        } else {
+            self.data = DataBytes::External(data);
+        }
 
         Ok(bytes)
     }
@@ -246,7 +221,7 @@ impl Entry {
                     &self.data.as_slice()[u32::unit_size() * index as usize..],
                 )),
                 _ => {
-                    log::error!("incorrect type {} for uint", self.type_);
+                    log::error!("incorrect type {} for uint {}", self.type_, self.id);
                     None
                 }
             })
@@ -336,10 +311,6 @@ impl Entry {
                 return None;
             }
         };
-        if let DataBytes::Offset(_) = self.data {
-            log::error!("Entry::uint_value_array<>(): data is offset, file likely corrupt.");
-            return None;
-        }
         let unit_size = match type_ {
             TagType::Short => u16::unit_size(),
             TagType::Long => u32::unit_size(),
@@ -380,10 +351,6 @@ impl Entry {
                 return None;
             }
         };
-        if let DataBytes::Offset(_) = self.data {
-            log::error!("Entry::int_value_array<>(): data is offset, file likely corrupt.");
-            return None;
-        }
         let unit_size = match type_ {
             TagType::SShort => i16::unit_size(),
             TagType::SLong => i32::unit_size(),
@@ -420,10 +387,6 @@ impl Entry {
     where
         T: ExifValue,
     {
-        if let DataBytes::Offset(_) = self.data {
-            log::error!("Entry::value_array<>(): data is offset, file likely corrupt.");
-            return None;
-        }
         let data_slice = self.data.as_slice();
         let count = if self.type_ == TagType::Undefined as i16 {
             // count is in bytes
@@ -461,7 +424,7 @@ impl Entry {
     ) where
         W: std::io::Write + ?Sized,
     {
-        fn array_to_str<V>(array: &Vec<V>) -> String
+        fn array_to_str<V>(array: &[V]) -> String
         where
             V: ToString,
         {
@@ -490,24 +453,26 @@ impl Entry {
 
             match TagType::try_from(e.type_) {
                 Ok(TagType::Ascii) => e.string_value().map(|v| format!("\"{v}\"")),
-                Ok(TagType::Byte) => e.value_array::<u8>(endian).as_ref().map(array_to_str),
-                Ok(TagType::SByte) => e.value_array::<i8>(endian).as_ref().map(array_to_str),
+                Ok(TagType::Byte) => e.value_array::<u8>(endian).as_ref().map(|v| array_to_str(v)),
+                Ok(TagType::SByte) => e.value_array::<i8>(endian).as_ref().map(|v| array_to_str(v)),
                 Ok(TagType::Short) | Ok(TagType::Long) => {
-                    e.uint_value_array(endian).as_ref().map(array_to_str)
+                    e.uint_value_array(endian).as_ref().map(|v| array_to_str(v))
                 }
                 Ok(TagType::SShort) | Ok(TagType::SLong) => {
-                    e.int_value_array(endian).as_ref().map(array_to_str)
+                    e.int_value_array(endian).as_ref().map(|v| array_to_str(v))
                 }
                 Ok(TagType::Rational) => {
-                    e.value_array::<Rational>(endian).as_ref().map(array_to_str)
+                    e.value_array::<Rational>(endian).as_ref().map(|v| array_to_str(v))
                 }
                 Ok(TagType::SRational) => e
                     .value_array::<SRational>(endian)
                     .as_ref()
-                    .map(array_to_str),
-                Ok(TagType::Float) => e.value_array::<f32>(endian).as_ref().map(array_to_str),
-                Ok(TagType::Double) => e.value_array::<f64>(endian).as_ref().map(array_to_str),
-
+                    .map(|v| array_to_str(v)),
+                Ok(TagType::Float) => e.value_array::<f32>(endian).as_ref().map(|v| array_to_str(v)),
+                Ok(TagType::Double) => e.value_array::<f64>(endian).as_ref().map(|v| array_to_str(v)),
+                Ok(TagType::Undefined) => Some(e.value_array::<u8>(endian)
+                    .as_ref()
+                    .map_or_else(|| array_to_str(e.data()), |d| array_to_str(d))),
                 Err(_) => None,
                 _ => Some("VALUE".to_string()),
             }

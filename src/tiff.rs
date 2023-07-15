@@ -174,18 +174,11 @@ fn convert_cfa_pattern(dir: &Dir, entry: &Entry) -> Option<Pattern> {
     Pattern::try_from(a.as_slice()).ok()
 }
 
-fn convert_new_cfa_pattern(container: &Container, dir: &Dir, entry: &Entry) -> Option<Pattern> {
+fn convert_new_cfa_pattern(entry: &Entry) -> Option<Pattern> {
     if entry.count < 4 {
         return None;
     }
-
-    let mut view = container.borrow_view_mut();
-    let result = match dir.endian() {
-        Endian::Big => entry.get_data::<BigEndian>(0, &mut view),
-        Endian::Little => entry.get_data::<LittleEndian>(0, &mut view),
-        _ => unreachable!(),
-    };
-    let data = result.ok()?;
+    let data = entry.data();
 
     let h = data[0];
     let v = data[1];
@@ -197,12 +190,12 @@ fn convert_new_cfa_pattern(container: &Container, dir: &Dir, entry: &Entry) -> O
     Pattern::try_from(&data[4..=7]).ok()
 }
 
-fn get_mosaic_info(container: &Container, dir: &Dir) -> Option<Pattern> {
+fn get_mosaic_info(dir: &Dir) -> Option<Pattern> {
     dir.entry(exif::EXIF_TAG_CFA_PATTERN)
         .and_then(|e| convert_cfa_pattern(dir, e))
         .or_else(|| {
             dir.entry(exif::EXIF_TAG_NEW_CFA_PATTERN)
-                .and_then(|e| convert_new_cfa_pattern(container, dir, e))
+                .and_then(convert_new_cfa_pattern)
         })
 }
 
@@ -316,12 +309,12 @@ pub(crate) fn tiff_get_rawdata(
     // But it'll trickle down the Nikon code.
 
     // Get the mosaic info
-    let mosaic_pattern = get_mosaic_info(container, dir).or_else(|| {
+    let mosaic_pattern = get_mosaic_info(dir).or_else(|| {
         log::debug!("Trying mosaic data in Exif");
         container
             .exif_dir()
             .as_ref()
-            .and_then(|exif| get_mosaic_info(container, exif))
+            .and_then(|exif| get_mosaic_info(exif))
     });
     log::debug!("mosaic_pattern {:?}", mosaic_pattern);
 

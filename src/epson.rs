@@ -164,9 +164,8 @@ impl RawFileImpl for ErfFile {
                     |mut rawdata| {
                         self.maker_note_ifd().and_then(|mnote| {
                             mnote
-                                .entry_cloned(
+                                .entry(
                                     exif::MNOTE_EPSON_SENSORAREA,
-                                    &mut self.container().borrow_view_mut(),
                                 )
                                 // the data type is `Undefined`
                                 .and_then(|e| e.value_array::<u16>(mnote.endian()))

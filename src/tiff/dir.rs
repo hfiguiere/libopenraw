@@ -474,10 +474,7 @@ impl Dir {
             view.read_exact(&mut data)?;
             debug!("Entry {:x} with type {} added", id, type_);
             let mut entry = Entry::new(id, type_, count, data);
-            if type_ == exif::TagType::Undefined as i16 {
-                let offset = data.as_slice().read_u32::<E>()?;
-                entry.set_offset(offset);
-            } else if !entry.is_inline() {
+            if !entry.is_inline() {
                 let pos = view.stream_position()?;
                 let r = entry.load_data::<E>(base_offset, view);
                 view.seek(SeekFrom::Start(pos))?;
@@ -641,32 +638,6 @@ impl Dir {
                 }
             }
             ifds
-        })
-    }
-
-    /// Return the cloned entry for the `tag`.
-    /// This is not just a clone, it allow also making sure the data
-    /// in self contained.
-    /// If the data can't be loaded (error), `None` is returned.
-    pub(crate) fn entry_cloned(&self, tag: u16, view: &mut View) -> Option<Entry> {
-        self.entries.get(&tag).and_then(|e| {
-            let mut e = (*e).clone();
-            if e.offset().is_some() {
-                match self.endian() {
-                    container::Endian::Little => {
-                        e.load_data::<LittleEndian>(self.mnote_offset, view).ok()?;
-                    }
-                    container::Endian::Big => {
-                        e.load_data::<BigEndian>(self.mnote_offset, view).ok()?;
-                    }
-                    _ => {
-                        log::error!("Endian unset to read Entry");
-                        return None;
-                    }
-                }
-            }
-
-            Some(e)
         })
     }
 }
