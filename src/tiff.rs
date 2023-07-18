@@ -45,10 +45,11 @@ pub(crate) use exif::TagType;
 pub(crate) use iterator::Iterator;
 
 #[repr(u32)]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
 /// TIFF (a RAW) compression values
 pub enum Compression {
     /// Unknown - this value is never a valid one
+    #[default]
     Unknown = 0,
     /// No compression
     None = 1,

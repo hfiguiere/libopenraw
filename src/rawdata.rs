@@ -34,6 +34,12 @@ enum Data {
     Tiled((Vec<Vec<u8>>, (u32, u32))),
 }
 
+impl Default for Data {
+    fn default() -> Data {
+        Data::Data16(Vec::default())
+    }
+}
+
 impl std::fmt::Debug for Data {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         f.write_str(&match *self {
@@ -45,7 +51,7 @@ impl std::fmt::Debug for Data {
 }
 
 /// RAW Data extracted from the file.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct RawData {
     /// Thumbnail width
     width: u32,
@@ -72,6 +78,10 @@ pub struct RawData {
 }
 
 impl RawData {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
     /// New `RawData` with 8 bit data.
     pub fn new8(
         width: u32,
