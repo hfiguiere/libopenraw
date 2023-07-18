@@ -227,7 +227,15 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
 
     /// Get the RAW data
     fn raw_data(&self, skip_decompression: bool) -> Result<RawData> {
-        self.load_rawdata(skip_decompression)
+        self.load_rawdata(skip_decompression).map(|mut rawdata| {
+            for i in 1..2_usize {
+                if let Ok(matrix) = self.colour_matrix(i) {
+                    rawdata.set_colour_matrix(i, &matrix);
+                }
+            }
+
+            rawdata
+        })
     }
 
     /// Get the main IFD
@@ -267,7 +275,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
     }
 
     /// Return the colour matrix for the file.
-    fn colour_matrix(&self, index: u32) -> Result<Vec<f64>> {
+    fn colour_matrix(&self, index: usize) -> Result<Vec<f64>> {
         let tag = match index {
             1 => exif::DNG_TAG_COLORMATRIX1,
             2 => exif::DNG_TAG_COLORMATRIX2,

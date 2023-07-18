@@ -75,6 +75,8 @@ pub struct RawData {
     active_area: Option<Rect>,
     /// The mosaic pattern
     mosaic_pattern: Pattern,
+    /// Colour matrices
+    matrices: [Vec<f64>; 2],
 }
 
 impl RawData {
@@ -103,6 +105,7 @@ impl RawData {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
+            matrices: [vec![], vec![]],
         }
     }
 
@@ -127,6 +130,7 @@ impl RawData {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
+            matrices: [vec![], vec![]],
         }
     }
 
@@ -151,6 +155,7 @@ impl RawData {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
+            matrices: [vec![], vec![]],
         }
     }
 
@@ -204,6 +209,19 @@ impl RawData {
 
     pub fn set_bpc(&mut self, bpc: u16) {
         self.bpc = bpc;
+    }
+
+    pub fn colour_matrix(&self, index: usize) -> Option<&[f64]> {
+        if index == 1 || index == 2 {
+            return Some(&self.matrices[index - 1]);
+        }
+        None
+    }
+
+    pub fn set_colour_matrix(&mut self, index: usize, m: &[f64]) {
+        if index == 1 || index == 2 {
+            self.matrices[index - 1] = m.to_vec();
+        }
     }
 
     pub fn set_data16(&mut self, data: Vec<u16>) {
