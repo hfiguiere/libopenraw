@@ -232,6 +232,8 @@ fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool, skip_decom
             if let Some(maker_note) = maker_note {
                 println!("Number of MakerNote entries {}", maker_note.num_entries());
             }
+            let orientation = rawfile.orientation();
+            println!("Orientation: {orientation}");
         }
         Err(err) => {
             println!("Failed to open raw file: {err}");

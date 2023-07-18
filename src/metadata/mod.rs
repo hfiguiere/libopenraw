@@ -51,6 +51,13 @@ impl Value {
     pub fn is_string(&self) -> bool {
         matches!(self, Self::String(_))
     }
+
+    pub fn integer(&self) -> Option<u32> {
+        match self {
+            Self::Int(i) => Some(i[0]),
+            _ => None,
+        }
+    }
 }
 
 /// Inner iterator

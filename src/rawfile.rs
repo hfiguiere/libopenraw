@@ -259,6 +259,13 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
             .map(|item| item.1)
     }
 
+    /// File orientation
+    fn orientation(&self) -> u32 {
+        self.metadata_value(&"Exif.Image.Orientation".to_string())
+            .and_then(|value| value.integer())
+            .unwrap_or(0)
+    }
+
     /// Return the colour matrix for the file.
     fn colour_matrix(&self, index: u32) -> Result<Vec<f64>> {
         let tag = match index {

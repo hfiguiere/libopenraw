@@ -327,6 +327,11 @@ impl Results {
             assert_eq!(&model, exif_model);
         }
 
+        if let Some(meta_orientation) = self.meta_orientation {
+            let orientation = rawfile.orientation();
+            assert_eq!(meta_orientation, orientation);
+        }
+
         // Check the MakerNote count
         if let Some(maker_note_count) = self.maker_note_count {
             count += 1;
