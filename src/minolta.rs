@@ -201,8 +201,9 @@ impl RawFileImpl for MrwFile {
             let mut thumbnails = vec![];
             if let Some(makernote) = self.ifd(tiff::IfdType::MakerNote) {
                 let ifd = self.container.get().unwrap().ifd_container();
-                // Old files have the thummail in the Exif entry `MNOTE_MINOLTA_THUMBNAIL`.
+                // Old files have the thumbnail in the Exif entry `MNOTE_MINOLTA_THUMBNAIL`.
                 let buffer = if let Some(preview) = makernote.entry(exif::MNOTE_MINOLTA_THUMBNAIL) {
+                    // e.data() is incorrect.
                     preview
                         .offset()
                         .map(|offset| ifd.load_buffer8(offset as u64, preview.count as u64))

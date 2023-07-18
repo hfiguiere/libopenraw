@@ -453,26 +453,41 @@ impl Entry {
 
             match TagType::try_from(e.type_) {
                 Ok(TagType::Ascii) => e.string_value().map(|v| format!("\"{v}\"")),
-                Ok(TagType::Byte) => e.value_array::<u8>(endian).as_ref().map(|v| array_to_str(v)),
-                Ok(TagType::SByte) => e.value_array::<i8>(endian).as_ref().map(|v| array_to_str(v)),
+                Ok(TagType::Byte) => e
+                    .value_array::<u8>(endian)
+                    .as_ref()
+                    .map(|v| array_to_str(v)),
+                Ok(TagType::SByte) => e
+                    .value_array::<i8>(endian)
+                    .as_ref()
+                    .map(|v| array_to_str(v)),
                 Ok(TagType::Short) | Ok(TagType::Long) => {
                     e.uint_value_array(endian).as_ref().map(|v| array_to_str(v))
                 }
                 Ok(TagType::SShort) | Ok(TagType::SLong) => {
                     e.int_value_array(endian).as_ref().map(|v| array_to_str(v))
                 }
-                Ok(TagType::Rational) => {
-                    e.value_array::<Rational>(endian).as_ref().map(|v| array_to_str(v))
-                }
+                Ok(TagType::Rational) => e
+                    .value_array::<Rational>(endian)
+                    .as_ref()
+                    .map(|v| array_to_str(v)),
                 Ok(TagType::SRational) => e
                     .value_array::<SRational>(endian)
                     .as_ref()
                     .map(|v| array_to_str(v)),
-                Ok(TagType::Float) => e.value_array::<f32>(endian).as_ref().map(|v| array_to_str(v)),
-                Ok(TagType::Double) => e.value_array::<f64>(endian).as_ref().map(|v| array_to_str(v)),
-                Ok(TagType::Undefined) => Some(e.value_array::<u8>(endian)
+                Ok(TagType::Float) => e
+                    .value_array::<f32>(endian)
                     .as_ref()
-                    .map_or_else(|| array_to_str(e.data()), |d| array_to_str(d))),
+                    .map(|v| array_to_str(v)),
+                Ok(TagType::Double) => e
+                    .value_array::<f64>(endian)
+                    .as_ref()
+                    .map(|v| array_to_str(v)),
+                Ok(TagType::Undefined) => Some(
+                    e.value_array::<u8>(endian)
+                        .as_ref()
+                        .map_or_else(|| array_to_str(e.data()), |d| array_to_str(d)),
+                ),
                 Err(_) => None,
                 _ => Some("VALUE".to_string()),
             }

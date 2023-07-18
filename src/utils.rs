@@ -47,12 +47,7 @@ pub(crate) fn to_u8_slice_mut<T>(slice: &mut [T]) -> &mut [u8] {
 
 /// Create an u8 slice from a `[T]`.
 pub(crate) fn to_u8_slice<T>(slice: &[T]) -> &[u8] {
-    unsafe {
-        std::slice::from_raw_parts(
-            slice.as_ptr().cast::<u8>(),
-            std::mem::size_of_val(slice),
-        )
-    }
+    unsafe { std::slice::from_raw_parts(slice.as_ptr().cast::<u8>(), std::mem::size_of_val(slice)) }
 }
 
 /// Will take the slice and create a string from the nul terminated
