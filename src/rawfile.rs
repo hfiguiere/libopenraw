@@ -394,7 +394,7 @@ mod test {
         fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
             let sizes = self.list_thumbnail_sizes();
             if sizes.contains(&size) {
-                Ok(Thumbnail::new(size, size, DataType::Jpeg, vec![]))
+                Ok(Thumbnail::with_data(size, size, DataType::Jpeg, vec![]))
             } else {
                 Err(Error::NotFound)
             }

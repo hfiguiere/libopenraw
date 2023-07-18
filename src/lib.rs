@@ -126,7 +126,7 @@ pub enum Error {
 
 /// What type is the data.
 ///
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub enum DataType {
     /// JPEG stream
     Jpeg,
@@ -137,6 +137,7 @@ pub enum DataType {
     /// RAW data uncompressed
     Raw,
     /// Unknown type
+    #[default]
     Unknown,
 }
 

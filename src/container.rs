@@ -92,7 +92,7 @@ pub trait RawContainer {
                 data
             }
         };
-        Ok(Thumbnail::new(
+        Ok(Thumbnail::with_data(
             desc.width,
             desc.height,
             desc.data_type,

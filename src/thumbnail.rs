@@ -70,6 +70,7 @@ impl ThumbDesc {
 }
 
 /// A thumbnail
+#[derive(Default, Debug)]
 pub struct Thumbnail {
     /// Thumbnail width
     width: u32,
@@ -81,8 +82,12 @@ pub struct Thumbnail {
 }
 
 impl Thumbnail {
+    pub fn new() -> Thumbnail {
+        Thumbnail::default()
+    }
+
     /// New thumbnail with data.
-    pub fn new(width: u32, height: u32, data_type: DataType, data: Vec<u8>) -> Thumbnail {
+    pub fn with_data(width: u32, height: u32, data_type: DataType, data: Vec<u8>) -> Thumbnail {
         Thumbnail {
             width,
             height,
