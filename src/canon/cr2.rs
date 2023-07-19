@@ -33,8 +33,7 @@ use crate::decompress;
 use crate::io::Viewer;
 use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
-use crate::thumbnail;
-use crate::thumbnail::ThumbDesc;
+use crate::rawfile::ThumbnailStorage;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
@@ -46,7 +45,7 @@ pub struct Cr2File {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl Cr2File {
@@ -208,16 +207,16 @@ impl RawFileImpl for Cr2File {
         })
     }
 
-    fn thumbnails(&self) -> &Vec<(u32, ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
-            if self.is_cr2() {
+            ThumbnailStorage::with_thumbnails(if self.is_cr2() {
                 self.container();
                 let container = self.container.get().unwrap();
                 tiff::tiff_thumbnails(container)
             } else {
                 // XXX todo non CR2 files
                 vec![]
-            }
+            })
         })
     }
 

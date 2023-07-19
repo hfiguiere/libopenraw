@@ -30,8 +30,7 @@ use crate::camera_ids::{hasselblad, vendor};
 use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
-use crate::rawfile::ReadAndSeek;
-use crate::thumbnail;
+use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
 use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::Dir;
@@ -834,7 +833,7 @@ pub struct ArwFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl ArwFile {
@@ -884,11 +883,11 @@ impl RawFileImpl for ArwFile {
         })
     }
 
-    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
-            tiff::tiff_thumbnails(container)
+            ThumbnailStorage::with_thumbnails(tiff::tiff_thumbnails(container))
         })
     }
 

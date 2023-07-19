@@ -34,6 +34,7 @@ use crate::io::Viewer;
 use crate::mosaic::Pattern;
 use crate::mp4;
 use crate::rawfile::ReadAndSeek;
+use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::Dir;
@@ -46,7 +47,7 @@ pub struct Cr3File {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<mp4::Container>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl Cr3File {
@@ -85,7 +86,7 @@ impl RawFileImpl for Cr3File {
     }
 
     /// Returns a lazily loaded set of [thumbnails][thumbnail::ThumbDesc].
-    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             use thumbnail::{Data, DataOffset};
 
@@ -147,7 +148,7 @@ impl RawFileImpl for Cr3File {
                 let dim = std::cmp::max(desc.width, desc.height);
                 thumbnails.push((dim, desc));
             }
-            thumbnails
+            ThumbnailStorage::with_thumbnails(thumbnails)
         })
     }
 

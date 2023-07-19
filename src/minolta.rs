@@ -35,7 +35,7 @@ use crate::decompress;
 use crate::io::{View, Viewer};
 use crate::metadata;
 use crate::mosaic::Pattern;
-use crate::rawfile::ReadAndSeek;
+use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
 use crate::thumbnail;
 use crate::tiff::{self, exif, Ifd, IfdType};
 use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
@@ -159,7 +159,7 @@ lazy_static::lazy_static! {
 pub(crate) struct MrwFile {
     reader: Rc<Viewer>,
     container: OnceCell<MrwContainer>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl MrwFile {
@@ -196,7 +196,7 @@ impl RawFileImpl for MrwFile {
     }
 
     /// MRW files have only one preview, 640x480, in the MakerNote.
-    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             let mut thumbnails = vec![];
             if let Some(makernote) = self.ifd(tiff::IfdType::MakerNote) {
@@ -236,7 +236,7 @@ impl RawFileImpl for MrwFile {
                     ));
                 }
             }
-            thumbnails
+            ThumbnailStorage::with_thumbnails(thumbnails)
         })
     }
 

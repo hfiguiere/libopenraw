@@ -33,6 +33,7 @@ use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
 use crate::rawfile::ReadAndSeek;
+use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Ifd, IfdType};
@@ -80,7 +81,7 @@ pub(crate) struct ErfFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl ErfFile {
@@ -115,7 +116,7 @@ impl RawFileImpl for ErfFile {
         })
     }
 
-    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
@@ -136,7 +137,7 @@ impl RawFileImpl for ErfFile {
                 })
             });
 
-            thumbnails
+            ThumbnailStorage::with_thumbnails(thumbnails)
         })
     }
 

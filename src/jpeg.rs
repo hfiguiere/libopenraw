@@ -32,7 +32,7 @@ use once_cell::unsync::OnceCell;
 use crate::camera_ids::vendor;
 use crate::container::RawContainer;
 use crate::io::Viewer;
-use crate::rawfile::ReadAndSeek;
+use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
@@ -43,7 +43,7 @@ pub struct JpegFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<Container>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl JpegFile {
@@ -71,7 +71,7 @@ impl RawFileImpl for JpegFile {
         })
     }
 
-    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             let mut thumbnails = vec![];
             self.container();
@@ -95,7 +95,7 @@ impl RawFileImpl for JpegFile {
 
                 Some(())
             });
-            thumbnails
+            ThumbnailStorage::with_thumbnails(thumbnails)
         })
     }
 

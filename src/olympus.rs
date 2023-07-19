@@ -33,8 +33,7 @@ use crate::bitmap::{Bitmap, Rect};
 use crate::container;
 use crate::container::RawContainer;
 use crate::io::Viewer;
-use crate::rawfile::ReadAndSeek;
-use crate::thumbnail;
+use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
 use crate::tiff;
 use crate::tiff::IfdType;
 use crate::tiff::{exif, Ifd};
@@ -258,7 +257,7 @@ pub(crate) struct OrfFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl OrfFile {
@@ -358,7 +357,7 @@ impl RawFileImpl for OrfFile {
         })
     }
 
-    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
@@ -399,7 +398,7 @@ impl RawFileImpl for OrfFile {
                     })
             });
 
-            thumbnails
+            ThumbnailStorage::with_thumbnails(thumbnails)
         })
     }
 

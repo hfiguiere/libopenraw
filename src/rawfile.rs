@@ -43,6 +43,19 @@ impl ReadAndSeek for std::io::Cursor<Vec<u8>> {}
 
 pub type RawFileFactory = fn(Box<dyn ReadAndSeek>) -> Box<dyn RawFile>;
 
+pub struct ThumbnailStorage {
+    pub thumbnails: Vec<(u32, ThumbDesc)>,
+    pub sizes: Vec<u32>,
+}
+
+impl ThumbnailStorage {
+    pub(crate) fn with_thumbnails(thumbnails: Vec<(u32, ThumbDesc)>) -> Self {
+        let sizes = thumbnails.iter().map(|v| v.0).collect();
+
+        Self { thumbnails, sizes }
+    }
+}
+
 /// Very specific implementation trait.
 /// It should be the only things that needs to be implemented
 /// for a new type of RAW file
@@ -54,25 +67,17 @@ pub trait RawFileImpl {
     fn container(&self) -> &dyn RawContainer;
 
     /// Return the thumbnails. Implementation lazy load them
-    fn thumbnails(&self) -> &Vec<(u32, ThumbDesc)>;
+    fn thumbnails(&self) -> &ThumbnailStorage;
 
     /// Get the thumbnail for the exact size.
     fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
-        let thumbnails = self.thumbnails();
+        let thumbnails = &self.thumbnails().thumbnails;
         if let Some((_, desc)) = thumbnails.iter().find(|t| t.0 == size) {
             self.container().make_thumbnail(desc)
         } else {
             log::warn!("Thumbnail size {} not found", size);
             Err(Error::NotFound)
         }
-    }
-
-    /// List the thumbnail sizes in the file
-    fn list_thumbnail_sizes(&self) -> Vec<u32> {
-        let thumbnails = self.thumbnails();
-
-        // XXX shall we cache this?
-        thumbnails.iter().map(|v| v.0).collect()
     }
 
     /// Get the ifd with type
@@ -165,8 +170,8 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
     }
 
     /// The rawfile thumbnail sizes
-    fn thumbnail_sizes(&self) -> Vec<u32> {
-        self.list_thumbnail_sizes()
+    fn thumbnail_sizes(&self) -> &[u32] {
+        &self.thumbnails().sizes
     }
 
     /// Return the thumbnail of at least size
@@ -180,7 +185,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
             return Err(Error::InvalidParam);
         }
 
-        let sizes = self.list_thumbnail_sizes();
+        let sizes = &self.thumbnails().sizes;
         if sizes.is_empty() {
             error!("No thumbnail available");
             return Err(Error::NotFound);
@@ -193,17 +198,17 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
         for s in sizes {
             match s.cmp(&tsize) {
                 Ordering::Less => {
-                    if s > biggest_smaller {
-                        biggest_smaller = s;
+                    if *s > biggest_smaller {
+                        biggest_smaller = *s;
                     }
                 }
                 Ordering::Greater => {
-                    if s < smallest_bigger {
-                        smallest_bigger = s;
+                    if *s < smallest_bigger {
+                        smallest_bigger = *s;
                     }
                 }
                 Ordering::Equal => {
-                    found_size = s;
+                    found_size = *s;
                     break;
                 }
             }
@@ -308,7 +313,7 @@ mod test {
 
     use once_cell::unsync::OnceCell;
 
-    use super::{RawData, RawFile, RawFileImpl};
+    use super::{RawData, RawFile, RawFileImpl, ThumbnailStorage};
     use crate::bitmap::Bitmap;
     use crate::container::RawContainer;
     use crate::io::View;
@@ -345,7 +350,7 @@ mod test {
 
     struct TestRawFile {
         container: TestContainer,
-        thumbnails: OnceCell<Vec<(u32, ThumbDesc)>>,
+        thumbnails: OnceCell<ThumbnailStorage>,
     }
 
     impl TestRawFile {
@@ -365,9 +370,9 @@ mod test {
             &self.container
         }
 
-        fn thumbnails(&self) -> &Vec<(u32, ThumbDesc)> {
+        fn thumbnails(&self) -> &ThumbnailStorage {
             self.thumbnails.get_or_init(|| {
-                vec![
+                ThumbnailStorage::with_thumbnails(vec![
                     (
                         160,
                         ThumbDesc {
@@ -395,12 +400,12 @@ mod test {
                             data: Data::Bytes(vec![]),
                         },
                     ),
-                ]
+                ])
             })
         }
 
         fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
-            let sizes = self.list_thumbnail_sizes();
+            let sizes = &self.thumbnails().sizes;
             if sizes.contains(&size) {
                 Ok(Thumbnail::with_data(size, size, DataType::Jpeg, vec![]))
             } else {

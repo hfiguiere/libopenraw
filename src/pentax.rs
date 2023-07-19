@@ -30,8 +30,7 @@ use crate::bitmap::{Point, Rect, Size};
 use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
-use crate::rawfile::ReadAndSeek;
-use crate::thumbnail;
+use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::{Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
@@ -487,7 +486,7 @@ pub(crate) struct PefFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl PefFile {
@@ -539,7 +538,7 @@ impl RawFileImpl for PefFile {
         })
     }
 
-    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
@@ -556,7 +555,7 @@ impl RawFileImpl for PefFile {
                     .ok()
             });
 
-            thumbnails
+            ThumbnailStorage::with_thumbnails(thumbnails)
         })
     }
 

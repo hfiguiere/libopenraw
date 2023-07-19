@@ -201,7 +201,7 @@ fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool, skip_decom
             let sizes = rawfile.thumbnail_sizes();
             println!("Thumbnail sizes: {:?}", &sizes);
             for size in sizes {
-                let thumb = rawfile.thumbnail(size);
+                let thumb = rawfile.thumbnail(*size);
                 match thumb {
                     Ok(ref thumb) => {
                         println!("\tThumbnail size: {} x {}", thumb.width(), thumb.height());

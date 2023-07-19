@@ -35,9 +35,8 @@ use crate::decompress;
 use crate::io::Viewer;
 use crate::leica;
 use crate::pentax;
-use crate::rawfile::ReadAndSeek;
+use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
 use crate::ricoh;
-use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
 use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
@@ -157,7 +156,7 @@ pub(crate) struct DngFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl DngFile {
@@ -229,7 +228,7 @@ impl RawFileImpl for DngFile {
         })
     }
 
-    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             self.container();
             let container = self.container.get().unwrap();
@@ -246,7 +245,7 @@ impl RawFileImpl for DngFile {
                 }
             });
 
-            thumbnails
+            ThumbnailStorage::with_thumbnails(thumbnails)
         })
     }
 

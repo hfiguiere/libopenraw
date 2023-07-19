@@ -228,11 +228,11 @@ impl Results {
             let formats: Vec<DataType> = thumb_formats.split(' ').map(DataType::from).collect();
 
             assert_eq!(
-                thumbnails.len(),
+                thumbnails.sizes.len(),
                 formats.len(),
                 "Mismatch number of thumbnail format"
             );
-            for (index, thumbnail) in thumbnails.iter().enumerate() {
+            for (index, thumbnail) in thumbnails.thumbnails.iter().enumerate() {
                 assert_eq!(
                     thumbnail.1.data_type, formats[index],
                     "Incorrect data type for thumbnail {index}"
@@ -246,11 +246,11 @@ impl Results {
             let data_sizes: Vec<&str> = thumb_data_sizes.split(' ').collect();
 
             assert_eq!(
-                thumbnails.len(),
+                thumbnails.thumbnails.len(),
                 data_sizes.len(),
                 "Mismatch number of thumbnail data sizes"
             );
-            for (index, thumbnail) in thumbnails.iter().enumerate() {
+            for (index, thumbnail) in thumbnails.thumbnails.iter().enumerate() {
                 assert_eq!(
                     thumbnail.1.data_size().to_string(),
                     data_sizes[index],
@@ -265,11 +265,11 @@ impl Results {
             let md5s: Vec<&str> = thumb_md5.split(' ').collect();
 
             assert_eq!(
-                thumbnails.len(),
+                thumbnails.thumbnails.len(),
                 md5s.len(),
                 "Mismatch number of thumbnail checksum"
             );
-            for (index, thumbnail_desc) in thumbnails.iter().enumerate() {
+            for (index, thumbnail_desc) in thumbnails.thumbnails.iter().enumerate() {
                 let thumbnail = rawfile
                     .thumbnail(thumbnail_desc.0)
                     .expect("Thumbnail not found");

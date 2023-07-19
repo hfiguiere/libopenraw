@@ -7,7 +7,7 @@ fn main() {
             let _ = rawfile.type_id();
             let sizes = rawfile.thumbnail_sizes();
             for size in sizes {
-                let _ = rawfile.thumbnail(size)?;
+                let _ = rawfile.thumbnail(*size)?;
             }
 
             let _ = rawfile.raw_data(false)?;

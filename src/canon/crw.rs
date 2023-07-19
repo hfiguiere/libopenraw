@@ -38,7 +38,7 @@ use crate::container::RawContainer;
 use crate::io::Viewer;
 use crate::jpeg;
 use crate::mosaic::Pattern;
-use crate::rawfile::ReadAndSeek;
+use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
 use crate::thumbnail;
 use crate::thumbnail::{Data, ThumbDesc};
 use crate::tiff;
@@ -80,7 +80,7 @@ pub struct CrwFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<ciff::Container>,
-    thumbnails: OnceCell<Vec<(u32, ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl CrwFile {
@@ -116,7 +116,7 @@ impl RawFileImpl for CrwFile {
         })
     }
 
-    fn thumbnails(&self) -> &Vec<(u32, ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             let mut thumbnails = Vec::new();
             self.container();
@@ -150,7 +150,7 @@ impl RawFileImpl for CrwFile {
                     None
                 }
             });
-            thumbnails
+            ThumbnailStorage::with_thumbnails(thumbnails)
         })
     }
 

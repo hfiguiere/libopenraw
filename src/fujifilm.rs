@@ -35,7 +35,7 @@ use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
 use crate::mosaic::Pattern;
-use crate::rawfile::ReadAndSeek;
+use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
 use crate::thumbnail;
 use crate::thumbnail::{Data, DataOffset};
 use crate::tiff;
@@ -232,7 +232,7 @@ lazy_static::lazy_static! {
 pub(crate) struct RafFile {
     reader: Rc<Viewer>,
     container: OnceCell<raf::RafContainer>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
 }
 
 impl RafFile {
@@ -267,7 +267,7 @@ impl RawFileImpl for RafFile {
         })
     }
 
-    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             let mut thumbnails = Vec::new();
             self.container();
@@ -326,8 +326,7 @@ impl RawFileImpl for RafFile {
                         None
                     });
             }
-
-            thumbnails
+            ThumbnailStorage::with_thumbnails(thumbnails)
         })
     }
 

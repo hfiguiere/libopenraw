@@ -34,7 +34,7 @@ use crate::io::Viewer;
 use crate::jpeg;
 use crate::leica;
 use crate::mosaic::Pattern;
-use crate::rawfile::ReadAndSeek;
+use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::exif;
@@ -866,7 +866,7 @@ pub struct Rw2File {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
-    thumbnails: OnceCell<Vec<(u32, thumbnail::ThumbDesc)>>,
+    thumbnails: OnceCell<ThumbnailStorage>,
     jpeg_preview: OnceCell<Option<jpeg::Container>>,
 }
 
@@ -953,7 +953,7 @@ impl RawFileImpl for Rw2File {
         })
     }
 
-    fn thumbnails(&self) -> &Vec<(u32, thumbnail::ThumbDesc)> {
+    fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
             let mut thumbnails = vec![];
             if let Some(jpeg) = self.jpeg_preview() {
@@ -1000,7 +1000,7 @@ impl RawFileImpl for Rw2File {
                 }
             }
 
-            thumbnails
+            ThumbnailStorage::with_thumbnails(thumbnails)
         })
     }
 
