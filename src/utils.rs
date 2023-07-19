@@ -75,6 +75,15 @@ pub(crate) fn from_maybe_nul_terminated(buf: &[u8]) -> String {
     }
 }
 
+/// Convert the bytes of a string to a `Vec<u8>` with a NUL
+/// This is useful for C API.
+pub(crate) fn to_nul_terminated(buf: &str) -> Vec<u8> {
+    let mut s = Vec::with_capacity(buf.len() + 1);
+    s.extend_from_slice(buf.as_bytes());
+    s.push(0);
+    s
+}
+
 #[cfg(test)]
 mod test {
     use super::from_maybe_nul_terminated;

@@ -22,6 +22,7 @@
 //! Metatadata
 
 use crate::tiff::{self, exif};
+use crate::utils;
 
 /// The key type. Currently an alias to `String`.
 pub type Key = String;
@@ -30,7 +31,7 @@ pub type Key = String;
 pub enum Value {
     Int(Vec<u32>),
     SInt(Vec<i32>),
-    String(String),
+    String(Vec<u8>),
     Float(Vec<f32>),
     Double(Vec<f64>),
     Rational(Vec<exif::Rational>),
@@ -43,7 +44,7 @@ pub enum Value {
 impl Value {
     pub fn string(&self) -> Option<String> {
         match self {
-            Self::String(s) => Some(s.clone()),
+            Self::String(s) => Some(utils::from_maybe_nul_terminated(s)),
             _ => None,
         }
     }

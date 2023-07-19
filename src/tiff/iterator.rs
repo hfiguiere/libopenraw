@@ -25,6 +25,7 @@ use std::collections::btree_map;
 
 use crate::container::Endian;
 use crate::metadata::Value as MetadataValue;
+use crate::utils;
 
 use super::{exif, Dir, Entry, IfdType};
 
@@ -65,7 +66,9 @@ impl<'a> std::iter::Iterator for Iterator<'a> {
 
 fn from_entry(entry: &Entry, endian: Endian) -> MetadataValue {
     match exif::TagType::from(entry.type_) {
-        exif::TagType::Ascii => MetadataValue::String(entry.string_value().unwrap()),
+        exif::TagType::Ascii => {
+            MetadataValue::String(utils::to_nul_terminated(&entry.string_value().unwrap()))
+        }
         exif::TagType::Rational => {
             MetadataValue::Rational(entry.value_array::<exif::Rational>(endian).unwrap())
         }
