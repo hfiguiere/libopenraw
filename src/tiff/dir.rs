@@ -70,7 +70,7 @@ pub struct Dir {
     /// Position of the next IFD
     next: u32,
     /// The MakerNote ID
-    id: String,
+    id: Vec<u8>,
     /// Offset in MakerNote
     pub mnote_offset: u32,
     /// Tag names to decode.
@@ -91,10 +91,16 @@ impl Dir {
         let file_type = container.raw_type();
         match file_type {
             RawType::Cr2 | RawType::Cr3 | RawType::Crw => {
-                return Dir::new_makernote("Canon", container, offset, 0, &canon::MNOTE_TAG_NAMES)
+                return Dir::new_makernote(
+                    b"Canon\0",
+                    container,
+                    offset,
+                    0,
+                    &canon::MNOTE_TAG_NAMES,
+                )
             }
             RawType::Arw => {
-                return Dir::new_makernote("Sony5", container, offset, 0, &sony::MNOTE_TAG_NAMES)
+                return Dir::new_makernote(b"Sony5\0", container, offset, 0, &sony::MNOTE_TAG_NAMES)
             }
             _ => {
                 // The size of this buffer should be adjusted depending on
@@ -109,7 +115,7 @@ impl Dir {
                 if &data[0..6] == b"Nikon\0" {
                     if data[6] == 1 {
                         return Dir::new_makernote(
-                            "Nikon2",
+                            b"Nikon2\0",
                             container,
                             offset + 8,
                             offset + 8,
@@ -118,7 +124,7 @@ impl Dir {
                     } else if data[6] == 2 {
                         // this one has an endian / TIFF header after the magic
                         return Dir::new_makernote(
-                            "Nikon",
+                            b"Nikon\0",
                             container,
                             offset + 18,
                             offset + 10,
@@ -127,7 +133,7 @@ impl Dir {
                     } else {
                         log::error!("Unidentified Nikon makernote");
                         return Dir::new_makernote(
-                            "",
+                            b"\0",
                             container,
                             offset,
                             offset,
@@ -139,7 +145,7 @@ impl Dir {
                 if file_type == RawType::Nef {
                     // Found on D1, D1X, D1H
                     return Dir::new_makernote(
-                        "Nikon (Headerless)",
+                        b"Nikon (Headerless)\0",
                         container,
                         offset,
                         offset,
@@ -149,7 +155,7 @@ impl Dir {
 
                 if &data[0..8] == b"OLYMPUS\0" {
                     return Dir::new_makernote(
-                        "Olympus2",
+                        b"Olympus2\0",
                         container,
                         offset + 12,
                         offset,
@@ -159,7 +165,7 @@ impl Dir {
 
                 if &data[0..9] == b"OM SYSTEM" {
                     return Dir::new_makernote(
-                        "Olympus2",
+                        b"Olympus2\0",
                         container,
                         offset + 16,
                         offset,
@@ -169,7 +175,7 @@ impl Dir {
 
                 if &data[0..6] == b"OLYMP\0" {
                     return Dir::new_makernote(
-                        "Olympus",
+                        b"Olympus\0",
                         container,
                         offset + 8,
                         0,
@@ -181,7 +187,7 @@ impl Dir {
                 // XXX deal with endian.
                 if &data[0..6] == b"EPSON\0" {
                     return Dir::new_makernote(
-                        "Epson",
+                        b"Epson\0",
                         container,
                         offset + 8,
                         0,
@@ -192,7 +198,7 @@ impl Dir {
                 // Pentax Asahi Optical Corporation (pre Ricoh merger)
                 if &data[0..4] == b"AOC\0" {
                     return Dir::new_makernote(
-                        "Pentax",
+                        b"Pentax\0",
                         container,
                         offset + 6,
                         0,
@@ -203,7 +209,7 @@ impl Dir {
                 // Pentax post Ricoh merger
                 if &data[0..8] == b"PENTAX \0" {
                     return Dir::new_makernote(
-                        "Pentax",
+                        b"Pentax\0",
                         container,
                         offset + 10,
                         offset,
@@ -214,7 +220,7 @@ impl Dir {
                 // Panasonic
                 if &data[0..10] == b"Panasonic\0" {
                     return Dir::new_makernote(
-                        "Panasonic",
+                        b"Panasonic\0",
                         container,
                         offset + 12,
                         0,
@@ -224,7 +230,7 @@ impl Dir {
 
                 if &data[0..6] == b"Ricoh\0" {
                     return Dir::new_makernote(
-                        "Ricoh",
+                        b"Ricoh\0",
                         container,
                         offset + 8,
                         0,
@@ -238,7 +244,7 @@ impl Dir {
                     // Leica V-Lux 5
                     // Leica D-Lux 7
                     return Dir::new_makernote(
-                        "Panasonic",
+                        b"Panasonic\0",
                         container,
                         offset + 18,
                         0,
@@ -251,7 +257,7 @@ impl Dir {
                         if file_type == RawType::Rw2 {
                             // Panasonic
                             return Dir::new_makernote(
-                                "Panasonic",
+                                b"Panasonic\0",
                                 container,
                                 offset + 8,
                                 0,
@@ -260,7 +266,7 @@ impl Dir {
                         } else {
                             // Leica M8
                             return Dir::new_makernote(
-                                "Leica2",
+                                b"Leica2\0",
                                 container,
                                 offset + 8,
                                 offset,
@@ -274,7 +280,7 @@ impl Dir {
                             0x08 | 0x09 | 0x0a =>
                             // Leica Q Typ 116, SL (Type 601), Q3 (0x0a)
                                 return Dir::new_makernote(
-                                    "Leica5",
+                                    b"Leica5\0",
                                     container,
                                     offset + 8, 0,
                                     &leica::MNOTE_TAG_NAMES_5,
@@ -287,7 +293,7 @@ impl Dir {
                             0x10 | // Leica X-U (Typ 113)
                             0x1a =>
                                 return Dir::new_makernote(
-                                    "Leica5",
+                                    b"Leica5\0",
                                     container,
                                     offset + 8,
                                     offset,
@@ -300,7 +306,7 @@ impl Dir {
                     // Leica M (Typ 240)
                     if data[5] == 0x0 && data[6] == 0x02 && data[7] == 0xff {
                         return Dir::new_makernote(
-                            "Leica6",
+                            b"Leica6\0",
                             container,
                             offset + 8,
                             0,
@@ -311,7 +317,7 @@ impl Dir {
                     // Leica M9/Monochrom
                     if data[5] == b'0' && data[6] == 0x03 && data[7] == 0 {
                         return Dir::new_makernote(
-                            "Leica4",
+                            b"Leica4\0",
                             container,
                             offset + 8,
                             offset,
@@ -322,7 +328,7 @@ impl Dir {
                     // Leica M10
                     if data[5] == 0 && data[6] == 0x02 && data[7] == 0 {
                         return Dir::new_makernote(
-                            "Leica9",
+                            b"Leica9\0",
                             container,
                             offset + 8,
                             0,
@@ -333,7 +339,7 @@ impl Dir {
 
                 if &data[0..8] == b"YI     \0" {
                     return Dir::new_makernote(
-                        "Xiaoyi",
+                        b"Xiaoyi\0",
                         container,
                         offset + 12,
                         offset,
@@ -344,7 +350,7 @@ impl Dir {
 
                 if &data[0..10] == b"Apple iOS\0" {
                     return Dir::new_makernote(
-                        "Apple",
+                        b"Apple\0",
                         container,
                         offset + 14,
                         offset,
@@ -355,7 +361,7 @@ impl Dir {
                 if &data[0..4] == b"STMN" {
                     return if &data[8..12] == b"\0\0\0\0" {
                         Dir::new_makernote(
-                            "Samsung1a",
+                            b"Samsung1a\0",
                             container,
                             offset,
                             offset,
@@ -363,7 +369,7 @@ impl Dir {
                         )
                     } else {
                         Dir::new_makernote(
-                            "Samsung1b",
+                            b"Samsung1b\0",
                             container,
                             offset,
                             offset,
@@ -374,7 +380,7 @@ impl Dir {
 
                 if &data[0..8] == b"FUJIFILM" {
                     return Dir::new_makernote(
-                        "Fujifilm",
+                        b"Fujifilm\0",
                         container,
                         offset + 12,
                         offset,
@@ -384,7 +390,7 @@ impl Dir {
 
                 if &data[0..6] == b"SIGMA\0" {
                     return Dir::new_makernote(
-                        "Sigma",
+                        b"Sigma\0",
                         container,
                         offset + 10,
                         0,
@@ -394,7 +400,7 @@ impl Dir {
 
                 if &data[10..14] == b"MLT0" {
                     return Dir::new_makernote(
-                        "Minolta",
+                        b"Minolta\0",
                         container,
                         offset,
                         offset,
@@ -416,12 +422,12 @@ impl Dir {
                 }
             }
         }
-        Dir::new_makernote("", container, offset, 0, &MNOTE_EMPTY_TAGS)
+        Dir::new_makernote(b"\0", container, offset, 0, &MNOTE_EMPTY_TAGS)
     }
 
     ///
     pub(crate) fn new_makernote(
-        id: &str,
+        id: &[u8],
         container: &dyn container::RawContainer,
         offset: u32,
         mnote_offset: u32,
@@ -441,7 +447,7 @@ impl Dir {
                 Err(Error::NotFound)
             }
         } {
-            dir.id = id.to_string();
+            dir.id = id.to_vec();
             dir.mnote_offset = mnote_offset;
             dir.tag_names = tag_names;
             Ok(dir)
@@ -494,7 +500,7 @@ impl Dir {
             type_,
             entries,
             next,
-            id: String::new(),
+            id: vec![0],
             mnote_offset: base_offset,
             tag_names: &exif::TAG_NAMES,
             sub_ifds: OnceCell::new(),
@@ -506,7 +512,7 @@ impl Dir {
             endian,
             type_,
             entries: BTreeMap::new(),
-            id: String::new(),
+            id: vec![0],
             next: 0,
             mnote_offset: 0,
             tag_names: &exif::TAG_NAMES,
@@ -514,7 +520,7 @@ impl Dir {
         }
     }
 
-    pub fn id(&self) -> &str {
+    pub fn id(&self) -> &[u8] {
         &self.id
     }
 
@@ -669,7 +675,7 @@ impl Dump for Dir {
         W: std::io::Write + ?Sized,
     {
         let maker_note_id = if self.type_ == IfdType::MakerNote {
-            format!(" id={}", self.id)
+            format!(" id={:?}", std::ffi::CStr::from_bytes_until_nul(&self.id))
         } else {
             String::default()
         };

@@ -352,10 +352,15 @@ impl Results {
         // Check MakerNote ID
         if let Some(ref maker_note_id) = self.maker_note_id {
             count += 1;
+            let maker_note_id = maker_note_id.as_bytes();
             let maker_note = rawfile.maker_note_ifd();
             assert!(maker_note.is_some(), "Expected MakerNote");
             let maker_note = maker_note.unwrap();
-            assert_eq!(maker_note.id(), maker_note_id, "Incorrect MakerNote ID");
+            assert_eq!(
+                &maker_note.id()[0..maker_note_id.len()],
+                maker_note_id,
+                "Incorrect MakerNote ID"
+            );
         }
 
         count += self.thumbnail_test(rawfile);

@@ -234,7 +234,7 @@ impl RawFileImpl for DngFile {
             let container = self.container.get().unwrap();
             let mut thumbnails = tiff::tiff_thumbnails(container);
             self.maker_note_ifd().and_then(|mnote| {
-                if mnote.id() == "Leica6" {
+                if mnote.id() == b"Leica6\0" {
                     // File with Leica6 MakerNote (Leica M Typ-240) have a
                     // larger preview in the MakerNote
                     mnote.entry(exif::MNOTE_LEICA_PREVIEW_IMAGE).map(|e| {
