@@ -150,10 +150,21 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
         } else {
             println!("\tNo 16bits Raw data found.");
         }
-        if let Ok(matrix) = rawfile.colour_matrix(1) {
+        if let Ok((origin, _)) = rawfile.colour_matrix(1) {
+            println!("\tColour Matrix Origin: {origin:?}");
+        }
+        if let Ok((_, matrix)) = rawfile.colour_matrix(1) {
+            println!(
+                "\tCalibration illuminant 1: {}",
+                rawfile.calibration_illuminant(1) as u32
+            );
             println!("\tColour matrix 1: {matrix:?}");
         }
-        if let Ok(matrix) = rawfile.colour_matrix(2) {
+        if let Ok((_, matrix)) = rawfile.colour_matrix(2) {
+            println!(
+                "\tCalibration illuminant 2: {}",
+                rawfile.calibration_illuminant(2) as u32
+            );
             println!("\tColour matrix 2: {matrix:?}");
         }
         if extract_raw {

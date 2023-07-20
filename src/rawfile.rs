@@ -24,8 +24,10 @@
 use std::path::Path;
 
 use log::{debug, error};
+use num_enum::TryFromPrimitive;
 
 use super::{Error, RawData, Result, Type, TypeId};
+use crate::colour::MatrixOrigin;
 use crate::container::RawContainer;
 use crate::factory;
 use crate::identify;
@@ -234,7 +236,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
     fn raw_data(&self, skip_decompression: bool) -> Result<RawData> {
         self.load_rawdata(skip_decompression).map(|mut rawdata| {
             for i in 1..2_usize {
-                if let Ok(matrix) = self.colour_matrix(i) {
+                if let Ok((_, matrix)) = self.colour_matrix(i) {
                     rawdata.set_colour_matrix(i, &matrix);
                 }
             }
@@ -279,8 +281,21 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
             .unwrap_or(0)
     }
 
+    /// Return the indexed callibration illumant: 1 or 2.
+    fn calibration_illuminant(&self, index: u32) -> exif::LightsourceValue {
+        let tag = match index {
+            1 => exif::DNG_TAG_CALIBRATION_ILLUMINANT1,
+            2 => exif::DNG_TAG_CALIBRATION_ILLUMINANT2,
+            _ => return exif::LightsourceValue::Unknown,
+        };
+        self.main_ifd()
+            .and_then(|dir| dir.uint_value(tag))
+            .and_then(|value| exif::LightsourceValue::try_from_primitive(value).ok())
+            .unwrap_or(exif::LightsourceValue::Unknown)
+    }
+
     /// Return the colour matrix for the file.
-    fn colour_matrix(&self, index: usize) -> Result<Vec<f64>> {
+    fn colour_matrix(&self, index: usize) -> Result<(MatrixOrigin, Vec<f64>)> {
         let tag = match index {
             1 => exif::DNG_TAG_COLORMATRIX1,
             2 => exif::DNG_TAG_COLORMATRIX2,
@@ -291,7 +306,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
             .and_then(|dir| {
                 dir.entry(tag)
                     .and_then(|e| e.value_array::<exif::SRational>(dir.endian()))
-                    .map(|a| a.iter().map(|r| r.into()).collect())
+                    .map(|a| (MatrixOrigin::Provided, a.iter().map(|r| r.into()).collect()))
             })
             .ok_or_else(|| {
                 log::debug!("DNG color matrix not found");
@@ -300,6 +315,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
             .or_else(|_| {
                 if index != 1 {
                     self.get_builtin_colour_matrix()
+                        .map(|matrix| (MatrixOrigin::Builtin, matrix))
                 } else {
                     Err(Error::NotFound)
                 }

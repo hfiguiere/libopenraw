@@ -26,6 +26,7 @@ mod tags;
 pub use tags::*;
 
 use byteorder::ByteOrder;
+use num_enum::TryFromPrimitive;
 
 use crate::utils;
 
@@ -350,6 +351,23 @@ pub enum PhotometricInterpretation {
     // RAW only
     CFA = 32803,
     LinearRaw = 34892,
+}
+
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, TryFromPrimitive)]
+pub enum LightsourceValue {
+    Unknown = 0,
+    Daylight = 1,
+    Fluorescent = 2,
+    Tungsten = 3,
+    StandardA = 17,
+    StandardB = 18,
+    StandardC = 19,
+    D55 = 20,
+    D65 = 21,
+    D75 = 22,
+    /* 23...254 reserved */
+    Other = 255,
 }
 
 impl std::convert::TryFrom<u32> for PhotometricInterpretation {

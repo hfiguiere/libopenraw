@@ -24,3 +24,16 @@
 mod matrix;
 
 pub use matrix::BuiltinMatrix;
+
+#[repr(C)]
+#[derive(Debug)]
+/// Where the colour matrix comes from.
+/// Typically DNG is provided. The others are built-in.
+pub enum MatrixOrigin {
+    /// Unknown. This usually signify an error.
+    Unknown = 0,
+    /// Colour matrix in library.
+    Builtin = 1,
+    /// Colour matrix provided by file.
+    Provided = 2,
+}
