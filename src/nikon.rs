@@ -36,7 +36,7 @@ use crate::bitmap::Bitmap;
 use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
-use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
+use crate::rawfile::ThumbnailStorage;
 use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::{Dir, Ifd};
@@ -307,10 +307,9 @@ pub struct NefFile {
 }
 
 impl NefFile {
-    pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader, 0);
+    pub(crate) fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
         Box::new(NefFile {
-            reader: viewer,
+            reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),

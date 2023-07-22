@@ -1155,7 +1155,7 @@ int main(int argc, char ** argv)
         }
     }
 
-        const char * srcdir = getenv("srcdir");
+    const char * srcdir = getenv("srcdir");
     if(srcdir == NULL) {
         srcdir = "./";
     }

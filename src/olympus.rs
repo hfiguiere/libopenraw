@@ -33,7 +33,7 @@ use crate::bitmap::{Bitmap, Rect};
 use crate::container;
 use crate::container::RawContainer;
 use crate::io::Viewer;
-use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
+use crate::rawfile::ThumbnailStorage;
 use crate::tiff;
 use crate::tiff::IfdType;
 use crate::tiff::{exif, Ifd};
@@ -261,10 +261,9 @@ pub(crate) struct OrfFile {
 }
 
 impl OrfFile {
-    pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader, 0);
+    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
         Box::new(OrfFile {
-            reader: viewer,
+            reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),

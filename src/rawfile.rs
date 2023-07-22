@@ -22,6 +22,7 @@
 //! Camera RAW file
 
 use std::path::Path;
+use std::rc::Rc;
 
 use log::{debug, error};
 use num_enum::TryFromPrimitive;
@@ -31,6 +32,7 @@ use crate::colour::MatrixOrigin;
 use crate::container::RawContainer;
 use crate::factory;
 use crate::identify;
+use crate::io;
 use crate::metadata;
 use crate::thumbnail::{ThumbDesc, Thumbnail};
 use crate::tiff;
@@ -43,7 +45,7 @@ impl ReadAndSeek for std::io::BufReader<std::fs::File> {}
 impl ReadAndSeek for std::io::Cursor<&[u8]> {}
 impl ReadAndSeek for std::io::Cursor<Vec<u8>> {}
 
-pub type RawFileFactory = fn(Box<dyn ReadAndSeek>) -> Box<dyn RawFile>;
+pub(crate) type RawFileFactory = fn(Rc<io::Viewer>) -> Box<dyn RawFile>;
 
 pub struct ThumbnailStorage {
     pub thumbnails: Vec<(u32, ThumbDesc)>,
@@ -110,16 +112,14 @@ where
 /// Use `RawFile::from_file() or `RawFile::from_memory`
 /// Will return `Error::UnrecognizedFormat` or some `Error::IOError`
 /// if the file can't be identified.
-fn from_io(
-    mut readable: Box<dyn ReadAndSeek>,
-    type_hint: Option<Type>,
-) -> Result<Box<dyn RawFile>> {
+fn from_io(readable: Box<dyn ReadAndSeek>, type_hint: Option<Type>) -> Result<Box<dyn RawFile>> {
+    let viewer = io::Viewer::new(readable, 0);
     let type_hint = if type_hint.is_some() {
         type_hint
     } else {
-        identify::type_for_content(&mut *readable)?
+        let mut view = io::Viewer::create_view(&viewer, 0)?;
+        identify::type_for_content(&mut view)?
     };
-    readable.rewind()?;
 
     if type_hint.is_none() {
         return Err(Error::UnrecognizedFormat);
@@ -127,7 +127,7 @@ fn from_io(
 
     let hint = type_hint.unwrap();
     if let Some(f) = factory::get_rawfile_factory(hint) {
-        Ok(f(readable))
+        Ok(f(viewer))
     } else {
         Err(Error::UnrecognizedFormat)
     }

@@ -30,7 +30,7 @@ use crate::bitmap::{Point, Rect, Size};
 use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
-use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
+use crate::rawfile::ThumbnailStorage;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::{Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
@@ -490,10 +490,9 @@ pub(crate) struct PefFile {
 }
 
 impl PefFile {
-    pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader, 0);
+    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
         Box::new(PefFile {
-            reader: viewer,
+            reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),

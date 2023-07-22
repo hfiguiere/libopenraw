@@ -2,7 +2,7 @@
 /*
  * libopenraw - identify.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,10 +22,13 @@
 //! Indentification of RAW files.
 
 use std::collections::HashMap;
+use std::io::{Read, Seek, SeekFrom};
 
 use super::{Error, Result, Type};
 use crate::fujifilm;
-use crate::rawfile::ReadAndSeek;
+use crate::io::View;
+use crate::tiff;
+use crate::tiff::{exif, Ifd, IfdType};
 
 lazy_static::lazy_static! {
     /// Mapping of extensions (lowercase) to a `Type`.
@@ -58,7 +61,7 @@ pub(crate) fn type_for_extension(ext: &str) -> Option<Type> {
 }
 
 /// Return the `Type` based on the content of the file.
-pub(crate) fn type_for_content(content: &mut dyn ReadAndSeek) -> Result<Option<Type>> {
+pub(crate) fn type_for_content(content: &mut View) -> Result<Option<Type>> {
     use crate::Type::*;
 
     // Buffer to read the content to identify
@@ -100,7 +103,30 @@ pub(crate) fn type_for_content(content: &mut dyn ReadAndSeek) -> Result<Option<T
             return Ok(Some(Cr2));
         }
         if len >= 8 {
-            // XXX missing the TIFF part.
+            content.seek(SeekFrom::Start(0))?;
+
+            let mut container =
+                tiff::Container::new(content.clone(), vec![IfdType::Main], Type::Unknown);
+            container.load(None)?;
+            if let Some(dir) = container.directory(0) {
+                if dir.entry(exif::TIFF_TAG_DNG_VERSION).is_some() {
+                    return Ok(Some(Dng));
+                }
+                if let Some(make) = dir.value::<String>(exif::EXIF_TAG_MAKE) {
+                    //let make = String::from_utf8_lossy(&bytes);
+                    if make.contains("NIKON") {
+                        return Ok(Some(Nef));
+                    } else if &make == "SEIKO EPSON CORP." {
+                        return Ok(Some(Erf));
+                    } else if &make == "PENTAX Corporation " {
+                        return Ok(Some(Pef));
+                    } else if make.contains("SONY") {
+                        return Ok(Some(Arw));
+                    } else if &make == "Canon" {
+                        return Ok(Some(Cr2));
+                    }
+                }
+            }
         }
     }
 
@@ -122,29 +148,41 @@ mod test {
     #[test]
     fn test_type_for_content() {
         use super::type_for_content;
-        use crate::{Error, Type};
+        use crate::{io, Error, Type};
         use std::io::Cursor;
 
-        let mut four_bytes = Cursor::new([0_u8; 4].as_slice());
+        let four_bytes = Cursor::new([0_u8; 4].as_slice());
+        let viewer = io::Viewer::new(Box::new(four_bytes), 0);
+        let mut view = io::Viewer::create_view(&viewer, 0).expect("Couldn't create view");
         assert!(matches!(
-            type_for_content(&mut four_bytes),
+            type_for_content(&mut view),
             Err(Error::BufferTooSmall)
         ));
 
         // Canon
-        let mut crw = Cursor::new(include_bytes!("../testdata/identify/content_crw").as_slice());
-        assert!(matches!(type_for_content(&mut crw), Ok(Some(Type::Crw))));
+        let crw = Cursor::new(include_bytes!("../testdata/identify/content_crw").as_slice());
+        let viewer = io::Viewer::new(Box::new(crw), 0);
+        let mut view = io::Viewer::create_view(&viewer, 0).expect("Couldn't create view");
+        assert!(matches!(type_for_content(&mut view), Ok(Some(Type::Crw))));
 
-        let mut cr2 = Cursor::new(include_bytes!("../testdata/identify/content_cr2").as_slice());
-        assert!(matches!(type_for_content(&mut cr2), Ok(Some(Type::Cr2))));
+        let cr2 = Cursor::new(include_bytes!("../testdata/identify/content_cr2").as_slice());
+        let viewer = io::Viewer::new(Box::new(cr2), 0);
+        let mut view = io::Viewer::create_view(&viewer, 0).expect("Couldn't create view");
+        assert!(matches!(type_for_content(&mut view), Ok(Some(Type::Cr2))));
 
-        let mut cr3 = Cursor::new(include_bytes!("../testdata/identify/content_cr3").as_slice());
-        assert!(matches!(type_for_content(&mut cr3), Ok(Some(Type::Cr3))));
+        let cr3 = Cursor::new(include_bytes!("../testdata/identify/content_cr3").as_slice());
+        let viewer = io::Viewer::new(Box::new(cr3), 0);
+        let mut view = io::Viewer::create_view(&viewer, 0).expect("Couldn't create view");
+        assert!(matches!(type_for_content(&mut view), Ok(Some(Type::Cr3))));
 
-        let mut mrw = Cursor::new(include_bytes!("../testdata/identify/content_mrw").as_slice());
-        assert!(matches!(type_for_content(&mut mrw), Ok(Some(Type::Mrw))));
+        let mrw = Cursor::new(include_bytes!("../testdata/identify/content_mrw").as_slice());
+        let viewer = io::Viewer::new(Box::new(mrw), 0);
+        let mut view = io::Viewer::create_view(&viewer, 0).expect("Couldn't create view");
+        assert!(matches!(type_for_content(&mut view), Ok(Some(Type::Mrw))));
 
-        let mut raf = Cursor::new(include_bytes!("../testdata/identify/content_raf").as_slice());
-        assert!(matches!(type_for_content(&mut raf), Ok(Some(Type::Raf))));
+        let raf = Cursor::new(include_bytes!("../testdata/identify/content_raf").as_slice());
+        let viewer = io::Viewer::new(Box::new(raf), 0);
+        let mut view = io::Viewer::create_view(&viewer, 0).expect("Couldn't create view");
+        assert!(matches!(type_for_content(&mut view), Ok(Some(Type::Raf))));
     }
 }

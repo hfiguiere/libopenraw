@@ -34,7 +34,7 @@ use crate::io::Viewer;
 use crate::jpeg;
 use crate::leica;
 use crate::mosaic::Pattern;
-use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
+use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::exif;
@@ -871,10 +871,9 @@ pub struct Rw2File {
 }
 
 impl Rw2File {
-    pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader, 0);
+    pub(crate) fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
         Box::new(Rw2File {
-            reader: viewer,
+            reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),

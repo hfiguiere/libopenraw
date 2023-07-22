@@ -288,7 +288,7 @@ impl Results {
         count
     }
 
-    fn run(&self, rawfile: &dyn RawFile) -> u32 {
+    fn run(&self, rawfile: &dyn RawFile, filename: &str) -> u32 {
         let mut count = 0;
         // Check RAW type
         if let Some(ref raw_type) = self.raw_type {
@@ -297,7 +297,19 @@ impl Results {
                 Type::from(raw_type.as_str()),
                 rawfile.type_(),
                 "Incorrect Raw file type"
-            )
+            );
+
+            // Make sure idenfication from content works.
+            let file = Box::new(std::io::BufReader::new(
+                std::fs::File::open(filename).expect("Couldn't open the file"),
+            ));
+            let rawfile = libopenraw::rawfile_from_io(file, None)
+                .expect(&format!("Couldn't load raw file {}", filename));
+            assert_eq!(
+                Type::from(raw_type.as_str()),
+                rawfile.type_(),
+                "Incorrect Raw file type identified"
+            );
         }
         // Check RAW file ID
         if let Some(raw_type_id) = self.raw_type_id {
@@ -384,7 +396,7 @@ impl Test {
         match rawfile {
             Ok(rawfile) => {
                 print!("Test '{}'", &self.name);
-                let count = self.results.run(rawfile.as_ref());
+                let count = self.results.run(rawfile.as_ref(), &self.file);
                 println!(" produced {count} results");
             }
             Err(err) => println!("Test '{}' skipped ({}): {}", &self.name, self.file, err),

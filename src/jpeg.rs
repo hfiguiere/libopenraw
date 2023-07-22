@@ -32,7 +32,7 @@ use once_cell::unsync::OnceCell;
 use crate::camera_ids::vendor;
 use crate::container::RawContainer;
 use crate::io::Viewer;
-use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
+use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
@@ -47,10 +47,9 @@ pub struct JpegFile {
 }
 
 impl JpegFile {
-    pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader, 0);
+    pub(crate) fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
         Box::new(JpegFile {
-            reader: viewer,
+            reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),

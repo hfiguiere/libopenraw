@@ -32,7 +32,6 @@ use crate::camera_ids::vendor;
 use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
-use crate::rawfile::ReadAndSeek;
 use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
@@ -85,10 +84,9 @@ pub(crate) struct ErfFile {
 }
 
 impl ErfFile {
-    pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader, 0);
+    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
         Box::new(ErfFile {
-            reader: viewer,
+            reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),

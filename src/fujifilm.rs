@@ -35,7 +35,7 @@ use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
 use crate::mosaic::Pattern;
-use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
+use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::thumbnail::{Data, DataOffset};
 use crate::tiff;
@@ -236,10 +236,9 @@ pub(crate) struct RafFile {
 }
 
 impl RafFile {
-    pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader, 0);
+    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
         Box::new(RafFile {
-            reader: viewer,
+            reader,
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
         })

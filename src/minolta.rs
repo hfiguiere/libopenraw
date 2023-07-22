@@ -35,7 +35,7 @@ use crate::decompress;
 use crate::io::{View, Viewer};
 use crate::metadata;
 use crate::mosaic::Pattern;
-use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
+use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff::{self, exif, Ifd, IfdType};
 use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
@@ -163,10 +163,9 @@ pub(crate) struct MrwFile {
 }
 
 impl MrwFile {
-    pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader, 0);
+    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
         Box::new(MrwFile {
-            reader: viewer,
+            reader,
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
         })

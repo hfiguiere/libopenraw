@@ -35,7 +35,7 @@ use crate::decompress;
 use crate::io::Viewer;
 use crate::leica;
 use crate::pentax;
-use crate::rawfile::{ReadAndSeek, ThumbnailStorage};
+use crate::rawfile::ThumbnailStorage;
 use crate::ricoh;
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
@@ -160,10 +160,9 @@ pub(crate) struct DngFile {
 }
 
 impl DngFile {
-    pub fn factory(reader: Box<dyn ReadAndSeek>) -> Box<dyn RawFile> {
-        let viewer = Viewer::new(reader, 0);
+    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
         Box::new(DngFile {
-            reader: viewer,
+            reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
