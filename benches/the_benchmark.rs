@@ -53,7 +53,7 @@ pub fn ordiag_benchmark(c: &mut Criterion) {
                 if let Ok(rawfile) = rawfile {
                     let sizes = rawfile.thumbnail_sizes();
                     for size in sizes {
-                        let _ = rawfile.thumbnail(size);
+                        let _ = rawfile.thumbnail(*size);
                     }
                     let _ = rawfile.raw_data(false);
                 }
