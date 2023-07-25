@@ -1060,7 +1060,7 @@ impl DecompressInfo {
             if self.dc_huff_tbl_ptrs[index as usize].is_none() {
                 self.dc_huff_tbl_ptrs[index as usize] = Some(HuffmanTable::default());
             }
-            let mut htblptr = self.dc_huff_tbl_ptrs[index as usize].as_mut().unwrap();
+            let htblptr = self.dc_huff_tbl_ptrs[index as usize].as_mut().unwrap();
             htblptr.bits[0] = 0;
             let mut count = 0_u16;
             for i in 1..=16 {
