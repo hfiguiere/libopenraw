@@ -319,7 +319,7 @@ impl Entry {
 
         let data_slice = self.data.as_slice();
         let count = self.count as usize;
-        let mut values = Vec::new();
+        let mut values = Vec::with_capacity(count);
         for index in 0..count {
             let slice = &data_slice[unit_size * index..];
             let v = match type_ {
@@ -359,7 +359,7 @@ impl Entry {
 
         let data_slice = self.data.as_slice();
         let count = self.count as usize;
-        let mut values = Vec::new();
+        let mut values = Vec::with_capacity(count);
         for index in 0..count {
             let slice = &data_slice[unit_size * index..];
             let v = match type_ {
@@ -397,7 +397,7 @@ impl Entry {
         if !T::is_array()
             && ((self.type_ == T::exif_type() as i16) || (self.type_ == TagType::Undefined as i16))
         {
-            let mut values = Vec::new();
+            let mut values = Vec::with_capacity(count);
             for index in 0..count {
                 let slice = &data_slice[T::unit_size() * index..];
                 let v = match endian {
