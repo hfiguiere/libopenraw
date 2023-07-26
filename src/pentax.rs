@@ -490,8 +490,8 @@ pub(crate) struct PefFile {
 }
 
 impl PefFile {
-    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(PefFile {
+    pub fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(PefFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

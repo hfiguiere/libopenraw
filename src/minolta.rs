@@ -163,8 +163,8 @@ pub(crate) struct MrwFile {
 }
 
 impl MrwFile {
-    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(MrwFile {
+    pub fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(MrwFile {
             reader,
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),

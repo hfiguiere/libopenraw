@@ -307,8 +307,8 @@ pub struct NefFile {
 }
 
 impl NefFile {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(NefFile {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(NefFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

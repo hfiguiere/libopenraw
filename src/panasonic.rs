@@ -871,8 +871,8 @@ pub struct Rw2File {
 }
 
 impl Rw2File {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(Rw2File {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(Rw2File {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

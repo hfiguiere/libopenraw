@@ -84,8 +84,8 @@ pub struct CrwFile {
 }
 
 impl CrwFile {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(CrwFile {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(CrwFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

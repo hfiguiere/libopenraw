@@ -236,8 +236,8 @@ pub(crate) struct RafFile {
 }
 
 impl RafFile {
-    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(RafFile {
+    pub fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(RafFile {
             reader,
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),

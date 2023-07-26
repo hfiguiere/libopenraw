@@ -261,8 +261,8 @@ pub(crate) struct OrfFile {
 }
 
 impl OrfFile {
-    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(OrfFile {
+    pub fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(OrfFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

@@ -837,8 +837,8 @@ pub struct ArwFile {
 }
 
 impl ArwFile {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(ArwFile {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(ArwFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

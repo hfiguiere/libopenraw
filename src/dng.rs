@@ -160,8 +160,8 @@ pub(crate) struct DngFile {
 }
 
 impl DngFile {
-    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(DngFile {
+    pub fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(DngFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

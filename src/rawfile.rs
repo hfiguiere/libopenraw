@@ -45,7 +45,7 @@ impl ReadAndSeek for std::io::BufReader<std::fs::File> {}
 impl ReadAndSeek for std::io::Cursor<&[u8]> {}
 impl ReadAndSeek for std::io::Cursor<Vec<u8>> {}
 
-pub(crate) type RawFileFactory = fn(Rc<io::Viewer>) -> Box<dyn RawFile>;
+pub(crate) type RawFileFactory = fn(Rc<io::Viewer>) -> Rc<dyn RawFile>;
 
 pub struct ThumbnailStorage {
     pub thumbnails: Vec<(u32, ThumbDesc)>,
@@ -112,7 +112,7 @@ where
 /// Use `RawFile::from_file() or `RawFile::from_memory`
 /// Will return `Error::UnrecognizedFormat` or some `Error::IOError`
 /// if the file can't be identified.
-fn from_io(readable: Box<dyn ReadAndSeek>, type_hint: Option<Type>) -> Result<Box<dyn RawFile>> {
+fn from_io(readable: Box<dyn ReadAndSeek>, type_hint: Option<Type>) -> Result<Rc<dyn RawFile>> {
     let viewer = io::Viewer::new(readable, 0);
     let type_hint = if type_hint.is_some() {
         type_hint
@@ -134,7 +134,7 @@ fn from_io(readable: Box<dyn ReadAndSeek>, type_hint: Option<Type>) -> Result<Bo
 }
 
 /// Create a RawFile object from a file
-pub fn rawfile_from_file<P>(filename: P, type_hint: Option<Type>) -> Result<Box<dyn RawFile>>
+pub fn rawfile_from_file<P>(filename: P, type_hint: Option<Type>) -> Result<Rc<dyn RawFile>>
 where
     P: AsRef<Path>,
 {
@@ -151,7 +151,7 @@ where
 pub fn rawfile_from_io(
     io: Box<dyn ReadAndSeek>,
     type_hint: Option<Type>,
-) -> Result<Box<dyn RawFile>> {
+) -> Result<Rc<dyn RawFile>> {
     from_io(io, type_hint)
 }
 

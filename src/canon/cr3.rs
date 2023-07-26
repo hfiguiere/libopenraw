@@ -50,8 +50,8 @@ pub struct Cr3File {
 }
 
 impl Cr3File {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(Cr3File {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(Cr3File {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

@@ -47,8 +47,8 @@ pub struct JpegFile {
 }
 
 impl JpegFile {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(JpegFile {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(JpegFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

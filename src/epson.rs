@@ -84,8 +84,8 @@ pub(crate) struct ErfFile {
 }
 
 impl ErfFile {
-    pub fn factory(reader: Rc<Viewer>) -> Box<dyn RawFile> {
-        Box::new(ErfFile {
+    pub fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
+        Rc::new(ErfFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),
