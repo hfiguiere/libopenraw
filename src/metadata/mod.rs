@@ -42,6 +42,22 @@ pub enum Value {
 }
 
 impl Value {
+    pub fn count(&self) -> usize {
+        match *self {
+            Self::Int(ref v) => v.len(),
+            Self::SInt(ref v) => v.len(),
+            // String has one value
+            Self::String(_) => 1,
+            Self::Float(ref v) => v.len(),
+            Self::Double(ref v) => v.len(),
+            Self::Rational(ref v) => v.len(),
+            Self::SRational(ref v) => v.len(),
+            Self::Bytes(ref v) => v.len(),
+            Self::SBytes(ref v) => v.len(),
+            Self::Invalid(ref v) => v.len(),
+        }
+    }
+
     pub fn string(&self) -> Option<String> {
         match self {
             Self::String(s) => Some(utils::from_maybe_nul_terminated(s)),
@@ -49,7 +65,51 @@ impl Value {
         }
     }
 
-    pub fn is_string(&self) -> bool {
+    fn value_into_string(&self, idx: usize) -> String {
+        match self {
+            Self::Int(ref v) => v[idx].to_string(),
+            Self::SInt(ref v) => v[idx].to_string(),
+            Self::String(s) => utils::from_maybe_nul_terminated(s),
+            Self::Float(ref v) => v[idx].to_string(),
+            Self::Double(ref v) => v[idx].to_string(),
+            Self::Rational(ref v) => v[idx].to_string(),
+            Self::SRational(ref v) => v[idx].to_string(),
+            Self::Bytes(ref v) => v[idx].to_string(),
+            Self::SBytes(ref v) => v[idx].to_string(),
+            Self::Invalid(ref v) => v[idx].to_string(),
+        }
+    }
+
+    pub fn into_string(&self, full: bool) -> String {
+        let mut count = 0;
+        let multiple = self.count() > 1;
+        let mut output = String::new();
+        if self.is_string() {
+            output.push_str(&self.string().unwrap());
+        } else {
+            if multiple {
+                output.push_str("[ ");
+            }
+            for i in 0..self.count() {
+                output.push_str(&self.value_into_string(i));
+                if multiple {
+                    output.push_str(", ");
+                }
+                count += 1;
+                if !full && count > 20 {
+                    output.push_str("...");
+                    break;
+                }
+            }
+            if multiple {
+                output.push(']');
+            }
+        }
+
+        output
+    }
+
+    pub(crate) fn is_string(&self) -> bool {
         matches!(self, Self::String(_))
     }
 
@@ -118,5 +178,47 @@ impl<'a> std::convert::From<tiff::DirIterator<'a>> for Iterator<'a> {
             inner: InnerIter::Container(dir_iter),
             stack: vec![],
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::Value;
+
+    #[test]
+    fn test_metavalue_to_string() {
+        let i = Value::Int(vec![1, 2, 3]);
+
+        assert!(!i.is_string());
+        assert_eq!(i.string(), None);
+        assert_eq!(i.integer(), Some(1));
+        assert_eq!(i.count(), 3);
+        let s = i.into_string(true);
+        assert_eq!(s, "[ 1, 2, 3, ]");
+        let s = i.into_string(false);
+        assert_eq!(s, "[ 1, 2, 3, ]");
+
+        let i = Value::Int(vec![0; 25]);
+        assert_eq!(i.count(), 25);
+        let s = i.into_string(true);
+        assert_eq!(
+            s,
+            "[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ]"
+        );
+        let s = i.into_string(false);
+        assert_eq!(
+            s,
+            "[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...]"
+        );
+
+        let v = Value::String(b"Abracadabra".to_vec());
+        assert!(v.is_string());
+        assert_eq!(v.count(), 1);
+        assert_eq!(v.string(), Some("Abracadabra".to_string()));
+        assert_eq!(v.integer(), None);
+        let s = v.into_string(true);
+        assert_eq!(s, "Abracadabra");
+        let s = v.into_string(false);
+        assert_eq!(s, "Abracadabra");
     }
 }
