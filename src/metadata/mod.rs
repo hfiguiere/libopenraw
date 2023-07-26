@@ -41,6 +41,9 @@ pub enum Value {
     Invalid(Vec<u8>),
 }
 
+/// Metadata type.
+pub type Metadata = (Key, Value);
+
 impl Value {
     pub fn count(&self) -> usize {
         match *self {
@@ -140,7 +143,7 @@ pub struct Iterator<'a> {
 }
 
 impl<'a> std::iter::Iterator for Iterator<'a> {
-    type Item = (Key, Value);
+    type Item = Metadata;
 
     fn next(&mut self) -> Option<Self::Item> {
         let next = match self.inner {
