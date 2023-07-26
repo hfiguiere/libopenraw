@@ -245,6 +245,12 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
         })
     }
 
+    /// Render the image.
+    fn rendered_image(&self) -> Result<Thumbnail> {
+        let raw_data = self.raw_data(false)?;
+        raw_data.rendered_image()
+    }
+
     /// Get the main IFD
     fn main_ifd(&self) -> Option<&tiff::Dir> {
         self.ifd(tiff::IfdType::Main)

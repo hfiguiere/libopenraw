@@ -73,3 +73,26 @@ pub struct Size {
     pub width: u32,
     pub height: u32,
 }
+
+/// Encapsulate data 8 or 16 bits
+pub(crate) enum Data {
+    Data8(Vec<u8>),
+    Data16(Vec<u16>),
+    Tiled((Vec<Vec<u8>>, (u32, u32))),
+}
+
+impl Default for Data {
+    fn default() -> Data {
+        Data::Data16(Vec::default())
+    }
+}
+
+impl std::fmt::Debug for Data {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+        f.write_str(&match *self {
+            Self::Data8(ref v) => format!("Data(Data8([{}]))", v.len()),
+            Self::Data16(ref v) => format!("Data(Data16([{}]))", v.len()),
+            Self::Tiled((ref v, sz)) => format!("Data(Tiled([{}], {:?}))", v.len(), sz),
+        })
+    }
+}

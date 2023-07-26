@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
 /*
- * libopenraw - render/grayscale.h
+ * libopenraw - render.rs
  *
- * Copyright (C) 2012 Hubert Figuiere
+ * Copyright (C) 2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,26 +19,18 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_RENDER_GRAYSCALE_H_
-#define OR_INTERNALS_RENDER_GRAYSCALE_H_
+use crate::capi::{or_cfa_pattern, or_error};
 
-#include <stdint.h>
+extern "C" {
+    pub fn bimedian_demosaic(
+        input: *const u16,
+        x: u32,
+        y: u32,
+        pattern: or_cfa_pattern,
+        out: *mut u16,
+        out_x: *mut u32,
+        out_y: *mut u32,
+    ) -> or_error;
 
-#include <libopenraw/consts.h>
-
-extern "C" or_error
-grayscale_to_rgb (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-		  uint16_t *dst);
-
-#endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  tab-width:2
-  c-basic-offset:2
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/
+    pub fn grayscale_to_rgb(input: *const u16, x: u32, y: u32, out: *mut u16) -> or_error;
+}

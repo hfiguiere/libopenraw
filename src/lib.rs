@@ -28,6 +28,7 @@ mod apple;
 mod bitmap;
 mod camera_ids;
 mod canon;
+mod capi;
 mod colour;
 mod container;
 mod decompress;
@@ -49,6 +50,7 @@ mod panasonic;
 mod pentax;
 mod rawdata;
 mod rawfile;
+mod render;
 mod ricoh;
 mod sigma;
 mod sony;
@@ -77,6 +79,9 @@ pub type Result<T> = std::result::Result<T, Error>;
 /// Standard `Error` for libopenraw
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
+    // No error. For compatibility with `capi::or_error`
+    #[error("No error")]
+    None,
     /// File format is unrecognized
     #[error("Unrecognized format")]
     UnrecognizedFormat,
@@ -119,6 +124,8 @@ pub enum Error {
     /// Bit reader error.
     #[error("BitReader error: {0}")]
     BitReaderError(#[from] bitreader::BitReaderError),
+    #[error("Invalid address")]
+    InvalidAddress,
     /// Unknown error: placeholder for anything else.
     #[error("Unknown error")]
     Unknown,
@@ -132,6 +139,8 @@ pub enum DataType {
     Jpeg,
     /// RGB8 Pixmap
     PixmapRgb8,
+    /// RGB8 Pixmap
+    PixmapRgb16,
     /// RAW data compressed. (undetermined codec)
     CompressedRaw,
     /// RAW data uncompressed
@@ -146,6 +155,7 @@ impl From<&str> for DataType {
         match s {
             "JPEG" => Self::Jpeg,
             "8RGB" => Self::PixmapRgb8,
+            "16RGB" => Self::PixmapRgb16,
             "COMP_RAW" => Self::CompressedRaw,
             "RAW" => Self::Raw,
             _ => Self::Unknown,

@@ -21,34 +21,14 @@
 
 //! RAW data
 
-use super::{Bitmap, DataType, Rect};
+use super::{Bitmap, DataType, Error, Rect, Result, Thumbnail};
+use crate::bitmap::Data;
+use crate::capi::or_error;
 use crate::mosaic::Pattern;
+use crate::render;
 use crate::tiff;
 use crate::tiff::exif;
 use crate::utils;
-
-/// Encapsulate data 8 or 16 bits
-enum Data {
-    Data8(Vec<u8>),
-    Data16(Vec<u16>),
-    Tiled((Vec<Vec<u8>>, (u32, u32))),
-}
-
-impl Default for Data {
-    fn default() -> Data {
-        Data::Data16(Vec::default())
-    }
-}
-
-impl std::fmt::Debug for Data {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        f.write_str(&match *self {
-            Self::Data8(ref v) => format!("Data(Data8([{}]))", v.len()),
-            Self::Data16(ref v) => format!("Data(Data16([{}]))", v.len()),
-            Self::Tiled((ref v, sz)) => format!("Data(Tiled([{}], {:?}))", v.len(), sz),
-        })
-    }
-}
 
 /// RAW Data extracted from the file.
 #[derive(Debug, Default)]
@@ -265,6 +245,57 @@ impl RawData {
     /// Return the mosaic pattern for the RAW data.
     pub fn mosaic_pattern(&self) -> &Pattern {
         &self.mosaic_pattern
+    }
+
+    pub fn rendered_image(&self) -> Result<Thumbnail> {
+        if self.data_type() != DataType::Raw {
+            return Err(Error::InvalidFormat);
+        }
+        let pattern = self.mosaic_pattern();
+        let x = self.width();
+        let y = self.height();
+
+        match self.photom_int {
+            exif::PhotometricInterpretation::CFA => {
+                let mut out_x = 0_u32;
+                let mut out_y = 0_u32;
+                let mut data = vec![0_u16; (3 * x * y) as usize];
+                let input = self.data16().ok_or(Error::InvalidFormat)?;
+                let err = unsafe {
+                    render::bimedian_demosaic(
+                        input.as_ptr(),
+                        x,
+                        y,
+                        pattern.into(),
+                        data.as_mut_ptr(),
+                        &mut out_x as *mut u32,
+                        &mut out_y as *mut u32,
+                    )
+                };
+                if err != or_error::NONE {
+                    Err(err.into())
+                } else {
+                    Ok(Thumbnail::with_data16(
+                        out_x,
+                        out_y,
+                        DataType::PixmapRgb16,
+                        data,
+                    ))
+                }
+            }
+            exif::PhotometricInterpretation::LinearRaw => {
+                let mut data = vec![0_u16; (3 * x * y) as usize];
+                let input = self.data16().ok_or(Error::InvalidFormat)?;
+                let err =
+                    unsafe { render::grayscale_to_rgb(input.as_ptr(), x, y, data.as_mut_ptr()) };
+                if err != or_error::NONE {
+                    Err(err.into())
+                } else {
+                    Ok(Thumbnail::with_data16(x, y, DataType::PixmapRgb16, data))
+                }
+            }
+            _ => Err(Error::InvalidFormat),
+        }
     }
 }
 
