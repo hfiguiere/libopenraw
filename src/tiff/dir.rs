@@ -646,6 +646,10 @@ impl Dir {
             ifds
         })
     }
+
+    pub fn tag_name(&self, id: u16) -> &'static str {
+        self.tag_names.get(&id).unwrap_or(&"")
+    }
 }
 
 impl Ifd for Dir {
@@ -691,8 +695,8 @@ impl Dump for Dir {
         {
             let indent = indent + 1;
             for (id, entry) in &self.entries {
-                let tag_name = self.tag_names.get(id).unwrap_or(&"");
-                let args = HashMap::from([("tag_name", String::from(*tag_name))]);
+                let tag_name = self.tag_name(*id);
+                let args = HashMap::from([("tag_name", String::from(tag_name))]);
                 entry.write_dump_entry(out, indent, self.endian(), args);
             }
         }
