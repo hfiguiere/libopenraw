@@ -649,8 +649,9 @@ void Cr2File::getRawBytes(RawData &data, uint32_t offset, uint32_t byte_length,
       RawDataPtr dData = decomp.decompress();
       if (dData) {
         LOGDBG1("Out size is %dx%d\n", dData->width(), dData->height());
-        // must re-set the cfaPattern
+        // must re-set the cfaPattern and photometric interpretation
         dData->setCfaPatternType(data.mosaicInfo()->patternType());
+        dData->setPhotometricInterpretation(data.getPhotometricInterpretation());
         data.swap(*dData);
         if (!isCr2()) {
             // In TIF the raw image width needs to be divided by two

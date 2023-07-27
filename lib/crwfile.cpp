@@ -269,6 +269,7 @@ RawContainer* CRWFile::getContainer() const
             if (dData) {
                 LOGDBG1("Out size is %dx%d\n", dData->width(), dData->height());
                 dData->setCfaPatternType(data.mosaicInfo()->patternType());
+                dData->setPhotometricInterpretation(data.getPhotometricInterpretation());
                 data.swap(*dData);
             }
         }

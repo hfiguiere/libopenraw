@@ -143,8 +143,6 @@ RawData::~RawData()
             return OR_ERROR_INVALID_FORMAT;
         }
 
-	or_cfa_pattern pattern;
-	pattern = mosaicInfo()->patternType();
 	_x = width();
 	_y = height();
 
@@ -159,6 +157,11 @@ RawData::~RawData()
         or_error err = OR_ERROR_NONE;
 
         if (d->photometricInterpretation == EV_PI_CFA) {
+            or_cfa_pattern pattern = OR_CFA_PATTERN_NONE;
+            auto mosaic_info = mosaicInfo();
+            if (mosaic_info) {
+                pattern = mosaic_info->patternType();
+            }
             /* figure out how the demosaic can be plugged for a different
              * algorithm */
             bitmapdata.setDataType(OR_DATA_TYPE_PIXMAP_16RGB);

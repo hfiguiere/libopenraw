@@ -94,6 +94,8 @@ main(int argc, char **argv)
             printf("short read\n");
         }
         fclose(f);
+    } else {
+        printf("Decoding error %d\n", err);
     }
     or_bitmapdata_release(bitmapdata);
     or_rawfile_release(raw_file);

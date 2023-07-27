@@ -507,6 +507,7 @@ OrfFile::~OrfFile()
         } while(current_offset < data.size());
 
         output->setCfaPatternType(data.mosaicInfo()->patternType());
+        output->setPhotometricInterpretation(data.getPhotometricInterpretation());
         data.swap(*output);
         data.setBpc(12);
         data.setWhiteLevel((1 << 12) - 1);
@@ -519,6 +520,7 @@ OrfFile::~OrfFile()
         RawDataPtr dData = decomp.decompress();
         if (dData) {
             dData->setCfaPatternType(data.mosaicInfo()->patternType());
+            dData->setPhotometricInterpretation(data.getPhotometricInterpretation());
             data.swap(*dData);
         }
     }

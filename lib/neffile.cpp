@@ -656,6 +656,7 @@ uint32_t NefFile::_translateCompressionType(IFD::TiffCompress tiffCompression)
     newData.setBpc(bpc);
     newData.setWhiteLevel((1 << bpc) - 1);
     newData.setCfaPatternType(data.mosaicInfo()->patternType());
+    newData.setPhotometricInterpretation(data.getPhotometricInterpretation());
 
     for (unsigned int i = 0; i < rows; i++) {
         for (unsigned int j = 0; j < raw_columns; j++) {

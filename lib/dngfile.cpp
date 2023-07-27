@@ -310,6 +310,7 @@ DngFile::getColourMatrixOrigin() const
             RawDataPtr dData = decomp.decompress();
             if (dData) {
                 dData->setMosaicInfo(data.mosaicInfo());
+                dData->setPhotometricInterpretation(data.getPhotometricInterpretation());
                 data.swap(*dData);
             }
         }
