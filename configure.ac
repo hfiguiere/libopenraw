@@ -2,7 +2,7 @@ dnl libopenraw configure
 dnl written by Hubert Figuiere
 
 AC_PREREQ([2.69])
-AC_INIT([libopenraw],[0.3.6])
+AC_INIT([libopenraw],[0.3.7])
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2 dist-xz subdir-objects])
@@ -55,7 +55,8 @@ dnl version 0.3.3 is 9.0.3
 dnl version 0.3.4 is 9.0.4
 dnl version 0.3.5 is 9.0.5
 dnl version 0.3.6 is 9.0.6
-AC_SUBST([LIBOPENRAW_REVISION], [6])
+dnl version 0.3.7 is 9.0.7
+AC_SUBST([LIBOPENRAW_REVISION], [7])
 AC_SUBST([LIBOPENRAW_AGE],      [0])
 AC_SUBST([LIBOPENRAW_CURRENT],  [9])
 AC_SUBST([LIBOPENRAW_CURRENT_MIN],
