@@ -10,7 +10,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/lib \
 	-I$(top_srcdir)/gnome/include \
 	@LIBGDKPIXBUF_CFLAGS@ @BOOST_CPPFLAGS@
 
-LIBOPENRAW_LIBS = $(top_builddir)/lib/libopenraw.la
+LIBOPENRAW_LIBS = $(top_builddir)/lib/libopenraw.la -lm
 LIBOPENRAWGNOME_LIBS = $(top_builddir)/gnome/libopenrawgnome.la \
 	@LIBGDKPIXBUF_LIBS@
 

@@ -1,7 +1,7 @@
 /*
  * libopenraw - exifdump.cpp
  *
- * Copyright (C) 2020 Hubert Figuière
+ * Copyright (C) 2020-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -109,11 +109,10 @@ public:
                 or_ifd_dir_type last_ifd_type = OR_IFD_OTHER;
 
                 while (or_metadata_iterator_next(iter)) {
-                    ORIfdDirRef ifd = nullptr;
                     uint16_t id;
-                    ExifTagType type;
-                    ORMetaValueRef value = nullptr;
-                    if (or_metadata_iterator_get_entry(iter, &ifd, &id, &type, &value)) {
+                    ORMetadataRef metavalue = or_metadata_iterator_get_entry(iter);
+                    ORIfdDirRef ifd = or_metadata_iterator_get_dir(iter);
+                    if (metavalue) {
                         or_ifd_dir_type ifd_type = or_ifd_get_type(ifd);
                         if (ifd_type != last_ifd_type) {
                             m_out << boost::format("%1% - %2% entries\n") %
@@ -124,8 +123,10 @@ public:
                                 m_out << boost::format("MakerNote type %1%\n") % makernote_id;
                             }
                         }
-                        const char* tagname = or_ifd_get_tag_name(ifd, id);
+                        const char* tagname = or_metadata_get_key(metavalue);
+                        ORConstMetaValueRef value = or_metadata_get_value(metavalue);
                         uint32_t count = or_metavalue_get_count(value);
+                        ExifTagType type = (ExifTagType)or_metadata_get_type(metavalue);
                         m_out << boost::format("\t0x%1$x %2% = %3% [ %4% ]\n") % id %
                             (tagname ? std::string(tagname) : "") %
                             map_exif_type(type) % count;
@@ -143,11 +144,9 @@ public:
                                     m_out << "\tvalue output skipped, use -b to dump\n";
                                 }
                             }
-                            or_metavalue_release(value);
                         } else {
                             m_out << "\tNo value\n";
                         }
-                        or_ifd_release(ifd);
                     }
                 }
 

@@ -388,8 +388,7 @@ bool Test::testThumbFormats(const std::string & result)
         RETURN_FAIL("mismatch number of elements");
     }
     for (size_t i = 0; i < num; i++) {
-        unique_ptr<_Thumbnail, ThumbnailDeleter> t(or_thumbnail_new(), td);
-        or_rawfile_get_thumbnail(m_rawfile.get(), thumbs[i], t.get());
+        unique_ptr<_Thumbnail, ThumbnailDeleter> t(or_rawfile_get_thumbnail(m_rawfile.get(), thumbs[i], nullptr), td);
         success &= equalDataType(*result_iter, or_thumbnail_format(t.get()));
         result_iter++;
     }
@@ -408,8 +407,7 @@ bool Test::testThumbDataSizes(const std::string & result)
         RETURN_FAIL("mismatch number of elements");
     }
     for (size_t i = 0; i < num; i++) {
-        unique_ptr<_Thumbnail, ThumbnailDeleter> t(or_thumbnail_new(), td);
-        or_rawfile_get_thumbnail(m_rawfile.get(), thumbs[i], t.get());
+        unique_ptr<_Thumbnail, ThumbnailDeleter> t(or_rawfile_get_thumbnail(m_rawfile.get(), thumbs[i], nullptr), td);
         try {
             bool succ = false;
             CHECK_TEST_EQUALS_N(or_thumbnail_data_size(t.get()), boost::lexical_cast<uint32_t>(*result_iter), succ);
@@ -447,8 +445,7 @@ bool Test::testThumbMd5(const std::string & result)
         RETURN_FAIL("mismatch number of elements");
     }
     for (size_t i = 0; i < num; i++) {
-        unique_ptr<_Thumbnail, ThumbnailDeleter> t(or_thumbnail_new(), td);
-        or_rawfile_get_thumbnail(m_rawfile.get(), thumbs[i], t.get());
+        unique_ptr<_Thumbnail, ThumbnailDeleter> t(or_rawfile_get_thumbnail(m_rawfile.get(), thumbs[i], nullptr), td);
         try {
             bool succ = false;
             uint32_t crc = computeCrc(t.get());
@@ -466,12 +463,7 @@ bool Test::testThumbMd5(const std::string & result)
 namespace {
 unique_ptr<_RawData, RawDataDeleter> loadRawData(const unique_ptr<_RawFile, RawFileDeleter> & file)
 {
-    unique_ptr<_RawData, RawDataDeleter> rawdata(or_rawdata_new(), rd);
-    ::or_error err;
-    err = or_rawfile_get_rawdata(file.get(), rawdata.get(), OR_OPTIONS_NONE);
-    if (OR_ERROR_NONE != err) {
-        rawdata.reset();
-    }
+    unique_ptr<_RawData, RawDataDeleter> rawdata(or_rawfile_get_rawdata(file.get(), OR_OPTIONS_NONE, nullptr), rd);
     return rawdata;
 }
 
@@ -680,7 +672,7 @@ bool Test::testMetaOrientation(const std::string & result)
 }
 
 
-bool Test::testExifString(int32_t meta_index, const std::string & result)
+bool Test::testExifString(const char* meta_index, const std::string & result)
 {
     auto val = or_rawfile_get_metavalue(m_rawfile.get(), meta_index);
     if (val) {
@@ -696,7 +688,6 @@ bool Test::testMakerNoteCount(const std::string & result)
     try {
         auto ifd = or_rawfile_get_ifd(m_rawfile.get(), OR_IFD_MNOTE);
         auto numTags = or_ifd_count_tags(ifd);
-        or_ifd_release(ifd);
         RETURN_TEST_EQUALS_N(numTags,
                              boost::lexical_cast<int32_t>(result));
     }
@@ -715,7 +706,6 @@ bool Test::testMakerNoteId(const std::string & result)
         RETURN_FAIL("no MakerNote found");
     }
     auto makernote_id = or_ifd_get_makernote_id(ifd);
-    or_ifd_release(ifd);
     if (!makernote_id) {
         RETURN_FAIL("no MakeNote id");
     }
@@ -799,12 +789,10 @@ int Test::run()
             pass = testMetaOrientation(elem.second);
             break;
         case XML_exifMake:
-            pass = testExifString(META_NS_TIFF | EXIF_TAG_MAKE,
-                                  elem.second);
+            pass = testExifString("Exif.Image.Make", elem.second);
             break;
         case XML_exifModel:
-            pass = testExifString(META_NS_TIFF | EXIF_TAG_MODEL,
-                                  elem.second);
+            pass = testExifString("Exif.Image.Model", elem.second);
             break;
         case XML_makerNoteCount:
             pass = testMakerNoteCount(elem.second);
@@ -1167,7 +1155,7 @@ int main(int argc, char ** argv)
         testsuite_file = srcdir;
         testsuite_file += "/testsuite.xml";
     }
-    or_debug_set_level(ERROR);
+    or_debug_set_level(DEBUG2);
 
     TestSuite testsuite;
     testsuite.load_tests(testsuite_file.c_str());

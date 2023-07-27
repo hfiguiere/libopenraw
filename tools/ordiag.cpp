@@ -218,8 +218,8 @@ public:
 
                 m_out << boost::format("\t\tSize %1%\n") % previews[i];
 
-                ORThumbnailRef thumb = or_thumbnail_new();
-                ::or_error err = or_rawfile_get_thumbnail(rf, previews[i], thumb);
+                ::or_error err = OR_ERROR_NONE;
+                ORThumbnailRef thumb = or_rawfile_get_thumbnail(rf, previews[i], &err);
                 if (err != OR_ERROR_NONE) {
                     m_out << boost::format("\t\t\tError getting thumbnail %1%\n") % err;
                 }
@@ -246,8 +246,8 @@ public:
 
     void dumpRawData(ORRawFileRef rf)
         {
-            ORRawDataRef rd = or_rawdata_new();
-            ::or_error err = or_rawfile_get_rawdata(rf, rd, 0);
+            ::or_error err = OR_ERROR_NONE;
+            ORRawDataRef rd = or_rawfile_get_rawdata(rf, 0, &err);
             if (err == OR_ERROR_NONE) {
                 m_out << "\tRAW data\n";
                 or_data_type dataType = or_rawdata_format(rd);
@@ -330,7 +330,6 @@ public:
                 auto num_entries = or_ifd_count_tags(mnote);
                 m_out << boost::format("\t\t\tNum entries = %1%\n")
                     % num_entries;
-                or_ifd_release(mnote);
                 mnote = nullptr;
             }
             m_out << boost::format("\t\tOrientation: %1%\n")
@@ -354,8 +353,7 @@ public:
             m_out << boost::format("\t\tColour Matrix Origin: %1%\n")
                 % os;
 
-            ExifLightsourceValue calIll;
-            calIll = or_rawfile_get_calibration_illuminant1(rf);
+            ExifLightsourceValue calIll = static_cast<ExifLightsourceValue>(or_rawfile_get_calibration_illuminant1(rf));
             m_out << boost::format("\t\tCalibration Illuminant 1: %1%\n")
                 % static_cast<int>(calIll);
 
@@ -382,7 +380,7 @@ public:
                 m_out << "\t\tNo Colour Matrix 1\n";
             }
 
-            calIll = or_rawfile_get_calibration_illuminant2(rf);
+            calIll = static_cast<ExifLightsourceValue>(or_rawfile_get_calibration_illuminant2(rf));
             m_out << boost::format("\t\tCalibration Illuminant 2: %1%\n")
                 % static_cast<int>(calIll);
 

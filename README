@@ -34,6 +34,13 @@ Optional Gnome support
 
     - gdkpixbuf
 
+## Rust crate
+
+Starting with 0.4.0, libopenraw is developed as a Rust native crate
+with a C API. There the standard layout for a Rust crate applies, and
+`lib/` contains the crate part to build the dynamic library for the C
+API.
+
 Supported file format:
 ======================
 

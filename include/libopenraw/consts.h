@@ -79,15 +79,15 @@ typedef enum {
 /** @brief Data types */
 typedef enum {
     OR_DATA_TYPE_NONE = 0,
-    OR_DATA_TYPE_PIXMAP_8RGB,    /**< 8bit per channel RGB pixmap */
-    OR_DATA_TYPE_PIXMAP_16RGB,   /**< 16bit per channel RGB pixmap */
-    OR_DATA_TYPE_JPEG,           /**< JPEG data */
-    OR_DATA_TYPE_TIFF,           /**< TIFF container */
-    OR_DATA_TYPE_PNG,            /**< PNG container */
-    OR_DATA_TYPE_RAW,            /**< RAW container */
-    OR_DATA_TYPE_COMPRESSED_RAW, /**< compressed RAW container */
+    OR_DATA_TYPE_PIXMAP_8RGB = 1,    /**< 8bit per channel RGB pixmap */
+    OR_DATA_TYPE_PIXMAP_16RGB = 2,   /**< 16bit per channel RGB pixmap */
+    OR_DATA_TYPE_JPEG = 3,           /**< JPEG data */
+    OR_DATA_TYPE_TIFF = 4,           /**< TIFF container */
+    OR_DATA_TYPE_PNG = 5,            /**< PNG container */
+    OR_DATA_TYPE_RAW = 6,            /**< RAW container */
+    OR_DATA_TYPE_COMPRESSED_RAW = 7, /**< compressed RAW container */
 
-    OR_DATA_TYPE_UNKNOWN
+    OR_DATA_TYPE_UNKNOWN = 100,
 } or_data_type;
 
 /** @brief CFA pattern types */

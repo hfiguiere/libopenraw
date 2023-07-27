@@ -45,6 +45,7 @@ typedef struct _MetadataIterator* ORMetadataIteratorRef; /**< @brief A metadata 
 
 typedef struct _MetaValue* ORMetaValueRef; /**< @brief A metadata value */
 typedef const struct _MetaValue* ORConstMetaValueRef; /**< @brief A const metadata value */
+typedef const struct _Metadata* ORMetadataRef; /**< @brief A metadata. Includes key and value */
 
 /** The meta data namespaces, 16 MSB of the index */
 enum {
@@ -77,7 +78,7 @@ const char* or_metavalue_get_as_string(ORConstMetaValueRef value, bool full);
  *
  * @return The value count.
  */
-uint32_t or_metavalue_get_count(ORMetaValueRef value);
+uint32_t or_metavalue_get_count(ORConstMetaValueRef value);
 
 /** @brief Free the %MetaValue */
 void or_metavalue_release(ORMetaValueRef value);
@@ -91,21 +92,30 @@ int or_metadata_iterator_next(ORMetadataIteratorRef iterator);
 /** @brief Get the metadata entry from the iterator.
  *
  * @param iterator The iterator.
- * @param ifd Pointer to the IfdDirRef.
- * @param id Pointer to id (nullable)
- * @param type Pointer to exif tag type (nullable)
- * @param value Pointer to store a newly allocated ORConstMetaValue (nullable)
- * @return 0 if error. In that case none of the values are valid.
+ * @return nullptr if error. Or a ORMetadata, owned by the iterator,
+ *   invalidated when calling next.
  */
-int
-or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator,
-                               ORIfdDirRef* ifd, uint16_t* id,
-                               ExifTagType* type, ORMetaValueRef* value);
+ORMetadataRef
+or_metadata_iterator_get_entry(ORMetadataIteratorRef iterator);
+
+/** @brief Get the current IFD from the iterator.
+ *
+ * @param iterator The iterator.
+ * @return nullptr if error. Or a ORIfdDirRef, owned by the iterator,
+ *   invalidated when calling next.
+ */
+ORIfdDirRef
+or_metadata_iterator_get_dir(ORMetadataIteratorRef iterator);
 
 /** @brief Free the iterator
  * @param iterator The iterator to free.
  */
 void or_metadata_iterator_free(ORMetadataIteratorRef iterator);
+
+
+const char* or_metadata_get_key(ORMetadataRef metadata);
+ORConstMetaValueRef or_metadata_get_value(ORMetadataRef metadata);
+int16_t or_metadata_get_type(ORMetadataRef metadata);
 
 #ifdef __cplusplus
 }

@@ -54,9 +54,11 @@ dnl version 0.3.2 is 9.0.2
 dnl version 0.3.3 is 9.0.3
 dnl version 0.3.4 is 9.0.4
 dnl version 0.3.5 is 9.0.5
-AC_SUBST([LIBOPENRAW_REVISION], [5])
+dnl This version is now built in Rust. Break ABI.
+dnl version 0.4.0 is 10.0.0
+AC_SUBST([LIBOPENRAW_REVISION], [0])
 AC_SUBST([LIBOPENRAW_AGE],      [0])
-AC_SUBST([LIBOPENRAW_CURRENT],  [9])
+AC_SUBST([LIBOPENRAW_CURRENT],  [10])
 AC_SUBST([LIBOPENRAW_CURRENT_MIN],
          [`expr $LIBOPENRAW_CURRENT - $LIBOPENRAW_AGE`])
 AC_SUBST([LIBOPENRAW_VERSION_INFO],
