@@ -1,10 +1,6 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/include @BOOST_CPPFLAGS@
 
-RUST_FILES = Cargo.lock \
-	Cargo.toml \
-	lib.rs \
-	$(NULL)
 
 DISTCLEANFILES = mp4/.cargo/config.toml
 
@@ -23,7 +19,7 @@ EXTRA_DIST = libopenraw.sym io/testfile.tmp \
 update_tags:
 	$(srcdir)/exif/exif-tags.pl > $(srcdir)/exif/exif_tags.cpp
 
-pkgconfig_DATA = libopenraw-0.3.pc
+pkgconfig_DATA = libopenraw-0.4.pc
 
 TESTS = teststream
 
