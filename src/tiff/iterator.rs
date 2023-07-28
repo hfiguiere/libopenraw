@@ -24,7 +24,7 @@
 use std::collections::btree_map;
 
 use crate::container::Endian;
-use crate::metadata::Value as MetadataValue;
+use crate::metadata::{Metadata, Value as MetadataValue};
 use crate::utils;
 
 use super::{exif, Dir, Entry, IfdType};
@@ -50,7 +50,7 @@ impl<'a> Iterator<'a> {
 }
 
 impl<'a> std::iter::Iterator for Iterator<'a> {
-    type Item = (String, MetadataValue);
+    type Item = Metadata;
 
     fn next(&mut self) -> Option<Self::Item> {
         let ns = match self.dir.type_ {
@@ -64,7 +64,7 @@ impl<'a> std::iter::Iterator for Iterator<'a> {
             let tag_name = self.dir.tag_names.get(e.0).unwrap_or(&"");
 
             let value = from_entry(e.1, self.dir.endian);
-            (format!("{ns}.{tag_name}"), value)
+            (format!("{ns}.{tag_name}"), value, e.1.type_)
         })
     }
 }

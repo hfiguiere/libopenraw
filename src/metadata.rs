@@ -42,7 +42,7 @@ pub enum Value {
 }
 
 /// Metadata type.
-pub type Metadata = (Key, Value);
+pub type Metadata = (Key, Value, i16);
 
 impl Value {
     pub fn count(&self) -> usize {
