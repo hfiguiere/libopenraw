@@ -275,6 +275,10 @@ impl RawData {
                 if err != or_error::NONE {
                     Err(err.into())
                 } else {
+                    // This is necessary to have a consistent size with the output.
+                    // Notably, the `image` crate doesn't like it.
+                    // The assumption is that the resize should shrink the buffer.
+                    data.resize((3 * out_x * out_y) as usize, 0);
                     Ok(Thumbnail::with_data16(
                         out_x,
                         out_y,
