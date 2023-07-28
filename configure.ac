@@ -2,7 +2,7 @@ dnl libopenraw configure
 dnl written by Hubert Figuiere
 
 AC_PREREQ([2.69])
-AC_INIT([libopenraw],[0.3.5])
+AC_INIT([libopenraw],[0.4.0])
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2 dist-xz subdir-objects])
@@ -69,7 +69,7 @@ LIBOPENRAW_MAJOR_VERSION=$LIBOPENRAW_CURRENT_MIN.0
 AC_SUBST(LIBOPENRAW_MAJOR_VERSION)
 
 dnl the path where includes are installed
-LIBOPENRAW_INCLUDE_BASE=libopenraw-0.3
+LIBOPENRAW_INCLUDE_BASE=libopenraw-0.4
 AC_SUBST(LIBOPENRAW_INCLUDE_BASE)
 
 
@@ -269,7 +269,7 @@ include/Makefile
 include/libopenraw/Makefile
 include/libopenraw++/Makefile
 lib/Makefile
-lib/libopenraw-0.3.pc
+lib/libopenraw-0.4.pc
 gnome/Makefile
 gnome/libopenraw-gnome-0.3.pc
 gnome/include/Makefile
