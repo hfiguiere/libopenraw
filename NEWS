@@ -1,3 +1,23 @@
+libopenraw 0.4.0 -
+
+API changes:
+
+  - `or_rawfile_get_rawdata()` now returns a newly allocated raw data.
+  - `or_rawfile_get_thumbnail()` now returns a newly allocated thumbnail.
+  - `or_rawfile_get_thumbnail_sizes()` may return nullptr on error.
+  - `or_rawfile_get_rendered_image()` now returns a new allocated bitmap data.
+  - `or_rawfile_get_metavalue()` now take a string key, and the MetaValue must
+    be freed.
+  - `or_rawfile_get_ifd()` return an owned object.
+  - `or_rawfile_get_calibration_illuminantX()` returns a uint32_t instead of
+    an enum.
+  - `or_metadata_iterator_get_entry()` now just return the entry.
+  - Added `or_metadata_iterator_get_dir()` to return the IFD.
+  - Added `or_metadata_get_key()`, `or_metadata_get_value()` and `or_metadata_get_type()`.
+  - Removed `or_bitmapdata_new()`, `or_rawdata_new()`, `or_thumbnail_new()` that are
+    no longer needed.
+  - Removed `or_ifd_release()` that is no longer needed.
+
 libopenraw 0.3.5 - 2023/04/28
 
 New features:
