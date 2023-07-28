@@ -180,6 +180,9 @@ impl DngFile {
                         decompressor.decompress(&mut io).map(|mut rawdata2| {
                             rawdata2.set_active_area(rawdata.active_area().cloned());
                             rawdata2.set_mosaic_pattern(rawdata.mosaic_pattern().clone());
+                            rawdata2.set_photometric_interpretation(
+                                rawdata.photometric_interpretation(),
+                            );
                             rawdata2
                         })
                     } else if rawdata.tile_data().is_some() {

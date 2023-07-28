@@ -175,6 +175,10 @@ impl RawData {
         self.data_type = data_type
     }
 
+    pub fn photometric_interpretation(&self) -> exif::PhotometricInterpretation {
+        self.photom_int
+    }
+
     pub fn set_photometric_interpretation(&mut self, photom_int: exif::PhotometricInterpretation) {
         self.photom_int = photom_int;
     }
