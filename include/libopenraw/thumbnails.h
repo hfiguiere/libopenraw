@@ -1,7 +1,7 @@
 /*
  * libopenraw - thumbnails.h
  *
- * Copyright (C) 2005-2020 Hubert Figuière
+ * Copyright (C) 2005-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,8 +23,7 @@
  */
 
 
-#ifndef LIBOPENRAW_THUMBNAILS_H_
-#define LIBOPENRAW_THUMBNAILS_H_
+#pragma once
 
 #include <stdlib.h>
 
@@ -56,12 +55,6 @@ extern "C" {
 or_error or_get_extract_thumbnail(const char* filename,
                                   uint32_t preferred_size,
                                   ORThumbnailRef *thumb);
-
-/** @brief Allocate a Thumbnail object.
- *
- * @return A Thumbnail object. Use %or_thumbnail_release() to free it.
- */
-ORThumbnailRef or_thumbnail_new(void);
 
 /** @brief Release a Thumbnail object.
  *
@@ -102,5 +95,3 @@ void or_thumbnail_dimensions(ORThumbnailRef thumb, uint32_t *x, uint32_t *y);
 }
 #endif
 /** @} */
-
-#endif
