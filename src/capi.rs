@@ -111,7 +111,7 @@ macro_rules! or_unwrap_mut {
 #[repr(C)]
 #[allow(non_camel_case_types)]
 #[allow(clippy::upper_case_acronyms)]
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 /// Error types.
 pub enum or_error {
     /// No error.
@@ -124,6 +124,8 @@ pub enum or_error {
     NOT_FOUND = 5,
     /// Invalid parameter
     INVALID_PARAM = 6,
+    /// Invalid format
+    INVALID_FORMAT = 7,
     /// An unknown error.
     UNKNOWN = 42,
 }
@@ -145,6 +147,7 @@ impl From<or_error> for Error {
             or_error::NOT_AREF => Error::InvalidAddress,
             or_error::NOT_FOUND => Error::NotFound,
             or_error::INVALID_PARAM => Error::InvalidParam,
+            or_error::INVALID_FORMAT => Error::InvalidFormat,
             or_error::UNKNOWN => Error::Unknown,
         }
     }
