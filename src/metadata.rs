@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 /*
- * libopenraw - metadata/mod.rs
+ * libopenraw - metadata.rs
  *
  * Copyright (C) 2023 Hubert Figuière
  *
@@ -21,7 +21,7 @@
 
 //! Metatadata
 
-use crate::tiff::{self, exif};
+use crate::tiff::{self, exif, Dir};
 use crate::utils;
 
 /// The key type. Currently an alias to `String`.
@@ -140,6 +140,16 @@ pub struct Iterator<'a> {
     inner: InnerIter<'a>,
     /// Stack of parent inner iterators.
     stack: Vec<InnerIter<'a>>,
+}
+
+impl<'a> Iterator<'a> {
+    /// Return the current IFD if there is one.
+    pub(crate) fn dir(&self) -> Option<&Dir> {
+        match self.inner {
+            InnerIter::Ifd(ref iter) => Some(iter.dir()),
+            _ => None,
+        }
+    }
 }
 
 impl<'a> std::iter::Iterator for Iterator<'a> {

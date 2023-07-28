@@ -42,6 +42,11 @@ impl<'a> Iterator<'a> {
         let iter = dir.entries.iter();
         Iterator { dir, iter }
     }
+
+    /// Return the current dir.
+    pub(crate) fn dir(&self) -> &Dir {
+        self.dir
+    }
 }
 
 impl<'a> std::iter::Iterator for Iterator<'a> {
