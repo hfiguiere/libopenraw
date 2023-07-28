@@ -2,19 +2,25 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include @BOOST_CPPFLAGS@
 
 
-DISTCLEANFILES = mp4/.cargo/config.toml
+RUST_FILES = mp4/Cargo.lock \
+	mp4/Cargo.toml \
+	mp4/lib.rs \
+	mp4/mp4parse_capi/src/lib.rs \
+	mp4/mp4parse_capi/Cargo.toml \
+	mp4/mp4parse/src/boxes.rs \
+	mp4/mp4parse/src/lib.rs \
+	mp4/mp4parse/src/macros.rs \
+	mp4/mp4parse/src/tests.rs \
+	mp4/mp4parse/src/craw.rs \
+	mp4/mp4parse/src/unstable.rs \
+	mp4/mp4parse/Cargo.toml \
+	$(NULL)
 
-dist-hook:
-	mkdir -p $(distdir)/mp4/
-	(cd mp4 && $(shell pwd)/$(top_srcdir)/build-aux/cargo-vendor.sh $(shell pwd)/$(top_srcdir)/lib/mp4/Cargo.toml)
-	cp -av mp4/vendor $(distdir)/mp4/
-
-distclean-local:
-	rm -fr mp4/vendor/*
 
 EXTRA_DIST = libopenraw.sym io/testfile.tmp \
 	exif/exif-tags.pl \
 	$(RUST_FILES)
+
 
 update_tags:
 	$(srcdir)/exif/exif-tags.pl > $(srcdir)/exif/exif_tags.cpp

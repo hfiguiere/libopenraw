@@ -8,13 +8,24 @@ dox:
 webdist: dox
 	$(top_srcdir)/scripts/webdist.sh ${top_builddir} ${VERSION}
 
-EXTRA_DIST = RELEASE_NOTES build-aux/cargo-vendor.sh
+EXTRA_DIST = RELEASE_NOTES build-aux/cargo-vendor.sh $(RUST_FILES)
 
 CLEANFILES = $(CARGO_TARGET_DIR)/CACHEDIR.TAG $(BUILT_SOURCES)
 
 RUST_FILES = Cargo.lock \
 	Cargo.toml \
+	build.rs \
 	src/apple.rs \
+	src/bin/fuzz-ljpeg.rs \
+	src/bin/fuzz-olymdecompress.rs \
+	src/bin/fuzz-rawfile.rs \
+	src/bin/identify.rs \
+	src/bin/metadata.rs \
+	src/bin/ordiag.rs \
+	src/bin/ordump.rs \
+	src/bin/rawdata.rs \
+	src/bin/test-ljpeg.rs \
+	src/bin/test-rawfile.rs \
 	src/bitmap.rs \
 	src/camera_ids.rs \
 	src/canon.rs \
@@ -54,7 +65,10 @@ RUST_FILES = Cargo.lock \
 	src/jpeg/container.rs \
 	src/leica.rs \
 	src/lib.rs \
+	src/metadata.rs \
 	src/metavalue.rs \
+	src/minolta.rs \
+	src/mosaic.rs \
 	src/mp4.rs \
 	src/mp4/container.rs \
 	src/nikon.rs \
@@ -68,6 +82,7 @@ RUST_FILES = Cargo.lock \
 	src/pentax.rs \
 	src/rawdata.rs \
 	src/rawfile.rs \
+	src/render.rs \
 	src/ricoh.rs \
 	src/sigma.rs \
 	src/sony.rs \
@@ -78,6 +93,7 @@ RUST_FILES = Cargo.lock \
 	src/tiff/entry.rs \
 	src/tiff/container.rs \
 	src/tiff/exif.rs \
+	src/tiff/iterator.rs \
 	src/utils.rs \
 	$(NULL)
 
@@ -105,3 +121,12 @@ liblibopenraw.la: $(liblibopenraw_la_OBJECTS) $(RUST_FILES)
 
 clean-local:
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo clean $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
+
+DISTCLEANFILES = .cargo/config.toml $(CARGO_TARGET_DIR)/.rustc_info.json
+
+dist-hook:
+	($(shell pwd)/$(top_srcdir)/build-aux/cargo-vendor.sh $(shell pwd)/$(top_srcdir)/Cargo.toml)
+	cp -av vendor $(distdir)/
+
+distclean-local:
+	rm -fr vendor/*
