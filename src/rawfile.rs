@@ -297,6 +297,15 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
         self.main_ifd()
             .and_then(|dir| dir.uint_value(tag))
             .and_then(|value| exif::LightsourceValue::try_from_primitive(value).ok())
+            .or_else(|| {
+                if index != 1 {
+                    self.get_builtin_colour_matrix()
+                        .map(|_| exif::LightsourceValue::D65)
+                        .ok()
+                } else {
+                    None
+                }
+            })
             .unwrap_or(exif::LightsourceValue::Unknown)
     }
 

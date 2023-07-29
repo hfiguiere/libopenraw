@@ -155,15 +155,17 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
         }
         if let Ok((_, matrix)) = rawfile.colour_matrix(1) {
             println!(
-                "\tCalibration illuminant 1: {}",
-                rawfile.calibration_illuminant(1) as u32
+                "\tCalibration illuminant 1: {} ({:?})",
+                rawfile.calibration_illuminant(1) as u32,
+                rawfile.calibration_illuminant(1)
             );
             println!("\tColour matrix 1: {matrix:?}");
         }
         if let Ok((_, matrix)) = rawfile.colour_matrix(2) {
             println!(
-                "\tCalibration illuminant 2: {}",
-                rawfile.calibration_illuminant(2) as u32
+                "\tCalibration illuminant 2: {} ({:?})",
+                rawfile.calibration_illuminant(2) as u32,
+                rawfile.calibration_illuminant(2)
             );
             println!("\tColour matrix 2: {matrix:?}");
         }
