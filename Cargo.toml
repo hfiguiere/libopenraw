@@ -35,7 +35,7 @@ crc = "2.1.0"
 serde = "1.0.136"
 serde_derive = "1.0.136"
 serde-xml-rs = "0.5.1"
-criterion = "0.4.0"
+criterion = { version = "0.5.1", features = ["html_reports"] }
 image = { version = "0.24.6", features = [ "png", "jpeg" ], default-features = false }
 
 [features]
