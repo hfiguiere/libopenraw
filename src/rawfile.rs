@@ -298,7 +298,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
             .and_then(|dir| dir.uint_value(tag))
             .and_then(|value| exif::LightsourceValue::try_from_primitive(value).ok())
             .or_else(|| {
-                if index != 1 {
+                if index == 1 {
                     self.get_builtin_colour_matrix()
                         .map(|_| exif::LightsourceValue::D65)
                         .ok()
@@ -328,7 +328,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
                 Error::NotFound
             })
             .or_else(|_| {
-                if index != 1 {
+                if index == 1 {
                     self.get_builtin_colour_matrix()
                         .map(|matrix| (MatrixOrigin::Builtin, matrix))
                 } else {
