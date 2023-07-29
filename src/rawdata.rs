@@ -286,6 +286,7 @@ impl RawData {
                     Ok(Thumbnail::with_data16(
                         out_x,
                         out_y,
+                        self.bpc(),
                         DataType::PixmapRgb16,
                         data,
                     ))
@@ -299,7 +300,13 @@ impl RawData {
                 if err != or_error::NONE {
                     Err(err.into())
                 } else {
-                    Ok(Thumbnail::with_data16(x, y, DataType::PixmapRgb16, data))
+                    Ok(Thumbnail::with_data16(
+                        x,
+                        y,
+                        self.bpc(),
+                        DataType::PixmapRgb16,
+                        data,
+                    ))
                 }
             }
             _ => Err(Error::InvalidFormat),

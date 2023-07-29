@@ -71,15 +71,29 @@ impl ThumbDesc {
 }
 
 /// A thumbnail
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct Thumbnail {
     /// Thumbnail width
     width: u32,
     /// Thumbnail height
     height: u32,
+    /// Bits per component
+    bpc: u16,
     /// Type of the data
     data_type: DataType,
     data: bitmap::Data,
+}
+
+impl Default for Thumbnail {
+    fn default() -> Thumbnail {
+        Thumbnail {
+            width: 0,
+            height: 0,
+            bpc: 8,
+            data_type: DataType::default(),
+            data: bitmap::Data::default(),
+        }
+    }
 }
 
 impl Thumbnail {
@@ -92,16 +106,24 @@ impl Thumbnail {
         Thumbnail {
             width,
             height,
+            bpc: 8,
             data_type,
             data: bitmap::Data::Data8(data),
         }
     }
 
     /// New thumbnail with data16.
-    pub fn with_data16(width: u32, height: u32, data_type: DataType, data: Vec<u16>) -> Thumbnail {
+    pub fn with_data16(
+        width: u32,
+        height: u32,
+        bpc: u16,
+        data_type: DataType,
+        data: Vec<u16>,
+    ) -> Thumbnail {
         Thumbnail {
             width,
             height,
+            bpc,
             data_type,
             data: bitmap::Data::Data16(data),
         }
@@ -131,7 +153,7 @@ impl Bitmap for Thumbnail {
     }
 
     fn bpc(&self) -> u16 {
-        8
+        self.bpc
     }
 
     fn data8(&self) -> Option<&[u8]> {
