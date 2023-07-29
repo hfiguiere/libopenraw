@@ -353,23 +353,6 @@ pub enum PhotometricInterpretation {
     LinearRaw = 34892,
 }
 
-#[repr(u32)]
-#[derive(Clone, Copy, Debug, PartialEq, TryFromPrimitive)]
-pub enum LightsourceValue {
-    Unknown = 0,
-    Daylight = 1,
-    Fluorescent = 2,
-    Tungsten = 3,
-    StandardA = 17,
-    StandardB = 18,
-    StandardC = 19,
-    D55 = 20,
-    D65 = 21,
-    D75 = 22,
-    /* 23...254 reserved */
-    Other = 255,
-}
-
 impl std::convert::TryFrom<u32> for PhotometricInterpretation {
     type Error = crate::Error;
 
@@ -384,6 +367,34 @@ impl std::convert::TryFrom<u32> for PhotometricInterpretation {
             _ => Err(Self::Error::InvalidFormat),
         }
     }
+}
+
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, TryFromPrimitive)]
+pub enum LightsourceValue {
+    Unknown = 0,
+    Daylight = 1,
+    Fluorescent = 2,
+    Tungsten = 3,
+    Flash = 4,
+    FineWeather = 9,
+    CloudyWeather = 10,
+    Shade = 11,
+    DaylightFluorescent = 12,
+    DayWhiteFluorescent = 13,
+    CoolWhiteFluorescent = 14,
+    WhiteFluorescent = 15,
+    WarmWhiteFluorescent = 16,
+    StandardA = 17,
+    StandardB = 18,
+    StandardC = 19,
+    D55 = 20,
+    D65 = 21,
+    D75 = 22,
+    D50 = 23,
+    IsoStudioTungsten = 24,
+    /* 25...254 reserved */
+    Other = 255,
 }
 
 #[cfg(test)]
