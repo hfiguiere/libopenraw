@@ -58,6 +58,8 @@ macro_rules! minolta {
     };
 }
 
+pub use tiff::exif::generated::MNOTE_MINOLTA_TAG_NAMES as MNOTE_TAG_NAMES;
+
 lazy_static::lazy_static! {
     pub(super) static ref MATRICES: [BuiltinMatrix; 9] = [
         BuiltinMatrix::new(
@@ -117,38 +119,6 @@ lazy_static::lazy_static! {
         minolta!("27820001", A1),
         minolta!("27200001", A2),
         minolta!("27470002", A200),
-    ]);
-
-    pub static ref MNOTE_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
-        (0x0, "MakerNoteVersion"),
-        (0x1, "MinoltaCameraSettingsOld"),
-        (0x3, "MinoltaCameraSettings"),
-        (0x4, "MinoltaCameraSettings7D"),
-        (0x10, "CameraInfoA100"),
-        (0x18, "ISInfoA100"),
-        (0x20, "WBInfoA100"),
-        (0x40, "CompressedImageSize"),
-        (0x81, "PreviewImage"),
-        (0x88, "PreviewImageStart"),
-        (0x89, "PreviewImageLength"),
-        (0x100, "SceneMode"),
-        (0x101, "ColorMode"),
-        (0x102, "MinoltaQuality"),
-        (0x103, "MinoltaQuality"),
-        (0x104, "FlashExposureComp"),
-        (0x105, "Teleconverter"),
-        (0x107, "ImageStabilization"),
-        (0x109, "RawAndJpgRecording"),
-        (0x10a, "ZoneMatching"),
-        (0x10b, "ColorTemperature"),
-        (0x10c, "LensType"),
-        (0x111, "ColorCompensationFilter"),
-        (0x112, "WhiteBalanceFineTune"),
-        (0x113, "ImageStabilization"),
-        (0x114, "MinoltaCameraSettings5D"),
-        (0x115, "WhiteBalance"),
-        (0xe00, "PrintIM"),
-        (0xf00, "MinoltaCameraSettings2"),
     ]);
 }
 

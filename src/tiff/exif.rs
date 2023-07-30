@@ -22,6 +22,8 @@
 //! Exif support
 
 /// Exif tags constants
+pub(crate) mod generated;
+pub use generated::EXIF_TAG_NAMES as TAG_NAMES;
 mod tags;
 pub use tags::*;
 
