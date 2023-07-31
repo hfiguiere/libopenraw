@@ -134,55 +134,6 @@ PKG_CHECK_MODULES(CURL, libcurl,
 			[HAVE_CURL=no])
 AC_CHECK_FUNCS_ONCE(get_current_dir_name)
 
-#
-dnl do we want GNOME ?
-#
-AC_ARG_ENABLE([gnome],
-              [AS_HELP_STRING([--disable-gnome],[disable support for Gnome])],,
-              [enable_gnome=yes])
-#
-# Checks for libgdkpixbuf
-#
-if test x$enable_gnome = xyes ; then
-   #
-   # Checks for libglib-2.0
-   #
-   HAVE_LIBGLIB=no
-   PKG_CHECK_MODULES(LIBGLIB, glib-2.0 >= $LIBGLIB_REQUIRED,
-                    [AC_DEFINE(HAVE_LIBGLIB, 1, [Define to 1 to enable libglib support])
-                     HAVE_LIBGLIB=yes],
-                    [HAVE_LIBGLIB=no])
-
-   HAVE_LIBGDKPIXBUF=no
-   if test x$HAVE_LIBGLIB = xyes ; then
-      PKG_CHECK_MODULES(LIBGDKPIXBUF, gdk-pixbuf-2.0 >= $LIBGDKPIXBUF_REQUIRED,
-                     [AC_DEFINE(HAVE_LIBGDKPIXBUF, 1, [Define to 1 to enable libgdkpixbuf support])
-		      GDK_PIXBUF_DIR=`$PKG_CONFIG --variable=gdk_pixbuf_moduledir gdk-pixbuf-2.0`
-			dnl This is because the variable is only defined on recent gdk-pixbuf. 
-			dnl Revert to the old method otherwise. (https://bugs.freedesktop.org/show_bug.cgi?id=30013)
-			if test -z "$GDK_PIXBUF_DIR" ; then
-				GTK_VERSION=`$PKG_CONFIG --variable=gtk_binary_version gtk+-2.0`
-				GDK_PIXBUF_DIR="$libdir/gtk-2.0/$GTK_VERSION/loaders"
-			fi
-		      AC_SUBST(GDK_PIXBUF_DIR)
-		      HAVE_LIBGDKPIXBUF=yes],
-                     [HAVE_LIBGDKPIXBUF=no])
-   else
-      AC_MSG_WARN([glib-2.0 missing, ignore GdkPixbuf support.])
-   fi
-   if test x$HAVE_LIBGDKPIXBUF = xyes ; then
-     HAVE_GNOME=yes
-   else
-     HAVE_GNOME=no
-   fi
-else
-   HAVE_GNOME=no
-   AC_MSG_CHECKING([for Gnome])
-   AC_MSG_RESULT([disabled])
-fi
-
-AM_CONDITIONAL(BUILD_GNOME_SUPPORT, test x$HAVE_GNOME = xyes)
-
 AC_ARG_ENABLE(debug,[  --enable-debug    Turn on debugging],[
         case "${enableval}" in
            yes) debug=true ;
@@ -261,21 +212,12 @@ CARGO_TARGET_SUBDIR=release
 fi
 AC_SUBST(CARGO_TARGET_SUBDIR)
 
-dnl we need to disable gdk pixbuf for distcheck
-DISTCHECK_CONFIGURE_FLAGS="--disable-gnome"
-AC_SUBST([DISTCHECK_CONFIGURE_FLAGS])
-
 AC_CONFIG_FILES([
 Makefile
 include/Makefile
 include/libopenraw/Makefile
-include/libopenraw++/Makefile
 lib/Makefile
 lib/libopenraw-0.4.pc
-gnome/Makefile
-gnome/libopenraw-gnome-0.3.pc
-gnome/include/Makefile
-gnome/include/libopenraw-gnome/Makefile
 doc/Makefile
 doc/Doxyfile
 doc/doxygen/Makefile
@@ -290,6 +232,5 @@ AC_OUTPUT
 echo "
 Options:
 
-  Gnome support:        ${HAVE_GNOME}
   Testsuite booststrap: ${HAVE_CURL}
 "

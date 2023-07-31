@@ -1,5 +1,5 @@
 
 
 
-SUBDIRS = libopenraw libopenraw++ 
+SUBDIRS = libopenraw
 
