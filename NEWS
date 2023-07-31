@@ -1,10 +1,14 @@
-libopenraw 0.3.7 -
+libopenraw 0.3.7 - 2023/07/31
 
 Bug fixes:
 
   - Fix a crash when rendering Leica M Monochron DNG files.
   - Preserve the raw data photometric interpretation when decompressing
     raw data.
+
+Other:
+
+  - Updated Exif tags.
 
 libopenraw 0.3.6 - 2023/06/10
 
