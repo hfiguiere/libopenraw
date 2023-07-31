@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawdata.h
  *
- * Copyright (C) 2007-2019 Hubert Figuiere
+ * Copyright (C) 2007-2023 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -20,9 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef LIBOPENRAW_RAWDATA_H_
-#define LIBOPENRAW_RAWDATA_H_
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -50,10 +48,6 @@ extern "C" {
 	 */
 	or_error or_get_extract_rawdata(const char* filename, uint32_t options,
 																	ORRawDataRef *rawdata);
-	/** @brief Allocate a new RawData
-	 * @return A newly allocated RawData. Must be released by %or_rawdata_release
-	 */
-	ORRawDataRef or_rawdata_new(void);
 
 	/** @brief Release the rawdata */
 	or_error or_rawdata_release(ORRawDataRef rawdata);
@@ -161,4 +155,4 @@ extern "C" {
 }
 #endif
 /** @} */
-#endif
+

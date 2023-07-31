@@ -1,7 +1,7 @@
 /*
  * libopenraw - thumbc.c
  *
- * Copyright (C) 2006,2008 Hubert Figuiere
+ * Copyright (C) 2006-2023 Hubert Figuière
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -100,9 +100,9 @@ main(int argc, char **argv)
         fprintf(output, "%u\n%u\n", x, y);
         fprintf(output, "%d\n", 255);
     }
-    writtenSize = fwrite(thumbnailData, dataSize, 1, output);
+    writtenSize = fwrite(thumbnailData, 1, dataSize, output);
     if(writtenSize != dataSize) {
-        printf("short write\n");
+        printf("short write : %ld expected %ld\n", writtenSize, dataSize);
     }
     fclose(output);
     printf("output %ld bytes in '%s'\n", dataSize, outfname);

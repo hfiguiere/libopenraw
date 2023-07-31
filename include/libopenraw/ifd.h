@@ -2,7 +2,7 @@
 /*
  * libopenraw - ifd.h
  *
- * Copyright (C) 2019-2020 Hubert Figuière
+ * Copyright (C) 2019-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -41,9 +41,6 @@ or_ifd_get_tag_name(ORIfdDirRef ifd, uint32_t tag);
 
 or_ifd_dir_type
 or_ifd_get_type(ORIfdDirRef ifd);
-
-void
-or_ifd_release(ORIfdDirRef ifd);
 
 #ifdef __cplusplus
 }

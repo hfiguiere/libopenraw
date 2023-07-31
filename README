@@ -1,7 +1,7 @@
 Copyright
 =========
 
-libopenraw is Copyright (c) 2005-2020 Hubert Figuiere and
+libopenraw is Copyright (c) 2005-2023 Hubert Figuiere and
 other contributors. See the respective files.
 It is licensed under LGPLv3 or later. See files COPYING
 and COPYING.LESSER
@@ -25,7 +25,7 @@ Prerequistes to build:
     - libjpeg
     - libxml > 2.5.0 (for the test suite)
     - libcurl (option for the test suite bootstrap)
-    - Rust to support CR3.
+    - Rust 1.64
 
 If building from the git tree you also need:
 
@@ -36,6 +36,13 @@ If building from the git tree you also need:
 Optional Gnome support
 
     - gdkpixbuf
+
+## Rust crate
+
+Starting with 0.4.0, libopenraw is developed as a Rust native crate
+with a C API. There the standard layout for a Rust crate applies, and
+`lib/` contains the crate part to build the dynamic library for the C
+API.
 
 Supported file format:
 ======================

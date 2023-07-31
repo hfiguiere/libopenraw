@@ -38,7 +38,7 @@ mod boxes;
 use boxes::{BoxType, FourCC};
 
 #[cfg(feature = "craw")]
-mod craw;
+pub mod craw;
 
 // Unit tests.
 #[cfg(test)]

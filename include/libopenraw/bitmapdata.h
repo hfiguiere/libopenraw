@@ -1,8 +1,8 @@
 /*
  * libopenraw - bitmapdata.h
  *
+ * Copyright (C) 2012-2023 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
- * Copyright (C) 2012 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,9 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-
-#ifndef LIBOPENRAW_BITMAPDATA_H_
-#define LIBOPENRAW_BITMAPDATA_H_
+#pragma once
 
 #include <stdlib.h>
 
@@ -31,14 +29,10 @@
 extern "C" {
 #endif
 
-	
-ORBitmapDataRef
-or_bitmapdata_new(void);
-
 or_error
 or_bitmapdata_release(ORBitmapDataRef bitmapdata);
 
-or_data_type 
+or_data_type
 or_bitmapdata_format(ORBitmapDataRef bitmapdata);
 
 void *
@@ -48,7 +42,7 @@ size_t
 or_bitmapdata_data_size(ORBitmapDataRef bitmapdata);
 
 void
-or_bitmapdata_dimensions(ORBitmapDataRef bitmapdata, 
+or_bitmapdata_dimensions(ORBitmapDataRef bitmapdata,
 			  uint32_t *x, uint32_t *y);
 
 uint32_t
@@ -58,7 +52,6 @@ or_bitmapdata_bpc(ORBitmapDataRef bitmapdata);
 }
 #endif
 
-#endif
 /*
   Local Variables:
   mode:c++

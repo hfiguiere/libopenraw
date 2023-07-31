@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+/*
+ * libopenraw - colour.rs
+ *
+ * Copyright (C) 2022 Hubert Figuière
+ *
+ * This library is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+//! Everything about colour
+
+mod matrix;
+
+pub use matrix::BuiltinMatrix;
+
+#[repr(C)]
+#[derive(Debug)]
+/// Where the colour matrix comes from.
+/// Typically DNG is provided. The others are built-in.
+pub enum MatrixOrigin {
+    /// Unknown. This usually signify an error.
+    Unknown = 0,
+    /// Colour matrix in library.
+    Builtin = 1,
+    /// Colour matrix provided by file.
+    Provided = 2,
+}

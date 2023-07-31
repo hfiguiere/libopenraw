@@ -1,7 +1,7 @@
 /*
  * libopenraw - ppmload.c
  *
- * Copyright (C) 2007, 2010 Hubert Figuiere
+ * Copyright (C) 2007, 2010, 2023 Hubert Figuière
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -60,9 +60,8 @@ main(int argc, char **argv)
         printf("Couldn't open %s\n", filename);
         return 1;
     }
-    or_error err;
-    ORBitmapDataRef bitmapdata = or_bitmapdata_new();
-    err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
+    or_error err = OR_ERROR_NONE;
+    ORBitmapDataRef bitmapdata = or_rawfile_get_rendered_image(raw_file, 0, &err);
     if (err == OR_ERROR_NONE) {
         uint32_t x, y;
         FILE * f;

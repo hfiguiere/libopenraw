@@ -97,7 +97,7 @@ or_rawfile_typeid or_rawfile_get_vendorid(ORRawFileRef rawfile);
  *
  * @param rawfile The RawFile.
  * @param [out] size The size of the array is returned
- * @return The array. It is owned by the raw file
+ * @return The array. It is owned by the raw file. Or %nullptr in case of error.
  * */
 const uint32_t* or_rawfile_get_thumbnail_sizes(ORRawFileRef  rawfile, size_t* size);
 
@@ -111,12 +111,11 @@ const uint32_t* or_rawfile_get_thumbnail_sizes(ORRawFileRef  rawfile, size_t* si
  *
  * @param rawfile The RawFile object.
  * @param preferred_size The requested preferred size.
- * @param [in/out] thumb The Thumbnail object to store the data.
- * @return An error code. %OR_ERROR_NONE in case of success.
+ * @param [out] An error code. %OR_ERROR_NONE in case of success.
+ * @return The Thumbnail object to store the data. Must be freed.
  */
-or_error
-or_rawfile_get_thumbnail(ORRawFileRef rawfile, uint32_t preferred_size,
-						 ORThumbnailRef thumb);
+ORThumbnailRef
+or_rawfile_get_thumbnail(ORRawFileRef rawfile, uint32_t preferred_size, or_error *error);
 
 /** @brief Get the RawData out of the RawFile.
  *
@@ -127,24 +126,22 @@ or_rawfile_get_thumbnail(ORRawFileRef rawfile, uint32_t preferred_size,
  * otherwise requested).
  *
  * @param rawfile The RawFile.
- * @param [in/out] rawdata An allocated RawData object. Pass %OR_OPTIONS_DONT_DECOMPRESS if
+ * @param options Some options. Pass %OR_OPTIONS_DONT_DECOMPRESS if
  * you don't want the RAW data stream to be decompressed, %OR_OPTIONS_NONE otherwise.
- * @param options Some options.
- * @return An error code or %OR_ERROR_NONE on success.
+ * @param error The error code. Pass %nullptr if not desired.
+ * @return An %ORRawDataRef or %nullptr in case of error.
  */
-or_error
-or_rawfile_get_rawdata(ORRawFileRef rawfile, ORRawDataRef rawdata,
-						   uint32_t options);
+ORRawDataRef
+or_rawfile_get_rawdata(ORRawFileRef rawfile, uint32_t options, or_error *error);
 
 /** @brief Get the rendered image from the raw file
  * @param rawfile The raw file.
- * @param rawdata The preallocated bitmap data.
  * @param options Option for rendering. Pass %OR_OPTIONS_NONE for now.
- * @return An error code. %OR_ERROR_NOTAREF is %rawfile is NULL.
+ * @param [out] error An error code. %OR_ERROR_NOTAREF is %rawfile is NULL.
+ * @return The rendered bitmap %ORBitmapDataRef
  */
-or_error
-or_rawfile_get_rendered_image(ORRawFileRef rawfile, ORBitmapDataRef rawdata,
-			      uint32_t options);
+ORBitmapDataRef
+or_rawfile_get_rendered_image(ORRawFileRef rawfile, uint32_t options, or_error *error);
 
 
 /** @brief Get the orientation.
@@ -196,13 +193,13 @@ or_rawfile_get_colourmatrix2(ORRawFileRef rawfile, double* matrix, uint32_t* siz
  *
  * @see %ExifLightsourceValue.
  */
-ExifLightsourceValue or_rawfile_get_calibration_illuminant1(ORRawFileRef rawfile);
+uint32_t or_rawfile_get_calibration_illuminant1(ORRawFileRef rawfile);
 
 /** @brief Get calibration illuminant for the second colour matrix.
  *
  * @see %or_rawfile_get_calibration_illuminant1
  */
-ExifLightsourceValue or_rawfile_get_calibration_illuminant2(ORRawFileRef rawfile);
+uint32_t or_rawfile_get_calibration_illuminant2(ORRawFileRef rawfile);
 
 /** @brief Get the colour matrix origin for file.
  *
@@ -217,17 +214,17 @@ or_rawfile_get_colour_matrix_origin(ORRawFileRef rawfile);
 
 /** @brief Get the metadata value
  * @param rawfile the RawFile object.
- * @param meta_index the index value which a bit OR between a namespace and an index
- * @return a const MetaValue, owned by the %RawFile
+ * @param key the string key for the value
+ * @return a MetaValue that must be freed with %or_metavalue_release
  */
-ORConstMetaValueRef
-or_rawfile_get_metavalue(ORRawFileRef rawfile, int32_t meta_index);
+ORMetaValueRef
+or_rawfile_get_metavalue(ORRawFileRef rawfile, const char* key);
 
 /** @brief Get an IFD directory
  *
  * @param rawfile The %RawFile object.
  * @param ifd The IFD you want, from %or_ifd_dir_type.
- * @return An IfdDir. Must be freed with %or_ifd_release()
+ * @return An IfdDir. Owned by the raw file.
  *
  * @see %or_ifd_dir_type
  */

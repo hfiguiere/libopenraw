@@ -8,5 +8,5 @@ Name: libopenraw
 Description: Library for easy decoding of camera RAW files
 Requires:
 Version: @VERSION@
-Libs: -L${libdir} -lopenraw
+Libs: -L${libdir} -lopenraw -lm
 Cflags: -I${includedir}/@LIBOPENRAW_INCLUDE_BASE@ -I${includedir}

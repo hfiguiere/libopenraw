@@ -1,6 +1,7 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/include @BOOST_CPPFLAGS@
 
+
 RUST_FILES = mp4/Cargo.lock \
 	mp4/Cargo.toml \
 	mp4/lib.rs \
@@ -15,25 +16,16 @@ RUST_FILES = mp4/Cargo.lock \
 	mp4/mp4parse/Cargo.toml \
 	$(NULL)
 
-DISTCLEANFILES = mp4/.cargo/config.toml
-
-dist-hook:
-	mkdir -p $(distdir)/mp4/
-	(cd mp4 && $(shell pwd)/$(top_srcdir)/build-aux/cargo-vendor.sh $(shell pwd)/$(top_srcdir)/lib/mp4/Cargo.toml)
-	cp -av mp4/vendor $(distdir)/mp4/
-	cp -av mp4/.cargo $(distdir)/mp4/
-
-distclean-local:
-	rm -fr mp4/vendor/*
 
 EXTRA_DIST = libopenraw.sym io/testfile.tmp \
 	exif/exif-tags.pl \
 	$(RUST_FILES)
 
+
 update_tags:
 	$(srcdir)/exif/exif-tags.pl > $(srcdir)/exif/exif_tags.cpp
 
-pkgconfig_DATA = libopenraw-0.3.pc
+pkgconfig_DATA = libopenraw-0.4.pc
 
 TESTS = teststream
 
@@ -41,8 +33,6 @@ check_PROGRAMS = teststream
 
 teststream_SOURCES = io/teststream.cpp
 teststream_LDADD = libopenraw_internals.la
-
-CLEANFILES = mp4/target/CACHEDIR.TAG
 
 noinst_HEADERS = \
 	mp4/mp4parse.h \
@@ -97,46 +87,27 @@ noinst_HEADERS = \
 lib_LTLIBRARIES = libopenraw.la
 noinst_LTLIBRARIES = libopenraw_internals.la
 
-if DEBUG
-CARGO_RELEASE_ARGS=
-else
-CARGO_RELEASE_ARGS=--release
-endif
-
-CARGO_TARGET_DIR=@abs_top_builddir@/lib/mp4/target
-RUST_PATH=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@
-RUST_LIB=$(RUST_PATH)/libmp4.a
-
-mp4/mp4parse.h: $(RUST_LIB)
-
-$(RUST_LIB): $(RUST_FILES)
-	cd $(srcdir)/mp4 && \
-	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo build $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
-
-clean-local:
-	cd $(srcdir)/mp4 && \
-	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo clean $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
-	rm -f $(CARGO_TARGET_DIR)/.rustc_info.json
-
-# The use of --all-static is necesary for the RUST_LIB
 libopenraw_la_LDFLAGS = \
+	$(BSYMBOLIC_LDFLAG) \
 	-version-info @LIBOPENRAW_VERSION_INFO@ \
-	--all-static \
-	-lpthread -ldl
-libopenraw_la_LIBADD = -ljpeg $(RUST_LIB) libopenraw_internals.la
-libopenraw_la_SOURCES = \
-	capi/capi.h \
-	capi/capi.cpp \
-	capi/debug.cpp \
-	capi/rawdata.cpp \
-	capi/rawfile.cpp \
-	capi/bitmapdata.cpp \
-	capi/mosaicinfo.cpp \
-	capi/metadata.cpp \
-	capi/ifd.cpp \
-	$(NULL)
+	-export-dynamic \
+	-no-undefined \
+	-export-symbols-regex "^or_.*" \
+	$(AM_LDFLAGS)
+libopenraw_la_LIBADD = ../liblibopenraw.la
+libopenraw_la_SOURCES =
+#	capi/capi.h \
+#	capi/capi.cpp \
+#	capi/debug.cpp \
+#	capi/rawdata.cpp \
+#	capi/rawfile.cpp \
+#	capi/bitmapdata.cpp \
+#	capi/mosaicinfo.cpp \
+#	capi/metadata.cpp \
+#	capi/ifd.cpp \
+#	$(NULL)
 
-libopenraw_internals_la_DEPENDENCIES = $(RUST_LIB)
+libopenraw_internals_la_DEPENDENCIES =
 libopenraw_internals_la_SOURCES = \
 	io/io.c io/posix_io.h \
 	io/posix_io.c io/posix_io.h \

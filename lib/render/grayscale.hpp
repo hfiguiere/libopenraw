@@ -25,7 +25,7 @@
 
 #include <libopenraw/consts.h>
 
-or_error
+extern "C" or_error
 grayscale_to_rgb (uint16_t *src, uint32_t src_x, uint32_t src_y, 
 		  uint16_t *dst);
 
