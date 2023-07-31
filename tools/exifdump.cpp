@@ -31,7 +31,6 @@
 #include <libopenraw/libopenraw.h>
 
 #include "dumputils.hpp"
-#include "exif/exif_tags.hpp"
 
 const char* map_ifd_type(or_ifd_dir_type type)
 {
