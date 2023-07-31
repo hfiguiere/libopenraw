@@ -1,7 +1,7 @@
 /*
  * libopenraw - pixbuf-loader.c
  *
- * Copyright (C) 2008-2016 Hubert Figuiere
+ * Copyright (C) 2008-2023 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -103,10 +103,9 @@ gdk_pixbuf__or_image_stop_load (gpointer data, GError **error)
                                           OR_RAWFILE_TYPE_UNKNOWN);
 
     if(raw_file) {
-        or_error err;
-        ORBitmapDataRef bitmapdata = or_bitmapdata_new();
-        err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
-        if(err == OR_ERROR_NONE) {
+        or_error err = OR_ERROR_NONE;
+        ORBitmapDataRef bitmapdata = or_rawfile_get_rendered_image(raw_file, 0, &err);
+        if (err == OR_ERROR_NONE && bitmapdata) {
             uint32_t x,y;
             uint32_t orientation;
             char orientation_str[16];

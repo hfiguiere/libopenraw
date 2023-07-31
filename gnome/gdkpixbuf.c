@@ -1,7 +1,7 @@
 /*
  * libopenraw - gdkpixbuf.c
  *
- * Copyright (C) 2006-2007 Hubert Figuiere
+ * Copyright (C) 2006-2023 Hubert Figuiere
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -162,23 +162,19 @@ static GdkPixbuf *_or_gdkpixbuf_extract_thumbnail(const char *path,
 						  gboolean rotate)
 {
 	ORRawFileRef rf;
-	int32_t orientation = 0;
 	GdkPixbuf *pixbuf = NULL;
-	or_error err = OR_ERROR_NONE;
-	ORThumbnailRef thumbnail = NULL;
 
 	rf = or_rawfile_new(path, OR_RAWFILE_TYPE_UNKNOWN);
-	if(rf) {
-		if(rotate) {
+	if (rf) {
+		int32_t orientation = 0;
+		if (rotate) {
 			orientation = or_rawfile_get_orientation(rf);
 		}
-		thumbnail = or_thumbnail_new();
-		err = or_rawfile_get_thumbnail(rf, preferred_size,
-									   thumbnail);
-		if (err == OR_ERROR_NONE)	{
+		or_error err = OR_ERROR_NONE;
+		ORThumbnailRef thumbnail = or_rawfile_get_thumbnail(rf, preferred_size, &err);
+		if (err == OR_ERROR_NONE && thumbnail)	{
 			pixbuf = _or_thumbnail_to_pixbuf(thumbnail, orientation);
-		}
-		else {
+		} else {
 			g_debug("or_get_extract_thumbnail() failed with %d.", err);
 		}
 		err = or_thumbnail_release(thumbnail);

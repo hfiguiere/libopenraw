@@ -1,7 +1,7 @@
 /*
  * libopenraw - gdk.c
  *
- * Copyright (C) 2007-2013 Hubert Figuiere
+ * Copyright (C) 2007-2023 Hubert Figuiere
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ main(int argc, char **argv)
     GdkPixbuf *pixbuf = NULL;
     ORRawFileRef raw_file = NULL;
     char *filename = argv[1];
-    or_error err;
+    or_error err = OR_ERROR_NONE;
     ORBitmapDataRef bitmapdata = NULL;
 
     (void)argc;
@@ -60,25 +60,24 @@ main(int argc, char **argv)
         return 1;
     }
 
-    bitmapdata = or_bitmapdata_new();
-    err = or_rawfile_get_rendered_image(raw_file, bitmapdata, 0);
-    if(err == OR_ERROR_NONE) {
+    bitmapdata = or_rawfile_get_rendered_image(raw_file, 0, &err);
+    if (err == OR_ERROR_NONE && bitmapdata) {
         uint32_t x,y;
         or_data_type format = or_bitmapdata_format(bitmapdata);
         x = y = 0;
         or_bitmapdata_dimensions(bitmapdata, &x, &y);
-        if(format == OR_DATA_TYPE_PIXMAP_8RGB) {
+        if (format == OR_DATA_TYPE_PIXMAP_8RGB) {
             pixbuf = gdk_pixbuf_new_from_data(or_bitmapdata_data(bitmapdata),
                                               GDK_COLORSPACE_RGB,
                                               FALSE, 8, x , y,
                                               x * 3,
                                               pixbuf_free, bitmapdata);
-        }
-        else {
-            /* Gdk pixbuf still suck ass in 2012 not supporting 16bpp. */
-            printf("16 bits isn't supported because Gdkpixbuf still suck\n");
+        } else {
+            /* Gdk pixbuf still does not supporting 8bpp. */
+            printf("16 bits isn't supported be GdkPixbuf.\n");
         }
     }
+    or_bitmapdata_release(bitmapdata);
     or_rawfile_release(raw_file);
 
     if(pixbuf) {
