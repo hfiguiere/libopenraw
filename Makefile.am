@@ -113,6 +113,10 @@ CARGO_TARGET_DIR=@abs_top_builddir@/target
 RUST_PATH=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@
 RUST_LIB=$(RUST_PATH)/liblibopenraw.a
 
+Cargo.lock:
+	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) \
+	cargo update
+
 liblibopenraw_la_SOURCES = _or_dummy.c
 liblibopenraw.la: $(liblibopenraw_la_OBJECTS) $(RUST_FILES)
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) \
