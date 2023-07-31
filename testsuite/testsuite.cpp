@@ -58,28 +58,10 @@
 #include <libopenraw/ifd.h>
 #include <libopenraw/metadata.h>
 
-#include "rawfile.hpp"
-#include "rawdata.hpp"
-#include "thumbnail.hpp"
-#include "bitmapdata.hpp"
-#include "metavalue.hpp"
-#include "mosaicinfo.hpp"
-
 #include "xmlhandler.h"
 #include "testsuite.h"
 #include "testsuitehandler.h"
 #include "testsuitetags.h"
-
-// Internal stuff. Because we can.
-#include "io/file.hpp"
-#include "ifdfile.hpp"
-#include "ifddir.hpp"
-#include "makernotedir.hpp"
-
-using OpenRaw::RawFile;
-using OpenRaw::BitmapData;
-using OpenRaw::RawData;
-using OpenRaw::Thumbnail;
 
 using std::unique_ptr;
 
@@ -178,7 +160,7 @@ std::string cfaPatternToString(::or_cfa_pattern t)
 }
 
 
-bool equalDataType(const std::string & result, BitmapData::DataType t)
+bool equalDataType(const std::string & result, or_data_type t)
 {
     bool equal = false;
     switch(t) {
