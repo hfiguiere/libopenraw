@@ -14,7 +14,7 @@ afl = { version = "0.12.4", optional = true }
 bitreader = "0.3.7"
 byteorder = "1.4.3"
 cc = "1.0"
-chrono = "0.4.26"
+chrono = { version = "0.4.26", default-features = false, features = [ "clock" ] }
 getopts = "0.2.21"
 jpeg-decoder = "0.3.0"
 lazy_static = "1.4.0"
