@@ -68,7 +68,7 @@ lazy_static::lazy_static! {
         pentax!("PENTAX K-500       ", K500_DNG),
         pentax!("PENTAX K-3         ", K3_DNG),
         pentax!("PENTAX K-3 II      ", K3_II_DNG),
-        pentax!("PENTAX K-3 Mark III             ", K3_II_DNG),
+        pentax!("PENTAX K-3 Mark III             ", K3_MKIII_DNG),
         pentax!("PENTAX K-7         ", K7_DNG),
         pentax!("PENTAX K-70        ", K70_DNG),
         pentax!("PENTAX K-S1        ", KS1_DNG),
