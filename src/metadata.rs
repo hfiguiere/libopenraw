@@ -27,7 +27,7 @@ use crate::utils;
 /// The key type. Currently an alias to `String`.
 pub type Key = String;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Value {
     Int(Vec<u32>),
     SInt(Vec<i32>),

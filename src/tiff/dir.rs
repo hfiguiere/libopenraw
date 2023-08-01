@@ -710,21 +710,31 @@ mod test {
     use simple_logger;
 
     use crate::io::Viewer;
+    use crate::metadata::Value;
     use crate::tiff;
+    use crate::tiff::exif;
     use crate::Type;
 
     #[test]
     fn test_ifd_iterator() {
         simple_logger::init_with_level(log::Level::Debug).unwrap();
 
-        let reader = std::fs::File::open("sample.tiff").expect("Couldn't open file");
+        let reader = std::fs::File::open("test/iterator_test.tif").expect("Couldn't open file");
         let viewer = Viewer::new(Box::new(std::io::BufReader::new(reader)), 0);
         let view = Viewer::create_view(&viewer, 0).expect("Couldn't create view");
         let mut container = tiff::Container::new(view, vec![tiff::IfdType::Main], Type::Jpeg);
         container.load(None).expect("Failed to load IFD");
         let dir = container.directory(0).expect("Couldn't get directory");
-        for meta in dir.iter() {
-            println!("meta {:?}", meta);
-        }
+        let mut iter = dir.iter();
+
+        let meta = iter.next().expect("Couldn't get first item");
+        assert_eq!(meta.0, "Exif.Image.SubfileType");
+        assert_eq!(meta.1, Value::Int(vec![0]));
+        assert_eq!(meta.2, exif::TagType::Long as i16);
+
+        let meta = iter.next().expect("Couldn't get second item");
+        assert_eq!(meta.0, "Exif.Image.ImageWidth");
+        assert_eq!(meta.1, Value::Int(vec![360]));
+        assert_eq!(meta.2, exif::TagType::Short as i16);
     }
 }

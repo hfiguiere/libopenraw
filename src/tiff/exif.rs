@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/exif.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -265,7 +265,7 @@ impl ExifValue for Vec<u8> {
 }
 
 /// Unsigned rational number (fraction)
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Rational {
     pub num: u32,
     pub denom: u32,
@@ -298,7 +298,7 @@ impl ToString for Rational {
 }
 
 /// Signed rational number (fraction)
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct SRational {
     pub num: i32,
     pub denom: i32,
