@@ -660,6 +660,7 @@ bool Test::testExifString(const char* meta_index, const std::string & result)
     if (val) {
         //
         auto stringVal = std::string(or_metavalue_get_string(val, 0));
+        or_metavalue_release(val);
         RETURN_TEST_EQUALS(stringVal, result);
     }
     RETURN_FAIL("meta data not found");
