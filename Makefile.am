@@ -66,7 +66,6 @@ RUST_FILES = Cargo.lock \
 	src/leica.rs \
 	src/lib.rs \
 	src/metadata.rs \
-	src/metavalue.rs \
 	src/minolta.rs \
 	src/mosaic.rs \
 	src/mp4.rs \
