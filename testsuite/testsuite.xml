@@ -627,7 +627,7 @@
       <rawDataActiveArea>0 0 3920 2638</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
-      <rawMaxValue>255</rawMaxValue>
+      <rawMaxValue>16383</rawMaxValue>
       <metaOrientation>1</metaOrientation>
       <rawMd5>28095</rawMd5>
     </results>

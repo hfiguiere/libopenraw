@@ -306,7 +306,12 @@ impl RawFileImpl for DngFile {
                                 })
                             });
                         rawdata.set_active_area(active_area);
-
+                        if let Some(black) = dir.uint_value(exif::DNG_TAG_BLACK_LEVEL) {
+                            rawdata.set_black(black as u16);
+                        }
+                        if let Some(white) = dir.uint_value(exif::DNG_TAG_WHITE_LEVEL) {
+                            rawdata.set_white(white as u16);
+                        }
                         rawdata
                     })
                     .map_err(|err| {

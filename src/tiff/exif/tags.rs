@@ -140,6 +140,8 @@ pub const EXIF_TAG_PRINT_IM: u16 = 0xc4a5;
 /* DNG tags */
 pub const TIFF_TAG_DNG_VERSION: u16 = 0xc612;
 pub const DNG_TAG_UNIQUE_CAMERA_MODEL: u16 = 0xc614;
+pub const DNG_TAG_BLACK_LEVEL: u16 = 0xc61a;
+pub const DNG_TAG_WHITE_LEVEL: u16 = 0xc61d;
 pub const DNG_TAG_DEFAULT_CROP_ORIGIN: u16 = 0xc61f;
 pub const DNG_TAG_DEFAULT_CROP_SIZE: u16 = 0xc620;
 pub const DNG_TAG_COLORMATRIX1: u16 = 0xc621;
