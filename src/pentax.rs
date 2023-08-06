@@ -33,7 +33,7 @@ use crate::io::Viewer;
 use crate::rawfile::ThumbnailStorage;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
-use crate::{Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 #[macro_export]
 macro_rules! pentax {
@@ -415,7 +415,7 @@ impl RawFileImpl for PefFile {
         }
     }
 
-    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawData> {
+    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawImage> {
         self.container();
         let container = self.container.get().unwrap();
         self.ifd(tiff::IfdType::Raw)

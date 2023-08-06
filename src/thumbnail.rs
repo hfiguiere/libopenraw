@@ -21,7 +21,6 @@
 
 //! Representation of thumbnails
 
-use crate::bitmap;
 use crate::bitmap::Bitmap;
 use crate::DataType;
 
@@ -81,7 +80,7 @@ pub struct Thumbnail {
     bpc: u16,
     /// Type of the data
     data_type: DataType,
-    data: bitmap::Data,
+    data: Vec<u8>,
 }
 
 impl Default for Thumbnail {
@@ -91,7 +90,7 @@ impl Default for Thumbnail {
             height: 0,
             bpc: 8,
             data_type: DataType::default(),
-            data: bitmap::Data::default(),
+            data: vec![],
         }
     }
 }
@@ -108,24 +107,7 @@ impl Thumbnail {
             height,
             bpc: 8,
             data_type,
-            data: bitmap::Data::Data8(data),
-        }
-    }
-
-    /// New thumbnail with data16.
-    pub fn with_data16(
-        width: u32,
-        height: u32,
-        bpc: u16,
-        data_type: DataType,
-        data: Vec<u16>,
-    ) -> Thumbnail {
-        Thumbnail {
-            width,
-            height,
-            bpc,
-            data_type,
-            data: bitmap::Data::Data16(data),
+            data,
         }
     }
 }
@@ -136,12 +118,7 @@ impl Bitmap for Thumbnail {
     }
 
     fn data_size(&self) -> usize {
-        use bitmap::Data;
-        match self.data {
-            Data::Data8(ref d) => d.len(),
-            Data::Data16(ref d) => d.len() * 2,
-            Data::Tiled(ref d) => d.0.iter().map(|t| t.len()).sum(),
-        }
+        self.data.len()
     }
 
     fn width(&self) -> u32 {
@@ -157,18 +134,6 @@ impl Bitmap for Thumbnail {
     }
 
     fn data8(&self) -> Option<&[u8]> {
-        use bitmap::Data;
-        match self.data {
-            Data::Data8(ref d) => Some(d),
-            _ => None,
-        }
-    }
-
-    fn data16(&self) -> Option<&[u16]> {
-        use bitmap::Data;
-        match self.data {
-            Data::Data16(ref d) => Some(d),
-            _ => None,
-        }
+        Some(&self.data)
     }
 }

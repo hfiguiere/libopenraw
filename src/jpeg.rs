@@ -36,7 +36,7 @@ use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 /// JPEG file
 pub struct JpegFile {
@@ -109,7 +109,7 @@ impl RawFileImpl for JpegFile {
         }
     }
 
-    fn load_rawdata(&self, _: bool) -> Result<RawData> {
+    fn load_rawdata(&self, _: bool) -> Result<RawImage> {
         Err(Error::NotSupported)
     }
 

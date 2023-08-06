@@ -37,7 +37,7 @@ use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::Dir;
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Rect, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Rect, Result, Type, TypeId};
 
 use super::matrices::MATRICES;
 
@@ -161,8 +161,8 @@ impl RawFileImpl for Cr3File {
         }
     }
 
-    /// Load the [`RawData`] and return it.
-    fn load_rawdata(&self, _skip_decompression: bool) -> Result<RawData> {
+    /// Load the [`RawImage`] and return it.
+    fn load_rawdata(&self, _skip_decompression: bool) -> Result<RawImage> {
         self.container();
         let container = self.container.get().unwrap();
 
@@ -182,7 +182,7 @@ impl RawFileImpl for Cr3File {
             let offset = raw_track.offset;
             let data = container.load_buffer8(offset, byte_len);
 
-            let mut rawdata = RawData::new8(
+            let mut rawdata = RawImage::with_data8(
                 width as u32,
                 height as u32,
                 8,

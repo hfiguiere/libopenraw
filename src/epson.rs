@@ -36,7 +36,7 @@ use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Ifd, IfdType};
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 /// The MakerNote tag names. It's actually the same as Olympus.
 pub(crate) use crate::olympus::MNOTE_TAG_NAMES;
@@ -151,7 +151,7 @@ impl RawFileImpl for ErfFile {
         }
     }
 
-    fn load_rawdata(&self, _skip_decompression: bool) -> Result<RawData> {
+    fn load_rawdata(&self, _skip_decompression: bool) -> Result<RawImage> {
         self.ifd(tiff::IfdType::Raw)
             .ok_or_else(|| {
                 log::error!("CFA not found");

@@ -25,7 +25,9 @@ use simple_logger::SimpleLogger;
 
 use libopenraw::metadata::Value;
 use libopenraw::Bitmap;
-use libopenraw::{rawfile_from_file, DataType, Error, Ifd, RawData, RawFile, Result, Thumbnail};
+use libopenraw::{
+    rawfile_from_file, DataType, Error, Ifd, Image, RawFile, RawImage, Result, Thumbnail,
+};
 
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -89,7 +91,7 @@ fn save_thumbnail(p: &str, thumb: &Thumbnail) {
     }
 }
 
-fn save_raw(p: &str, rawdata: &RawData) -> Result<usize> {
+fn save_raw(p: &str, rawdata: &RawImage) -> Result<usize> {
     if let Some(stem) = std::path::PathBuf::from(p)
         .file_stem()
         .and_then(|s| s.to_str())

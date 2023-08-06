@@ -40,7 +40,7 @@ use crate::thumbnail;
 use crate::thumbnail::{Data, DataOffset};
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 use matrices::MATRICES;
 
@@ -261,7 +261,7 @@ impl RawFileImpl for RafFile {
         }
     }
 
-    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawData> {
+    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawImage> {
         self.container();
         let raw_container = self.container.get().unwrap();
         raw_container
@@ -365,7 +365,7 @@ impl RawFileImpl for RafFile {
                         log::error!("RAF failed to unpack {}", err);
                         err
                     })?;
-                    RawData::new16(
+                    RawImage::with_data16(
                         raw_size.width,
                         raw_size.height,
                         16,
@@ -376,7 +376,7 @@ impl RawFileImpl for RafFile {
                 } else {
                     // XXX decompress is not supported yet
                     let raw = raw_container.load_buffer8(cfa_offset, cfa_len);
-                    RawData::new8(
+                    RawImage::with_data8(
                         raw_size.width,
                         raw_size.height,
                         bps,

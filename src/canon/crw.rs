@@ -44,7 +44,7 @@ use crate::thumbnail::{Data, ThumbDesc};
 use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::Dir;
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 use super::matrices::MATRICES;
 use decompress::Decompress;
@@ -163,7 +163,7 @@ impl RawFileImpl for CrwFile {
         }
     }
 
-    fn load_rawdata(&self, skip_decompression: bool) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompression: bool) -> Result<RawImage> {
         self.container();
         let container = self.container.get().unwrap();
 
@@ -226,7 +226,7 @@ impl RawFileImpl for CrwFile {
                                 view.seek(SeekFrom::Start(pos as u64))?;
                                 let mut data = vec![0; len as usize];
                                 view.read_exact(&mut data)?;
-                                let mut rawdata = RawData::new8(
+                                let mut rawdata = RawImage::with_data8(
                                     x,
                                     y,
                                     component_bit_depth as u16,

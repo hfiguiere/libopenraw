@@ -39,7 +39,7 @@ use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::{Dir, Ifd};
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 macro_rules! panasonic {
     ($id:expr, $model:ident) => {
@@ -835,7 +835,7 @@ impl RawFileImpl for Rw2File {
         }
     }
 
-    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawData> {
+    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawImage> {
         if let Some(cfa) = self.ifd(tiff::IfdType::Raw) {
             let offset: thumbnail::DataOffset =
                 if let Some(offset) = cfa.uint_value(exif::RW2_TAG_RAW_OFFSET) {
@@ -902,7 +902,7 @@ impl RawFileImpl for Rw2File {
             let mut raw_data = match data_type {
                 DataType::CompressedRaw => {
                     let raw = self.container().load_buffer8(offset.offset, offset.len);
-                    RawData::new8(
+                    RawImage::with_data8(
                         width,
                         height,
                         bpc,
@@ -920,7 +920,7 @@ impl RawFileImpl for Rw2File {
                     } else {
                         self.container().load_buffer16(offset.offset, offset.len)
                     };
-                    RawData::new16(
+                    RawImage::with_data16(
                         width,
                         height,
                         bpc,

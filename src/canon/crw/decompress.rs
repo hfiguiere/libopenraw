@@ -25,7 +25,7 @@ use byteorder::ReadBytesExt;
 
 use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
-use crate::{DataType, RawData, Result};
+use crate::{DataType, RawImage, Result};
 
 const FIRST_TREE: [[u8; 29]; 3] = [
     [
@@ -248,7 +248,7 @@ impl Decompress {
         decompressor
     }
 
-    pub(super) fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<RawData> {
+    pub(super) fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<RawImage> {
         let mut data = Vec::with_capacity(self.width as usize * self.height as usize);
 
         let lowbits = if canon_has_lowbits(reader)? { 1 } else { 0 };
@@ -327,7 +327,7 @@ impl Decompress {
             data.extend_from_slice(&outbuf);
         }
 
-        Ok(RawData::new16(
+        Ok(RawImage::with_data16(
             self.width,
             self.height,
             10,

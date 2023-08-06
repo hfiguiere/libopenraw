@@ -40,7 +40,7 @@ use crate::rawfile::ThumbnailStorage;
 use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::{Dir, Ifd};
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 use diffiterator::{CfaIterator, DiffIterator};
 use matrices::MATRICES;
@@ -213,7 +213,7 @@ impl NefFile {
     }
 
     /// Unpack Nikon.
-    fn unpack_nikon(&self, rawdata: RawData) -> Result<RawData> {
+    fn unpack_nikon(&self, rawdata: RawImage) -> Result<RawImage> {
         let mut width = rawdata.width();
         if self.is_d100() {
             width += 6;
@@ -252,7 +252,7 @@ impl NefFile {
         Ok(rawdata)
     }
 
-    fn get_compression_curve(&self, rawdata: &mut RawData) -> Result<CompressionInfo> {
+    fn get_compression_curve(&self, rawdata: &mut RawImage) -> Result<CompressionInfo> {
         self.ifd(tiff::IfdType::MakerNote)
             .ok_or_else(|| {
                 log::error!("No MakerNote");
@@ -368,7 +368,7 @@ impl NefFile {
             })
     }
 
-    fn decompress_nikon_quantized(&self, mut rawdata: RawData) -> Result<RawData> {
+    fn decompress_nikon_quantized(&self, mut rawdata: RawImage) -> Result<RawImage> {
         self.get_compression_curve(&mut rawdata)
             .map_err(|err| {
                 log::error!("Get compression curve failed {}", err);
@@ -466,7 +466,7 @@ impl RawFileImpl for NefFile {
         }
     }
 
-    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         self.ifd(tiff::IfdType::Raw)
             .ok_or_else(|| {
                 log::error!("CFA not found");

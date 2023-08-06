@@ -21,12 +21,12 @@
 
 //! This contain all the `or_bitmapdata_*` APIs.
 
-use crate::{or_unwrap, Bitmap, DataType};
+use crate::{or_unwrap, Bitmap, DataType, Image, RawImage};
 
-use super::{or_data_type, or_error, ORThumbnailRef};
+use super::{or_data_type, or_error};
 
 /// Pointer to a [`Thumbnail`] object exported to the C API.
-pub type ORBitmapDataRef = ORThumbnailRef;
+pub type ORBitmapDataRef = *mut RawImage;
 
 #[no_mangle]
 /// Release `bitmap` of type [`ORBitmapref`], and return an error code.

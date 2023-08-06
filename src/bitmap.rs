@@ -2,7 +2,7 @@
 /*
  * libopenraw - bitmap.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -36,6 +36,9 @@ pub trait Bitmap {
     fn bpc(&self) -> u16;
     /// Image data in 8 bits
     fn data8(&self) -> Option<&[u8]>;
+}
+
+pub trait Image: Bitmap {
     /// Image data in 16 bits
     fn data16(&self) -> Option<&[u16]>;
 }

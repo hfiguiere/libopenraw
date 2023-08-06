@@ -26,11 +26,11 @@ use crate::{
     colour::ColourSpace,
     or_unwrap,
     render::{RenderingOptions, RenderingStage},
-    Bitmap, RawData,
+    Bitmap, Image, RawImage,
 };
 
-/// Pointer to a [`RawData`] object exported to the C API.
-pub type ORRawDataRef = *mut RawData;
+/// Pointer to a [`RawImage`] object exported to the C API.
+pub type ORRawDataRef = *mut RawImage;
 
 #[allow(dead_code)]
 /// The rendering options const for the C API.
@@ -92,7 +92,7 @@ impl From<u32> for RenderingOptions {
 /// Will return an `ORRawDataref` that will need to be freed with
 /// `or_rawdata_release`.
 extern "C" fn or_rawdata_new() -> ORRawDataRef {
-    Box::into_raw(Box::new(RawData::new()))
+    Box::into_raw(Box::new(RawImage::new()))
 }
 
 #[no_mangle]

@@ -37,7 +37,7 @@ use crate::rawfile::ThumbnailStorage;
 use crate::tiff;
 use crate::tiff::IfdType;
 use crate::tiff::{exif, Ifd};
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 use decompress::decompress_olympus;
 use matrices::MATRICES;
@@ -175,7 +175,7 @@ impl OrfFile {
     }
 
     /// Decompress the Olympus RawData. Could be unpack.
-    fn decompress(&self, mut data: RawData) -> RawData {
+    fn decompress(&self, mut data: RawImage) -> RawImage {
         let width = data.width();
         let height = data.height();
 
@@ -292,7 +292,7 @@ impl RawFileImpl for OrfFile {
         }
     }
 
-    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         self.ifd(IfdType::Raw)
             .ok_or(Error::NotFound)
             .and_then(|cfa| {

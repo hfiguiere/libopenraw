@@ -27,7 +27,7 @@ use std::rc::Rc;
 use log::{debug, error};
 use num_enum::TryFromPrimitive;
 
-use super::{Error, RawData, Result, Type, TypeId};
+use super::{Error, RawImage, Result, Type, TypeId};
 use crate::colour::MatrixOrigin;
 use crate::container::RawContainer;
 use crate::factory;
@@ -88,10 +88,10 @@ pub trait RawFileImpl {
     /// Get the ifd with type
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir>;
 
-    /// Load the [`RawData`] and return it.
+    /// Load the [`RawImage`] and return it.
     ///
     /// If `skip_decompress` is true then the decompression will not be performed.
-    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData>;
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage>;
 
     /// Get the builtin colour matrix for this file.
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>>;
@@ -234,7 +234,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
     }
 
     /// Get the RAW data
-    fn raw_data(&self, skip_decompression: bool) -> Result<RawData> {
+    fn raw_data(&self, skip_decompression: bool) -> Result<RawImage> {
         self.load_rawdata(skip_decompression).map(|mut rawdata| {
             for i in 1..2_usize {
                 if let Ok((_, matrix)) = self.colour_matrix(i) {
@@ -247,7 +247,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
     }
 
     /// Render the image.
-    fn rendered_image(&self, options: RenderingOptions) -> Result<Thumbnail> {
+    fn rendered_image(&self, options: RenderingOptions) -> Result<RawImage> {
         let raw_data = self.raw_data(false)?;
         raw_data.rendered_image(options)
     }
@@ -345,7 +345,7 @@ mod test {
 
     use once_cell::unsync::OnceCell;
 
-    use super::{RawData, RawFile, RawFileImpl, ThumbnailStorage};
+    use super::{RawFile, RawFileImpl, RawImage, ThumbnailStorage};
     use crate::bitmap::Bitmap;
     use crate::container::RawContainer;
     use crate::io::View;
@@ -449,7 +449,7 @@ mod test {
             None
         }
 
-        fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawData> {
+        fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawImage> {
             Err(Error::NotFound)
         }
 

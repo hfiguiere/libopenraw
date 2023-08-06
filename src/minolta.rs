@@ -38,7 +38,7 @@ use crate::mosaic::Pattern;
 use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff::{self, exif, Ifd, IfdType};
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 macro_rules! minolta {
     ($id:expr, $model:ident) => {
@@ -224,7 +224,7 @@ impl RawFileImpl for MrwFile {
 
     /// The raw data is after all the blocks. The PRD give some info like
     /// the dimensions and the bits per sample.
-    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         self.container();
         if let Some(container) = self.container.get() {
             let prd = container.prd.as_ref().ok_or(Error::NotFound)?;
@@ -262,7 +262,7 @@ impl RawFileImpl for MrwFile {
             let mut rawdata = if is_compressed {
                 let raw = container.load_buffer8(cfa_offset, cfa_len);
                 if skip_decompress {
-                    RawData::new8(x, y, bps, DataType::CompressedRaw, raw, mosaic)
+                    RawImage::with_data8(x, y, bps, DataType::CompressedRaw, raw, mosaic)
                 } else {
                     let mut unpacked = Vec::with_capacity((x * y) as usize);
                     decompress::unpack_be12to16(&raw, &mut unpacked, tiff::Compression::None)
@@ -270,11 +270,11 @@ impl RawFileImpl for MrwFile {
                             log::error!("RAF failed to unpack {}", err);
                             err
                         })?;
-                    RawData::new16(x, y, 16, DataType::Raw, unpacked, mosaic)
+                    RawImage::with_data16(x, y, 16, DataType::Raw, unpacked, mosaic)
                 }
             } else {
                 let raw = container.load_buffer16_be(cfa_offset, cfa_len);
-                RawData::new16(x, y, bps, DataType::Raw, raw, mosaic)
+                RawImage::with_data16(x, y, bps, DataType::Raw, raw, mosaic)
             };
             if let Some((black, white)) = MATRICES
                 .iter()

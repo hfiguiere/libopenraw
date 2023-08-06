@@ -63,7 +63,7 @@ use byteorder::{BigEndian, ReadBytesExt};
 use super::sliced_buffer::SlicedBuffer;
 use crate::mosaic::Pattern;
 use crate::rawfile::ReadAndSeek;
-use crate::{DataType, Error, RawData, Result};
+use crate::{DataType, Error, RawImage, Result};
 
 const M_SOF0: u8 = 0xc0;
 const M_SOF1: u8 = 0xc1;
@@ -222,7 +222,7 @@ impl LJpeg {
             // On CR2 and untiled DNG.
             dc_info.image_width as u32 * dc_info.num_components as u32
         };
-        // XXX RawData::set_slices?
+        // XXX RawImage::set_slices?
         self.decoder_struct_init(&mut dc_info)?;
         self.huff_decoder_init(&mut dc_info)?;
         self.decode_image(&mut dc_info, reader, &mut output)?;
@@ -237,10 +237,10 @@ impl LJpeg {
         })
     }
 
-    /// Decompress the LJPEG stream into a RawData.
-    pub fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<RawData> {
+    /// Decompress the LJPEG stream into a RawImage.
+    pub fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<RawImage> {
         let tile = self.decompress_buffer(reader, false)?;
-        let mut rawdata = RawData::new16(
+        let mut rawdata = RawImage::with_data16(
             tile.width,
             tile.height,
             tile.bpc,

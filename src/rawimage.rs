@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 /*
- * libopenraw - rawdata.rs
+ * libopenraw - rawimage.rs
  *
  * Copyright (C) 2022-2023 Hubert Figuière
  *
@@ -21,7 +21,7 @@
 
 //! RAW data
 
-use super::{Bitmap, DataType, Error, Rect, Result, Thumbnail};
+use super::{Bitmap, DataType, Error, Image, Rect, Result};
 use crate::bitmap::Data;
 use crate::capi::or_error;
 use crate::mosaic::Pattern;
@@ -33,7 +33,7 @@ use crate::{tiff, ColourSpace};
 
 /// RAW Data extracted from the file.
 #[derive(Debug, Default)]
-pub struct RawData {
+pub struct RawImage {
     /// Thumbnail width
     width: u32,
     /// Thumbnail height
@@ -60,13 +60,13 @@ pub struct RawData {
     matrices: [Vec<f64>; 2],
 }
 
-impl RawData {
+impl RawImage {
     pub fn new() -> Self {
         Self::default()
     }
 
-    /// New `RawData` with 8 bit data.
-    pub fn new8(
+    /// New `RawImage` with 8 bit data.
+    pub fn with_data8(
         width: u32,
         height: u32,
         bpc: u16,
@@ -74,7 +74,7 @@ impl RawData {
         data: Vec<u8>,
         mosaic_pattern: Pattern,
     ) -> Self {
-        RawData {
+        RawImage {
             width,
             height,
             bpc,
@@ -99,7 +99,7 @@ impl RawData {
         tile_size: (u32, u32),
         mosaic_pattern: Pattern,
     ) -> Self {
-        RawData {
+        RawImage {
             width,
             height,
             bpc,
@@ -115,8 +115,8 @@ impl RawData {
         }
     }
 
-    /// New `RawData` with 16 bit data.
-    pub fn new16(
+    /// New `RawImage` with 16 bit data.
+    pub fn with_data16(
         width: u32,
         height: u32,
         bpc: u16,
@@ -124,7 +124,7 @@ impl RawData {
         data: Vec<u16>,
         mosaic_pattern: Pattern,
     ) -> Self {
-        RawData {
+        RawImage {
             width,
             height,
             bpc,
@@ -236,7 +236,7 @@ impl RawData {
         }
     }
 
-    pub fn replace_data(mut self, data: Vec<u16>) -> RawData {
+    pub fn replace_data(mut self, data: Vec<u16>) -> RawImage {
         self.data = Data::Data16(data);
 
         self
@@ -254,7 +254,7 @@ impl RawData {
 
     /// Render the image using `options`. See `[render::RenderingOptions]`
     /// May return `Error::Unimplemented`.
-    pub fn rendered_image(&self, options: RenderingOptions) -> Result<Thumbnail> {
+    pub fn rendered_image(&self, options: RenderingOptions) -> Result<RawImage> {
         if options.stage != RenderingStage::Interpolation {
             return Err(Error::Unimplemented);
         }
@@ -292,12 +292,13 @@ impl RawData {
                     // Notably, the `image` crate doesn't like it.
                     // The assumption is that the resize should shrink the buffer.
                     data.resize((3 * out_x * out_y) as usize, 0);
-                    Ok(Thumbnail::with_data16(
+                    Ok(RawImage::with_data16(
                         out_x,
                         out_y,
                         self.bpc(),
                         DataType::PixmapRgb16,
                         data,
+                        Pattern::Empty,
                     ))
                 }
             }
@@ -309,12 +310,13 @@ impl RawData {
                 if err != or_error::NONE {
                     Err(err.into())
                 } else {
-                    Ok(Thumbnail::with_data16(
+                    Ok(RawImage::with_data16(
                         x,
                         y,
                         self.bpc(),
                         DataType::PixmapRgb16,
                         data,
+                        Pattern::Empty,
                     ))
                 }
             }
@@ -323,7 +325,7 @@ impl RawData {
     }
 }
 
-impl Bitmap for RawData {
+impl Bitmap for RawImage {
     fn data_type(&self) -> DataType {
         self.data_type
     }
@@ -353,7 +355,9 @@ impl Bitmap for RawData {
             _ => None,
         }
     }
+}
 
+impl Image for RawImage {
     fn data16(&self) -> Option<&[u16]> {
         match self.data {
             Data::Data16(ref d) => Some(d),

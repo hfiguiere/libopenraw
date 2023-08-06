@@ -24,7 +24,7 @@
 use rayon::prelude::*;
 
 use crate::bitmap::Bitmap;
-use crate::{DataType, RawData, Result};
+use crate::{DataType, RawImage, Result};
 
 use super::ljpeg::{LJpeg, Tile};
 
@@ -77,8 +77,8 @@ impl TiledLJpeg {
         buffer
     }
 
-    /// Decompress the RawData into a new RawData.
-    pub fn decompress(&self, rawdata: RawData) -> Result<RawData> {
+    /// Decompress the RawImage into a new RawImage.
+    pub fn decompress(&self, rawdata: RawImage) -> Result<RawImage> {
         if let Some(tiles) = rawdata.tile_data() {
             let tile_size = rawdata.tile_size();
             let dec_tiles: Vec<Option<Tile>> = tiles

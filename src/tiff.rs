@@ -37,7 +37,7 @@ use crate::io;
 use crate::jpeg;
 use crate::mosaic::Pattern;
 use crate::thumbnail;
-use crate::{DataType, Error, RawData, Result, Type, TypeId};
+use crate::{DataType, Error, RawImage, Result, Type, TypeId};
 pub(crate) use container::{Container, DirIterator};
 pub(crate) use dir::Dir;
 pub(crate) use entry::Entry;
@@ -205,7 +205,7 @@ pub(crate) fn tiff_get_rawdata(
     container: &Container,
     dir: &Dir,
     file_type: Type,
-) -> Result<RawData> {
+) -> Result<RawImage> {
     let mut offset = 0_u32;
 
     let mut bpc = dir
@@ -352,7 +352,7 @@ pub(crate) fn tiff_get_rawdata(
                     }
                 })
                 .collect();
-            RawData::new_tiled(
+            RawImage::new_tiled(
                 x,
                 y,
                 actual_bpc,
@@ -363,7 +363,7 @@ pub(crate) fn tiff_get_rawdata(
             )
         } else {
             let data = container.load_buffer8(offset as u64, byte_len as u64);
-            RawData::new8(
+            RawImage::with_data8(
                 x,
                 y,
                 actual_bpc,
@@ -378,7 +378,7 @@ pub(crate) fn tiff_get_rawdata(
         } else {
             container.load_buffer16_le(offset as u64, byte_len as u64)
         };
-        RawData::new16(
+        RawImage::with_data16(
             x,
             y,
             actual_bpc,
@@ -396,7 +396,7 @@ pub(crate) fn tiff_get_rawdata(
             offset as u64,
             byte_len as usize,
         )?;
-        RawData::new16(
+        RawImage::with_data16(
             x,
             y,
             actual_bpc,
@@ -407,7 +407,7 @@ pub(crate) fn tiff_get_rawdata(
     } else if bpc == 8 {
         let data = container.load_buffer8(offset as u64, byte_len as u64);
         // XXX is this efficient?
-        RawData::new16(
+        RawImage::with_data16(
             x,
             y,
             bpc,

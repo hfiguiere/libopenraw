@@ -39,7 +39,7 @@ use crate::rawfile::ThumbnailStorage;
 use crate::ricoh;
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 lazy_static::lazy_static! {
     /// Make to TypeId map for DNG files.
@@ -169,7 +169,7 @@ impl DngFile {
         })
     }
 
-    fn decompress(rawdata: RawData) -> Result<RawData> {
+    fn decompress(rawdata: RawImage) -> Result<RawImage> {
         match rawdata.data_type() {
             DataType::Raw => Ok(rawdata),
             DataType::CompressedRaw => match rawdata.compression() {
@@ -275,7 +275,7 @@ impl RawFileImpl for DngFile {
         }
     }
 
-    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         self.ifd(tiff::IfdType::Raw)
             .ok_or_else(|| {
                 log::error!("DNG: couldn't find CFA ifd");

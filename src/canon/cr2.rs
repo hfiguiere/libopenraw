@@ -35,7 +35,7 @@ use crate::mosaic::Pattern;
 use crate::rawfile::ThumbnailStorage;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
-use crate::{DataType, Dump, Error, RawData, RawFile, RawFileImpl, Result, Type, TypeId};
+use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
 use super::matrices::MATRICES;
 
@@ -71,14 +71,14 @@ impl Cr2File {
         byte_len: u64,
         slices: &[u32],
         skip_decompress: bool,
-    ) -> Result<RawData> {
+    ) -> Result<RawImage> {
         let data = self.container().load_buffer8(offset, byte_len);
         if (data.len() as u64) != byte_len {
             log::warn!("Size mismatch for data. Moving on");
         }
 
         if skip_decompress {
-            Ok(RawData::new8(
+            Ok(RawImage::with_data8(
                 width,
                 height,
                 8,
@@ -99,8 +99,8 @@ impl Cr2File {
         }
     }
 
-    /// Load the `RawData` for actual CR2 files.
-    fn load_cr2_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
+    /// Load the `RawImage` for actual CR2 files.
+    fn load_cr2_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         self.container();
         let container = self.container.get().unwrap();
 
@@ -241,7 +241,7 @@ impl RawFileImpl for Cr2File {
         }
     }
 
-    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawData> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         if self.is_cr2() {
             return self.load_cr2_rawdata(skip_decompress);
         }
