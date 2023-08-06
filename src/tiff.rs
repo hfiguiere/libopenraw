@@ -302,6 +302,9 @@ pub(crate) fn tiff_get_rawdata(
         })
         .unwrap_or(Compression::None);
 
+    let linearization_table = dir
+        .entry(exif::DNG_TAG_LINEARIZATION_TABLE)
+        .and_then(|entry| entry.value_array::<u16>(dir.endian()));
     let data_type = match compression {
         Compression::None | Compression::NikonPack | Compression::PentaxPack => DataType::Raw,
         _ => DataType::CompressedRaw,
@@ -420,6 +423,7 @@ pub(crate) fn tiff_get_rawdata(
         return Err(Error::InvalidFormat);
     };
 
+    rawdata.set_linearization_table(linearization_table);
     // XXX maybe we don't need the if
     rawdata.set_compression(if data_type == DataType::CompressedRaw {
         compression

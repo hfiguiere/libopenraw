@@ -58,6 +58,8 @@ pub struct RawImage {
     mosaic_pattern: Pattern,
     /// Colour matrices
     matrices: [Vec<f64>; 2],
+    /// Linearization table. len = 2^bpc
+    linearization_table: Option<Vec<u16>>,
 }
 
 impl RawImage {
@@ -87,6 +89,7 @@ impl RawImage {
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
             matrices: [vec![], vec![]],
+            linearization_table: None,
         }
     }
 
@@ -112,6 +115,7 @@ impl RawImage {
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
             matrices: [vec![], vec![]],
+            linearization_table: None,
         }
     }
 
@@ -137,6 +141,7 @@ impl RawImage {
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
             matrices: [vec![], vec![]],
+            linearization_table: None,
         }
     }
 
@@ -159,7 +164,17 @@ impl RawImage {
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
             matrices: [vec![], vec![]],
+            linearization_table: None,
         }
+    }
+
+    /// Get the linearization table if there is one.
+    pub fn linearization_table(&self) -> Option<&Vec<u16>> {
+        self.linearization_table.as_ref()
+    }
+
+    pub(crate) fn set_linearization_table(&mut self, table: Option<Vec<u16>>) {
+        self.linearization_table = table;
     }
 
     /// The sensor active area.
@@ -275,14 +290,31 @@ impl RawImage {
     }
 
     /// Simple linearize based on black and white
+    ///
+    /// Linearization will:
+    /// - lookup the linearization table to directly map indexed values:
+    ///   this is notable on Leica M8 files.
+    /// - scale by range / white
+    ///
     fn linearize(&self, mut buffer: ImageBuffer<u16>) -> ImageBuffer<u16> {
+        log::debug!("linearize");
         let white = self.white();
         let black = self.black();
         let range = white - black;
-        buffer
-            .data
-            .iter_mut()
-            .for_each(|v| *v = ((*v as f64 / range as f64) * u16::MAX as f64).floor() as u16);
+        let scale = range as f64 / white as f64;
+        let table = if self
+            .linearization_table
+            .as_ref()
+            .map(|t| t.len() == (1 << self.bpc()))
+            .unwrap_or(false)
+        {
+            self.linearization_table.as_ref()
+        } else {
+            None
+        };
+        buffer.data.iter_mut().for_each(|v| {
+            *v = (table.map(|t| t[*v as usize] as f64).unwrap_or(*v as f64) * scale).round() as u16
+        });
 
         buffer
     }
@@ -349,21 +381,23 @@ impl RawImage {
         }
         let x = self.width();
         let y = self.height();
-
+        let mut pattern = self.mosaic_pattern().clone();
         let data16 =
             ImageBuffer::with_data(self.data16().ok_or(Error::InvalidFormat)?.to_vec(), x, y);
         let mut data16 = self.linearize(data16);
         if options.stage >= RenderingStage::Interpolation {
             data16 = self.interpolate(&data16)?;
+            pattern = Pattern::Empty;
         }
 
         // XXX make sure to copy over other data from the rawimage.
-        Ok(RawImage::with_image_buffer(
-            data16,
-            self.bpc(),
-            DataType::PixmapRgb16,
-            Pattern::Empty,
-        ))
+        let mut image = RawImage::with_image_buffer(data16, 16, DataType::PixmapRgb16, pattern);
+        if options.stage >= RenderingStage::Linearization {
+            image.set_black(0);
+            image.set_white(self.white());
+        }
+
+        Ok(image)
     }
 }
 

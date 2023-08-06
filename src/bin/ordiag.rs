@@ -152,6 +152,9 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
         } else {
             println!("\tNo 16bits Raw data found.");
         }
+        if rawdata.linearization_table().is_some() {
+            println!("\tHas a linearization table.");
+        }
         if let Ok((origin, _)) = rawfile.colour_matrix(1) {
             println!("\tColour Matrix Origin: {origin:?}");
         }
