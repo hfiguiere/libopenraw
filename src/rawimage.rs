@@ -22,7 +22,7 @@
 //! RAW data
 
 use super::{Bitmap, DataType, Error, Image, Rect, Result};
-use crate::bitmap::Data;
+use crate::bitmap::{Data, ImageBuffer};
 use crate::capi::or_error;
 use crate::mosaic::Pattern;
 use crate::render::RenderingOptions;
@@ -130,6 +130,28 @@ impl RawImage {
             bpc,
             data_type,
             data: Data::Data16(data),
+            active_area: None,
+            white: 0,
+            black: 0,
+            compression: tiff::Compression::Unknown,
+            photom_int: exif::PhotometricInterpretation::CFA,
+            mosaic_pattern,
+            matrices: [vec![], vec![]],
+        }
+    }
+
+    pub(crate) fn with_image_buffer(
+        buffer: ImageBuffer<u16>,
+        bpc: u16,
+        data_type: DataType,
+        mosaic_pattern: Pattern,
+    ) -> Self {
+        RawImage {
+            width: buffer.width,
+            height: buffer.height,
+            bpc,
+            data_type,
+            data: Data::Data16(buffer.data),
             active_area: None,
             white: 0,
             black: 0,
@@ -252,31 +274,32 @@ impl RawImage {
         &self.mosaic_pattern
     }
 
-    /// Render the image using `options`. See `[render::RenderingOptions]`
-    /// May return `Error::Unimplemented`.
-    pub fn rendered_image(&self, options: RenderingOptions) -> Result<RawImage> {
-        if options.stage != RenderingStage::Interpolation {
-            return Err(Error::Unimplemented);
-        }
-        if options.target != ColourSpace::Camera {
-            return Err(Error::Unimplemented);
-        }
-        if self.data_type() != DataType::Raw {
-            return Err(Error::InvalidFormat);
-        }
+    /// Simple linearize based on black and white
+    fn linearize(&self, mut buffer: ImageBuffer<u16>) -> ImageBuffer<u16> {
+        let white = self.white();
+        let black = self.black();
+        let range = white - black;
+        buffer
+            .data
+            .iter_mut()
+            .for_each(|v| *v = ((*v as f64 / range as f64) * u16::MAX as f64).floor() as u16);
+
+        buffer
+    }
+
+    /// Interplate the image buffer. Return a new buffer if successful.
+    fn interpolate(&self, buffer: &ImageBuffer<u16>) -> Result<ImageBuffer<u16>> {
         let pattern = self.mosaic_pattern();
         let x = self.width();
         let y = self.height();
-
         match self.photom_int {
             exif::PhotometricInterpretation::CFA => {
                 let mut out_x = 0_u32;
                 let mut out_y = 0_u32;
                 let mut data = vec![0_u16; (3 * x * y) as usize];
-                let input = self.data16().ok_or(Error::InvalidFormat)?;
                 let err = unsafe {
                     render::bimedian_demosaic(
-                        input.as_ptr(),
+                        buffer.data.as_ptr(),
                         x,
                         y,
                         pattern.into(),
@@ -292,36 +315,55 @@ impl RawImage {
                     // Notably, the `image` crate doesn't like it.
                     // The assumption is that the resize should shrink the buffer.
                     data.resize((3 * out_x * out_y) as usize, 0);
-                    Ok(RawImage::with_data16(
-                        out_x,
-                        out_y,
-                        self.bpc(),
-                        DataType::PixmapRgb16,
-                        data,
-                        Pattern::Empty,
-                    ))
+                    Ok(ImageBuffer::with_data(data, out_x, out_y))
                 }
             }
             exif::PhotometricInterpretation::LinearRaw => {
                 let mut data = vec![0_u16; (3 * x * y) as usize];
-                let input = self.data16().ok_or(Error::InvalidFormat)?;
-                let err =
-                    unsafe { render::grayscale_to_rgb(input.as_ptr(), x, y, data.as_mut_ptr()) };
+                let err = unsafe {
+                    render::grayscale_to_rgb(buffer.data.as_ptr(), x, y, data.as_mut_ptr())
+                };
                 if err != or_error::NONE {
                     Err(err.into())
                 } else {
-                    Ok(RawImage::with_data16(
-                        x,
-                        y,
-                        self.bpc(),
-                        DataType::PixmapRgb16,
-                        data,
-                        Pattern::Empty,
-                    ))
+                    Ok(ImageBuffer::with_data(data, x, y))
                 }
             }
             _ => Err(Error::InvalidFormat),
         }
+    }
+
+    /// Render the image using `options`. See `[render::RenderingOptions]`
+    /// May return `Error::Unimplemented`.
+    pub fn rendered_image(&self, options: RenderingOptions) -> Result<RawImage> {
+        // XXX fix to properly handle the Raw stage.
+        if options.stage == RenderingStage::Raw || options.stage == RenderingStage::Colour {
+            return Err(Error::Unimplemented);
+        }
+        // XXX remove when the colour stage is implemented
+        if options.target != ColourSpace::Camera {
+            return Err(Error::Unimplemented);
+        }
+        if self.data_type() != DataType::Raw {
+            return Err(Error::InvalidFormat);
+        }
+        let x = self.width();
+        let y = self.height();
+
+        let data16 =
+            ImageBuffer::with_data(self.data16().ok_or(Error::InvalidFormat)?.to_vec(), x, y);
+        let mut data16 = self.linearize(data16);
+        if options.stage >= RenderingStage::Interpolation {
+            data16 = self.interpolate(&data16)?;
+        }
+
+        // XXX make sure to copy over other data from the rawimage.
+        Ok(RawImage::with_image_buffer(
+            data16,
+            self.bpc(),
+            DataType::PixmapRgb16,
+            Pattern::Empty,
+        ))
     }
 }
 

@@ -131,6 +131,9 @@ pub enum Error {
     BitReaderError(#[from] bitreader::BitReaderError),
     #[error("Invalid address")]
     InvalidAddress,
+    /// Other error.
+    #[error("Other error: {0}")]
+    Other(String),
     /// Unknown error: placeholder for anything else.
     #[error("Unknown error")]
     Unknown,

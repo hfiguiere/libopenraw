@@ -27,8 +27,8 @@ use crate::{
 };
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, Default, Eq, PartialEq, TryFromPrimitive)]
-/// Rendering stage
+#[derive(Copy, Clone, Debug, Default, Eq, PartialEq, PartialOrd, TryFromPrimitive)]
+/// Rendering stage. The values are also the order in the pipeline.
 pub enum RenderingStage {
     /// The raw data from the file
     Raw = 0,
