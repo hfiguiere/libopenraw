@@ -34,6 +34,7 @@ use crate::factory;
 use crate::identify;
 use crate::io;
 use crate::metadata;
+use crate::render::RenderingOptions;
 use crate::thumbnail::{ThumbDesc, Thumbnail};
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
@@ -246,9 +247,9 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
     }
 
     /// Render the image.
-    fn rendered_image(&self) -> Result<Thumbnail> {
+    fn rendered_image(&self, options: RenderingOptions) -> Result<Thumbnail> {
         let raw_data = self.raw_data(false)?;
-        raw_data.rendered_image()
+        raw_data.rendered_image(options)
     }
 
     /// Get the main IFD

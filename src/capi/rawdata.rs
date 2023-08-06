@@ -2,7 +2,7 @@
 /*
  * libopenraw - capi/rawdata.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,11 +19,72 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+use num_enum::TryFromPrimitive;
+
 use super::{or_cfa_pattern, or_data_type, or_error, ORMosaicInfoRef};
-use crate::{or_unwrap, Bitmap, RawData};
+use crate::{
+    colour::ColourSpace,
+    or_unwrap,
+    render::{RenderingOptions, RenderingStage},
+    Bitmap, RawData,
+};
 
 /// Pointer to a [`RawData`] object exported to the C API.
 pub type ORRawDataRef = *mut RawData;
+
+#[allow(dead_code)]
+/// The rendering options const for the C API.
+pub(crate) mod or_rendering_options {
+    use crate::{ColourSpace, RenderingStage};
+
+    /// The mask for the target coulour space. 16 possible values.
+    pub const OR_RENDERING_TARGET_CS_MASK: u32 = 0x0000000f;
+    /// Keep the camera colour space (unadjusted demosaic) (default).
+    pub const OR_RENDERING_TARGET_CAMERA_CS: u32 = ColourSpace::Camera as u32;
+    /// Render to XYZ colour space.
+    pub const OR_RENDERING_TARGET_XYZ_CS: u32 = ColourSpace::XYZ as u32;
+    /// Render to sRGB colour space.
+    pub const OR_RENDERING_TARGET_SRGB_CS: u32 = ColourSpace::SRgb as u32;
+
+    /// The mask for the stage
+    pub const OR_RENDERING_STAGE_MASK: u32 = 0x00000030;
+    /// The number of bits to shift in or out.
+    pub const OR_RENDERING_STAGE_BIT_SHIFT: u32 = 4;
+    /// Raw stage
+    pub const OR_RENDERING_STAGE_RAW: u32 =
+        (RenderingStage::Raw as u32) << OR_RENDERING_STAGE_BIT_SHIFT;
+    /// Linearization stage
+    pub const OR_RENDERING_STAGE_LINEAR: u32 =
+        (RenderingStage::Linearization as u32) << OR_RENDERING_STAGE_BIT_SHIFT;
+    /// Interpolation stage
+    pub const OR_RENDERING_STAGE_INTERP: u32 =
+        (RenderingStage::Interpolation as u32) << OR_RENDERING_STAGE_BIT_SHIFT;
+    /// Colour stage
+    pub const OR_RENDERING_STAGE_COLOUR: u32 =
+        (RenderingStage::Colour as u32) << OR_RENDERING_STAGE_BIT_SHIFT;
+
+    /// Default is SRgb, Interpolation stage.
+    pub const OR_RENDERING_OPTIONS_DEFAULT: u32 =
+        OR_RENDERING_TARGET_SRGB_CS + OR_RENDERING_STAGE_INTERP;
+}
+
+impl From<u32> for RenderingOptions {
+    fn from(value: u32) -> RenderingOptions {
+        use or_rendering_options::*;
+
+        let mut options = RenderingOptions::default();
+        if let Ok(cs) = ColourSpace::try_from_primitive(value & OR_RENDERING_TARGET_CS_MASK) {
+            options = options.with_target(cs);
+        }
+        if let Ok(stage) = RenderingStage::try_from_primitive(
+            (value & OR_RENDERING_STAGE_MASK) >> OR_RENDERING_STAGE_BIT_SHIFT,
+        ) {
+            options = options.with_stage(stage);
+        }
+
+        options
+    }
+}
 
 #[no_mangle]
 /// Create a new `RawDataRef`

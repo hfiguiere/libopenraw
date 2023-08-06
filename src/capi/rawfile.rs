@@ -27,6 +27,7 @@ use std::os::raw::c_char;
 use std::os::unix::ffi::OsStrExt;
 use std::rc::Rc;
 
+use crate::render::RenderingOptions;
 use crate::tiff::exif;
 use crate::{or_unwrap, rawfile_from_file, rawfile_from_io, RawFile, Type};
 
@@ -237,13 +238,14 @@ extern "C" fn or_rawfile_get_metavalue(
 /// Get the rendered image. The returned ORBitmapDataRef must be freed.
 extern "C" fn or_rawfile_get_rendered_image(
     rawfile: ORRawFileRef,
-    _options: u32,
+    options: u32,
     error: *mut or_error,
 ) -> ORBitmapDataRef {
+    let options = RenderingOptions::from(options);
     or_unwrap!(rawfile, std::ptr::null_mut(), {
         rawfile
             .0
-            .rendered_image()
+            .rendered_image(options)
             .map(|r| Box::into_raw(Box::new(r)))
             .unwrap_or_else(|e| {
                 if !error.is_null() {

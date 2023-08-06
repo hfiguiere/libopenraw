@@ -25,10 +25,11 @@ use super::{Bitmap, DataType, Error, Rect, Result, Thumbnail};
 use crate::bitmap::Data;
 use crate::capi::or_error;
 use crate::mosaic::Pattern;
-use crate::render;
-use crate::tiff;
+use crate::render::RenderingOptions;
+use crate::render::{self, RenderingStage};
 use crate::tiff::exif;
 use crate::utils;
+use crate::{tiff, ColourSpace};
 
 /// RAW Data extracted from the file.
 #[derive(Debug, Default)]
@@ -251,7 +252,15 @@ impl RawData {
         &self.mosaic_pattern
     }
 
-    pub fn rendered_image(&self) -> Result<Thumbnail> {
+    /// Render the image using `options`. See `[render::RenderingOptions]`
+    /// May return `Error::Unimplemented`.
+    pub fn rendered_image(&self, options: RenderingOptions) -> Result<Thumbnail> {
+        if options.stage != RenderingStage::Interpolation {
+            return Err(Error::Unimplemented);
+        }
+        if options.target != ColourSpace::Camera {
+            return Err(Error::Unimplemented);
+        }
         if self.data_type() != DataType::Raw {
             return Err(Error::InvalidFormat);
         }

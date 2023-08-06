@@ -24,6 +24,7 @@
 mod matrix;
 
 pub use matrix::BuiltinMatrix;
+use num_enum::TryFromPrimitive;
 
 #[repr(C)]
 #[derive(Debug)]
@@ -36,4 +37,19 @@ pub enum MatrixOrigin {
     Builtin = 1,
     /// Colour matrix provided by file.
     Provided = 2,
+}
+
+#[repr(u32)]
+#[derive(Copy, Clone, Debug, Eq, TryFromPrimitive, PartialEq)]
+/// The colour space to use.
+pub enum ColourSpace {
+    #[num_enum(default)]
+    /// Unknown, likely an error
+    Unknown = 0,
+    /// Camera colour space.
+    Camera = 1,
+    /// XYZ colour space.
+    XYZ = 2,
+    /// Standard RGB.
+    SRgb = 3,
 }

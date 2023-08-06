@@ -23,7 +23,7 @@ use getopts::Options;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
 
-use libopenraw::{rawfile_from_file, Bitmap};
+use libopenraw::{rawfile_from_file, Bitmap, RenderingOptions};
 
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -65,7 +65,8 @@ fn process_file(p: &str, output: Option<&String>) -> libopenraw::Result<()> {
     if let Ok(rawfile) = rawfile_from_file(p, None) {
         log::info!("Rendering raw file {}", p);
 
-        let rendered_image = rawfile.rendered_image()?;
+        let options = RenderingOptions::default();
+        let rendered_image = rawfile.rendered_image(options)?;
         if let Some(ref output) = output {
             println!(
                 "output {} x {}",

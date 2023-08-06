@@ -58,10 +58,12 @@ mod thumbnail;
 pub mod tiff;
 
 pub use bitmap::{Bitmap, Rect};
+pub use colour::ColourSpace;
 pub use dump::Dump;
 pub use rawdata::RawData;
 pub use rawfile::RawFile;
 pub use rawfile::RawFileImpl;
+pub use render::{RenderingOptions, RenderingStage};
 pub use thumbnail::Thumbnail;
 pub use tiff::Ifd;
 
@@ -82,6 +84,9 @@ pub enum Error {
     // No error. For compatibility with `capi::or_error`
     #[error("No error")]
     None,
+    /// This is unimplemented
+    #[error("Unimplemented")]
+    Unimplemented,
     /// File format is unrecognized
     #[error("Unrecognized format")]
     UnrecognizedFormat,
