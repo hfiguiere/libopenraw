@@ -33,11 +33,15 @@ use crate::container::RawContainer;
 use crate::io::Viewer;
 use crate::mosaic::Pattern;
 use crate::mp4;
+use crate::rawfile::RawFileHandleType;
 use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::Dir;
-use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Rect, Result, Type, TypeId};
+use crate::{
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Type,
+    TypeId,
+};
 
 use super::matrices::MATRICES;
 
@@ -51,8 +55,8 @@ pub(crate) struct Cr3File {
 }
 
 impl Cr3File {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
-        Rc::new(Cr3File {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> RawFileHandle {
+        RawFileHandleType::new(Cr3File {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

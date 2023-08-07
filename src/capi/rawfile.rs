@@ -25,11 +25,10 @@ use std::ffi::{CStr, OsStr};
 use std::os::raw::c_char;
 // This is not portable to Windows
 use std::os::unix::ffi::OsStrExt;
-use std::rc::Rc;
 
 use crate::render::RenderingOptions;
 use crate::tiff::exif;
-use crate::{or_unwrap, rawfile_from_file, rawfile_from_io, RawFile, Type};
+use crate::{or_unwrap, rawfile_from_file, rawfile_from_io, RawFileHandle, Type};
 
 use super::iterator::ORMetadataIterator;
 use super::metavalue::ORMetaValue;
@@ -50,7 +49,7 @@ pub type or_rawfile_type = u32;
 /// Wrapper for the [RawFile] trait. This is because we can't expose
 /// traits, and also we need to refcount it.
 #[derive(Clone)]
-pub struct ORRawFile(Rc<dyn RawFile>);
+pub struct ORRawFile(RawFileHandle);
 /// Pointer to a [`ORRawFile`] object wrapper exported to the C API.
 pub type ORRawFileRef = *mut ORRawFile;
 

@@ -36,11 +36,13 @@ use crate::bitmap::Bitmap;
 use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
-use crate::rawfile::ThumbnailStorage;
+use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::{Dir, Ifd};
-use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+};
 
 use diffiterator::{CfaIterator, DiffIterator};
 use matrices::MATRICES;
@@ -188,8 +190,8 @@ pub(crate) struct NefFile {
 }
 
 impl NefFile {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
-        Rc::new(NefFile {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> RawFileHandle {
+        RawFileHandleType::new(NefFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

@@ -35,12 +35,14 @@ use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
 use crate::mosaic::Pattern;
-use crate::rawfile::ThumbnailStorage;
+use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::thumbnail;
 use crate::thumbnail::{Data, DataOffset};
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
-use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+};
 
 use matrices::MATRICES;
 
@@ -149,8 +151,8 @@ pub(crate) struct RafFile {
 }
 
 impl RafFile {
-    pub fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
-        Rc::new(RafFile {
+    pub fn factory(reader: Rc<Viewer>) -> RawFileHandle {
+        RawFileHandleType::new(RafFile {
             reader,
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),

@@ -32,10 +32,13 @@ use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
 use crate::mosaic::Pattern;
+use crate::rawfile::RawFileHandleType;
 use crate::rawfile::ThumbnailStorage;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
-use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+};
 
 use super::matrices::MATRICES;
 
@@ -49,8 +52,8 @@ pub(crate) struct Cr2File {
 }
 
 impl Cr2File {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
-        Rc::new(Cr2File {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> RawFileHandle {
+        RawFileHandleType::new(Cr2File {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

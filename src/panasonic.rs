@@ -34,12 +34,14 @@ use crate::io::Viewer;
 use crate::jpeg;
 use crate::leica;
 use crate::mosaic::Pattern;
-use crate::rawfile::ThumbnailStorage;
+use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::{Dir, Ifd};
-use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+};
 
 macro_rules! panasonic {
     ($id:expr, $model:ident) => {
@@ -690,8 +692,8 @@ pub(crate) struct Rw2File {
 }
 
 impl Rw2File {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
-        Rc::new(Rw2File {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> RawFileHandle {
+        RawFileHandleType::new(Rw2File {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

@@ -32,11 +32,14 @@ use once_cell::unsync::OnceCell;
 use crate::camera_ids::vendor;
 use crate::container::RawContainer;
 use crate::io::Viewer;
+use crate::rawfile::RawFileHandleType;
 use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
-use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+};
 
 #[derive(Debug)]
 /// JPEG file
@@ -48,8 +51,8 @@ pub(crate) struct JpegFile {
 }
 
 impl JpegFile {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
-        Rc::new(JpegFile {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> RawFileHandle {
+        RawFileHandleType::new(JpegFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

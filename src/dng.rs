@@ -35,11 +35,13 @@ use crate::decompress;
 use crate::io::Viewer;
 use crate::leica;
 use crate::pentax;
-use crate::rawfile::ThumbnailStorage;
+use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::ricoh;
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
-use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+};
 
 lazy_static::lazy_static! {
     /// Make to TypeId map for DNG files.
@@ -161,8 +163,8 @@ pub(crate) struct DngFile {
 }
 
 impl DngFile {
-    pub fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
-        Rc::new(DngFile {
+    pub fn factory(reader: Rc<Viewer>) -> RawFileHandle {
+        RawFileHandleType::new(DngFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

@@ -32,11 +32,14 @@ use crate::camera_ids::vendor;
 use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
+use crate::rawfile::RawFileHandleType;
 use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Ifd, IfdType};
-use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+};
 
 /// The MakerNote tag names. It's actually the same as Olympus.
 pub(crate) use crate::olympus::MNOTE_TAG_NAMES;
@@ -85,8 +88,8 @@ pub(crate) struct ErfFile {
 }
 
 impl ErfFile {
-    pub fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
-        Rc::new(ErfFile {
+    pub fn factory(reader: Rc<Viewer>) -> RawFileHandle {
+        RawFileHandleType::new(ErfFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

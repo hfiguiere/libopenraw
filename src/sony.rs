@@ -30,11 +30,11 @@ use crate::camera_ids::{hasselblad, vendor};
 use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
-use crate::rawfile::ThumbnailStorage;
+use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::Dir;
-use crate::{Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId};
 
 macro_rules! sony {
     ($id:expr, $model:ident) => {
@@ -725,8 +725,8 @@ pub(crate) struct ArwFile {
 }
 
 impl ArwFile {
-    pub(crate) fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
-        Rc::new(ArwFile {
+    pub(crate) fn factory(reader: Rc<Viewer>) -> RawFileHandle {
+        RawFileHandleType::new(ArwFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),

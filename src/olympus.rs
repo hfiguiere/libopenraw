@@ -33,11 +33,13 @@ use crate::bitmap::{Bitmap, Rect};
 use crate::container;
 use crate::container::RawContainer;
 use crate::io::Viewer;
-use crate::rawfile::ThumbnailStorage;
+use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::tiff;
 use crate::tiff::IfdType;
 use crate::tiff::{exif, Ifd};
-use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+};
 
 use decompress::decompress_olympus;
 use matrices::MATRICES;
@@ -141,8 +143,8 @@ pub(crate) struct OrfFile {
 }
 
 impl OrfFile {
-    pub fn factory(reader: Rc<Viewer>) -> Rc<dyn RawFile> {
-        Rc::new(OrfFile {
+    pub fn factory(reader: Rc<Viewer>) -> RawFileHandle {
+        RawFileHandleType::new(OrfFile {
             reader,
             type_id: OnceCell::new(),
             container: OnceCell::new(),
