@@ -328,6 +328,7 @@ lazy_static::lazy_static! {
     ];
 }
 
+#[derive(Debug)]
 pub(crate) struct PefFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,

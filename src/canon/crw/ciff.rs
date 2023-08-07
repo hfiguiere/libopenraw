@@ -165,6 +165,7 @@ impl Tag {
 
 type CameraSettings = Vec<u16>;
 
+#[derive(Debug)]
 pub(crate) struct ImageSpec {
     /// Width (horizontal) in pixel.
     pub(crate) image_width: u32,
@@ -470,6 +471,7 @@ impl RecordEntry {
     }
 }
 
+#[derive(Debug)]
 pub(crate) struct Heap {
     pos: u32,
     pub(crate) len: u32,
@@ -543,6 +545,7 @@ impl Heap {
     }
 }
 
+#[derive(Debug)]
 pub(crate) struct HeapFileHeader {
     endian: Endian,
     len: u32,

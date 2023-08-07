@@ -58,6 +58,7 @@ lazy_static::lazy_static! {
     static ref MNOTE_EMPTY_TAGS: HashMap<u16, &'static str> = HashMap::new();
 }
 
+#[derive(Debug)]
 /// IFD
 /// Also handle MakerNotes
 pub struct Dir {

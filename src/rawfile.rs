@@ -40,7 +40,7 @@ use crate::tiff;
 use crate::tiff::{exif, Ifd};
 
 /// The trait for any IO
-pub trait ReadAndSeek: std::io::Read + std::io::Seek {}
+pub trait ReadAndSeek: std::io::Read + std::io::Seek + std::fmt::Debug {}
 
 impl ReadAndSeek for std::io::BufReader<std::fs::File> {}
 impl ReadAndSeek for std::io::Cursor<&[u8]> {}
@@ -48,6 +48,7 @@ impl ReadAndSeek for std::io::Cursor<Vec<u8>> {}
 
 pub(crate) type RawFileFactory = fn(Rc<io::Viewer>) -> Rc<dyn RawFile>;
 
+#[derive(Debug)]
 pub struct ThumbnailStorage {
     pub thumbnails: Vec<(u32, ThumbDesc)>,
     pub sizes: Vec<u32>,
@@ -158,7 +159,7 @@ pub fn rawfile_from_io(
 
 /// Standard trait for RAW files.
 /// Mostly using the default implementation
-pub trait RawFile: RawFileImpl + crate::dump::DumpFile {
+pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
     /// Return the type for the RAW file
     fn type_(&self) -> Type;
 
@@ -353,6 +354,7 @@ mod test {
     use crate::tiff;
     use crate::{DataType, Dump, Error, Result, Type, TypeId};
 
+    #[derive(Debug)]
     struct TestContainer {
         view: RefCell<View>,
     }
@@ -380,6 +382,7 @@ mod test {
         fn write_dump<W: std::io::Write + ?Sized>(&self, _out: &mut W, _indent: u32) {}
     }
 
+    #[derive(Debug)]
     struct TestRawFile {
         container: TestContainer,
         thumbnails: OnceCell<ThumbnailStorage>,

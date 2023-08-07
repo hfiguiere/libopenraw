@@ -177,6 +177,7 @@ fn translate_date(record: &RecordEntry, container: &Container, _: u16) -> Vec<En
     vec![]
 }
 
+#[derive(Debug)]
 pub(crate) struct Container {
     view: RefCell<View>,
     /// Endian of the container.

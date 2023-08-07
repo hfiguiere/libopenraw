@@ -38,8 +38,9 @@ use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type, TypeId};
 
+#[derive(Debug)]
 /// JPEG file
-pub struct JpegFile {
+pub(crate) struct JpegFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<Container>,

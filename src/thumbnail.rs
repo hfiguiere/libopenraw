@@ -24,6 +24,7 @@
 use crate::bitmap::Bitmap;
 use crate::DataType;
 
+#[derive(Debug)]
 /// Offset/len representation for `Data`
 pub struct DataOffset {
     /// Offset in the container
@@ -32,6 +33,7 @@ pub struct DataOffset {
     pub len: u64,
 }
 
+#[derive(Debug)]
 /// Represent data either as offset/len or a buffer.
 pub enum Data {
     Offset(DataOffset),
@@ -47,6 +49,7 @@ impl Data {
     }
 }
 
+#[derive(Debug)]
 /// Describe a thumbnail to fetch it from the container later
 /// as a blob
 pub struct ThumbDesc {

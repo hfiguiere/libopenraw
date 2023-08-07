@@ -75,8 +75,9 @@ lazy_static::lazy_static! {
     ]);
 }
 
+#[derive(Debug)]
 /// Canon CRW File
-pub struct CrwFile {
+pub(crate) struct CrwFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<ciff::Container>,

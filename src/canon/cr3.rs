@@ -41,8 +41,9 @@ use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Rect, Result,
 
 use super::matrices::MATRICES;
 
+#[derive(Debug)]
 /// Canon CR3 File
-pub struct Cr3File {
+pub(crate) struct Cr3File {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<mp4::Container>,

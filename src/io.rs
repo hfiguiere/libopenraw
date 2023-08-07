@@ -66,6 +66,7 @@ impl FromBuf for u16 {
     }
 }
 
+#[derive(Debug)]
 /// Wrap the IO for views.
 ///
 /// ```no_compile
@@ -135,9 +136,9 @@ impl Viewer {
     }
 }
 
+#[derive(Clone, Debug)]
 /// And IO View. Allow having file IO as an offset of another
 /// Useful for containers.
-#[derive(Clone)]
 pub struct View {
     inner: Weak<Viewer>,
     offset: u64,

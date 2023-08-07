@@ -679,8 +679,9 @@ lazy_static::lazy_static! {
     ];
 }
 
+#[derive(Debug)]
 /// Panasonic Rw2 File
-pub struct Rw2File {
+pub(crate) struct Rw2File {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,

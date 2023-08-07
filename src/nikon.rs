@@ -179,7 +179,8 @@ impl CompressionInfo {
     }
 }
 
-pub struct NefFile {
+#[derive(Debug)]
+pub(crate) struct NefFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,

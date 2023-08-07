@@ -36,9 +36,9 @@ use crate::{Error, Result};
 use super::exif;
 use super::exif::{ExifValue, TagType};
 
+#[derive(Clone, Debug)]
 /// Represent the data bytes, either the 4 bytes read,
 /// the read bytes from the view or the offset.
-#[derive(Clone)]
 enum DataBytes {
     /// Inline data. In the IFD byte order.
     Inline([u8; 4]),
@@ -60,8 +60,8 @@ impl DataBytes {
     }
 }
 
+#[derive(Clone, Debug)]
 /// IFD entry
-#[derive(Clone)]
 pub struct Entry {
     /// The tag
     pub(crate) id: u16,

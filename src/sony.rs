@@ -716,7 +716,8 @@ lazy_static::lazy_static! {
     ];
 }
 
-pub struct ArwFile {
+#[derive(Debug)]
+pub(crate) struct ArwFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,

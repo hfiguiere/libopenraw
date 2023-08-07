@@ -43,6 +43,7 @@ type CheckMagicHeader = fn(&[u8]) -> Result<container::Endian>;
 
 pub(crate) type DirIterator<'a> = std::slice::Iter<'a, Dir>;
 
+#[derive(Debug)]
 /// IFD Container for TIFF based file.
 pub(crate) struct Container {
     /// The `io::View`.

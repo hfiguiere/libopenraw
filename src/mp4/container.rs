@@ -82,6 +82,7 @@ mod capi {
 /// Type to hold the IFD and its `Viewer`.
 type IfdHolder = (Rc<Viewer>, tiff::Container);
 
+#[derive(Debug)]
 /// A container for ISO Media, aka MPEG4.
 pub(crate) struct Container {
     view: RefCell<View>,

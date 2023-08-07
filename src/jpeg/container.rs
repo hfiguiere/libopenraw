@@ -48,6 +48,25 @@ pub(crate) struct Container {
     raw_type: RawType,
 }
 
+impl std::fmt::Debug for Container {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        f.debug_struct("Container")
+            .field("view", &self.view)
+            .field("image_info", &self.image_info)
+            .field(
+                "decoder",
+                if self.decoder.get().is_some() {
+                    &"Decoder created"
+                } else {
+                    &"Decoder uninitialized"
+                },
+            )
+            .field("exif", &self.exif)
+            .field("raw_type", &self.raw_type)
+            .finish()
+    }
+}
+
 impl container::RawContainer for Container {
     fn endian(&self) -> container::Endian {
         container::Endian::Big

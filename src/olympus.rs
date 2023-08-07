@@ -132,6 +132,7 @@ lazy_static::lazy_static! {
     ]);
 }
 
+#[derive(Debug)]
 pub(crate) struct OrfFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,

@@ -21,8 +21,8 @@ use crate::utils;
 use crate::Type as RawType;
 use crate::{Dump, Error, Result};
 
+#[derive(Debug, Default)]
 /// Just a list of offset/length
-#[derive(Default)]
 struct RafOffsetDirectory {
     jpeg_offset: u32,
     jpeg_len: u32,
@@ -34,6 +34,7 @@ struct RafOffsetDirectory {
     extra_meta_len: u32,
 }
 
+#[derive(Debug)]
 pub(super) struct RafContainer {
     view: RefCell<View>,
     model: String,
@@ -409,6 +410,7 @@ impl std::convert::TryFrom<&Value> for Size {
     }
 }
 
+#[derive(Debug)]
 pub(super) struct MetaContainer {
     view: RefCell<View>,
     tags: BTreeMap<u16, Value>,

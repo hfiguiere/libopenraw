@@ -141,6 +141,7 @@ lazy_static::lazy_static! {
     ]);
 }
 
+#[derive(Debug)]
 pub(crate) struct RafFile {
     reader: Rc<Viewer>,
     container: OnceCell<raf::RafContainer>,

@@ -39,8 +39,9 @@ use crate::{DataType, Dump, Error, RawFile, RawFileImpl, RawImage, Result, Type,
 
 use super::matrices::MATRICES;
 
+#[derive(Debug)]
 /// Canon CR2 File
-pub struct Cr2File {
+pub(crate) struct Cr2File {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,

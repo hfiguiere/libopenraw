@@ -152,6 +152,7 @@ lazy_static::lazy_static! {
     ]);
 }
 
+#[derive(Debug)]
 pub(crate) struct DngFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,

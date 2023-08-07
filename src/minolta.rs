@@ -122,6 +122,7 @@ lazy_static::lazy_static! {
     ]);
 }
 
+#[derive(Debug)]
 /// The MRW file format was produced by Minolta cameras until
 /// Konica-Minolta was purchased by Sony. This will not change.
 ///
@@ -432,6 +433,7 @@ enum ColorMode {
 /// The extra length to add to the block length.
 const DATA_BLOCK_HEADER_LENGTH: u64 = 8;
 
+#[derive(Debug)]
 /// Datablock of the MRW file.
 struct DataBlock {
     /// Offset from the begining of the file.
@@ -480,6 +482,7 @@ impl DataBlock {
     }
 }
 
+#[derive(Debug)]
 struct MrwContainer {
     /// The `io::View`.
     view: RefCell<View>,

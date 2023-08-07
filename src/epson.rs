@@ -75,6 +75,7 @@ lazy_static::lazy_static! {
     ]);
 }
 
+#[derive(Debug)]
 /// ERF RAW file support
 pub(crate) struct ErfFile {
     reader: Rc<Viewer>,

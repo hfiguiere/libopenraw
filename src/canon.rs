@@ -33,9 +33,9 @@ use lazy_static::lazy_static;
 use super::TypeId;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
-pub use cr2::Cr2File;
-pub use cr3::Cr3File;
-pub use crw::CrwFile;
+pub(crate) use cr2::Cr2File;
+pub(crate) use cr3::Cr3File;
+pub(crate) use crw::CrwFile;
 
 #[macro_export]
 macro_rules! canon {
