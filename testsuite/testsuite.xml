@@ -48,7 +48,7 @@
       <rawDataActiveArea>32 23 4272 2848</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
-      <rawMaxValue>16383</rawMaxValue>
+      <rawMaxValue>14605</rawMaxValue>
       <rawMd5>36420</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -75,7 +75,7 @@
       <rawDataActiveArea>168 56 5184 3456</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
-      <rawMaxValue>16383</rawMaxValue>
+      <rawMaxValue>13584</rawMaxValue>
       <rawMd5>21909</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -102,7 +102,7 @@
       <rawDataActiveArea>168 56 5184 3456</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
-      <rawMaxValue>16383</rawMaxValue>
+      <rawMaxValue>13584</rawMaxValue>
       <rawMd5>9987</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -129,7 +129,7 @@
       <rawDataActiveArea>168 56 5616 3744</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0</rawMinValue>
-      <rawMaxValue>16383</rawMaxValue>
+      <rawMaxValue>15600</rawMaxValue>
       <rawMd5>38395</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
@@ -155,7 +155,7 @@
       <rawDataDimensions>3744 2784</rawDataDimensions>
       <rawDataActiveArea>24 28 3648 2736</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>0</rawMinValue>
+      <rawMinValue>120</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
       <rawMd5>37727</rawMd5>
       <metaOrientation>1</metaOrientation>
@@ -182,7 +182,7 @@
       <rawDataDimensions>3744 2784</rawDataDimensions>
       <rawDataActiveArea>24 28 3648 2736</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>0</rawMinValue>
+      <rawMinValue>120</rawMinValue>
       <rawMaxValue>4095</rawMaxValue>
       <rawMd5>41705</rawMd5>
       <metaOrientation>1</metaOrientation>

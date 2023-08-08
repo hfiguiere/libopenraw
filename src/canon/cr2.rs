@@ -173,8 +173,30 @@ impl Cr2File {
         // XXX they are not all RGGB.
         // XXX but I don't seem to see where this is encoded.
         rawdata.set_mosaic_pattern(Pattern::Rggb);
-        let white: u32 = (1 << rawdata.bpc()) - 1;
-        rawdata.set_white(white as u16);
+
+        // Get the black and white point from the built-in matrices.
+        let bpc = rawdata.bpc();
+        let (black, white) = MATRICES
+            .iter()
+            .find(|m| m.camera == self.type_id())
+            .map(|m| {
+                (
+                    m.black,
+                    if m.white == 0 {
+                        // A 0 value for white isn't valid.
+                        let white: u32 = (1 << bpc) - 1;
+                        white as u16
+                    } else {
+                        m.white
+                    },
+                )
+            })
+            .unwrap_or_else(|| {
+                let white: u32 = (1 << bpc) - 1;
+                (0, white as u16)
+            });
+        rawdata.set_black(black);
+        rawdata.set_white(white);
 
         Ok(rawdata)
     }
