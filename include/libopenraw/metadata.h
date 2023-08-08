@@ -60,11 +60,10 @@ enum {
 
 /** @brief Get the string out of the %MetaValue.
  *
- * @param idx Pass 0. @todo Remove the idx parameter.
  * @return A NUL terminated string. NULL if not found. The pointer is owned by the
  * %MetaValue.
  */
-const char* or_metavalue_get_string(ORConstMetaValueRef value, uint32_t idx);
+const char* or_metavalue_get_string(ORConstMetaValueRef value);
 
 /** @brief Convert the %MetaValue to a string.
  *

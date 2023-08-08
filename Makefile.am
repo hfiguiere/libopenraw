@@ -79,8 +79,8 @@ RUST_FILES = Cargo.lock \
 	src/olympus/matrices.rs \
 	src/panasonic.rs \
 	src/pentax.rs \
-	src/rawdata.rs \
 	src/rawfile.rs \
+	src/rawimage.rs \
 	src/render.rs \
 	src/ricoh.rs \
 	src/sigma.rs \

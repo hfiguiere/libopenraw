@@ -133,7 +133,7 @@ public:
                             switch (type) {
                             case EXIF_FORMAT_ASCII:
                                 m_out << boost::format("\tvalue = %1%\n") %
-                                    or_metavalue_get_string(value, 0);
+                                    or_metavalue_get_string(value);
                                 break;
                             default:
                                 if (type != EXIF_FORMAT_UNDEFINED || m_dump_binaries) {

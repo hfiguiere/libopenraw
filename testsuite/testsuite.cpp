@@ -659,7 +659,7 @@ bool Test::testExifString(const char* meta_index, const std::string & result)
     auto val = or_rawfile_get_metavalue(m_rawfile.get(), meta_index);
     if (val) {
         //
-        auto stringVal = std::string(or_metavalue_get_string(val, 0));
+        auto stringVal = std::string(or_metavalue_get_string(val));
         or_metavalue_release(val);
         RETURN_TEST_EQUALS(stringVal, result);
     }

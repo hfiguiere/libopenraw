@@ -97,7 +97,7 @@ void dump_file_info(std::ostream& out, ORRawFileRef rf, bool dev_mode)
         ORConstMetaValueRef original_value
             = or_rawfile_get_metavalue(rf, "Exif.Image.OriginalRawFileName");
         if (original_value) {
-            auto original = or_metavalue_get_string(original_value, 0);
+            auto original = or_metavalue_get_string(original_value);
             if (original != nullptr) {
                 out << boost::format("\tConverted to DNG from '%1%'\n") % original;
             }
@@ -115,19 +115,19 @@ void dump_file_info(std::ostream& out, ORRawFileRef rf, bool dev_mode)
     if (make) {
         out << boost::format(dev_mode ?
                              "\tMake = \"%1%\"\n" : "\tMake = %1%\n")
-            % or_metavalue_get_string(make, 0);
+            % or_metavalue_get_string(make);
     }
     ORConstMetaValueRef model
         = or_rawfile_get_metavalue(rf, "Exif.Image.Model");
     if (model) {
         out << boost::format(dev_mode ?
                                "\tModel = \"%1%\"\n" : "\tModel = %1%\n")
-            % or_metavalue_get_string(model, 0);
+            % or_metavalue_get_string(model);
     }
     ORConstMetaValueRef uniqueCameraModel
         = or_rawfile_get_metavalue(rf, "Exif.Image.UniqueCameraModel");
     if (uniqueCameraModel) {
         out << boost::format("\tUnique Camera Model = %1%\n")
-            % or_metavalue_get_string(uniqueCameraModel, 0);
+            % or_metavalue_get_string(uniqueCameraModel);
     }
 }
