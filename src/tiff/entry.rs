@@ -34,7 +34,7 @@ use crate::io::View;
 use crate::{Error, Result};
 
 use super::exif;
-use super::exif::{ExifValue, TagType};
+use super::exif::{ExifValue, Rational, TagType};
 
 #[derive(Clone, Debug)]
 /// Represent the data bytes, either the 4 bytes read,
@@ -202,7 +202,8 @@ impl Entry {
         None
     }
 
-    /// Get the uint value at index. Ignore typing between SHORT and LONG
+    /// Get the uint value at index. Ignore typing between SHORT, LONG
+    /// and RATIONAL. Also in case of RATIONAL it will calculate it.
     fn uint_value_at_index<E>(&self, index: u32) -> Option<u32>
     where
         E: ByteOrder,
@@ -220,6 +221,7 @@ impl Entry {
                 TagType::Long => Some(u32::read::<E>(
                     &self.data.as_slice()[u32::unit_size() * index as usize..],
                 )),
+                TagType::Rational => self.value::<Rational, E>().map(|r| r.num / r.denom),
                 _ => {
                     log::error!("incorrect type {} for uint {}", self.type_, self.id);
                     None
@@ -449,7 +451,7 @@ impl Entry {
         }
 
         fn value(e: &Entry, endian: Endian) -> String {
-            use crate::tiff::exif::{Rational, SRational};
+            use crate::tiff::exif::SRational;
 
             match TagType::try_from(e.type_) {
                 Ok(TagType::Ascii) => e.string_value().map(|v| format!("\"{v}\"")),
