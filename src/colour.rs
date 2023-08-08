@@ -27,10 +27,11 @@ pub use matrix::BuiltinMatrix;
 use num_enum::TryFromPrimitive;
 
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Default)]
 /// Where the colour matrix comes from.
 /// Typically DNG is provided. The others are built-in.
 pub enum MatrixOrigin {
+    #[default]
     /// Unknown. This usually signify an error.
     Unknown = 0,
     /// Colour matrix in library.
