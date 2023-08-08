@@ -61,9 +61,9 @@ use std::io::SeekFrom;
 use byteorder::{BigEndian, ReadBytesExt};
 
 use super::sliced_buffer::SlicedBuffer;
-use crate::mosaic::Pattern;
+use crate::bitmap::ImageBuffer;
 use crate::rawfile::ReadAndSeek;
-use crate::{DataType, Error, RawImage, Result};
+use crate::{Error, Result};
 
 const M_SOF0: u8 = 0xc0;
 const M_SOF1: u8 = 0xc1;
@@ -238,19 +238,14 @@ impl LJpeg {
     }
 
     /// Decompress the LJPEG stream into a RawImage.
-    pub fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<RawImage> {
+    pub fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<ImageBuffer<u16>> {
         let tile = self.decompress_buffer(reader, false)?;
-        let mut rawdata = RawImage::with_data16(
+        Ok(ImageBuffer::with_data(
+            tile.buf,
             tile.width,
             tile.height,
             tile.bpc,
-            DataType::Raw,
-            tile.buf,
-            Pattern::default(),
-        );
-        let white: u32 = (1 << tile.bpc) - 1;
-        rawdata.set_white(white as u16);
-        Ok(rawdata)
+        ))
     }
 
     fn read_file_header(
@@ -1193,6 +1188,8 @@ fn extend(x: u16, s: u8) -> i32 {
 
 #[cfg(test)]
 mod test {
+    use crate::utils;
+
     use super::LJpeg;
     use super::{BitReader, BITS_PER_LONG, MIN_GET_BITS};
 
@@ -1279,9 +1276,7 @@ mod test {
             digest.finalize()
         }
 
-        let buf = rawdata.data16_as_u8();
-        assert!(buf.is_some());
-        let buf = buf.unwrap();
+        let buf = utils::to_u8_slice(&rawdata.data);
         let crc = raw_checksum(buf);
 
         assert_eq!(crc, 0x20cc);

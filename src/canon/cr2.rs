@@ -26,7 +26,7 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::bitmap;
+use crate::bitmap::{self, Bitmap};
 use crate::canon;
 use crate::container::RawContainer;
 use crate::decompress;
@@ -99,7 +99,9 @@ impl Cr2File {
             }
 
             let mut io = std::io::Cursor::new(data);
-            decompressor.decompress(&mut io)
+            decompressor.decompress(&mut io).map(|buffer| {
+                RawImage::with_image_buffer(buffer, DataType::Raw, Pattern::default())
+            })
         }
     }
 
@@ -171,6 +173,8 @@ impl Cr2File {
         // XXX they are not all RGGB.
         // XXX but I don't seem to see where this is encoded.
         rawdata.set_mosaic_pattern(Pattern::Rggb);
+        let white: u32 = (1 << rawdata.bpc()) - 1;
+        rawdata.set_white(white as u16);
 
         Ok(rawdata)
     }

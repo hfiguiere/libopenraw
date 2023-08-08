@@ -26,19 +26,21 @@ use crate::DataType;
 
 /// An image buffer carries the data and the dimension. It is used to
 /// carry pipeline input and ouput as dimensions can change.
-pub(crate) struct ImageBuffer<T> {
+pub struct ImageBuffer<T> {
     pub(crate) data: Vec<T>,
     pub(crate) width: u32,
     pub(crate) height: u32,
+    pub(crate) bpc: u16,
 }
 
 impl<T> ImageBuffer<T> {
     /// Create an image buffer.
-    pub(crate) fn with_data(data: Vec<T>, width: u32, height: u32) -> Self {
+    pub(crate) fn with_data(data: Vec<T>, width: u32, height: u32, bpc: u16) -> Self {
         Self {
             data,
             width,
             height,
+            bpc,
         }
     }
 }

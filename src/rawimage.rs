@@ -147,14 +147,13 @@ impl RawImage {
 
     pub(crate) fn with_image_buffer(
         buffer: ImageBuffer<u16>,
-        bpc: u16,
         data_type: DataType,
         mosaic_pattern: Pattern,
     ) -> Self {
         RawImage {
             width: buffer.width,
             height: buffer.height,
-            bpc,
+            bpc: buffer.bpc,
             data_type,
             data: Data::Data16(buffer.data),
             active_area: None,
@@ -166,6 +165,15 @@ impl RawImage {
             matrices: [vec![], vec![]],
             linearization_table: None,
         }
+    }
+
+    /// Reset the buffer from an `ImageBuffer<u16>`.
+    /// This is usefull when decompressing.
+    pub(crate) fn set_with_buffer(&mut self, buffer: ImageBuffer<u16>) {
+        self.width = buffer.width;
+        self.height = buffer.height;
+        self.bpc = buffer.bpc;
+        self.data = Data::Data16(buffer.data);
     }
 
     /// Get the linearization table if there is one.
@@ -347,7 +355,7 @@ impl RawImage {
                     // Notably, the `image` crate doesn't like it.
                     // The assumption is that the resize should shrink the buffer.
                     data.resize((3 * out_x * out_y) as usize, 0);
-                    Ok(ImageBuffer::with_data(data, out_x, out_y))
+                    Ok(ImageBuffer::with_data(data, out_x, out_y, 16))
                 }
             }
             exif::PhotometricInterpretation::LinearRaw => {
@@ -358,7 +366,7 @@ impl RawImage {
                 if err != or_error::NONE {
                     Err(err.into())
                 } else {
-                    Ok(ImageBuffer::with_data(data, x, y))
+                    Ok(ImageBuffer::with_data(data, x, y, 16))
                 }
             }
             _ => Err(Error::InvalidFormat),
@@ -382,8 +390,12 @@ impl RawImage {
         let x = self.width();
         let y = self.height();
         let mut pattern = self.mosaic_pattern().clone();
-        let data16 =
-            ImageBuffer::with_data(self.data16().ok_or(Error::InvalidFormat)?.to_vec(), x, y);
+        let data16 = ImageBuffer::with_data(
+            self.data16().ok_or(Error::InvalidFormat)?.to_vec(),
+            x,
+            y,
+            16,
+        );
         let mut data16 = self.linearize(data16);
         if options.stage >= RenderingStage::Interpolation {
             data16 = self.interpolate(&data16)?;
@@ -391,7 +403,7 @@ impl RawImage {
         }
 
         // XXX make sure to copy over other data from the rawimage.
-        let mut image = RawImage::with_image_buffer(data16, 16, DataType::PixmapRgb16, pattern);
+        let mut image = RawImage::with_image_buffer(data16, DataType::PixmapRgb16, pattern);
         if options.stage >= RenderingStage::Linearization {
             image.set_black(0);
             image.set_white(self.white());

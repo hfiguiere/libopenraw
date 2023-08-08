@@ -172,7 +172,7 @@ impl DngFile {
         })
     }
 
-    fn decompress(rawdata: RawImage) -> Result<RawImage> {
+    fn decompress(mut rawdata: RawImage) -> Result<RawImage> {
         match rawdata.data_type() {
             DataType::Raw => Ok(rawdata),
             DataType::CompressedRaw => match rawdata.compression() {
@@ -180,13 +180,10 @@ impl DngFile {
                     if let Some(data) = rawdata.data8() {
                         let mut decompressor = decompress::LJpeg::new();
                         let mut io = std::io::Cursor::new(data);
-                        decompressor.decompress(&mut io).map(|mut rawdata2| {
-                            rawdata2.set_active_area(rawdata.active_area().cloned());
-                            rawdata2.set_mosaic_pattern(rawdata.mosaic_pattern().clone());
-                            rawdata2.set_photometric_interpretation(
-                                rawdata.photometric_interpretation(),
-                            );
-                            rawdata2
+                        decompressor.decompress(&mut io).map(|buffer| {
+                            rawdata.set_with_buffer(buffer);
+                            rawdata.set_data_type(DataType::Raw);
+                            rawdata
                         })
                     } else if rawdata.tile_data().is_some() {
                         let decompressor = decompress::TiledLJpeg::new();
