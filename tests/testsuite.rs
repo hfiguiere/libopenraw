@@ -19,7 +19,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+use std::fmt::Display;
 use std::path::Path;
+use std::str::FromStr;
 
 use serde::{de::Error, Deserialize};
 use serde_xml_rs::{de::Deserializer, from_reader};
@@ -38,14 +40,24 @@ struct Results {
     exif_make: Option<String>,
     exif_model: Option<String>,
     thumb_num: Option<u32>,
-    thumb_sizes: Option<String>,      // XXX split array
-    thumb_formats: Option<String>,    // XXX split array
-    thumb_data_sizes: Option<String>, // XXX split array
-    thumb_md5: Option<String>,        // XXX split array
+    #[serde(deserialize_with = "from_u32_list")]
+    #[serde(default)]
+    thumb_sizes: Option<Vec<u32>>,
+    thumb_formats: Option<String>, // XXX split array
+    #[serde(deserialize_with = "from_u32_list")]
+    #[serde(default)]
+    thumb_data_sizes: Option<Vec<u32>>,
+    #[serde(deserialize_with = "from_u16_list")]
+    #[serde(default)]
+    thumb_md5: Option<Vec<u16>>,
     raw_data_type: Option<String>,
     raw_data_size: Option<u32>,
-    raw_data_dimensions: Option<String>,  // XXX split array
-    raw_data_active_area: Option<String>, // XXX split array
+    #[serde(deserialize_with = "from_u32_list")]
+    #[serde(default)]
+    raw_data_dimensions: Option<Vec<u32>>,
+    #[serde(deserialize_with = "from_u32_list")]
+    #[serde(default)]
+    raw_data_active_area: Option<Vec<u32>>,
     raw_cfa_pattern: Option<String>,
     #[serde(deserialize_with = "from_u16_list")]
     #[serde(default)]
@@ -57,18 +69,34 @@ struct Results {
     meta_orientation: Option<u32>,
 }
 
-fn from_u16_list<'de, D>(deserializer: D) -> Result<Option<Vec<u16>>, D::Error>
+fn from_list<'de, D, T>(deserializer: D) -> Result<Option<Vec<T>>, D::Error>
 where
     D: serde::Deserializer<'de>,
+    T: FromStr,
+    <T as FromStr>::Err: Display,
 {
     let s: String = Deserialize::deserialize(deserializer)?;
     let v: Vec<&str> = s.split(' ').collect();
     let mut ints = vec![];
     for num in v {
-        let n = num.parse::<u16>().map_err(D::Error::custom)?;
+        let n = num.parse::<T>().map_err(D::Error::custom)?;
         ints.push(n);
     }
     Ok(Some(ints))
+}
+
+fn from_u16_list<'de, D>(deserializer: D) -> Result<Option<Vec<u16>>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    from_list::<'de, D, u16>(deserializer)
+}
+
+fn from_u32_list<'de, D>(deserializer: D) -> Result<Option<Vec<u32>>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    from_list::<'de, D, u32>(deserializer)
 }
 
 impl Results {
@@ -120,45 +148,27 @@ impl Results {
         }
 
         // RAW dimensions
-        if let Some(ref raw_data_dimensions) = self.raw_data_dimensions {
+        if let Some(ref dims) = self.raw_data_dimensions {
             count += 1;
-            let dims: Vec<&str> = raw_data_dimensions.split(' ').collect();
             assert_eq!(dims.len(), 2, "Incorrect number of Raw dimensions");
-            assert_eq!(dims[0], rawdata.width().to_string(), "Incorrect Raw width");
             assert_eq!(
-                dims[1],
-                rawdata.height().to_string(),
-                "Incorrect Raw height"
+                dims,
+                &[rawdata.width(), rawdata.height()],
+                "Incorrect dimensions"
             );
         }
 
         // RAW active area
         if let Some(ref raw_data_active_area) = self.raw_data_active_area {
             count += 1;
-            let dims: Vec<&str> = raw_data_active_area.split(' ').collect();
-            assert_eq!(dims.len(), 4, "Incorrect active area");
+            assert_eq!(raw_data_active_area.len(), 4, "Incorrect active area");
             let active_area = rawdata.active_area();
             assert!(active_area.is_some(), "No active area found");
             let active_area = active_area.unwrap();
             assert_eq!(
-                dims[0],
-                active_area.x.to_string(),
-                "Incorrect active area X"
-            );
-            assert_eq!(
-                dims[1],
-                active_area.y.to_string(),
-                "Incorrect active area Y"
-            );
-            assert_eq!(
-                dims[2],
-                active_area.width.to_string(),
-                "Incorrect active area Width"
-            );
-            assert_eq!(
-                dims[3],
-                active_area.height.to_string(),
-                "Incorrect active area Height"
+                raw_data_active_area,
+                &active_area.to_vec(),
+                "Incorrect active area"
             );
         }
 
@@ -221,11 +231,9 @@ impl Results {
             );
         }
 
-        if let Some(ref thumb_sizes) = self.thumb_sizes {
+        if let Some(ref sizes) = self.thumb_sizes {
             count += 1;
             let thumbnail_sizes = rawfile.thumbnail_sizes();
-            let sizes: Vec<&str> = thumb_sizes.split(' ').collect();
-
             assert_eq!(
                 thumbnail_sizes.len(),
                 sizes.len(),
@@ -233,8 +241,7 @@ impl Results {
             );
             for (index, size) in sizes.iter().enumerate() {
                 assert_eq!(
-                    size,
-                    &thumbnail_sizes[index].to_string(),
+                    size, &thumbnail_sizes[index],
                     "Incorrect size for thumbnail {index}"
                 );
             }
@@ -258,11 +265,9 @@ impl Results {
             }
         }
 
-        if let Some(ref thumb_data_sizes) = self.thumb_data_sizes {
+        if let Some(ref data_sizes) = self.thumb_data_sizes {
             count += 1;
             let thumbnails = rawfile.thumbnails();
-            let data_sizes: Vec<&str> = thumb_data_sizes.split(' ').collect();
-
             assert_eq!(
                 thumbnails.thumbnails.len(),
                 data_sizes.len(),
@@ -270,18 +275,16 @@ impl Results {
             );
             for (index, thumbnail) in thumbnails.thumbnails.iter().enumerate() {
                 assert_eq!(
-                    thumbnail.1.data_size().to_string(),
-                    data_sizes[index],
+                    thumbnail.1.data_size(),
+                    data_sizes[index] as u64,
                     "Incorrect data size for thumbnail {index}"
                 );
             }
         }
 
-        if let Some(ref thumb_md5) = self.thumb_md5 {
+        if let Some(ref md5s) = self.thumb_md5 {
             count += 1;
             let thumbnails = rawfile.thumbnails();
-            let md5s: Vec<&str> = thumb_md5.split(' ').collect();
-
             assert_eq!(
                 thumbnails.thumbnails.len(),
                 md5s.len(),
@@ -293,11 +296,7 @@ impl Results {
                     .expect("Thumbnail not found");
                 let buf = thumbnail.data8().unwrap();
                 let r = Self::raw_checksum(buf);
-                assert_eq!(
-                    r.to_string(),
-                    md5s[index],
-                    "Incorrect checksum for thumbnail {index}"
-                );
+                assert_eq!(r, md5s[index], "Incorrect checksum for thumbnail {index}");
             }
         }
 

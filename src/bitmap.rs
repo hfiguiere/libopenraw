@@ -83,6 +83,11 @@ impl Rect {
             height: size.height,
         }
     }
+
+    /// Generate a Vec<u32> with the values in x, y, w, h order.
+    pub fn to_vec(&self) -> Vec<u32> {
+        [self.x, self.y, self.width, self.height].to_vec()
+    }
 }
 
 /// Point struct
