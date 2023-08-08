@@ -195,8 +195,8 @@ lazy_static::lazy_static! {
         ),
         BuiltinMatrix::new(
             pentax!(K100D_PEF),
-            0,
-            0,
+            127,
+            3950,
             [11095, -3157, -1324, -8377, 15834, 2720, -1108, 947, 11688],
         ),
         BuiltinMatrix::new(
@@ -453,9 +453,23 @@ impl RawFileImpl for PefFile {
 
                             Some(())
                         });
-
+                    if let Some(black) = mnote.uint_value(exif::MNOTE_PENTAX_BLACK_POINT) {
+                        rawdata.set_black(black as u16);
+                    }
                     if let Some(white) = mnote.uint_value(exif::MNOTE_PENTAX_WHITELEVEL) {
                         rawdata.set_white(white as u16);
+                    } else if let Some((black, white)) = MATRICES
+                        .iter()
+                        .find(|m| m.camera == self.type_id())
+                        .map(|m| (m.black, m.white))
+                    {
+                        if white != 0 {
+                            rawdata.set_white(white);
+                        }
+                        // If black isn't already set.
+                        if rawdata.black() == 0 {
+                            rawdata.set_black(black);
+                        }
                     }
                 }
                 // XXX decompress
