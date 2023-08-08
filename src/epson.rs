@@ -186,7 +186,11 @@ impl RawFileImpl for ErfFile {
                                     } else {
                                         None
                                     }
-                                })
+                                });
+                            if let Some(black) = mnote.uint_value(exif::MNOTE_EPSON_BLACK_LEVEL) {
+                                rawdata.set_black(black as u16);
+                            }
+                            None::<()>
                         });
                         rawdata
                     },

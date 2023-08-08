@@ -164,6 +164,7 @@ pub const ERF_TAG_PREVIEW_IMAGE: u16 = 0x280;
 
 /* ERF MakerNote */
 pub const MNOTE_EPSON_SENSORAREA: u16 = 0x400;
+pub const MNOTE_EPSON_BLACK_LEVEL: u16 = 0x401;
 
 /* ORF tags */
 pub const ORF_TAG_THUMBNAIL_IMAGE: u16 = 0x100;
