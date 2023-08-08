@@ -40,35 +40,36 @@ struct Results {
     exif_make: Option<String>,
     exif_model: Option<String>,
     thumb_num: Option<u32>,
-    #[serde(deserialize_with = "from_u32_list")]
+    #[serde(deserialize_with = "from_list")]
     #[serde(default)]
     thumb_sizes: Option<Vec<u32>>,
     thumb_formats: Option<String>, // XXX split array
-    #[serde(deserialize_with = "from_u32_list")]
+    #[serde(deserialize_with = "from_list")]
     #[serde(default)]
     thumb_data_sizes: Option<Vec<u32>>,
-    #[serde(deserialize_with = "from_u16_list")]
+    #[serde(deserialize_with = "from_list")]
     #[serde(default)]
     thumb_md5: Option<Vec<u16>>,
     raw_data_type: Option<String>,
     raw_data_size: Option<u32>,
-    #[serde(deserialize_with = "from_u32_list")]
+    #[serde(deserialize_with = "from_list")]
     #[serde(default)]
     raw_data_dimensions: Option<Vec<u32>>,
-    #[serde(deserialize_with = "from_u32_list")]
+    #[serde(deserialize_with = "from_list")]
     #[serde(default)]
     raw_data_active_area: Option<Vec<u32>>,
     raw_cfa_pattern: Option<String>,
-    #[serde(deserialize_with = "from_u16_list")]
+    #[serde(deserialize_with = "from_list")]
     #[serde(default)]
     raw_min_value: Option<Vec<u16>>,
-    #[serde(deserialize_with = "from_u16_list")]
+    #[serde(deserialize_with = "from_list")]
     #[serde(default)]
     raw_max_value: Option<Vec<u16>>,
     raw_md5: Option<u32>,
     meta_orientation: Option<u32>,
 }
 
+/// Deserialize a space separated list on numbers to a vector.
 fn from_list<'de, D, T>(deserializer: D) -> Result<Option<Vec<T>>, D::Error>
 where
     D: serde::Deserializer<'de>,
@@ -83,20 +84,6 @@ where
         ints.push(n);
     }
     Ok(Some(ints))
-}
-
-fn from_u16_list<'de, D>(deserializer: D) -> Result<Option<Vec<u16>>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    from_list::<'de, D, u16>(deserializer)
-}
-
-fn from_u32_list<'de, D>(deserializer: D) -> Result<Option<Vec<u32>>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    from_list::<'de, D, u32>(deserializer)
 }
 
 impl Results {
