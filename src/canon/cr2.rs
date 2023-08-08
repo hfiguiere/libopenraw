@@ -195,8 +195,8 @@ impl Cr2File {
                 let white: u32 = (1 << bpc) - 1;
                 (0, white as u16)
             });
-        rawdata.set_black(black);
-        rawdata.set_white(white);
+        rawdata.set_blacks([black; 4]);
+        rawdata.set_whites([white; 4]);
 
         Ok(rawdata)
     }

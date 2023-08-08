@@ -134,11 +134,8 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
         println!("\tBayer Type: {:?}", rawdata.mosaic_pattern());
         let bpc = rawdata.bpc();
         println!("\tBpc: {bpc}");
-        println!(
-            "\tValues: white = {} black = {}",
-            rawdata.white(),
-            rawdata.black()
-        );
+        println!("\tWhites = {:?}", rawdata.whites(),);
+        println!("\tBlacks = {:?}", rawdata.blacks());
         if rawdata.data_type() == DataType::CompressedRaw {
             if let Some(d) = rawdata.data8() {
                 println!("\tRaw data: {} bytes", d.len());

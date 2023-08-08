@@ -39,6 +39,7 @@ use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::ricoh;
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
+use crate::utils;
 use crate::{
     DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
 };
@@ -306,11 +307,11 @@ impl RawFileImpl for DngFile {
                                 })
                             });
                         rawdata.set_active_area(active_area);
-                        if let Some(black) = dir.uint_value(exif::DNG_TAG_BLACK_LEVEL) {
-                            rawdata.set_black(black as u16);
+                        if let Some(blacks) = dir.uint_value_array(exif::DNG_TAG_BLACK_LEVEL) {
+                            rawdata.set_blacks(utils::to_quad(&blacks));
                         }
-                        if let Some(white) = dir.uint_value(exif::DNG_TAG_WHITE_LEVEL) {
-                            rawdata.set_white(white as u16);
+                        if let Some(whites) = dir.uint_value_array(exif::DNG_TAG_WHITE_LEVEL) {
+                            rawdata.set_whites(utils::to_quad(&whites));
                         }
                         rawdata
                     })

@@ -140,6 +140,7 @@ extern "C" fn or_rawdata_format(rawdata: ORRawDataRef) -> or_data_type {
 }
 
 #[no_mangle]
+/// Get the black and white.
 extern "C" fn or_rawdata_get_levels(
     rawdata: ORRawDataRef,
     black: *mut u16,
@@ -147,10 +148,10 @@ extern "C" fn or_rawdata_get_levels(
 ) -> or_error {
     or_unwrap!(rawdata, or_error::NOT_AREF, {
         if !black.is_null() {
-            unsafe { *black = rawdata.black() };
+            unsafe { *black = rawdata.blacks()[0] };
         }
         if !white.is_null() {
-            unsafe { *white = rawdata.white() };
+            unsafe { *white = rawdata.whites()[0] };
         }
         or_error::NONE
     })

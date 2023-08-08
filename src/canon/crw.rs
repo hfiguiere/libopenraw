@@ -252,7 +252,7 @@ impl RawFileImpl for CrwFile {
                                 decompressor
                                     .decompress(&mut view)
                                     .map(|mut rawdata| {
-                                        rawdata.set_white((1 << 10) - 1);
+                                        rawdata.set_whites([(1 << 10) - 1; 4]);
                                         rawdata.set_active_area(sensor_info);
                                         rawdata.set_mosaic_pattern(Pattern::Rggb);
                                         rawdata

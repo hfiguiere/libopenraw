@@ -21,7 +21,7 @@
 
 use std::path::Path;
 
-use serde::Deserialize;
+use serde::{de::Error, Deserialize};
 use serde_xml_rs::{de::Deserializer, from_reader};
 
 use libopenraw::metadata::Value;
@@ -47,10 +47,28 @@ struct Results {
     raw_data_dimensions: Option<String>,  // XXX split array
     raw_data_active_area: Option<String>, // XXX split array
     raw_cfa_pattern: Option<String>,
-    raw_min_value: Option<u32>,
-    raw_max_value: Option<u32>,
+    #[serde(deserialize_with = "from_u16_list")]
+    #[serde(default)]
+    raw_min_value: Option<Vec<u16>>,
+    #[serde(deserialize_with = "from_u16_list")]
+    #[serde(default)]
+    raw_max_value: Option<Vec<u16>>,
     raw_md5: Option<u32>,
     meta_orientation: Option<u32>,
+}
+
+fn from_u16_list<'de, D>(deserializer: D) -> Result<Option<Vec<u16>>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let s: String = Deserialize::deserialize(deserializer)?;
+    let v: Vec<&str> = s.split(' ').collect();
+    let mut ints = vec![];
+    for num in v {
+        let n = num.parse::<u16>().map_err(D::Error::custom)?;
+        ints.push(n);
+    }
+    Ok(Some(ints))
 }
 
 impl Results {
@@ -155,18 +173,18 @@ impl Results {
         }
 
         // RAW black and white
-        if let Some(raw_min_value) = self.raw_min_value {
+        if let Some(ref raw_min_value) = self.raw_min_value {
             count += 1;
             assert_eq!(
-                rawdata.black() as u32,
+                &rawdata.blacks().to_vec(),
                 raw_min_value,
                 "Incorrect black point"
             );
         }
-        if let Some(raw_max_value) = self.raw_max_value {
+        if let Some(ref raw_max_value) = self.raw_max_value {
             count += 1;
             assert_eq!(
-                rawdata.white() as u32,
+                &rawdata.whites().to_vec(),
                 raw_max_value,
                 "Incorrect white point"
             );

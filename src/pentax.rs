@@ -33,6 +33,7 @@ use crate::io::Viewer;
 use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
+use crate::utils;
 use crate::{Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId};
 
 #[macro_export]
@@ -453,22 +454,22 @@ impl RawFileImpl for PefFile {
 
                             Some(())
                         });
-                    if let Some(black) = mnote.uint_value(exif::MNOTE_PENTAX_BLACK_POINT) {
-                        rawdata.set_black(black as u16);
+                    if let Some(blacks) = mnote.uint_value_array(exif::MNOTE_PENTAX_BLACK_POINT) {
+                        rawdata.set_blacks(utils::to_quad(&blacks));
                     }
                     if let Some(white) = mnote.uint_value(exif::MNOTE_PENTAX_WHITELEVEL) {
-                        rawdata.set_white(white as u16);
+                        rawdata.set_whites([white as u16; 4]);
                     } else if let Some((black, white)) = MATRICES
                         .iter()
                         .find(|m| m.camera == self.type_id())
                         .map(|m| (m.black, m.white))
                     {
                         if white != 0 {
-                            rawdata.set_white(white);
+                            rawdata.set_whites([white; 4]);
                         }
                         // If black isn't already set.
-                        if rawdata.black() == 0 {
-                            rawdata.set_black(black);
+                        if rawdata.blacks()[0] == 0 {
+                            rawdata.set_blacks([black; 4]);
                         }
                     }
                 }

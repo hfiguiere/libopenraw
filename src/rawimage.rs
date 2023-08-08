@@ -45,9 +45,9 @@ pub struct RawImage {
     /// Bits per component
     bpc: u16,
     /// White point
-    white: u16,
+    whites: [u16; 4],
     /// Black point
-    black: u16,
+    blacks: [u16; 4],
     ///
     photom_int: exif::PhotometricInterpretation,
     ///
@@ -83,8 +83,8 @@ impl RawImage {
             data_type,
             data: Data::Data8(data),
             active_area: None,
-            white: 0,
-            black: 0,
+            whites: [0, 0, 0, 0],
+            blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
@@ -109,8 +109,8 @@ impl RawImage {
             data_type,
             data: Data::Tiled((data, tile_size)),
             active_area: None,
-            white: 0,
-            black: 0,
+            whites: [0, 0, 0, 0],
+            blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
@@ -135,8 +135,8 @@ impl RawImage {
             data_type,
             data: Data::Data16(data),
             active_area: None,
-            white: 0,
-            black: 0,
+            whites: [0, 0, 0, 0],
+            blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
@@ -157,8 +157,8 @@ impl RawImage {
             data_type,
             data: Data::Data16(buffer.data),
             active_area: None,
-            white: 0,
-            black: 0,
+            whites: [0, 0, 0, 0],
+            blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
@@ -200,21 +200,21 @@ impl RawImage {
         self.width = width;
     }
 
-    /// Black value
-    pub fn black(&self) -> u16 {
-        self.black
+    /// Black values
+    pub fn blacks(&self) -> &[u16; 4] {
+        &self.blacks
     }
 
-    pub fn set_black(&mut self, b: u16) {
-        self.black = b;
+    pub fn set_blacks(&mut self, b: [u16; 4]) {
+        self.blacks = b;
     }
 
-    pub fn white(&self) -> u16 {
-        self.white
+    pub fn whites(&self) -> &[u16; 4] {
+        &self.whites
     }
 
-    pub fn set_white(&mut self, w: u16) {
-        self.white = w;
+    pub fn set_whites(&mut self, w: [u16; 4]) {
+        self.whites = w;
     }
 
     pub fn set_data_type(&mut self, data_type: DataType) {
@@ -306,8 +306,9 @@ impl RawImage {
     ///
     fn linearize(&self, mut buffer: ImageBuffer<u16>) -> ImageBuffer<u16> {
         log::debug!("linearize");
-        let white = self.white();
-        let black = self.black();
+        // XXX fix this to use the 4 component
+        let white = self.whites()[0];
+        let black = self.blacks()[0];
         let range = white - black;
         let scale = range as f64 / white as f64;
         let table = if self
@@ -405,8 +406,8 @@ impl RawImage {
         // XXX make sure to copy over other data from the rawimage.
         let mut image = RawImage::with_image_buffer(data16, DataType::PixmapRgb16, pattern);
         if options.stage >= RenderingStage::Linearization {
-            image.set_black(0);
-            image.set_white(self.white());
+            image.set_blacks([0, 0, 0, 0]);
+            image.set_whites(*self.whites());
         }
 
         Ok(image)

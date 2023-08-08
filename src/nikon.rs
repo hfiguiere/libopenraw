@@ -364,8 +364,8 @@ impl NefFile {
                     curve.curve[i as usize] = white;
                 }
 
-                rawdata.set_white(white);
-                rawdata.set_black(black);
+                rawdata.set_whites([white; 4]);
+                rawdata.set_blacks([black; 4]);
 
                 Ok(curve)
             })
@@ -408,7 +408,7 @@ impl NefFile {
 
                 let mut rawdata = rawdata.replace_data(new_data);
                 rawdata.set_width(columns as u32);
-                rawdata.set_white((1 << rawdata.bpc()) - 1);
+                rawdata.set_whites([(1 << rawdata.bpc()) - 1; 4]);
                 rawdata.set_data_type(DataType::Raw);
                 Ok(rawdata)
             })

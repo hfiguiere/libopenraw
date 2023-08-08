@@ -284,8 +284,8 @@ impl RawFileImpl for MrwFile {
                 .find(|m| m.camera == self.type_id())
                 .map(|m| (m.black, m.white))
             {
-                rawdata.set_white(white);
-                rawdata.set_black(black);
+                rawdata.set_whites([white; 4]);
+                rawdata.set_blacks([black; 4]);
             }
             Ok(rawdata)
         } else {

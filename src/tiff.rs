@@ -431,9 +431,9 @@ pub(crate) fn tiff_get_rawdata(
         Compression::None
     });
     rawdata.set_photometric_interpretation(photom_int);
-    if rawdata.white() == 0 {
+    if rawdata.whites()[0] == 0 {
         let white: u32 = (1_u32 << actual_bpc) - 1;
-        rawdata.set_white(white as u16);
+        rawdata.set_whites([white as u16; 4]);
     }
 
     Ok(rawdata)

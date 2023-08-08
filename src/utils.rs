@@ -35,6 +35,21 @@ macro_rules! uninit_vec {
     }};
 }
 
+/// Convert a slice of u32 to a quad of u16
+/// If there is less than 4 in the slice, it will use the first
+/// value for the quad.
+pub(crate) fn to_quad(slice: &[u32]) -> [u16; 4] {
+    if slice.len() != 4 {
+        [slice[0] as u16; 4]
+    } else {
+        let mut sl = [0_u16; 4];
+        for (idx, v) in slice[0..4].iter().enumerate() {
+            sl[idx] = *v as u16;
+        }
+        sl
+    }
+}
+
 /// Create an mut u8 slice from a `mut [T]`.
 pub(crate) fn to_u8_slice_mut<T>(slice: &mut [T]) -> &mut [u8] {
     unsafe {

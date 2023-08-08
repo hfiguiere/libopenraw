@@ -329,7 +329,7 @@ impl RawFileImpl for OrfFile {
                     width,
                     height,
                 }));
-                data.set_white((1 << 12) - 1);
+                data.set_whites([(1 << 12) - 1_u16; 4]);
                 data
             })
     }

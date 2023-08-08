@@ -37,6 +37,7 @@ use crate::rawfile::ThumbnailStorage;
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Ifd, IfdType};
+use crate::utils;
 use crate::{
     DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
 };
@@ -187,8 +188,10 @@ impl RawFileImpl for ErfFile {
                                         None
                                     }
                                 });
-                            if let Some(black) = mnote.uint_value(exif::MNOTE_EPSON_BLACK_LEVEL) {
-                                rawdata.set_black(black as u16);
+                            if let Some(blacks) =
+                                mnote.uint_value_array(exif::MNOTE_EPSON_BLACK_LEVEL)
+                            {
+                                rawdata.set_blacks(utils::to_quad(&blacks));
                             }
                             None::<()>
                         });
