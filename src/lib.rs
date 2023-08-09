@@ -60,6 +60,7 @@ pub mod tiff;
 pub use bitmap::{Bitmap, Image, Point, Rect, Size};
 pub use colour::ColourSpace;
 pub use dump::Dump;
+pub use mosaic::Pattern as CfaPattern;
 pub use rawfile::{RawFile, RawFileHandle, RawFileImpl};
 pub use rawimage::RawImage;
 pub use render::{RenderingOptions, RenderingStage};
