@@ -330,6 +330,31 @@ impl RawFileImpl for OrfFile {
                     height,
                 }));
                 data.set_whites([(1 << 12) - 1_u16; 4]);
+
+                if let Some(mnote) = self.ifd(IfdType::MakerNote) {
+                    // We are guaranted that container was created
+                    if let Some(ip_dir) = mnote.ifd_in_entry(
+                        self.container.get().unwrap(),
+                        exif::ORF_TAG_CAMERA_IMAGE_PROCESSING,
+                    ) {
+                        let active_area = Some(Rect::default()).and_then(|_| {
+                            let y = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_TOP)?;
+                            let x = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_LEFT)?;
+                            let width = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_WIDTH)?;
+                            let height = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_HEIGHT)?;
+                            Some(Rect {
+                                x,
+                                y,
+                                width,
+                                height,
+                            })
+                        });
+                        if active_area.is_some() {
+                            data.set_active_area(active_area);
+                        }
+                    }
+                }
+
                 data
             })
     }

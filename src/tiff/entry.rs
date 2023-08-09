@@ -249,7 +249,7 @@ impl Entry {
                     &self.data.as_slice()[i32::unit_size() * index as usize..],
                 )),
                 _ => {
-                    log::error!("incorrect type {} for uint", self.type_);
+                    log::error!("incorrect type {} for uint {}", self.type_, self.id);
                     None
                 }
             })
@@ -308,8 +308,13 @@ impl Entry {
     pub fn uint_value_array(&self, endian: Endian) -> Option<Vec<u32>> {
         let type_ = match exif::TagType::try_from(self.type_) {
             Ok(t @ TagType::Short) | Ok(t @ TagType::Long) => t,
+            Ok(TagType::Rational) => {
+                return self
+                    .value_array::<Rational>(endian)
+                    .map(|v| v.iter().map(|r| r.num / r.denom).collect())
+            }
             _ => {
-                log::error!("incorrect type {} for uint", self.type_);
+                log::error!("incorrect type {} for uint {}", self.type_, self.id);
                 return None;
             }
         };
@@ -349,7 +354,7 @@ impl Entry {
         let type_ = match exif::TagType::try_from(self.type_) {
             Ok(t @ TagType::SShort) | Ok(t @ TagType::SLong) => t,
             _ => {
-                log::error!("incorrect type {} for uint", self.type_);
+                log::error!("incorrect type {} for uint {}", self.type_, self.id);
                 return None;
             }
         };

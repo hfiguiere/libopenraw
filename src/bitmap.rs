@@ -66,7 +66,7 @@ pub trait Image: Bitmap {
 }
 
 /// Rectangle struct.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Rect {
     pub x: u32,
     pub y: u32,

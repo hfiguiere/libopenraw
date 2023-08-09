@@ -166,13 +166,22 @@ pub const ERF_TAG_PREVIEW_IMAGE: u16 = 0x280;
 pub const MNOTE_EPSON_SENSORAREA: u16 = 0x400;
 pub const MNOTE_EPSON_BLACK_LEVEL: u16 = 0x401;
 
-/* ORF tags */
+/// ORF MakerNote
 pub const ORF_TAG_THUMBNAIL_IMAGE: u16 = 0x100;
+/// Camera Settings IFD
 pub const ORF_TAG_CAMERA_SETTINGS: u16 = 0x2020;
-/* Camera Settings */
 pub const ORF_TAG_CS_PREVIEW_IMAGE_VALID: u16 = 0x100;
 pub const ORF_TAG_CS_PREVIEW_IMAGE_START: u16 = 0x101;
 pub const ORF_TAG_CS_PREVIEW_IMAGE_LENGTH: u16 = 0x102;
+/// Image processing IFD
+pub const ORF_TAG_CAMERA_IMAGE_PROCESSING: u16 = 0x2040;
+pub const ORF_TAG_IP_WHITE_BALANCE: u16 = 0x0100;
+pub const ORF_TAG_IP_COLOR_MATRIX: u16 = 0x200;
+pub const ORF_TAG_IP_BLACK_LEVEL: u16 = 0x0600;
+pub const ORF_TAG_IP_CROP_LEFT: u16 = 0x0612;
+pub const ORF_TAG_IP_CROP_TOP: u16 = 0x0613;
+pub const ORF_TAG_IP_CROP_WIDTH: u16 = 0x0614;
+pub const ORF_TAG_IP_CROP_HEIGHT: u16 = 0x0615;
 
 /* CR2 tags */
 /// This tag is present in the RAW IFD for Canon CR2.
