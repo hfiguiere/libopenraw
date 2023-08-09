@@ -57,7 +57,7 @@ mod sony;
 mod thumbnail;
 pub mod tiff;
 
-pub use bitmap::{Bitmap, Image, Rect};
+pub use bitmap::{Bitmap, Image, Point, Rect, Size};
 pub use colour::ColourSpace;
 pub use dump::Dump;
 pub use rawfile::{RawFile, RawFileHandle, RawFileImpl};
