@@ -575,18 +575,26 @@ bool Test::testRawMinValue(const std::string & result)
             RETURN_FAIL("failed to get rawData");
         }
     }
-    uint16_t expected;
-    try {
-        expected = boost::lexical_cast<uint16_t>(result);
+    std::vector<std::string> v;
+    boost::split(v, result, boost::is_any_of(" "));
+    if (v.size() != 4) {
+        RETURN_FAIL("mismatch number of elements");
     }
-    catch(...)
+    std::vector<uint32_t> v2;
+    for (const auto & s : v)
     {
-        RETURN_FAIL("conversion failed");
+        try {
+            v2.push_back(boost::lexical_cast<uint32_t>(s));
+        }
+        catch(...)
+        {
+            RETURN_FAIL("conversion failed");
+        }
     }
     uint16_t black, white;
     black = white = 0;
     or_rawdata_get_levels(m_rawdata.get(), &black, &white);
-    RETURN_TEST_EQUALS_N(black, expected);
+    RETURN_TEST_EQUALS_N(black, v2[0]);
 }
 
 
@@ -598,18 +606,26 @@ bool Test::testRawMaxValue(const std::string & result)
             RETURN_FAIL("failed to get rawData");
         }
     }
-    uint16_t expected;
-    try {
-        expected = boost::lexical_cast<uint16_t>(result);
+    std::vector<std::string> v;
+    boost::split(v, result, boost::is_any_of(" "));
+    if (v.size() != 4) {
+        RETURN_FAIL("mismatch number of elements");
     }
-    catch(...)
+    std::vector<uint32_t> v2;
+    for (const auto & s : v)
     {
-        RETURN_FAIL("conversion failed");
+        try {
+            v2.push_back(boost::lexical_cast<uint32_t>(s));
+        }
+        catch(...)
+        {
+            RETURN_FAIL("conversion failed");
+        }
     }
     uint16_t black, white;
     black = white = 0;
     or_rawdata_get_levels(m_rawdata.get(), &black, &white);
-    RETURN_TEST_EQUALS_N(white, expected);
+    RETURN_TEST_EQUALS_N(white, v2[0]);
 }
 
 bool Test::testRawMd5(const std::string & result)
