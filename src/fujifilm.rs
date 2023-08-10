@@ -40,6 +40,7 @@ use crate::thumbnail;
 use crate::thumbnail::{Data, DataOffset};
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
+use crate::utils;
 use crate::{
     DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
 };
@@ -320,7 +321,7 @@ impl RawFileImpl for RafFile {
                     )
                     .map_err(|_| Error::FormatError)?
                 } else {
-                    Pattern::Gbrg
+                    Pattern::Rggb
                 };
 
                 log::debug!("RAF raw props {:x}", raw_props);
@@ -331,6 +332,7 @@ impl RawFileImpl for RafFile {
                 let mut cfa_offset: u64 = 0;
                 let mut cfa_len: u64 = 0;
                 let mut bps: u16 = 12;
+                let mut blacks = vec![0_u32; 4];
 
                 if let Some(cfa_container) = raw_container.cfa_container() {
                     if let Some(dir) = cfa_container
@@ -343,6 +345,9 @@ impl RawFileImpl for RafFile {
                             .unwrap_or(0) as u64;
                         cfa_len = dir.value::<u32>(raf::FUJI_TAG_RAW_BYTE_LEN).unwrap_or(0) as u64;
                         bps = dir.value::<u32>(raf::FUJI_TAG_RAW_BPS).unwrap_or(0) as u16;
+                        blacks = dir
+                            .uint_value_array(raf::FUJI_TAG_RAW_BLACK_LEVEL_GRB)
+                            .unwrap_or_else(|| vec![0_u32; 4]);
                     }
                 } else {
                     cfa_offset = raw_container.cfa_offset() as u64 + 2048;
@@ -389,6 +394,8 @@ impl RawFileImpl for RafFile {
                     )
                 };
 
+                rawdata.set_blacks(utils::to_quad(&blacks));
+                rawdata.set_whites([((1 << bps as u32) - 1) as u16; 4]);
                 rawdata.set_active_area(active_area);
 
                 Ok(rawdata)

@@ -1071,9 +1071,9 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>25531520</rawDataSize>
       <rawDataDimensions>4448 2870</rawDataDimensions>
-      <rawCfaPattern>GBRG</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
-      <rawMaxValue>0 0 0 0</rawMaxValue>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>255 254 254 255</rawMinValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawMd5>36143</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -1098,8 +1098,8 @@
       <rawDataSize>33669120</rawDataSize>
       <rawDataDimensions>5120 3288</rawDataDimensions>
       <rawCfaPattern>NON_RGB22</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
-      <rawMaxValue>0 0 0 0</rawMaxValue>
+      <rawMinValue>255 255 255 255</rawMinValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawMd5>26116</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
