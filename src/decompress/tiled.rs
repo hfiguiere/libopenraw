@@ -52,8 +52,8 @@ impl TiledLJpeg {
             let tile = tile.as_ref().unwrap();
             // Edge tiles might be wider than necessary, ie width
             // isn't a multiple of the image width.
-            let row_len = std::cmp::min(tile.width as usize, width - first_col);
-            for r in 0..tile.height as usize {
+            let row_len = std::cmp::min(tile.u_width as usize, width - first_col);
+            for r in 0..tile.u_height as usize {
                 if first_row + r >= height {
                     // We are past the last row. This is because the
                     // tiles aren't necessarily a multiple of the
@@ -61,7 +61,7 @@ impl TiledLJpeg {
                     break;
                 }
                 let pos = (first_row + r) * width + first_col;
-                let tile_pos = r * tile.width as usize;
+                let tile_pos = r * tile.u_width as usize;
                 buf_slice[pos..][..row_len].copy_from_slice(&tile.buf[tile_pos..][..row_len]);
             }
             first_col += tile.u_width as usize;
