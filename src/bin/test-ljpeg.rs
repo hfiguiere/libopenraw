@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
 use libopenraw::LJpeg;
 
 /// Test the LJpeg decrompression from the command line
@@ -11,7 +12,7 @@ fn main() {
 
     let io = std::fs::File::open(&args[1]);
     assert!(io.is_ok());
-    let mut io = io.unwrap();
+    let mut io = std::io::BufReader::new(io.unwrap());
     let _ = decompressor.decompress(&mut io).map_err(|e| {
         println!("Error decoding: {}", e);
         e
