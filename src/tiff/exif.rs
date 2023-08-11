@@ -297,6 +297,27 @@ impl ToString for Rational {
     }
 }
 
+impl From<&Rational> for f64 {
+    fn from(r: &Rational) -> f64 {
+        if r.denom != 0 {
+            r.num as f64 / r.denom as f64
+        } else {
+            f64::NAN
+        }
+    }
+}
+
+impl From<&Rational> for u32 {
+    fn from(r: &Rational) -> u32 {
+        if r.denom != 0 {
+            r.num / r.denom
+        } else {
+            // XXX this should be an error.
+            0
+        }
+    }
+}
+
 /// Signed rational number (fraction)
 #[derive(Debug, PartialEq, Eq)]
 pub struct SRational {

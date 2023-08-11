@@ -548,6 +548,12 @@ impl Dir {
             .and_then(|e| e.uint_value_array(self.endian()))
     }
 
+    /// Get and unsigned integer that could be either size.
+    pub fn float_value_array(&self, tag: u16) -> Option<Vec<f64>> {
+        self.entry(tag)
+            .and_then(|e| e.float_value_array(self.endian()))
+    }
+
     /// Whether the IFD is primary
     pub fn is_primary(&self) -> bool {
         if let Some(v) = self.value::<u32>(exif::EXIF_TAG_NEW_SUBFILE_TYPE) {

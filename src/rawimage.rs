@@ -56,6 +56,8 @@ pub struct RawImage {
     active_area: Option<Rect>,
     /// The mosaic pattern
     mosaic_pattern: Pattern,
+    /// The neutral camera white balance
+    as_shot_neutral: [f64; 4],
     /// Colour matrices
     matrices: [Vec<f64>; 2],
     /// Linearization table. len = 2^bpc
@@ -88,6 +90,7 @@ impl RawImage {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
+            as_shot_neutral: [0_f64; 4],
             matrices: [vec![], vec![]],
             linearization_table: None,
         }
@@ -114,6 +117,7 @@ impl RawImage {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
+            as_shot_neutral: [0_f64; 4],
             matrices: [vec![], vec![]],
             linearization_table: None,
         }
@@ -140,6 +144,7 @@ impl RawImage {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
+            as_shot_neutral: [0_f64; 4],
             matrices: [vec![], vec![]],
             linearization_table: None,
         }
@@ -162,6 +167,7 @@ impl RawImage {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
+            as_shot_neutral: [0_f64; 4],
             matrices: [vec![], vec![]],
             linearization_table: None,
         }
@@ -193,6 +199,24 @@ impl RawImage {
     /// Set the sensor active area.
     pub fn set_active_area(&mut self, rect: Option<Rect>) {
         self.active_area = rect;
+    }
+
+    /// Retrieve the White balance as RGBx multiplier values.
+    ///
+    /// Usually on RGB raw data `x` will be NAN. These multipliers are
+    /// usually normalized around a 1.0 multiplier value for Green.
+    /// For a white balanced RGB image, returns `[1.0, 1.0, 1.0, NAN]`
+    pub fn as_shot_neutral(&self) -> &[f64] {
+        &self.as_shot_neutral
+    }
+
+    /// Set the white balance.
+    ///
+    /// Currently only 3 RGB component is supported.
+    pub fn set_as_shot_neutral(&mut self, as_shot: &[f64]) {
+        self.as_shot_neutral[0] = as_shot[0];
+        self.as_shot_neutral[1] = as_shot[1];
+        self.as_shot_neutral[2] = as_shot[2];
     }
 
     /// Set the width of the Rawdata. Use with caution.

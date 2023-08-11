@@ -152,6 +152,7 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
         if rawdata.linearization_table().is_some() {
             println!("\tHas a linearization table.");
         }
+        println!("\tAs Shot Neutral = {:?}", rawdata.as_shot_neutral());
         if let Ok((origin, _)) = rawfile.colour_matrix(1) {
             println!("\tColour Matrix Origin: {origin:?}");
         }

@@ -34,7 +34,7 @@ use crate::io::View;
 use crate::{Error, Result};
 
 use super::exif;
-use super::exif::{ExifValue, Rational, TagType};
+use super::exif::{ExifValue, Rational, SRational, TagType};
 
 #[derive(Clone, Debug)]
 /// Represent the data bytes, either the 4 bytes read,
@@ -311,7 +311,7 @@ impl Entry {
             Ok(TagType::Rational) => {
                 return self
                     .value_array::<Rational>(endian)
-                    .map(|v| v.iter().map(|r| r.num / r.denom).collect())
+                    .map(|v| v.iter().map(|r| r.into()).collect())
             }
             _ => {
                 log::error!("incorrect type {} for uint {}", self.type_, self.id);
@@ -340,6 +340,61 @@ impl Entry {
                 TagType::Long => match endian {
                     Endian::Big => u32::read::<BigEndian>(slice),
                     Endian::Little => u32::read::<LittleEndian>(slice),
+                    _ => unreachable!(),
+                },
+                _ => unreachable!(),
+            };
+            values.push(v);
+        }
+        Some(values)
+    }
+
+    /// Get the value array out of the entry, using `endian`.
+    pub fn float_value_array(&self, endian: Endian) -> Option<Vec<f64>> {
+        let type_ = match exif::TagType::try_from(self.type_) {
+            Ok(TagType::Short) | Ok(TagType::Long) => {
+                return self
+                    .uint_value_array(endian)
+                    .map(|v| v.iter().map(|v| *v as f64).collect())
+            }
+            Ok(TagType::Rational) => {
+                return self
+                    .value_array::<Rational>(endian)
+                    .map(|v| v.iter().map(|r| r.into()).collect())
+            }
+            Ok(TagType::SRational) => {
+                return self
+                    .value_array::<SRational>(endian)
+                    .map(|v| v.iter().map(|r| r.into()).collect())
+            }
+            Ok(t @ TagType::Float) | Ok(t @ TagType::Double) => t,
+            _ => {
+                log::error!("incorrect type {} for uint {}", self.type_, self.id);
+                return None;
+            }
+        };
+        let unit_size = match type_ {
+            TagType::Float => f32::unit_size(),
+            TagType::Double => f64::unit_size(),
+            _ => unreachable!(),
+        };
+
+        let data_slice = self.data.as_slice();
+        let count = self.count as usize;
+        let mut values = Vec::with_capacity(count);
+        for index in 0..count {
+            let slice = &data_slice[unit_size * index..];
+            let v = match type_ {
+                TagType::Float => {
+                    (match endian {
+                        Endian::Big => f32::read::<BigEndian>(slice),
+                        Endian::Little => f32::read::<LittleEndian>(slice),
+                        _ => unreachable!(),
+                    }) as f64
+                }
+                TagType::Double => match endian {
+                    Endian::Big => f64::read::<BigEndian>(slice),
+                    Endian::Little => f64::read::<LittleEndian>(slice),
                     _ => unreachable!(),
                 },
                 _ => unreachable!(),
@@ -456,8 +511,6 @@ impl Entry {
         }
 
         fn value(e: &Entry, endian: Endian) -> String {
-            use crate::tiff::exif::SRational;
-
             match TagType::try_from(e.type_) {
                 Ok(TagType::Ascii) => e.string_value().map(|v| format!("\"{v}\"")),
                 Ok(TagType::Byte) => e
