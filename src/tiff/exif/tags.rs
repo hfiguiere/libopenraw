@@ -168,20 +168,31 @@ pub const MNOTE_EPSON_BLACK_LEVEL: u16 = 0x401;
 
 /// ORF MakerNote
 pub const ORF_TAG_THUMBNAIL_IMAGE: u16 = 0x100;
+/// Equipment IFD
+pub const ORF_TAG_EQUIPMENT: u16 = 0x2010;
 /// Camera Settings IFD
 pub const ORF_TAG_CAMERA_SETTINGS: u16 = 0x2020;
 pub const ORF_TAG_CS_PREVIEW_IMAGE_VALID: u16 = 0x100;
 pub const ORF_TAG_CS_PREVIEW_IMAGE_START: u16 = 0x101;
 pub const ORF_TAG_CS_PREVIEW_IMAGE_LENGTH: u16 = 0x102;
+/// Raw Development IFD
+pub const ORF_TAG_RAW_DEVELOPMENT: u16 = 0x2030;
+/// Raw Development2 IFD
+pub const ORF_TAG_RAW_DEVELOPMENT2: u16 = 0x2031;
 /// Image processing IFD
-pub const ORF_TAG_CAMERA_IMAGE_PROCESSING: u16 = 0x2040;
-pub const ORF_TAG_IP_WHITE_BALANCE: u16 = 0x0100;
+pub const ORF_TAG_IMAGE_PROCESSING: u16 = 0x2040;
+pub const ORF_TAG_IP_WHITE_BALANCE_RB: u16 = 0x0100;
+pub const ORF_TAG_IP_WHITE_BALANCE_G: u16 = 0x011f;
 pub const ORF_TAG_IP_COLOR_MATRIX: u16 = 0x200;
 pub const ORF_TAG_IP_BLACK_LEVEL: u16 = 0x0600;
 pub const ORF_TAG_IP_CROP_LEFT: u16 = 0x0612;
 pub const ORF_TAG_IP_CROP_TOP: u16 = 0x0613;
 pub const ORF_TAG_IP_CROP_WIDTH: u16 = 0x0614;
 pub const ORF_TAG_IP_CROP_HEIGHT: u16 = 0x0615;
+/// Focus Info IFD
+pub const ORF_TAG_FOCUS_INFO: u16 = 0x2050;
+/// Raw Info IFD
+pub const ORF_TAG_RAW_INFO: u16 = 0x3000;
 
 /* CR2 tags */
 /// This tag is present in the RAW IFD for Canon CR2.

@@ -7,7 +7,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65537</rawTypeId>
       <makerNoteCount>24</makerNoteCount>
-      <makerNoteId>Canon</makerNoteId>
+      <makerNoteId>Exif.Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 20D</exifModel>
       <thumbNum>2</thumbNum>
@@ -34,7 +34,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65542</rawTypeId>
       <makerNoteCount>34</makerNoteCount>
-      <makerNoteId>Canon</makerNoteId>
+      <makerNoteId>Exif.Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 450D</exifModel>
       <thumbNum>2</thumbNum>
@@ -61,7 +61,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65564</rawTypeId>
       <makerNoteCount>41</makerNoteCount>
-      <makerNoteId>Canon</makerNoteId>
+      <makerNoteId>Exif.Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 7D</exifModel>
       <thumbNum>2</thumbNum>
@@ -88,7 +88,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65564</rawTypeId>
       <makerNoteCount>41</makerNoteCount>
-      <makerNoteId>Canon</makerNoteId>
+      <makerNoteId>Exif.Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 7D</exifModel>
       <thumbNum>2</thumbNum>
@@ -115,7 +115,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65568</rawTypeId>
       <makerNoteCount>39</makerNoteCount>
-      <makerNoteId>Canon</makerNoteId>
+      <makerNoteId>Exif.Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS 5D Mark II</exifModel>
       <thumbNum>2</thumbNum>
@@ -142,7 +142,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65565</rawTypeId>
       <makerNoteCount>28</makerNoteCount>
-      <makerNoteId>Canon</makerNoteId>
+      <makerNoteId>Exif.Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon PowerShot G11</exifModel>
       <thumbNum>2</thumbNum>
@@ -169,7 +169,7 @@
       <rawType>CR2</rawType>
       <rawTypeId>65565</rawTypeId>
       <makerNoteCount>28</makerNoteCount>
-      <makerNoteId>Canon</makerNoteId>
+      <makerNoteId>Exif.Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon PowerShot G11</exifModel>
       <thumbNum>2</thumbNum>
@@ -196,7 +196,7 @@
       <rawType>CR3</rawType>
       <rawTypeId>65620</rawTypeId>
       <makerNoteCount>47</makerNoteCount>
-      <makerNoteId>Canon</makerNoteId>
+      <makerNoteId>Exif.Canon</makerNoteId>
       <exifMake>Canon</exifMake>
       <exifModel>Canon EOS M50</exifModel>
       <thumbNum>3</thumbNum>
@@ -273,7 +273,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131076</rawTypeId>
       <makerNoteCount>32</makerNoteCount>
-      <makerNoteId>Nikon</makerNoteId>
+      <makerNoteId>Exif.Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D100 </exifModel>
       <thumbNum>2</thumbNum>
@@ -298,7 +298,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131085</rawTypeId>
       <makerNoteCount>43</makerNoteCount>
-      <makerNoteId>Nikon</makerNoteId>
+      <makerNoteId>Exif.Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D70</exifModel>
       <thumbNum>3</thumbNum>
@@ -324,7 +324,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131085</rawTypeId>
       <makerNoteCount>43</makerNoteCount>
-      <makerNoteId>Nikon</makerNoteId>
+      <makerNoteId>Exif.Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D70</exifModel>
       <thumbNum>3</thumbNum>
@@ -350,7 +350,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131106</rawTypeId>
       <makerNoteCount>54</makerNoteCount>
-      <makerNoteId>Nikon</makerNoteId>
+      <makerNoteId>Exif.Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D90</exifModel>
       <thumbNum>3</thumbNum>
@@ -376,7 +376,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131106</rawTypeId>
       <makerNoteCount>54</makerNoteCount>
-      <makerNoteId>Nikon</makerNoteId>
+      <makerNoteId>Exif.Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D90</exifModel>
       <thumbNum>3</thumbNum>
@@ -402,7 +402,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131074</rawTypeId>
       <makerNoteCount>21</makerNoteCount>
-      <makerNoteId>Nikon (Headerless)</makerNoteId>
+      <makerNoteId>Exif.NikonHeaderless</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D1 </exifModel>
       <thumbNum>1</thumbNum>
@@ -427,7 +427,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131077</rawTypeId>
       <makerNoteCount>40</makerNoteCount>
-      <makerNoteId>Nikon</makerNoteId>
+      <makerNoteId>Exif.Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D2H</exifModel>
       <thumbNum>2</thumbNum>
@@ -453,7 +453,7 @@
       <rawType>NEF</rawType>
       <rawTypeId>131081</rawTypeId>
       <makerNoteCount>53</makerNoteCount>
-      <makerNoteId>Nikon</makerNoteId>
+      <makerNoteId>Exif.Nikon</makerNoteId>
       <exifMake>NIKON CORPORATION</exifMake>
       <exifModel>NIKON D300</exifModel>
       <thumbNum>3</thumbNum>
@@ -479,7 +479,7 @@
       <rawType>ERF</rawType>
       <rawTypeId>327681</rawTypeId>
       <makerNoteCount>14</makerNoteCount>
-      <makerNoteId>Epson</makerNoteId>
+      <makerNoteId>Exif.Epson</makerNoteId>
       <exifMake>SEIKO EPSON CORP.</exifMake>
       <exifModel>R-D1</exifModel>
       <thumbNum>2</thumbNum>
@@ -508,7 +508,7 @@
       <exifMake>PENTAX Corporation </exifMake>
       <exifModel>PENTAX K10D        </exifModel>
       <makerNoteCount>91</makerNoteCount>
-      <makerNoteId>Pentax</makerNoteId>
+      <makerNoteId>Exif.Pentax</makerNoteId>
       <thumbNum>3</thumbNum>
       <thumbSizes>160 3872 640</thumbSizes>
       <thumbFormats>JPEG JPEG JPEG</thumbFormats>
@@ -535,7 +535,7 @@
       <exifMake>PENTAX Corporation </exifMake>
       <exifModel>PENTAX *ist D      </exifModel>
       <makerNoteCount>78</makerNoteCount>
-      <makerNoteId>Pentax</makerNoteId>
+      <makerNoteId>Exif.Pentax</makerNoteId>
       <thumbNum>3</thumbNum>
       <thumbSizes>160 3008 640</thumbSizes>
       <thumbFormats>JPEG JPEG JPEG</thumbFormats>
@@ -615,7 +615,7 @@
       <exifMake>Leica Camera AG</exifMake>
       <exifModel>M8 Digital Camera</exifModel>
       <makerNoteCount>15</makerNoteCount>
-      <makerNoteId>Leica2</makerNoteId>
+      <makerNoteId>Exif.Leica2</makerNoteId>
       <thumbNum>1</thumbNum>
       <thumbSizes>320</thumbSizes>
       <thumbFormats>8RGB</thumbFormats>
@@ -659,7 +659,7 @@
       <exifMake>RICOH IMAGING COMPANY, LTD.</exifMake>
       <exifModel>GR                                                             </exifModel>
       <makerNoteCount>69</makerNoteCount>
-      <makerNoteId>Ricoh</makerNoteId>
+      <makerNoteId>Exif.Ricoh</makerNoteId>
       <thumbNum>2</thumbNum>
       <thumbSizes>160 640</thumbSizes>
       <thumbFormats>8RGB JPEG</thumbFormats>
@@ -684,7 +684,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458755</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
-      <makerNoteId>Olympus2</makerNoteId>
+      <makerNoteId>Exif.Olympus2</makerNoteId>
       <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
       <exifModel>E-3             </exifModel>
       <thumbNum>2</thumbNum>
@@ -710,7 +710,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458756</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
-      <makerNoteId>Olympus</makerNoteId>
+      <makerNoteId>Exif.Olympus</makerNoteId>
       <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
       <exifModel>E-300           </exifModel>
       <thumbNum>2</thumbNum>
@@ -737,7 +737,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458756</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
-      <makerNoteId>Olympus</makerNoteId>
+      <makerNoteId>Exif.Olympus</makerNoteId>
       <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
       <exifModel>E-300           </exifModel>
       <thumbNum>2</thumbNum>
@@ -764,7 +764,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458757</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
-      <makerNoteId>Olympus</makerNoteId>
+      <makerNoteId>Exif.Olympus</makerNoteId>
       <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
       <exifModel>E-330           </exifModel>
       <thumbNum>2</thumbNum>
@@ -791,7 +791,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458757</rawTypeId>
       <makerNoteCount>27</makerNoteCount>
-      <makerNoteId>Olympus</makerNoteId>
+      <makerNoteId>Exif.Olympus</makerNoteId>
       <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
       <exifModel>E-330           </exifModel>
       <thumbNum>2</thumbNum>
@@ -817,7 +817,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458766</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
-      <makerNoteId>Olympus2</makerNoteId>
+      <makerNoteId>Exif.Olympus2</makerNoteId>
       <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
       <exifModel>E-P1            </exifModel>
       <thumbNum>2</thumbNum>
@@ -844,7 +844,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458766</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
-      <makerNoteId>Olympus2</makerNoteId>
+      <makerNoteId>Exif.Olympus2</makerNoteId>
       <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
       <exifModel>E-P1            </exifModel>
       <thumbNum>2</thumbNum>
@@ -870,7 +870,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458759</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
-      <makerNoteId>Olympus2</makerNoteId>
+      <makerNoteId>Exif.Olympus2</makerNoteId>
       <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
       <exifModel>E-410           </exifModel>
       <thumbNum>2</thumbNum>
@@ -897,7 +897,7 @@
       <rawType>ORF</rawType>
       <rawTypeId>458759</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
-      <makerNoteId>Olympus2</makerNoteId>
+      <makerNoteId>Exif.Olympus2</makerNoteId>
       <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
       <exifModel>E-410           </exifModel>
       <thumbNum>2</thumbNum>
@@ -924,7 +924,7 @@
       <rawType>MRW</rawType>
       <rawTypeId>393219</rawTypeId>
       <makerNoteCount>7</makerNoteCount>
-      <makerNoteId>Minolta</makerNoteId>
+      <makerNoteId>Exif.Minolta</makerNoteId>
       <exifMake>Minolta Co., Ltd.</exifMake>
       <exifModel>DiMAGE 5</exifModel>
       <thumbNum>1</thumbNum>
@@ -950,7 +950,7 @@
       <rawType>MRW</rawType>
       <rawTypeId>393221</rawTypeId>
       <makerNoteCount>8</makerNoteCount>
-      <makerNoteId>Minolta</makerNoteId>
+      <makerNoteId>Exif.Minolta</makerNoteId>
       <exifMake>Minolta Co., Ltd.</exifMake>
       <exifModel>DiMAGE 7i</exifModel>
       <thumbNum>1</thumbNum>
@@ -976,7 +976,7 @@
       <rawType>MRW</rawType>
       <rawTypeId>393222</rawTypeId>
       <makerNoteCount>11</makerNoteCount>
-      <makerNoteId>Minolta</makerNoteId>
+      <makerNoteId>Exif.Minolta</makerNoteId>
       <exifMake>Minolta Co., Ltd.</exifMake>
       <exifModel>DiMAGE 7Hi</exifModel>
       <thumbNum>1</thumbNum>
@@ -1001,7 +1001,7 @@
     <results>
       <rawType>ARW</rawType>
       <rawTypeId>524289</rawTypeId>
-      <makerNoteId>Sony5</makerNoteId>
+      <makerNoteId>Exif.Sony5</makerNoteId>
       <thumbNum>1</thumbNum>
       <thumbSizes>3872</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
@@ -1017,7 +1017,7 @@
     <results>
       <rawType>ARW</rawType>
       <rawTypeId>524289</rawTypeId>
-      <makerNoteId>Sony5</makerNoteId>
+      <makerNoteId>Exif.Sony5</makerNoteId>
       <thumbNum>2</thumbNum>
       <thumbSizes>3872 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
@@ -1034,7 +1034,7 @@
       <rawType>ARW</rawType>
       <rawTypeId>524366</rawTypeId>
       <makerNoteCount>19</makerNoteCount>
-      <makerNoteId>Sony5</makerNoteId>
+      <makerNoteId>Exif.Sony5</makerNoteId>
       <exifMake>SONY</exifMake>
       <exifModel>DSC-R1</exifModel>
       <thumbNum>2</thumbNum>
@@ -1060,7 +1060,7 @@
       <rawType>RAF</rawType>
       <rawTypeId>917518</rawTypeId>
       <makerNoteCount>42</makerNoteCount>
-      <makerNoteId>Fujifilm</makerNoteId>
+      <makerNoteId>Exif.Fujifilm</makerNoteId>
       <exifMake>FUJIFILM</exifMake>
       <exifModel>FinePix X100</exifModel>
       <thumbNum>2</thumbNum>
@@ -1086,7 +1086,7 @@
       <rawType>RAF</rawType>
       <rawTypeId>917526</rawTypeId>
       <makerNoteCount>46</makerNoteCount>
-      <makerNoteId>Fujifilm</makerNoteId>
+      <makerNoteId>Exif.Fujifilm</makerNoteId>
       <exifMake>FUJIFILM</exifMake>
       <exifModel>X-Pro1</exifModel>
       <thumbNum>2</thumbNum>
@@ -1134,7 +1134,7 @@
       <rawType>RW2</rawType>
       <rawTypeId>720912</rawTypeId>
       <makerNoteCount>69</makerNoteCount>
-      <makerNoteId>Panasonic</makerNoteId>
+      <makerNoteId>Exif.Panasonic</makerNoteId>
       <exifMake>Panasonic</exifMake>
       <exifModel>DMC-L10</exifModel>
       <thumbNum>2</thumbNum>
@@ -1161,7 +1161,7 @@
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
       <makerNoteCount>143</makerNoteCount>
-      <makerNoteId>Panasonic</makerNoteId>
+      <makerNoteId>Exif.Panasonic</makerNoteId>
       <exifMake>Panasonic</exifMake>
       <exifModel>DMC-GH4</exifModel>
       <thumbNum>2</thumbNum>
@@ -1188,7 +1188,7 @@
       <rawType>RW2</rawType>
       <rawTypeId>720926</rawTypeId>
       <makerNoteCount>146</makerNoteCount>
-      <makerNoteId>Panasonic</makerNoteId>
+      <makerNoteId>Exif.Panasonic</makerNoteId>
       <exifMake>Panasonic</exifMake>
       <exifModel>DMC-GH4</exifModel>
       <thumbNum>2</thumbNum>

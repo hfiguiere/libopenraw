@@ -27,10 +27,14 @@ pub use generated::EXIF_TAG_NAMES as TAG_NAMES;
 mod tags;
 pub use tags::*;
 
+use std::collections::HashMap;
+
 use byteorder::ByteOrder;
 use num_enum::TryFromPrimitive;
 
 use crate::utils;
+
+pub type TagMap = HashMap<u16, &'static str>;
 
 /// Type a tag. See `tiff::Entry`.
 #[derive(Debug, PartialEq)]

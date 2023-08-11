@@ -296,10 +296,14 @@ impl Dump for RafContainer {
                 let indent = indent + 1;
                 if let Some(cfa_container) = self.cfa_container() {
                     cfa_container.write_dump(out, indent);
-                    if let Some(dir) = cfa_container
-                        .directory(0)
-                        .and_then(|dir| dir.ifd_in_entry(cfa_container, FUJI_TAG_RAW_SUBIFD))
-                    {
+                    if let Some(dir) = cfa_container.directory(0).and_then(|dir| {
+                        dir.ifd_in_entry(
+                            cfa_container,
+                            FUJI_TAG_RAW_SUBIFD,
+                            Some("Raw.Fujifilm"),
+                            Some(&super::MNOTE_FUJIFILM_RAWIFD_TAG_NAMES),
+                        )
+                    }) {
                         dir.write_dump(out, indent);
                     }
                 } else {

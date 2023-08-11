@@ -22,6 +22,7 @@
 //! The IFD Container. Contains the IFD `Dir`
 
 use std::cell::{RefCell, RefMut};
+use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
@@ -59,6 +60,18 @@ pub(crate) struct Container {
     /// The MakerNote IFD
     mnote_ifd: OnceCell<Option<Dir>>,
     raw_type: RawType,
+}
+
+fn ifd_type_to_dirid(t: IfdType) -> Option<&'static str> {
+    match t {
+        IfdType::Raw => Some("Raw"),
+        IfdType::Main => Some("Main"),
+        IfdType::Exif => Some("Exif"),
+        IfdType::SubIfd => Some("SubIfd"),
+        IfdType::Other => Some("Other"),
+        // XXX figure out the best way here, we shouldn't reach this.
+        IfdType::MakerNote => None,
+    }
 }
 
 impl container::RawContainer for Container {
@@ -135,14 +148,35 @@ impl Container {
     }
 
     /// Read the dir at the offset
-    pub(crate) fn dir_at(&self, view: &mut View, offset: u32, t: IfdType) -> Result<Dir> {
-        match *self.endian.borrow() {
+    pub(crate) fn dir_at(
+        &self,
+        view: &mut View,
+        offset: u32,
+        t: IfdType,
+        id: Option<&'static str>,
+        tag_names: Option<&'static HashMap<u16, &'static str>>,
+    ) -> Result<Dir> {
+        let mut dir = match *self.endian.borrow() {
             container::Endian::Little => Dir::read::<LittleEndian>(view, offset, 0, t),
             container::Endian::Big => Dir::read::<BigEndian>(view, offset, 0, t),
             _ => {
                 error!("Endian unset to read directory");
                 Err(Error::NotFound)
             }
+        };
+        if let Some(id) = id {
+            dir = dir.map(|mut dir| {
+                dir.id = id.bytes().chain(std::iter::once(0_u8)).collect();
+                dir
+            });
+        }
+        if let Some(tag_names) = tag_names {
+            dir.map(|mut dir| {
+                dir.tag_names = tag_names;
+                dir
+            })
+        } else {
+            dir
         }
     }
 
@@ -166,7 +200,13 @@ impl Container {
                 if let Ok(dir) = if t == IfdType::MakerNote {
                     Dir::create_maker_note(self, dir_offset)
                 } else {
-                    self.dir_at(&mut self.view.borrow_mut(), dir_offset, t)
+                    self.dir_at(
+                        &mut self.view.borrow_mut(),
+                        dir_offset,
+                        t,
+                        ifd_type_to_dirid(t),
+                        None,
+                    )
                 } {
                     let next_offset = dir.next_ifd();
                     dirs.push(dir);

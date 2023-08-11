@@ -40,6 +40,12 @@ use crate::tiff::{exif, Ifd};
 use crate::{
     DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
 };
+pub use tiff::exif::generated::MNOTE_OLYMPUS_TAG_NAMES as MNOTE_TAG_NAMES;
+use tiff::exif::generated::{
+    MNOTE_OLYMPUS_CS_TAG_NAMES, MNOTE_OLYMPUS_EQ_TAG_NAMES, MNOTE_OLYMPUS_FI_TAG_NAMES,
+    MNOTE_OLYMPUS_IP_TAG_NAMES, MNOTE_OLYMPUS_RD2_TAG_NAMES, MNOTE_OLYMPUS_RD_TAG_NAMES,
+    MNOTE_OLYMPUS_RI_TAG_NAMES,
+};
 
 use decompress::decompress_olympus;
 use matrices::MATRICES;
@@ -62,8 +68,6 @@ macro_rules! olympus {
         )
     };
 }
-
-pub use tiff::exif::generated::MNOTE_OLYMPUS_TAG_NAMES as MNOTE_TAG_NAMES;
 
 lazy_static::lazy_static! {
 
@@ -131,6 +135,16 @@ lazy_static::lazy_static! {
         olympus!("TG-5            ", TG5),
         olympus!("TG-6            ", TG6),
         olympus!("C5060WZ", C5060WZ),
+    ]);
+
+    static ref MNOTE_TAG_TO_DIRID: HashMap<u16, &'static str> = HashMap::from([
+        (exif::ORF_TAG_CAMERA_SETTINGS, "Exif.OlympusCs"),
+        (exif::ORF_TAG_IMAGE_PROCESSING, "Exif.OlympusIp"),
+        (exif::ORF_TAG_RAW_DEVELOPMENT, "Exif.OlympusRd"),
+        (exif::ORF_TAG_RAW_DEVELOPMENT2, "Exif.OlympusRd2"),
+        (exif::ORF_TAG_EQUIPMENT, "Exif.OlympusEq"),
+        (exif::ORF_TAG_FOCUS_INFO, "Exif.OlympusFi"),
+        (exif::ORF_TAG_RAW_INFO, "Exif.OlympusRi"),
     ]);
 }
 
@@ -214,6 +228,76 @@ impl OrfFile {
         }
         data
     }
+
+    fn olympus_cs_ifd(&self, mnote: &tiff::Dir) -> Option<tiff::Dir> {
+        let dirid = MNOTE_TAG_TO_DIRID.get(&exif::ORF_TAG_CAMERA_SETTINGS);
+        mnote.ifd_in_entry(
+            self.container.get().unwrap(),
+            exif::ORF_TAG_CAMERA_SETTINGS,
+            dirid.cloned(),
+            Some(&MNOTE_OLYMPUS_CS_TAG_NAMES),
+        )
+    }
+
+    fn olympus_ip_ifd(&self, mnote: &tiff::Dir) -> Option<tiff::Dir> {
+        let dirid = MNOTE_TAG_TO_DIRID.get(&exif::ORF_TAG_IMAGE_PROCESSING);
+        mnote.ifd_in_entry(
+            self.container.get().unwrap(),
+            exif::ORF_TAG_IMAGE_PROCESSING,
+            dirid.cloned(),
+            Some(&MNOTE_OLYMPUS_IP_TAG_NAMES),
+        )
+    }
+
+    fn olympus_rd_ifd(&self, mnote: &tiff::Dir) -> Option<tiff::Dir> {
+        let dirid = MNOTE_TAG_TO_DIRID.get(&exif::ORF_TAG_RAW_DEVELOPMENT);
+        mnote.ifd_in_entry(
+            self.container.get().unwrap(),
+            exif::ORF_TAG_RAW_DEVELOPMENT,
+            dirid.cloned(),
+            Some(&MNOTE_OLYMPUS_RD_TAG_NAMES),
+        )
+    }
+
+    fn olympus_rd2_ifd(&self, mnote: &tiff::Dir) -> Option<tiff::Dir> {
+        let dirid = MNOTE_TAG_TO_DIRID.get(&exif::ORF_TAG_RAW_DEVELOPMENT2);
+        mnote.ifd_in_entry(
+            self.container.get().unwrap(),
+            exif::ORF_TAG_RAW_DEVELOPMENT2,
+            dirid.cloned(),
+            Some(&MNOTE_OLYMPUS_RD2_TAG_NAMES),
+        )
+    }
+
+    fn olympus_fi_ifd(&self, mnote: &tiff::Dir) -> Option<tiff::Dir> {
+        let dirid = MNOTE_TAG_TO_DIRID.get(&exif::ORF_TAG_FOCUS_INFO);
+        mnote.ifd_in_entry(
+            self.container.get().unwrap(),
+            exif::ORF_TAG_FOCUS_INFO,
+            dirid.cloned(),
+            Some(&MNOTE_OLYMPUS_FI_TAG_NAMES),
+        )
+    }
+
+    fn olympus_eq_ifd(&self, mnote: &tiff::Dir) -> Option<tiff::Dir> {
+        let dirid = MNOTE_TAG_TO_DIRID.get(&exif::ORF_TAG_EQUIPMENT);
+        mnote.ifd_in_entry(
+            self.container.get().unwrap(),
+            exif::ORF_TAG_EQUIPMENT,
+            dirid.cloned(),
+            Some(&MNOTE_OLYMPUS_EQ_TAG_NAMES),
+        )
+    }
+
+    fn olympus_ri_ifd(&self, mnote: &tiff::Dir) -> Option<tiff::Dir> {
+        let dirid = MNOTE_TAG_TO_DIRID.get(&exif::ORF_TAG_RAW_INFO);
+        mnote.ifd_in_entry(
+            self.container.get().unwrap(),
+            exif::ORF_TAG_RAW_INFO,
+            dirid.cloned(),
+            Some(&MNOTE_OLYMPUS_RI_TAG_NAMES),
+        )
+    }
 }
 
 impl RawFileImpl for OrfFile {
@@ -247,36 +331,31 @@ impl RawFileImpl for OrfFile {
                 mnote.entry(exif::ORF_TAG_THUMBNAIL_IMAGE).map(|e| {
                     container.add_thumbnail_from_entry(e, mnote.mnote_offset, &mut thumbnails)
                 });
-                mnote
-                    .ifd_in_entry(container, exif::ORF_TAG_CAMERA_SETTINGS)
-                    .map(|dir| {
-                        if dir
-                            .value::<u32>(exif::ORF_TAG_CS_PREVIEW_IMAGE_VALID)
+                self.olympus_cs_ifd(mnote).map(|dir| {
+                    if dir
+                        .value::<u32>(exif::ORF_TAG_CS_PREVIEW_IMAGE_VALID)
+                        .unwrap_or(0)
+                        != 0
+                    {
+                        let start = dir
+                            .value::<u32>(exif::ORF_TAG_CS_PREVIEW_IMAGE_START)
                             .unwrap_or(0)
-                            != 0
-                        {
-                            let start = dir
-                                .value::<u32>(exif::ORF_TAG_CS_PREVIEW_IMAGE_START)
-                                .unwrap_or(0)
-                                + mnote.mnote_offset;
-                            let len = dir
-                                .value::<u32>(exif::ORF_TAG_CS_PREVIEW_IMAGE_LENGTH)
-                                .unwrap_or(0);
-                            if start != 0 && len != 0 {
-                                let _ = container.add_thumbnail_from_stream(
-                                    start,
-                                    len,
-                                    &mut thumbnails,
-                                );
-                            } else {
-                                log::error!(
-                                    "ORF thumbnail valid but invalid start {} or len {}",
-                                    start,
-                                    len
-                                );
-                            }
+                            + mnote.mnote_offset;
+                        let len = dir
+                            .value::<u32>(exif::ORF_TAG_CS_PREVIEW_IMAGE_LENGTH)
+                            .unwrap_or(0);
+                        if start != 0 && len != 0 {
+                            let _ =
+                                container.add_thumbnail_from_stream(start, len, &mut thumbnails);
+                        } else {
+                            log::error!(
+                                "ORF thumbnail valid but invalid start {} or len {}",
+                                start,
+                                len
+                            );
                         }
-                    })
+                    }
+                })
             });
 
             ThumbnailStorage::with_thumbnails(thumbnails)
@@ -333,10 +412,7 @@ impl RawFileImpl for OrfFile {
 
                 if let Some(mnote) = self.ifd(IfdType::MakerNote) {
                     // We are guaranted that container was created
-                    if let Some(ip_dir) = mnote.ifd_in_entry(
-                        self.container.get().unwrap(),
-                        exif::ORF_TAG_CAMERA_IMAGE_PROCESSING,
-                    ) {
+                    if let Some(ip_dir) = self.olympus_ip_ifd(mnote) {
                         let active_area = Some(Rect::default()).and_then(|_| {
                             let y = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_TOP)?;
                             let x = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_LEFT)?;
@@ -382,6 +458,29 @@ impl Dump for OrfFile {
             let indent = indent + 1;
             self.container();
             self.container.get().unwrap().write_dump(out, indent);
+            if let Some(mnote) = self.maker_note_ifd() {
+                if let Some(dir) = self.olympus_cs_ifd(mnote) {
+                    dir.write_dump(out, indent);
+                }
+                if let Some(dir) = self.olympus_ip_ifd(mnote) {
+                    dir.write_dump(out, indent);
+                }
+                if let Some(dir) = self.olympus_rd_ifd(mnote) {
+                    dir.write_dump(out, indent);
+                }
+                if let Some(dir) = self.olympus_rd2_ifd(mnote) {
+                    dir.write_dump(out, indent);
+                }
+                if let Some(dir) = self.olympus_fi_ifd(mnote) {
+                    dir.write_dump(out, indent);
+                }
+                if let Some(dir) = self.olympus_eq_ifd(mnote) {
+                    dir.write_dump(out, indent);
+                }
+                if let Some(dir) = self.olympus_ri_ifd(mnote) {
+                    dir.write_dump(out, indent);
+                }
+            }
         }
         dump_writeln!(out, indent, "</Olympus ORF File>");
     }

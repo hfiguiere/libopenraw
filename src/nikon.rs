@@ -442,8 +442,15 @@ impl RawFileImpl for NefFile {
 
             // Get the preview in the makernote
             if let Some(mnote) = self.ifd(tiff::IfdType::MakerNote) {
+                // XXX is this the right id.
+                // XXX add tag names
                 mnote
-                    .ifd_in_entry(container, exif::MNOTE_NIKON_PREVIEW_IFD)
+                    .ifd_in_entry(
+                        container,
+                        exif::MNOTE_NIKON_PREVIEW_IFD,
+                        Some("Nikon.Preview"),
+                        None,
+                    )
                     .and_then(|dir| {
                         let start = dir.value::<u32>(exif::MNOTE_NIKON_PREVIEWIFD_START)?
                             + mnote.mnote_offset;

@@ -68,6 +68,7 @@ macro_rules! fuji {
     };
 }
 
+pub use tiff::exif::generated::MNOTE_FUJIFILM_RAWIFD_TAG_NAMES;
 pub use tiff::exif::generated::MNOTE_FUJIFILM_TAG_NAMES as MNOTE_TAG_NAMES;
 
 lazy_static::lazy_static! {
@@ -335,10 +336,14 @@ impl RawFileImpl for RafFile {
                 let mut blacks = vec![0_u32; 4];
 
                 if let Some(cfa_container) = raw_container.cfa_container() {
-                    if let Some(dir) = cfa_container
-                        .directory(0)
-                        .and_then(|dir| dir.ifd_in_entry(cfa_container, raf::FUJI_TAG_RAW_SUBIFD))
-                    {
+                    if let Some(dir) = cfa_container.directory(0).and_then(|dir| {
+                        dir.ifd_in_entry(
+                            cfa_container,
+                            raf::FUJI_TAG_RAW_SUBIFD,
+                            Some("Raw.Fujifilm"),
+                            Some(&MNOTE_FUJIFILM_RAWIFD_TAG_NAMES),
+                        )
+                    }) {
                         cfa_offset = dir
                             .value::<u32>(raf::FUJI_TAG_RAW_OFFSET)
                             .map(|v| v + raw_container.cfa_offset())
