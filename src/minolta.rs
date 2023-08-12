@@ -287,6 +287,25 @@ impl RawFileImpl for MrwFile {
                 rawdata.set_whites([white; 4]);
                 rawdata.set_blacks([black; 4]);
             }
+            if let Some(wb) = container.wbg.as_ref().and_then(|wbg| {
+                let rd = wbg
+                    .uint8_value(Wbg::DenominatorR as u64, container)
+                    .map(|d| 1 << (6 + d))? as f64;
+                let gd = wbg
+                    .uint8_value(Wbg::DenominatorG1 as u64, container)
+                    .map(|d| 1 << (6 + d))? as f64;
+                let bd = wbg
+                    .uint8_value(Wbg::DenominatorB as u64, container)
+                    .map(|d| 1 << (6 + d))? as f64;
+                let rn = wbg.uint16_value(Wbg::NominatorR as u64, container)? as f64;
+                let gn = wbg.uint16_value(Wbg::NominatorG1 as u64, container)? as f64;
+                let bn = wbg.uint16_value(Wbg::NominatorB as u64, container)? as f64;
+
+                Some([rd / rn, gd / gn, bd / bn, f64::NAN])
+            }) {
+                rawdata.set_as_shot_neutral(&wb);
+            }
+
             Ok(rawdata)
         } else {
             Err(Error::NotFound)
@@ -440,7 +459,7 @@ const DATA_BLOCK_HEADER_LENGTH: u64 = 8;
 struct DataBlock {
     /// Offset from the begining of the file.
     offset: u64,
-    /// Nmae of the block. 3 letter code in a u32 big endian. Starts with `NUL`.
+    /// Name of the block. 3 letter code in a u32 big endian. Starts with `NUL`.
     name: [u8; 4],
     /// Length of the block.
     length: u64,
