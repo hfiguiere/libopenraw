@@ -410,9 +410,26 @@ impl RawFileImpl for OrfFile {
                 }));
                 data.set_whites([(1 << 12) - 1_u16; 4]);
 
+                let mut wb: Option<[f64; 4]> = None;
                 if let Some(mnote) = self.ifd(IfdType::MakerNote) {
+                    let wbr = mnote.uint_value(exif::ORF_TAG_RED_MULTIPLIER);
+                    let wbb = mnote.uint_value(exif::ORF_TAG_BLUE_MULTIPLIER);
+                    if let Some(wbr) = wbr {
+                        if let Some(wbb) = wbb {
+                            wb = Some([256.0 / wbr as f64, 1.0, 256.0 / wbb as f64, f64::NAN]);
+                        }
+                    }
                     // We are guaranted that container was created
                     if let Some(ip_dir) = self.olympus_ip_ifd(mnote) {
+                        if wb.is_none() {
+                            if let Some(wb_rb) = ip_dir
+                                .float_value_array(exif::ORF_TAG_IP_WHITE_BALANCE_RB)
+                                .filter(|v| v.len() == 2 || v.len() == 4)
+                            {
+                                wb = Some([256.0 / wb_rb[0], 1.0, 256.0 / wb_rb[1], f64::NAN]);
+                            }
+                        }
+
                         let active_area = Some(Rect::default()).and_then(|_| {
                             let y = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_TOP)?;
                             let x = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_LEFT)?;
@@ -430,7 +447,9 @@ impl RawFileImpl for OrfFile {
                         }
                     }
                 }
-
+                if let Some(wb) = wb {
+                    data.set_as_shot_neutral(&wb);
+                }
                 data
             })
     }

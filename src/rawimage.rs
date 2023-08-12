@@ -217,6 +217,7 @@ impl RawImage {
         self.as_shot_neutral[0] = as_shot[0];
         self.as_shot_neutral[1] = as_shot[1];
         self.as_shot_neutral[2] = as_shot[2];
+        self.as_shot_neutral[3] = f64::NAN;
     }
 
     /// Set the width of the Rawdata. Use with caution.

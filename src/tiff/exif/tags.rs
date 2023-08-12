@@ -168,6 +168,8 @@ pub const MNOTE_EPSON_BLACK_LEVEL: u16 = 0x401;
 
 /// ORF MakerNote
 pub const ORF_TAG_THUMBNAIL_IMAGE: u16 = 0x100;
+pub const ORF_TAG_RED_MULTIPLIER: u16 = 0x1017;
+pub const ORF_TAG_BLUE_MULTIPLIER: u16 = 0x1018;
 /// Equipment IFD
 pub const ORF_TAG_EQUIPMENT: u16 = 0x2010;
 /// Camera Settings IFD
