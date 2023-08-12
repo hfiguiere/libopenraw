@@ -152,13 +152,14 @@ impl Container {
         &self,
         view: &mut View,
         offset: u32,
+        base_offset: u32,
         t: IfdType,
         id: Option<&'static str>,
         tag_names: Option<&'static HashMap<u16, &'static str>>,
     ) -> Result<Dir> {
         let mut dir = match *self.endian.borrow() {
-            container::Endian::Little => Dir::read::<LittleEndian>(view, offset, 0, t),
-            container::Endian::Big => Dir::read::<BigEndian>(view, offset, 0, t),
+            container::Endian::Little => Dir::read::<LittleEndian>(view, offset, base_offset, t),
+            container::Endian::Big => Dir::read::<BigEndian>(view, offset, base_offset, t),
             _ => {
                 error!("Endian unset to read directory");
                 Err(Error::NotFound)
@@ -203,6 +204,7 @@ impl Container {
                     self.dir_at(
                         &mut self.view.borrow_mut(),
                         dir_offset,
+                        0,
                         t,
                         ifd_type_to_dirid(t),
                         None,

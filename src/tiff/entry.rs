@@ -152,7 +152,7 @@ impl Entry {
         }
 
         let offset = E::read_u32(self.data.as_slice());
-        let actual_offset = (offset + base_offset) as u64;
+        let actual_offset = offset as u64 + base_offset as u64;
         let data = self.load_data_impl(actual_offset, view)?;
 
         let bytes = data.len();

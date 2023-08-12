@@ -575,7 +575,14 @@ impl Dir {
             .and_then(|offset| {
                 let mut view = container.borrow_view_mut();
                 container
-                    .dir_at(&mut view, offset, IfdType::Exif, Some("Exif"), None)
+                    .dir_at(
+                        &mut view,
+                        offset,
+                        self.mnote_offset,
+                        IfdType::Exif,
+                        Some("Exif"),
+                        None,
+                    )
                     .map_err(|e| {
                         log::warn!("Coudln't get exif dir at {}: {}", offset, e);
                         e
@@ -623,7 +630,14 @@ impl Dir {
             .and_then(|val_offset| {
                 let mut view = container.borrow_view_mut();
                 container
-                    .dir_at(&mut view, val_offset, IfdType::Other, id, tag_names)
+                    .dir_at(
+                        &mut view,
+                        val_offset,
+                        self.mnote_offset,
+                        IfdType::Other,
+                        id,
+                        tag_names,
+                    )
                     .ok()
             })
         })
