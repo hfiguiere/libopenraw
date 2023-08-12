@@ -25,7 +25,7 @@ mod matrices;
 mod raf;
 
 use std::collections::HashMap;
-use std::convert::TryFrom;
+use std::convert::{TryFrom, TryInto};
 use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
@@ -310,6 +310,17 @@ impl RawFileImpl for RafFile {
                     _ => None,
                 });
 
+                let mut wb = container.value(raf::TAG_WB_OLD).and_then(|v| match v {
+                    raf::Value::Bytes(wb) => {
+                        // XXX Unsure of the format here.
+                        let g = u16::from_be_bytes(wb[0..2].try_into().ok()?) as f64;
+                        let r = u16::from_be_bytes(wb[2..4].try_into().ok()?) as f64;
+                        let b = u16::from_be_bytes(wb[6..8].try_into().ok()?) as f64;
+                        Some([g / r, 1.0, g / b, f64::NAN])
+                    }
+                    _ => None,
+                });
+
                 let mosaic = if let Some(pattern) = pattern {
                     // In the RAF file the pattern is inverted.
                     Pattern::try_from(
@@ -353,6 +364,13 @@ impl RawFileImpl for RafFile {
                         blacks = dir
                             .uint_value_array(raf::FUJI_TAG_RAW_BLACK_LEVEL_GRB)
                             .unwrap_or_else(|| vec![0_u32; 4]);
+                        if wb.is_none() {
+                            let wb_grb = dir.uint_value_array(raf::FUJI_TAG_RAW_WB_GRB).map(|v| {
+                                let g = v[0] as f64;
+                                [g / v[1] as f64, 1.0, g / v[2] as f64, f64::NAN]
+                            });
+                            wb = wb_grb;
+                        }
                     }
                 } else {
                     cfa_offset = raw_container.cfa_offset() as u64 + 2048;
@@ -402,6 +420,9 @@ impl RawFileImpl for RafFile {
                 rawdata.set_blacks(utils::to_quad(&blacks));
                 rawdata.set_whites([((1 << bps as u32) - 1) as u16; 4]);
                 rawdata.set_active_area(active_area);
+                if let Some(wb) = wb {
+                    rawdata.set_as_shot_neutral(&wb);
+                }
 
                 Ok(rawdata)
             })

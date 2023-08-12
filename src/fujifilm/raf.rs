@@ -68,7 +68,7 @@ impl RafContainer {
     ///  0 +--------------------------
     ///    | 16 bytes magic          |
     ///    | RAF_MAGIC               |
-    /// 12 +-------------------------+
+    /// 16 +-------------------------+
     ///    | 12 bytes serial (string)|
     /// 28 +-------------------------+
     ///    | 32 bytes string         |
@@ -348,10 +348,8 @@ pub(super) const FUJI_TAG_RAW_OFFSET: u16 = 0xf007;
 /// Byte len of the raw image.
 pub(super) const FUJI_TAG_RAW_BYTE_LEN: u16 = 0xf008;
 /// Black level (GRB?)
-#[allow(dead_code)]
 pub(super) const FUJI_TAG_RAW_BLACK_LEVEL_GRB: u16 = 0xf00a;
 /// White balance coefficients.
-#[allow(dead_code)]
 pub(super) const FUJI_TAG_RAW_WB_GRB: u16 = 0xf00e;
 
 lazy_static::lazy_static! {
