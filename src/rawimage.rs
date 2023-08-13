@@ -359,35 +359,11 @@ impl RawImage {
         let x = self.width();
         let y = self.height();
         match self.photom_int {
-            exif::PhotometricInterpretation::CFA => {
-                let mut out_x = 0_u32;
-                let mut out_y = 0_u32;
-                let mut data = vec![0_u16; (3 * x * y) as usize];
-                let err = unsafe {
-                    render::bimedian_demosaic(
-                        buffer.data.as_ptr(),
-                        x,
-                        y,
-                        pattern.into(),
-                        data.as_mut_ptr(),
-                        &mut out_x as *mut u32,
-                        &mut out_y as *mut u32,
-                    )
-                };
-                if err != or_error::NONE {
-                    Err(err.into())
-                } else {
-                    // This is necessary to have a consistent size with the output.
-                    // Notably, the `image` crate doesn't like it.
-                    // The assumption is that the resize should shrink the buffer.
-                    data.resize((3 * out_x * out_y) as usize, 0);
-                    Ok(ImageBuffer::with_data(data, out_x, out_y, 16))
-                }
-            }
+            exif::PhotometricInterpretation::CFA => render::bimedian_demosaic(buffer, pattern),
             exif::PhotometricInterpretation::LinearRaw => {
                 let mut data = vec![0_u16; (3 * x * y) as usize];
                 let err = unsafe {
-                    render::grayscale_to_rgb(buffer.data.as_ptr(), x, y, data.as_mut_ptr())
+                    render::ffi::grayscale_to_rgb(buffer.data.as_ptr(), x, y, data.as_mut_ptr())
                 };
                 if err != or_error::NONE {
                     Err(err.into())

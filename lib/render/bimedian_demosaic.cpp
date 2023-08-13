@@ -74,6 +74,25 @@ m4 (double a, double b, double c, double d)
 #define ROW src_x
 #define COL 1
 
+/* Return -1 if invalid */
+inline int pattern_to_n(or_cfa_pattern pattern)
+{
+    switch(pattern) {
+    case OR_CFA_PATTERN_GRBG:
+        return 0;
+    case OR_CFA_PATTERN_BGGR:
+        return 1;
+    case OR_CFA_PATTERN_GBRG:
+        return 2;
+    case OR_CFA_PATTERN_RGGB:
+        return 3;
+    default:
+        return -1;
+    }
+    // invalid
+    return -1;
+}
+
 /* We expect src_extent to have a one pixel border around all four sides
  * of dst_extent.
  */
@@ -87,23 +106,8 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
     double *src_buf;
     double *dst_buf;
 
-    int npattern = 0;
-    switch(pattern) {
-    case OR_CFA_PATTERN_GRBG:
-        npattern = 0;
-        break;
-    case OR_CFA_PATTERN_BGGR:
-        npattern = 1;
-        break;
-    case OR_CFA_PATTERN_GBRG:
-        npattern = 2;
-        break;
-    case OR_CFA_PATTERN_RGGB:
-        npattern = 3;
-        break;
-
-    default:
-        // invalid
+    const int npattern = pattern_to_n(pattern);
+    if (npattern == -1) {
         return OR_ERROR_INVALID_FORMAT;
     }
 
@@ -122,7 +126,7 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
             double red=0.0;
             double green=0.0;
             double blue=0.0;
-			
+
             if ((y + npattern%2)%2==0) {
                 if ((x+npattern/2)%2==1) {
                     /* GRG
@@ -167,11 +171,11 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
                     red  =(src_buf[offset-COL]+src_buf[offset+COL])/2.0;
                 }
             }
-			
+
             dst_buf [doffset*3+0] = red;
             dst_buf [doffset*3+1] = green;
             dst_buf [doffset*3+2] = blue;
-			
+
             offset++;
             doffset++;
         }
@@ -179,7 +183,7 @@ bimedian_demosaic (uint16_t *src, uint32_t src_x, uint32_t src_y,
     }
     out_x = src_x - 2;
     out_y = src_y - 2;
-    std::copy(dst_buf, dst_buf + (out_x * out_y * 3), dst);		
+    std::copy(dst_buf, dst_buf + (out_x * out_y * 3), dst);
     free(src_buf);
     free(dst_buf);
 
