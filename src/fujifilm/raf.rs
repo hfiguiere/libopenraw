@@ -32,31 +32,39 @@ struct RafOffsetDirectory {
     cfa_len: u32,
     extra_meta_offset: u32,
     extra_meta_len: u32,
+    extra_cfa_offset: u32,
+    extra_cfa_len: u32,
 }
 
 #[derive(Debug)]
 pub(super) struct RafContainer {
     view: RefCell<View>,
+    version: [u8; 4],
+    serial: [u8; 8],
     model: String,
-    version: u32,
+    fw_version: [u8; 4],
     offsets: RafOffsetDirectory,
     meta: OnceCell<Option<MetaContainer>>,
     extra_meta: OnceCell<Option<MetaContainer>>,
     jpeg_preview: OnceCell<Option<jpeg::Container>>,
     cfa: OnceCell<Option<tiff::Container>>,
+    extra_cfa: OnceCell<Option<tiff::Container>>,
 }
 
 impl RafContainer {
     pub fn new(view: View) -> Self {
         RafContainer {
             view: RefCell::new(view),
+            version: [0u8; 4],
+            serial: [0u8; 8],
             model: String::default(),
-            version: 0,
+            fw_version: [0u8; 4],
             offsets: RafOffsetDirectory::default(),
             meta: OnceCell::new(),
             extra_meta: OnceCell::new(),
             jpeg_preview: OnceCell::new(),
             cfa: OnceCell::new(),
+            extra_cfa: OnceCell::new(),
         }
     }
 
@@ -65,40 +73,45 @@ impl RafContainer {
     ///
     /// The layout is as follow:
     /// ```text
-    ///  0 +--------------------------
-    ///    | 16 bytes magic          |
-    ///    | RAF_MAGIC               |
-    /// 16 +-------------------------+
-    ///    | 12 bytes serial (string)|
-    /// 28 +-------------------------+
-    ///    | 32 bytes string         |
-    ///    | zero filled             |
-    ///    | Camera model string     |
-    /// 60 +-------------------------+
-    ///    | 4 bytes u32 version (?) |
-    /// 64 +-------------------------+
-    ///    | 20 bytes unknown (Skip) |
-    /// 84 +-------------------------+
-    ///    | offsets directory       |
-    ///    | 24 bytes:               |
-    ///    | +---------------------+ |
-    ///    | | jpeg_offset: u32    | |
-    ///    | | jpeg_len: u32       | |
-    ///    | +---------------------+ |
-    ///    | | meta_offset: u32    | |
-    ///    | | meta_len: u32       | |
-    ///    | +---------------------+ |
-    ///    | | cfa_offset: u32     | |
-    ///    | | cfa_len: u32        | |
-    ///    | +---------------------+ |
-    ///    | 12 bytes unknown (Skip) |
-    ///120 +-------------------------+
-    ///    | if jpeg_offset > 120    |
-    ///    | +---------------------+ |
-    ///    | | extra_offset: u32   | |
-    ///    | | extra_len: u32      | |
-    ///    | +---------------------+ |
-    ///    +-------------------------+
+    ///  0 +----------------------------+
+    ///    | 16 bytes magic             |
+    ///    | RAF_MAGIC                  |
+    /// 16 +----------------------------+
+    ///    | 4 bytes ASCII (version)    |
+    /// 20 +----------------------------+
+    ///    | 8 bytes ASCII (serial)     |
+    /// 28 +----------------------------+
+    ///    | 32 bytes ASCII             |
+    ///    | zero filled                |
+    ///    | Camera model string        |
+    /// 60 +----------------------------+
+    ///    | 4 bytes ASCII (FW version) |
+    /// 64 +----------------------------+
+    ///    | 20 bytes unknown (Skip)    |
+    /// 84 +----------------------------+
+    ///    | offsets directory          |
+    ///    | 24 bytes:                  |
+    ///    | +---------------------+    |
+    ///    | | jpeg_offset: u32    |    |
+    ///    | | jpeg_len: u32       |    |
+    ///    | +---------------------+    |
+    ///    | | meta_offset: u32    |    |
+    ///    | | meta_len: u32       |    |
+    ///    | +---------------------+    |
+    ///    | | cfa_offset: u32     |    |
+    ///    | | cfa_len: u32        |    |
+    ///    | +---------------------+    |
+    ///    | 12 bytes unknown (Skip)    |
+    ///120 +----------------------------+
+    ///    | if jpeg_offset > 120       |
+    ///    | +------------------------+ |
+    ///    | | extra_meta_offset: u32 | |
+    ///    | | extra_meta_len: u32    | |
+    ///    | +------------------------+ |
+    ///    | | extra_cfa_offset: u32  | |
+    ///    | | extra_cfa_len: u32     | |
+    ///    | +------------------------+ |
+    ///    +----------------------------+
     /// ```
     pub fn load(&mut self) -> Result<()> {
         let mut view = self.view.borrow_mut();
@@ -109,14 +122,14 @@ impl RafContainer {
         if magic != super::RAF_MAGIC {
             return Err(Error::FormatError);
         }
-        let mut _serial = [0u8; 12];
-        view.read_exact(&mut _serial)?;
+        view.read_exact(&mut self.version)?;
+        view.read_exact(&mut self.serial)?; // 8 bytes
         let mut model = [0u8; 32];
         view.read_exact(&mut model)?;
         self.model = utils::from_maybe_nul_terminated(&model);
 
         // looks like it is "0100" in ASCII
-        self.version = view.read_u32::<BigEndian>()?;
+        view.read_exact(&mut self.fw_version)?; // 4 bytes
         view.seek(SeekFrom::Current(20))?;
 
         // offset 84
@@ -134,8 +147,23 @@ impl RafContainer {
         if self.offsets.jpeg_offset > 120 {
             self.offsets.extra_meta_offset = view.read_u32::<BigEndian>()?;
             self.offsets.extra_meta_len = view.read_u32::<BigEndian>()?;
+            self.offsets.extra_cfa_offset = view.read_u32::<BigEndian>()?;
+            self.offsets.extra_cfa_len = view.read_u32::<BigEndian>()?;
         }
         Ok(())
+    }
+
+    pub fn cfa_container2(&self) -> Option<&tiff::Container> {
+        self.extra_cfa
+            .get_or_init(|| {
+                if self.offsets.extra_cfa_offset == 0 || self.offsets.extra_cfa_len == 0 {
+                    return None;
+                }
+
+                log::error!("Extra CFA not implemented");
+                None
+            })
+            .as_ref()
     }
 
     pub fn cfa_container(&self) -> Option<&tiff::Container> {
@@ -256,8 +284,25 @@ impl Dump for RafContainer {
         );
         {
             let indent = indent + 1;
+            dump_writeln!(
+                out,
+                indent,
+                "Version = {}",
+                String::from_utf8_lossy(&self.version)
+            );
+            dump_writeln!(
+                out,
+                indent,
+                "Serial  = {}",
+                String::from_utf8_lossy(&self.serial)
+            );
             dump_writeln!(out, indent, "Model   = {}", self.model);
-            dump_writeln!(out, indent, "Version = {}", self.version);
+            dump_writeln!(
+                out,
+                indent,
+                "FW Ver. = {}",
+                String::from_utf8_lossy(&self.fw_version)
+            );
             dump_writeln!(out, indent, "<Offsets>");
             {
                 let indent = indent + 1;
@@ -265,6 +310,8 @@ impl Dump for RafContainer {
                 dump_writeln!(out, indent, "JPEG Len    = {}", self.offsets.jpeg_len);
                 dump_writeln!(out, indent, "Meta Offset = {}", self.offsets.meta_offset);
                 dump_writeln!(out, indent, "Meta Len    = {}", self.offsets.meta_len);
+                dump_writeln!(out, indent, "CFA Offset  = {}", self.offsets.cfa_offset);
+                dump_writeln!(out, indent, "CFA Len     = {}", self.offsets.cfa_len);
                 dump_writeln!(
                     out,
                     indent,
@@ -272,8 +319,18 @@ impl Dump for RafContainer {
                     self.offsets.extra_meta_offset
                 );
                 dump_writeln!(out, indent, "Extra Len   = {}", self.offsets.extra_meta_len);
-                dump_writeln!(out, indent, "CFA Offset  = {}", self.offsets.cfa_offset);
-                dump_writeln!(out, indent, "CFA Len     = {}", self.offsets.cfa_len);
+                dump_writeln!(
+                    out,
+                    indent,
+                    "Extra CFA Offset= {}",
+                    self.offsets.extra_cfa_offset
+                );
+                dump_writeln!(
+                    out,
+                    indent,
+                    "Extra CFA Len   = {}",
+                    self.offsets.extra_cfa_len
+                );
             }
             dump_writeln!(out, indent, "</Offsets>");
             if let Some(jpeg_preview) = self.jpeg_preview() {
@@ -311,6 +368,28 @@ impl Dump for RafContainer {
                 }
             }
             dump_writeln!(out, indent, "</CFA>");
+            if self.offsets.extra_cfa_offset != 0 {
+                dump_writeln!(out, indent, "<CFA2 @{}>", self.offsets.cfa_offset);
+                {
+                    let indent = indent + 1;
+                    if let Some(cfa_container) = self.cfa_container2() {
+                        cfa_container.write_dump(out, indent);
+                        if let Some(dir) = cfa_container.directory(0).and_then(|dir| {
+                            dir.ifd_in_entry(
+                                cfa_container,
+                                FUJI_TAG_RAW_SUBIFD,
+                                Some("Raw.Fujifilm"),
+                                Some(&super::MNOTE_FUJIFILM_RAWIFD_TAG_NAMES),
+                            )
+                        }) {
+                            dir.write_dump(out, indent);
+                        }
+                    } else {
+                        dump_writeln!(out, indent, "ERROR: Extra CFA container not found");
+                    }
+                }
+                dump_writeln!(out, indent, "</CFA2>");
+            }
         }
         dump_writeln!(out, indent, "</RAF Container>");
     }
