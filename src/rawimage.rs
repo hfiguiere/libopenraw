@@ -25,7 +25,6 @@ use nalgebra::{matrix, Matrix3, Vector3};
 
 use super::{Bitmap, DataType, Error, Image, Rect, Result};
 use crate::bitmap::{Data, ImageBuffer};
-use crate::capi::or_error;
 use crate::mosaic::Pattern;
 use crate::render::{self, gamma_correct_f, gamma_correct_srgb, RenderingOptions, RenderingStage};
 use crate::tiff::exif;
@@ -269,7 +268,12 @@ impl RawImage {
 
     pub fn colour_matrix(&self, index: usize) -> Option<&[f64]> {
         if index == 1 || index == 2 {
-            return Some(&self.matrices[index - 1]);
+            let matrix = &self.matrices[index - 1];
+            return if matrix.is_empty() {
+                None
+            } else {
+                Some(matrix)
+            };
         }
         None
     }
@@ -368,23 +372,8 @@ impl RawImage {
     fn interpolate(&self, buffer: ImageBuffer<f64>) -> Result<ImageBuffer<f64>> {
         let pattern = self.mosaic_pattern();
         match self.photom_int {
-            exif::PhotometricInterpretation::CFA => {
-                render::demosaic::bimedian(&buffer, pattern)
-            }
-            exif::PhotometricInterpretation::LinearRaw => {
-                let x = self.width();
-                let y = self.height();
-                let buffer: ImageBuffer<u16> = buffer.into_u16();
-                let mut data = vec![0_u16; (3 * x * y) as usize];
-                let err = unsafe {
-                    render::ffi::grayscale_to_rgb(buffer.data.as_ptr(), x, y, data.as_mut_ptr())
-                };
-                if err != or_error::NONE {
-                    Err(err.into())
-                } else {
-                    Ok(ImageBuffer::with_data(data, x, y, 16, 1).into_f64())
-                }
-            }
+            exif::PhotometricInterpretation::CFA => render::demosaic::bimedian(&buffer, pattern),
+            exif::PhotometricInterpretation::LinearRaw => render::grayscale::to_rgb(&buffer),
             _ => Err(Error::InvalidFormat),
         }
     }
@@ -433,10 +422,6 @@ impl RawImage {
             log::debug!("pixel rgb at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));
         } else {
             log::error!("no matrix");
-            buffer
-                .data
-                .iter_mut()
-                .for_each(|v| *v = gamma_correct_f::<22>(*v));
         }
 
         Ok(buffer)
@@ -469,12 +454,20 @@ impl RawImage {
         }
 
         if options.stage >= RenderingStage::Colour {
-            if data.cc == 3 {
-                data = self.colour_correct(data, options.target)?;
+            match self.photom_int {
+                exif::PhotometricInterpretation::CFA => {
+                    data = self.colour_correct(data, options.target)?;
+                    data.data
+                        .iter_mut()
+                        .for_each(|v| *v = gamma_correct_srgb(*v));
+                }
+                exif::PhotometricInterpretation::LinearRaw => {
+                    data.data
+                        .iter_mut()
+                        .for_each(|v| *v = gamma_correct_f::<22>(*v));
+                }
+                _ => {}
             }
-            data.data
-                .iter_mut()
-                .for_each(|v| *v = gamma_correct_srgb(*v));
         }
 
         log::debug!(

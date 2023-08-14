@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
 /*
- * libopenraw - render/grayscale.h
+ * libopenraw - grayscale.rs
  *
- * Copyright (C) 2012 Hubert Figuiere
+ * Copyright (C) 2023 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -18,26 +19,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OR_INTERNALS_RENDER_GRAYSCALE_H_
-#define OR_INTERNALS_RENDER_GRAYSCALE_H_
+use crate::bitmap::ImageBuffer;
+use crate::{Error, Result};
 
-#include <stdint.h>
+/// Convert a grayscale buffer to RGB
+///
+/// It's done naively.
+pub fn to_rgb(buffer: &ImageBuffer<f64>) -> Result<ImageBuffer<f64>> {
+    if buffer.cc != 1 {
+        return Err(Error::InvalidFormat);
+    }
+    let width = buffer.width;
+    let height = buffer.height;
 
-#include <libopenraw/consts.h>
+    let out = buffer
+        .data
+        .iter()
+        .flat_map(|v| [*v, *v, *v])
+        .collect::<Vec<f64>>();
 
-extern "C" or_error
-grayscale_to_rgb (uint16_t *src, uint32_t src_x, uint32_t src_y, 
-		  uint16_t *dst);
-
-#endif
-/*
-  Local Variables:
-  mode:c++
-  c-file-style:"stroustrup"
-  c-file-offsets:((innamespace . 0))
-  tab-width:2
-  c-basic-offset:2
-  indent-tabs-mode:nil
-  fill-column:80
-  End:
-*/
+    Ok(ImageBuffer::with_data(out, width, height, buffer.bpc, 3))
+}

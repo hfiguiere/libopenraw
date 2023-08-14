@@ -20,6 +20,7 @@
  */
 
 pub(crate) mod demosaic;
+pub(crate) mod grayscale;
 
 use num_enum::TryFromPrimitive;
 
@@ -93,12 +94,4 @@ pub fn gamma_correct_srgb(value: f64) -> f64 {
 /// Gamma correct pixel values. G is the gamma x10.
 pub fn gamma_correct_f<const G: u32>(value: f64) -> f64 {
     value.powf(10.0 / G as f64)
-}
-
-pub(crate) mod ffi {
-    use crate::capi::or_error;
-
-    extern "C" {
-        pub fn grayscale_to_rgb(input: *const u16, x: u32, y: u32, out: *mut u16) -> or_error;
-    }
 }
