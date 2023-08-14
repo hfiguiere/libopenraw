@@ -19,7 +19,6 @@ RUST_FILES = mp4/Cargo.lock \
 
 EXTRA_DIST = libopenraw.sym \
 	exif/exif-tags.pl \
-	render/bimedian_demosaic.cpp render/bimedian_demosaic.hpp \
 	render/grayscale.hpp render/grayscale.cpp \
 	$(RUST_FILES)
 

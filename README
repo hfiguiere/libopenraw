@@ -96,29 +96,30 @@ Supported formats:
                          | | | | | /  Active Area (ROI)
                          | | | | | | /  Color Matrices
                          | | | | | | | /  Exif and MakerNotes
-                         | | | | | | | | /
-                         | | | | | | | | |
-Canon CR2                Y Y Y Y Y Y Y Y Y
-Canon CR3                Y Y   Y Y Y Y Y Y
-Canon CRW                Y Y Y Y Y Y Y Y Y
+                         | | | | | | | | /  Rendering
+                         | | | | | | | | | /
+                         | | | | | | | | | |
+Canon CR2                Y Y Y Y Y Y Y Y Y Y
+Canon CR3                Y Y N Y Y Y Y Y Y N
+Canon CRW                Y Y Y Y Y Y Y Y Y B
 
-Canon CRW CHDK           N N N N N N N N N
+Canon CRW CHDK           N N N N N N N N N N
 (unofficial firmware)
 
 
 Nikon NEF                Y Y Y Y Y Y N Y Y
 Nikon NRW                Y         Y N Y Y
 Olympus ORF              Y Y Y Y Y Y N Y Y
-Adobe DNG                Y Y B Y Y Y Y Y Y
-GoPro GPR                Y Y N Y Y Y Y Y X
-Sony SR2                 Y Y N Y N Y N Y
+Adobe DNG                Y Y B Y Y Y Y Y Y Y
+GoPro GPR                Y Y N Y Y Y Y Y X N
+Sony SR2                 Y Y N Y N Y N Y   B
 Sony ARW                 Y Y N Y N Y N Y Y
-Pentax PEF               Y Y N Y Y Y N Y Y
-Epson ERF                Y Y Y Y Y Y N Y Y
-Minolta MRW              Y Y Y N Y Y N Y Y
-Panasonic RAW            Y Y N Y Y Y Y N Y
-Panasonic RW2            Y Y N Y Y Y Y N Y
-FujiFilm RAF             Y Y N Y N Y N T Y
+Pentax PEF               Y Y N Y Y Y N Y Y Y
+Epson ERF                Y Y Y Y Y Y N Y Y Y
+Minolta MRW              Y Y Y N Y Y N Y Y Y
+Panasonic RAW            Y Y N Y Y Y Y N Y N
+Panasonic RW2            Y Y N Y Y Y Y N Y N
+FujiFilm RAF             Y Y N Y N Y N T Y B
 
 
 Unsupported

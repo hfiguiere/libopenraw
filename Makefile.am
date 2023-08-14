@@ -82,6 +82,7 @@ RUST_FILES = Cargo.lock \
 	src/rawfile.rs \
 	src/rawimage.rs \
 	src/render.rs \
+	src/render/demosaic.rs \
 	src/ricoh.rs \
 	src/sigma.rs \
 	src/sony.rs \

@@ -19,12 +19,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+pub(crate) mod demosaic;
+
 use num_enum::TryFromPrimitive;
 
-use crate::bitmap::ImageBuffer;
-use crate::capi::or_error;
 use crate::colour::ColourSpace;
-use crate::mosaic::Pattern;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, PartialOrd, TryFromPrimitive)]
@@ -61,8 +60,8 @@ pub struct RenderingOptions {
 impl Default for RenderingOptions {
     fn default() -> Self {
         RenderingOptions {
-            stage: RenderingStage::Raw,
-            target: ColourSpace::Camera,
+            stage: RenderingStage::Colour,
+            target: ColourSpace::SRgb,
         }
     }
 }
@@ -81,49 +80,25 @@ impl RenderingOptions {
     }
 }
 
-pub(crate) fn bimedian_demosaic(
-    input: &ImageBuffer<u16>,
-    pattern: &Pattern,
-) -> crate::Result<ImageBuffer<u16>> {
-    let mut out_x = 0_u32;
-    let mut out_y = 0_u32;
-    let mut data = vec![0_u16; (3 * input.width * input.height) as usize];
-    let err = unsafe {
-        ffi::bimedian_demosaic(
-            input.data.as_ptr(),
-            input.width,
-            input.height,
-            pattern.into(),
-            data.as_mut_ptr(),
-            &mut out_x as *mut u32,
-            &mut out_y as *mut u32,
-        )
-    };
-    if err != or_error::NONE {
-        Err(err.into())
-    } else {
-        // This is necessary to have a consistent size with the output.
-        // Notably, the `image` crate doesn't like it.
-        // The assumption is that the resize should shrink the buffer.
-        data.resize((3 * out_x * out_y) as usize, 0);
-        Ok(ImageBuffer::with_data(data, out_x, out_y, 16))
+/// Gamma correct sRGB values
+///
+/// Source <https://en.wikipedia.org/wiki/SRGB#From_CIE_XYZ_to_sRGB>
+pub fn gamma_correct_srgb(value: f64) -> f64 {
+    if value <= 0.0031308 {
+        return value * 12.92;
     }
+    1.055 * value.powf(1.0 / 2.4) - 0.055
+}
+
+/// Gamma correct pixel values. G is the gamma x10.
+pub fn gamma_correct_f<const G: u32>(value: f64) -> f64 {
+    value.powf(10.0 / G as f64)
 }
 
 pub(crate) mod ffi {
-    use crate::capi::{or_cfa_pattern, or_error};
+    use crate::capi::or_error;
 
     extern "C" {
-        pub fn bimedian_demosaic(
-            input: *const u16,
-            x: u32,
-            y: u32,
-            pattern: or_cfa_pattern,
-            out: *mut u16,
-            out_x: *mut u32,
-            out_y: *mut u32,
-        ) -> or_error;
-
         pub fn grayscale_to_rgb(input: *const u16, x: u32, y: u32, out: *mut u16) -> or_error;
     }
 }

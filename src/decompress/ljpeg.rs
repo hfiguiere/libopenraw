@@ -245,6 +245,7 @@ impl LJpeg {
             tile.width,
             tile.height,
             tile.bpc,
+            1,
         ))
     }
 

@@ -30,18 +30,66 @@ pub struct ImageBuffer<T> {
     pub(crate) data: Vec<T>,
     pub(crate) width: u32,
     pub(crate) height: u32,
+    /// bits per channel
     pub(crate) bpc: u16,
+    /// number of channel
+    pub(crate) cc: u32,
 }
 
 impl<T> ImageBuffer<T> {
     /// Create an image buffer.
-    pub(crate) fn with_data(data: Vec<T>, width: u32, height: u32, bpc: u16) -> Self {
+    pub(crate) fn with_data(data: Vec<T>, width: u32, height: u32, bpc: u16, cc: u32) -> Self {
         Self {
             data,
             width,
             height,
             bpc,
+            cc,
         }
+    }
+
+    /// Return the pixel RGB value at `x` and `y`.
+    pub fn pixel_at(&self, x: u32, y: u32) -> Option<Vec<T>>
+    where
+        T: Copy,
+    {
+        if x > self.width || y > self.height {
+            return None;
+        }
+        let pos = ((y * self.width * self.cc) + x) as usize;
+        let pixel = &self.data[pos..pos + self.cc as usize];
+
+        Some(pixel.to_vec())
+    }
+}
+
+impl ImageBuffer<f64> {
+    pub fn into_u16(self) -> ImageBuffer<u16> {
+        ImageBuffer::<u16>::with_data(
+            self.data
+                .iter()
+                .map(|v| (*v * u16::MAX as f64).round() as u16)
+                .collect(),
+            self.width,
+            self.height,
+            16,
+            self.cc,
+        )
+    }
+}
+
+impl ImageBuffer<u16> {
+    pub fn into_f64(self) -> ImageBuffer<f64> {
+        ImageBuffer::<f64>::with_data(
+            self.data
+                .iter()
+                .map(|v| *v as f64 / u16::MAX as f64)
+                .collect(),
+            self.width,
+            self.height,
+            16,
+            self.cc,
+        )
     }
 }
 

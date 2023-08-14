@@ -21,12 +21,13 @@
 
 //! RAW data
 
+use nalgebra::{matrix, Matrix3, Vector3};
+
 use super::{Bitmap, DataType, Error, Image, Rect, Result};
 use crate::bitmap::{Data, ImageBuffer};
 use crate::capi::or_error;
 use crate::mosaic::Pattern;
-use crate::render::RenderingOptions;
-use crate::render::{self, RenderingStage};
+use crate::render::{self, gamma_correct_f, gamma_correct_srgb, RenderingOptions, RenderingStage};
 use crate::tiff::exif;
 use crate::utils;
 use crate::{tiff, ColourSpace};
@@ -329,13 +330,12 @@ impl RawImage {
     ///   this is notable on Leica M8 files.
     /// - scale by range / white
     ///
-    fn linearize(&self, mut buffer: ImageBuffer<u16>) -> ImageBuffer<u16> {
+    fn linearize(&self, buffer: ImageBuffer<u16>) -> ImageBuffer<f64> {
         log::debug!("linearize");
         // XXX fix this to use the 4 component
         let white = self.whites()[0];
         let black = self.blacks()[0];
-        let range = white - black;
-        let scale = range as f64 / white as f64;
+        let range = (white - black) as f64;
         let table = if self
             .linearization_table
             .as_ref()
@@ -346,21 +346,35 @@ impl RawImage {
         } else {
             None
         };
-        buffer.data.iter_mut().for_each(|v| {
-            *v = (table.map(|t| t[*v as usize] as f64).unwrap_or(*v as f64) * scale).round() as u16
-        });
+        log::debug!("pre-lin at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));
+        let data = buffer
+            .data
+            .iter()
+            .map(|v| {
+                table
+                    .map(|t| t[*v as usize] as f64)
+                    .unwrap_or((*v - black) as f64)
+                    / range
+            })
+            .collect();
 
+        let buffer =
+            ImageBuffer::<f64>::with_data(data, buffer.width, buffer.height, buffer.bpc, 1);
+        log::debug!("post-lin at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));
         buffer
     }
 
     /// Interplate the image buffer. Return a new buffer if successful.
-    fn interpolate(&self, buffer: &ImageBuffer<u16>) -> Result<ImageBuffer<u16>> {
+    fn interpolate(&self, buffer: ImageBuffer<f64>) -> Result<ImageBuffer<f64>> {
         let pattern = self.mosaic_pattern();
-        let x = self.width();
-        let y = self.height();
         match self.photom_int {
-            exif::PhotometricInterpretation::CFA => render::bimedian_demosaic(buffer, pattern),
+            exif::PhotometricInterpretation::CFA => {
+                render::demosaic::bimedian(&buffer, pattern)
+            }
             exif::PhotometricInterpretation::LinearRaw => {
+                let x = self.width();
+                let y = self.height();
+                let buffer: ImageBuffer<u16> = buffer.into_u16();
                 let mut data = vec![0_u16; (3 * x * y) as usize];
                 let err = unsafe {
                     render::ffi::grayscale_to_rgb(buffer.data.as_ptr(), x, y, data.as_mut_ptr())
@@ -368,22 +382,71 @@ impl RawImage {
                 if err != or_error::NONE {
                     Err(err.into())
                 } else {
-                    Ok(ImageBuffer::with_data(data, x, y, 16))
+                    Ok(ImageBuffer::with_data(data, x, y, 16, 1).into_f64())
                 }
             }
             _ => Err(Error::InvalidFormat),
         }
     }
 
+    /// Calculate the camera to RGB colour matrix using `cm`
+    ///
+    /// Currently analog balance and camera calibration are identity matrices
+    pub fn calculate_cam_rgb(cm: &Matrix3<f64>) -> Matrix3<f64> {
+        // Camera calibration
+        let cc = Matrix3::<f64>::identity();
+        // Analog  balance
+        let ab = Matrix3::<f64>::identity();
+        let xyz_camera = ab * cc * cm;
+        let cam_xyz = xyz_camera.try_inverse().unwrap();
+        let xyz_rgb = matrix![ 0.412453, 0.357580, 0.180423; 0.212671, 0.715160, 0.072169; 0.019334, 0.119193, 0.950227];
+        cam_xyz * xyz_rgb
+    }
+
+    pub fn colour_correct(
+        &self,
+        mut buffer: ImageBuffer<f64>,
+        target: ColourSpace,
+    ) -> Result<ImageBuffer<f64>> {
+        if target != ColourSpace::SRgb {
+            return Err(Error::Unimplemented);
+        }
+        let width = buffer.width;
+        let height = buffer.height;
+        let cm = self.colour_matrix(1).map(Matrix3::from_row_slice);
+        if let Some(cm) = cm {
+            let cam_rgb = Self::calculate_cam_rgb(&cm);
+            let mut out = Vec::with_capacity((height * width) as usize * 3);
+            log::debug!("pixel cam at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));
+            for row in 0..height {
+                let pos = row * width * 3;
+                let mut col = 0;
+                while col < width * 3 {
+                    let c = (pos + col) as usize;
+                    let abc = Vector3::from_row_iterator(buffer.data[c..c + 3].iter().copied());
+                    let rgb = cam_rgb * abc;
+                    col += 3;
+                    out.extend(rgb.iter());
+                }
+            }
+            buffer.data = out;
+            log::debug!("pixel rgb at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));
+        } else {
+            log::error!("no matrix");
+            buffer
+                .data
+                .iter_mut()
+                .for_each(|v| *v = gamma_correct_f::<22>(*v));
+        }
+
+        Ok(buffer)
+    }
+
     /// Render the image using `options`. See `[render::RenderingOptions]`
     /// May return `Error::Unimplemented`.
     pub fn rendered_image(&self, options: RenderingOptions) -> Result<RawImage> {
         // XXX fix to properly handle the Raw stage.
-        if options.stage == RenderingStage::Raw || options.stage == RenderingStage::Colour {
-            return Err(Error::Unimplemented);
-        }
-        // XXX remove when the colour stage is implemented
-        if options.target != ColourSpace::Camera {
+        if options.stage == RenderingStage::Raw {
             return Err(Error::Unimplemented);
         }
         if self.data_type() != DataType::Raw {
@@ -397,18 +460,38 @@ impl RawImage {
             x,
             y,
             16,
+            1,
         );
-        let mut data16 = self.linearize(data16);
+        let mut data = self.linearize(data16);
         if options.stage >= RenderingStage::Interpolation {
-            data16 = self.interpolate(&data16)?;
+            data = self.interpolate(data)?;
             pattern = Pattern::Empty;
         }
 
+        if options.stage >= RenderingStage::Colour {
+            if data.cc == 3 {
+                data = self.colour_correct(data, options.target)?;
+            }
+            data.data
+                .iter_mut()
+                .for_each(|v| *v = gamma_correct_srgb(*v));
+        }
+
+        log::debug!(
+            "pixel rgb(float) at 1000, 1000: {:?}",
+            data.pixel_at(1000, 1000)
+        );
+
         // XXX make sure to copy over other data from the rawimage.
+        let data16 = data.into_u16();
+        log::debug!(
+            "pixel rgb(u16) at 1000, 1000: {:?}",
+            data16.pixel_at(1000, 1000)
+        );
         let mut image = RawImage::with_image_buffer(data16, DataType::PixmapRgb16, pattern);
         if options.stage >= RenderingStage::Linearization {
             image.set_blacks([0, 0, 0, 0]);
-            image.set_whites(*self.whites());
+            image.set_whites([u16::MAX; 4]);
         }
 
         Ok(image)

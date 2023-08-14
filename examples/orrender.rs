@@ -30,7 +30,7 @@ pub fn main() {
 
     let mut opts = Options::new();
     opts.optflag("d", "", "Debug");
-    opts.optopt("o", "", "set output file name", "OUTPUT");
+    opts.optopt("o", "", "Set output file name", "OUTPUT");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -57,7 +57,7 @@ pub fn main() {
         .unwrap();
 
     for name in matches.free.iter() {
-        process_file(name, output.as_ref());
+        process_file(name, output.as_ref()).expect("Error processing");
     }
 }
 
@@ -65,23 +65,30 @@ fn process_file(p: &str, output: Option<&String>) -> libopenraw::Result<()> {
     if let Ok(rawfile) = rawfile_from_file(p, None) {
         log::info!("Rendering raw file {}", p);
 
+        // Default options are Colour stage + SRgb.
         let options = RenderingOptions::default();
-        let rendered_image = rawfile.rendered_image(options)?;
-        if let Some(ref output) = output {
-            println!(
-                "output {} x {}",
-                rendered_image.width(),
-                rendered_image.height()
-            );
-            if let Some(data8) = rendered_image
-                .data16()
-                .map(|data16| data16.iter().map(|v| (*v >> 4) as u8).collect::<Vec<u8>>())
-            {
+        let rawdata = rawfile.raw_data(false)?;
+        let rendered_image = rawdata.rendered_image(options)?;
+        if let Some(output) = output {
+            let width = rendered_image.width();
+            let height = rendered_image.height();
+            if let Some(data16) = rendered_image.data16() {
+                let scale = u8::MAX as f64 / u16::MAX as f64;
+                let data8 = data16
+                    .iter()
+                    .map(|v| (*v as f64 * scale) as u8)
+                    .collect::<Vec<u8>>();
+                log::debug!(
+                    "orrender rgb(u8) at 1000. 1000: [{}, {}, {}]",
+                    data8[1000 * 1000 * 3],
+                    data8[1000 * 1000 * 3 + 1],
+                    data8[1000 * 1000 * 3 + 2]
+                );
                 image::save_buffer_with_format(
                     output,
                     &data8,
-                    rendered_image.width(),
-                    rendered_image.height(),
+                    width,
+                    height,
                     image::ColorType::Rgb8,
                     image::ImageFormat::Png,
                 )
