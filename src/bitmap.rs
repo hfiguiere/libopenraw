@@ -56,7 +56,7 @@ impl<T> ImageBuffer<T> {
         if x > self.width || y > self.height {
             return None;
         }
-        let pos = ((y * self.width * self.cc) + x) as usize;
+        let pos = ((y * self.width * self.cc) + x * self.cc) as usize;
         let pixel = &self.data[pos..pos + self.cc as usize];
 
         Some(pixel.to_vec())
