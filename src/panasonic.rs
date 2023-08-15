@@ -891,11 +891,13 @@ impl RawFileImpl for Rw2File {
                 return Err(Error::FormatError);
             }
             let real_len = self.reader.length() - offset.offset;
-            log::debug!("real_len {} width {} height {}", real_len, width, height);
+            log::debug!(
+                "real_len {real_len} width {width} height {height} pixel_count {pixel_count}"
+            );
             let mut packed = false;
-            let data_type = if real_len > (pixel_count * 2) as u64 {
+            let data_type = if real_len >= (pixel_count * 2) as u64 {
                 DataType::Raw
-            } else if real_len > (pixel_count * 3 / 2) as u64 {
+            } else if real_len >= (pixel_count * 3 / 2) as u64 {
                 // Need to unpack
                 packed = true;
                 DataType::Raw
@@ -916,11 +918,13 @@ impl RawFileImpl for Rw2File {
                 }
                 DataType::Raw => {
                     let raw = if packed {
+                        log::debug!("Panasonic: packed data");
                         let raw = self.container().load_buffer8(offset.offset, offset.len);
                         let mut out = Vec::with_capacity(width as usize * height as usize);
                         decompress::unpack_be12to16(&raw, &mut out, tiff::Compression::None)?;
                         out
                     } else {
+                        log::debug!("Panasonic: unpacked data");
                         self.container().load_buffer16(offset.offset, offset.len)
                     };
                     RawImage::with_data16(
@@ -966,6 +970,50 @@ impl RawFileImpl for Rw2File {
                 height: h as u32,
             }));
 
+            let wr = cfa
+                .uint_value(exif::RW2_TAG_LINEARITY_LIMIT_RED)
+                .unwrap_or((1 << bpc) - 1) as u16;
+            let wg = cfa
+                .uint_value(exif::RW2_TAG_LINEARITY_LIMIT_GREEN)
+                .unwrap_or((1 << bpc) - 1) as u16;
+            let wb = cfa
+                .uint_value(exif::RW2_TAG_LINEARITY_LIMIT_BLUE)
+                .unwrap_or((1 << bpc) - 1) as u16;
+
+            raw_data.set_whites([wr, wg, wb, wg]);
+
+            let br = cfa
+                .uint_value(exif::RW2_TAG_BLACK_LEVEL_RED)
+                .unwrap_or((1 << bpc) - 1) as u16;
+            let bg = cfa
+                .uint_value(exif::RW2_TAG_BLACK_LEVEL_GREEN)
+                .unwrap_or((1 << bpc) - 1) as u16;
+            let bb = cfa
+                .uint_value(exif::RW2_TAG_BLACK_LEVEL_BLUE)
+                .unwrap_or((1 << bpc) - 1) as u16;
+            raw_data.set_blacks([br, bg, bb, bg]);
+
+            let wbr = cfa.uint_value(exif::RW2_TAG_WB_RED_LEVEL);
+            let wbg = cfa.uint_value(exif::RW2_TAG_WB_GREEN_LEVEL);
+            let wbb = cfa.uint_value(exif::RW2_TAG_WB_BLUE_LEVEL);
+
+            if let Some(wbg) = wbg {
+                let wbg = wbg as f64;
+                let wbr = wbr.map(|wbr| wbg / wbr as f64).unwrap_or(1.0);
+                let wbb = wbb.map(|wbb| wbg / wbb as f64).unwrap_or(1.0);
+                raw_data.set_as_shot_neutral(&[wbr, 1.0, wbb, f64::NAN]);
+            } else {
+                let wbr = cfa.uint_value(exif::RW2_TAG_RED_BALANCE);
+                let wbb = cfa.uint_value(exif::RW2_TAG_BLUE_BALANCE);
+                if wbr.is_some() && wbb.is_some() {
+                    raw_data.set_as_shot_neutral(&[
+                        256.0 / wbr.unwrap() as f64,
+                        1.0,
+                        256.0 / wbb.unwrap() as f64,
+                        f64::NAN,
+                    ]);
+                }
+            }
             Ok(raw_data)
         } else {
             Err(Error::NotFound)

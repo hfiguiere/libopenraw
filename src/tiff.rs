@@ -65,8 +65,16 @@ pub enum Compression {
     NikonPack = 32769,
     /// Pentax packed (12be)
     PentaxPack = 32773,
+    /// Panasonic raw 1
+    PanasonicRaw1 = 34316,
     /// Nikon quantized
     NikonQuantized = 34713,
+    /// Panasonic raw 2
+    PanasonicRaw2 = 34826,
+    /// Panasonic raw 3
+    PanasonicRaw3 = 34828,
+    /// Panasonic raw 4
+    PanasonicRaw4 = 34830,
     /// DNG Lossy JPEG
     DngLossy = 34892,
     /// What everybody seems to use
