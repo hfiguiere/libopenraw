@@ -388,7 +388,9 @@ impl RawImage {
         let ab = Matrix3::<f64>::identity();
         let xyz_camera = ab * cc * cm;
         let cam_xyz = xyz_camera.try_inverse().unwrap();
-        let xyz_rgb = matrix![ 0.412453, 0.357580, 0.180423; 0.212671, 0.715160, 0.072169; 0.019334, 0.119193, 0.950227];
+        // XYZ to RGB <https://en.wikipedia.org/wiki/SRGB#From_CIE_XYZ_to_sRGB>
+        let xyz_rgb =
+            matrix![ 3.2406, -1.5372, -0.4986; -0.9689, 1.8758, 0.0415; 0.0557, -0.2040, 1.0570];
         cam_xyz * xyz_rgb
     }
 
