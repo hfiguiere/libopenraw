@@ -578,7 +578,7 @@ impl MrwContainer {
             let ttw = self.ttw.as_ref().expect("no TTW in the file");
             let view = Viewer::create_subview(&self.view.borrow(), ttw.offset + 8)
                 .expect("Couldn't create view");
-            let mut ifd = tiff::Container::new(view, vec![IfdType::Main], Type::Mrw);
+            let mut ifd = tiff::Container::new(view, vec![(IfdType::Main, None)], Type::Mrw);
             ifd.load(None).expect("Failed to load IFD container");
 
             ifd

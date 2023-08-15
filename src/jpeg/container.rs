@@ -142,7 +142,7 @@ impl Container {
                             .ok()?;
                         let mut exif = tiff::Container::new(
                             view,
-                            vec![tiff::IfdType::Main, tiff::IfdType::Other],
+                            vec![(tiff::IfdType::Main, None), (tiff::IfdType::Other, None)],
                             self.raw_type,
                         );
                         exif.load(None)

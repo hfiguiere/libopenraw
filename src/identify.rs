@@ -106,7 +106,7 @@ pub(crate) fn type_for_content(content: &mut View) -> Result<Option<Type>> {
             content.seek(SeekFrom::Start(0))?;
 
             let mut container =
-                tiff::Container::new(content.clone(), vec![IfdType::Main], Type::Unknown);
+                tiff::Container::new(content.clone(), vec![(IfdType::Main, None)], Type::Unknown);
             container.load(None)?;
             if let Some(dir) = container.directory(0) {
                 if dir.entry(exif::TIFF_TAG_DNG_VERSION).is_some() {

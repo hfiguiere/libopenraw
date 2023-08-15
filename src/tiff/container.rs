@@ -36,6 +36,7 @@ use crate::io::View;
 use crate::jpeg;
 use crate::metadata;
 use crate::thumbnail;
+use crate::tiff::exif::TagMap;
 use crate::tiff::{Dir, Entry, IfdType};
 use crate::Type as RawType;
 use crate::{DataType, Dump, Error, Result};
@@ -43,6 +44,8 @@ use crate::{DataType, Dump, Error, Result};
 type CheckMagicHeader = fn(&[u8]) -> Result<container::Endian>;
 
 pub(crate) type DirIterator<'a> = std::slice::Iter<'a, Dir>;
+
+pub(crate) type DirMap = Vec<(IfdType, Option<&'static TagMap>)>;
 
 #[derive(Debug)]
 /// IFD Container for TIFF based file.
@@ -53,8 +56,8 @@ pub(crate) struct Container {
     endian: RefCell<container::Endian>,
     /// IFD.
     dirs: OnceCell<Vec<Dir>>,
-    /// index to `Type` map
-    dir_map: Vec<IfdType>,
+    /// index to `Type` and `TagMap` map
+    dir_map: DirMap,
     /// The Exif IFD
     exif_ifd: OnceCell<Option<Dir>>,
     /// The MakerNote IFD
@@ -95,7 +98,7 @@ impl container::RawContainer for Container {
 
 impl Container {
     /// Create a new container for the view.
-    pub(crate) fn new(view: View, dir_map: Vec<IfdType>, raw_type: RawType) -> Self {
+    pub(crate) fn new(view: View, dir_map: DirMap, raw_type: RawType) -> Self {
         Self {
             view: RefCell::new(view),
             endian: RefCell::new(container::Endian::Unset),
@@ -196,18 +199,18 @@ impl Container {
                 let t = if index < self.dir_map.len() {
                     self.dir_map[index]
                 } else {
-                    IfdType::Other
+                    (IfdType::Other, None)
                 };
-                if let Ok(dir) = if t == IfdType::MakerNote {
+                if let Ok(dir) = if t.0 == IfdType::MakerNote {
                     Dir::create_maker_note(self, dir_offset)
                 } else {
                     self.dir_at(
                         &mut self.view.borrow_mut(),
                         dir_offset,
                         0,
-                        t,
-                        ifd_type_to_dirid(t),
-                        None,
+                        t.0,
+                        ifd_type_to_dirid(t.0),
+                        t.1,
                     )
                 } {
                     let next_offset = dir.next_ifd();

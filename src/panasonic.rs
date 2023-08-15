@@ -759,10 +759,10 @@ impl RawFileImpl for Rw2File {
             let mut container = tiff::Container::new(
                 view,
                 vec![
-                    tiff::IfdType::Main,
-                    tiff::IfdType::Other,
-                    tiff::IfdType::Other,
-                    tiff::IfdType::Other,
+                    (tiff::IfdType::Main, Some(&RAW_TAG_NAMES)),
+                    (tiff::IfdType::Other, None),
+                    (tiff::IfdType::Other, None),
+                    (tiff::IfdType::Other, None),
                 ],
                 self.type_(),
             );

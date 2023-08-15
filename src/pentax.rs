@@ -374,9 +374,9 @@ impl RawFileImpl for PefFile {
             let mut container = tiff::Container::new(
                 view,
                 vec![
-                    tiff::IfdType::Main,
-                    tiff::IfdType::Other,
-                    tiff::IfdType::Other,
+                    (tiff::IfdType::Main, None),
+                    (tiff::IfdType::Other, None),
+                    (tiff::IfdType::Other, None),
                 ],
                 self.type_(),
             );

@@ -763,7 +763,8 @@ mod test {
         let reader = std::fs::File::open("test/iterator_test.tif").expect("Couldn't open file");
         let viewer = Viewer::new(Box::new(std::io::BufReader::new(reader)), 0);
         let view = Viewer::create_view(&viewer, 0).expect("Couldn't create view");
-        let mut container = tiff::Container::new(view, vec![tiff::IfdType::Main], Type::Jpeg);
+        let mut container =
+            tiff::Container::new(view, vec![(tiff::IfdType::Main, None)], Type::Jpeg);
         container.load(None).expect("Failed to load IFD");
         let dir = container.directory(0).expect("Couldn't get directory");
         let mut iter = dir.iter();

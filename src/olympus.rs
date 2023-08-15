@@ -314,7 +314,8 @@ impl RawFileImpl for OrfFile {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = tiff::Container::new(view, vec![IfdType::Main], self.type_());
+            let mut container =
+                tiff::Container::new(view, vec![(IfdType::Main, None)], self.type_());
             container
                 .load(Some(OrfFile::is_magic_header))
                 .expect("Olympus IFD container error");

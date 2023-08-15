@@ -764,7 +764,8 @@ impl RawFileImpl for ArwFile {
         self.container.get_or_init(|| {
             // XXX we should be faillible here.
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = tiff::Container::new(view, vec![tiff::IfdType::Main], self.type_());
+            let mut container =
+                tiff::Container::new(view, vec![(tiff::IfdType::Main, None)], self.type_());
             container.load(None).expect("Arw container error");
             container
         })

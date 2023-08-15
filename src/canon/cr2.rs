@@ -223,10 +223,10 @@ impl RawFileImpl for Cr2File {
                 // XXX non CR2 have a different layout
                 view,
                 vec![
-                    tiff::IfdType::Main,
-                    tiff::IfdType::Other,
-                    tiff::IfdType::Other,
-                    tiff::IfdType::Raw,
+                    (tiff::IfdType::Main, None),
+                    (tiff::IfdType::Other, None),
+                    (tiff::IfdType::Other, None),
+                    (tiff::IfdType::Raw, None),
                 ],
                 self.type_(),
             );
