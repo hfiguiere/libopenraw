@@ -64,8 +64,8 @@ pub(crate) fn bimedian(
     pattern: &Pattern,
 ) -> crate::Result<ImageBuffer<f64>> {
     let npattern = match pattern.pattern_type() {
-        PatternType::Grbg => 0,
-        PatternType::Bggr => 1,
+        PatternType::Bggr => 0,
+        PatternType::Grbg => 1,
         PatternType::Gbrg => 2,
         PatternType::Rggb => 3,
         _ => return Err(Error::InvalidFormat),
@@ -153,7 +153,7 @@ pub(crate) fn bimedian(
             doffset += 1;
         }
         // We must skip 2 each row.
-        offset += 2
+        offset += 2;
     }
     let out_w = input.width - 2;
     let out_h = input.height - 2;
@@ -163,4 +163,67 @@ pub(crate) fn bimedian(
     dst.resize((3 * out_w * out_h) as usize, 0.0);
 
     Ok(ImageBuffer::with_data(dst, out_w, out_h, input.bpc, 3))
+}
+
+#[cfg(test)]
+mod test {
+    use crate::bitmap::ImageBuffer;
+    use crate::mosaic::Pattern;
+
+    use super::bimedian;
+
+    /// Demosaic. `result is the value of the pixel at 1,1.
+    fn test_demosaic(buffer: Vec<f64>, pattern: &Pattern, result: Vec<f64>) {
+        let image = ImageBuffer::with_data(buffer, 8, 8, 16, 1);
+        let output = bimedian(&image, pattern);
+        assert!(output.is_ok());
+        let output = output.unwrap();
+        assert_eq!(output.width, 6);
+        assert_eq!(output.height, 6);
+        assert_eq!(output.cc, 3);
+        assert_eq!(output.data.len(), 36 * output.cc as usize);
+        println!("{:?}: {:?}", pattern, output.data);
+        assert_eq!(
+            output.pixel_at(0, 0),
+            Some(result),
+            "Demosaic {:?} Failed",
+            pattern
+        );
+    }
+
+    #[test]
+    fn test_demosaic_xggx() {
+        #[rustfmt::skip]
+        let buffer = vec![
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+        ];
+
+        test_demosaic(buffer.clone(), &Pattern::Rggb, vec![0.0_f64, 1.0, 0.0]);
+        test_demosaic(buffer, &Pattern::Bggr, vec![0.0_f64, 1.0, 0.0]);
+    }
+
+    #[test]
+    fn test_demosaic_gxxg() {
+        #[rustfmt::skip]
+        let buffer = vec![
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        ];
+
+        test_demosaic(buffer.clone(), &Pattern::Gbrg, vec![0.0_f64, 0.0, 1.0]);
+        test_demosaic(buffer, &Pattern::Grbg, vec![1.0_f64, 0.0, 0.0]);
+    }
 }
