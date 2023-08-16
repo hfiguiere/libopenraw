@@ -155,7 +155,7 @@ impl Dir {
                         b"Exif.NikonHeaderless\0",
                         container,
                         offset,
-                        offset,
+                        0,
                         &nikon::MNOTE_TAG_NAMES,
                     );
                 }
