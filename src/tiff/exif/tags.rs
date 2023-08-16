@@ -250,6 +250,7 @@ pub const MNOTE_CANON_MODEL_ID: u16 = 0x0010;
 pub const MNOTE_CANON_RAW_DATA_OFFSET: u16 = 0x0081;
 pub const MNOTE_CANON_RAW_DATA_LENGTH: u16 = 0x0082;
 pub const MNOTE_CANON_SENSORINFO: u16 = 0x00e0;
+pub const MNOTE_CANON_COLOR_DATA: u16 = 0x4001;
 
 /* Leica MakerNote tags */
 pub const MNOTE_LEICA_PREVIEW_IMAGE: u16 = 0x300;

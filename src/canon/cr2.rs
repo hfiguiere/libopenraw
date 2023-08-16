@@ -105,6 +105,16 @@ impl Cr2File {
         }
     }
 
+    /// Find the white balance in the file.
+    fn white_balance(&self) -> Option<[f64; 3]> {
+        self.maker_note_ifd().and_then(|mnote| {
+            mnote
+                .entry(exif::MNOTE_CANON_COLOR_DATA)
+                .and_then(|entry| entry.value_array::<u16>(mnote.endian()))
+                .and_then(|color_data| canon::color_data_to_as_shot(&color_data))
+        })
+    }
+
     /// Load the `RawImage` for actual CR2 files.
     fn load_cr2_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         self.container();
@@ -197,6 +207,10 @@ impl Cr2File {
             });
         rawdata.set_blacks([black; 4]);
         rawdata.set_whites([white; 4]);
+
+        if let Some(wb) = self.white_balance() {
+            rawdata.set_as_shot_neutral(&wb);
+        }
 
         Ok(rawdata)
     }

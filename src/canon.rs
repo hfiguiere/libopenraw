@@ -181,6 +181,113 @@ pub(crate) fn identify_from_maker_note(maker_note: &tiff::Dir) -> TypeId {
     canon!(UNKNOWN)
 }
 
+/// Convert the color data from the Make Note to a white balance triple
+///
+/// Source <https://exiftool.org/TagNames/Canon.html#ColorData1>
+pub(crate) fn color_data_to_as_shot(color_data: &[u16]) -> Option<[f64; 3]> {
+    match color_data.len() {
+        // 20D and 350D
+        582 => {
+            // ColorData1
+            let r = color_data[25] as f64;
+            let g = color_data[25 + 1] as f64;
+            let b = color_data[25 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        // 1DmkII and 1DSmkII
+        653 => {
+            // ColorData2
+            let r = color_data[24] as f64;
+            let g = color_data[24 + 1] as f64;
+            let b = color_data[24 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        // 1DmkIIN, 5D, 30D, 400D
+        769 => {
+            // ColorData3
+            let r = color_data[63] as f64;
+            let g = color_data[63 + 1] as f64;
+            let b = color_data[63 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        // 1DmkIII, 1DSmkIII, 1DmkIV, 5DmkII, 7D,
+        // 40D, 50D, 60D, 450D, 500D, 550D, 1000D
+        // and 1100D.
+        692 | 674 | 702 | 1227 | 1250 | 1251 | 1337 | 1338 | 1346 => {
+            // ColorData4
+            let r = color_data[63] as f64;
+            let g = color_data[63 + 1] as f64;
+            let b = color_data[63 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        // G10, G7X
+        5120 => {
+            // ColorData5
+            let r = color_data[71] as f64;
+            let g = color_data[71 + 1] as f64;
+            let b = color_data[71 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        // 600D, 1200D
+        1273 | 1275 => {
+            // ColorData6
+            let r = color_data[63] as f64;
+            let g = color_data[63 + 1] as f64;
+            let b = color_data[63 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        // 70D, 1DX firmware 1.x, 7DmkIIEOS, 1DX,
+        // 5DmkIII, 6D, 7DmkII, 100D, 650D, 700D,
+        // 8000D, M and M2.
+        1312 | 1313 | 1316 | 1506 => {
+            // ColorData7
+            let r = color_data[63] as f64;
+            let g = color_data[63 + 1] as f64;
+            let b = color_data[63 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        // 5DS/5DSR, 80D, 1300D, EOS 1DXmkII,
+        // 5DmkIV, 6DmkII, 77D, 80D, 200D,
+        // 800D, 1300D, 2000D, 4000D and 9000D.
+        1560 | 1592 | 1353 | 1602 => {
+            // ColorData8
+            let r = color_data[63] as f64;
+            let g = color_data[63 + 1] as f64;
+            let b = color_data[63 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        // M50, EOS R, EOS RP, SX70, M6mkII, M50,
+        // M200, 90D, 250D and 850D
+        1816 | 1820 | 1824 => {
+            // ColorData9
+            let r = color_data[71] as f64;
+            let g = color_data[71 + 1] as f64;
+            let b = color_data[71 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        // 1DXmkIII, R5, R6
+        2024 | 3656 => {
+            // ColorData10
+            let r = color_data[85] as f64;
+            let g = color_data[85 + 1] as f64;
+            let b = color_data[85 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        // R3, R7 and R6mkII
+        3973 | 3778 => {
+            // ColorData11
+            let r = color_data[105] as f64;
+            let g = color_data[105 + 1] as f64;
+            let b = color_data[105 + 3] as f64;
+            Some([g / r, 1.0, g / b])
+        }
+        _ => {
+            log::error!("Unknown ColorData. (len={})", color_data.len());
+            None
+        }
+    }
+}
+
 /// SensorInfo currently only contain the active area (x, y, w, h)
 pub(crate) struct SensorInfo([u32; 4]);
 
