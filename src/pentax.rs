@@ -472,6 +472,12 @@ impl RawFileImpl for PefFile {
                             rawdata.set_blacks([black; 4]);
                         }
                     }
+                    if let Some(wb) = mnote.uint_value_array(exif::MNOTE_PENTAX_WHITE_BALANCE) {
+                        // ExifTool and the MNOTE_PENTAX_TAG_NAMES have this as WhitePoint
+                        let g = wb[1] as f64;
+                        let wb = [g / wb[0] as f64, 1.0, g / wb[3] as f64];
+                        rawdata.set_as_shot_neutral(&wb);
+                    }
                 }
                 // XXX decompress
 

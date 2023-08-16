@@ -242,7 +242,7 @@ pub const MNOTE_PENTAX_RAWIMAGESIZE: u16 = 0x39;
 pub const MNOTE_PENTAX_WHITELEVEL: u16 = 0x7e;
 pub const MNOTE_PENTAX_BLACK_POINT: u16 = 0x200;
 // These seem to be wb coefficients
-pub const MNOTE_PENTAX_WHITE_POINT: u16 = 0x201;
+pub const MNOTE_PENTAX_WHITE_BALANCE: u16 = 0x201;
 
 /* Canon MakerNote tags */
 /// The model ID for Canon cameras.
