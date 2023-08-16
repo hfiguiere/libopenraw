@@ -605,6 +605,31 @@ impl Dir {
             })
     }
 
+    /// Get the TIFF stored in the entry
+    ///
+    /// XXX find a way to initialize the id.
+    pub(crate) fn tiff_in_entry(
+        &self,
+        container: &tiff::Container,
+        tag: u16,
+        tag_names: Option<&'static HashMap<u16, &'static str>>,
+    ) -> Option<tiff::Container> {
+        self.entry(tag).and_then(|e| e.offset()).and_then(|offset| {
+            let view = container.borrow_view_mut();
+            crate::io::Viewer::create_subview(&view, offset as u64)
+                .ok()
+                .and_then(|view| {
+                    let mut container = tiff::Container::new(
+                        view,
+                        vec![(tiff::IfdType::Main, tag_names)],
+                        RawType::Unknown,
+                    );
+                    container.load(None).ok()?;
+                    Some(container)
+                })
+        })
+    }
+
     /// Get the IFD stored in the entry
     pub(crate) fn ifd_in_entry(
         &self,

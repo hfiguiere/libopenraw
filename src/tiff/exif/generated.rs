@@ -2016,3 +2016,32 @@ pub static ref RAW_PANASONIC_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fr
     ( 0x8825, "GPSInfo" ),
     ]);
 }
+
+lazy_static::lazy_static! {
+/// Exif tag names
+pub static ref RAW_PANASONIC_CAMERAIFD_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+    ( 0x1001, "MultishotOn" ),
+    ( 0x1100, "FocusStepNear" ),
+    ( 0x1101, "FocusStepCount" ),
+    ( 0x1102, "FlashFired" ),
+    ( 0x1105, "ZoomPosition" ),
+    ( 0x1200, "LensAttached" ),
+    ( 0x1201, "LensTypeMake" ),
+    ( 0x1202, "LensTypeModel" ),
+    ( 0x1203, "FocalLengthIn35mmFormat" ),
+    ( 0x1301, "ApertureValue" ),
+    ( 0x1302, "ShutterSpeedValue" ),
+    ( 0x1303, "SensitivityValue" ),
+    ( 0x1305, "HighISOMode" ),
+    ( 0x1412, "FacesDetected" ),
+    ( 0x3200, "WB_CFA0_LevelDaylight" ),
+    ( 0x3201, "WB_CFA1_LevelDaylight" ),
+    ( 0x3202, "WB_CFA2_LevelDaylight" ),
+    ( 0x3203, "WB_CFA3_LevelDaylight" ),
+    ( 0x3300, "WhiteBalanceSet" ),
+    ( 0x3420, "WB_RedLevelAuto" ),
+    ( 0x3421, "WB_BlueLevelAuto" ),
+    ( 0x3501, "Orientation" ),
+    ( 0x3600, "WhiteBalanceDetected" ),
+    ]);
+}

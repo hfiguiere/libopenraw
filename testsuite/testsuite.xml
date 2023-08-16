@@ -1121,7 +1121,7 @@
       <rawDataActiveArea>16 7 3136 2352</rawDataActiveArea>
       <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
-      <rawMaxValue>0 0 0 0</rawMaxValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawMd5>28497</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -1148,7 +1148,7 @@
       <rawDataActiveArea>16 7 3648 2736</rawDataActiveArea>
       <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
-      <rawMaxValue>0 0 0 0</rawMaxValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawMd5>36847</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
@@ -1174,8 +1174,8 @@
       <rawDataDimensions>4816 3472</rawDataDimensions>
       <rawDataActiveArea>8 8 4608 3456</rawDataActiveArea>
       <rawCfaPattern>BGGR</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
-      <rawMaxValue>0 0 0 0</rawMaxValue>
+      <rawMinValue>128 128 127 128</rawMinValue>
+      <rawMaxValue>2111 2111 2111 2111</rawMaxValue>
       <rawMd5>3877</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -1201,8 +1201,8 @@
       <rawDataDimensions>4816 3472</rawDataDimensions>
       <rawDataActiveArea>8 8 4608 3456</rawDataActiveArea>
       <rawCfaPattern>BGGR</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
-      <rawMaxValue>0 0 0 0</rawMaxValue>
+      <rawMinValue>128 128 128 128</rawMinValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawMd5>39462</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>

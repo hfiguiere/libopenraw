@@ -62,6 +62,7 @@ macro_rules! panasonic {
 }
 
 pub use tiff::exif::generated::MNOTE_PANASONIC_TAG_NAMES as MNOTE_TAG_NAMES;
+use tiff::exif::generated::RAW_PANASONIC_CAMERAIFD_TAG_NAMES as RAW_CAMERAIFD_TAG_NAMES;
 pub use tiff::exif::generated::RAW_PANASONIC_TAG_NAMES as RAW_TAG_NAMES;
 
 lazy_static::lazy_static! {
@@ -1005,6 +1006,7 @@ impl RawFileImpl for Rw2File {
             } else {
                 let wbr = cfa.uint_value(exif::RW2_TAG_RED_BALANCE);
                 let wbb = cfa.uint_value(exif::RW2_TAG_BLUE_BALANCE);
+                #[allow(clippy::unnecessary_unwrap)]
                 if wbr.is_some() && wbb.is_some() {
                     raw_data.set_as_shot_neutral(&[
                         256.0 / wbr.unwrap() as f64,
@@ -1045,7 +1047,20 @@ impl Dump for Rw2File {
         {
             let indent = indent + 1;
             self.container();
-            self.container.get().unwrap().write_dump(out, indent);
+            let container = self.container.get().unwrap();
+            container.write_dump(out, indent);
+            if let Some(camera_tiff) = self.main_ifd().and_then(|dir| {
+                // id = "PanasonicRaw.CameraIfd"
+                dir.tiff_in_entry(
+                    container,
+                    exif::RW2_TAG_CAMERA_IFD,
+                    Some(&RAW_CAMERAIFD_TAG_NAMES),
+                )
+            }) {
+                if let Some(camera_ifd) = camera_tiff.directory(0) {
+                    camera_ifd.write_dump(out, indent);
+                }
+            }
         }
         dump_writeln!(out, indent, "</Panasonic RW2 File>");
     }

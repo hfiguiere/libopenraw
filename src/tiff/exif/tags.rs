@@ -230,6 +230,7 @@ pub const RW2_TAG_WB_BLUE_LEVEL: u16 = 0x026;
 pub const RW2_TAG_IMAGE_RAWFORMAT: u16 = 0x002d;
 pub const RW2_TAG_JPEG_FROM_RAW: u16 = 0x002e;
 pub const RW2_TAG_RAW_OFFSET: u16 = 0x0118;
+pub const RW2_TAG_CAMERA_IFD: u16 = 0x0120;
 
 /* Pentax MakerNote tags */
 pub const MNOTE_PENTAX_PREVIEW_IMAGE_SIZE: u16 = 0x02;

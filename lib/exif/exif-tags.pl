@@ -81,3 +81,4 @@ output_table(\%Image::ExifTool::Sigma::Main, "mnote_sigma_tag_names");
 output_table(\%Image::ExifTool::Sony::Main, "mnote_sony_tag_names");
 
 output_table(\%Image::ExifTool::PanasonicRaw::Main, "raw_panasonic_tag_names");
+output_table(\%Image::ExifTool::PanasonicRaw::CameraIFD, "raw_panasonic_cameraifd_tag_names");
