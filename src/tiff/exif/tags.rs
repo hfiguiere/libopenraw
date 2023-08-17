@@ -257,8 +257,13 @@ pub const MNOTE_LEICA_PREVIEW_IMAGE: u16 = 0x300;
 
 /* Nikon MakerNote tags */
 pub const MNOTE_NIKON_QUALITY: u16 = 0x04;
+pub const MNOTE_NIKON_WB_RB_LEVELS: u16 = 0x0c;
 pub const MNOTE_NIKON_PREVIEW_IFD: u16 = 0x11;
+pub const MNOTE_NIKON_COLOR_BALANCE_A: u16 = 0x14;
+pub const MNOTE_NIKON_SERIAL_NUMBER: u16 = 0x1d;
+pub const MNOTE_NIKON_SHUTTER_COUNT: u16 = 0xa7;
 pub const MNOTE_NIKON_NEFDECODETABLE2: u16 = 0x96;
+pub const MNOTE_NIKON_COLOR_BALANCE: u16 = 0x97;
 
 /* Nikon MakerNote Preview IFD tags */
 pub const MNOTE_NIKON_PREVIEWIFD_START: u16 = 0x201;

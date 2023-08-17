@@ -29,7 +29,7 @@ use std::collections::HashMap;
 use std::io::{Seek, SeekFrom};
 use std::rc::Rc;
 
-use byteorder::ReadBytesExt;
+use byteorder::{BigEndian, ByteOrder, LittleEndian, ReadBytesExt};
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap::Bitmap;
@@ -413,6 +413,81 @@ impl NefFile {
                 Ok(rawdata)
             })
     }
+
+    fn encrypted_white_balance(mnote: &Dir, entry: &tiff::Entry) -> Option<[f64; 3]> {
+        let data = entry.data();
+        let version = &data[0..4];
+        let endian = mnote.endian();
+        if version == b"0100" && data.len() >= 80 {
+            let r = endian.read_u16(&data[72..]) as f64;
+            let b = endian.read_u16(&data[74..]) as f64;
+            let g = endian.read_u16(&data[76..]) as f64;
+            return Some([g / r, 1.0, g / b]);
+        } else if version == b"0103" && data.len() >= 26 {
+            let r = endian.read_u16(&data[20..]) as f64;
+            let g = endian.read_u16(&data[22..]) as f64;
+            let b = endian.read_u16(&data[24..]) as f64;
+            return Some([g / r, 1.0, g / b]);
+        }
+        log::error!("Encrypted white balance is not supported yet. {version:?}");
+        None
+    }
+
+    /// Extract the while balance mostly from NRW files.
+    fn nrw_white_balance(entry: &tiff::Entry) -> Option<[f64; 3]> {
+        let data = entry.data();
+        if data.len() == 2560 {
+            let data = &data[1248..];
+            let r = BigEndian::read_u16(data) as f64;
+            let b = BigEndian::read_u16(&data[2..]) as f64;
+            Some([256.0 / r, 1.0, 256.0 / b])
+        } else if &data[0..4] == b"NRW " {
+            let offset = if &data[4..8] != b"0100" && entry.count > 72 {
+                56
+            } else if entry.count > 1572 {
+                1556
+            } else {
+                log::error!("ColorBalanceA format unknown");
+                return None;
+            };
+            let data = &data[offset..];
+            let r = (LittleEndian::read_u32(data) << 2) as f64;
+            let g =
+                (LittleEndian::read_u32(&data[4..]) + LittleEndian::read_u32(&data[8..])) as f64;
+            let b = (LittleEndian::read_u32(&data[12..]) << 2) as f64;
+            Some([g / r, 1.0, b / r])
+        } else {
+            log::error!("ColorBalanceA format unknown");
+            None
+        }
+    }
+
+    /// Extract the while balance
+    fn white_balance(&self) -> Option<[f64; 3]> {
+        self.maker_note_ifd().and_then(|mnote| {
+            if let Some(entry) = mnote.entry(exif::MNOTE_NIKON_WB_RB_LEVELS) {
+                // Some NRW have this tag, so take it before
+                // `ColorBalanceA` (see [`nrw_white_balance`])
+                if entry.count >= 4 {
+                    entry.float_value_array(mnote.endian()).map(|v| {
+                        let mut g = v[2];
+                        if g <= 0.0 {
+                            g = 1.0;
+                        }
+                        [1.0 / v[0], g, 1.0 / v[1]]
+                    })
+                } else {
+                    None
+                }
+            } else if let Some(entry) = mnote.entry(exif::MNOTE_NIKON_COLOR_BALANCE) {
+                Self::encrypted_white_balance(mnote, entry)
+            } else if let Some(entry) = mnote.entry(exif::MNOTE_NIKON_COLOR_BALANCE_A) {
+                Self::nrw_white_balance(entry)
+            } else {
+                None
+            }
+        })
+    }
 }
 
 impl RawFileImpl for NefFile {
@@ -513,6 +588,12 @@ impl RawFileImpl for NefFile {
                             log::error!("Invalid compression {:?}", compression);
                             Err(Error::InvalidFormat)
                         }
+                    })
+                    .map(|mut rawdata| {
+                        if let Some(wb) = self.white_balance() {
+                            rawdata.set_as_shot_neutral(&wb);
+                        }
+                        rawdata
                     })
             })
     }

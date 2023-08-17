@@ -40,6 +40,15 @@ pub enum Endian {
     Little,
 }
 
+impl Endian {
+    pub(crate) fn read_u16(&self, data: &[u8]) -> u16 {
+        match *self {
+            Endian::Big => BigEndian::read_u16(data),
+            Endian::Little => LittleEndian::read_u16(data),
+            _ => unreachable!("Endian undefined"),
+        }
+    }
+}
 /// Allow converting a `byteorder::ByteOrder` type to a
 /// `Endian` value
 ///
