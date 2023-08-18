@@ -378,6 +378,7 @@ pub mod nikon {
     pub const D850: u16 = 87;
     pub const COOLPIX_P7800: u16 = 88;
     pub const Z30: u16 = 89;
+    pub const Z8: u16 = 90;
 }
 
 /// Leica type IDs
