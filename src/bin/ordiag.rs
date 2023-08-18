@@ -34,6 +34,7 @@ pub fn main() {
 
     let mut opts = Options::new();
     opts.optflag("d", "", "Debug");
+    opts.optflag("D", "", "Dev mode");
     opts.optflag("t", "", "Extract thumbnails");
     opts.optflag("R", "", "Extract Raw data");
     opts.optflag("n", "", "No decompression");
@@ -57,9 +58,16 @@ pub fn main() {
     let extract_thumbnails = matches.opt_present("t");
     let extract_raw = matches.opt_present("R");
     let skip_decompress = matches.opt_present("n");
+    let dev_mode = matches.opt_present("D");
 
     for name in matches.free.iter() {
-        process_file(name, extract_thumbnails, extract_raw, skip_decompress);
+        process_file(
+            name,
+            extract_thumbnails,
+            extract_raw,
+            skip_decompress,
+            dev_mode,
+        );
     }
 }
 
@@ -121,7 +129,21 @@ fn save_raw(p: &str, rawdata: &RawImage) -> Result<usize> {
     }
 }
 
-fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decompress: bool) {
+fn print_as_int(matrix: &[f64]) -> String {
+    let m = matrix
+        .iter()
+        .map(|v| (*v * 10000.0) as i64)
+        .collect::<Vec<i64>>();
+    format!("{m:?}")
+}
+
+fn extract_rawdata(
+    p: &str,
+    rawfile: &dyn RawFile,
+    extract_raw: bool,
+    skip_decompress: bool,
+    dev_mode: bool,
+) {
     let before = std::time::Instant::now();
     let rawdata = rawfile.raw_data(skip_decompress);
     println!("Elapsed time: {:.2?}", before.elapsed());
@@ -162,7 +184,12 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
                 rawfile.calibration_illuminant(1) as u32,
                 rawfile.calibration_illuminant(1)
             );
-            println!("\tColour matrix 1: {matrix:?}");
+            let matrix = if dev_mode {
+                print_as_int(&matrix)
+            } else {
+                format!("{matrix:?}")
+            };
+            println!("\tColour matrix 1: {matrix}");
         }
         if let Ok((_, matrix)) = rawfile.colour_matrix(2) {
             println!(
@@ -170,7 +197,12 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
                 rawfile.calibration_illuminant(2) as u32,
                 rawfile.calibration_illuminant(2)
             );
-            println!("\tColour matrix 2: {matrix:?}");
+            let matrix = if dev_mode {
+                print_as_int(&matrix)
+            } else {
+                format!("{matrix:?}")
+            };
+            println!("\tColour matrix 2: {matrix}");
         }
         if extract_raw {
             if let Err(err) = save_raw(p, &rawdata) {
@@ -182,7 +214,13 @@ fn extract_rawdata(p: &str, rawfile: &dyn RawFile, extract_raw: bool, skip_decom
     }
 }
 
-fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool, skip_decompress: bool) {
+fn process_file(
+    p: &str,
+    extract_thumbnails: bool,
+    extract_raw: bool,
+    skip_decompress: bool,
+    dev_mode: bool,
+) {
     let rawfile = rawfile_from_file(p, None);
 
     info!("Diags {}", p);
@@ -237,7 +275,7 @@ fn process_file(p: &str, extract_thumbnails: bool, extract_raw: bool, skip_decom
                 }
             }
 
-            extract_rawdata(p, rawfile.as_ref(), extract_raw, skip_decompress);
+            extract_rawdata(p, rawfile.as_ref(), extract_raw, skip_decompress, dev_mode);
 
             let exif_ifd = rawfile.exif_ifd();
             println!("Has Exif: {}", exif_ifd.is_some());
