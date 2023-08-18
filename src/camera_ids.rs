@@ -798,6 +798,7 @@ pub mod panasonic {
     #[allow(unused)]
     pub const TX2: u16 = ZS200;
     pub const TZ202: u16 = ZS200;
+    pub const ZS200D: u16 = ZS200;
     pub const GX7MK2: u16 = 59;
     pub const LX100M2: u16 = 60;
     pub const DMC_FZ40: u16 = 61;

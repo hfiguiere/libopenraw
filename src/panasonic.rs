@@ -172,9 +172,10 @@ lazy_static::lazy_static! {
         panasonic!("DMC-TZ101", TZ101),
         panasonic!("DMC-TZ110", TZ110),
         panasonic!("DC-ZS200", ZS200),
-        // Aliases to DMC-ZS200
+        // Aliases to DC-ZS200
         panasonic!("DC-TZ202", TZ202),
         panasonic!("DC-ZS80", DC_ZS80),
+        panasonic!("DC-ZS200D", ZS200D),
         // Aliases to DC-ZS80
         panasonic!("DC-TZ95", DC_TZ95),
         panasonic!("DC-TZ96", DC_TZ96),
