@@ -917,6 +917,7 @@ pub mod fujifilm {
     pub const HS50EXR: u16 = 65;
     pub const S6000FD: u16 = 66;
     pub const SL1000: u16 = 67;
+    pub const XS20: u16 = 68;
 }
 
 /// Black Magic

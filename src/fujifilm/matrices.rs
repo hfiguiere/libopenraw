@@ -7,7 +7,7 @@ use crate::fuji;
 use crate::TypeId;
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 67] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 68] = [
         BuiltinMatrix::new(
             fuji!(F550EXR),
             0,
@@ -299,6 +299,11 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 13426, -6334, -1177, -4244, 12136, 2371, -580, 1303, 5980 ] ),
+        BuiltinMatrix::new(
+            fuji!(XS20),
+            0,
+            0,
+            [ 12836, -5909, -1032, -3086, 11132, 2236, -35, 872, 5330 ] ),
         BuiltinMatrix::new(
             fuji!(XF1),
             0,
