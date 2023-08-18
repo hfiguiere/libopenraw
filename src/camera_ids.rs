@@ -839,6 +839,7 @@ pub mod panasonic {
     pub const TZ90: u16 = ZS70;
     pub const DC_S5M2: u16 = 84;
     pub const GF8: u16 = 85;
+    pub const DC_S5M2X: u16 = 86;
 }
 
 /// Fujifilm type IDs
