@@ -78,21 +78,6 @@ impl ImageBuffer<f64> {
     }
 }
 
-impl ImageBuffer<u16> {
-    pub(crate) fn into_f64(self) -> ImageBuffer<f64> {
-        ImageBuffer::<f64>::with_data(
-            self.data
-                .iter()
-                .map(|v| *v as f64 / u16::MAX as f64)
-                .collect(),
-            self.width,
-            self.height,
-            16,
-            self.cc,
-        )
-    }
-}
-
 /// Trait for bitmap objects.
 pub trait Bitmap {
     fn data_type(&self) -> DataType;
