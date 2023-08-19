@@ -502,6 +502,7 @@ pub mod pentax {
     pub const K2000_PEF: u16 = 56;
     pub const K5_DNG: u16 = 57;
     pub const K20D_DNG: u16 = 58;
+    pub const K3_MKIII_MONO_DNG: u16 = 59;
 }
 
 /// Epson type IDs
