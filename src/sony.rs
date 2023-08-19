@@ -31,10 +31,12 @@ use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
 use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
-use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::Dir;
-use crate::{Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{tiff, utils};
+use crate::{
+    Bitmap, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Type, TypeId,
+};
 
 macro_rules! sony {
     ($id:expr, $model:ident) => {
@@ -818,7 +820,55 @@ impl RawFileImpl for ArwFile {
             self.ifd(tiff::IfdType::Raw)
                 .ok_or(Error::NotFound)
                 .and_then(|dir| {
-                    tiff::tiff_get_rawdata(self.container.get().unwrap(), dir, self.type_())
+                    tiff::tiff_get_rawdata(self.container.get().unwrap(), dir, self.type_()).map(
+                        |mut rawimage| {
+                            let active_area = dir
+                                .uint_value_array(exif::ARW_TAG_SONY_CROP_TOP_LEFT)
+                                .and_then(|top_left| {
+                                    if top_left.len() < 2 {
+                                        log::error!("Top Left: not enough elements");
+                                        return None;
+                                    }
+                                    dir.uint_value_array(exif::ARW_TAG_SONY_CROP_SIZE).and_then(
+                                        |size| {
+                                            if size.len() < 2 {
+                                                log::error!("Crop Size: not enough elements");
+                                                return None;
+                                            }
+                                            Some(Rect {
+                                                x: top_left[1],
+                                                y: top_left[0],
+                                                width: size[0],
+                                                height: size[1],
+                                            })
+                                        },
+                                    )
+                                })
+                                .unwrap_or_else(|| Rect {
+                                    x: 0,
+                                    y: 0,
+                                    width: rawimage.width(),
+                                    height: rawimage.height(),
+                                });
+                            rawimage.set_active_area(Some(active_area));
+
+                            if let Some(wb) =
+                                dir.int_value_array(exif::ARW_TAG_WB_RGGB_LEVELS).map(|v| {
+                                    let g = v[1] as f64;
+                                    [g / v[0] as f64, 1.0, g / v[3] as f64]
+                                })
+                            {
+                                rawimage.set_as_shot_neutral(&wb);
+                            }
+                            if let Some(blacks) = dir.uint_value_array(exif::ARW_TAG_BLACK_LEVELS) {
+                                rawimage.set_blacks(utils::to_quad(&blacks));
+                            }
+                            if let Some(whites) = dir.uint_value_array(exif::DNG_TAG_WHITE_LEVEL) {
+                                rawimage.set_whites(utils::to_quad(&whites));
+                            }
+                            rawimage
+                        },
+                    )
                 })
         }
     }

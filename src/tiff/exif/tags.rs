@@ -154,10 +154,17 @@ pub const DNG_TAG_REDUCTION_MATRIX2: u16 = 0xc626;
 pub const DNG_TAG_ANALOG_BALANCE: u16 = 0xc627;
 pub const DNG_TAG_AS_SHOT_NEUTRAL: u16 = 0xc628;
 pub const DNG_TAG_AS_SHOT_WHITE_XY: u16 = 0xc629;
+pub const DNG_TAG_DNG_PRIVATE: u16 = 0xc634;
 pub const DNG_TAG_CALIBRATION_ILLUMINANT1: u16 = 0xc65a;
 pub const DNG_TAG_CALIBRATION_ILLUMINANT2: u16 = 0xc65b;
 pub const DNG_TAG_ORIGINAL_RAW_FILE_NAME: u16 = 0xc68b;
 pub const DNG_TAG_ACTIVE_AREA: u16 = 0xc68d;
+
+/* ARW tags */
+pub const ARW_TAG_BLACK_LEVELS: u16 = 0x7310;
+pub const ARW_TAG_WB_RGGB_LEVELS: u16 = 0x7313;
+pub const ARW_TAG_SONY_CROP_TOP_LEFT: u16 = 0x74c7;
+pub const ARW_TAG_SONY_CROP_SIZE: u16 = 0x74c8;
 
 /* ERF tags */
 pub const ERF_TAG_PREVIEW_IMAGE: u16 = 0x280;

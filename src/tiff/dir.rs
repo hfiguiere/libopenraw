@@ -548,13 +548,19 @@ impl Dir {
         })
     }
 
-    /// Get and unsigned integer that could be either size.
+    /// Get an array of unsigned integers that could be either size.
     pub fn uint_value_array(&self, tag: u16) -> Option<Vec<u32>> {
         self.entry(tag)
             .and_then(|e| e.uint_value_array(self.endian()))
     }
 
-    /// Get and unsigned integer that could be either size.
+    /// Get an array of signed integers that could be either size.
+    pub fn int_value_array(&self, tag: u16) -> Option<Vec<i32>> {
+        self.entry(tag)
+            .and_then(|e| e.int_value_array(self.endian()))
+    }
+
+    /// Get an array of floats that could be either size.
     pub fn float_value_array(&self, tag: u16) -> Option<Vec<f64>> {
         self.entry(tag)
             .and_then(|e| e.float_value_array(self.endian()))
