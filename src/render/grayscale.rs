@@ -25,7 +25,7 @@ use crate::{Error, Result};
 /// Convert a grayscale buffer to RGB
 ///
 /// It's done naively.
-pub fn to_rgb(buffer: &ImageBuffer<f64>) -> Result<ImageBuffer<f64>> {
+pub(crate) fn to_rgb(buffer: &ImageBuffer<f64>) -> Result<ImageBuffer<f64>> {
     if buffer.cc != 1 {
         return Err(Error::InvalidFormat);
     }

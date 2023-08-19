@@ -9,6 +9,6 @@ fn main() {
     fuzz!(|data: &[u8]| {
         let mut io = std::io::Cursor::new(data);
         let mut decompressor = LJpeg::new();
-        let _ = decompressor.decompress(&mut io);
+        let _ = decompressor.discard_decompress(&mut io);
     });
 }

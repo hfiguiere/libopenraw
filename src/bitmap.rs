@@ -26,7 +26,7 @@ use crate::DataType;
 
 /// An image buffer carries the data and the dimension. It is used to
 /// carry pipeline input and ouput as dimensions can change.
-pub struct ImageBuffer<T> {
+pub(crate) struct ImageBuffer<T> {
     pub(crate) data: Vec<T>,
     pub(crate) width: u32,
     pub(crate) height: u32,
@@ -49,7 +49,7 @@ impl<T> ImageBuffer<T> {
     }
 
     /// Return the pixel RGB value at `x` and `y`.
-    pub fn pixel_at(&self, x: u32, y: u32) -> Option<Vec<T>>
+    pub(crate) fn pixel_at(&self, x: u32, y: u32) -> Option<Vec<T>>
     where
         T: Copy,
     {
@@ -64,7 +64,7 @@ impl<T> ImageBuffer<T> {
 }
 
 impl ImageBuffer<f64> {
-    pub fn into_u16(self) -> ImageBuffer<u16> {
+    pub(crate) fn into_u16(self) -> ImageBuffer<u16> {
         ImageBuffer::<u16>::with_data(
             self.data
                 .iter()
@@ -79,7 +79,7 @@ impl ImageBuffer<f64> {
 }
 
 impl ImageBuffer<u16> {
-    pub fn into_f64(self) -> ImageBuffer<f64> {
+    pub(crate) fn into_f64(self) -> ImageBuffer<f64> {
         ImageBuffer::<f64>::with_data(
             self.data
                 .iter()
@@ -108,6 +108,8 @@ pub trait Bitmap {
     fn data8(&self) -> Option<&[u8]>;
 }
 
+/// An `Image` is a more comprehensive `Bitmap` with 16-bits
+/// support.
 pub trait Image: Bitmap {
     /// Image data in 16 bits
     fn data16(&self) -> Option<&[u16]>;

@@ -23,9 +23,9 @@
 
 /// Exif tags constants
 pub(crate) mod generated;
-pub use generated::EXIF_TAG_NAMES as TAG_NAMES;
+pub(crate) use generated::EXIF_TAG_NAMES as TAG_NAMES;
 mod tags;
-pub use tags::*;
+pub(crate) use tags::*;
 
 use std::collections::HashMap;
 
@@ -34,7 +34,7 @@ use num_enum::TryFromPrimitive;
 
 use crate::utils;
 
-pub type TagMap = HashMap<u16, &'static str>;
+pub(crate) type TagMap = HashMap<u16, &'static str>;
 
 /// Type a tag. See `tiff::Entry`.
 #[derive(Debug, PartialEq)]
@@ -87,7 +87,7 @@ impl std::convert::From<TagType> for &'static str {
 }
 
 /// Return the size of a unit for the tag type
-pub fn tag_unit_size(tag_type: TagType) -> usize {
+pub(crate) fn tag_unit_size(tag_type: TagType) -> usize {
     use TagType::*;
 
     match tag_type {
@@ -365,9 +365,9 @@ impl ToString for SRational {
     }
 }
 
-/// Exif photometric interpretation
 #[repr(u16)]
 #[derive(Copy, Clone, Debug, Default)]
+/// Exif photometric interpretation
 pub enum PhotometricInterpretation {
     #[default]
     None = 0,
@@ -398,6 +398,7 @@ impl std::convert::TryFrom<u32> for PhotometricInterpretation {
 
 #[repr(u32)]
 #[derive(Clone, Copy, Debug, PartialEq, TryFromPrimitive)]
+/// Exif light source (Illuminant)
 pub enum LightsourceValue {
     Unknown = 0,
     Daylight = 1,

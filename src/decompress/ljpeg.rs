@@ -237,8 +237,13 @@ impl LJpeg {
         })
     }
 
-    /// Decompress the LJPEG stream into a RawImage.
-    pub fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<ImageBuffer<u16>> {
+    #[cfg(any(feature = "fuzzing", feature = "bench"))]
+    /// Used to fuzz or bench the decompressor that is otherwise crate only.
+    pub fn discard_decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<()> {
+        self.decompress(reader).map(|_| ())
+    }
+
+    pub(crate) fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<ImageBuffer<u16>> {
         let tile = self.decompress_buffer(reader, false)?;
         Ok(ImageBuffer::with_data(
             tile.buf,

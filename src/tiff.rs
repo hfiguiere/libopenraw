@@ -155,7 +155,7 @@ pub trait Ifd {
     }
 }
 
-pub type MakeToIdMap = std::collections::HashMap<&'static str, TypeId>;
+pub(crate) type MakeToIdMap = std::collections::HashMap<&'static str, TypeId>;
 
 /// Identify a files using the Exif data
 pub(crate) fn identify_with_exif(container: &Container, map: &MakeToIdMap) -> Option<TypeId> {

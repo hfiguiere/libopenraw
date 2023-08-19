@@ -397,7 +397,7 @@ impl RawImage {
         cam_xyz * xyz_rgb
     }
 
-    pub fn colour_correct(
+    pub(crate) fn colour_correct(
         &self,
         mut buffer: ImageBuffer<f64>,
         target: ColourSpace,

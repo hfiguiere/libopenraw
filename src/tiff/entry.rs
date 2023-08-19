@@ -166,7 +166,7 @@ impl Entry {
     }
 
     /// Get the value at index.
-    pub fn value_at_index<T, E>(&self, index: u32) -> Option<T>
+    pub(crate) fn value_at_index<T, E>(&self, index: u32) -> Option<T>
     where
         T: ExifValue,
         E: ByteOrder,
@@ -256,7 +256,7 @@ impl Entry {
     }
 
     /// Get the value out of the entry, ignoring the type.
-    pub fn value_untyped<T, E>(&self) -> Option<T>
+    pub(crate) fn value_untyped<T, E>(&self) -> Option<T>
     where
         T: ExifValue,
         E: ByteOrder,
@@ -296,7 +296,7 @@ impl Entry {
     }
 
     /// Get the value out of the entry.
-    pub fn value<T, E>(&self) -> Option<T>
+    pub(crate) fn value<T, E>(&self) -> Option<T>
     where
         T: ExifValue,
         E: ByteOrder,
@@ -445,7 +445,7 @@ impl Entry {
     }
 
     /// Get the value array out of the entry, using `endian`.
-    pub fn value_array<T>(&self, endian: Endian) -> Option<Vec<T>>
+    pub(crate) fn value_array<T>(&self, endian: Endian) -> Option<Vec<T>>
     where
         T: ExifValue,
     {

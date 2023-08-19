@@ -13,7 +13,7 @@ fn main() {
     let io = std::fs::File::open(&args[1]);
     assert!(io.is_ok());
     let mut io = std::io::BufReader::new(io.unwrap());
-    let _ = decompressor.decompress(&mut io).map_err(|e| {
+    let _ = decompressor.discard_decompress(&mut io).map_err(|e| {
         println!("Error decoding: {}", e);
         e
     });

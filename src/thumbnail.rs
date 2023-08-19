@@ -99,12 +99,17 @@ impl Default for Thumbnail {
 }
 
 impl Thumbnail {
-    pub fn new() -> Thumbnail {
+    pub(crate) fn new() -> Thumbnail {
         Thumbnail::default()
     }
 
     /// New thumbnail with data.
-    pub fn with_data(width: u32, height: u32, data_type: DataType, data: Vec<u8>) -> Thumbnail {
+    pub(crate) fn with_data(
+        width: u32,
+        height: u32,
+        data_type: DataType,
+        data: Vec<u8>,
+    ) -> Thumbnail {
         Thumbnail {
             width,
             height,

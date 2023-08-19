@@ -23,7 +23,7 @@ macro_rules! dumpfile_impl {
 }
 
 /// Trait to dump a container.
-/// XXX invert the default methods
+// XXX invert the default methods
 pub trait Dump {
     #[cfg(feature = "dump")]
     /// Print dump the container as `indent`
