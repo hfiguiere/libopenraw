@@ -46,6 +46,7 @@ use crate::sigma;
 use crate::sony;
 use crate::tiff;
 use crate::tiff::exif;
+use crate::utils;
 #[cfg(feature = "dump")]
 use crate::Dump;
 use crate::Type as RawType;
@@ -750,15 +751,11 @@ impl Dump for Dir {
     where
         W: std::io::Write + ?Sized,
     {
-        let id_converted = std::ffi::CStr::from_bytes_until_nul(&self.id);
-        let id = match id_converted {
-            Ok(id) => format!(" id={id:?}"),
-            Err(err) => format!(" id=Err({err:?})"),
-        };
+        let id = utils::from_maybe_nul_terminated(&self.id);
         dump_writeln!(
             out,
             indent,
-            "<IFD type={:?}{} {} entries next=@{}>",
+            "<IFD type={:?} id=\"{}\" {} entries next=@{}>",
             self.type_,
             id,
             self.num_entries(),
