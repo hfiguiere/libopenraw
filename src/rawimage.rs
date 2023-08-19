@@ -355,10 +355,13 @@ impl RawImage {
             .data
             .iter()
             .map(|v| {
-                table
-                    .map(|t| t[*v as usize] as f64)
-                    .unwrap_or((*v - black) as f64)
-                    / range
+                table.map(|t| t[*v as usize] as f64).unwrap_or_else(|| {
+                    if *v < black {
+                        0.0
+                    } else {
+                        (*v - black) as f64
+                    }
+                }) / range
             })
             .collect();
 
