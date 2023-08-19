@@ -62,8 +62,8 @@ impl Cr2File {
     }
 
     fn is_cr2(&self) -> bool {
-        // XXX todo
-        true
+        let id = self.type_id();
+        id != canon!(EOS_1D) && id != canon!(EOS_1DS)
     }
 
     /// Get the raw bytes.
@@ -113,6 +113,50 @@ impl Cr2File {
                 .and_then(|entry| entry.value_array::<u16>(mnote.endian()))
                 .and_then(|color_data| canon::color_data_to_as_shot(&color_data))
         })
+    }
+
+    /// Find the white balance in the file.
+    fn old_white_balance(&self) -> Option<[f64; 3]> {
+        self.maker_note_ifd()
+            .and_then(|mnote| mnote.uint_value_array(exif::MNOTE_CANON_WHITE_BALANCE_TABLE))
+            .map(|v| {
+                let g = v[1] as f64;
+                [g / v[0] as f64, 1.0, g / v[2] as f64]
+            })
+    }
+
+    /// Load the `RawImage` from old Canon raw TIF files.
+    fn load_tif_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
+        self.container();
+        let container = self.container.get().unwrap();
+
+        let cfa_ifd = self.ifd(tiff::IfdType::Raw).ok_or_else(|| {
+            log::debug!("CFA IFD not found");
+            Error::NotFound
+        })?;
+        let offset = cfa_ifd
+            .uint_value(exif::MNOTE_CANON_RAW_DATA_OFFSET)
+            .ok_or_else(|| {
+                log::debug!("offset not found");
+                Error::NotFound
+            })?;
+        let byte_len = cfa_ifd
+            .uint_value(exif::MNOTE_CANON_RAW_DATA_LENGTH)
+            .unwrap_or_else(|| {
+                // not found on the 1D, so we calculate it.
+                let len = std::cmp::min(container.borrow_view_mut().len(), u32::MAX as u64) as u32;
+                len - offset
+            });
+        let mut rawdata =
+            self.get_raw_bytes(0, 0, offset as u64, byte_len as u64, &[], skip_decompress)?;
+
+        rawdata.set_mosaic_pattern(Pattern::Rggb);
+
+        if let Some(wb) = self.old_white_balance() {
+            rawdata.set_as_shot_neutral(&wb);
+        }
+
+        Ok(rawdata)
     }
 
     /// Load the `RawImage` for actual CR2 files.
@@ -184,30 +228,6 @@ impl Cr2File {
         // XXX but I don't seem to see where this is encoded.
         rawdata.set_mosaic_pattern(Pattern::Rggb);
 
-        // Get the black and white point from the built-in matrices.
-        let bpc = rawdata.bpc();
-        let (black, white) = MATRICES
-            .iter()
-            .find(|m| m.camera == self.type_id())
-            .map(|m| {
-                (
-                    m.black,
-                    if m.white == 0 {
-                        // A 0 value for white isn't valid.
-                        let white: u32 = (1 << bpc) - 1;
-                        white as u16
-                    } else {
-                        m.white
-                    },
-                )
-            })
-            .unwrap_or_else(|| {
-                let white: u32 = (1 << bpc) - 1;
-                (0, white as u16)
-            });
-        rawdata.set_blacks([black; 4]);
-        rawdata.set_whites([white; 4]);
-
         if let Some(wb) = self.white_balance() {
             rawdata.set_as_shot_neutral(&wb);
         }
@@ -251,14 +271,9 @@ impl RawFileImpl for Cr2File {
 
     fn thumbnails(&self) -> &ThumbnailStorage {
         self.thumbnails.get_or_init(|| {
-            ThumbnailStorage::with_thumbnails(if self.is_cr2() {
-                self.container();
-                let container = self.container.get().unwrap();
-                tiff::tiff_thumbnails(container)
-            } else {
-                // XXX todo non CR2 files
-                vec![]
-            })
+            self.container();
+            let container = self.container.get().unwrap();
+            ThumbnailStorage::with_thumbnails(tiff::tiff_thumbnails(container))
         })
     }
 
@@ -287,9 +302,37 @@ impl RawFileImpl for Cr2File {
 
     fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         if self.is_cr2() {
-            return self.load_cr2_rawdata(skip_decompress);
+            self.load_cr2_rawdata(skip_decompress)
+        } else {
+            self.load_tif_rawdata(skip_decompress)
         }
-        Err(Error::NotSupported)
+        .map(|mut rawdata| {
+            // Get the black and white point from the built-in matrices.
+            let bpc = rawdata.bpc();
+            let (black, white) = MATRICES
+                .iter()
+                .find(|m| m.camera == self.type_id())
+                .map(|m| {
+                    (
+                        m.black,
+                        if m.white == 0 {
+                            // A 0 value for white isn't valid.
+                            let white: u32 = (1 << bpc) - 1;
+                            white as u16
+                        } else {
+                            m.white
+                        },
+                    )
+                })
+                .unwrap_or_else(|| {
+                    let white: u32 = (1 << bpc) - 1;
+                    (0, white as u16)
+                });
+            rawdata.set_blacks([black; 4]);
+            rawdata.set_whites([white; 4]);
+
+            rawdata
+        })
     }
 
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>> {
