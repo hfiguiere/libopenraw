@@ -1,5 +1,31 @@
 libopenraw 0.4.0 -
 
+New features:
+
+  - The library is now written in Rust. This should provide a safer
+    code. Some API changed, see below.
+  - Extract White Balance coefficients.
+
+  Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Fujifilm Z-S20*.
+  - Nikon Z8*.
+  - Pannsonic S5M2X*, ZS200D* (Alias of ZS200).
+  - Pentax K3 Mark III DNG is properly identified. Added K3 Mark III
+    Monochrome.
+  - Sony ILCE-6700*, Z-V1M2*.
+
+Bug fixes:
+
+  - The white and black values for the RAW data are now correctly set.
+    - DNG, ERF, PEF: directly from the files.
+    - CR2: from the built-in matrices.
+    - Values are now quads (for 4 component patterns)
+  - The active area from Olympus ORF is extracted from the files.
+  - Fujifilm RAF: get black levels and set white levels and non X-trans CFA.
+  - DNG: decompress lossless JPEG tiled images (most of DNG converted files).
+
 API changes:
 
   - `or_rawfile_get_rawdata()` now returns a newly allocated raw data.
@@ -17,12 +43,13 @@ API changes:
   - Removed `or_bitmapdata_new()`, `or_rawdata_new()`, `or_thumbnail_new()` that are
     no longer needed.
   - Removed `or_ifd_release()` that is no longer needed.
+  - `or_metavalue_get_string()` no longer take an index.
 
 libopenraw 0.3.7 - 2023/07/31
 
 Bug fixes:
 
-  - Fix a crash when rendering Leica M Monochron DNG files.
+  - Fix a crash when rendering Leica M Monochrom DNG files.
   - Preserve the raw data photometric interpretation when decompressing
     raw data.
 
