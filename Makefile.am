@@ -93,6 +93,7 @@ RUST_FILES = Cargo.lock \
 	src/tiff/entry.rs \
 	src/tiff/container.rs \
 	src/tiff/exif.rs \
+	src/tiff/exif/generated.rs \
 	src/tiff/iterator.rs \
 	src/utils.rs \
 	$(NULL)
