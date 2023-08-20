@@ -171,6 +171,20 @@ impl From<&str> for DataType {
     }
 }
 
+impl From<DataType> for String {
+    fn from(t: DataType) -> String {
+        match t {
+            DataType::Jpeg => "JPEG",
+            DataType::Raw => "RAW",
+            DataType::PixmapRgb8 => "8RGB",
+            DataType::PixmapRgb16 => "16RGB",
+            DataType::CompressedRaw => "COMP_RAW",
+            DataType::Unknown => "UNKNOWN",
+        }
+        .to_string()
+    }
+}
+
 /// RAW file type. This list the type of files, which
 /// coincidentally match the vendor, except for DNG.
 ///
@@ -227,6 +241,7 @@ impl From<&str> for Type {
             "CRW" => Self::Crw,
             "DNG" => Self::Dng,
             "ERF" => Self::Erf,
+            "GPR" => Self::Gpr,
             "MRW" => Self::Mrw,
             "NEF" => Self::Nef,
             "NRW" => Self::Nrw,
@@ -234,8 +249,37 @@ impl From<&str> for Type {
             "PEF" => Self::Pef,
             "RAF" => Self::Raf,
             "RW2" => Self::Rw2,
+            "SR2" => Self::Sr2,
             _ => Self::Unknown,
         }
+    }
+}
+
+impl From<Type> for String {
+    fn from(t: Type) -> String {
+        match t {
+            Type::Arw => "ARW",
+            Type::Cr2 => "CR2",
+            Type::Cr3 => "CR3",
+            Type::Crw => "CRW",
+            Type::Dng => "DNG",
+            Type::Erf => "ERF",
+            Type::Gpr => "GPR",
+            Type::Jpeg => "JPEG",
+            Type::Mrw => "MRW",
+            Type::Nef => "NEF",
+            Type::Nrw => "NRW",
+            Type::Orf => "ORF",
+            Type::Pef => "PEF",
+            Type::Raf => "RAF",
+            Type::Rw2 => "RW2",
+            Type::Sr2 => "SR2",
+            #[cfg(test)]
+            Type::Test => "TEST",
+            Type::Tiff => "TIF",
+            Type::Unknown => "UNKNOWN",
+        }
+        .to_string()
     }
 }
 

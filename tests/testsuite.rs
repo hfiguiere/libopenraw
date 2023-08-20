@@ -19,279 +19,215 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-use std::fmt::Display;
 use std::path::Path;
-use std::str::FromStr;
 
-use serde::{de::Error, Deserialize};
+use serde::Deserialize;
 use serde_xml_rs::{de::Deserializer, from_reader};
 
 use libopenraw::metadata::Value;
 use libopenraw::{Bitmap, DataType, Ifd, RawFile, Type, TypeId};
+use libopenraw_testing::{raw_checksum, Results, Test};
 
-#[derive(Clone, Debug, Deserialize, PartialEq)]
-#[serde(rename_all = "camelCase")]
-struct Results {
-    raw_type: Option<String>,
-    raw_type_id: Option<u32>,
-    /// MakeNoteCount can be -1 for an error (expected)
-    maker_note_count: Option<i32>,
-    maker_note_id: Option<String>,
-    exif_make: Option<String>,
-    exif_model: Option<String>,
-    thumb_num: Option<u32>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
-    thumb_sizes: Option<Vec<u32>>,
-    thumb_formats: Option<String>, // XXX split array
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
-    thumb_data_sizes: Option<Vec<u32>>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
-    thumb_md5: Option<Vec<u16>>,
-    raw_data_type: Option<String>,
-    raw_data_size: Option<u32>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
-    raw_data_dimensions: Option<Vec<u32>>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
-    raw_data_active_area: Option<Vec<u32>>,
-    raw_cfa_pattern: Option<String>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
-    raw_min_value: Option<Vec<u16>>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
-    raw_max_value: Option<Vec<u16>>,
-    raw_md5: Option<u32>,
-    meta_orientation: Option<u32>,
+trait TestRun {
+    fn run(&self, rawfile: &dyn RawFile, filename: &str) -> u32;
 }
 
-/// Deserialize a space separated list on numbers to a vector.
-fn from_list<'de, D, T>(deserializer: D) -> Result<Option<Vec<T>>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-    T: FromStr,
-    <T as FromStr>::Err: Display,
-{
-    let s: String = Deserialize::deserialize(deserializer)?;
-    let v: Vec<&str> = s.split(' ').collect();
-    let mut ints = vec![];
-    for num in v {
-        let n = num.parse::<T>().map_err(D::Error::custom)?;
-        ints.push(n);
-    }
-    Ok(Some(ints))
-}
+/// Test for RAW
+fn raw_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
+    let mut count = 0;
 
-impl Results {
-    /// CRC checksum for the RAW data (8 bits only)
-    fn raw_checksum(buf: &[u8]) -> u16 {
-        // This is the same algorithm as used in the C++ implementation
-        let crc = crc::Crc::<u16>::new(&crc::CRC_16_IBM_3740);
-        let mut digest = crc.digest();
-        digest.update(buf);
+    let rawdata = rawfile.raw_data(false);
+    assert_eq!(
+        rawdata.is_ok(),
+        results.raw_data_type.is_some(),
+        "Expected Raw data wasn't found"
+    );
 
-        digest.finalize()
+    // no raw data, bail out
+    if rawdata.is_err() {
+        return count;
     }
 
-    /// Test for RAW
-    fn raw_test(&self, rawfile: &dyn RawFile) -> u32 {
-        let mut count = 0;
+    let rawdata = rawdata.unwrap();
 
-        let rawdata = rawfile.raw_data(false);
+    // RAW data type
+    if let Some(ref raw_data_type) = results.raw_data_type {
+        count += 1;
         assert_eq!(
-            rawdata.is_ok(),
-            self.raw_data_type.is_some(),
-            "Expected Raw data wasn't found"
+            DataType::from(raw_data_type.as_str()),
+            rawdata.data_type(),
+            "Incorrect type for Raw data"
         );
-
-        // no raw data, bail out
-        if rawdata.is_err() {
-            return count;
-        }
-
-        let rawdata = rawdata.unwrap();
-
-        // RAW data type
-        if let Some(ref raw_data_type) = self.raw_data_type {
-            count += 1;
-            assert_eq!(
-                DataType::from(raw_data_type.as_str()),
-                rawdata.data_type(),
-                "Incorrect type for Raw data"
-            );
-        }
-        // RAW data size
-        if let Some(raw_data_size) = self.raw_data_size {
-            count += 1;
-            assert_eq!(
-                raw_data_size as usize,
-                rawdata.data_size(),
-                "Incorrect Raw data size"
-            );
-        }
-
-        // RAW dimensions
-        if let Some(ref dims) = self.raw_data_dimensions {
-            count += 1;
-            assert_eq!(dims.len(), 2, "Incorrect number of Raw dimensions");
-            assert_eq!(
-                dims,
-                &[rawdata.width(), rawdata.height()],
-                "Incorrect dimensions"
-            );
-        }
-
-        // RAW active area
-        if let Some(ref raw_data_active_area) = self.raw_data_active_area {
-            count += 1;
-            assert_eq!(raw_data_active_area.len(), 4, "Incorrect active area");
-            let active_area = rawdata.active_area();
-            assert!(active_area.is_some(), "No active area found");
-            let active_area = active_area.unwrap();
-            assert_eq!(
-                raw_data_active_area,
-                &active_area.to_vec(),
-                "Incorrect active area"
-            );
-        }
-
-        // CFA pattern
-        if let Some(ref raw_cfa_pattern) = self.raw_cfa_pattern {
-            count += 1;
-            assert_eq!(
-                &rawdata.mosaic_pattern().to_string(),
-                raw_cfa_pattern,
-                "Incorrect CFA pattern"
-            );
-        }
-
-        // RAW black and white
-        if let Some(ref raw_min_value) = self.raw_min_value {
-            count += 1;
-            assert_eq!(
-                &rawdata.blacks().to_vec(),
-                raw_min_value,
-                "Incorrect black point"
-            );
-        }
-        if let Some(ref raw_max_value) = self.raw_max_value {
-            count += 1;
-            assert_eq!(
-                &rawdata.whites().to_vec(),
-                raw_max_value,
-                "Incorrect white point"
-            );
-        }
-
-        // RAW data checksum. It's not even a md5.
-        if let Some(raw_md5) = self.raw_md5 {
-            count += 1;
-            let buf = if rawdata.data_type() == DataType::CompressedRaw {
-                let buf = rawdata.data8();
-                assert!(buf.is_some(), "Compressed Raw data not found");
-                buf.unwrap()
-            } else {
-                let buf = rawdata.data16_as_u8();
-                assert!(buf.is_some(), "16-bits Raw data not found");
-                buf.unwrap()
-            };
-            let r = Self::raw_checksum(buf);
-            assert_eq!(raw_md5, r as u32, "Incorrect Raw data checksum");
-        }
-        count
+    }
+    // RAW data size
+    if let Some(raw_data_size) = results.raw_data_size {
+        count += 1;
+        assert_eq!(
+            raw_data_size as usize,
+            rawdata.data_size(),
+            "Incorrect Raw data size"
+        );
     }
 
-    fn thumbnail_test(&self, rawfile: &dyn RawFile) -> u32 {
-        let mut count = 0;
-        // Check the number of thumbnails
-        if let Some(thumb_num) = self.thumb_num {
-            count += 1;
-            let thumbnail_sizes = rawfile.thumbnail_sizes();
-            assert_eq!(
-                thumb_num as usize,
-                thumbnail_sizes.len(),
-                "Different number of thumbnails"
-            );
-        }
-
-        if let Some(ref sizes) = self.thumb_sizes {
-            count += 1;
-            let thumbnail_sizes = rawfile.thumbnail_sizes();
-            assert_eq!(
-                thumbnail_sizes.len(),
-                sizes.len(),
-                "Mismatch number of thumbnails"
-            );
-            for (index, size) in sizes.iter().enumerate() {
-                assert_eq!(
-                    size, &thumbnail_sizes[index],
-                    "Incorrect size for thumbnail {index}"
-                );
-            }
-        }
-
-        if let Some(ref thumb_formats) = self.thumb_formats {
-            count += 1;
-            let thumbnails = rawfile.thumbnails();
-            let formats: Vec<DataType> = thumb_formats.split(' ').map(DataType::from).collect();
-
-            assert_eq!(
-                thumbnails.sizes.len(),
-                formats.len(),
-                "Mismatch number of thumbnail format"
-            );
-            for (index, thumbnail) in thumbnails.thumbnails.iter().enumerate() {
-                assert_eq!(
-                    thumbnail.1.data_type, formats[index],
-                    "Incorrect data type for thumbnail {index}"
-                );
-            }
-        }
-
-        if let Some(ref data_sizes) = self.thumb_data_sizes {
-            count += 1;
-            let thumbnails = rawfile.thumbnails();
-            assert_eq!(
-                thumbnails.thumbnails.len(),
-                data_sizes.len(),
-                "Mismatch number of thumbnail data sizes"
-            );
-            for (index, thumbnail) in thumbnails.thumbnails.iter().enumerate() {
-                assert_eq!(
-                    thumbnail.1.data_size(),
-                    data_sizes[index] as u64,
-                    "Incorrect data size for thumbnail {index}"
-                );
-            }
-        }
-
-        if let Some(ref md5s) = self.thumb_md5 {
-            count += 1;
-            let thumbnails = rawfile.thumbnails();
-            assert_eq!(
-                thumbnails.thumbnails.len(),
-                md5s.len(),
-                "Mismatch number of thumbnail checksum"
-            );
-            for (index, thumbnail_desc) in thumbnails.thumbnails.iter().enumerate() {
-                let thumbnail = rawfile
-                    .thumbnail(thumbnail_desc.0)
-                    .expect("Thumbnail not found");
-                let buf = thumbnail.data8().unwrap();
-                let r = Self::raw_checksum(buf);
-                assert_eq!(r, md5s[index], "Incorrect checksum for thumbnail {index}");
-            }
-        }
-
-        // XXX todo
-
-        count
+    // RAW dimensions
+    if let Some(ref dims) = results.raw_data_dimensions {
+        count += 1;
+        assert_eq!(dims.len(), 2, "Incorrect number of Raw dimensions");
+        assert_eq!(
+            dims,
+            &[rawdata.width(), rawdata.height()],
+            "Incorrect dimensions"
+        );
     }
 
+    // RAW active area
+    if let Some(ref raw_data_active_area) = results.raw_data_active_area {
+        count += 1;
+        assert_eq!(raw_data_active_area.len(), 4, "Incorrect active area");
+        let active_area = rawdata.active_area();
+        assert!(active_area.is_some(), "No active area found");
+        let active_area = active_area.unwrap();
+        assert_eq!(
+            raw_data_active_area,
+            &active_area.to_vec(),
+            "Incorrect active area"
+        );
+    }
+
+    // CFA pattern
+    if let Some(ref raw_cfa_pattern) = results.raw_cfa_pattern {
+        count += 1;
+        assert_eq!(
+            &rawdata.mosaic_pattern().to_string(),
+            raw_cfa_pattern,
+            "Incorrect CFA pattern"
+        );
+    }
+
+    // RAW black and white
+    if let Some(ref raw_min_value) = results.raw_min_value {
+        count += 1;
+        assert_eq!(
+            &rawdata.blacks().to_vec(),
+            raw_min_value,
+            "Incorrect black point"
+        );
+    }
+    if let Some(ref raw_max_value) = results.raw_max_value {
+        count += 1;
+        assert_eq!(
+            &rawdata.whites().to_vec(),
+            raw_max_value,
+            "Incorrect white point"
+        );
+    }
+
+    // RAW data checksum. It's not even a md5.
+    if let Some(raw_md5) = results.raw_md5 {
+        count += 1;
+        let buf = if rawdata.data_type() == DataType::CompressedRaw {
+            let buf = rawdata.data8();
+            assert!(buf.is_some(), "Compressed Raw data not found");
+            buf.unwrap()
+        } else {
+            let buf = rawdata.data16_as_u8();
+            assert!(buf.is_some(), "16-bits Raw data not found");
+            buf.unwrap()
+        };
+        let r = raw_checksum(buf);
+        assert_eq!(raw_md5, r, "Incorrect Raw data checksum");
+    }
+    count
+}
+
+fn thumbnail_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
+    let mut count = 0;
+    // Check the number of thumbnails
+    if let Some(thumb_num) = results.thumb_num {
+        count += 1;
+        let thumbnail_sizes = rawfile.thumbnail_sizes();
+        assert_eq!(
+            thumb_num as usize,
+            thumbnail_sizes.len(),
+            "Different number of thumbnails"
+        );
+    }
+
+    if let Some(ref sizes) = results.thumb_sizes {
+        count += 1;
+        let thumbnail_sizes = rawfile.thumbnail_sizes();
+        assert_eq!(
+            thumbnail_sizes.len(),
+            sizes.len(),
+            "Mismatch number of thumbnails"
+        );
+        for (index, size) in sizes.iter().enumerate() {
+            assert_eq!(
+                size, &thumbnail_sizes[index],
+                "Incorrect size for thumbnail {index}"
+            );
+        }
+    }
+
+    if let Some(ref thumb_formats) = results.thumb_formats {
+        count += 1;
+        let thumbnails = rawfile.thumbnails();
+        let formats: Vec<DataType> = thumb_formats.split(' ').map(DataType::from).collect();
+
+        assert_eq!(
+            thumbnails.sizes.len(),
+            formats.len(),
+            "Mismatch number of thumbnail format"
+        );
+        for (index, thumbnail) in thumbnails.thumbnails.iter().enumerate() {
+            assert_eq!(
+                thumbnail.1.data_type, formats[index],
+                "Incorrect data type for thumbnail {index}"
+            );
+        }
+    }
+
+    if let Some(ref data_sizes) = results.thumb_data_sizes {
+        count += 1;
+        let thumbnails = rawfile.thumbnails();
+        assert_eq!(
+            thumbnails.thumbnails.len(),
+            data_sizes.len(),
+            "Mismatch number of thumbnail data sizes"
+        );
+        for (index, thumbnail) in thumbnails.thumbnails.iter().enumerate() {
+            assert_eq!(
+                thumbnail.1.data_size(),
+                data_sizes[index] as u64,
+                "Incorrect data size for thumbnail {index}"
+            );
+        }
+    }
+
+    if let Some(ref md5s) = results.thumb_md5 {
+        count += 1;
+        let thumbnails = rawfile.thumbnails();
+        assert_eq!(
+            thumbnails.thumbnails.len(),
+            md5s.len(),
+            "Mismatch number of thumbnail checksum"
+        );
+        for (index, thumbnail_desc) in thumbnails.thumbnails.iter().enumerate() {
+            let thumbnail = rawfile
+                .thumbnail(thumbnail_desc.0)
+                .expect("Thumbnail not found");
+            let buf = thumbnail.data8().unwrap();
+            let r = raw_checksum(buf);
+            assert_eq!(r, md5s[index], "Incorrect checksum for thumbnail {index}");
+        }
+    }
+
+    // XXX todo
+
+    count
+}
+
+impl TestRun for Results {
     fn run(&self, rawfile: &dyn RawFile, filename: &str) -> u32 {
         let mut count = 0;
         // Check RAW type
@@ -379,32 +315,9 @@ impl Results {
             );
         }
 
-        count += self.thumbnail_test(rawfile);
-        count += self.raw_test(rawfile);
+        count += thumbnail_test(self, rawfile);
+        count += raw_test(self, rawfile);
         count
-    }
-}
-
-#[derive(Clone, Debug, Deserialize, PartialEq)]
-#[serde(rename = "test")]
-struct Test {
-    name: String,
-    file: String,
-    source: Option<String>,
-    results: Results,
-}
-
-impl Test {
-    fn run(&self) {
-        let rawfile = libopenraw::rawfile_from_file(self.file.clone(), None);
-        match rawfile {
-            Ok(rawfile) => {
-                print!("Test '{}'", &self.name);
-                let count = self.results.run(rawfile.as_ref(), &self.file);
-                println!(" produced {count} results");
-            }
-            Err(err) => println!("Test '{}' skipped ({}): {}", &self.name, self.file, err),
-        }
     }
 }
 
@@ -434,10 +347,20 @@ struct Overrides {
 }
 
 impl TestSuite {
-    fn run(&mut self) {
-        for test in &self.tests {
-            test.run();
+    fn run_test(test: &Test) {
+        let rawfile = libopenraw::rawfile_from_file(test.file.clone(), None);
+        match rawfile {
+            Ok(rawfile) => {
+                print!("Test '{}'", &test.name);
+                let count = test.results.run(rawfile.as_ref(), &test.file);
+                println!(" produced {count} results");
+            }
+            Err(err) => println!("Test '{}' skipped ({}): {}", &test.name, test.file, err),
         }
+    }
+
+    fn run(&mut self) {
+        self.tests.iter().for_each(TestSuite::run_test);
     }
 
     /// Load the overrides to, notably, change the local path of the files.

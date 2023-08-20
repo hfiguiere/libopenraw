@@ -36,6 +36,7 @@ crc = "2.1.0"
 serde = { version = "^1, <=1.0.171", features = [ "derive" ] }
 serde-xml-rs = "^0.5.1"
 criterion = { version = "0.5.1", features = ["html_reports"] }
+libopenraw-testing = { path = "libopenraw-testing" }
 image = { version = "0.24.6", features = [ "png", "jpeg" ], default-features = false }
 
 [features]
