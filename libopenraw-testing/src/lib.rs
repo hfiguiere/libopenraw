@@ -22,7 +22,7 @@
 use std::fmt::Display;
 use std::str::FromStr;
 
-use serde::{de::Error, Deserialize};
+use serde::{de::Error, Deserialize, Serialize};
 
 use libopenraw::{metadata::Value, Bitmap, DataType, Ifd, RawFile, Rect};
 
@@ -36,44 +36,61 @@ pub fn raw_checksum(buf: &[u8]) -> u16 {
     digest.finalize()
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Results {
     pub raw_type: Option<String>,
+    #[serde(default)]
     pub raw_type_id: Option<u32>,
-    /// MakeNoteCount can be -1 for an error (expected)
+    /// MakerNoteCount can be -1 for an error (expected)
+    #[serde(default)]
     pub maker_note_count: Option<i32>,
     pub maker_note_id: Option<String>,
     pub exif_make: Option<String>,
     pub exif_model: Option<String>,
-    pub thumb_num: Option<u32>,
-    #[serde(deserialize_with = "from_list")]
     #[serde(default)]
+    pub thumb_num: Option<u32>,
+    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
     pub thumb_sizes: Option<Vec<u32>>,
     pub thumb_formats: Option<String>, // XXX split array
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
+    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
     pub thumb_data_sizes: Option<Vec<u32>>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
+    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
     pub thumb_md5: Option<Vec<u16>>,
     pub raw_data_type: Option<String>,
+    #[serde(default)]
     pub raw_data_size: Option<u32>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
+    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
     pub raw_data_dimensions: Option<Vec<u32>>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
+    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
     pub raw_data_active_area: Option<Vec<u32>>,
     pub raw_cfa_pattern: Option<String>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
+    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
     pub raw_min_value: Option<Vec<u16>>,
-    #[serde(deserialize_with = "from_list")]
-    #[serde(default)]
+    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
     pub raw_max_value: Option<Vec<u16>>,
+    #[serde(default)]
     pub raw_md5: Option<u16>,
+    #[serde(default)]
     pub meta_orientation: Option<u32>,
+}
+
+pub fn to_list<T, S>(value: &Option<Vec<T>>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    T: ToString,
+    S: serde::Serializer,
+{
+    if let Some(value) = value {
+        serializer.serialize_str(
+            &value
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(" "),
+        )
+    } else {
+        serializer.serialize_none()
+    }
 }
 
 /// Deserialize a space separated list on numbers to a vector.
@@ -93,7 +110,7 @@ where
     Ok(Some(ints))
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename = "test")]
 pub struct Test {
     pub name: String,
@@ -102,7 +119,22 @@ pub struct Test {
     pub results: Results,
 }
 
-fn make_results(rawfile: &dyn RawFile) -> Results {
+impl Test {
+    pub fn serialize_to_xml(&self) -> String {
+        let mut buffer = String::default();
+        let mut serializer = quick_xml::se::Serializer::new(&mut buffer);
+        serializer.indent(' ', 2);
+
+        self.serialize(serializer).expect("serialize");
+        buffer
+    }
+
+    pub fn deserialize_from_xml(serialized: &str) -> Test {
+        quick_xml::de::from_str(serialized).expect("deserialize")
+    }
+}
+
+pub fn make_results(rawfile: &dyn RawFile) -> Results {
     let raw_type = Some(rawfile.type_().into());
     let raw_type_id = Some(rawfile.type_id().into());
     let exif_make = rawfile
@@ -119,7 +151,9 @@ fn make_results(rawfile: &dyn RawFile) -> Results {
     let maker_note_count = maker_note
         .map(|mnote| mnote.num_entries() as i32)
         .or(Some(-1));
-    let maker_note_id = maker_note.and_then(|mnote| String::from_utf8(mnote.id().to_vec()).ok());
+    let maker_note_id = maker_note
+        .and_then(|mnote| std::ffi::CStr::from_bytes_with_nul(mnote.id()).ok())
+        .map(|s| s.to_string_lossy().to_string());
 
     let thumbnail_sizes = rawfile.thumbnail_sizes();
     let thumb_num = Some(thumbnail_sizes.len() as u32);
@@ -202,5 +236,74 @@ fn make_results(rawfile: &dyn RawFile) -> Results {
         raw_min_value,
         raw_max_value,
         raw_md5,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Results, Test};
+
+    #[test]
+    fn deser() {
+        let xml_ser = "<test>\n\
+  <name>test case</name>\n\
+  <file>/var/home/hub/samples/cr2/20D/img_0620.cr2</file>\n\
+  <source/>\n\
+  <results>\n\
+    <rawType>CR2</rawType>\n\
+    <rawTypeId>65537</rawTypeId>\n\
+    <makerNoteCount>24</makerNoteCount>\n\
+    <makerNoteId>Exif.Canon</makerNoteId>\n\
+    <exifMake>Canon</exifMake>\n\
+    <exifModel>Canon EOS 20D</exifModel>\n\
+    <thumbNum>2</thumbNum>\n\
+    <thumbSizes>1536 160</thumbSizes>\n\
+    <thumbFormats>JPEG JPEG</thumbFormats>\n\
+    <thumbDataSizes>377981 7239</thumbDataSizes>\n\
+    <thumbMd5>32808 59392</thumbMd5>\n\
+    <rawDataType>RAW</rawDataType>\n\
+    <rawDataSize>16973120</rawDataSize>\n\
+    <rawDataDimensions>3596 2360</rawDataDimensions>\n\
+    <rawDataActiveArea>84 19 3504 2336</rawDataActiveArea>\n\
+    <rawCfaPattern>RGGB</rawCfaPattern>\n\
+    <rawMinValue>0 0 0 0</rawMinValue>\n\
+    <rawMaxValue>4095 4095 4095 4095</rawMaxValue>\n\
+    <rawMd5>51638</rawMd5>\n\
+    <metaOrientation>1</metaOrientation>\n\
+  </results>\n\
+</test>";
+        let newtest: Test = Test::deserialize_from_xml(&xml_ser);
+
+        assert_eq!(newtest.results.raw_type, Some("CR2".to_string()));
+        assert_eq!(newtest.results.raw_type_id, Some(65537));
+        assert_eq!(
+            newtest.results.raw_data_active_area,
+            Some(vec![84, 19, 3504, 2336])
+        );
+    }
+
+    #[test]
+    #[ignore]
+    fn ser_deser() {
+        let results = Results {
+            thumb_num: Some(1),
+            thumb_sizes: Some(vec![1, 3, 5, 7]),
+            thumb_formats: Some("foo bar".into()),
+            ..Default::default()
+        };
+        let t = Test {
+            name: "name of test".to_string(),
+            file: "/var/home/user/some/file.txt".to_string(),
+            source: None,
+            results,
+        };
+
+        let serial = t.serialize_to_xml();
+
+        println!("serial {serial}");
+
+        let newtest: Test = Test::deserialize_from_xml(&serial);
+
+        assert_eq!(t, newtest);
     }
 }
