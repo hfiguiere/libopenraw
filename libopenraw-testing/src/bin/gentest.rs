@@ -50,8 +50,14 @@ pub fn main() {
         .file_name()
         .map(|s| s.to_string_lossy())
         .unwrap_or_default();
+    let model = rawfile
+        .metadata_value(&"Exif.Image.Model".to_string())
+        .as_ref()
+        .and_then(libopenraw::metadata::Value::string)
+        .map(|s| s.trim_end().to_string())
+        .unwrap_or_else(|| "Unknown".to_string());
     let name = format!(
-        "{} - {filename}",
+        "{} - {model} - {filename}",
         <Type as Into<String>>::into(rawfile.type_())
     );
 
