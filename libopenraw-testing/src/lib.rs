@@ -39,39 +39,81 @@ pub fn raw_checksum(buf: &[u8]) -> u16 {
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Results {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_type: Option<String>,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none", default)]
     pub raw_type_id: Option<u32>,
     /// MakerNoteCount can be -1 for an error (expected)
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none", default)]
     pub maker_note_count: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub maker_note_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub exif_make: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub exif_model: Option<String>,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none", default)]
     pub thumb_num: Option<u32>,
-    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
+    #[serde(
+        deserialize_with = "from_list",
+        serialize_with = "to_list",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub thumb_sizes: Option<Vec<u32>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub thumb_formats: Option<String>, // XXX split array
-    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
+    #[serde(
+        deserialize_with = "from_list",
+        serialize_with = "to_list",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub thumb_data_sizes: Option<Vec<u32>>,
-    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
+    #[serde(
+        deserialize_with = "from_list",
+        serialize_with = "to_list",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub thumb_md5: Option<Vec<u16>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_data_type: Option<String>,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none", default)]
     pub raw_data_size: Option<u32>,
-    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
+    #[serde(
+        deserialize_with = "from_list",
+        serialize_with = "to_list",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub raw_data_dimensions: Option<Vec<u32>>,
-    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
+    #[serde(
+        deserialize_with = "from_list",
+        serialize_with = "to_list",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub raw_data_active_area: Option<Vec<u32>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_cfa_pattern: Option<String>,
-    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
+    #[serde(
+        deserialize_with = "from_list",
+        serialize_with = "to_list",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub raw_min_value: Option<Vec<u16>>,
-    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
+    #[serde(
+        deserialize_with = "from_list",
+        serialize_with = "to_list",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub raw_max_value: Option<Vec<u16>>,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none", default)]
     pub raw_md5: Option<u16>,
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none", default)]
     pub meta_orientation: Option<u32>,
 }
 
@@ -115,6 +157,7 @@ where
 pub struct Test {
     pub name: String,
     pub file: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
     pub results: Results,
 }
