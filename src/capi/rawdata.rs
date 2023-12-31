@@ -104,7 +104,7 @@ extern "C" fn or_rawdata_new() -> ORRawDataRef {
 /// and will cause undefined behaviour.
 extern "C" fn or_rawdata_release(rawdata: ORRawDataRef) -> or_error {
     if !rawdata.is_null() {
-        unsafe { Box::from_raw(rawdata) };
+        unsafe { drop(Box::from_raw(rawdata)) };
         return or_error::NONE;
     }
     or_error::NOT_AREF

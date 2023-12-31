@@ -46,7 +46,7 @@ extern "C" fn or_thumbnail_new() -> ORThumbnailRef {
 /// and will cause undefined behaviour.
 extern "C" fn or_thumbnail_release(thumbnail: ORThumbnailRef) -> or_error {
     if !thumbnail.is_null() {
-        unsafe { Box::from_raw(thumbnail) };
+        unsafe { drop(Box::from_raw(thumbnail)) };
         return or_error::NONE;
     }
     or_error::NOT_AREF

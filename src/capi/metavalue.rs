@@ -56,7 +56,7 @@ pub type ORMetaValueRef = *mut ORMetaValue;
 /// Release a metavalue.
 extern "C" fn or_metavalue_release(metavalue: ORMetaValueRef) {
     if !metavalue.is_null() {
-        unsafe { Box::from_raw(metavalue) };
+        unsafe { drop(Box::from_raw(metavalue)) };
     }
 }
 

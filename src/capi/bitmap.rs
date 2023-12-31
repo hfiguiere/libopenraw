@@ -37,7 +37,7 @@ pub type ORBitmapDataRef = *mut RawImage;
 /// and will cause undefined behaviour.
 extern "C" fn or_bitmapdata_release(bitmap: ORBitmapDataRef) -> or_error {
     if !bitmap.is_null() {
-        unsafe { Box::from_raw(bitmap) };
+        unsafe { drop(Box::from_raw(bitmap)) };
         return or_error::NONE;
     }
     or_error::NOT_AREF

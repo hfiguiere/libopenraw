@@ -104,7 +104,7 @@ extern "C" fn or_rawfile_new_from_memory(buffer: *const u8, len: u32, type_: Typ
 /// and will cause undefined behaviour.
 extern "C" fn or_rawfile_release(rawfile: ORRawFileRef) -> or_error {
     if !rawfile.is_null() {
-        unsafe { Box::from_raw(rawfile) };
+        unsafe { drop(Box::from_raw(rawfile)) };
         return or_error::NONE;
     }
     or_error::NOT_AREF
