@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/crw/ciff/container.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -130,9 +130,9 @@ fn translate_camera_settings(_: &RecordEntry, container: &Container, _: u16) -> 
             3 => 3, // Aperture Priority
             4 => 1, // Manual
             5 => 5, // DoF
-            6 | // M-Dep
-            7 | // Bulb
-            8 => 0, // Flexible
+            // 6 M-Dep
+            // 7 Bulb
+            6..=8 => 0, // Flexible
             _ => 0,
         };
 

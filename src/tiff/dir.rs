@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/dir.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -285,7 +285,7 @@ impl Dir {
 
                     if data[5] == 0 && data[7] == 0 {
                         match data[6] {
-                            0x08 | 0x09 | 0x0a =>
+                            0x08..=0x0a =>
                             // Leica Q Typ 116, SL (Type 601), Q3 (0x0a)
                                 return Dir::new_makernote(
                                     b"Exif.Leica5\0",

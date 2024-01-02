@@ -2,7 +2,7 @@
 /*
  * libopenraw - decompress.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -209,8 +209,7 @@ pub(crate) fn unpack_from_reader(
         }
     };
     log::debug!("Block size = {}", block_size);
-    let mut block = Vec::new();
-    block.resize(block_size, 0);
+    let mut block = vec![0; block_size];
     let out_size = width as usize * height as usize;
     let mut out_data = Vec::with_capacity(out_size);
     let mut fetched = 0_usize;
