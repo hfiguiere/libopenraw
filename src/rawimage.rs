@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawimage.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -377,7 +377,10 @@ impl RawImage {
         match self.photom_int {
             exif::PhotometricInterpretation::CFA => render::demosaic::bimedian(&buffer, pattern),
             exif::PhotometricInterpretation::LinearRaw => render::grayscale::to_rgb(&buffer),
-            _ => Err(Error::InvalidFormat),
+            _ => {
+                log::error!("Invalid photometric interpretation {:?}", self.photom_int);
+                Err(Error::InvalidFormat)
+            }
         }
     }
 

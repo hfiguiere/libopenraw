@@ -2,7 +2,7 @@
 /*
  * libopenraw - olympus.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -402,6 +402,7 @@ impl RawFileImpl for OrfFile {
                     }
                     _ => data,
                 };
+                data.set_photometric_interpretation(exif::PhotometricInterpretation::CFA);
                 data.set_bpc(12);
                 data.set_active_area(Some(Rect {
                     x: 0,
