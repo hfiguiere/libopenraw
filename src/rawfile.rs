@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawfile.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -152,7 +152,13 @@ where
     from_io(buffered, type_hint)
 }
 
-/// Create a RawFile object from a buffer
+/// Create a RawFile object from memory
+pub fn rawfile_from_memory(mem: Vec<u8>, type_hint: Option<Type>) -> Result<RawFileHandle> {
+    let io = Box::new(std::io::Cursor::new(mem));
+    from_io(io, type_hint)
+}
+
+/// Create a RawFile object from an IO buffer
 pub fn rawfile_from_io(io: Box<dyn ReadAndSeek>, type_hint: Option<Type>) -> Result<RawFileHandle> {
     from_io(io, type_hint)
 }

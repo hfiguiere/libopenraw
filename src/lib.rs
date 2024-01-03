@@ -2,7 +2,7 @@
 /*
  * libopenraw - lib.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -74,6 +74,7 @@ pub use olympus::decompress::decompress_olympus;
 
 pub use rawfile::rawfile_from_file;
 pub use rawfile::rawfile_from_io;
+pub use rawfile::rawfile_from_memory;
 
 /// Standard Result for libopenraw
 pub type Result<T> = std::result::Result<T, Error>;

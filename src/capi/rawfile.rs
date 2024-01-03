@@ -2,7 +2,7 @@
 /*
  * libopenraw - capi/rawfile.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,7 +28,7 @@ use std::os::unix::ffi::OsStrExt;
 
 use crate::render::RenderingOptions;
 use crate::tiff::exif;
-use crate::{or_unwrap, rawfile_from_file, rawfile_from_io, RawFileHandle, Type};
+use crate::{or_unwrap, rawfile_from_file, rawfile_from_memory, RawFileHandle, Type};
 
 use super::iterator::ORMetadataIterator;
 use super::metavalue::ORMetaValue;
@@ -88,8 +88,7 @@ extern "C" fn or_rawfile_new_from_memory(buffer: *const u8, len: u32, type_: Typ
         Some(type_)
     };
     let buffer = Vec::from(bytes);
-    let io = Box::new(std::io::Cursor::new(buffer));
-    match rawfile_from_io(io, type_) {
+    match rawfile_from_memory(buffer, type_) {
         Ok(rawfile) => Box::into_raw(Box::new(ORRawFile(rawfile))),
         Err(_) => std::ptr::null_mut(),
     }
