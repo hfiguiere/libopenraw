@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/iterator.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,6 +22,7 @@
 //! The iterator over the ifd entries as `metadata::Value`
 
 use std::collections::btree_map;
+use std::convert::TryFrom;
 
 use crate::container::Endian;
 use crate::metadata::{Metadata, Value as MetadataValue};
@@ -70,7 +71,7 @@ impl<'a> std::iter::Iterator for Iterator<'a> {
 }
 
 fn from_entry(entry: &Entry, endian: Endian) -> MetadataValue {
-    match exif::TagType::from(entry.type_) {
+    match exif::TagType::try_from(entry.type_).unwrap_or(exif::TagType::Invalid) {
         exif::TagType::Ascii => {
             MetadataValue::String(utils::to_nul_terminated(&entry.string_value().unwrap()))
         }

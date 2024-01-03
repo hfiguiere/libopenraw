@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/exif.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -55,12 +55,14 @@ pub enum TagType {
     Invalid = 13,
 }
 
-impl std::convert::From<i16> for TagType {
-    fn from(value: i16) -> Self {
+impl std::convert::TryFrom<i16> for TagType {
+    type Error = i16;
+
+    fn try_from(value: i16) -> Result<Self, Self::Error> {
         if value <= 0 || value > 13 {
-            Self::Invalid
+            Err(value)
         } else {
-            unsafe { std::mem::transmute(value) }
+            Ok(unsafe { std::mem::transmute(value) })
         }
     }
 }
@@ -427,25 +429,27 @@ pub enum LightsourceValue {
 
 #[cfg(test)]
 mod test {
+    use std::convert::TryFrom;
+
     use byteorder::LittleEndian;
 
     use super::{ExifValue, Rational, SRational, TagType};
 
     #[test]
     fn test_tag_type_convert() {
-        let tag = TagType::from(1);
-        assert_eq!(tag, TagType::Byte);
+        let tag = TagType::try_from(1);
+        assert_eq!(tag, Ok(TagType::Byte));
 
-        let tag = TagType::from(4);
-        assert_eq!(tag, TagType::Long);
-
-        // Invalid value
-        let tag = TagType::from(-1);
-        assert_eq!(tag, TagType::Invalid);
+        let tag = TagType::try_from(4);
+        assert_eq!(tag, Ok(TagType::Long));
 
         // Invalid value
-        let tag = TagType::from(42);
-        assert_eq!(tag, TagType::Invalid);
+        let tag = TagType::try_from(-1);
+        assert_eq!(tag, Err(-1));
+
+        // Invalid value
+        let tag = TagType::try_from(42);
+        assert_eq!(tag, Err(42));
     }
 
     #[test]

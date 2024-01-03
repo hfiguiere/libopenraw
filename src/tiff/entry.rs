@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/entry.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -548,8 +548,8 @@ impl Entry {
                         .as_ref()
                         .map_or_else(|| array_to_str(e.data()), |d| array_to_str(d)),
                 ),
-                Err(_) => None,
-                _ => Some("VALUE".to_string()),
+                Ok(TagType::Invalid) => Some("INVALID".to_string()),
+                Err(n) => Some(n.to_string()),
             }
             .or_else(|| Some("ERROR".to_string()))
             .unwrap()
