@@ -83,14 +83,16 @@ fn from_entry(entry: &Entry, endian: Endian) -> MetadataValue {
         }
         exif::TagType::Float => MetadataValue::Float(entry.value_array::<f32>(endian).unwrap()),
         exif::TagType::Double => MetadataValue::Double(entry.value_array::<f64>(endian).unwrap()),
-        exif::TagType::Byte | exif::TagType::Undefined => MetadataValue::Bytes(Vec::default()), //entry.data().to_vec())
-        exif::TagType::SByte => MetadataValue::SBytes(Vec::default()), //entry.data().to_vec())
+        exif::TagType::Byte | exif::TagType::Undefined => {
+            MetadataValue::Bytes(entry.data().to_vec())
+        }
+        exif::TagType::SByte => MetadataValue::SBytes(entry.value_array::<i8>(endian).unwrap()),
         exif::TagType::Short | exif::TagType::Long => {
             MetadataValue::Int(entry.uint_value_array(endian).unwrap())
         }
         exif::TagType::SShort | exif::TagType::SLong => {
             MetadataValue::SInt(entry.int_value_array(endian).unwrap())
         }
-        exif::TagType::Invalid => MetadataValue::Invalid(Vec::default()), //entry.data().to_vec())
+        exif::TagType::Invalid => MetadataValue::Invalid(entry.data().to_vec()),
     }
 }
