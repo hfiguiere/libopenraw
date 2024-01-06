@@ -17,6 +17,7 @@ CLEANFILES = $(CARGO_TARGET_DIR)/CACHEDIR.TAG $(BUILT_SOURCES)
 
 RUST_FILES = Cargo.lock \
 	Cargo.toml \
+	benches/the_benchmark.rs \
 	build.rs \
 	src/apple.rs \
 	src/bin/fuzz-ljpeg.rs \
