@@ -1,5 +1,5 @@
 [package]
-name = "mp4parse"
+name = "mp4parse-craw"
 version = "0.12.0"
 authors = [
   "Ralph Giles <giles@mozilla.com>",
@@ -9,7 +9,7 @@ authors = [
   "Bryce Seager van Dyk <bvandyk@mozilla.com>",
 ]
 
-description = "Parser for ISO base media file format (mp4)"
+description = "Parser for ISO base media file format (mp4) with CRAW support"
 documentation = "https://docs.rs/mp4parse/"
 license = "MPL-2.0"
 categories = ["multimedia::video"]
