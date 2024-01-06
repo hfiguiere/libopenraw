@@ -11,9 +11,17 @@ webdist: dox
 EXTRA_DIST = MPL-2.0 \
 	RELEASE_NOTES \
 	build-aux/cargo-vendor.sh \
-	$(RUST_FILES)
+	$(RUST_FILES) \
+	$(TESTDATA_FILES)
 
 CLEANFILES = $(CARGO_TARGET_DIR)/CACHEDIR.TAG $(BUILT_SOURCES)
+
+TESTDATA_FILES = \
+	testdata/identify/content_cr2 \
+	testdata/identify/content_cr3 \
+	testdata/identify/content_crw \
+	testdata/identify/content_mrw \
+	testdata/identify/content_raf
 
 RUST_FILES = Cargo.lock \
 	Cargo.toml \

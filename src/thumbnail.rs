@@ -104,7 +104,7 @@ impl Thumbnail {
     }
 
     /// New thumbnail with data.
-    pub(crate) fn with_data(
+    pub fn with_data(
         width: u32,
         height: u32,
         data_type: DataType,
