@@ -10,7 +10,7 @@ homepage = "https://libopenraw.freedesktop.org/libopenraw/"
 license = "LGPL-3.0-or-later"
 keywords = [ "image", "photography", "file_format", "graphics" ]
 documentation = "https://docs.rs/crate/libopenraw/"
-readme = "README.md"
+readme = "README"
 
 rust-version = "1.64"
 
