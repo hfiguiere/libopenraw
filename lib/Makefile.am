@@ -19,6 +19,7 @@ RUST_FILES = mp4/Cargo.lock \
 
 EXTRA_DIST = \
 	exif/exif-tags.pl \
+	mp4/mp4parse/README.md \
 	$(RUST_FILES)
 
 

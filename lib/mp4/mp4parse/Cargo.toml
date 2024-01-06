@@ -7,23 +7,21 @@ authors = [
   "Alfredo Yang <ayang@mozilla.com>",
   "Jon Bauman <jbauman@mozilla.com>",
   "Bryce Seager van Dyk <bvandyk@mozilla.com>",
+  "Hubert Figuière <hub@figuiere.net>",
 ]
 
-description = "Parser for ISO base media file format (mp4) with CRAW support"
-documentation = "https://docs.rs/mp4parse/"
+description = "Parser for ISO base media file format (mp4) with CRAW support, a fork of mp4parse"
+documentation = "https://docs.rs/mp4parse-craw/"
 license = "MPL-2.0"
-categories = ["multimedia::video"]
+categories = ["multimedia::video", "multimedia::images"]
 
-repository = "https://github.com/mozilla/mp4parse-rust"
+repository = "https://gitlab.freedesktop.org/libopenraw/libopenraw"
 
 # Avoid complaints about trying to package test files.
 exclude = [
   "*.mp4",
   "av1-avif/*"
 ]
-
-[badges]
-travis-ci = { repository = "https://github.com/mozilla/mp4parse-rust" }
 
 [dependencies]
 byteorder = "1.2.1"
@@ -47,10 +45,6 @@ missing-pixi-permitted = []
 meta-xml = []
 unstable-api = []
 mp4v = []
-
-[[bench]]
-name = "avif_benchmark"
-harness = false
 
 # See https://bheisler.github.io/criterion.rs/book/faq.html#cargo-bench-gives-unrecognized-option-errors-for-valid-command-line-options
 [lib]
