@@ -8,7 +8,10 @@ dox:
 webdist: dox
 	$(top_srcdir)/scripts/webdist.sh ${top_builddir} ${VERSION}
 
-EXTRA_DIST = MPL-2.0 RELEASE_NOTES build-aux/cargo-vendor.sh
+EXTRA_DIST = MPL-2.0 \
+	RELEASE_NOTES \
+	build-aux/cargo-vendor.sh \
+	$(RUST_FILES)
 
 CLEANFILES = $(CARGO_TARGET_DIR)/CACHEDIR.TAG $(BUILT_SOURCES)
 
@@ -83,26 +86,30 @@ RUST_FILES = Cargo.lock \
 	src/rawimage.rs \
 	src/render.rs \
 	src/render/demosaic.rs \
+	src/render/grayscale.rs \
 	src/ricoh.rs \
 	src/sigma.rs \
 	src/sony.rs \
 	src/thumbnail.rs \
 	src/tiff.rs \
 	src/tiff/dir.rs \
-	src/tiff/exif/tags.rs \
 	src/tiff/entry.rs \
 	src/tiff/container.rs \
 	src/tiff/exif.rs \
 	src/tiff/exif/generated.rs \
+	src/tiff/exif/tags.rs \
 	src/tiff/iterator.rs \
 	src/utils.rs \
+	libopenraw-testing/Cargo.toml \
+	libopenraw-testing/src/bin/gentest.rs \
+	libopenraw-testing/src/lib.rs \
 	$(NULL)
 
 BUILT_SOURCES = _or_dummy.c
 _or_dummy.c:
 	echo "static int __attribute__((unused)) __or_dummy;" > _or_dummy.c
 
-noinst_LTLIBRARIES = liblibopenraw.la
+noinst_LTLIBRARIES = libopenraw.la
 
 if DEBUG
 CARGO_RELEASE_ARGS=
@@ -112,17 +119,17 @@ endif
 
 CARGO_TARGET_DIR=@abs_top_builddir@/target
 RUST_PATH=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@
-RUST_LIB=$(RUST_PATH)/liblibopenraw.a
+RUST_LIB=$(RUST_PATH)/libopenraw.a
 
 Cargo.lock:
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) \
 	cargo update
 
-liblibopenraw_la_SOURCES = _or_dummy.c
-liblibopenraw.la: $(liblibopenraw_la_OBJECTS) $(RUST_FILES)
+libopenraw_la_SOURCES = _or_dummy.c
+libopenraw.la: $(libopenraw_la_OBJECTS) $(RUST_FILES)
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) \
 	cargo build --features=capi $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS) --lib && \
-	$(LINK) $< && mv $(RUST_LIB) .libs/liblibopenraw.a
+	$(LINK) $< && mv $(RUST_LIB) .libs/libopenraw.a
 
 clean-local:
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo clean $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)

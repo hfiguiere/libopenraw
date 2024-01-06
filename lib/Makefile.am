@@ -17,7 +17,7 @@ RUST_FILES = mp4/Cargo.lock \
 	$(NULL)
 
 
-EXTRA_DIST = libopenraw.sym \
+EXTRA_DIST = \
 	exif/exif-tags.pl \
 	$(RUST_FILES)
 
@@ -40,6 +40,6 @@ libopenraw_la_LDFLAGS = \
 	-no-undefined \
 	-export-symbols-regex "^or_.*" \
 	$(AM_LDFLAGS)
-libopenraw_la_LIBADD = ../liblibopenraw.la
+libopenraw_la_LIBADD = ../libopenraw.la
 libopenraw_la_SOURCES = \
 	$(NULL)

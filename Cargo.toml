@@ -54,6 +54,7 @@ fuzzing = ["afl"]
 debug = true
 
 [lib]
+name = "openraw"
 bench = false
 crate-type = [ "staticlib", "rlib" ]
 
