@@ -119,14 +119,14 @@ endif
 
 CARGO_TARGET_DIR=@abs_top_builddir@/target
 RUST_PATH=$(CARGO_TARGET_DIR)/@CARGO_TARGET_SUBDIR@
-RUST_LIB=$(RUST_PATH)/libopenraw.a
+RUST_LIB=$(RUST_PATH)/liblibopenraw.a
 
 Cargo.lock:
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) \
 	cargo update
 
 libopenraw_la_SOURCES = _or_dummy.c
-libopenraw.la: $(libopenraw_la_OBJECTS) $(RUST_FILES)
+libopenraw.la: $(liblibopenraw_la_OBJECTS) $(RUST_FILES)
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) \
 	cargo build --features=capi $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS) --lib && \
 	$(LINK) $< && mv $(RUST_LIB) .libs/libopenraw.a
