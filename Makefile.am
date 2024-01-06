@@ -131,6 +131,10 @@ libopenraw.la: $(liblibopenraw_la_OBJECTS) $(RUST_FILES)
 	cargo build --features=capi $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS) --lib && \
 	$(LINK) $< && mv $(RUST_LIB) .libs/libopenraw.a
 
+check-local: $(RUST_FILES)
+	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) \
+	cargo test --features=capi $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS) --all-targets
+
 clean-local:
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) cargo clean $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS)
 
