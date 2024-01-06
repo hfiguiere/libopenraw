@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MPL-2.0
+
 //! Module for parsing ISO Base Media Format aka video/mp4 streams.
 //! Internal unit tests.
 
@@ -17,7 +19,7 @@ use std::io::Read as _;
 extern crate test_assembler;
 use self::test_assembler::*;
 
-use boxes::BoxType;
+use super::boxes::BoxType;
 
 enum BoxSize {
     Short(u32),

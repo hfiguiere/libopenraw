@@ -82,6 +82,12 @@ RUST_FILES = Cargo.lock \
 	src/mosaic.rs \
 	src/mp4.rs \
 	src/mp4/container.rs \
+	src/mp4/parse/boxes.rs \
+	src/mp4/parse/craw.rs \
+	src/mp4/parse/macros.rs \
+	src/mp4/parse/mod.rs \
+	src/mp4/parse/tests.rs \
+	src/mp4/parse/unstable.rs \
 	src/nikon.rs \
 	src/nikon/huffman.rs \
 	src/nikon/matrices.rs \

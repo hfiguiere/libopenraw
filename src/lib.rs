@@ -19,6 +19,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+// For mp4::parse
+#[macro_use]
+extern crate log;
+
 #[macro_use]
 mod dump;
 #[macro_use]
@@ -78,6 +82,8 @@ pub use rawfile::rawfile_from_memory;
 
 /// Standard Result for libopenraw
 pub type Result<T> = std::result::Result<T, Error>;
+
+use mp4::parse as mp4parse;
 
 /// Standard `Error` for libopenraw
 #[derive(Debug, thiserror::Error)]

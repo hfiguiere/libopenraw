@@ -2,7 +2,7 @@
 /*
  * libopenraw - mp4/container.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,7 +26,6 @@ use std::io::{Seek, SeekFrom};
 use std::rc::Rc;
 
 use byteorder::{BigEndian, ReadBytesExt};
-use mp4parse::craw;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
@@ -35,6 +34,8 @@ use crate::container::RawContainer;
 use crate::io::{View, Viewer};
 #[cfg(feature = "dump")]
 use crate::jpeg;
+use crate::mp4::parse as mp4parse;
+use crate::mp4::parse::craw;
 use crate::thumbnail;
 use crate::tiff;
 use crate::Type as RawType;

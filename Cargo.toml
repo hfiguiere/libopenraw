@@ -23,17 +23,20 @@ bitreader = "0.3.7"
 byteorder = "1.4.3"
 cc = "1.0"
 chrono = { version = "0.4.26", default-features = false, features = [ "clock" ] }
+env_logger = "0.10"
+fallible_collections = { version = "0.4", features = ["std_io"] }
 getopts = "0.2.21"
 jpeg-decoder = "0.3.0"
 lazy_static = "1.4.0"
 libc = { version = "*", optional = true }
 log = "0.4.19"
-mp4parse = { package = "mp4parse-craw", path = "lib/mp4/mp4parse", version = "0.12.0", features = [ "craw" ] }
 nalgebra = "0.32"
 num_enum = "0.6.1"
+num-traits = "0.2.14"
 once_cell = "1.18.0"
 rayon = "1.8.0"
 simple_logger = { version = "4.2.0", default-features = false }
+static_assertions = "1.1.0"
 thiserror = "1.0.44"
 
 [build-dependencies]
@@ -46,6 +49,7 @@ serde-xml-rs = "^0.6"
 criterion = { version = "0.5.1", features = ["html_reports"] }
 libopenraw-testing = { path = "libopenraw-testing" }
 image = { version = "0.24.7", features = [ "png", "jpeg" ], default-features = false }
+test-assembler = "0.1.2"
 
 [features]
 default = ["dump", "bench", "capi"]

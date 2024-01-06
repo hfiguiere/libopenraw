@@ -1,8 +1,23 @@
+// SPDX-License-Identifier: MPL-2.0
+
 //! Module for parsing ISO Base Media Format aka video/mp4 streams.
 
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// This is an adaptation of Mozilla mp4parse that adds support for craw brand
+// (Canon CR3 raw files).
+// The original project:
+//
+// https://github.com/mozilla/mp4parse-rust/
+//
+// Original authors:
+//  Ralph Giles <giles@mozilla.com>
+//  Matthew Gregan <kinetik@flim.org>
+//  Alfredo Yang <ayang@mozilla.com>
+//  Jon Bauman <jbauman@mozilla.com>
+//  Bryce Seager van Dyk <bvandyk@mozilla.com>
 
 // `clippy::upper_case_acronyms` is a nightly-only lint as of 2021-03-15, so we
 // allow `clippy::unknown_clippy_lints` to ignore it on stable - but
@@ -11,14 +26,11 @@
 #![allow(renamed_and_removed_lints)]
 #![allow(clippy::unknown_clippy_lints)]
 #![allow(clippy::upper_case_acronyms)]
+// Upstream code has some dead_code, to avoid divergence, just allow it.
+#![allow(dead_code)]
+#![allow(clippy::get_first)]
+#![allow(clippy::derivable_impls)]
 
-#[macro_use]
-extern crate log;
-
-extern crate bitreader;
-extern crate byteorder;
-extern crate fallible_collections;
-extern crate num_traits;
 use bitreader::{BitReader, ReadInto};
 use byteorder::{ReadBytesExt, WriteBytesExt};
 
@@ -37,7 +49,6 @@ mod macros;
 mod boxes;
 use boxes::{BoxType, FourCC};
 
-#[cfg(feature = "craw")]
 pub mod craw;
 
 // Unit tests.
@@ -485,7 +496,6 @@ pub struct SampleDescriptionBox {
 pub enum SampleEntry {
     Audio(AudioSampleEntry),
     Video(VideoSampleEntry),
-    #[cfg(feature = "craw")]
     CanonCRAW(craw::CanonCRAWEntry),
     Unknown,
 }
@@ -531,6 +541,7 @@ pub struct AudioSampleEntry {
     pub protection_info: TryVec<ProtectionSchemeInfoBox>,
 }
 
+#[allow(clippy::enum_variant_names)]
 #[derive(Debug)]
 pub enum VideoCodecSpecific {
     AVCConfig(TryVec<u8>),
@@ -891,7 +902,6 @@ pub struct MediaContext {
     pub userdata: Option<Result<UserdataBox>>,
     #[cfg(feature = "meta-xml")]
     pub metadata: Option<Result<MetadataBox>>,
-    #[cfg(feature = "craw")]
     pub craw: Option<craw::CrawHeader>,
 }
 
@@ -1450,7 +1460,6 @@ pub enum CodecType {
     AMRNB,
     #[cfg(feature = "3gpp")]
     AMRWB,
-    #[cfg(feature = "craw")]
     CRAW, // Canon CRAW
 }
 
@@ -2527,7 +2536,7 @@ macro_rules! impl_bounded_product {
 }
 
 mod bounded_uints {
-    use UpperBounded;
+    use super::UpperBounded;
 
     impl_bounded!(U8, u8);
     impl_bounded!(U16, u16);
@@ -3280,7 +3289,6 @@ fn read_moov<T: Read>(f: &mut BMFFBox<T>, context: Option<MediaContext>) -> Resu
         mut userdata,
         #[cfg(feature = "meta-xml")]
         metadata,
-        #[cfg(feature = "craw")]
         mut craw,
     } = context.unwrap_or_default();
 
@@ -3290,7 +3298,6 @@ fn read_moov<T: Read>(f: &mut BMFFBox<T>, context: Option<MediaContext>) -> Resu
             BoxType::UuidBox => {
                 debug!("{:?}", b.head);
                 let mut box_known = false;
-                #[cfg(feature = "craw")]
                 {
                     if brand == FourCC::from(*b"crx ") && b.head.uuid == Some(craw::HEADER_UUID) {
                         let crawheader = craw::parse_craw_header(&mut b)?;
@@ -3346,7 +3353,6 @@ fn read_moov<T: Read>(f: &mut BMFFBox<T>, context: Option<MediaContext>) -> Resu
         userdata,
         #[cfg(feature = "meta-xml")]
         metadata,
-        #[cfg(feature = "craw")]
         craw,
     })
 }
@@ -4144,7 +4150,7 @@ fn read_ds_descriptor(data: &[u8], esds: &mut ES_Descriptor) -> Result<()> {
     }
 
     // We are in an Audio esda Box.
-    let frequency_table = vec![
+    let frequency_table = [
         (0x0, 96000),
         (0x1, 88200),
         (0x2, 64000),
@@ -4626,11 +4632,8 @@ fn read_video_sample_entry<T: Read>(src: &mut BMFFBox<T>, brand: &FourCC) -> Res
     let width = be_u16(src)?;
     let height = be_u16(src)?;
 
-    #[cfg(feature = "craw")]
-    {
-        if codec_type == CodecType::CRAW {
-            return craw::read_craw_entry(src, width, height, data_reference_index);
-        }
+    if codec_type == CodecType::CRAW {
+        return craw::read_craw_entry(src, width, height, data_reference_index);
     }
 
     // Skip uninteresting fields.

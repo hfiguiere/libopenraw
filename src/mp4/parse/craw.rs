@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MPL-2.0
+// SPDX-Copyright: 2018-2024 Hubert Figuière
+
 //! Module for parsing Canon CR3 files that are ISO Base Media Format
 //!  aka video/mp4 streams.
 
@@ -5,10 +8,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+use super::boxes::BoxType;
 use super::{
     be_u16, be_u32, be_u64, read_buf, skip, skip_box_content, skip_box_remain, BMFFBox, Error,
 };
-use boxes::BoxType;
 use std::io::Read;
 
 pub const HEADER_UUID: [u8; 16] = [
