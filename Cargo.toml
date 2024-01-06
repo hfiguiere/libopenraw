@@ -4,6 +4,13 @@ version = "0.4.0-alpha.0"
 edition = "2018"
 default-run = "ordiag"
 build = "build.rs"
+description = "Digital camera RAW file processing"
+repository = "https://gitlab.freedesktop.org/libopenraw/libopenraw"
+homepage = "https://libopenraw.freedesktop.org/libopenraw/"
+license = "LGPL-3.0-or-later"
+keywords = [ "image", "photography", "file_format", "graphics" ]
+documentation = "https://docs.rs/crate/libopenraw/"
+readme = "README.md"
 
 rust-version = "1.64"
 
