@@ -27,7 +27,7 @@ fallible_collections = { version = "0.4", features = ["std_io"] }
 getopts = "0.2.21"
 jpeg-decoder = "0.3.0"
 lazy_static = "1.4.0"
-libc = { version = "*", optional = true }
+libc = { version = "0.2.151", optional = true }
 log = "0.4.19"
 nalgebra = "0.32"
 num_enum = "0.6.1"
