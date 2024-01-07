@@ -104,12 +104,7 @@ impl Thumbnail {
     }
 
     /// New thumbnail with data.
-    pub fn with_data(
-        width: u32,
-        height: u32,
-        data_type: DataType,
-        data: Vec<u8>,
-    ) -> Thumbnail {
+    pub fn with_data(width: u32, height: u32, data_type: DataType, data: Vec<u8>) -> Thumbnail {
         Thumbnail {
             width,
             height,
