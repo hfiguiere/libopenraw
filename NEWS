@@ -1,4 +1,4 @@
-libopenraw 0.4.0-alpha.1 - 2024/01/05
+libopenraw 0.4.0-alpha.1 - 2024/01/06
 
 THIS IS A PRE-RELEASE.
 
@@ -46,6 +46,11 @@ API changes:
     no longer needed.
   - Removed `or_ifd_release()` that is no longer needed.
   - `or_metavalue_get_string()` no longer take an index.
+
+Internal changes
+
+  - The mp4parse crate as been moved to src/mp4/parse, and mp4parse_capi
+    has been removed. This allow publishing the crate.
 
 libopenraw 0.3.7 - 2023/07/31
 
