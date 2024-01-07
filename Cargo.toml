@@ -23,7 +23,6 @@ bitreader = "0.3.7"
 byteorder = "1.4.3"
 cc = "1.0"
 chrono = { version = "0.4.26", default-features = false, features = [ "clock" ] }
-env_logger = "0.10"
 fallible_collections = { version = "0.4", features = ["std_io"] }
 getopts = "0.2.21"
 jpeg-decoder = "0.3.0"

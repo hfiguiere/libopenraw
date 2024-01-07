@@ -1705,8 +1705,6 @@ fn skip_box_remain<T: Read>(src: &mut BMFFBox<T>) -> Result<()> {
 
 /// Read the contents of an AVIF file
 pub fn read_avif<T: Read>(f: &mut T, strictness: ParseStrictness) -> Result<AvifContext> {
-    let _ = env_logger::try_init();
-
     debug!("read_avif(strictness: {:?})", strictness);
 
     let mut f = OffsetReader::new(f);
