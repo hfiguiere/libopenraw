@@ -3,7 +3,6 @@ name = "libopenraw"
 version = "0.4.0-alpha.2"
 edition = "2018"
 default-run = "ordiag"
-build = "build.rs"
 description = "Digital camera RAW file processing"
 repository = "https://gitlab.freedesktop.org/libopenraw/libopenraw"
 homepage = "https://libopenraw.freedesktop.org/libopenraw/"
@@ -21,7 +20,6 @@ rust-version = "1.64"
 afl = { version = "0.12.4", optional = true }
 bitreader = "0.3.7"
 byteorder = "1.4.3"
-cc = "1.0"
 chrono = { version = "0.4.26", default-features = false, features = [ "clock" ] }
 fallible_collections = { version = "0.4", features = ["std_io"] }
 getopts = "0.2.21"
@@ -37,9 +35,6 @@ rayon = "1.8.0"
 simple_logger = { version = "4.2.0", default-features = false }
 static_assertions = "1.1.0"
 thiserror = "1.0.44"
-
-[build-dependencies]
-cc = { version = "1.0", features = ["parallel"] }
 
 [dev-dependencies]
 crc = "2.1.0"
