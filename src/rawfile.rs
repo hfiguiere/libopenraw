@@ -174,6 +174,11 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
         self.identify_id()
     }
 
+    /// Return the MIME type for the raw file.
+    fn mime_type(&self) -> &'static str {
+        identify::mime_for_type(self.type_()).unwrap_or("application/octet-stream")
+    }
+
     /// Return the vendor ID
     fn vendor_id(&self) -> u16 {
         self.identify_id().0

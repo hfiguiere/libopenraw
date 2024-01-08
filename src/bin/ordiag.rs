@@ -2,7 +2,7 @@
 /*
  * libopenraw - bin/ordiag.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -228,6 +228,7 @@ fn process_file(
     match rawfile {
         Ok(ref rawfile) => {
             println!("Raw type: {:?}", rawfile.type_());
+            println!("MIME type: {}", rawfile.mime_type());
             println!("Vendor id: {}", rawfile.vendor_id());
             println!("Type id: {:?}", rawfile.type_id());
             if let Some(make) = rawfile

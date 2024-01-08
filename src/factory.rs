@@ -2,7 +2,7 @@
 /*
  * libopenraw - factory.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -57,6 +57,7 @@ lazy_static::lazy_static! {
         (Type::Orf, OrfFile::factory as RawFileFactory),
         (Type::Pef, PefFile::factory as RawFileFactory),
         (Type::Raf, RafFile::factory as RawFileFactory),
+        (Type::Rw, Rw2File::factory as RawFileFactory),
         (Type::Rw2, Rw2File::factory as RawFileFactory),
     ]);
 }

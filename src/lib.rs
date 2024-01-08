@@ -227,6 +227,8 @@ pub enum Type {
     Pef = 8,
     /// Fujfilm RAW
     Raf = 13,
+    /// Panasonic old RAW
+    Rw = 17,
     /// Panasonic RAW
     Rw2 = 12,
     /// Sony RAW (old)
@@ -279,6 +281,7 @@ impl From<Type> for String {
             Type::Orf => "ORF",
             Type::Pef => "PEF",
             Type::Raf => "RAF",
+            Type::Rw => "RW",
             Type::Rw2 => "RW2",
             Type::Sr2 => "SR2",
             #[cfg(test)]

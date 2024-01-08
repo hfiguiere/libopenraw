@@ -2,7 +2,7 @@
 /*
  * libopenraw - identify.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,28 +30,59 @@ use crate::io::View;
 use crate::tiff;
 use crate::tiff::{exif, Ifd, IfdType};
 
+const TYPE_MIME: [(Type, &str); 15] = [
+    (Type::Arw, "image/x-sony-arw"),
+    (Type::Cr2, "image/x-canon-cr2"),
+    (Type::Cr3, "image/x-canon-cr3"),
+    (Type::Crw, "image/x-canon-crw"),
+    (Type::Dng, "image/x-adobe-dng"),
+    (Type::Erf, "image/x-epson-erf"),
+    (Type::Mrw, "image/x-minolta-mrw"),
+    (Type::Nef, "image/x-nikon-nef"),
+    (Type::Nrw, "image/x-nikon-nrw"),
+    (Type::Orf, "image/x-olympus-orf"),
+    (Type::Pef, "image/x-pentax-pef"),
+    (Type::Raf, "image/x-fuji-raf"),
+    (Type::Rw, "image/x-panasonic-rw"),
+    (Type::Rw2, "image/x-panasonic-rw2"),
+    (Type::Sr2, "image/x-sony-sr2"),
+];
+
+const EXT_TYPE: [(&str, Type); 17] = [
+    // The extension MUST be lowercase
+    ("arw", Type::Arw),
+    ("cr2", Type::Cr2),
+    ("cr3", Type::Cr3),
+    ("dng", Type::Dng),
+    ("erf", Type::Erf),
+    ("jpg", Type::Jpeg),
+    ("jpeg", Type::Jpeg),
+    ("gpr", Type::Gpr),
+    ("nef", Type::Nef),
+    ("nrw", Type::Nrw),
+    ("orf", Type::Orf),
+    ("pef", Type::Pef),
+    ("raf", Type::Raf),
+    ("raw", Type::Rw),
+    ("rw2", Type::Rw2),
+    ("rwl", Type::Rw2),
+    ("sr2", Type::Arw),
+];
+
 lazy_static::lazy_static! {
     /// Mapping of extensions (lowercase) to a `Type`.
-    pub(crate) static ref EXT_TO_TYPE: HashMap<&'static str, Type> = HashMap::from([
-        // The extension MUST be lowercase
-        ("arw", Type::Arw),
-        ("cr2", Type::Cr2),
-        ("cr3", Type::Cr3),
-        ("dng", Type::Dng),
-        ("erf", Type::Erf),
-        ("jpg", Type::Jpeg),
-        ("jpeg", Type::Jpeg),
-        ("gpr", Type::Gpr),
-        ("nef", Type::Nef),
-        ("nrw", Type::Nrw),
-        ("orf", Type::Orf),
-        ("pef", Type::Pef),
-        ("raf", Type::Raf),
-        ("raw", Type::Rw2),
-        ("rw2", Type::Rw2),
-        ("rwl", Type::Rw2),
-        ("sr2", Type::Arw),
-    ]);
+    pub(crate) static ref EXT_TO_TYPE: HashMap<&'static str, Type> = HashMap::from(
+        EXT_TYPE
+    );
+
+    pub(crate) static ref TYPE_TO_MIME: HashMap<Type, &'static str> = HashMap::from(
+        TYPE_MIME
+    );
+}
+
+/// Get the mime type associated for the file.
+pub(crate) fn mime_for_type(type_: Type) -> Option<&'static str> {
+    TYPE_TO_MIME.get(&type_).copied()
 }
 
 /// Get the type associated to the extension.
