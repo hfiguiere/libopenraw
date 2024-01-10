@@ -2,8 +2,8 @@ dnl libopenraw configure
 dnl written by Hubert Figuiere
 
 AC_PREREQ([2.69])
-AC_INIT([libopenraw],[0.4.0-alpha.2])
-AM_CONFIG_HEADER(config.h)
+AC_INIT([libopenraw],[0.4.0-alpha.3])
+AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2 dist-xz subdir-objects])
 AM_MAINTAINER_MODE
