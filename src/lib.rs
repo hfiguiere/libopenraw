@@ -23,6 +23,8 @@
 #[macro_use]
 extern crate log;
 
+use once_cell::sync::Lazy;
+
 #[macro_use]
 mod dump;
 #[macro_use]
@@ -318,6 +320,24 @@ impl From<TypeId> for u32 {
     fn from(type_id: TypeId) -> u32 {
         ((type_id.0 as u32) << 16) | type_id.1 as u32
     }
+}
+
+static EXTENSIONS: Lazy<Vec<String>> = Lazy::new(|| {
+    crate::identify::EXT_TO_TYPE
+        .iter()
+        .filter_map(|(e, t)| {
+            if *t != Type::Jpeg {
+                Some(String::from(*e))
+            } else {
+                None
+            }
+        })
+        .collect()
+});
+
+/// Return the extensions for raw files (in lowercase).
+pub fn extensions() -> &'static [String] {
+    &EXTENSIONS
 }
 
 #[cfg(test)]

@@ -366,9 +366,9 @@ unsafe extern "C" fn or_get_extract_rawdata(
 /// The storage for the static strings. The CString array
 /// is just used to keep the pointers valid.
 static STATIC_EXTS: Lazy<Vec<CString>> = Lazy::new(|| {
-    crate::identify::EXT_TO_TYPE
-        .keys()
-        .map(|e| CString::new(*e).expect("static C string failed"))
+    crate::extensions()
+        .iter()
+        .map(|e| CString::new(e.as_bytes()).expect("static C string failed"))
         .collect()
 });
 
