@@ -1,14 +1,16 @@
-libopenraw 0.4.0-alpha.3 -
+libopenraw 0.4.0-alpha.3 - 2024/01/21
 
 Bug fixes:
 
   - (Alpha) Added missing `extensions()` API in Rust.
   - (Alpha) Removed unneeded cc dependency.
 
-New API:
+API changes:
 
   - Added mimetype API.
   - Separate type for old Panasonic raw.
+  - `or_get_file_extensions()` only return extensions for raw file
+    (not JPEG).
 
 libopenraw 0.4.0-alpha.2 - 2024/01/06
 
