@@ -1,7 +1,7 @@
 /*
  * libopenraw - rawfile.h
  *
- * Copyright (C) 2007-2020 Hubert Figuière
+ * Copyright (C) 2007-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -40,7 +40,8 @@
 extern "C" {
 #endif
 
-/** @brief Return a NULL terminated list of extensions that the library supposedly handle.
+/** @brief Return a NULL terminated list of extensions for raw files that the
+ * library supposedly handle. This excludes JPEG.
  *
  * @return A NULL terminated list. Owned the library.
  */
