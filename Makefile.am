@@ -155,8 +155,7 @@ clean-local:
 DISTCLEANFILES = .cargo/config.toml $(CARGO_TARGET_DIR)/.rustc_info.json
 
 dist-hook:
-	($(shell pwd)/$(top_srcdir)/build-aux/cargo-vendor.sh $(shell pwd)/$(top_srcdir)/Cargo.toml)
-	cp -av vendor $(distdir)/
+	(cd $(distdir) && $(shell pwd)/$(top_srcdir)/build-aux/cargo-vendor.sh $(shell pwd)/$(top_srcdir)/Cargo.toml)
 
 distclean-local:
 	rm -fr vendor/*
