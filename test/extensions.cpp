@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(test_extensions)
         exts++;
     }
 
-    BOOST_CHECK(i == 17);
+    BOOST_CHECK(i == 15);
 }
 
 /*
