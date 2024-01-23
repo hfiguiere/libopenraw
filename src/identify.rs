@@ -24,6 +24,8 @@
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 
+use once_cell::sync::Lazy;
+
 use super::{Error, Result, Type};
 use crate::fujifilm;
 use crate::io::View;
@@ -78,6 +80,20 @@ lazy_static::lazy_static! {
     pub(crate) static ref TYPE_TO_MIME: HashMap<Type, &'static str> = HashMap::from(
         TYPE_MIME
     );
+}
+
+static MIME_TYPES: Lazy<Vec<String>> = Lazy::new(|| {
+    crate::identify::TYPE_MIME
+        .iter()
+        .filter_map(|(_, m)| {
+            Some(String::from(*m))
+        })
+        .collect()
+});
+
+/// Return the list of supported mimetypes
+pub fn mime_types() -> &'static [String] {
+    &MIME_TYPES
 }
 
 /// Get the mime type associated for the file.
