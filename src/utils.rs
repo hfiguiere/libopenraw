@@ -2,7 +2,7 @@
 /*
  * libopenraw - utils.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,7 +22,7 @@
 //! Various utilities
 
 #[macro_export]
-/// Create a vecto with size but not initialized.
+/// Create a vector with size but not initialized.
 /// Use with caution.
 macro_rules! uninit_vec {
     ( $len:expr ) => {{
