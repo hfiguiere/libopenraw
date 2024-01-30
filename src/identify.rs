@@ -23,6 +23,7 @@
 
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
+use std::iter::FromIterator;
 
 use once_cell::sync::Lazy;
 
@@ -80,6 +81,10 @@ lazy_static::lazy_static! {
     pub(crate) static ref TYPE_TO_MIME: HashMap<Type, &'static str> = HashMap::from(
         TYPE_MIME
     );
+
+    pub(crate) static ref MIME_TO_TYPE: HashMap<&'static str, Type> = HashMap::from_iter(
+        TYPE_MIME.iter().map(|(t, m)| (*m, *t))
+    );
 }
 
 static MIME_TYPES: Lazy<Vec<String>> = Lazy::new(|| {
@@ -106,6 +111,12 @@ pub(crate) fn mime_for_type(type_: Type) -> Option<&'static str> {
 pub(crate) fn type_for_extension(ext: &str) -> Option<Type> {
     EXT_TO_TYPE.get(ext).cloned()
 }
+
+/// Get the type associated to the mimetype.
+pub(crate) fn type_for_mime_type(mime: &str) -> Option<Type> {
+    MIME_TO_TYPE.get(mime).cloned()
+}
+
 
 /// Return the `Type` based on the content of the file.
 pub(crate) fn type_for_content(content: &mut View) -> Result<Option<Type>> {
@@ -190,6 +201,16 @@ mod test {
         assert_eq!(type_for_extension("CR3"), None);
         assert_eq!(type_for_extension("cr3"), Some(Type::Cr3));
         assert_eq!(type_for_extension("NOPE"), None);
+    }
+
+    #[test]
+    fn test_type_for_mime_type() {
+        use super::type_for_mime_type;
+        use crate::Type;
+
+        assert_eq!(type_for_mime_type("image/x-fuji-raf"), Some(Type::Raf));
+        assert_eq!(type_for_mime_type("image/x-canon-cr3"), Some(Type::Cr3));
+        assert_eq!(type_for_mime_type("application/octet-stream"), None);
     }
 
     #[test]
