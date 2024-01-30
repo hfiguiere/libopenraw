@@ -18,6 +18,8 @@ cargo vendor --manifest-path "$1"
 # Caveat this tarball won't build on Windows.
 # See https://github.com/rust-lang/cargo/issues/7058#issuecomment-751856262
 rm vendor/winapi*gnu*/lib/*.a
+rm vendor/windows*gnu*/lib/*.a
+rm vendor/windows*msvc*/lib/*.lib
 
 mkdir .cargo
 cat > .cargo/config.toml <<EOF

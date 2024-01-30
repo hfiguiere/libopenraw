@@ -5,7 +5,7 @@ AC_PREREQ([2.69])
 AC_INIT([libopenraw],[0.4.0-alpha.4])
 AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2 dist-xz subdir-objects])
+AM_INIT_AUTOMAKE([foreign tar-ustar no-dist-gzip dist-bzip2 dist-xz subdir-objects])
 AM_MAINTAINER_MODE
 m4_ifndef([AM_SILENT_RULES], [m4_define([AM_SILENT_RULES],[])])
 AM_SILENT_RULES([yes])
