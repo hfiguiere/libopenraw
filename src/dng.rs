@@ -2,7 +2,7 @@
 /*
  * libopenraw - dng.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -131,6 +131,7 @@ lazy_static::lazy_static! {
         ( "iPhone 8", TypeId(vendor::APPLE, apple::IPHONE_8) ),
         ( "iPhone 12 Pro", TypeId(vendor::APPLE, apple::IPHONE_12_PRO) ),
         ( "iPhone 13 Pro", TypeId(vendor::APPLE, apple::IPHONE_13_PRO) ),
+        ( "iPhone 14", TypeId(vendor::APPLE, apple::IPHONE_14) ),
         ( "iPhone SE", TypeId(vendor::APPLE, apple::IPHONE_SE) ),
         ( "iPhone XS", TypeId(vendor::APPLE, apple::IPHONE_XS) ),
         ( "Blackmagic Pocket Cinema Camera", TypeId(vendor::BLACKMAGIC,

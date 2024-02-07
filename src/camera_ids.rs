@@ -2,7 +2,7 @@
 /*
  * libopenraw - camera_ids.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -942,6 +942,7 @@ pub mod apple {
     pub const IPHONE_XS: u16 = 5;
     pub const IPHONE_12_PRO: u16 = 6;
     pub const IPHONE_13_PRO: u16 = 7;
+    pub const IPHONE_14: u16 = 8;
 }
 
 /// Sigma
