@@ -90,9 +90,7 @@ lazy_static::lazy_static! {
 static MIME_TYPES: Lazy<Vec<String>> = Lazy::new(|| {
     crate::identify::TYPE_MIME
         .iter()
-        .filter_map(|(_, m)| {
-            Some(String::from(*m))
-        })
+        .map(|(_, m)| String::from(*m))
         .collect()
 });
 
