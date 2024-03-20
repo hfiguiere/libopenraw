@@ -122,6 +122,13 @@ impl Value {
             _ => None,
         }
     }
+
+    pub fn rational(&self) -> Option<exif::Rational> {
+        match self {
+            Self::Rational(r) => Some(r[0]),
+            _ => None,
+        }
+    }
 }
 
 /// Inner iterator

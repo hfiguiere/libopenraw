@@ -271,7 +271,7 @@ impl ExifValue for Vec<u8> {
 }
 
 /// Unsigned rational number (fraction)
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Rational {
     pub num: u32,
     pub denom: u32,
@@ -325,7 +325,7 @@ impl From<&Rational> for u32 {
 }
 
 /// Signed rational number (fraction)
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct SRational {
     pub num: i32,
     pub denom: i32,
