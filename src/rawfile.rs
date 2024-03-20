@@ -286,16 +286,16 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
     }
 
     /// Get the metadata value
-    fn metadata_value(&self, key: &metadata::Key) -> Option<metadata::Value> {
+    fn metadata_value(&self, key: &str) -> Option<metadata::Value> {
         self.main_ifd()
             .map(|ifd| ifd.iter().into())
-            .and_then(|mut iter: metadata::Iterator| iter.find(|item| &item.0 == key))
+            .and_then(|mut iter: metadata::Iterator| iter.find(|item| item.0 == key))
             .map(|item| item.1)
     }
 
     /// File orientation
     fn orientation(&self) -> u32 {
-        self.metadata_value(&"Exif.Image.Orientation".to_string())
+        self.metadata_value("Exif.Image.Orientation")
             .and_then(|value| value.integer())
             .unwrap_or(0)
     }

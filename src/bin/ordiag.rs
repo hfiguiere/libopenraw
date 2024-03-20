@@ -232,21 +232,21 @@ fn process_file(
             println!("Vendor id: {}", rawfile.vendor_id());
             println!("Type id: {:?}", rawfile.type_id());
             if let Some(make) = rawfile
-                .metadata_value(&"Exif.Image.Make".to_string())
+                .metadata_value("Exif.Image.Make")
                 .as_ref()
                 .and_then(Value::string)
             {
                 println!("Make: {:?}", make);
             }
             if let Some(model) = rawfile
-                .metadata_value(&"Exif.Image.Model".to_string())
+                .metadata_value("Exif.Image.Model")
                 .as_ref()
                 .and_then(Value::string)
             {
                 println!("Model: {:?}", model);
             }
             if let Some(unique) = rawfile
-                .metadata_value(&"Exif.Image.UniqueCameraModel".to_string())
+                .metadata_value("Exif.Image.UniqueCameraModel")
                 .as_ref()
                 .and_then(Value::string)
             {

@@ -2,7 +2,7 @@
 /*
  * libopenraw - test/testsuite.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -262,7 +262,7 @@ impl TestRun for Results {
         }
 
         if let Some(exif_make) = &self.exif_make {
-            let make = rawfile.metadata_value(&"Exif.Image.Make".to_string());
+            let make = rawfile.metadata_value("Exif.Image.Make");
             assert!(make.is_some());
             let make = make.as_ref().and_then(Value::string);
             assert!(make.is_some());
@@ -271,7 +271,7 @@ impl TestRun for Results {
         }
 
         if let Some(exif_model) = &self.exif_model {
-            let model = rawfile.metadata_value(&"Exif.Image.Model".to_string());
+            let model = rawfile.metadata_value("Exif.Image.Model");
             assert!(model.is_some());
             let model = model.as_ref().and_then(Value::string);
             assert!(model.is_some());

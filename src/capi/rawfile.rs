@@ -224,7 +224,7 @@ extern "C" fn or_rawfile_get_metavalue(
         let key = unsafe { std::ffi::CStr::from_ptr(key) };
         rawfile
             .0
-            .metadata_value(&key.to_string_lossy().to_string())
+            .metadata_value(&key.to_string_lossy())
             .map(ORMetaValue::from)
             .map(Box::new)
             .map(Box::into_raw)
