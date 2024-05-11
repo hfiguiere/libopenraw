@@ -2,7 +2,7 @@
 /*
  * libopenraw - mosaic.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -84,19 +84,23 @@ pub enum Pattern {
     Grbg,
 }
 
-impl ToString for Pattern {
-    /// The `ToString` conversion for the pattern will print a string of
-    /// the pattern colour filters left - right & top - bottom
-    fn to_string(&self) -> String {
-        match *self {
-            Self::Empty => "NONE".into(),
-            Self::Rggb => "RGGB".into(),
-            Self::Gbrg => "GBRG".into(),
-            Self::Bggr => "BGGR".into(),
-            Self::Grbg => "GRBG".into(),
-            Self::NonRgb22(_) => "NON_RGB22".into(),
-            //p.iter().map(|c| c.to_char()).collect(),
-        }
+impl std::fmt::Display for Pattern {
+    /// `Display` will print a string of the pattern colour filters
+    /// left - right & top - bottom
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match *self {
+                Self::Empty => "NONE",
+                Self::Rggb => "RGGB",
+                Self::Gbrg => "GBRG",
+                Self::Bggr => "BGGR",
+                Self::Grbg => "GRBG",
+                Self::NonRgb22(_) => "NON_RGB22",
+                //p.iter().map(|c| c.to_char()).collect(),
+            }
+        )
     }
 }
 

@@ -115,7 +115,6 @@ pub(crate) fn type_for_mime_type(mime: &str) -> Option<Type> {
     MIME_TO_TYPE.get(mime).cloned()
 }
 
-
 /// Return the `Type` based on the content of the file.
 pub(crate) fn type_for_content(content: &mut View) -> Result<Option<Type>> {
     use crate::Type::*;

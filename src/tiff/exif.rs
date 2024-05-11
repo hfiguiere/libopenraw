@@ -297,9 +297,9 @@ impl ExifValue for Rational {
     }
 }
 
-impl ToString for Rational {
-    fn to_string(&self) -> String {
-        format!("{}/{}", self.num, self.denom)
+impl std::fmt::Display for Rational {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}/{}", self.num, self.denom)
     }
 }
 
@@ -361,9 +361,9 @@ impl ExifValue for SRational {
     }
 }
 
-impl ToString for SRational {
-    fn to_string(&self) -> String {
-        format!("{}/{}", self.num, self.denom)
+impl std::fmt::Display for SRational {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}/{}", self.num, self.denom)
     }
 }
 
