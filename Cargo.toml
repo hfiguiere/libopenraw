@@ -20,7 +20,7 @@ rust-version = "1.64"
 afl = { version = "0.12.4", optional = true }
 bitreader = "0.3.7"
 byteorder = "1.4.3"
-chrono = { version = "0.4.26", default-features = false, features = [ "clock" ] }
+chrono = { version = "0.4.38", default-features = false, features = [ "clock" ] }
 fallible_collections = { version = "0.4", features = ["std_io"] }
 getopts = "0.2.21"
 jpeg-decoder = "0.3.0"
@@ -42,7 +42,7 @@ serde = { version = "^1, <=1.0.171", features = [ "derive" ] }
 serde-xml-rs = "^0.6"
 criterion = { version = "0.5.1", features = ["html_reports"] }
 libopenraw-testing = { path = "libopenraw-testing" }
-image = { version = "0.24.7", features = [ "png", "jpeg" ], default-features = false }
+image = { version = "0.25.1", features = [ "png", "jpeg" ], default-features = false }
 test-assembler = "0.1.2"
 
 [features]
