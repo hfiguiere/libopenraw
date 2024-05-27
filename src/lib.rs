@@ -335,7 +335,7 @@ static EXTENSIONS: Lazy<Vec<String>> = Lazy::new(|| {
         .collect()
 });
 
-pub use crate::identify::mime_types;
+pub use crate::identify::{mime_types, type_for_mime_type};
 
 /// Return the extensions for raw files (in lowercase).
 pub fn extensions() -> &'static [String] {

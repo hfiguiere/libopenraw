@@ -111,7 +111,7 @@ pub(crate) fn type_for_extension(ext: &str) -> Option<Type> {
 }
 
 /// Get the type associated to the mimetype.
-pub(crate) fn type_for_mime_type(mime: &str) -> Option<Type> {
+pub fn type_for_mime_type(mime: &str) -> Option<Type> {
     MIME_TO_TYPE.get(mime).cloned()
 }
 
