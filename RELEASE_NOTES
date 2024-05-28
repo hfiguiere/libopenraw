@@ -1,10 +1,17 @@
-What's (visibly) new in 0.4.0-alpha.0
+What's (visibly) new in 0.4.0-alpha.4
 =====================================
 
 - Complete rewrite in Rust.
 - Various API improvements.
+  - Added MIME API.
+  - Old Panasonic raw files have a separate type.
+- Extract White Balance coefficients.
+- DNG: decompress the tiles.
+- Fujifilm RAF: get black and white levels
+- Olympus ORF: get active area.
+- Properly set black & white files for DNG, ERF, PEF, CR2.
 - Support rendering to sRGB with proper colours.
-- 6 new cameras listed.
+- 7 new cameras listed.
 - 1 camera properly identified.
 
 What's (visibly) new in 0.3.7

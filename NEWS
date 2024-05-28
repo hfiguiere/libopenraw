@@ -1,6 +1,26 @@
 libopenraw 0.4.0-alpha.4 -
 
+THIS IS A PRE-RELEASE.
+
+New features:
+
+Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Apple iPhone 14.
+
+API changes:
+
+  - Added `mime_types()` and `type_for_mime_type()` with C API.
+  - (Alpha) Rawfile::metadata_value() takes a &str for key.
+
+Misc:
+
+  - Updated simple_logger, image-rs.
+
 libopenraw 0.4.0-alpha.3 - 2024/01/21
+
+THIS IS A PRE-RELEASE.
 
 Bug fixes:
 
