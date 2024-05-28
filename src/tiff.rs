@@ -281,11 +281,12 @@ pub(crate) fn tiff_get_rawdata(
         // if v overflow when muliplied my 2, then it's too big.
         .and_then(|v| if v > u32::MAX / 2 { None } else { Some(v) })
         .ok_or(Error::FormatError)?;
-    // Check for excessively large byte_len
-    // pixel_count * 2 should be a proper limit.
+    // Check for excessively large byte_len: pixel_count * 2 should be
+    // a proper limit. But we can't make this an error. iPhone 15 Pro
+    // files trigger it. The actual file length will catch excessive
+    // length.
     if byte_len > pixel_count * 2 {
-        log::error!("TIFF: Raw byte length too large for pixel count.");
-        return Err(Error::FormatError);
+        log::warn!("TIFF: Raw byte length {byte_len} too large for pixel count {pixel_count} * 2.");
     }
     if byte_len as u64 > container.borrow_view_mut().len() {
         log::error!("TIFF: Raw byte length too large for file size.");
