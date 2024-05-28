@@ -27,11 +27,25 @@ int main(int /*argc*/, char ** /*argv*/)
 {
     const char **exts = or_get_file_extensions();
 
-    if(exts) {
+    if (exts) {
         printf("Extensions supported\n");
-        while(*exts) {
+        while (*exts) {
             printf("%s\n", *exts);
             exts++;
+        }
+    }
+    else {
+        printf("No extensions found\n");
+    }
+
+    printf("\n\n");
+
+    const char **mimes = or_get_mime_types();
+    if (mimes) {
+        printf("Mime types supported\n");
+        while (*mimes) {
+            printf("%s\n", *mimes);
+            mimes++;
         }
     }
     else {

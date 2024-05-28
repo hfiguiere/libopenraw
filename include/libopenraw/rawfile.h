@@ -43,7 +43,7 @@ extern "C" {
 /** @brief Return a NULL terminated list of extensions for raw files that the
  * library supposedly handle. This excludes JPEG.
  *
- * @return A NULL terminated list. Owned the library.
+ * @return A NULL terminated list. Owned by the library.
  */
 const char **
 or_get_file_extensions();

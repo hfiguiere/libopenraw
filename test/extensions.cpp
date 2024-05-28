@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Hubert Figuiere
+ * Copyright (C) 2008-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,6 +21,7 @@
 #include <boost/test/included/unit_test.hpp>
 
 #include "libopenraw/rawfile.h"
+#include "libopenraw/mime.h"
 
 boost::unit_test::test_suite* init_unit_test_suite(int, char**)
 {
@@ -36,6 +37,20 @@ BOOST_AUTO_TEST_CASE(test_extensions)
     while (*exts) {
         i++;
         exts++;
+    }
+
+    BOOST_CHECK(i == 15);
+}
+
+BOOST_AUTO_TEST_CASE(test_mime_types)
+{
+    const char **mimes = or_get_mime_types();
+    BOOST_CHECK(mimes);
+
+    int i = 0;
+    while (*mimes) {
+        i++;
+        mimes++;
     }
 
     BOOST_CHECK(i == 15);

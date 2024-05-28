@@ -1,7 +1,7 @@
 /*
  * libopenraw - libopenraw.h
  *
- * Copyright (C) 2005-2020 Hubert Figuière
+ * Copyright (C) 2005-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,8 +22,7 @@
  * @author Hubert Figuiere <hub@figuiere.net>
  */
 
-#ifndef LIBOPENRAW_H_
-#define LIBOPENRAW_H_
+#pragma once
 
 /** @defgroup public_api libopenraw public API
  * @brief The public API for libopenraw.
@@ -42,7 +41,6 @@
 #include <libopenraw/rawfile.h>
 #include <libopenraw/debug.h>
 #include <libopenraw/demosaic.h>
+#include <libopenraw/mime.h>
 #include <libopenraw/mosaicinfo.h>
 #include <libopenraw/metadata.h>
-
-#endif

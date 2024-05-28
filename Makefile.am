@@ -52,6 +52,7 @@ RUST_FILES = Cargo.lock \
 	src/capi/ifd.rs \
 	src/capi/iterator.rs \
 	src/capi/metavalue.rs \
+	src/capi/mime.rs \
 	src/capi/mosaic.rs \
 	src/capi/rawdata.rs \
 	src/capi/rawfile.rs \

@@ -44,6 +44,8 @@ mod iterator;
 #[cfg(feature = "capi")]
 mod metavalue;
 #[cfg(feature = "capi")]
+mod mime;
+#[cfg(feature = "capi")]
 mod mosaic;
 #[cfg(feature = "capi")]
 mod rawdata;
