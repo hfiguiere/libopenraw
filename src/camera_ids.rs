@@ -439,6 +439,7 @@ pub mod leica {
     /* DNG */
     pub const M11_MONOCHROM: u16 = 41;
     pub const Q3: u16 = 42;
+    pub const SL3: u16 = 43;
 }
 
 /// Pentax type IDs
