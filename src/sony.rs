@@ -2,7 +2,7 @@
 /*
  * libopenraw - sony.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -153,11 +153,13 @@ lazy_static::lazy_static! {
         sony!(382, ZVE10),
         sony!(383, ILCE7SM3),
         sony!(384, ILCE1),
+        sony!(385, ILME_FX3),
         sony!(386, ILCE7RM3A),
         sony!(387, ILCE7RM4A),
         sony!(388, ILCE7M4),
         sony!(390, ILCE7RM5),
         sony!(391, ILME_FX30),
+        sony!(392, ILCE9M3),
         sony!(393, ZVE1),
         sony!(394, ILCE6700),
         sony!(395, ZV1M2),
@@ -252,6 +254,8 @@ lazy_static::lazy_static! {
         sony!("ILCE-7SM3", ILCE7SM3),
         sony!("ILCE-9", ILCE9),
         sony!("ILCE-9M2", ILCE9M2),
+        sony!("ILCE-9M3", ILCE9M3),
+        sony!("ILME-FX3", ILME_FX3),
         sony!("ILME-FX30", ILME_FX30),
         sony!("ZV-1", ZV1),
         sony!("ZV-1M2", ZV1M2),
@@ -260,7 +264,7 @@ lazy_static::lazy_static! {
         ("Lunar", TypeId(vendor::HASSELBLAD, hasselblad::LUNAR)),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 93] = [
+    static ref MATRICES: [BuiltinMatrix; 95] = [
         BuiltinMatrix::new(
             sony!(A100),
             0,
@@ -694,10 +698,20 @@ lazy_static::lazy_static! {
             0,
             [ 6389, -1703, -378, -4562, 12265, 2587, -670, 1489, 6550 ] ),
         BuiltinMatrix::new(
+            sony!(ILCE9M3),
+            0,
+            0,
+            [ 9811, -3908, -752, -3704, 11577, 2417, -73, 950, 5980 ] ),
+        BuiltinMatrix::new(
             sony!(ILCEQX1),
             128,
             0,
             [ 5991, -1456, -455, -4764, 12135, 2980, -707, 1425, 6701 ] ),
+        BuiltinMatrix::new(
+            sony!(ILME_FX3),
+            128,
+            0,
+            [ 6912, -2127, -469, -4470, 12175, 2587, -398, 1477, 6492 ] ),
         BuiltinMatrix::new(
             sony!(ILME_FX30),
             128,
