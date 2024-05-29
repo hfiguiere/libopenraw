@@ -926,6 +926,9 @@ pub mod fujifilm {
     pub const S6000FD: u16 = 66;
     pub const SL1000: u16 = 67;
     pub const XS20: u16 = 68;
+    pub const XT50: u16 = 69;
+    pub const GFX100_II: u16 = 70;
+    pub const X100VI: u16 = 71;
 }
 
 /// Black Magic

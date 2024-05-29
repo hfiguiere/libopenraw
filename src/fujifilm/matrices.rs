@@ -1,4 +1,23 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+/*
+ * libopenraw - fujifilm/matrices.rs
+ *
+ * Copyright (C) 2022-2024 Hubert Figuière
+ *
+ * This library is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
 
 //! Fujifilm colour matrices
 
@@ -7,7 +26,7 @@ use crate::fuji;
 use crate::TypeId;
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 68] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 71] = [
         BuiltinMatrix::new(
             fuji!(F550EXR),
             0,
@@ -114,6 +133,11 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 13426, -6334, -1177, -4244, 12136, 2371, -580, 1303, 5980 ] ),
+        BuiltinMatrix::new(
+            fuji!(X100VI),
+            0,
+            0,
+            [ 11809, -5358, -1141, -4248, 12164, 2343, -514, 1097, 5848 ] ),
         BuiltinMatrix::new(
             fuji!(X10),
             0,
@@ -290,6 +314,11 @@ lazy_static::lazy_static! {
             0,
             [ 11809, -5358, -1141, -4248, 12164, 2343, -514, 1097, 5848 ] ),
         BuiltinMatrix::new(
+            fuji!(XT50),
+            0,
+            0,
+            [ 11809, -5358, -1141, -4248, 12164, 2343, -514, 1097, 5848 ] ),
+        BuiltinMatrix::new(
             fuji!(XS1),
             0,
             0,
@@ -345,6 +374,11 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199 ] ),
+        BuiltinMatrix::new(
+            fuji!(GFX100_II),
+            0,
+            0,
+            [ 12806, -5779, -1110, -3546, 11507, 2318, -177, 995, 5715 ] ),
         BuiltinMatrix::new(
             fuji!(GFX100S),
             0,

@@ -2,7 +2,7 @@
 /*
  * libopenraw - fujifilm.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -78,6 +78,7 @@ lazy_static::lazy_static! {
         fuji!("GFX50S II", GFX50S_II),
         fuji!("GFX 50R", GFX50R),
         fuji!("GFX 100", GFX100),
+        fuji!("GFX100 II", GFX100_II),
         fuji!("GFX100S", GFX100S),
         fuji!("FinePix F550EXR", F550EXR),
         fuji!("FinePix F700  ", F700),
@@ -134,12 +135,14 @@ lazy_static::lazy_static! {
         fuji!("X-T30 II", XT30_II),
         fuji!("X-T4", XT4),
         fuji!("X-T5", XT5),
+        fuji!("X-T50", XT50),
         fuji!("XF1", XF1),
         fuji!("XF10", XF10),
         fuji!("X100S", X100S),
         fuji!("X100T", X100T),
         fuji!("X100F", X100F),
         fuji!("X100V", X100V),
+        fuji!("X100VI", X100VI),
         fuji!("X-H1", XH1),
         fuji!("X-H2", XH2),
         fuji!("X-H2S", XH2S),
