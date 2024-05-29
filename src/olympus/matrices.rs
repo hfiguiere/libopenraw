@@ -1,7 +1,7 @@
 /*
  * libopenraw - olympus/matrices.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,7 +25,7 @@ use crate::olympus;
 use crate::TypeId;
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 63] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 65] = [
     BuiltinMatrix::new( olympus!(E1),
       0,
       0,
@@ -238,6 +238,10 @@ lazy_static::lazy_static! {
       0,
       0,
       [ 9488, -3984, -714, -2887, 10945, 2229, -137, 960, 5786 ] ),
+    BuiltinMatrix::new( olympus!(OM1II),
+      0,
+      0,
+      [ 9090, -3590, -756, -3252, 11396, 2109, -318, 1059, 5606 ] ),
     BuiltinMatrix::new( olympus!(OM5),
       0,
       0,
@@ -271,6 +275,10 @@ lazy_static::lazy_static! {
       0,
       [ 10899, -3833, -1082, -2112, 10736, 1575, -267, 1452, 5269 ] ),
     BuiltinMatrix::new( olympus!(TG6),
+      0,
+      0,
+      [ 10899, -3833, -1082, -2112, 10736, 1575, -267, 1452, 5269 ] ),
+    BuiltinMatrix::new( olympus!(TG7),
       0,
       0,
       [ 10899, -3833, -1082, -2112, 10736, 1575, -267, 1452, 5269 ] ),

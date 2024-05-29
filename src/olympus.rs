@@ -126,6 +126,7 @@ lazy_static::lazy_static! {
         olympus!("E-M10MarkIIIS   ", EM10IIIS),
         olympus!("E-M10MarkIV     ", EM10IV),
         olympus!("OM-1            ", OM1),
+        olympus!("OM-1MarkII      ", OM1II),
         olympus!("OM-5            ", OM5),
         olympus!("STYLUS1         ", STYLUS1),
         olympus!("STYLUS1,1s      ", STYLUS1_1S),
@@ -134,6 +135,7 @@ lazy_static::lazy_static! {
         olympus!("TG-4            ", TG4),
         olympus!("TG-5            ", TG5),
         olympus!("TG-6            ", TG6),
+        olympus!("TG-7            ", TG7),
         olympus!("C5060WZ", C5060WZ),
     ]);
 
