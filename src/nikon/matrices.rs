@@ -2,7 +2,7 @@
 /*
  * libopenraw - nikon/matrices.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,7 +26,7 @@ use crate::nikon;
 use crate::TypeId;
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 89] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 90] = [
         BuiltinMatrix::new(
             nikon!(D1),
             0,
@@ -398,6 +398,12 @@ lazy_static::lazy_static! {
             0,
             0,
             [11640, -4829, -1079, -5107, 13006, 2325, -972, 1711, 7380],
+        ),
+        BuiltinMatrix::new(
+            nikon!(ZF),
+            0,
+            0,
+            [ 11607, -4491, -977, -4522, 12460, 2304, -458, 1519, 7616 ],
         ),
         BuiltinMatrix::new(
             nikon!(DF),

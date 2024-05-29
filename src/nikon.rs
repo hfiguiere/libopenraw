@@ -2,7 +2,7 @@
 /*
  * libopenraw - nikon.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -136,6 +136,7 @@ lazy_static::lazy_static! {
         nikon!("NIKON Z 8", Z8),
         nikon!("NIKON Z 9", Z9),
         nikon!("NIKON Z fc", ZFC),
+        nikon!("NIKON Z f", ZF),
         nikon!("E5400", E5400),
         nikon!("E5700", E5700),
         nikon!("E8400", E8400),
