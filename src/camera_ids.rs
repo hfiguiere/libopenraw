@@ -961,6 +961,9 @@ pub mod gopro {
     pub const HERO8_BLACK: u16 = 4;
     pub const HERO9_BLACK: u16 = 5;
     pub const HERO10_BLACK: u16 = 6;
+    pub const HERO11_BLACK: u16 = 7;
+    pub const HERO12_BLACK: u16 = 8;
+    pub const FUSION: u16 = 9;
 }
 
 /// Hasselblad
