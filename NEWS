@@ -7,7 +7,12 @@ New features:
 Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
-  - Apple iPhone 14.
+  - Apple iPhone 14, iPhone 15 Pro.
+  - Canon R100*.
+  - GoPro HERO11 Black, HERO12 Black and Fusion.
+  - Leica SL3.
+  - Olympus TG-7* and OM-1 MkII*.
+  - Sony FX30* and A III*.
 
 API changes:
 
