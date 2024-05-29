@@ -9,9 +9,12 @@ Camera support:
 
   - Apple iPhone 14, iPhone 15 Pro.
   - Canon R100*.
+  - Fujfilm X-T50*, GFX100 II*, X100VI*.
   - GoPro HERO11 Black, HERO12 Black and Fusion.
   - Leica SL3.
+  - Nikon Z f*.
   - Olympus TG-7* and OM-1 MkII*.
+  - Panasonic S9, G9 II* and FX150*.
   - Sony FX30* and A III*.
 
 API changes:
