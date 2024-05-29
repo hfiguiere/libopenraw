@@ -2,7 +2,7 @@
 /*
  * libopenraw - panasonic.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -87,6 +87,7 @@ lazy_static::lazy_static! {
         panasonic!("DC-GX850", GX850),
         panasonic!("DC-GX880", GX880),
         panasonic!("DC-GX9", GX9),
+        panasonic!("DMC-FX150", FX150),
         panasonic!("DMC-FZ8", FZ8),
         panasonic!("DMC-FZ1000", DMC_FZ1000),
         panasonic!("DC-FZ10002", DC_FZ1000M2),
@@ -124,6 +125,7 @@ lazy_static::lazy_static! {
         panasonic!("DMC-G80", G80),
         panasonic!("DMC-G81", G81),
         panasonic!("DC-G9", G9),
+        panasonic!("DC-G9M2", G9M2),
         panasonic!("DC-G90", DC_G90),
         panasonic!("DC-G91", DC_G91),
         panasonic!("DC-G95", DC_G95),
@@ -160,6 +162,7 @@ lazy_static::lazy_static! {
         panasonic!("DC-S5", DC_S5),
         panasonic!("DC-S5M2", DC_S5M2),
         panasonic!("DC-S5M2X", DC_S5M2X),
+        panasonic!("DC-S9", DC_S9),
         panasonic!("DMC-TZ70", TZ70),
         panasonic!("DMC-ZS60", ZS60),
         // Aliases to DMC-ZS60 (2)
@@ -204,7 +207,7 @@ lazy_static::lazy_static! {
         leica!("C (Typ 112)", C_TYP112),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 96] = [
+    static ref MATRICES: [BuiltinMatrix; 98] = [
         BuiltinMatrix::new(
             panasonic!(CM1),
             15,
@@ -290,6 +293,11 @@ lazy_static::lazy_static! {
             15,
             0,
             [ 7564, -2263, -606, -3148, 11239, 2177, -540, 1435, 4853 ] ),
+        BuiltinMatrix::new(
+            panasonic!(FX150),
+            0,
+            0,
+            [ 9082, -2907, -925, -6119, 13376, 3058, -1797, 2641, 5608 ] ),
         BuiltinMatrix::new(
             panasonic!(FZ8),
             0,
@@ -425,6 +433,11 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 7685, -2375, -634, -3687, 11700, 2249, -748, 1546, 5111 ] ),
+        BuiltinMatrix::new(
+            panasonic!(G9M2),
+            0,
+            0,
+            [ 8325, -3456, -623, -4330, 12089, 2528, -859, 2646, 5984 ] ),
         BuiltinMatrix::new(
             panasonic!(DC_G95),
             0,
