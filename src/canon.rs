@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -160,6 +160,7 @@ lazy_static! {
         canon!(0x80000480, EOS_R50),
         canon!(0x80000481, EOS_R6MKII),
         canon!(0x80000487, EOS_R8),
+        canon!(0x80000498, EOS_R100),
     ]);
 }
 
