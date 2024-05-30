@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # SPDX-License-Identifier: LGPL-3.0-or-later
 #
-# (c) 2020-2023 Hubert Figuière
+# (c) 2020-2024 Hubert Figuière
 
 use Image::ExifTool::Exif;
 use Image::ExifTool::Apple;
@@ -52,6 +52,7 @@ print "//! This contain the tag names generated from ExifTool.\n\n";
 print "use std::collections::HashMap;\n";
 
 output_table(\%Image::ExifTool::Exif::Main, "exif_tag_names");
+output_table(\%Image::ExifTool::GPS::Main, "gpsinfo_tag_names");
 output_table(\%Image::ExifTool::Apple::Main, "mnote_apple_tag_names");
 output_table(\%Image::ExifTool::Canon::Main, "mnote_canon_tag_names");
 output_table(\%Image::ExifTool::FujiFilm::Main, "mnote_fujifilm_tag_names");

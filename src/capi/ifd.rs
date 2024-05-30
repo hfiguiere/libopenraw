@@ -43,6 +43,8 @@ pub enum or_ifd_dir_type {
     RAW = 4,
     /// SubIFD
     SUBIFD = 5,
+    /// GPSInfo
+    GPSINFO = 6,
     /// INVALID value
     INVALID = 10000,
 }
@@ -56,6 +58,7 @@ impl From<IfdType> for or_ifd_dir_type {
             MakerNote => Self::MNOTE,
             Raw => Self::RAW,
             SubIfd => Self::SUBIFD,
+            GpsInfo => Self::GPSINFO,
             Other => Self::OTHER,
         }
     }
@@ -70,6 +73,7 @@ impl From<or_ifd_dir_type> for IfdType {
             MNOTE => Self::MakerNote,
             RAW => Self::Raw,
             SUBIFD => Self::SubIfd,
+            GPSINFO => Self::GpsInfo,
             OTHER | INVALID => Self::Other,
         }
     }

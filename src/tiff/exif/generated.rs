@@ -518,6 +518,44 @@ pub static ref EXIF_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
 
 lazy_static::lazy_static! {
 /// Exif tag names
+pub static ref GPSINFO_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+    ( 0x0, "GPSVersionID" ),
+    ( 0x1, "GPSLatitudeRef" ),
+    ( 0x2, "GPSLatitude" ),
+    ( 0x3, "GPSLongitudeRef" ),
+    ( 0x4, "GPSLongitude" ),
+    ( 0x5, "GPSAltitudeRef" ),
+    ( 0x6, "GPSAltitude" ),
+    ( 0x7, "GPSTimeStamp" ),
+    ( 0x8, "GPSSatellites" ),
+    ( 0x9, "GPSStatus" ),
+    ( 0xa, "GPSMeasureMode" ),
+    ( 0xb, "GPSDOP" ),
+    ( 0xc, "GPSSpeedRef" ),
+    ( 0xd, "GPSSpeed" ),
+    ( 0xe, "GPSTrackRef" ),
+    ( 0xf, "GPSTrack" ),
+    ( 0x10, "GPSImgDirectionRef" ),
+    ( 0x11, "GPSImgDirection" ),
+    ( 0x12, "GPSMapDatum" ),
+    ( 0x13, "GPSDestLatitudeRef" ),
+    ( 0x14, "GPSDestLatitude" ),
+    ( 0x15, "GPSDestLongitudeRef" ),
+    ( 0x16, "GPSDestLongitude" ),
+    ( 0x17, "GPSDestBearingRef" ),
+    ( 0x18, "GPSDestBearing" ),
+    ( 0x19, "GPSDestDistanceRef" ),
+    ( 0x1a, "GPSDestDistance" ),
+    ( 0x1b, "GPSProcessingMethod" ),
+    ( 0x1c, "GPSAreaInformation" ),
+    ( 0x1d, "GPSDateStamp" ),
+    ( 0x1e, "GPSDifferential" ),
+    ( 0x1f, "GPSHPositioningError" ),
+    ]);
+}
+
+lazy_static::lazy_static! {
+/// Exif tag names
 pub static ref MNOTE_APPLE_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
     ( 0x1, "MakerNoteVersion" ),
     ( 0x2, "AEMatrix" ),

@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/container.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -70,6 +70,7 @@ fn ifd_type_to_dirid(t: IfdType) -> Option<&'static str> {
         IfdType::Raw => Some("Raw"),
         IfdType::Main => Some("Main"),
         IfdType::Exif => Some("Exif"),
+        IfdType::GpsInfo => Some("GPSInfo"),
         IfdType::SubIfd => Some("SubIfd"),
         IfdType::Other => Some("Other"),
         // XXX figure out the best way here, we shouldn't reach this.
@@ -368,6 +369,9 @@ impl Dump for Container {
                     if let Some(mnote_dir) = exif_dir.get_mnote_ifd(self) {
                         mnote_dir.write_dump(out, indent + 2);
                     }
+                }
+                if let Some(gps_dir) = dir.get_gpsinfo_ifd(self) {
+                    gps_dir.write_dump(out, indent + 1);
                 }
                 let subdirs = dir.get_sub_ifds(self);
                 for subdir in subdirs {

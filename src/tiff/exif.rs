@@ -24,6 +24,7 @@
 /// Exif tags constants
 pub(crate) mod generated;
 pub(crate) use generated::EXIF_TAG_NAMES as TAG_NAMES;
+pub(crate) use generated::GPSINFO_TAG_NAMES;
 mod tags;
 pub(crate) use tags::*;
 

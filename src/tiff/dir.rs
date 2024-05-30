@@ -612,6 +612,28 @@ impl Dir {
             })
     }
 
+    /// Get the GPSInfo IFD from the directory
+    pub(crate) fn get_gpsinfo_ifd(&self, container: &tiff::Container) -> Option<Dir> {
+        self.value::<u32>(exif::EXIF_TAG_GPS_INFO_IFD_POINTER)
+            .and_then(|offset| {
+                let mut view = container.borrow_view_mut();
+                container
+                    .dir_at(
+                        &mut view,
+                        offset,
+                        self.mnote_offset,
+                        IfdType::GpsInfo,
+                        Some("GPSInfo"),
+                        Some(&exif::GPSINFO_TAG_NAMES),
+                    )
+                    .map_err(|e| {
+                        log::warn!("Coudln't get GPSInfo dir at {}: {}", offset, e);
+                        e
+                    })
+                    .ok()
+            })
+    }
+
     /// Get the TIFF stored in the entry
     ///
     /// XXX find a way to initialize the id.
