@@ -44,8 +44,7 @@ use crate::pentax;
 use crate::ricoh;
 use crate::sigma;
 use crate::sony;
-use crate::tiff;
-use crate::tiff::exif;
+use crate::tiff::{self, exif, TagType};
 use crate::utils;
 #[cfg(feature = "dump")]
 use crate::Dump;
@@ -496,7 +495,10 @@ impl Dir {
                     // We'll just stop parsing.
                     // This is encountered on Somy A100 and is likely
                     // a bug, but it's also in the C++ code.
-                    break;
+                    log::error!(
+                        "Skipping entry {id:x} at {pos} with count {count}, Setting type to Error"
+                    );
+                    entry.type_ = TagType::Error_ as i16;
                 }
             }
             entries.insert(id, entry);

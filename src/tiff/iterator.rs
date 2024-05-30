@@ -93,6 +93,7 @@ fn from_entry(entry: &Entry, endian: Endian) -> MetadataValue {
         exif::TagType::SShort | exif::TagType::SLong => {
             MetadataValue::SInt(entry.int_value_array(endian).unwrap())
         }
+        exif::TagType::Error_ => MetadataValue::Invalid(entry.data().to_vec()),
         exif::TagType::Invalid => MetadataValue::Invalid(entry.data().to_vec()),
     }
 }

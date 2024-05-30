@@ -549,6 +549,7 @@ impl Entry {
                         .map_or_else(|| array_to_str(e.data()), |d| array_to_str(d)),
                 ),
                 Ok(TagType::Invalid) => Some("INVALID".to_string()),
+                Ok(TagType::Error_) => Some("ERROR".to_string()),
                 Err(n) => Some(n.to_string()),
             }
             .or_else(|| Some("ERROR".to_string()))
@@ -567,7 +568,11 @@ impl Entry {
             self.id,
             self.id,
             tag_name,
-            self.type_,
+            if self.type_ != TagType::Error_ as i16 {
+                self.type_
+            } else {
+                0
+            },
             type_,
             self.count,
             value

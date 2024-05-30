@@ -54,13 +54,15 @@ pub enum TagType {
     Float = 11,
     Double = 12,
     Invalid = 13,
+    /// Not a TIFF type, but an error marker.
+    Error_ = 10000,
 }
 
 impl std::convert::TryFrom<i16> for TagType {
     type Error = i16;
 
     fn try_from(value: i16) -> Result<Self, Self::Error> {
-        if value <= 0 || value > 13 {
+        if value <= 0 || value > 13 && value != (TagType::Error_ as i16) {
             Err(value)
         } else {
             Ok(unsafe { std::mem::transmute(value) })
@@ -85,6 +87,7 @@ impl std::convert::From<TagType> for &'static str {
             Float => "FLOAT",
             Double => "DOUBLE",
             Invalid => "INVALID",
+            Error_ => "ERROR",
         }
     }
 }
@@ -94,7 +97,7 @@ pub(crate) fn tag_unit_size(tag_type: TagType) -> usize {
     use TagType::*;
 
     match tag_type {
-        Byte | SByte | Ascii | Undefined | Invalid => 1,
+        Byte | SByte | Ascii | Undefined | Invalid | Error_ => 1,
         Short | SShort => 2,
         Long | SLong | Float => 4,
         Rational | SRational | Double => 8,
