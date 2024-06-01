@@ -6,6 +6,7 @@ What's (visibly) new in 0.4.0-alpha.4
   - Added MIME API.
   - Old Panasonic raw files have a separate type.
 - Extract White Balance coefficients.
+- Extract Exif GPSInfo.
 - DNG: decompress the tiles.
 - Fujifilm RAF: get black and white levels
 - Olympus ORF: get active area.

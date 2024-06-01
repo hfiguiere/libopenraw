@@ -1,8 +1,14 @@
-libopenraw 0.4.0-alpha.4 -
+libopenraw 0.4.0-alpha.4 - 2024/06/01
 
 THIS IS A PRE-RELEASE.
 
+Bug fixes:
+
+  - (Alpha) Recover from invalid IFD entries (on ORF files).
+
 New features:
+
+  - Extract the GPSInfo
 
 Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
