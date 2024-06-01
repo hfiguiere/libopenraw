@@ -141,7 +141,7 @@ Cargo.lock:
 	cargo update
 
 libopenraw_la_SOURCES = _or_dummy.c
-libopenraw.la: $(liblibopenraw_la_OBJECTS) $(RUST_FILES)
+libopenraw.la: $(RUST_FILES)
 	CARGO_TARGET_DIR=$(CARGO_TARGET_DIR) \
 	cargo build --features=capi $(CARGO_VERBOSE) $(CARGO_RELEASE_ARGS) --lib && \
 	$(LINK) $< && mv $(RUST_LIB) .libs/libopenraw.a
