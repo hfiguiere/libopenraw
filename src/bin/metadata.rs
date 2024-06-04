@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 /*
- * libopenraw - bin/ordump.rs
+ * libopenraw - bin/metadata.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -19,11 +19,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+use std::convert::TryInto;
+
 use getopts::Options;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
 
 use libopenraw::rawfile_from_file;
+use libopenraw::tiff::exif::TagType;
 
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -52,12 +55,22 @@ pub fn main() {
     }
 }
 
+fn type_to_string(t: i16) -> String {
+    let t: TagType = t.try_into().unwrap_or(TagType::Error_);
+    <TagType as Into<&'static str>>::into(t).to_string()
+}
+
 fn process_file(p: &str) {
     if let Ok(rawfile) = rawfile_from_file(p, None) {
         log::info!("Metadata raw file {}", p);
 
         for metadata in rawfile.metadata() {
-            println!("{:?}", metadata);
+            println!(
+                "{} ({}) => {:?}",
+                metadata.0,
+                type_to_string(metadata.2),
+                metadata.1.into_string(false)
+            );
         }
     }
 }
