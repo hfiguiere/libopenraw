@@ -59,6 +59,7 @@ impl<'a> std::iter::Iterator for Iterator<'a> {
             IfdType::Exif => "Exif.Photo",
             IfdType::Raw => "Raw",
             IfdType::MakerNote => "MakerNote",
+            IfdType::GpsInfo => "GPSInfo",
             _ => "other",
         };
         self.iter.next().map(|e| {
