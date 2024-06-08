@@ -413,7 +413,6 @@ impl RawImage {
         let cm = self.colour_matrix(1).map(Matrix3::from_row_slice);
         if let Some(cm) = cm {
             let cam_rgb = Self::calculate_cam_rgb(&cm);
-            let mut out = Vec::with_capacity((height * width) as usize * 3);
             log::debug!("pixel cam at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));
             for row in 0..height {
                 let pos = row * width * 3;
@@ -423,10 +422,9 @@ impl RawImage {
                     let abc = Vector3::from_row_iterator(buffer.data[c..c + 3].iter().copied());
                     let rgb = cam_rgb * abc;
                     col += 3;
-                    out.extend(rgb.iter());
+                    buffer.data[c..c + 3].copy_from_slice((&rgb).into());
                 }
             }
-            buffer.data = out;
             log::debug!("pixel rgb at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));
         } else {
             log::error!("no matrix");
