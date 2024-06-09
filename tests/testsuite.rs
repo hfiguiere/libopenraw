@@ -121,6 +121,25 @@ fn raw_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
             "Incorrect white point"
         );
     }
+    // RAW WB (as shot neutral)
+    if let Some(ref raw_as_shot_neutral) = results.raw_as_shot_neutral {
+        count += 1;
+        // This is necessary because in Rust f64::NAN != f64::NAN.
+        // So we assume that if the third value is NAN we can ignore them
+        if raw_as_shot_neutral[3].is_nan() && rawdata.as_shot_neutral()[3].is_nan() {
+            assert_eq!(
+                rawdata.as_shot_neutral()[0..3],
+                raw_as_shot_neutral[0..3],
+                "Incorrect WB"
+            );
+        } else {
+            assert_eq!(
+                &rawdata.as_shot_neutral().to_vec(),
+                raw_as_shot_neutral,
+                "Incorrect WB"
+            );
+        }
+    }
 
     // RAW data checksum. It's not even a md5.
     if let Some(raw_md5) = results.raw_md5 {

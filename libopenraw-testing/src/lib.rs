@@ -111,6 +111,13 @@ pub struct Results {
         default
     )]
     pub raw_max_value: Option<Vec<u16>>,
+    #[serde(
+        deserialize_with = "from_list",
+        serialize_with = "to_list",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
+    pub raw_as_shot_neutral: Option<Vec<f64>>,
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub raw_md5: Option<u16>,
     #[serde(skip_serializing_if = "Option::is_none", default)]
@@ -247,6 +254,7 @@ pub fn make_results(rawfile: &dyn RawFile) -> Results {
         .ok();
     let raw_min_value = rawdata.map(|rawdata| rawdata.blacks().to_vec()).ok();
     let raw_max_value = rawdata.map(|rawdata| rawdata.whites().to_vec()).ok();
+    let raw_as_shot_neutral = rawdata.map(|rawdata| rawdata.as_shot_neutral().to_vec()).ok();
     let raw_md5 = rawdata
         .ok()
         .and_then(|rawdata| {
@@ -278,6 +286,7 @@ pub fn make_results(rawfile: &dyn RawFile) -> Results {
         raw_cfa_pattern,
         raw_min_value,
         raw_max_value,
+        raw_as_shot_neutral,
         raw_md5,
     }
 }
