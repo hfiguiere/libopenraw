@@ -2,7 +2,7 @@
 /*
  * libopenraw - colour/matrix.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,6 +21,7 @@
 
 //! Deal with colour matrixes
 
+use crate::tiff::exif;
 use crate::TypeId;
 
 /// Builtin Colour Matrix. This is the static data for
@@ -47,3 +48,19 @@ impl BuiltinMatrix {
         }
     }
 }
+
+#[derive(Debug, Default)]
+pub struct ColourMatrix {
+    pub illuminant: exif::LightsourceValue,
+    pub matrix: Vec<f64>,
+}
+
+impl std::ops::Deref for ColourMatrix {
+    type Target = Vec<f64>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.matrix
+    }
+}
+
+impl ColourMatrix {}

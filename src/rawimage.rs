@@ -25,6 +25,7 @@ use nalgebra::{matrix, Matrix3, Vector3};
 
 use super::{Bitmap, DataType, Error, Image, Rect, Result};
 use crate::bitmap::{Data, ImageBuffer};
+use crate::colour::ColourMatrix;
 use crate::mosaic::Pattern;
 use crate::render::{self, gamma_correct_f, gamma_correct_srgb, RenderingOptions, RenderingStage};
 use crate::tiff::exif;
@@ -59,7 +60,7 @@ pub struct RawImage {
     /// The neutral camera white balance
     as_shot_neutral: [f64; 4],
     /// Colour matrices
-    matrices: [Vec<f64>; 2],
+    matrices: [ColourMatrix; 2],
     /// Linearization table. len = 2^bpc
     linearization_table: Option<Vec<u16>>,
 }
@@ -91,7 +92,7 @@ impl RawImage {
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
             as_shot_neutral: [0_f64; 4],
-            matrices: [vec![], vec![]],
+            matrices: [ColourMatrix::default(), ColourMatrix::default()],
             linearization_table: None,
         }
     }
@@ -118,7 +119,7 @@ impl RawImage {
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
             as_shot_neutral: [0_f64; 4],
-            matrices: [vec![], vec![]],
+            matrices: [ColourMatrix::default(), ColourMatrix::default()],
             linearization_table: None,
         }
     }
@@ -145,7 +146,7 @@ impl RawImage {
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
             as_shot_neutral: [0_f64; 4],
-            matrices: [vec![], vec![]],
+            matrices: [ColourMatrix::default(), ColourMatrix::default()],
             linearization_table: None,
         }
     }
@@ -168,7 +169,7 @@ impl RawImage {
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
             as_shot_neutral: [0_f64; 4],
-            matrices: [vec![], vec![]],
+            matrices: [ColourMatrix::default(), ColourMatrix::default()],
             linearization_table: None,
         }
     }
@@ -266,7 +267,7 @@ impl RawImage {
         self.bpc = bpc;
     }
 
-    pub fn colour_matrix(&self, index: usize) -> Option<&[f64]> {
+    pub fn colour_matrix(&self, index: usize) -> Option<&ColourMatrix> {
         if index == 1 || index == 2 {
             let matrix = &self.matrices[index - 1];
             return if matrix.is_empty() {
@@ -278,9 +279,17 @@ impl RawImage {
         None
     }
 
-    pub fn set_colour_matrix(&mut self, index: usize, m: &[f64]) {
+    pub fn set_colour_matrix(
+        &mut self,
+        index: usize,
+        illuminant: exif::LightsourceValue,
+        m: &[f64],
+    ) {
         if index == 1 || index == 2 {
-            self.matrices[index - 1] = m.to_vec();
+            self.matrices[index - 1] = ColourMatrix {
+                illuminant,
+                matrix: m.to_vec(),
+            };
         }
     }
 
@@ -410,7 +419,17 @@ impl RawImage {
         }
         let width = buffer.width;
         let height = buffer.height;
-        let cm = self.colour_matrix(1).map(Matrix3::from_row_slice);
+        // XXX get the D65 illuminant matrix. On DNG it is not necessarily 1.
+        let mut cm = None;
+        for i in 1..=2 {
+            cm = self
+                .colour_matrix(i)
+                .filter(|m| m.illuminant == exif::LightsourceValue::D65)
+                .map(|m| Matrix3::from_row_slice(&m.matrix));
+            if cm.is_some() {
+                break;
+            }
+        }
         if let Some(cm) = cm {
             let cam_rgb = Self::calculate_cam_rgb(&cm);
             log::debug!("pixel cam at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));

@@ -248,9 +248,10 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
     /// Get the RAW data
     fn raw_data(&self, skip_decompression: bool) -> Result<RawImage> {
         self.load_rawdata(skip_decompression).map(|mut rawdata| {
-            for i in 1..2_usize {
+            for i in 1..=2_usize {
                 if let Ok((_, matrix)) = self.colour_matrix(i) {
-                    rawdata.set_colour_matrix(i, &matrix);
+                    log::debug!("Setting colour matrix {i}");
+                    rawdata.set_colour_matrix(i, self.calibration_illuminant(i), &matrix);
                 }
             }
 
@@ -301,7 +302,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
     }
 
     /// Return the indexed callibration illumant: 1 or 2.
-    fn calibration_illuminant(&self, index: u32) -> exif::LightsourceValue {
+    fn calibration_illuminant(&self, index: usize) -> exif::LightsourceValue {
         let tag = match index {
             1 => exif::DNG_TAG_CALIBRATION_ILLUMINANT1,
             2 => exif::DNG_TAG_CALIBRATION_ILLUMINANT2,

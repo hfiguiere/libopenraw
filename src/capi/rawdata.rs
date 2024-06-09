@@ -2,7 +2,7 @@
 /*
  * libopenraw - capi/rawdata.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -199,9 +199,9 @@ extern "C" fn or_rawdata_get_colour_matrix(
         std::ptr::null(),
         if let Some(matrix) = rawdata.colour_matrix(index as usize) {
             if !size.is_null() {
-                unsafe { *size = matrix.len() as u32 };
+                unsafe { *size = matrix.matrix.len() as u32 };
             }
-            matrix.as_ptr()
+            matrix.matrix.as_ptr()
         } else {
             std::ptr::null()
         }

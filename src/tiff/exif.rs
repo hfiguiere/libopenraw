@@ -403,9 +403,10 @@ impl std::convert::TryFrom<u32> for PhotometricInterpretation {
 }
 
 #[repr(u32)]
-#[derive(Clone, Copy, Debug, PartialEq, TryFromPrimitive)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, TryFromPrimitive)]
 /// Exif light source (Illuminant)
 pub enum LightsourceValue {
+    #[default]
     Unknown = 0,
     Daylight = 1,
     Fluorescent = 2,

@@ -270,7 +270,7 @@ extern "C" fn or_rawfile_get_ifd(rawfile: ORRawFileRef, ifd_type: or_ifd_dir_typ
 
 fn rawfile_get_calibration_illuminant(rawfile: ORRawFileRef, index: u32) -> exif::LightsourceValue {
     or_unwrap!(rawfile, exif::LightsourceValue::Unknown, {
-        rawfile.0.calibration_illuminant(index)
+        rawfile.0.calibration_illuminant(index as usize)
     })
 }
 

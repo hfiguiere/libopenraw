@@ -2,7 +2,7 @@
 /*
  * libopenraw - colour.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,7 +23,7 @@
 
 mod matrix;
 
-pub use matrix::BuiltinMatrix;
+pub use matrix::{BuiltinMatrix, ColourMatrix};
 use num_enum::TryFromPrimitive;
 
 #[repr(C)]
