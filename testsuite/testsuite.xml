@@ -140,6 +140,90 @@
     </results>
   </test>
   <test>
+    <name>CR2 - Canon EOS 200D - IMG_0100.CR2</name>
+    <file>/var/home/hub/samples/cr2/200D/IMG_0100.CR2</file>
+    <source>https://gitlab.freedesktop.org/libopenraw/libopenraw/uploads/dd063309426621784220d376d3773488/IMG_0100.CR2</source>
+    <results>
+      <rawType>CR2</rawType>
+      <rawTypeId>65617</rawTypeId>
+      <makerNoteCount>45</makerNoteCount>
+      <makerNoteId>Exif.Canon</makerNoteId>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon EOS 200D</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>6000 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>2380150 12546</thumbDataSizes>
+      <thumbMd5>44392 54296</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>51008256</rawDataSize>
+      <rawDataDimensions>6288 4056</rawDataDimensions>
+      <rawDataActiveArea>276 48 6000 4000</rawDataActiveArea>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMaxValue>13583 13583 13583 13583</rawMaxValue>
+      <rawAsShotNeutral>0.7792998477929984 1 0.4208795725441841 NaN</rawAsShotNeutral>
+      <rawMd5>45712</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>CR2 - Canon PowerShot G5 X - IMG_2240.CR2</name>
+    <file>/var/home/hub/samples/raw-pixls-us-data/Canon/PowerShot G5 X/IMG_2240.CR2</file>
+    <source>https://raw.pixls.us/getfile.php/4257/nice/Canon%20-%20PowerShot%20G5%20X%20-%20RAW%20(3:2).CR2</source>
+    <results>
+      <rawType>CR2</rawType>
+      <rawTypeId>65603</rawTypeId>
+      <makerNoteCount>35</makerNoteCount>
+      <makerNoteId>Exif.Canon</makerNoteId>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon PowerShot G5 X</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>2304 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>1832851 16258</thumbDataSizes>
+      <thumbMd5>43717 4927</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>41789440</rawDataSize>
+      <rawDataDimensions>5632 3710</rawDataDimensions>
+      <rawDataActiveArea>132 40 5472 3648</rawDataActiveArea>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMaxValue>16383 16383 16383 16383</rawMaxValue>
+      <rawAsShotNeutral>0 0 0 0</rawAsShotNeutral>
+      <rawMd5>53429</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>CR2 - Canon PowerShot G7 X Mark II - IMG_0166.CR2</name>
+    <file>/var/home/hub/samples/raw-pixls-us-data/Canon/PowerShot G7 X Mark II/IMG_0166.CR2</file>
+    <source>https://raw.pixls.us/getfile.php/1682/nice/Canon%20-%20PowerShot%20G7%20X%20Mark%20II%20-%20RAW%20(3:2).CR2</source>
+    <results>
+      <rawType>CR2</rawType>
+      <rawTypeId>65604</rawTypeId>
+      <makerNoteCount>52</makerNoteCount>
+      <makerNoteId>Exif.Canon</makerNoteId>
+      <exifMake>Canon</exifMake>
+      <exifModel>Canon PowerShot G7 X Mark II</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>5472 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>4819487 12463</thumbDataSizes>
+      <thumbMd5>50989 16664</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>41789440</rawDataSize>
+      <rawDataDimensions>5632 3710</rawDataDimensions>
+      <rawDataActiveArea>132 40 5472 3648</rawDataActiveArea>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMaxValue>16383 16383 16383 16383</rawMaxValue>
+      <rawAsShotNeutral>0 0 0 0</rawAsShotNeutral>
+      <rawMd5>33165</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>CR2-test G11</name>
     <file>/home/hub/samples/cr2/G11/canong11_studio_ISO80.CR2</file>
     <source compress="zip" disabled="1">http://movies.dpreview.com.s3.amazonaws.com/canong11/studio_ISO80.zip</source>
