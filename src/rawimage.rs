@@ -212,13 +212,15 @@ impl RawImage {
     }
 
     /// Set the white balance.
-    ///
-    /// Currently only 3 RGB component is supported.
     pub fn set_as_shot_neutral(&mut self, as_shot: &[f64]) {
         self.as_shot_neutral[0] = as_shot[0];
         self.as_shot_neutral[1] = as_shot[1];
         self.as_shot_neutral[2] = as_shot[2];
-        self.as_shot_neutral[3] = f64::NAN;
+        self.as_shot_neutral[3] = if as_shot.len() > 3 {
+            as_shot[3]
+        } else {
+            f64::NAN
+        };
     }
 
     /// Set the width of the Rawdata. Use with caution.

@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/crw.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -32,6 +32,7 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap;
+use crate::camera_ids::canon as canon_id;
 use crate::canon;
 use crate::canon::SensorInfo;
 use crate::container::RawContainer;
@@ -45,10 +46,12 @@ use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::Dir;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Size, Type,
+    TypeId,
 };
 
 use super::matrices::MATRICES;
+use ciff::Heap;
 use decompress::Decompress;
 
 lazy_static::lazy_static! {
@@ -94,6 +97,165 @@ impl CrwFile {
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
         })
+    }
+
+    /// Extract the sensor info `Rect` and raw image size `Size`.
+    fn get_sensor_info(&self, heap: &Heap) -> Option<(Size, Rect)> {
+        let container = self.container.get().unwrap();
+
+        heap.records().get(&ciff::Tag::SensorInfo).and_then(|r| {
+            if let ciff::Record::InHeap((pos, _)) = r.data {
+                let mut view = container.borrow_view_mut();
+                view.seek(SeekFrom::Start(pos as u64)).ok()?;
+                let mut sensor_info = vec![0_u16; 9];
+                view.read_endian_u16_array(&mut sensor_info, container.endian())
+                    .ok()?;
+                let dim = Size {
+                    width: sensor_info[1] as u32,
+                    height: sensor_info[2] as u32,
+                };
+                SensorInfo::parse(sensor_info).map(|sensor_info| {
+                    (
+                        dim,
+                        bitmap::Rect {
+                            x: sensor_info.0[0],
+                            y: sensor_info.0[1],
+                            width: sensor_info.0[2],
+                            height: sensor_info.0[3],
+                        },
+                    )
+                })
+            } else {
+                None
+            }
+        })
+    }
+
+    const CRW_WB_DEFAULT_OFFSET: u64 = 120;
+
+    fn crw_wb_offset(&self) -> u64 {
+        match self.type_id().1 {
+            canon_id::PRO1 | canon_id::G6 | canon_id::S60 | canon_id::S70 => 96,
+            _ => Self::CRW_WB_DEFAULT_OFFSET,
+        }
+    }
+
+    fn get_white_balance(&self, heap: &Heap) -> Option<Vec<f64>> {
+        let container = self.container.get().unwrap();
+
+        // Check ColourInfo2 first. A G2 also has ColourInfo1.
+        let wb = heap.records().get(&ciff::Tag::ColourInfo2).and_then(|r| {
+            if let ciff::Record::InHeap((pos, _)) = r.data {
+                let mut view = container.borrow_view_mut();
+                view.seek(SeekFrom::Start(pos as u64)).ok()?;
+                let magic = view.read_endian_u16(container.endian()).unwrap_or(0);
+                if magic > 512 {
+                    view.seek(SeekFrom::Start(pos as u64 + 120)).ok()?;
+                    let mut wb_data = [0_u16; 4];
+                    view.read_endian_u16_array(&mut wb_data, container.endian())
+                        .ok();
+                    let g = wb_data[0] as f64;
+                    Some(vec![
+                        g / wb_data[2] as f64,
+                        g / wb_data[3] as f64,
+                        1.0,
+                        g / wb_data[1] as f64,
+                    ])
+                } else if magic != 276 {
+                    // G2, S30, S40
+                    view.seek(SeekFrom::Start(pos as u64 + 100)).ok()?;
+                    let mut wb_data = [0_u16; 4];
+                    view.read_endian_u16_array(&mut wb_data, container.endian())
+                        .ok();
+                    let g = (wb_data[0] + wb_data[3]) as f64 / 2.0;
+                    Some(vec![g / wb_data[1] as f64, 1.0, g / wb_data[2] as f64])
+                } else {
+                    log::warn!("Unexpected ColourInfo2 magic {magic}");
+                    None
+                }
+            } else {
+                None
+            }
+        });
+        if wb.is_some() {
+            return wb;
+        }
+
+        // D30, G, S.
+        let wb = heap.records().get(&ciff::Tag::ColourInfo1).and_then(|r| {
+            if let ciff::Record::InHeap((pos, len)) = r.data {
+                let mut view = container.borrow_view_mut();
+                match len {
+                    768 => {
+                        // D30 values are RGGB
+                        view.seek(SeekFrom::Start(pos as u64 + 72)).ok()?;
+                        let mut wb_values = [0_u16; 4];
+                        view.read_endian_u16_array(&mut wb_values, container.endian())
+                            .ok()?;
+                        let g = (1024.0 / wb_values[1] as f64 + 1024.0 / wb_values[2] as f64) / 2.0;
+                        let wb = vec![
+                            g / (1024.0 / wb_values[0] as f64),
+                            1.0,
+                            g / (1024.0 / wb_values[3] as f64),
+                        ];
+                        Some(wb)
+                    }
+                    769.. => {
+                        // Pro, G6, S60, S70, S45, S50, G3, G5
+                        let offset = self.crw_wb_offset();
+                        // magic values from rawspeed if not the default offset.
+                        // Pro, G6, S60, S70
+                        let key = if offset != Self::CRW_WB_DEFAULT_OFFSET {
+                            (0x410, 0x45f3)
+                        } else {
+                            (0_u16, 0_u16)
+                        };
+
+                        view.seek(SeekFrom::Start(pos as u64 + offset)).ok()?;
+                        let mut wb_data = [0_u16; 3];
+                        view.read_endian_u16_array(&mut wb_data, container.endian())
+                            .ok();
+                        let r = (wb_data[1] ^ key.1) as f64;
+                        let g = (wb_data[0] ^ key.0) as f64;
+                        let b = (wb_data[2] ^ key.0) as f64;
+                        Some(vec![g / r, 1.0, g / b])
+                    }
+                    _ => None,
+                }
+            } else {
+                None
+            }
+        });
+        if wb.is_some() {
+            return wb;
+        }
+
+        let wb_idx = heap.records().get(&ciff::Tag::ShotInfo).and_then(|r| {
+            if let ciff::Record::InHeap((pos, _)) = r.data {
+                let mut view = container.borrow_view_mut();
+                view.seek(SeekFrom::Start(pos as u64 + 14)).ok()?;
+                view.read_endian_u16(container.endian()).ok()
+            } else {
+                None
+            }
+        });
+        // For D60, 10D, 300D. Need wb_idx.
+        if let Some(wb_idx) = wb_idx {
+            let r = heap.records().get(&ciff::Tag::WhiteBalanceTable)?;
+            if let ciff::Record::InHeap((pos, _)) = r.data {
+                // Some dark magic lifted from both rawspeed and dcraw
+                let wb_offset = 1 + (b"0134567028"[wb_idx as usize] - b'0') as u64 * 4;
+                let mut view = container.borrow_view_mut();
+                view.seek(SeekFrom::Start(pos as u64 + wb_offset * 2))
+                    .ok()?;
+                let mut wb_data = [0_u16; 4];
+                view.read_endian_u16_array(&mut wb_data, container.endian())
+                    .ok()?;
+                let g = wb_data[1] as f64;
+                return Some(vec![g / wb_data[0] as f64, 1.0, g / wb_data[3] as f64]);
+            };
+        }
+        None
     }
 }
 
@@ -199,25 +361,12 @@ impl RawFileImpl for CrwFile {
                     })?;
                 let mut cfa_x = 0;
                 let mut cfa_y = 0;
-                let sensor_info = heap.records().get(&ciff::Tag::SensorInfo).and_then(|r| {
-                    if let ciff::Record::InHeap((pos, _)) = r.data {
-                        let mut view = container.borrow_view_mut();
-                        view.seek(SeekFrom::Start(pos as u64)).ok()?;
-                        let mut sensor_info = vec![0_u16; 9];
-                        view.read_endian_u16_array(&mut sensor_info, container.endian())
-                            .ok()?;
-                        cfa_x = sensor_info[1];
-                        cfa_y = sensor_info[2];
-                        SensorInfo::parse(sensor_info).map(|sensor_info| bitmap::Rect {
-                            x: sensor_info.0[0],
-                            y: sensor_info.0[1],
-                            width: sensor_info.0[2],
-                            height: sensor_info.0[3],
-                        })
-                    } else {
-                        None
-                    }
-                });
+                let sensor_info = self.get_sensor_info(heap);
+                if let Some(ref sensor_info) = sensor_info {
+                    cfa_x = sensor_info.0.width;
+                    cfa_y = sensor_info.0.height;
+                }
+                let wb = self.get_white_balance(heap);
                 container
                     .raw_data_record()
                     .ok_or(Error::NotFound)
@@ -237,14 +386,14 @@ impl RawFileImpl for CrwFile {
                                     data,
                                     Pattern::Rggb,
                                 );
-                                rawdata.set_active_area(sensor_info);
+                                if let Some(wb) = wb {
+                                    rawdata.set_as_shot_neutral(&wb);
+                                }
+                                rawdata.set_active_area(sensor_info.map(|v| v.1));
                                 Ok(rawdata)
                             } else {
-                                let mut decompressor = Decompress::new(
-                                    decoder_table as usize,
-                                    cfa_x as u32,
-                                    cfa_y as u32,
-                                );
+                                let mut decompressor =
+                                    Decompress::new(decoder_table as usize, cfa_x, cfa_y);
                                 let mut view = Viewer::create_subview(
                                     &container.borrow_view_mut(),
                                     pos as u64,
@@ -253,7 +402,10 @@ impl RawFileImpl for CrwFile {
                                     .decompress(&mut view)
                                     .map(|mut rawdata| {
                                         rawdata.set_whites([(1 << 10) - 1; 4]);
-                                        rawdata.set_active_area(sensor_info);
+                                        rawdata.set_active_area(sensor_info.map(|v| v.1));
+                                        if let Some(wb) = wb {
+                                            rawdata.set_as_shot_neutral(&wb);
+                                        }
                                         rawdata.set_mosaic_pattern(Pattern::Rggb);
                                         rawdata
                                     })
