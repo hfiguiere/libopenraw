@@ -2,7 +2,7 @@
 /*
  * libopenraw - libopenraw-testing.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -51,7 +51,7 @@ pub fn main() {
         .map(|s| s.to_string_lossy())
         .unwrap_or_default();
     let model = rawfile
-        .metadata_value(&"Exif.Image.Model".to_string())
+        .metadata_value("Exif.Image.Model")
         .as_ref()
         .and_then(libopenraw::metadata::Value::string)
         .map(|s| s.trim_end().to_string())

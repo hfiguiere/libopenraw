@@ -2,7 +2,7 @@
 /*
  * libopenraw - libopenraw-testing.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -188,11 +188,11 @@ pub fn make_results(rawfile: &dyn RawFile) -> Results {
     let raw_type = Some(rawfile.type_().into());
     let raw_type_id = Some(rawfile.type_id().into());
     let exif_make = rawfile
-        .metadata_value(&"Exif.Image.Make".to_string())
+        .metadata_value("Exif.Image.Make")
         .as_ref()
         .and_then(Value::string);
     let exif_model = rawfile
-        .metadata_value(&"Exif.Image.Model".to_string())
+        .metadata_value("Exif.Image.Model")
         .as_ref()
         .and_then(Value::string);
     let meta_orientation = Some(rawfile.orientation());
