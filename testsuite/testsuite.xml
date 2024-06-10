@@ -596,7 +596,7 @@
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>65 64 64 60</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
-      <rawAsShotNeutral>0 0 0 0</rawAsShotNeutral>
+      <rawAsShotNeutral>0.46028212507402605 1 0.5668900699329347 NaN</rawAsShotNeutral>
       <rawMd5>30938</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>

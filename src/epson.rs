@@ -2,7 +2,7 @@
 /*
  * libopenraw - epson.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -193,6 +193,17 @@ impl RawFileImpl for ErfFile {
                                 mnote.uint_value_array(exif::MNOTE_EPSON_BLACK_LEVEL)
                             {
                                 rawdata.set_blacks(utils::to_quad(&blacks));
+                            }
+                            if let Some(wb_values) = mnote.u16_value_array(exif::MNOTE_EPSON_WB) {
+                                if wb_values.len() != 128 {
+                                    log::error!("EPSON white balance len {}", wb_values.len());
+                                }
+                                // These values are taken directly from dcraw.
+                                rawdata.set_as_shot_neutral(&[
+                                    (0x10000 as f64) / ((wb_values[24] as f64) * 508.0 * 1.078),
+                                    1.0,
+                                    (0x10000 as f64) / ((wb_values[25] as f64) * 382.0 * 1.173),
+                                ]);
                             }
                             None::<()>
                         });

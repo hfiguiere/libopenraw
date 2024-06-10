@@ -557,6 +557,12 @@ impl Dir {
             .and_then(|e| e.uint_value_array(self.endian()))
     }
 
+    /// Get an array of u16 integers.
+    pub fn u16_value_array(&self, tag: u16) -> Option<Vec<u16>> {
+        self.entry(tag)
+            .and_then(|e| e.value_array::<u16>(self.endian()))
+    }
+
     /// Get an array of signed integers that could be either size.
     pub fn int_value_array(&self, tag: u16) -> Option<Vec<i32>> {
         self.entry(tag)
