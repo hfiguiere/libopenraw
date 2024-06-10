@@ -188,6 +188,11 @@ pub(crate) fn identify_from_maker_note(maker_note: &tiff::Dir) -> TypeId {
 /// Also rawspeed <https://github.com/darktable-org/rawspeed/blob/a79bd3878389159a44b72b0e3eac9dca8a46568a/src/librawspeed/decoders/Cr2Decoder.cpp#L250>
 ///  The first u16 is a version field, except for ColorData1 and ColorData2.
 pub(crate) fn color_data_to_as_shot(color_data: &[u16]) -> Option<[f64; 3]> {
+    log::debug!(
+        "Canon WB: version: {} size {}",
+        color_data[0] as i16,
+        color_data.len()
+    );
     match color_data.len() {
         // 20D and 350D
         582 => {
@@ -208,7 +213,7 @@ pub(crate) fn color_data_to_as_shot(color_data: &[u16]) -> Option<[f64; 3]> {
 
         // These are CR3.
 
-        // M50, EOS R, EOS RP, SX70, M6mkII, M50,
+        // M50, EOS R, EOS RP, SX70, M6mkII,
         // M200, 90D, 250D and 850D
         1816 | 1820 | 1824 => {
             // ColorData9
@@ -255,7 +260,8 @@ pub(crate) fn color_data_to_as_shot(color_data: &[u16]) -> Option<[f64; 3]> {
                     let b = color_data[63 + 3] as f64;
                     Some([g / r, 1.0, g / b])
                 }
-                // G10, G7X, G5X MkII, G7X MkII
+                // (-3) G10, G11, G12, G15, G16, G1X, G1XMkII, G7X, G5X,
+                // (-4) G7X MkII, G1XMkIII
                 -4..=-3 => {
                     // ColorData5
                     let r = color_data[71] as f64;
@@ -275,7 +281,7 @@ pub(crate) fn color_data_to_as_shot(color_data: &[u16]) -> Option<[f64; 3]> {
                         }
                         _ => {
                             // some are version 10, some are 11
-                            // 70D, 1DX firmware 1.x, 7DmkIIEOS, 1DX,
+                            // 70D, 1DX firmware 1.x, 1DX, 70D,
                             // 5DmkIII, 6D, 7DmkII, 100D, 650D, 700D,
                             // 8000D, M and M2.
                             // ColorData7
