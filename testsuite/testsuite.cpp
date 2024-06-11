@@ -2,7 +2,7 @@
 /*
  * libopenraw - testsuite.cpp
  *
- * Copyright (C) 2008-2020 Hubert Figuière
+ * Copyright (C) 2008-2024 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -47,6 +47,7 @@
 #include <utility>
 #include <vector>
 
+#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -69,6 +70,18 @@ ThumbnailDeleter td;
 RawDataDeleter rd;
 RawFileDeleter rfd;
 
+template <class T>
+std::string to_string(const std::vector<T> &v)
+{
+    std::string s = "[";
+    for (auto value: v) {
+        s += str(boost::format("%1%, ") % value);
+    }
+    s += "]";
+
+    return s;
+}
+
 #define RETURN_TEST_EQUALS(a,b) \
     {                               \
         bool _success = (a == b);   \
@@ -76,6 +89,16 @@ RawFileDeleter rfd;
             fprintf(stderr, "FAILED: %s on equality. found '%s', "  \
                     "expected '%s'\n",                       \
                     __FUNCTION__, a.c_str(), b.c_str());     \
+        }                           \
+        return _success;            \
+    }
+
+#define RETURN_TEST_EQUALS_O(a,b) \
+    {                               \
+        bool _success = (a == b);   \
+        if(!_success) {             \
+            std::cerr << boost::format("FAILED: %1% on equality. found '%2%', expected '%3%'\n") \
+                % __FUNCTION__ % to_string(a) % to_string(b);           \
         }                           \
         return _success;            \
     }
@@ -580,21 +603,20 @@ bool Test::testRawMinValue(const std::string & result)
     if (v.size() != 4) {
         RETURN_FAIL("mismatch number of elements");
     }
-    std::vector<uint32_t> v2;
+    std::vector<uint16_t> v2;
     for (const auto & s : v)
     {
         try {
-            v2.push_back(boost::lexical_cast<uint32_t>(s));
+            v2.push_back(boost::lexical_cast<uint16_t>(s));
         }
         catch(...)
         {
             RETURN_FAIL("conversion failed");
         }
     }
-    uint16_t black, white;
-    black = white = 0;
-    or_rawdata_get_levels(m_rawdata.get(), &black, &white);
-    RETURN_TEST_EQUALS_N(black, v2[0]);
+    std::vector<uint16_t> blacks = { 0, 0, 0, 0 };
+    or_rawdata_levels(m_rawdata.get(), blacks.data(), nullptr);
+    RETURN_TEST_EQUALS_O(blacks, v2);
 }
 
 
@@ -611,21 +633,49 @@ bool Test::testRawMaxValue(const std::string & result)
     if (v.size() != 4) {
         RETURN_FAIL("mismatch number of elements");
     }
-    std::vector<uint32_t> v2;
+    std::vector<uint16_t> v2;
     for (const auto & s : v)
     {
         try {
-            v2.push_back(boost::lexical_cast<uint32_t>(s));
+            v2.push_back(boost::lexical_cast<uint16_t>(s));
         }
         catch(...)
         {
             RETURN_FAIL("conversion failed");
         }
     }
-    uint16_t black, white;
-    black = white = 0;
-    or_rawdata_get_levels(m_rawdata.get(), &black, &white);
-    RETURN_TEST_EQUALS_N(white, v2[0]);
+    std::vector<uint16_t> whites = { 0, 0, 0, 0 };
+    or_rawdata_levels(m_rawdata.get(), nullptr, whites.data());
+    RETURN_TEST_EQUALS_O(whites, v2);
+}
+
+bool Test::testRawAsShotNeutral(const std::string & result)
+{
+    if(m_rawdata == NULL) {
+        m_rawdata = loadRawData(m_rawfile);
+        if(m_rawdata == NULL) {
+            RETURN_FAIL("failed to get rawData");
+        }
+    }
+    std::vector<std::string> v;
+    boost::split(v, result, boost::is_any_of(" "));
+    if (v.size() != 4) {
+        RETURN_FAIL("mismatch number of elements");
+    }
+    std::vector<double> v2;
+    for (const auto & s : v)
+    {
+        try {
+            v2.push_back(boost::lexical_cast<double>(s));
+        }
+        catch(...)
+        {
+            RETURN_FAIL("conversion failed");
+        }
+    }
+    std::vector<double> wb = { 0, 0, 0, 0 };
+    or_rawdata_as_shot_neutral(m_rawdata.get(), wb.data());
+    RETURN_TEST_EQUALS_O(wb, v2);
 }
 
 bool Test::testRawMd5(const std::string & result)

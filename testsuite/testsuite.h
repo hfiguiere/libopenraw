@@ -2,7 +2,7 @@
 /*
  * libopenraw - testsuite.h
  *
- * Copyright (C) 2008-2020 Hubert Figuière
+ * Copyright (C) 2008-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -102,6 +102,7 @@ private:
     bool testRawCfaPattern(const std::string& result);
     bool testRawMinValue(const std::string& result);
     bool testRawMaxValue(const std::string& result);
+    bool testRawAsShotNeutral(const std::string&);
     bool testRawMd5(const std::string& result);
     bool testRawDecompressedMd5(const std::string& result);
     bool testMetaOrientation(const std::string& result);

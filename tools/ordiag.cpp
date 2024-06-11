@@ -1,7 +1,7 @@
 /*
  * libopenraw - ordiag.cpp
  *
- * Copyright (C) 2007-2020 Hubert Figuière
+ * Copyright (C) 2007-2024 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -291,9 +291,14 @@ public:
                 m_out << boost::format("\t\tBits per channel: %1%\n")
                     % or_rawdata_bpc(rd);
                 uint16_t black, white;
-                or_rawdata_get_levels(rd, &black, &white);
+                or_rawdata_levels(rd, &black, &white);
                 m_out << boost::format(
                     "\t\tValues: black = %1% white = %2%\n") % black % white;
+
+                double wb[4] = { 0.0, 0.0, 0.0, 0.0 };
+                or_rawdata_as_shot_neutral(rd, wb);
+                m_out << boost::format("\t\tWB as shot neutral: [ %1% %2% %3% %4% ]\n")
+                    % wb[0] % wb[1] % wb[2] % wb[3];
 
                 uint32_t matrix_size = 0;
                 const double *matrix = or_rawdata_get_colour_matrix(rd, 1, &matrix_size);

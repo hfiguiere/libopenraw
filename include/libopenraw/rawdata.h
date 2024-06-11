@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawdata.h
  *
- * Copyright (C) 2007-2023 Hubert Figuiere
+ * Copyright (C) 2007-2024 Hubert Figuière
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -117,18 +117,41 @@ extern "C" {
 	uint32_t
 	or_rawdata_get_compression(ORRawDataRef rawdata);
 
-	/** @brief Return the levels values for the raw data.
+	/** @brief Return the levels values for the raw data, black and white.
 	 *
 	 * These are possible values, not actual values.
 	 *
-	 * @param rawdata the raw data object
-	 * @param [out] black the pointer to the black value.
-	 * @param [out] white the pointer to the white value.
+	 * @param rawdata the %RawData object
+	 * @param [in/out] blacks a uint16_t[4] to copy the black values for RGG'B.
+	 *    It is a programming error to pass less than 4 in capacity and will
+	 *    lead to crashes. Can be %nullptr.
+	 * @param [in/out] whites a uiint16_t[4] to copy the white values for RGG'B.
+	 *    It is a programming error to pass less than 4 in capacity and will
+	 *    lead to crashes. Can be %nullptr.
 	 * @return the error code.
 	 */
 	or_error
-	or_rawdata_get_levels(ORRawDataRef rawdata, uint16_t *black,
-                             uint16_t *white);
+	or_rawdata_levels(ORRawDataRef rawdata, uint16_t *blacks,
+					  uint16_t *whites);
+
+	/** @brief Return the as shot neutral white balance.
+	 *
+	 * White balance is a quad of double values. For RGB, the fourth
+	 * value is NaN.  The as shot neutral whitebalance is a set of
+	 * component multipliers for a green reference (always 1.0). This
+	 * is similar to the DNG specification.
+	 * For an RGB image, it will be (r, 1.0, b, NaN)
+	 * For an CYGM it will be (c, y, 1.0, m) - this mode isn't yet
+	 * supported and is only relevant for old Canon cameras (20th century).
+	 *
+	 * @param rawdata the raw data object
+	 * @param [in/out] wb a double[4] to copy the values into. It is a
+	 *    programming error to pass less than 4 in capacity and will lead
+	 *    to crashes.
+	 * @return the error code.
+	 */
+	or_error
+	or_rawdata_as_shot_neutral(ORRawDataRef rawdata, double *wb);
 
 	/** @brief Get the colour matrix.
 	 * @param rawdata the raw data object

@@ -141,17 +141,33 @@ extern "C" fn or_rawdata_format(rawdata: ORRawDataRef) -> or_data_type {
 
 #[no_mangle]
 /// Get the black and white.
-extern "C" fn or_rawdata_get_levels(
+extern "C" fn or_rawdata_levels(
     rawdata: ORRawDataRef,
     black: *mut u16,
     white: *mut u16,
 ) -> or_error {
     or_unwrap!(rawdata, or_error::NOT_AREF, {
         if !black.is_null() {
-            unsafe { *black = rawdata.blacks()[0] };
+            unsafe {
+                black.copy_from_nonoverlapping(rawdata.blacks().as_ptr(), 4);
+            }
         }
         if !white.is_null() {
-            unsafe { *white = rawdata.whites()[0] };
+            unsafe {
+                white.copy_from_nonoverlapping(rawdata.whites().as_ptr(), 4);
+            }
+        }
+        or_error::NONE
+    })
+}
+
+#[no_mangle]
+// As shot neutral white balance.
+extern "C" fn or_rawdata_as_shot_neutral(rawdata: ORRawDataRef, wb: *mut f64) -> or_error {
+    or_unwrap!(rawdata, or_error::NOT_AREF, {
+        let rwb = rawdata.as_shot_neutral();
+        unsafe {
+            wb.copy_from_nonoverlapping(rwb.as_ptr(), 4);
         }
         or_error::NONE
     })
