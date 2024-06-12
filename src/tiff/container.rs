@@ -41,13 +41,24 @@ use crate::tiff::{Dir, Entry, IfdType};
 use crate::Type as RawType;
 use crate::{DataType, Dump, Error, Result};
 
-type CheckMagicHeader = fn(&[u8]) -> Result<container::Endian>;
-
 pub(crate) type DirIterator<'a> = std::slice::Iter<'a, Dir>;
 
 pub(crate) type DirMap = Vec<(IfdType, Option<&'static TagMap>)>;
 
-#[derive(Debug)]
+pub(crate) trait LoaderFixup {
+    /// Check for the magic header.
+    fn check_magic_header(&self, buf: &[u8]) -> Result<container::Endian> {
+        Container::is_magic_header(buf)
+    }
+
+    /// Determine if a subifd shall be parsed. Returns true by default.
+    /// This is useful to skip broken IFD like Sony's where they decide
+    /// to "encrypt" thing as a user hostile move.
+    fn parse_subifd(&self, _container: &Container) -> bool {
+        true
+    }
+}
+
 /// IFD Container for TIFF based file.
 pub(crate) struct Container {
     /// The `io::View`.
@@ -63,8 +74,31 @@ pub(crate) struct Container {
     /// The MakerNote IFD
     mnote_ifd: OnceCell<Option<Dir>>,
     raw_type: RawType,
+    /// Loader fixup for quirks (ie almost TIFF)
+    pub(crate) loader_fixup: Option<Box<dyn LoaderFixup>>,
 }
 
+impl std::fmt::Debug for Container {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Container")
+            .field("view", &self.view)
+            .field("endian", &self.endian)
+            .field("dirs", &self.dirs)
+            .field("dir_map", &self.dir_map)
+            .field("exif_ifd", &self.exif_ifd)
+            .field("mnote_ifd", &self.mnote_ifd)
+            .field("raw_type", &self.raw_type)
+            .field(
+                "loader_fixup",
+                if self.loader_fixup.is_some() {
+                    &"Some"
+                } else {
+                    &"None"
+                },
+            )
+            .finish()
+    }
+}
 fn ifd_type_to_dirid(t: IfdType) -> Option<&'static str> {
     match t {
         IfdType::Raw => Some("Raw"),
@@ -108,6 +142,7 @@ impl Container {
             exif_ifd: OnceCell::new(),
             mnote_ifd: OnceCell::new(),
             raw_type,
+            loader_fixup: None,
         }
     }
 
@@ -137,13 +172,14 @@ impl Container {
         }
     }
 
-    pub(crate) fn load(&mut self, check_magic_header: Option<CheckMagicHeader>) -> Result<()> {
+    pub(crate) fn load(&mut self, loader_fixup: Option<Box<dyn LoaderFixup>>) -> Result<()> {
+        self.loader_fixup = loader_fixup;
         let mut view = self.view.borrow_mut();
         view.seek(SeekFrom::Start(0))?;
         let mut buf = [0_u8; 4];
         view.read_exact(&mut buf)?;
-        if let Some(check_magic_header) = check_magic_header {
-            self.endian.replace(check_magic_header(&buf)?);
+        if let Some(loader_fixup) = &self.loader_fixup {
+            self.endian.replace(loader_fixup.check_magic_header(&buf)?);
         } else {
             self.endian.replace(Self::is_magic_header(&buf)?);
         }

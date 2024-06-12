@@ -38,7 +38,7 @@ use crate::jpeg;
 use crate::mosaic::Pattern;
 use crate::thumbnail;
 use crate::{DataType, Error, RawImage, Result, Type, TypeId};
-pub(crate) use container::{Container, DirIterator};
+pub(crate) use container::{Container, DirIterator, LoaderFixup};
 pub(crate) use dir::Dir;
 pub(crate) use entry::Entry;
 pub(crate) use exif::TagType;

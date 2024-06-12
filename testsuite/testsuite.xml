@@ -1122,12 +1122,21 @@
     <results>
       <rawType>ARW</rawType>
       <rawTypeId>524289</rawTypeId>
+      <makerNoteCount>28</makerNoteCount>
       <makerNoteId>Exif.Sony5</makerNoteId>
       <thumbNum>1</thumbNum>
       <thumbSizes>3872</thumbSizes>
       <thumbFormats>JPEG</thumbFormats>
       <thumbDataSizes>15915</thumbDataSizes>
       <thumbMd5>63133</thumbMd5>
+      <rawDataType>COMP_RAW</rawDataType>
+      <rawDataSize>12193048</rawDataSize>
+      <rawDataDimensions>3880 2608</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMaxValue>0 0 0 0</rawMaxValue>
+      <rawAsShotNeutral>0.5663716814159292 1 0.5 NaN</rawAsShotNeutral>
+      <rawMd5>51881</rawMd5>
       <metaOrientation>8</metaOrientation>
     </results>
   </test>
@@ -1138,12 +1147,21 @@
     <results>
       <rawType>ARW</rawType>
       <rawTypeId>524289</rawTypeId>
+      <makerNoteCount>28</makerNoteCount>
       <makerNoteId>Exif.Sony5</makerNoteId>
       <thumbNum>2</thumbNum>
       <thumbSizes>3872 160</thumbSizes>
       <thumbFormats>JPEG JPEG</thumbFormats>
       <thumbDataSizes>42850 4071</thumbDataSizes>
       <thumbMd5>34033 14547</thumbMd5>
+      <rawDataType>COMP_RAW</rawDataType>
+      <rawDataSize>10039268</rawDataSize>
+      <rawDataDimensions>3880 2608</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMaxValue>0 0 0 0</rawMaxValue>
+      <rawAsShotNeutral>0.6384039900249376 1 0.445993031358885 NaN</rawAsShotNeutral>
+      <rawMd5>50944</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>

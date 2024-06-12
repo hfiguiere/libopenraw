@@ -38,7 +38,7 @@ use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::exif;
-use crate::tiff::{Dir, Ifd};
+use crate::tiff::{Dir, Ifd, LoaderFixup};
 use crate::{
     DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
 };
@@ -702,6 +702,14 @@ lazy_static::lazy_static! {
     ];
 }
 
+struct Rw2Fixup {}
+
+impl LoaderFixup for Rw2Fixup {
+    fn check_magic_header(&self, buf: &[u8]) -> Result<Endian> {
+        Rw2File::is_magic_header(buf)
+    }
+}
+
 #[derive(Debug)]
 /// Panasonic Rw2 File
 pub(crate) struct Rw2File {
@@ -788,7 +796,7 @@ impl RawFileImpl for Rw2File {
                 self.type_(),
             );
             container
-                .load(Some(Self::is_magic_header))
+                .load(Some(Box::new(Rw2Fixup {})))
                 .expect("Rw2 container error");
             container
         })

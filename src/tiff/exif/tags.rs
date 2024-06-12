@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/exif/tags.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -156,7 +156,7 @@ pub const _DNG_TAG_REDUCTION_MATRIX2: u16 = 0xc626;
 pub const _DNG_TAG_ANALOG_BALANCE: u16 = 0xc627;
 pub const DNG_TAG_AS_SHOT_NEUTRAL: u16 = 0xc628;
 pub const _DNG_TAG_AS_SHOT_WHITE_XY: u16 = 0xc629;
-pub const _DNG_TAG_DNG_PRIVATE: u16 = 0xc634;
+pub const DNG_TAG_DNG_PRIVATE: u16 = 0xc634;
 pub const DNG_TAG_CALIBRATION_ILLUMINANT1: u16 = 0xc65a;
 pub const DNG_TAG_CALIBRATION_ILLUMINANT2: u16 = 0xc65b;
 pub const _DNG_TAG_ORIGINAL_RAW_FILE_NAME: u16 = 0xc68b;

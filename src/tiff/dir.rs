@@ -100,15 +100,6 @@ impl Dir {
                     &canon::MNOTE_TAG_NAMES,
                 )
             }
-            RawType::Arw => {
-                return Dir::new_makernote(
-                    b"Exif.Sony5\0",
-                    container,
-                    offset,
-                    0,
-                    &sony::MNOTE_TAG_NAMES,
-                )
-            }
             _ => {
                 // The size of this buffer should be adjusted depending on
                 // what the various detection need.
@@ -119,6 +110,20 @@ impl Dir {
                     view.read_exact(&mut data)?;
                 }
 
+                if file_type == RawType::Arw {
+                    let mut padding = 0;
+                    // A100 has padding.
+                    if &data[0..9] == b"SONY DSC " {
+                        padding = 12
+                    }
+                    return Dir::new_makernote(
+                        b"Exif.Sony5\0",
+                        container,
+                        offset + padding,
+                        0,
+                        &sony::MNOTE_TAG_NAMES,
+                    );
+                }
                 if &data[0..6] == b"Nikon\0" {
                     if data[6] == 1 {
                         return Dir::new_makernote(
@@ -713,6 +718,11 @@ impl Dir {
                 .entry(exif::EXIF_TAG_SUB_IFDS)
                 .and_then(|entry| entry.value_array::<u32>(self.endian()))
             {
+                if let Some(fixup) = &container.loader_fixup {
+                    if !fixup.parse_subifd(container) {
+                        return ifds;
+                    }
+                }
                 for offset in offsets {
                     if offset == 0 {
                         log::warn!("SubIFD with offset 0");

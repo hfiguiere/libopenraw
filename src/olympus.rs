@@ -35,8 +35,8 @@ use crate::container::RawContainer;
 use crate::io::Viewer;
 use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::tiff;
-use crate::tiff::IfdType;
 use crate::tiff::{exif, Ifd};
+use crate::tiff::{IfdType, LoaderFixup};
 use crate::{
     DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
 };
@@ -148,6 +148,14 @@ lazy_static::lazy_static! {
         (exif::ORF_TAG_FOCUS_INFO, "Exif.OlympusFi"),
         (exif::ORF_TAG_RAW_INFO, "Exif.OlympusRi"),
     ]);
+}
+
+struct OrfFixup {}
+
+impl LoaderFixup for OrfFixup {
+    fn check_magic_header(&self, buf: &[u8]) -> Result<container::Endian> {
+        OrfFile::is_magic_header(buf)
+    }
 }
 
 #[derive(Debug)]
@@ -319,7 +327,7 @@ impl RawFileImpl for OrfFile {
             let mut container =
                 tiff::Container::new(view, vec![(IfdType::Main, None)], self.type_());
             container
-                .load(Some(OrfFile::is_magic_header))
+                .load(Some(Box::new(OrfFixup {})))
                 .expect("Olympus IFD container error");
             container
         })

@@ -24,18 +24,21 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use byteorder::LittleEndian;
 use once_cell::unsync::OnceCell;
 
 use crate::camera_ids::{hasselblad, vendor};
 use crate::colour::BuiltinMatrix;
-use crate::container::RawContainer;
+use crate::container::{Endian, RawContainer};
 use crate::io::Viewer;
+use crate::minolta::MrwContainer;
 use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
-use crate::tiff::exif;
-use crate::tiff::Dir;
+use crate::tiff::exif::{self, ExifValue};
+use crate::tiff::{Dir, Ifd, LoaderFixup};
 use crate::{tiff, utils};
 use crate::{
-    Bitmap, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Type, TypeId,
+    Bitmap, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
+    Type, TypeId,
 };
 
 macro_rules! sony {
@@ -746,6 +749,31 @@ lazy_static::lazy_static! {
     ];
 }
 
+#[derive(Default)]
+struct ArwFixup {
+    is_a100: OnceCell<bool>,
+}
+
+impl ArwFixup {
+    fn is_a100(&self, container: &tiff::Container) -> bool {
+        *self.is_a100.get_or_init(|| {
+            container
+                .directory(0)
+                .and_then(|dir| dir.entry(exif::EXIF_TAG_MODEL))
+                .and_then(|e| e.string_value())
+                .map(|s| s == "DSLR-A100")
+                .unwrap_or(false)
+        })
+    }
+}
+
+impl LoaderFixup for ArwFixup {
+    fn parse_subifd(&self, container: &tiff::Container) -> bool {
+        // On an A100, the SubIfd is the RAW data. Not an IFD.
+        !self.is_a100(container)
+    }
+}
+
 #[derive(Debug)]
 pub(crate) struct ArwFile {
     reader: Rc<Viewer>,
@@ -765,7 +793,102 @@ impl ArwFile {
     }
 
     fn is_a100(&self) -> bool {
-        self.identify_id() == sony!(A100)
+        self.main_ifd()
+            .and_then(|dir| dir.entry(exif::EXIF_TAG_MODEL))
+            .and_then(|entry| entry.string_value())
+            .map(|s| s == "DSLR-A100")
+            .unwrap_or(false)
+    }
+
+    fn a100_rawinfo(&self, dir: &Dir) -> Result<MrwContainer> {
+        let offset = dir
+            .entry(exif::DNG_TAG_DNG_PRIVATE)
+            .and_then(|entry| entry.value_array::<u8>(dir.endian()))
+            .map(|bytes| u32::read::<LittleEndian>(&bytes))
+            .ok_or(Error::NotFound)?;
+        let view = Viewer::create_view(&self.reader, offset as u64).expect("Created view");
+        let mut container = MrwContainer::new(view);
+        container.set_endian(Endian::Little);
+        container.load().expect("Failed to load container");
+
+        Ok(container)
+    }
+
+    fn load_rawdata_arw(&self, dir: &Dir) -> Result<RawImage> {
+        let container = self.container.get().unwrap();
+        tiff::tiff_get_rawdata(container, dir, self.type_()).map(|mut rawimage| {
+            let active_area = dir
+                .uint_value_array(exif::ARW_TAG_SONY_CROP_TOP_LEFT)
+                .and_then(|top_left| {
+                    if top_left.len() < 2 {
+                        log::error!("Top Left: not enough elements");
+                        return None;
+                    }
+                    dir.uint_value_array(exif::ARW_TAG_SONY_CROP_SIZE)
+                        .and_then(|size| {
+                            if size.len() < 2 {
+                                log::error!("Crop Size: not enough elements");
+                                return None;
+                            }
+                            Some(Rect {
+                                x: top_left[1],
+                                y: top_left[0],
+                                width: size[0],
+                                height: size[1],
+                            })
+                        })
+                })
+                .unwrap_or_else(|| Rect {
+                    x: 0,
+                    y: 0,
+                    width: rawimage.width(),
+                    height: rawimage.height(),
+                });
+            rawimage.set_active_area(Some(active_area));
+            if let Some(wb) = dir.int_value_array(exif::ARW_TAG_WB_RGGB_LEVELS).map(|v| {
+                let g = v[1] as f64;
+                [g / v[0] as f64, 1.0, g / v[3] as f64]
+            }) {
+                rawimage.set_as_shot_neutral(&wb);
+            }
+            if let Some(blacks) = dir.uint_value_array(exif::ARW_TAG_BLACK_LEVELS) {
+                rawimage.set_blacks(utils::to_quad(&blacks));
+            }
+            if let Some(whites) = dir.uint_value_array(exif::DNG_TAG_WHITE_LEVEL) {
+                rawimage.set_whites(utils::to_quad(&whites));
+            }
+            rawimage
+        })
+    }
+
+    fn load_rawdata_a100(&self, dir: &Dir) -> Result<RawImage> {
+        let container = self.container.get().unwrap();
+        let offset = dir
+            .uint_value(exif::EXIF_TAG_SUB_IFDS)
+            .ok_or(Error::NotFound)?;
+        let raw_info = self.a100_rawinfo(dir)?;
+
+        let prd = raw_info.minolta_prd()?;
+
+        // XXX figure out where to find this. It must be somewhere.
+        // They don't match the ImageWidth and ImageHeight
+        let width = prd.x; //3881;
+        let height = prd.y; //2608;
+        let byte_len = width * height * 2;
+        let data = container.load_buffer8(offset as u64, byte_len as u64);
+
+        let mut rawimage = RawImage::with_data8(
+            width,
+            height,
+            prd.bps,
+            DataType::CompressedRaw,
+            data,
+            prd.mosaic,
+        );
+        if let Some(wb) = raw_info.get_wb() {
+            rawimage.set_as_shot_neutral(&wb);
+        }
+        Ok(rawimage)
     }
 }
 
@@ -796,7 +919,9 @@ impl RawFileImpl for ArwFile {
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
             let mut container =
                 tiff::Container::new(view, vec![(tiff::IfdType::Main, None)], self.type_());
-            container.load(None).expect("Arw container error");
+            container
+                .load(Some(Box::<ArwFixup>::default()))
+                .expect("Arw container error");
             container
         })
     }
@@ -828,63 +953,15 @@ impl RawFileImpl for ArwFile {
     }
 
     fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawImage> {
-        if self.is_a100() {
-            Err(Error::NotFound)
-        } else {
-            self.ifd(tiff::IfdType::Raw)
-                .ok_or(Error::NotFound)
-                .and_then(|dir| {
-                    tiff::tiff_get_rawdata(self.container.get().unwrap(), dir, self.type_()).map(
-                        |mut rawimage| {
-                            let active_area = dir
-                                .uint_value_array(exif::ARW_TAG_SONY_CROP_TOP_LEFT)
-                                .and_then(|top_left| {
-                                    if top_left.len() < 2 {
-                                        log::error!("Top Left: not enough elements");
-                                        return None;
-                                    }
-                                    dir.uint_value_array(exif::ARW_TAG_SONY_CROP_SIZE).and_then(
-                                        |size| {
-                                            if size.len() < 2 {
-                                                log::error!("Crop Size: not enough elements");
-                                                return None;
-                                            }
-                                            Some(Rect {
-                                                x: top_left[1],
-                                                y: top_left[0],
-                                                width: size[0],
-                                                height: size[1],
-                                            })
-                                        },
-                                    )
-                                })
-                                .unwrap_or_else(|| Rect {
-                                    x: 0,
-                                    y: 0,
-                                    width: rawimage.width(),
-                                    height: rawimage.height(),
-                                });
-                            rawimage.set_active_area(Some(active_area));
-
-                            if let Some(wb) =
-                                dir.int_value_array(exif::ARW_TAG_WB_RGGB_LEVELS).map(|v| {
-                                    let g = v[1] as f64;
-                                    [g / v[0] as f64, 1.0, g / v[3] as f64]
-                                })
-                            {
-                                rawimage.set_as_shot_neutral(&wb);
-                            }
-                            if let Some(blacks) = dir.uint_value_array(exif::ARW_TAG_BLACK_LEVELS) {
-                                rawimage.set_blacks(utils::to_quad(&blacks));
-                            }
-                            if let Some(whites) = dir.uint_value_array(exif::DNG_TAG_WHITE_LEVEL) {
-                                rawimage.set_whites(utils::to_quad(&whites));
-                            }
-                            rawimage
-                        },
-                    )
-                })
-        }
+        self.ifd(tiff::IfdType::Raw)
+            .ok_or(Error::NotFound)
+            .and_then(|dir| {
+                if self.is_a100() {
+                    self.load_rawdata_a100(dir)
+                } else {
+                    self.load_rawdata_arw(dir)
+                }
+            })
     }
 
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>> {

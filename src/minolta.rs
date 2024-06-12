@@ -2,7 +2,7 @@
 /*
  * libopenraw - minolta.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,17 +20,20 @@
  */
 
 //! Minolta MRW format
+//!
+//! This is also needed for the Sony file support for very early
+//! post Minolta acquisition cameras like the Sony A100.
 
 use std::cell::{RefCell, RefMut};
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 use std::rc::Rc;
 
-use byteorder::{BigEndian, ReadBytesExt};
+use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
 use once_cell::unsync::OnceCell;
 
 use crate::colour::BuiltinMatrix;
-use crate::container::{self, RawContainer};
+use crate::container::{Endian, RawContainer};
 use crate::decompress;
 use crate::io::{View, Viewer};
 use crate::metadata;
@@ -230,54 +233,51 @@ impl RawFileImpl for MrwFile {
     fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         self.container();
         if let Some(container) = self.container.get() {
-            let prd = container.prd.as_ref().ok_or(Error::NotFound)?;
-            let y = prd
-                .uint16_value(Prd::SensorLength as u64, container)
-                .ok_or(Error::NotFound)? as u32;
-            let x = prd
-                .uint16_value(Prd::SensorWidth as u64, container)
-                .ok_or(Error::NotFound)? as u32;
-            let bps = prd
-                .uint8_value(Prd::PixelSize as u64, container)
-                .ok_or(Error::NotFound)? as u16;
-
-            let is_compressed = prd
-                .uint8_value(Prd::StorageType as u64, container)
-                .map(|storage| storage == StorageType::Packed as u8)
-                .unwrap_or(false);
-            let mosaic = prd
-                .uint16_value(Prd::BayerPattern as u64, container)
-                .map(|pattern| {
-                    if pattern == BayerPattern::Gbrg as u16 {
-                        Pattern::Gbrg
-                    } else {
-                        Pattern::Rggb
-                    }
-                })
-                .unwrap_or(Pattern::Rggb);
+            let rawinfo = container.minolta_prd()?;
 
             let cfa_offset = container.raw_data_offset();
-            let cfa_len = if is_compressed {
-                x * y + ((x * y) >> 1)
+            let cfa_len = if rawinfo.is_compressed {
+                rawinfo.x * rawinfo.y + ((rawinfo.x * rawinfo.y) >> 1)
             } else {
-                2 * x * y
+                2 * rawinfo.x * rawinfo.y
             } as u64;
-            let mut rawdata = if is_compressed {
+            let mut rawdata = if rawinfo.is_compressed {
                 let raw = container.load_buffer8(cfa_offset, cfa_len);
                 if skip_decompress {
-                    RawImage::with_data8(x, y, bps, DataType::CompressedRaw, raw, mosaic)
+                    RawImage::with_data8(
+                        rawinfo.x,
+                        rawinfo.y,
+                        rawinfo.bps,
+                        DataType::CompressedRaw,
+                        raw,
+                        rawinfo.mosaic,
+                    )
                 } else {
-                    let mut unpacked = Vec::with_capacity((x * y) as usize);
+                    let mut unpacked = Vec::with_capacity((rawinfo.x * rawinfo.y) as usize);
                     decompress::unpack_be12to16(&raw, &mut unpacked, tiff::Compression::None)
                         .map_err(|err| {
                             log::error!("RAF failed to unpack {}", err);
                             err
                         })?;
-                    RawImage::with_data16(x, y, 16, DataType::Raw, unpacked, mosaic)
+                    RawImage::with_data16(
+                        rawinfo.x,
+                        rawinfo.y,
+                        16,
+                        DataType::Raw,
+                        unpacked,
+                        rawinfo.mosaic,
+                    )
                 }
             } else {
                 let raw = container.load_buffer16_be(cfa_offset, cfa_len);
-                RawImage::with_data16(x, y, bps, DataType::Raw, raw, mosaic)
+                RawImage::with_data16(
+                    rawinfo.x,
+                    rawinfo.y,
+                    rawinfo.bps,
+                    DataType::Raw,
+                    raw,
+                    rawinfo.mosaic,
+                )
             };
             if let Some((black, white)) = MATRICES
                 .iter()
@@ -287,22 +287,7 @@ impl RawFileImpl for MrwFile {
                 rawdata.set_whites([white; 4]);
                 rawdata.set_blacks([black; 4]);
             }
-            if let Some(wb) = container.wbg.as_ref().and_then(|wbg| {
-                let rd = wbg
-                    .uint8_value(Wbg::DenominatorR as u64, container)
-                    .map(|d| 1 << (6 + d))? as f64;
-                let gd = wbg
-                    .uint8_value(Wbg::DenominatorG1 as u64, container)
-                    .map(|d| 1 << (6 + d))? as f64;
-                let bd = wbg
-                    .uint8_value(Wbg::DenominatorB as u64, container)
-                    .map(|d| 1 << (6 + d))? as f64;
-                let rn = wbg.uint16_value(Wbg::NominatorR as u64, container)? as f64;
-                let gn = wbg.uint16_value(Wbg::NominatorG1 as u64, container)? as f64;
-                let bn = wbg.uint16_value(Wbg::NominatorB as u64, container)? as f64;
-
-                Some([rd / rn, gd / gn, bd / bn, f64::NAN])
-            }) {
+            if let Some(wb) = container.get_wb() {
                 rawdata.set_as_shot_neutral(&wb);
             }
 
@@ -397,7 +382,7 @@ enum BayerPattern {
 /// Known offsets in WBG block.
 /// The order is RGGB, or GBRG depending on the `BayerPattern`.
 #[allow(unused)]
-enum Wbg {
+pub(crate) enum Wbg {
     DenominatorR = 0,  /* 1 byte,  log2(denominator)-6 */
     DenominatorG1 = 1, /* 1 byte,  To get actual denominator, 1<<(val+6) */
     DenominatorG2 = 2, /* 1 byte, */
@@ -470,7 +455,11 @@ impl DataBlock {
     fn load(offset: u64, container: &MrwContainer) -> Result<DataBlock> {
         let mut name = [0_u8; 4];
         container.borrow_view_mut().read_exact(&mut name)?;
-        let length = container.borrow_view_mut().read_u32::<BigEndian>()? as u64;
+        let length = match container.endian() {
+            Endian::Big => container.borrow_view_mut().read_u32::<BigEndian>()? as u64,
+            Endian::Little => container.borrow_view_mut().read_u32::<LittleEndian>()? as u64,
+            _ => unreachable!("Endian unset"),
+        };
         Ok(DataBlock {
             offset,
             name,
@@ -490,7 +479,11 @@ impl DataBlock {
             offset + self.offset + DATA_BLOCK_HEADER_LENGTH,
         ))
         .ok()?;
-        view.read_u16::<BigEndian>().ok()
+        match container.endian() {
+            Endian::Big => view.read_u16::<BigEndian>().ok(),
+            Endian::Little => view.read_u16::<LittleEndian>().ok(),
+            _ => unreachable!("Endian unset"),
+        }
     }
 
     fn uint8_value(&self, offset: u64, container: &MrwContainer) -> Option<u8> {
@@ -503,8 +496,18 @@ impl DataBlock {
     }
 }
 
+/// Raw info extracted from the PRD block.
+pub(crate) struct RawInfo {
+    pub x: u32,
+    pub y: u32,
+    pub bps: u16,
+    pub is_compressed: bool,
+    pub mosaic: Pattern,
+}
+
 #[derive(Debug)]
-struct MrwContainer {
+pub(crate) struct MrwContainer {
+    endian: Endian,
     /// The `io::View`.
     view: RefCell<View>,
     /// Version (ie camera) of the file.
@@ -525,8 +528,9 @@ struct MrwContainer {
 }
 
 impl MrwContainer {
-    fn new(view: View) -> Self {
+    pub(crate) fn new(view: View) -> Self {
         Self {
+            endian: Endian::Big,
             view: RefCell::new(view),
             version: String::default(),
             mrm: None,
@@ -539,9 +543,15 @@ impl MrwContainer {
         }
     }
 
+    /// Set the endian. This is only useful for Sony A100 that
+    /// has a Little Endian MRW data block.
+    pub(crate) fn set_endian(&mut self, endian: Endian) {
+        self.endian = endian
+    }
+
     /// Load the container. Will read the datablocks, but not their
     /// content.
-    fn load(&mut self) -> Result<()> {
+    pub(crate) fn load(&mut self) -> Result<()> {
         let block = DataBlock::load(0, self)?;
         let end = block.length;
         self.mrm = Some(block);
@@ -585,6 +595,61 @@ impl MrwContainer {
         })
     }
 
+    pub(crate) fn minolta_prd(&self) -> Result<RawInfo> {
+        let prd = self.prd.as_ref().ok_or(Error::NotFound)?;
+        let y = prd
+            .uint16_value(Prd::SensorLength as u64, self)
+            .ok_or(Error::NotFound)? as u32;
+        let x = prd
+            .uint16_value(Prd::SensorWidth as u64, self)
+            .ok_or(Error::NotFound)? as u32;
+        let bps = prd
+            .uint8_value(Prd::PixelSize as u64, self)
+            .ok_or(Error::NotFound)? as u16;
+
+        let is_compressed = prd
+            .uint8_value(Prd::StorageType as u64, self)
+            .map(|storage| storage == StorageType::Packed as u8)
+            .unwrap_or(false);
+        let mosaic = prd
+            .uint16_value(Prd::BayerPattern as u64, self)
+            .map(|pattern| {
+                if pattern == BayerPattern::Gbrg as u16 {
+                    Pattern::Gbrg
+                } else {
+                    Pattern::Rggb
+                }
+            })
+            .unwrap_or(Pattern::Rggb);
+
+        Ok(RawInfo {
+            x,
+            y,
+            bps,
+            is_compressed,
+            mosaic,
+        })
+    }
+
+    pub(crate) fn get_wb(&self) -> Option<[f64; 4]> {
+        self.wbg.as_ref().and_then(|wbg| {
+            let rd = wbg
+                .uint8_value(Wbg::DenominatorR as u64, self)
+                .map(|d| 1 << (6 + d))? as f64;
+            let gd = wbg
+                .uint8_value(Wbg::DenominatorG1 as u64, self)
+                .map(|d| 1 << (6 + d))? as f64;
+            let bd = wbg
+                .uint8_value(Wbg::DenominatorB as u64, self)
+                .map(|d| 1 << (6 + d))? as f64;
+            let rn = wbg.uint16_value(Wbg::NominatorR as u64, self)? as f64;
+            let gn = wbg.uint16_value(Wbg::NominatorG1 as u64, self)? as f64;
+            let bn = wbg.uint16_value(Wbg::NominatorB as u64, self)? as f64;
+
+            Some([rd / rn, gd / gn, bd / bn, f64::NAN])
+        })
+    }
+
     /// The offset where to find the raw data.
     fn raw_data_offset(&self) -> u64 {
         DATA_BLOCK_HEADER_LENGTH + self.mrm.as_ref().map(|mrm| mrm.length).unwrap_or(0)
@@ -620,8 +685,8 @@ impl MrwContainer {
 }
 
 impl RawContainer for MrwContainer {
-    fn endian(&self) -> container::Endian {
-        container::Endian::Big
+    fn endian(&self) -> Endian {
+        self.endian
     }
 
     fn borrow_view_mut(&self) -> RefMut<'_, View> {
