@@ -2,6 +2,27 @@ libopenraw 0.4.0-alpha.5 -
 
 THIS IS A PRE-RELEASE.
 
+Bug fixes:
+
+  - (Alpha) Reduced peak memory usage with colour rendering by 25%
+  - (Alpha) Get the right colour matrix for the D65 illuminant. Also
+    get both matrices in the rawimage.
+  - (Alpha) Properly calculate the cam XYZ to RGB matrix.
+  - (Alpha) Fixed white balance for Canon G11, G5X, G7X MkII (and
+    possibly others).
+  - Improved parsing of Sony A100 files.
+
+New features:
+
+  - (Alpha) Support white balance for CRW, ERF.
+  - C API: Added as_shot_neutral. Updated the levels to get the quad
+    values.
+
+Internal:
+
+  - Added testsuite for Canon G5X, G7XMark II, 200D / SL2, and white
+    balance test.
+
 libopenraw 0.4.0-alpha.4 - 2024/06/01
 
 THIS IS A PRE-RELEASE.
@@ -105,6 +126,8 @@ Internal changes
 
   - The mp4parse crate as been moved to src/mp4/parse, and mp4parse_capi
     has been removed. This allow publishing the crate.
+  - You can add testsuite fragments into `testsuite/testsuite.d` for
+    addition regression tests.
 
 libopenraw 0.3.7 - 2023/07/31
 
