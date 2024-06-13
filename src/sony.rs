@@ -27,7 +27,7 @@ use std::rc::Rc;
 use byteorder::LittleEndian;
 use once_cell::unsync::OnceCell;
 
-use crate::camera_ids::{hasselblad, vendor};
+use crate::camera_ids::{self, hasselblad, vendor};
 use crate::colour::BuiltinMatrix;
 use crate::container::{Endian, RawContainer};
 use crate::io::Viewer;
@@ -470,8 +470,8 @@ lazy_static::lazy_static! {
             [ 5491, -1192, -363, -4951, 12342, 2948, -911, 1722, 7192 ] ),
         BuiltinMatrix::new(
             sony!(R1),
-            0,
-            0,
+            511,
+            16383,
             [ 8512, -2641, -694, -8041, 15670, 2526, -1820, 2117, 7414 ] ),
         BuiltinMatrix::new(
             sony!(RX100),
@@ -816,49 +816,67 @@ impl ArwFile {
 
     fn load_rawdata_arw(&self, dir: &Dir) -> Result<RawImage> {
         let container = self.container.get().unwrap();
-        tiff::tiff_get_rawdata(container, dir, self.type_()).map(|mut rawimage| {
-            let active_area = dir
-                .uint_value_array(exif::ARW_TAG_SONY_CROP_TOP_LEFT)
-                .and_then(|top_left| {
-                    if top_left.len() < 2 {
-                        log::error!("Top Left: not enough elements");
-                        return None;
-                    }
-                    dir.uint_value_array(exif::ARW_TAG_SONY_CROP_SIZE)
-                        .and_then(|size| {
-                            if size.len() < 2 {
-                                log::error!("Crop Size: not enough elements");
-                                return None;
-                            }
-                            Some(Rect {
-                                x: top_left[1],
-                                y: top_left[0],
-                                width: size[0],
-                                height: size[1],
+        let rawdata_endian = if self.type_id().1 == camera_ids::sony::R1 {
+            Endian::Big
+        } else {
+            container.endian()
+        };
+        tiff::tiff_get_rawdata_with_endian(container, dir, self.type_(), rawdata_endian).map(
+            |mut rawimage| {
+                let active_area = dir
+                    .uint_value_array(exif::ARW_TAG_SONY_CROP_TOP_LEFT)
+                    .and_then(|top_left| {
+                        if top_left.len() < 2 {
+                            log::error!("Top Left: not enough elements");
+                            return None;
+                        }
+                        dir.uint_value_array(exif::ARW_TAG_SONY_CROP_SIZE)
+                            .and_then(|size| {
+                                if size.len() < 2 {
+                                    log::error!("Crop Size: not enough elements");
+                                    return None;
+                                }
+                                Some(Rect {
+                                    x: top_left[1],
+                                    y: top_left[0],
+                                    width: size[0],
+                                    height: size[1],
+                                })
                             })
-                        })
-                })
-                .unwrap_or_else(|| Rect {
-                    x: 0,
-                    y: 0,
-                    width: rawimage.width(),
-                    height: rawimage.height(),
-                });
-            rawimage.set_active_area(Some(active_area));
-            if let Some(wb) = dir.int_value_array(exif::ARW_TAG_WB_RGGB_LEVELS).map(|v| {
-                let g = v[1] as f64;
-                [g / v[0] as f64, 1.0, g / v[3] as f64]
-            }) {
-                rawimage.set_as_shot_neutral(&wb);
-            }
-            if let Some(blacks) = dir.uint_value_array(exif::ARW_TAG_BLACK_LEVELS) {
-                rawimage.set_blacks(utils::to_quad(&blacks));
-            }
-            if let Some(whites) = dir.uint_value_array(exif::DNG_TAG_WHITE_LEVEL) {
-                rawimage.set_whites(utils::to_quad(&whites));
-            }
-            rawimage
-        })
+                    })
+                    .unwrap_or_else(|| Rect {
+                        x: 0,
+                        y: 0,
+                        width: rawimage.width(),
+                        height: rawimage.height(),
+                    });
+                rawimage.set_active_area(Some(active_area));
+                if let Some(wb) = dir.int_value_array(exif::ARW_TAG_WB_RGGB_LEVELS).map(|v| {
+                    let g = v[1] as f64;
+                    [g / v[0] as f64, 1.0, g / v[3] as f64]
+                }) {
+                    rawimage.set_as_shot_neutral(&wb);
+                }
+                // XXX This here and Pentax get the levels from the builtins.
+                // Make this in a common area.
+                let levels = MATRICES
+                    .iter()
+                    .find(|m| m.camera == self.type_id())
+                    .map(|m| (m.black, m.white));
+
+                if let Some(blacks) = dir.uint_value_array(exif::ARW_TAG_BLACK_LEVELS) {
+                    rawimage.set_blacks(utils::to_quad(&blacks));
+                } else if let Some((black, _)) = levels {
+                    rawimage.set_blacks([black; 4]);
+                }
+                if let Some(whites) = dir.uint_value_array(exif::DNG_TAG_WHITE_LEVEL) {
+                    rawimage.set_whites(utils::to_quad(&whites));
+                } else if let Some((_, white)) = levels {
+                    rawimage.set_whites([white; 4]);
+                }
+                rawimage
+            },
+        )
     }
 
     fn load_rawdata_a100(&self, dir: &Dir) -> Result<RawImage> {

@@ -216,6 +216,16 @@ pub(crate) fn tiff_get_rawdata(
     dir: &Dir,
     file_type: Type,
 ) -> Result<RawImage> {
+    tiff_get_rawdata_with_endian(container, dir, file_type, container.endian())
+}
+
+/// Get the raw data with a specific endian for the data.
+pub(crate) fn tiff_get_rawdata_with_endian(
+    container: &Container,
+    dir: &Dir,
+    file_type: Type,
+    endian: Endian,
+) -> Result<RawImage> {
     let mut offset = 0_u32;
 
     let mut bpc = dir
@@ -387,7 +397,7 @@ pub(crate) fn tiff_get_rawdata(
             )
         }
     } else if bpc == 16 {
-        let data = if container.endian() == Endian::Big {
+        let data = if endian == Endian::Big {
             container.load_buffer16_be(offset as u64, byte_len as u64)
         } else {
             container.load_buffer16_le(offset as u64, byte_len as u64)
