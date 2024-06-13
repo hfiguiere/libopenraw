@@ -37,6 +37,7 @@ use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::tiff;
 use crate::tiff::{exif, Ifd};
 use crate::tiff::{IfdType, LoaderFixup};
+use crate::utils;
 use crate::{
     DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
 };
@@ -442,6 +443,13 @@ impl RawFileImpl for OrfFile {
                             }
                         }
 
+                        if let Some(blacks) = ip_dir.uint_value_array(exif::ORF_TAG_IP_BLACK_LEVEL2) {
+                            if blacks.len() == 1 {
+                                data.set_blacks([blacks[0] as u16; 4]);
+                            } else if blacks.len() == 4 {
+                                data.set_blacks(utils::to_quad(&blacks));
+                            }
+                        }
                         let active_area = Some(Rect::default()).and_then(|_| {
                             let y = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_TOP)?;
                             let x = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_LEFT)?;
