@@ -484,7 +484,7 @@ impl Dir {
     {
         let mut entries = BTreeMap::new();
         view.seek(SeekFrom::Start(dir_offset as u64))?;
-
+        debug!("Dir starts at {dir_offset}");
         let num_entries = view.read_i16::<E>()?;
         for _ in 0..num_entries {
             let id = view.read_u16::<E>()?;
@@ -492,7 +492,7 @@ impl Dir {
             let count = view.read_u32::<E>()?;
             let mut data = [0_u8; 4];
             view.read_exact(&mut data)?;
-            debug!("Entry {:x} with type {} added", id, type_);
+            debug!("Entry {:x} with type {} count {count} added", id, type_);
             let mut entry = Entry::new(id, type_, count, data);
             if !entry.is_inline() {
                 let pos = view.stream_position()?;

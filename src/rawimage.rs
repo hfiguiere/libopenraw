@@ -433,8 +433,10 @@ impl RawImage {
             }
         }
         if let Some(cm) = cm {
+            log::debug!("Calculating cam RGB");
             let cam_rgb = Self::calculate_cam_rgb(&cm);
             log::debug!("pixel cam at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));
+            log::debug!("Applying colour matrix");
             for row in 0..height {
                 let pos = row * width * 3;
                 let mut col = 0;
@@ -474,8 +476,10 @@ impl RawImage {
             16,
             1,
         );
+        log::debug!("Linearizing data");
         let mut data = self.linearize(data16);
         if options.stage >= RenderingStage::Interpolation {
+            log::debug!("Interpolating");
             data = self.interpolate(data)?;
             pattern = Pattern::Empty;
         }
@@ -483,12 +487,14 @@ impl RawImage {
         if options.stage >= RenderingStage::Colour {
             match self.photom_int {
                 exif::PhotometricInterpretation::CFA => {
+                    log::debug!("RGB colour correction");
                     data = self.colour_correct(data, options.target)?;
                     data.data
                         .iter_mut()
                         .for_each(|v| *v = gamma_correct_srgb(*v));
                 }
                 exif::PhotometricInterpretation::LinearRaw => {
+                    log::debug!("Grayscale GAMMA");
                     data.data
                         .iter_mut()
                         .for_each(|v| *v = gamma_correct_f::<22>(*v));
