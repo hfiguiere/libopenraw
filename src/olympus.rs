@@ -443,7 +443,8 @@ impl RawFileImpl for OrfFile {
                             }
                         }
 
-                        if let Some(blacks) = ip_dir.uint_value_array(exif::ORF_TAG_IP_BLACK_LEVEL2) {
+                        if let Some(blacks) = ip_dir.uint_value_array(exif::ORF_TAG_IP_BLACK_LEVEL2)
+                        {
                             if blacks.len() == 1 {
                                 data.set_blacks([blacks[0] as u16; 4]);
                             } else if blacks.len() == 4 {
