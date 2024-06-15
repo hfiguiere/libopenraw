@@ -65,7 +65,7 @@ impl std::convert::TryFrom<i16> for TagType {
         if value <= 0 || value > 13 && value != (TagType::Error_ as i16) {
             Err(value)
         } else {
-            Ok(unsafe { std::mem::transmute(value) })
+            Ok(unsafe { std::mem::transmute::<i16, Self>(value) })
         }
     }
 }

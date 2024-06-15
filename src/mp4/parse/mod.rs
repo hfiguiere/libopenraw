@@ -3636,8 +3636,8 @@ fn read_mvhd<T: Read>(src: &mut BMFFBox<T>) -> Result<MovieHeaderBox> {
         1 => be_u64(src)?,
         0 => {
             let d = be_u32(src)?;
-            if d == std::u32::MAX {
-                std::u64::MAX
+            if d == u32::MAX {
+                u64::MAX
             } else {
                 u64::from(d)
             }
@@ -3757,8 +3757,8 @@ fn read_mdhd<T: Read>(src: &mut BMFFBox<T>) -> Result<MediaHeaderBox> {
                 // upcasting, we need to preserve the special all-1s
                 // ("unknown") case by hand.
                 let d = be_u32(src)?;
-                if d == std::u32::MAX {
-                    std::u64::MAX
+                if d == u32::MAX {
+                    u64::MAX
                 } else {
                     u64::from(d)
                 }
