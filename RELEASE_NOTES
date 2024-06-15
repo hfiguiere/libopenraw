@@ -8,8 +8,8 @@ What's (visibly) new in 0.4.0-alpha.5
 - Extract White Balance coefficients.
 - Extract Exif GPSInfo.
 - DNG: decompress the tiles.
-- Fujifilm RAF: get black and white levels
-- Olympus ORF: get active area.
+- Fujifilm RAF: get black and white levels.
+- Olympus ORF: get active area, black levels.
 - Sony ARW: improved parsing of A100 files.
 - Properly set black & white files for DNG, ERF, PEF, CR2.
 - Support rendering to sRGB with proper colours.

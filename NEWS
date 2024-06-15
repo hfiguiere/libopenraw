@@ -1,4 +1,4 @@
-libopenraw 0.4.0-alpha.5 -
+libopenraw 0.4.0-alpha.5 - 2024/06/14
 
 THIS IS A PRE-RELEASE.
 
@@ -11,6 +11,8 @@ Bug fixes:
   - (Alpha) Fixed white balance for Canon G11, G5X, G7X MkII (and
     possibly others).
   - Improved parsing of Sony A100 files.
+  - (Alpha) Fix rendering for Sony R1 (SRF).
+  - Fix black levels in Olympus ORF.
 
 New features:
 
