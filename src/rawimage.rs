@@ -49,9 +49,9 @@ pub struct RawImage {
     whites: [u16; 4],
     /// Black point
     blacks: [u16; 4],
-    ///
+    /// Photmetric Interpretation
     photom_int: exif::PhotometricInterpretation,
-    ///
+    /// TIFF Compression. Values are either TIFF or specific to the Raw
     compression: tiff::Compression,
     /// Sensor active area
     active_area: Option<Rect>,

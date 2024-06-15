@@ -437,7 +437,9 @@ impl Dir {
         Dir::new_makernote(b"\0", container, offset, 0, &MNOTE_EMPTY_TAGS)
     }
 
-    ///
+    /// Create a new MakerNote with `id`. `offset` is the offset in the container
+    /// while `mnote_offset` is the offset to apply from inside the MakerNote.
+    /// `tag_names` allow custom display of tags.
     pub(crate) fn new_makernote(
         id: &[u8],
         container: &dyn container::RawContainer,
