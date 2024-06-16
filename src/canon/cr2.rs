@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/cr2.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -217,12 +217,7 @@ impl Cr2File {
         let sensor_info = self
             .ifd(tiff::IfdType::MakerNote)
             .and_then(super::SensorInfo::new)
-            .map(|sensor_info| bitmap::Rect {
-                x: sensor_info.0[0],
-                y: sensor_info.0[1],
-                width: sensor_info.0[2],
-                height: sensor_info.0[3],
-            });
+            .map(|sensor_info| sensor_info.0);
         rawdata.set_active_area(sensor_info);
         // XXX they are not all RGGB.
         // XXX but I don't seem to see where this is encoded.

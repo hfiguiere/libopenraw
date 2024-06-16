@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/cr3.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -39,8 +39,7 @@ use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::Dir;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Type,
-    TypeId,
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
 };
 
 use super::matrices::MATRICES;
@@ -199,12 +198,7 @@ impl RawFileImpl for Cr3File {
             let sensor_info = self
                 .maker_note_ifd()
                 .and_then(super::SensorInfo::new)
-                .map(|s| Rect {
-                    x: s.0[0],
-                    y: s.0[1],
-                    width: s.0[2],
-                    height: s.0[3],
-                });
+                .map(|s| s.0);
             rawdata.set_active_area(sensor_info);
 
             Ok(rawdata)

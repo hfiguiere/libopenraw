@@ -32,6 +32,7 @@ use std::collections::HashMap;
 use lazy_static::lazy_static;
 
 use super::TypeId;
+use crate::bitmap::Rect;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use colour::ColourFormat;
@@ -185,7 +186,20 @@ pub(crate) fn identify_from_maker_note(maker_note: &tiff::Dir) -> TypeId {
 }
 
 /// SensorInfo currently only contain the active area (x, y, w, h)
-pub(crate) struct SensorInfo([u32; 4]);
+pub(crate) struct SensorInfo(Rect);
+
+/*
+1 	SensorWidth
+2 	SensorHeight
+5 	SensorLeftBorder
+6 	SensorTopBorder
+7 	SensorRightBorder
+8 	SensorBottomBorder
+9 	BlackMaskLeftBorder
+10 	BlackMaskTopBorder
+11 	BlackMaskRightBorder
+12 	BlackMaskBottomBorder
+*/
 
 impl SensorInfo {
     /// Load the `SensorInfo` from the MakerNote
@@ -202,9 +216,11 @@ impl SensorInfo {
             log::warn!("Data too small for sensor info {}", sensor_info.len());
             None
         } else {
-            let mut result = [0u32; 4];
-            result[0] = sensor_info[5] as u32;
-            result[1] = sensor_info[6] as u32;
+            let mut result = Rect {
+                x: sensor_info[5] as u32,
+                y: sensor_info[6] as u32,
+                ..Default::default()
+            };
             if sensor_info[7] <= sensor_info[5] {
                 log::warn!(
                     "sensor_info: bottom {} <= top {}",
@@ -218,7 +234,7 @@ impl SensorInfo {
             if (w % 2) != 0 {
                 w += 1;
             }
-            result[2] = w;
+            result.width = w;
             if sensor_info[8] <= sensor_info[6] {
                 log::warn!(
                     "sensor_info: right {} <= left {}",
@@ -232,7 +248,7 @@ impl SensorInfo {
             if (h % 2) != 0 {
                 h += 1;
             }
-            result[3] = h;
+            result.height = h;
             Some(SensorInfo(result))
         }
     }

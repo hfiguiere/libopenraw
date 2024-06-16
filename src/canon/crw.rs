@@ -31,7 +31,6 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::bitmap;
 use crate::camera_ids::canon as canon_id;
 use crate::canon;
 use crate::canon::SensorInfo;
@@ -114,17 +113,7 @@ impl CrwFile {
                     width: sensor_info[1] as u32,
                     height: sensor_info[2] as u32,
                 };
-                SensorInfo::parse(sensor_info).map(|sensor_info| {
-                    (
-                        dim,
-                        bitmap::Rect {
-                            x: sensor_info.0[0],
-                            y: sensor_info.0[1],
-                            width: sensor_info.0[2],
-                            height: sensor_info.0[3],
-                        },
-                    )
-                })
+                SensorInfo::parse(sensor_info).map(|sensor_info| (dim, sensor_info.0))
             } else {
                 None
             }
