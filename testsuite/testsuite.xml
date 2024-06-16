@@ -48,7 +48,7 @@
       <rawDataDimensions>4312 2876</rawDataDimensions>
       <rawDataActiveArea>32 23 4272 2848</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMinValue>1023 1023 1024 1024</rawMinValue>
       <rawMaxValue>14605 14605 14605 14605</rawMaxValue>
       <rawAsShotNeutral>0.5495495495495496 1 0.5148957298907646 NaN</rawAsShotNeutral>
       <rawMd5>36420</rawMd5>
@@ -76,7 +76,7 @@
       <rawDataDimensions>5360 3516</rawDataDimensions>
       <rawDataActiveArea>168 56 5184 3456</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMinValue>2047 2046 2048 2047</rawMinValue>
       <rawMaxValue>13584 13584 13584 13584</rawMaxValue>
       <rawAsShotNeutral>0.5029469548133595 1 0.45309734513274336 NaN</rawAsShotNeutral>
       <rawMd5>21909</rawMd5>
@@ -104,7 +104,7 @@
       <rawDataDimensions>5360 3516</rawDataDimensions>
       <rawDataActiveArea>168 56 5184 3456</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMinValue>2046 2046 2049 2049</rawMinValue>
       <rawMaxValue>13584 13584 13584 13584</rawMaxValue>
       <rawAsShotNeutral>0.4727608494921514 1 0.6719160104986877 NaN</rawAsShotNeutral>
       <rawMd5>9987</rawMd5>
@@ -132,7 +132,7 @@
       <rawDataDimensions>5792 3804</rawDataDimensions>
       <rawDataActiveArea>168 56 5616 3744</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMinValue>1021 1021 1020 1020</rawMinValue>
       <rawMaxValue>15600 15600 15600 15600</rawMaxValue>
       <rawAsShotNeutral>0.5301786576533076 1 0.401609363569861 NaN</rawAsShotNeutral>
       <rawMd5>38395</rawMd5>
@@ -160,7 +160,7 @@
       <rawDataDimensions>6288 4056</rawDataDimensions>
       <rawDataActiveArea>276 48 6000 4000</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMinValue>2048 2048 2048 2048</rawMinValue>
       <rawMaxValue>13583 13583 13583 13583</rawMaxValue>
       <rawAsShotNeutral>0.7792998477929984 1 0.4208795725441841 NaN</rawAsShotNeutral>
       <rawMd5>45712</rawMd5>
@@ -188,7 +188,7 @@
       <rawDataDimensions>5632 3710</rawDataDimensions>
       <rawDataActiveArea>132 40 5472 3648</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMinValue>2048 2048 2048 2048</rawMinValue>
       <rawMaxValue>16383 16383 16383 16383</rawMaxValue>
       <rawAsShotNeutral>0.4847702632937532 1 0.551056338028169 NaN</rawAsShotNeutral>
       <rawMd5>53429</rawMd5>
@@ -216,7 +216,7 @@
       <rawDataDimensions>5632 3710</rawDataDimensions>
       <rawDataActiveArea>132 40 5472 3648</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMinValue>2048 2048 2048 2048</rawMinValue>
       <rawMaxValue>16383 16383 16383 16383</rawMaxValue>
       <rawAsShotNeutral>0.4695093993580926 1 0.5967365967365967 NaN</rawAsShotNeutral>
       <rawMd5>33165</rawMd5>
@@ -244,7 +244,7 @@
       <rawDataDimensions>3744 2784</rawDataDimensions>
       <rawDataActiveArea>24 28 3648 2736</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>120 120 120 120</rawMinValue>
+      <rawMinValue>128 128 128 128</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawAsShotNeutral>0.5986895986895987 1 0.30008210180623973 NaN</rawAsShotNeutral>
       <rawMd5>37727</rawMd5>
@@ -272,7 +272,7 @@
       <rawDataDimensions>3744 2784</rawDataDimensions>
       <rawDataActiveArea>24 28 3648 2736</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>120 120 120 120</rawMinValue>
+      <rawMinValue>128 128 128 128</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawAsShotNeutral>0.5808580858085809 1 0.47670639219934996 NaN</rawAsShotNeutral>
       <rawMd5>41705</rawMd5>

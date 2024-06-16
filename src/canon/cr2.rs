@@ -28,6 +28,7 @@ use once_cell::unsync::OnceCell;
 
 use crate::bitmap::{self, Bitmap};
 use crate::canon;
+use crate::canon::ColourFormat;
 use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
@@ -105,13 +106,12 @@ impl Cr2File {
         }
     }
 
-    /// Find the white balance in the file.
-    fn white_balance(&self) -> Option<[f64; 3]> {
+    /// Find the colour data in the file.
+    fn colour_data(&self) -> Option<Vec<u16>> {
         self.maker_note_ifd().and_then(|mnote| {
             mnote
                 .entry(exif::MNOTE_CANON_COLOR_DATA)
                 .and_then(|entry| entry.value_array::<u16>(mnote.endian()))
-                .and_then(|color_data| canon::color_data_to_as_shot(&color_data))
         })
     }
 
@@ -228,8 +228,20 @@ impl Cr2File {
         // XXX but I don't seem to see where this is encoded.
         rawdata.set_mosaic_pattern(Pattern::Rggb);
 
-        if let Some(wb) = self.white_balance() {
-            rawdata.set_as_shot_neutral(&wb);
+        if let Some(colour_data) = self.colour_data() {
+            if let Some(colour_format) = ColourFormat::identify(&colour_data) {
+                log::debug!("{colour_format:?}");
+                if let Some(blacks) = colour_format.blacks(&colour_data) {
+                    log::debug!("black {blacks:?}");
+                    rawdata.set_blacks(blacks);
+                }
+
+                if let Some(wb) = colour_format.as_shot(&colour_data) {
+                    rawdata.set_as_shot_neutral(&wb);
+                }
+            }
+        } else {
+            log::debug!("No colour data");
         }
 
         Ok(rawdata)
@@ -328,7 +340,9 @@ impl RawFileImpl for Cr2File {
                     let white: u32 = (1 << bpc) - 1;
                     (0, white as u16)
                 });
-            rawdata.set_blacks([black; 4]);
+            if rawdata.blacks() == &[0_u16, 0, 0, 0] {
+                rawdata.set_blacks([black; 4]);
+            }
             rawdata.set_whites([white; 4]);
 
             rawdata

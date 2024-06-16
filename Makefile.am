@@ -40,6 +40,7 @@ RUST_FILES = Cargo.lock \
 	src/bitmap.rs \
 	src/camera_ids.rs \
 	src/canon.rs \
+	src/canon/colour.rs \
 	src/canon/cr3.rs \
 	src/canon/cr2.rs \
 	src/canon/crw.rs \

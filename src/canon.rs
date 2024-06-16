@@ -21,6 +21,7 @@
 
 //! Canon specific code.
 
+mod colour;
 mod cr2;
 mod cr3;
 mod crw;
@@ -33,6 +34,7 @@ use lazy_static::lazy_static;
 use super::TypeId;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
+use colour::ColourFormat;
 pub(crate) use cr2::Cr2File;
 pub(crate) use cr3::Cr3File;
 pub(crate) use crw::CrwFile;
@@ -180,139 +182,6 @@ pub(crate) fn identify_from_maker_note(maker_note: &tiff::Dir) -> TypeId {
         log::error!("Canon model ID tag not found");
     }
     canon!(UNKNOWN)
-}
-
-/// Convert the color data from the Make Note to a white balance triple
-///
-/// Source <https://exiftool.org/TagNames/Canon.html#ColorData1>
-/// Also rawspeed <https://github.com/darktable-org/rawspeed/blob/a79bd3878389159a44b72b0e3eac9dca8a46568a/src/librawspeed/decoders/Cr2Decoder.cpp#L250>
-///  The first u16 is a version field, except for ColorData1 and ColorData2.
-pub(crate) fn color_data_to_as_shot(color_data: &[u16]) -> Option<[f64; 3]> {
-    log::debug!(
-        "Canon WB: version: {} size {}",
-        color_data[0] as i16,
-        color_data.len()
-    );
-    match color_data.len() {
-        // 20D and 350D
-        582 => {
-            // ColorData1
-            let r = color_data[25] as f64;
-            let g = color_data[25 + 1] as f64;
-            let b = color_data[25 + 3] as f64;
-            Some([g / r, 1.0, g / b])
-        }
-        // 1DmkII and 1DSmkII
-        653 => {
-            // ColorData2
-            let r = color_data[24] as f64;
-            let g = color_data[24 + 1] as f64;
-            let b = color_data[24 + 3] as f64;
-            Some([g / r, 1.0, g / b])
-        }
-
-        // These are CR3.
-
-        // M50, EOS R, EOS RP, SX70, M6mkII,
-        // M200, 90D, 250D and 850D
-        1816 | 1820 | 1824 => {
-            // ColorData9
-            let r = color_data[71] as f64;
-            let g = color_data[71 + 1] as f64;
-            let b = color_data[71 + 3] as f64;
-            Some([g / r, 1.0, g / b])
-        }
-        // 1DXmkIII, R5, R6
-        2024 | 3656 => {
-            // ColorData10
-            let r = color_data[85] as f64;
-            let g = color_data[85 + 1] as f64;
-            let b = color_data[85 + 3] as f64;
-            Some([g / r, 1.0, g / b])
-        }
-        // R3, R7 and R6mkII
-        3973 | 3778 => {
-            // ColorData11
-            let r = color_data[105] as f64;
-            let g = color_data[105 + 1] as f64;
-            let b = color_data[105 + 3] as f64;
-            Some([g / r, 1.0, g / b])
-        }
-        _ => {
-            // The first u16 is a version field (i16), except for
-            // ColorData1 and ColorData2.
-            match color_data[0] as i16 {
-                // 1DmkIIN, 5D, 30D, 400D
-                1 => {
-                    // ColorData3
-                    let r = color_data[63] as f64;
-                    let g = color_data[63 + 1] as f64;
-                    let b = color_data[63 + 3] as f64;
-                    Some([g / r, 1.0, g / b])
-                }
-                // 1DmkIII, 1DSmkIII, 1DmkIV, 5DmkII, 7D,
-                // 40D, 50D, 60D, 450D, 500D, 550D, 1000D
-                // and 1100D.
-                2..=7 | 9 => {
-                    // ColorData4
-                    let r = color_data[63] as f64;
-                    let g = color_data[63 + 1] as f64;
-                    let b = color_data[63 + 3] as f64;
-                    Some([g / r, 1.0, g / b])
-                }
-                // (-3) G10, G11, G12, G15, G16, G1X, G1XMkII, G7X, G5X,
-                // (-4) G7X MkII, G1XMkIII
-                -4..=-3 => {
-                    // ColorData5
-                    let r = color_data[71] as f64;
-                    let g = color_data[71 + 1] as f64;
-                    let b = color_data[71 + 3] as f64;
-                    Some([g / r, 1.0, g / b])
-                }
-                10 | 11 => {
-                    match color_data.len() {
-                        // 600D, 1200D
-                        1273 | 1275 => {
-                            // ColorData6
-                            let r = color_data[63] as f64;
-                            let g = color_data[63 + 1] as f64;
-                            let b = color_data[63 + 3] as f64;
-                            Some([g / r, 1.0, g / b])
-                        }
-                        _ => {
-                            // some are version 10, some are 11
-                            // 70D, 1DX firmware 1.x, 1DX, 70D,
-                            // 5DmkIII, 6D, 7DmkII, 100D, 650D, 700D,
-                            // 8000D, M and M2.
-                            // ColorData7
-                            let r = color_data[63] as f64;
-                            let g = color_data[63 + 1] as f64;
-                            let b = color_data[63 + 3] as f64;
-                            Some([g / r, 1.0, g / b])
-                        }
-                    }
-                }
-                12..=15 => {
-                    // 5DS/5DSR, 80D, 1300D, EOS 1DXmkII,
-                    // 5DmkIV, 6DmkII, 77D, 80D, 200D,
-                    // 800D, 1300D, 2000D, 4000D and 9000D.
-                    // ColorData8
-                    let r = color_data[63] as f64;
-                    let g = color_data[63 + 1] as f64;
-                    let b = color_data[63 + 3] as f64;
-                    Some([g / r, 1.0, g / b])
-                }
-                _ => {
-                    log::error!(
-                        "Unknown ColorData. (len={} version={})",
-                        color_data.len(),
-                        color_data[0] as i16
-                    );
-                    None
-                }
-            }
-        }
-    }
 }
 
 /// SensorInfo currently only contain the active area (x, y, w, h)
