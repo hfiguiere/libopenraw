@@ -20,7 +20,7 @@
       <rawDataDimensions>3596 2360</rawDataDimensions>
       <rawDataActiveArea>84 19 3504 2336</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMinValue>126 126 126 126</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawAsShotNeutral>0.48939247830279653 1 0.684885290148448 NaN</rawAsShotNeutral>
       <rawMd5>51638</rawMd5>

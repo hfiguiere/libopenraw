@@ -133,7 +133,7 @@ lazy_static::lazy_static! {
       0x3c4e,
       [ 7596, -978, -967, -4808, 12571, 2503, -1398, 2567, 5752 ] ),
     BuiltinMatrix::new( canon!(EOS_20D),
-      0,
+      126,
       0xfff,
       [ 6599, -537, -891, -8071, 15783, 2424, -1983, 2234, 7462 ] ),
     BuiltinMatrix::new( canon!(EOS_20DA),

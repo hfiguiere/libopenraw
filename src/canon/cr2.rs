@@ -26,7 +26,7 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::bitmap::{self, Bitmap};
+use crate::bitmap::Bitmap;
 use crate::canon;
 use crate::canon::ColourFormat;
 use crate::container::RawContainer;
@@ -219,9 +219,14 @@ impl Cr2File {
             .and_then(super::SensorInfo::new)
             .map(|sensor_info| sensor_info.0);
         rawdata.set_active_area(sensor_info);
-        // XXX they are not all RGGB.
+        // They are not all RGGB.
         // XXX but I don't seem to see where this is encoded.
-        rawdata.set_mosaic_pattern(Pattern::Rggb);
+        // For the 5DMKII, DNG set an odd row for the active area.
+        if self.type_id() == canon!(EOS_5DMKII) {
+            rawdata.set_mosaic_pattern(Pattern::Gbrg);
+        } else {
+            rawdata.set_mosaic_pattern(Pattern::Rggb);
+        }
 
         if let Some(colour_data) = self.colour_data() {
             if let Some(colour_format) = ColourFormat::identify(&colour_data) {
