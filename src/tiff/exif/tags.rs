@@ -210,6 +210,7 @@ pub const ORF_TAG_RAW_INFO: u16 = 0x3000;
 /// This tag is present in the RAW IFD for Canon CR2.
 pub const _CR2_TAG_C5D8: u16 = 0xc5d8;
 pub const _CR2_TAG_C5D9: u16 = 0xc5d9;
+pub const CR2_TAG_CFA_PATTERN: u16 = 0xc5e0;
 /// Exif tag for CR2 RAW "slices"
 pub const CR2_TAG_SLICE: u16 = 0xc640;
 pub const _CR2_TAG_SRAW_TYPE: u16 = 0xc6c5;

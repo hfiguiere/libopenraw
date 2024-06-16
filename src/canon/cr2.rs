@@ -106,6 +106,18 @@ impl Cr2File {
         }
     }
 
+    fn detect_mosaic_pattern(&self, cfa_ifd: &Dir) -> Pattern {
+        let cfa_pattern = cfa_ifd.uint_value(exif::CR2_TAG_CFA_PATTERN).unwrap_or(1);
+        match cfa_pattern {
+            3 => Pattern::Gbrg,
+            1 => Pattern::Rggb,
+            _ => {
+                log::error!("Unkown CFA Pattern value {cfa_pattern}");
+                Pattern::Rggb
+            }
+        }
+    }
+
     /// Find the colour data in the file.
     fn colour_data(&self) -> Option<Vec<u16>> {
         self.maker_note_ifd().and_then(|mnote| {
@@ -219,14 +231,7 @@ impl Cr2File {
             .and_then(super::SensorInfo::new)
             .map(|sensor_info| sensor_info.0);
         rawdata.set_active_area(sensor_info);
-        // They are not all RGGB.
-        // XXX but I don't seem to see where this is encoded.
-        // For the 5DMKII, DNG set an odd row for the active area.
-        if self.type_id() == canon!(EOS_5DMKII) {
-            rawdata.set_mosaic_pattern(Pattern::Gbrg);
-        } else {
-            rawdata.set_mosaic_pattern(Pattern::Rggb);
-        }
+        rawdata.set_mosaic_pattern(self.detect_mosaic_pattern(cfa_ifd));
 
         if let Some(colour_data) = self.colour_data() {
             if let Some(colour_format) = ColourFormat::identify(&colour_data) {

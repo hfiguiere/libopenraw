@@ -75,7 +75,7 @@
       <rawDataSize>37691520</rawDataSize>
       <rawDataDimensions>5360 3516</rawDataDimensions>
       <rawDataActiveArea>168 56 5184 3456</rawDataActiveArea>
-      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>2047 2046 2048 2047</rawMinValue>
       <rawMaxValue>13584 13584 13584 13584</rawMaxValue>
       <rawAsShotNeutral>0.5029469548133595 1 0.45309734513274336 NaN</rawAsShotNeutral>
@@ -103,7 +103,7 @@
       <rawDataSize>37691520</rawDataSize>
       <rawDataDimensions>5360 3516</rawDataDimensions>
       <rawDataActiveArea>168 56 5184 3456</rawDataActiveArea>
-      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>2046 2046 2049 2049</rawMinValue>
       <rawMaxValue>13584 13584 13584 13584</rawMaxValue>
       <rawAsShotNeutral>0.4727608494921514 1 0.6719160104986877 NaN</rawAsShotNeutral>
@@ -131,7 +131,7 @@
       <rawDataSize>44065536</rawDataSize>
       <rawDataDimensions>5792 3804</rawDataDimensions>
       <rawDataActiveArea>168 56 5616 3744</rawDataActiveArea>
-      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>1021 1021 1020 1020</rawMinValue>
       <rawMaxValue>15600 15600 15600 15600</rawMaxValue>
       <rawAsShotNeutral>0.5301786576533076 1 0.401609363569861 NaN</rawAsShotNeutral>
