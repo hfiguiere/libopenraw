@@ -327,7 +327,7 @@
       <rawDataActiveArea>72 16 3072 2048</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
-      <rawMaxValue>1023 1023 1023 1023</rawMaxValue>
+      <rawMaxValue>4000 4000 4000 4000</rawMaxValue>
       <rawAsShotNeutral>0.509840098400984 1 0.7310405643738977 NaN</rawAsShotNeutral>
       <rawMd5>22551</rawMd5>
       <metaOrientation>8</metaOrientation>
@@ -353,7 +353,7 @@
       <rawDataActiveArea>72 16 3072 2048</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
-      <rawMaxValue>1023 1023 1023 1023</rawMaxValue>
+      <rawMaxValue>4000 4000 4000 4000</rawMaxValue>
       <rawAsShotNeutral>0.6275614754098361 1 0.6664853101196954 NaN</rawAsShotNeutral>
       <rawMd5>52226</rawMd5>
       <metaOrientation>1</metaOrientation>

@@ -390,7 +390,29 @@ impl RawFileImpl for CrwFile {
                                 decompressor
                                     .decompress(&mut view)
                                     .map(|mut rawdata| {
-                                        rawdata.set_whites([(1 << 10) - 1; 4]);
+                                        let bpc = 10_u32;
+                                        let (black, white) = MATRICES
+                                            .iter()
+                                            .find(|m| m.camera == self.type_id())
+                                            .map(|m| {
+                                                (
+                                                    m.black,
+                                                    if m.white == 0 {
+                                                        // A 0 value for white isn't valid.
+                                                        let white: u32 = (1 << bpc) - 1;
+                                                        white as u16
+                                                    } else {
+                                                        m.white
+                                                    },
+                                                )
+                                            })
+                                            .unwrap_or_else(|| {
+                                                let white: u32 = (1 << bpc) - 1;
+                                                (0, white as u16)
+                                            });
+
+                                        rawdata.set_whites([white; 4]);
+                                        rawdata.set_blacks([black; 4]);
                                         rawdata.set_active_area(sensor_info.map(|v| v.1));
                                         if let Some(wb) = wb {
                                             rawdata.set_as_shot_neutral(&wb);
