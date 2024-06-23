@@ -202,6 +202,33 @@ impl OrfFile {
         }
     }
 
+    // Inspired from rawloader::decoders::packed::decode_12be_msb32
+    //  https://github.com/pedrocr/rawloader/blob/master/src/decoders/packed.rs#L111
+    fn decode_12be_olympus(buf: &[u8], width: usize, height: usize) -> Vec<u16> {
+        let mut out: Vec<u16> = vec![0; width * height];
+
+        let mut i = 0;
+        let mut o = 0;
+        while i < buf.len() {
+            let in_slice = &buf[i..];
+            let out_slice = &mut out[o..];
+
+            out_slice[0] = (in_slice[3] as u16) << 4 | in_slice[2] as u16 >> 4;
+            out_slice[1] = (in_slice[2] as u16 & 0x0f) << 8 | in_slice[1] as u16;
+            out_slice[2] = (in_slice[0] as u16) << 4 | in_slice[7] as u16 >> 4;
+            out_slice[3] = (in_slice[7] as u16 & 0x0f) << 8 | in_slice[6] as u16;
+            out_slice[4] = (in_slice[5] as u16) << 4 | in_slice[4] as u16 >> 4;
+            out_slice[5] = (in_slice[4] as u16 & 0x0f) << 8 | in_slice[11] as u16;
+            out_slice[6] = (in_slice[10] as u16) << 4 | in_slice[9] as u16 >> 4;
+            out_slice[7] = (in_slice[9] as u16 & 0x0f) << 8 | in_slice[8] as u16;
+
+            i += 12;
+            o += 8;
+        }
+
+        out
+    }
+
     /// Decompress the Olympus RawData. Could be unpack.
     fn decompress(&self, mut data: RawImage) -> RawImage {
         let width = data.width();
@@ -222,6 +249,8 @@ impl OrfFile {
                         data8.len(),
                     )
                     .ok()
+                } else if data8.len() == (height * width * 3 / 2) as usize {
+                    Some(Self::decode_12be_olympus(&data8, width as usize, height as usize))
                 } else {
                     // Olympus decompression
                     decompress_olympus(data8, width as usize, height as usize)
