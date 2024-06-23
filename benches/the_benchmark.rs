@@ -80,7 +80,7 @@ pub fn dump_benchmark(c: &mut Criterion) {
 fn ljpeg_benchmark(c: &mut Criterion) {
     c.bench_function("ljpeg", |b| {
         b.iter(|| {
-            let mut decompressor = LJpeg::new();
+            let mut decompressor = LJpeg::new(false);
             let io = std::fs::File::open("test/ljpegtest1.jpg").expect("Couldn't open");
             let mut buffered = std::io::BufReader::new(io);
             let _ = decompressor.discard_decompress(&mut buffered);

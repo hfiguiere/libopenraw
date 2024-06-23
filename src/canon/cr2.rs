@@ -92,7 +92,7 @@ impl Cr2File {
                 Pattern::default(),
             ))
         } else {
-            let mut decompressor = decompress::LJpeg::new();
+            let mut decompressor = decompress::LJpeg::new(true);
             // in fact on Canon CR2 files slices either do not exists
             // or is 3.
             if slices.len() > 1 {

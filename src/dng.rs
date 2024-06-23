@@ -187,7 +187,8 @@ impl DngFile {
             DataType::CompressedRaw => match rawdata.compression() {
                 tiff::Compression::LJpeg => {
                     if let Some(data) = rawdata.data8() {
-                        let mut decompressor = decompress::LJpeg::new();
+                        // We can get away with passing `is_raw` to false in DNG.
+                        let mut decompressor = decompress::LJpeg::new(false);
                         let mut io = std::io::Cursor::new(data);
                         decompressor.decompress(&mut io).map(|buffer| {
                             rawdata.set_with_buffer(buffer);

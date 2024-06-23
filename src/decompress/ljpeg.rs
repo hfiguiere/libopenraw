@@ -144,23 +144,21 @@ pub struct LJpeg {
     /// number of slices is always N+1
     /// This is for Canon CR2.
     slices: Option<Vec<u32>>,
+    /// The decompressed data is raw CFA. Safe to be false on DNG.
+    /// Mostly a hack for CR2.
+    is_raw: bool,
     cur_row: usize,
     prev_row: usize,
     mcu_row: Vec<Vec<Mcu>>,
     bit_reader: BitReader,
 }
 
-impl Default for LJpeg {
-    fn default() -> LJpeg {
-        LJpeg::new()
-    }
-}
-
 impl LJpeg {
     /// Create a new lossless JPEG decompressor.
-    pub fn new() -> LJpeg {
+    pub fn new(is_raw: bool) -> LJpeg {
         LJpeg {
             slices: None,
+            is_raw,
             cur_row: 0,
             prev_row: 1,
             mcu_row: Vec::new(),
@@ -214,13 +212,36 @@ impl LJpeg {
             dc_info.image_width,
             dc_info.image_height
         );
-        let width: u32 = if tiled {
+        let (width, height) = if tiled {
             // Tiled seems to have the actual width.
-            dc_info.image_width as u32
+            (dc_info.image_width as u32, dc_info.image_height as u32)
         } else {
             // Consistently the real width is the JPEG width * numComponent
-            // On CR2 and untiled DNG.
-            dc_info.image_width as u32 * dc_info.num_components as u32
+            // untiled DNG.
+            // Some CR2 files have 4 components so we need to double the height.
+            // Includes 6DMkII.
+            // The 7D has proper width and height. We check against the slices.
+            let slice_width: u32 = self.slices.as_ref().map(|s| s.iter().sum()).unwrap_or(0);
+            if self.is_raw && dc_info.num_components == 4 {
+                if slice_width != 0
+                    && (dc_info.image_width as u32 * dc_info.num_components as u32) == slice_width
+                {
+                    (
+                        dc_info.image_width as u32 * dc_info.num_components as u32,
+                        dc_info.image_height as u32,
+                    )
+                } else {
+                    (
+                        dc_info.image_width as u32 * 2,
+                        dc_info.image_height as u32 * 2,
+                    )
+                }
+            } else {
+                (
+                    dc_info.image_width as u32 * dc_info.num_components as u32,
+                    dc_info.image_height as u32,
+                )
+            }
         };
         // XXX RawImage::set_slices?
         self.decoder_struct_init(&mut dc_info)?;
@@ -228,9 +249,9 @@ impl LJpeg {
         self.decode_image(&mut dc_info, reader, &mut output)?;
 
         Ok(Tile {
-            height: dc_info.image_height as u32,
+            height,
             width,
-            u_height: dc_info.image_height as u32,
+            u_height: height,
             u_width: width,
             bpc: bpc as u16,
             buf: output.into(),
@@ -1262,7 +1283,7 @@ mod test {
 
     #[test]
     fn test_jpeg() {
-        let mut decompressor = LJpeg::new();
+        let mut decompressor = LJpeg::new(false);
 
         let io = std::fs::File::open("test/ljpegtest1.jpg");
         assert!(io.is_ok());
