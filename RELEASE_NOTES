@@ -11,7 +11,7 @@ What's (visibly) new in 0.4.0-alpha.6
 - Fujifilm RAF: get black and white levels.
 - Olympus ORF: get active area, black levels.
 - Sony ARW: improved parsing of A100 files.
-- Properly set black & white files for DNG, ERF, PEF, CR2.
+- Properly set black & white files for DNG, ERF, PEF, CR2, CRW.
 - Support rendering to sRGB with proper colours.
 - 25 new cameras listed.
 - 1 camera properly identified.

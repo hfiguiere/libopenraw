@@ -1,9 +1,15 @@
-libopenraw 0.4.0-alpha.6 -
+libopenraw 0.4.0-alpha.6 - 2024/06/23
 
 THIS IS A PRE-RELEASE.
 
 Bug fixes:
 
+  - Most Canon CR2 render properly:
+    - Fix black levels in Canon CR2. Closes issue #5.
+      https://gitlab.freedesktop.org/libopenraw/libopenraw/-/issues/5
+    - (Alpha) Fixed mosaic on Canon.
+  - Fix black levels for Canon CRW. Canon S30 and S40 now render
+    properly.
 
 libopenraw 0.4.0-alpha.5 - 2024/06/14
 

@@ -110,7 +110,7 @@ Canon CRW CHDK           N N N N N N N N N N N
 
 
 Nikon NEF                Y Y Y Y Y Y N Y Y   B
-Nikon NRW                Y         Y N Y Y   B
+Nikon NRW                Y         Y N Y Y B B
 Olympus ORF              Y Y Y Y Y Y N Y Y B Y
 Adobe DNG                Y Y B Y Y Y Y Y Y Y Y
 GoPro GPR                Y Y N Y Y Y Y Y X N Y
