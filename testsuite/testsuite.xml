@@ -574,6 +574,32 @@
     </results>
   </test>
   <test>
+    <name>NRW - COOLPIX A1000 - nikon_coolpix_a1000_01.nrw</name>
+    <file>/home/hub/samples/nrw/Coolpix_A1000/nikon_coolpix_a1000_01.nrw</file>
+    <results>
+      <rawType>NEF</rawType>
+      <rawTypeId>131147</rawTypeId>
+      <makerNoteCount>46</makerNoteCount>
+      <makerNoteId>Exif.Nikon</makerNoteId>
+      <exifMake>NIKON CORPORATION</exifMake>
+      <exifModel>COOLPIX A1000</exifModel>
+      <thumbNum>4</thumbNum>
+      <thumbSizes>160 4608 1440 640</thumbSizes>
+      <thumbFormats>JPEG JPEG JPEG JPEG</thumbFormats>
+      <thumbDataSizes>5173 2040248 317483 49389</thumbDataSizes>
+      <thumbMd5>46036 42210 13611 13558</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>31850496</rawDataSize>
+      <rawDataDimensions>4608 3456</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
+      <rawAsShotNeutral>0.5565217391304348 1 0.5752808988764045 NaN</rawAsShotNeutral>
+      <rawMd5>14720</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>ERF-test R-D1</name>
     <file>/home/hub/samples/erf/Epson_RD1/_eps8447.erf</file>
     <source>https://libopenraw.freedesktop.org/samples/erf/_eps8447.erf</source>
