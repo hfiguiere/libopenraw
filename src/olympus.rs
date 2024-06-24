@@ -28,6 +28,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
+use rayon::prelude::*;
 
 use crate::bitmap::{Bitmap, Rect};
 use crate::container;
@@ -202,6 +203,44 @@ impl OrfFile {
         }
     }
 
+    // Inspired from rawloader::decoders::packed::decode_12be_interlaced
+    //  https://github.com/pedrocr/rawloader/blob/master/src/decoders/packed.rs#L182
+    fn decode_12be_olympus_interlaced(buf: &[u8], width: usize, height: usize) -> Vec<u16> {
+        let half = (height + 1) >> 1;
+        // Interlaced data seems to be 2048 bytes aligned
+        let interlaced_offset = (((half * width * 3 / 2) >> 11) + 1) << 11;
+        let interlaced = &buf[interlaced_offset..];
+
+        let mut out: Vec<u16> = vec![0; width * height];
+        out.par_chunks_mut(width)
+            .enumerate()
+            .for_each(|(row, outb)| {
+                let off = row / 2 * width * 12 / 8;
+                let inb = if (row % 2) == 0 {
+                    &buf[off..]
+                } else {
+                    &interlaced[off..]
+                };
+
+                let mut i = 0;
+                let mut o = 0;
+                while o < outb.len() {
+                    let in_slice = &inb[i..];
+                    if in_slice.len() < 3 {
+                        // If read short, it's the end.
+                        break;
+                    }
+                    let out_slice = &mut outb[o..];
+                    out_slice[0] = ((in_slice[0] as u16) << 4) | ((in_slice[1] as u16) >> 4);
+                    out_slice[1] = ((in_slice[1] as u16 & 0x0f) << 8) | in_slice[2] as u16;
+                    i += 3;
+                    o += 2;
+                }
+            });
+
+        out
+    }
+
     // Inspired from rawloader::decoders::packed::decode_12be_msb32
     //  https://github.com/pedrocr/rawloader/blob/master/src/decoders/packed.rs#L111
     fn decode_12be_olympus(buf: &[u8], width: usize, height: usize) -> Vec<u16> {
@@ -250,7 +289,22 @@ impl OrfFile {
                     )
                     .ok()
                 } else if data8.len() == (height * width * 3 / 2) as usize {
-                    Some(Self::decode_12be_olympus(&data8, width as usize, height as usize))
+                    // It seems that this is the only way™.
+                    // Some decoder like rawloader use 3500,
+                    // but SP565UZ is 3664 and interlaced.
+                    if width < 3700 {
+                        Some(Self::decode_12be_olympus_interlaced(
+                            data8,
+                            width as usize,
+                            height as usize,
+                        ))
+                    } else {
+                        Some(Self::decode_12be_olympus(
+                            data8,
+                            width as usize,
+                            height as usize,
+                        ))
+                    }
                 } else {
                     // Olympus decompression
                     decompress_olympus(data8, width as usize, height as usize)
