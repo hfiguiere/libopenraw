@@ -141,7 +141,7 @@
   </test>
   <test>
     <name>CR2 - Canon EOS 200D - IMG_0100.CR2</name>
-    <file>/var/home/hub/samples/cr2/200D/IMG_0100.CR2</file>
+    <file>/home/hub/samples/cr2/200D/IMG_0100.CR2</file>
     <source>https://gitlab.freedesktop.org/libopenraw/libopenraw/uploads/dd063309426621784220d376d3773488/IMG_0100.CR2</source>
     <results>
       <rawType>CR2</rawType>
@@ -169,7 +169,7 @@
   </test>
   <test>
     <name>CR2 - Canon PowerShot G5 X - IMG_2240.CR2</name>
-    <file>/var/home/hub/samples/raw-pixls-us-data/Canon/PowerShot G5 X/IMG_2240.CR2</file>
+    <file>/home/hub/samples/raw-pixls-us-data/Canon/PowerShot G5 X/IMG_2240.CR2</file>
     <source>https://raw.pixls.us/getfile.php/4257/nice/Canon%20-%20PowerShot%20G5%20X%20-%20RAW%20(3:2).CR2</source>
     <results>
       <rawType>CR2</rawType>
@@ -197,7 +197,7 @@
   </test>
   <test>
     <name>CR2 - Canon PowerShot G7 X Mark II - IMG_0166.CR2</name>
-    <file>/var/home/hub/samples/raw-pixls-us-data/Canon/PowerShot G7 X Mark II/IMG_0166.CR2</file>
+    <file>/home/hub/samples/raw-pixls-us-data/Canon/PowerShot G7 X Mark II/IMG_0166.CR2</file>
     <source>https://raw.pixls.us/getfile.php/1682/nice/Canon%20-%20PowerShot%20G7%20X%20Mark%20II%20-%20RAW%20(3:2).CR2</source>
     <results>
       <rawType>CR2</rawType>
