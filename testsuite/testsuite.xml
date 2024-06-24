@@ -1035,6 +1035,62 @@
     </results>
   </test>
   <test>
+    <name>ORF - XZ-10 - Olympus - XZ-10 - 12bit (4:3).ORF</name>
+    <file>/home/hub/samples/orf/xz-10/Olympus - XZ-10 - 12bit (4:3).ORF</file>
+    <source>https://raw.pixls.us/getfile.php/2431/nice/Olympus%20-%20XZ-10%20-%2012bit%20(4:3).ORF</source>
+    <results>
+      <rawType>ORF</rawType>
+      <rawTypeId>458791</rawTypeId>
+      <makerNoteCount>7</makerNoteCount>
+      <makerNoteId>Exif.Olympus2</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>XZ-10           </exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 3200</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>10316 1074882</thumbDataSizes>
+      <thumbMd5>7700 41281</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>23824320</rawDataSize>
+      <rawDataDimensions>3984 2990</rawDataDimensions>
+      <rawDataActiveArea>8 14 3968 2976</rawDataActiveArea>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>200 200 200 200</rawMinValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
+      <rawAsShotNeutral>0.504930966469428 1 0.5844748858447488 NaN</rawAsShotNeutral>
+      <rawMd5>15043</rawMd5>
+      <metaOrientation>6</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>ORF - SP565UZ - Olympus - SP565UZ - 12bit (4_3).ORF</name>
+    <file>/home/hub/samples/orf/Olympus_SP565UZ/Olympus - SP565UZ - 12bit (4_3).ORF</file>
+    <source>https://raw.pixls.us/getfile.php/3438/nice/Olympus%20-%20SP565UZ%20-%2012bit%20(4:3).ORF</source>
+    <results>
+      <rawType>ORF</rawType>
+      <rawTypeId>458800</rawTypeId>
+      <makerNoteCount>46</makerNoteCount>
+      <makerNoteId>Exif.Olympus</makerNoteId>
+      <exifMake>OLYMPUS IMAGING CORP.  </exifMake>
+      <exifModel>SP565UZ                </exifModel>
+      <thumbNum>1</thumbNum>
+      <thumbSizes>160</thumbSizes>
+      <thumbFormats>JPEG</thumbFormats>
+      <thumbDataSizes>11264</thumbDataSizes>
+      <thumbMd5>26767</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>20086048</rawDataSize>
+      <rawDataDimensions>3664 2741</rawDataDimensions>
+      <rawDataActiveArea>0 0 3664 2741</rawDataActiveArea>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>0 0 0 0</rawMinValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
+      <rawAsShotNeutral>0.5446808510638298 1 0.565121412803532 NaN</rawAsShotNeutral>
+      <rawMd5>6098</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>MRW-test Dimage5</name>
     <file>/home/hub/samples/mrw/Dimage5/dimage5.mrw</file>
     <source>https://libopenraw.freedesktop.org/samples/mrw/dimage5.mrw</source>
