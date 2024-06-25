@@ -207,7 +207,7 @@ impl NefFile {
             .and_then(|mnote| {
                 mnote
                     .value::<String>(exif::MNOTE_NIKON_QUALITY)
-                    .map(|value| value == "NRW")
+                    .map(|value| value.trim() == "NRW")
             })
             .unwrap_or(false)
     }
@@ -568,11 +568,7 @@ impl RawFileImpl for NefFile {
                     })
                     .and_then(|rawdata| {
                         let compression = rawdata.compression();
-                        if self.is_nrw() {
-                            // XXX decompression not yet supported
-                            log::error!("NRW compression unsupported");
-                            Ok(rawdata)
-                        } else if self.is_d100() {
+                        if self.is_d100() {
                             self.unpack_nikon(rawdata)
                         } else if compression == tiff::Compression::None {
                             Ok(rawdata)
@@ -586,6 +582,10 @@ impl RawFileImpl for NefFile {
                             } else {
                                 Ok(rawdata)
                             }
+                        } else if self.is_nrw() {
+                            // XXX decompression not yet supported
+                            log::error!("NRW compression unsupported");
+                            Ok(rawdata)
                         } else {
                             log::error!("Invalid compression {:?}", compression);
                             Err(Error::InvalidFormat)
