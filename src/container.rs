@@ -41,6 +41,18 @@ pub enum Endian {
 }
 
 impl Endian {
+    /// Read an u16 from a reader based on the endian.
+    pub(crate) fn read_u16_from<R>(&self, rdr: &mut R) -> std::io::Result<u16>
+    where
+        R: Read,
+    {
+        match *self {
+            Endian::Big => rdr.read_u16::<BigEndian>(),
+            Endian::Little => rdr.read_u16::<LittleEndian>(),
+            _ => unreachable!("Endian undefined"),
+        }
+    }
+
     pub(crate) fn read_u16(&self, data: &[u8]) -> u16 {
         match *self {
             Endian::Big => BigEndian::read_u16(data),
@@ -48,7 +60,16 @@ impl Endian {
             _ => unreachable!("Endian undefined"),
         }
     }
+
+    pub(crate) fn read_u32(&self, data: &[u8]) -> u32 {
+        match *self {
+            Endian::Big => BigEndian::read_u32(data),
+            Endian::Little => LittleEndian::read_u32(data),
+            _ => unreachable!("Endian undefined"),
+        }
+    }
 }
+
 /// Allow converting a `byteorder::ByteOrder` type to a
 /// `Endian` value
 ///

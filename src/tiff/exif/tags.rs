@@ -254,6 +254,8 @@ pub const MNOTE_PENTAX_WHITELEVEL: u16 = 0x7e;
 pub const MNOTE_PENTAX_BLACK_POINT: u16 = 0x200;
 // These seem to be wb coefficients
 pub const MNOTE_PENTAX_WHITE_BALANCE: u16 = 0x201;
+// The Huffman table for decompression.
+pub const MNOTE_PENTAX_HUFFMAN_TABLE: u16 = 0x220;
 
 /* Canon MakerNote tags */
 /// The model ID for Canon cameras.

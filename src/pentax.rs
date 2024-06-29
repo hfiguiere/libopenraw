@@ -26,7 +26,7 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::bitmap::{Point, Rect, Size};
+use crate::bitmap::{Bitmap, Point, Rect, Size};
 use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
@@ -34,7 +34,11 @@ use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::utils;
-use crate::{Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId};
+use crate::{
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+};
+
+mod decompress;
 
 #[macro_export]
 macro_rules! pentax {
@@ -499,8 +503,26 @@ impl RawFileImpl for PefFile {
                     "pef.compression",
                     &format!("{:?}", rawdata.compression())
                 );
-                // XXX decompress
-
+                if let Some(data8) = rawdata.data8() {
+                    let huffman = self
+                        .ifd(tiff::IfdType::MakerNote)
+                        .and_then(|mnote| mnote.entry(exif::MNOTE_PENTAX_HUFFMAN_TABLE))
+                        .and_then(|e| e.value_array::<u8>(container.endian()));
+                    let huffman = huffman
+                        .as_ref()
+                        .map(|huffman| (huffman.as_slice(), container.endian()));
+                    probe!(self.probe, "pef.compression.huffman", huffman.is_some());
+                    if let Ok(image) = decompress::decompress(
+                        data8,
+                        huffman,
+                        rawdata.width() as usize,
+                        rawdata.height() as usize,
+                    ) {
+                        rawdata.set_data16(image);
+                        rawdata.set_data_type(DataType::Raw);
+                        rawdata.set_compression(tiff::Compression::None);
+                    }
+                }
                 rawdata
             })
     }

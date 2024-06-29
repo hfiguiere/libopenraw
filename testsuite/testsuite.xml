@@ -643,12 +643,12 @@
       <thumbFormats>JPEG JPEG JPEG</thumbFormats>
       <thumbDataSizes>6696 1254388 25279</thumbDataSizes>
       <thumbMd5>47529 63340 11625</thumbMd5>
-      <rawDataType>COMP_RAW</rawDataType>
-      <rawDataSize>8025398</rawDataSize>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>20656128</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
       <rawDataActiveArea>8 8 3872 2592</rawDataActiveArea>
       <rawCfaPattern>RGGB</rawCfaPattern>
-      <rawMd5>48788</rawMd5>
+      <rawMd5>49129</rawMd5>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawAsShotNeutral>0.6772486772486772 1 0.7398843930635838 NaN</rawAsShotNeutral>

@@ -99,6 +99,7 @@ RUST_FILES = Cargo.lock \
 	src/olympus/matrices.rs \
 	src/panasonic.rs \
 	src/pentax.rs \
+	src/pentax/decompress.rs \
 	src/probe.rs \
 	src/rawfile.rs \
 	src/rawimage.rs \
