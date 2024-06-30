@@ -166,6 +166,7 @@ pub(crate) struct OrfFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl OrfFile {
@@ -175,6 +176,7 @@ impl OrfFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 
@@ -278,6 +280,7 @@ impl OrfFile {
             .or_else(|| data.data16_as_u8())
             .and_then(|data8| {
                 if data8.len() == (height * ((width * 12 / 8) + ((width + 2) / 10))) as usize {
+                    probe!(self.probe, "orf.decompress.unpack", "true");
                     let mut buf = data8;
                     crate::decompress::unpack_from_reader(
                         &mut buf,
@@ -293,12 +296,14 @@ impl OrfFile {
                     // Some decoder like rawloader use 3500,
                     // but SP565UZ is 3664 and interlaced.
                     if width < 3700 {
+                        probe!(self.probe, "orf.decompress.interlaced", "true");
                         Some(Self::decode_12be_olympus_interlaced(
                             data8,
                             width as usize,
                             height as usize,
                         ))
                     } else {
+                        probe!(self.probe, "orf.decompress.12be", "true");
                         Some(Self::decode_12be_olympus(
                             data8,
                             width as usize,
@@ -307,6 +312,7 @@ impl OrfFile {
                     }
                 } else {
                     // Olympus decompression
+                    probe!(self.probe, "orf.decompress.olympus", "true");
                     decompress_olympus(data8, width as usize, height as usize)
                         .map_err(|err| {
                             log::error!("Decompression failed {}", err);
@@ -395,6 +401,9 @@ impl OrfFile {
 }
 
 impl RawFileImpl for OrfFile {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| {
             self.container();
@@ -413,6 +422,11 @@ impl RawFileImpl for OrfFile {
             container
                 .load(Some(Box::new(OrfFixup {})))
                 .expect("Olympus IFD container error");
+            probe!(
+                self.probe,
+                "raw.container.endian",
+                &format!("{:?}", container.endian())
+            );
             container
         })
     }
@@ -512,6 +526,7 @@ impl RawFileImpl for OrfFile {
                     let wbb = mnote.uint_value(exif::ORF_TAG_BLUE_MULTIPLIER);
                     if let Some(wbr) = wbr {
                         if let Some(wbb) = wbb {
+                            probe!(self.probe, "orf.ip.wb.mutlipliers", "true");
                             wb = Some([256.0 / wbr as f64, 1.0, 256.0 / wbb as f64, f64::NAN]);
                         }
                     }
@@ -522,12 +537,14 @@ impl RawFileImpl for OrfFile {
                                 .float_value_array(exif::ORF_TAG_IP_WHITE_BALANCE_RB)
                                 .filter(|v| v.len() == 2 || v.len() == 4)
                             {
+                                probe!(self.probe, "orf.ip.wb.rb", "true");
                                 wb = Some([256.0 / wb_rb[0], 1.0, 256.0 / wb_rb[1], f64::NAN]);
                             }
                         }
 
                         if let Some(blacks) = ip_dir.uint_value_array(exif::ORF_TAG_IP_BLACK_LEVEL2)
                         {
+                            probe!(self.probe, "orf.ip.black_level2", blacks.len());
                             if blacks.len() == 1 {
                                 data.set_blacks([blacks[0] as u16; 4]);
                             } else if blacks.len() == 4 {
@@ -535,6 +552,7 @@ impl RawFileImpl for OrfFile {
                             }
                         }
                         let active_area = Some(Rect::default()).and_then(|_| {
+                            probe!(self.probe, "orf.ip.active_area", "true");
                             let y = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_TOP)?;
                             let x = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_LEFT)?;
                             let width = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_WIDTH)?;

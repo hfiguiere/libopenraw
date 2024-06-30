@@ -170,7 +170,12 @@ impl LJpeg {
 
     /// Decompress the LJPEG stream into a tile.
     /// Pass `true` to `tiled` if it's an actual tiled file.
-    pub fn decompress_buffer(&mut self, reader: &mut dyn ReadAndSeek, tiled: bool) -> Result<Tile> {
+    pub fn decompress_buffer(
+        &mut self,
+        reader: &mut dyn ReadAndSeek,
+        tiled: bool,
+        probe: &Option<crate::Probe>,
+    ) -> Result<Tile> {
         let mut dc_info = DecompressInfo::default();
 
         self.read_file_header(&mut dc_info, reader)?;
@@ -208,6 +213,8 @@ impl LJpeg {
             // Tiled seems to have the actual width.
             (dc_info.image_width as u32, dc_info.image_height as u32)
         } else {
+            probe!(probe, "ljpeg.num_components", dc_info.num_components);
+            probe!(probe, "ljpeg.width", dc_info.image_width);
             // Consistently the real width is the JPEG width * numComponent
             // untiled DNG.
             // Some CR2 files have 4 components so we need to double the height.
@@ -253,11 +260,15 @@ impl LJpeg {
     #[cfg(any(feature = "fuzzing", feature = "bench"))]
     /// Used to fuzz or bench the decompressor that is otherwise crate only.
     pub fn discard_decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<()> {
-        self.decompress(reader).map(|_| ())
+        self.decompress(reader, &None).map(|_| ())
     }
 
-    pub(crate) fn decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<ImageBuffer<u16>> {
-        let tile = self.decompress_buffer(reader, false)?;
+    pub(crate) fn decompress(
+        &mut self,
+        reader: &mut dyn ReadAndSeek,
+        probe: &Option<crate::Probe>,
+    ) -> Result<ImageBuffer<u16>> {
+        let tile = self.decompress_buffer(reader, false, probe)?;
         Ok(ImageBuffer::with_data(
             tile.buf,
             tile.width,
@@ -1124,7 +1135,7 @@ mod test {
         assert!(io.is_ok());
         let io = io.unwrap();
         let mut buffered = std::io::BufReader::new(io);
-        let rawdata = decompressor.decompress(&mut buffered);
+        let rawdata = decompressor.decompress(&mut buffered, &None);
 
         assert!(rawdata.is_ok());
         let rawdata = rawdata.unwrap();

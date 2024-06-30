@@ -724,6 +724,7 @@ pub(crate) struct Rw2File {
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
     jpeg_preview: OnceCell<Option<jpeg::Container>>,
+    probe: Option<crate::Probe>,
 }
 
 impl Rw2File {
@@ -734,6 +735,7 @@ impl Rw2File {
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
             jpeg_preview: OnceCell::new(),
+            probe: None,
         })
     }
 
@@ -779,6 +781,9 @@ impl Rw2File {
 }
 
 impl RawFileImpl for Rw2File {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| {
             self.container();
@@ -804,6 +809,11 @@ impl RawFileImpl for Rw2File {
             container
                 .load(Some(Box::new(Rw2Fixup {})))
                 .expect("Rw2 container error");
+            probe!(
+                self.probe,
+                "raw.container.endian",
+                &format!("{:?}", container.endian())
+            );
             container
         })
     }
@@ -836,6 +846,7 @@ impl RawFileImpl for Rw2File {
                             },
                         ));
 
+                        probe!(self.probe, "rw2.jpeg_preview.thumbnail", "true");
                         Some(())
                     });
 
@@ -882,6 +893,7 @@ impl RawFileImpl for Rw2File {
                     }
                     let len = self.reader.length() - offset as u64;
                     log::debug!("Panasonic Raw offset: {}", offset);
+                    probe!(self.probe, "rw2.raw_offset", true);
                     thumbnail::DataOffset {
                         offset: offset as u64,
                         len,
@@ -893,6 +905,7 @@ impl RawFileImpl for Rw2File {
                     let len = cfa
                         .uint_value(exif::EXIF_TAG_STRIP_BYTE_COUNTS)
                         .ok_or(Error::NotFound)? as u64;
+                    probe!(self.probe, "rw2.raw_tiff_offset", true);
                     log::debug!("Panasonic TIFF Raw offset: {} {} bytes", offset, len);
                     thumbnail::DataOffset { offset, len }
                 };
@@ -931,12 +944,15 @@ impl RawFileImpl for Rw2File {
             );
             let mut packed = false;
             let data_type = if real_len >= (pixel_count * 2) as u64 {
+                probe!(self.probe, "rw2.compression", "unpacked");
                 DataType::Raw
             } else if real_len >= (pixel_count * 3 / 2) as u64 {
                 // Need to unpack
+                probe!(self.probe, "rw2.compression", "packed");
                 packed = true;
                 DataType::Raw
             } else {
+                probe!(self.probe, "rw2.compression", "panasonic");
                 DataType::CompressedRaw
             };
             let mut raw_data = match data_type {
@@ -974,6 +990,7 @@ impl RawFileImpl for Rw2File {
                 _ => return Err(Error::NotFound),
             };
             if let Some(compression) = cfa.value::<u16>(exif::RW2_TAG_IMAGE_COMPRESSION) {
+                probe!(self.probe, "rw2.compression.value", compression);
                 raw_data.set_compression((compression as u32).into());
             }
             let x = cfa
@@ -1033,11 +1050,13 @@ impl RawFileImpl for Rw2File {
             let wbb = cfa.uint_value(exif::RW2_TAG_WB_BLUE_LEVEL);
 
             if let Some(wbg) = wbg {
+                probe!(self.probe, "rw2.wb.rgb", true);
                 let wbg = wbg as f64;
                 let wbr = wbr.map(|wbr| wbg / wbr as f64).unwrap_or(1.0);
                 let wbb = wbb.map(|wbb| wbg / wbb as f64).unwrap_or(1.0);
                 raw_data.set_as_shot_neutral(&[wbr, 1.0, wbb, f64::NAN]);
             } else {
+                probe!(self.probe, "rw2.wb.rb_balance", true);
                 let wbr = cfa.uint_value(exif::RW2_TAG_RED_BALANCE);
                 let wbb = cfa.uint_value(exif::RW2_TAG_BLUE_BALANCE);
                 #[allow(clippy::unnecessary_unwrap)]

@@ -29,6 +29,13 @@ use libopenraw::{
     rawfile_from_file, DataType, Error, Ifd, Image, RawFile, RawImage, Result, Thumbnail,
 };
 
+#[derive(Clone, Copy, PartialEq)]
+enum ProbeType {
+    None,
+    Probe,
+    ProbeOnly,
+}
+
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();
 
@@ -38,6 +45,8 @@ pub fn main() {
     opts.optflag("t", "", "Extract thumbnails");
     opts.optflag("R", "", "Extract Raw data");
     opts.optflag("n", "", "No decompression");
+    opts.optflag("p", "probe", "Probe file");
+    opts.optflag("P", "probe-only", "Only probe file (unimplemented)");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -59,6 +68,13 @@ pub fn main() {
     let extract_raw = matches.opt_present("R");
     let skip_decompress = matches.opt_present("n");
     let dev_mode = matches.opt_present("D");
+    let probe = if matches.opt_present("P") {
+        ProbeType::ProbeOnly
+    } else if matches.opt_present("p") {
+        ProbeType::Probe
+    } else {
+        ProbeType::None
+    };
 
     for name in matches.free.iter() {
         process_file(
@@ -67,6 +83,7 @@ pub fn main() {
             extract_raw,
             skip_decompress,
             dev_mode,
+            probe,
         );
     }
 }
@@ -89,12 +106,12 @@ fn save_thumbnail(p: &str, thumb: &Thumbnail) {
                 if let Some(d) = thumb.data8() {
                     let mut f = std::fs::File::create(&fname).expect("Couldn't open file");
                     let amount = f.write(d).expect("Couldn't write thumbnail");
-                    println!("Written {fname:?}: {amount} bytes");
+                    eprintln!("Written {fname:?}: {amount} bytes");
                 }
             }
         }
         _ => {
-            println!("Unsupported format {:?}", thumb.data_type());
+            eprintln!("Unsupported format {:?}", thumb.data_type());
         }
     }
 }
@@ -120,7 +137,7 @@ fn save_raw(p: &str, rawdata: &RawImage) -> Result<usize> {
                 f.write_u16::<BigEndian>(*b)?;
                 amount += 2;
             }
-            println!("Written Raw {raw:?}: {amount} bytes");
+            eprintln!("Written Raw {raw:?}: {amount} bytes");
         }
 
         Ok(amount)
@@ -206,7 +223,7 @@ fn extract_rawdata(
         }
         if extract_raw {
             if let Err(err) = save_raw(p, &rawdata) {
-                println!("Saving raw failed: {err}");
+                eprintln!("Saving raw failed: {err}");
             }
         }
     } else {
@@ -220,13 +237,19 @@ fn process_file(
     extract_raw: bool,
     skip_decompress: bool,
     dev_mode: bool,
+    probe: ProbeType,
 ) {
-    let rawfile = rawfile_from_file(p, None);
-
     info!("Diags {}", p);
 
+    let mut rawfile = rawfile_from_file(p, None);
     match rawfile {
-        Ok(ref rawfile) => {
+        Ok(ref mut rawfile) => {
+            #[cfg(feature = "probe")]
+            if probe != ProbeType::None {
+                use std::rc::Rc;
+                Rc::get_mut(rawfile).unwrap().set_probe(true);
+            }
+
             println!("Raw type: {:?}", rawfile.type_());
             println!("MIME type: {}", rawfile.mime_type());
             println!("Vendor id: {}", rawfile.vendor_id());
@@ -271,7 +294,7 @@ fn process_file(
                         }
                     }
                     Err(err) => {
-                        println!("Failed to fetch preview for {size}: {err}");
+                        eprintln!("Failed to fetch preview for {size}: {err}");
                     }
                 }
             }
@@ -289,9 +312,16 @@ fn process_file(
             }
             let orientation = rawfile.orientation();
             println!("Orientation: {orientation}");
+
+            #[cfg(feature = "probe")]
+            if probe != ProbeType::None {
+                if let Some(probe) = rawfile.probe() {
+                    println!("Probe:\n{}", probe.print_str());
+                }
+            }
         }
         Err(err) => {
-            println!("Failed to open raw file: {err}");
+            eprintln!("Failed to open raw file: {err}");
         }
     }
 }

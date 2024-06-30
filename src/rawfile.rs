@@ -99,6 +99,12 @@ pub trait RawFileImpl {
 
     /// Get the builtin colour matrix for this file.
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>>;
+
+    #[cfg(feature = "probe")]
+    fn set_probe(&mut self, probe: bool);
+
+    #[cfg(feature = "probe")]
+    fn probe(&self) -> Option<&crate::Probe>;
 }
 
 /// Identify the RAW file type from file extension
@@ -398,6 +404,7 @@ mod test {
     struct TestRawFile {
         container: TestContainer,
         thumbnails: OnceCell<ThumbnailStorage>,
+        probe: Option<crate::Probe>,
     }
 
     impl TestRawFile {
@@ -405,10 +412,14 @@ mod test {
             TestRawFile {
                 container: TestContainer::new(),
                 thumbnails: OnceCell::new(),
+                probe: None,
             }
         }
     }
     impl RawFileImpl for TestRawFile {
+        #[cfg(feature = "probe")]
+        probe_imp!();
+
         fn identify_id(&self) -> TypeId {
             TypeId::default()
         }

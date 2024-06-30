@@ -169,6 +169,7 @@ pub(crate) struct DngFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl DngFile {
@@ -178,39 +179,47 @@ impl DngFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 
-    fn decompress(mut rawdata: RawImage) -> Result<RawImage> {
+    fn decompress(&self, mut rawdata: RawImage) -> Result<RawImage> {
         match rawdata.data_type() {
             DataType::Raw => Ok(rawdata),
-            DataType::CompressedRaw => match rawdata.compression() {
-                tiff::Compression::LJpeg => {
-                    if let Some(data) = rawdata.data8() {
-                        // We can get away with passing `is_raw` to false in DNG.
-                        let mut decompressor = decompress::LJpeg::new(false);
-                        let mut io = std::io::Cursor::new(data);
-                        decompressor.decompress(&mut io).map(|buffer| {
-                            rawdata.set_with_buffer(buffer);
-                            rawdata.set_data_type(DataType::Raw);
-                            rawdata
-                        })
-                    } else if rawdata.tile_data().is_some() {
-                        let decompressor = decompress::TiledLJpeg::new();
-                        decompressor.decompress(rawdata)
-                    } else {
-                        log::error!("No data to decompress LJPEG");
+            DataType::CompressedRaw => {
+                probe!(
+                    self.probe,
+                    "dng.compression",
+                    format!("{:?}", rawdata.compression())
+                );
+                match rawdata.compression() {
+                    tiff::Compression::LJpeg => {
+                        if let Some(data) = rawdata.data8() {
+                            // We can get away with passing `is_raw` to false in DNG.
+                            let mut decompressor = decompress::LJpeg::new(false);
+                            let mut io = std::io::Cursor::new(data);
+                            decompressor.decompress(&mut io, &self.probe).map(|buffer| {
+                                rawdata.set_with_buffer(buffer);
+                                rawdata.set_data_type(DataType::Raw);
+                                rawdata
+                            })
+                        } else if rawdata.tile_data().is_some() {
+                            let decompressor = decompress::TiledLJpeg::new();
+                            decompressor.decompress(rawdata, &self.probe)
+                        } else {
+                            log::error!("No data to decompress LJPEG");
+                            Ok(rawdata)
+                        }
+                    }
+                    _ => {
+                        log::error!(
+                            "Unsupported compression for DNG: {:?}",
+                            rawdata.compression()
+                        );
                         Ok(rawdata)
                     }
                 }
-                _ => {
-                    log::error!(
-                        "Unsupported compression for DNG: {:?}",
-                        rawdata.compression()
-                    );
-                    Ok(rawdata)
-                }
-            },
+            }
             _ => {
                 log::warn!("Unexpected data type for DNG: {:?}", rawdata.data_type());
                 Ok(rawdata)
@@ -220,6 +229,9 @@ impl DngFile {
 }
 
 impl RawFileImpl for DngFile {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| {
             self.container();
@@ -237,6 +249,11 @@ impl RawFileImpl for DngFile {
             let mut container =
                 tiff::Container::new(view, vec![(tiff::IfdType::Main, None)], self.type_());
             container.load(None).expect("IFD container error");
+            probe!(
+                self.probe,
+                "raw.container.endian",
+                &format!("{:?}", container.endian())
+            );
             container
         })
     }
@@ -272,6 +289,7 @@ impl RawFileImpl for DngFile {
                 self.ifd(tiff::IfdType::Main).and_then(|dir| {
                     // Leica Monochrom has the main IFD being primary.
                     if dir.is_primary() {
+                        probe!(self.probe, "dng.main_is_primary", "true");
                         Some(dir)
                     } else {
                         dir.get_sub_ifds(self.container.get().unwrap())
@@ -338,7 +356,7 @@ impl RawFileImpl for DngFile {
             })
             .and_then(|rawdata| {
                 if !skip_decompress {
-                    Self::decompress(rawdata)
+                    self.decompress(rawdata)
                 } else {
                     Ok(rawdata)
                 }

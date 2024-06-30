@@ -2,7 +2,7 @@
 /*
  * libopenraw - decompress/tiled.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -78,8 +78,9 @@ impl TiledLJpeg {
     }
 
     /// Decompress the RawImage into a new RawImage.
-    pub fn decompress(&self, rawdata: RawImage) -> Result<RawImage> {
+    pub fn decompress(&self, rawdata: RawImage, probe: &Option<crate::Probe>) -> Result<RawImage> {
         if let Some(tiles) = rawdata.tile_data() {
+            probe!(probe, "ljpeg.tiled", "true");
             let tile_size = rawdata.tile_size();
             let dec_tiles: Vec<Option<Tile>> = tiles
                 .par_iter()
@@ -88,7 +89,9 @@ impl TiledLJpeg {
                     let mut buffer = std::io::Cursor::new(tile.as_slice());
                     // Tiles should be fine to have `is_raw` set to false.
                     let mut decompressor = LJpeg::new(false);
-                    decompressor.decompress_buffer(&mut buffer, true).ok()
+                    decompressor
+                        .decompress_buffer(&mut buffer, true, &None)
+                        .ok()
                 })
                 .map(|tile| {
                     tile.map(|mut tile| {

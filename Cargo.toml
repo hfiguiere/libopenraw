@@ -46,7 +46,8 @@ image = { version = "0.25.1", features = [ "png", "jpeg" ], default-features = f
 test-assembler = "0.1.2"
 
 [features]
-default = ["dump", "bench", "capi"]
+default = ["dump", "bench", "capi", "probe"]
+probe = []
 bench = []
 ## Build the C API.
 capi = ["libc"]

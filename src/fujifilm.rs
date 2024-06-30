@@ -154,6 +154,7 @@ pub(crate) struct RafFile {
     reader: Rc<Viewer>,
     container: OnceCell<raf::RafContainer>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl RafFile {
@@ -162,11 +163,15 @@ impl RafFile {
             reader,
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 }
 
 impl RawFileImpl for RafFile {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         self.container();
         let container = self.container.get().unwrap();
@@ -183,6 +188,11 @@ impl RawFileImpl for RafFile {
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
             let mut container = raf::RafContainer::new(view);
             container.load().expect("Raf container error");
+            probe!(
+                self.probe,
+                "raw.container.endian",
+                &format!("{:?}", container.endian())
+            );
             container
         })
     }
@@ -238,6 +248,7 @@ impl RawFileImpl for RafFile {
                                     data: Data::Bytes(bytes),
                                 },
                             ));
+                            probe!(self.probe, "raf.thumbnail.exif", true);
                             Some(())
                         })
                     })
@@ -310,13 +321,17 @@ impl RawFileImpl for RafFile {
 
                 // It's an XTrans if there is a `TAG_CFA_PATTERN` and it has 36 elements.
                 let pattern = container.value(raf::TAG_CFA_PATTERN).and_then(|v| match v {
-                    raf::Value::Bytes(pattern) => Some(pattern),
+                    raf::Value::Bytes(pattern) => {
+                        probe!(self.probe, "raf.cfa_pattern", true);
+                        Some(pattern)
+                    }
                     _ => None,
                 });
 
                 let mut wb = container.value(raf::TAG_WB_OLD).and_then(|v| match v {
                     raf::Value::Bytes(wb) => {
                         // XXX Unsure of the format here.
+                        probe!(self.probe, "raf.wb.old", true);
                         let g = u16::from_be_bytes(wb[0..2].try_into().ok()?) as f64;
                         let r = u16::from_be_bytes(wb[2..4].try_into().ok()?) as f64;
                         let b = u16::from_be_bytes(wb[6..8].try_into().ok()?) as f64;
@@ -341,8 +356,11 @@ impl RawFileImpl for RafFile {
                 };
 
                 log::debug!("RAF raw props {:x}", raw_props);
-                // let layout = raw_props & 0xff000000 >> 24 >> 7;
-                let compressed = ((raw_props & 0xff0000) >> 18 & 8) != 0;
+                let layout = raw_props & 0xff000000 >> 24 >> 7;
+                probe!(self.probe, "raf.layout", layout);
+                let compression = (raw_props & 0xff0000) >> 18 & 8;
+                probe!(self.probe, "raf.compression", compression);
+                let compressed = compression != 0;
                 log::debug!("compressed {compressed}");
 
                 let mut cfa_offset: u64 = 0;
@@ -370,6 +388,7 @@ impl RawFileImpl for RafFile {
                             .unwrap_or_else(|| vec![0_u32; 4]);
                         if wb.is_none() {
                             let wb_grb = dir.uint_value_array(raf::FUJI_TAG_RAW_WB_GRB).map(|v| {
+                                probe!(self.probe, "raf.wb.grb", true);
                                 let g = v[0] as f64;
                                 [g / v[1] as f64, 1.0, g / v[2] as f64, f64::NAN]
                             });

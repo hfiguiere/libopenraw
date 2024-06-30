@@ -50,6 +50,7 @@ pub(crate) struct Cr2File {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl Cr2File {
@@ -59,12 +60,18 @@ impl Cr2File {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 
     fn is_cr2(&self) -> bool {
         let id = self.type_id();
-        id != canon!(EOS_1D) && id != canon!(EOS_1DS)
+        if id != canon!(EOS_1D) && id != canon!(EOS_1DS) {
+            probe!(self.probe, "cr2.is_cr2", "true");
+            true
+        } else {
+            false
+        }
     }
 
     /// Get the raw bytes.
@@ -96,11 +103,12 @@ impl Cr2File {
             // in fact on Canon CR2 files slices either do not exists
             // or is 3.
             if slices.len() > 1 {
+                probe!(self.probe, "cr2.slices", "true");
                 decompressor.set_slices(slices);
             }
 
             let mut io = std::io::Cursor::new(data);
-            decompressor.decompress(&mut io).map(|buffer| {
+            decompressor.decompress(&mut io, &self.probe).map(|buffer| {
                 RawImage::with_image_buffer(buffer, DataType::Raw, Pattern::default())
             })
         }
@@ -108,11 +116,13 @@ impl Cr2File {
 
     fn detect_mosaic_pattern(&self, cfa_ifd: &Dir) -> Pattern {
         let cfa_pattern = cfa_ifd.uint_value(exif::CR2_TAG_CFA_PATTERN).unwrap_or(1);
+        probe!(self.probe, "cr2.cfa", cfa_pattern);
         match cfa_pattern {
             3 => Pattern::Gbrg,
             1 => Pattern::Rggb,
             _ => {
                 log::error!("Unkown CFA Pattern value {cfa_pattern}");
+                probe!(self.probe, "cr2.cfa", "false");
                 Pattern::Rggb
             }
         }
@@ -132,6 +142,7 @@ impl Cr2File {
         self.maker_note_ifd()
             .and_then(|mnote| mnote.uint_value_array(exif::MNOTE_CANON_WHITE_BALANCE_TABLE))
             .map(|v| {
+                probe!(self.probe, "cr2.old_wb", "true");
                 let g = v[1] as f64;
                 [g / v[0] as f64, 1.0, g / v[2] as f64]
             })
@@ -141,6 +152,8 @@ impl Cr2File {
     fn load_tif_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         self.container();
         let container = self.container.get().unwrap();
+
+        probe!(self.probe, "cr2.tiff_raw", "true");
 
         let cfa_ifd = self.ifd(tiff::IfdType::Raw).ok_or_else(|| {
             log::debug!("CFA IFD not found");
@@ -155,6 +168,7 @@ impl Cr2File {
         let byte_len = cfa_ifd
             .uint_value(exif::MNOTE_CANON_RAW_DATA_LENGTH)
             .unwrap_or_else(|| {
+                probe!(self.probe, "cr2.no_tiff_raw_data_len", "true");
                 // not found on the 1D, so we calculate it.
                 let len = std::cmp::min(container.borrow_view_mut().len(), u32::MAX as u64) as u32;
                 len - offset
@@ -200,6 +214,7 @@ impl Cr2File {
             })
             .and_then(|entry| entry.uint_value_array(container.endian()))
             .or_else(|| {
+                probe!(self.probe, "cr2.slices", "false");
                 log::debug!("CR2 slice value not found");
                 None
             })
@@ -212,9 +227,17 @@ impl Cr2File {
         // But we need this if we skip decompression.
         let width = cfa_ifd
             .uint_value(exif::EXIF_TAG_PIXEL_X_DIMENSION)
+            .map(|value| {
+                probe!(self.probe, "cr2.exif_x", "true");
+                value
+            })
             .unwrap_or_default();
         let height = cfa_ifd
             .uint_value(exif::EXIF_TAG_PIXEL_Y_DIMENSION)
+            .map(|value| {
+                probe!(self.probe, "cr2.exif_y", "true");
+                value
+            })
             .unwrap_or_default();
 
         let mut rawdata = self.get_raw_bytes(
@@ -229,20 +252,32 @@ impl Cr2File {
         let sensor_info = self
             .ifd(tiff::IfdType::MakerNote)
             .and_then(super::SensorInfo::new)
-            .map(|sensor_info| sensor_info.0);
+            .map(|sensor_info| {
+                probe!(self.probe, "cr2.sensor_info", "true");
+                sensor_info.0
+            });
         rawdata.set_active_area(sensor_info);
         rawdata.set_mosaic_pattern(self.detect_mosaic_pattern(cfa_ifd));
 
         if let Some(colour_data) = self.colour_data() {
             if let Some(colour_format) = ColourFormat::identify(&colour_data) {
+                probe!(
+                    self.probe,
+                    "cr2.colour_format",
+                    &format!("{colour_format:?}")
+                );
                 log::debug!("{colour_format:?}");
                 if let Some(blacks) = colour_format.blacks(&colour_data) {
                     log::debug!("black {blacks:?}");
                     rawdata.set_blacks(blacks);
+                } else {
+                    probe!(self.probe, "cr2.no_blacks", "true");
                 }
 
                 if let Some(wb) = colour_format.as_shot(&colour_data) {
                     rawdata.set_as_shot_neutral(&wb);
+                } else {
+                    probe!(self.probe, "cr2.no_wb", "true");
                 }
             }
         } else {
@@ -254,6 +289,9 @@ impl Cr2File {
 }
 
 impl RawFileImpl for Cr2File {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| {
             if let Some(maker_note) = self.maker_note_ifd() {
@@ -282,6 +320,11 @@ impl RawFileImpl for Cr2File {
                 self.type_(),
             );
             container.load(None).expect("TIFF container error");
+            probe!(
+                self.probe,
+                "raw.container.endian",
+                &format!("{:?}", container.endian())
+            );
             container
         })
     }
@@ -346,6 +389,7 @@ impl RawFileImpl for Cr2File {
                     (0, white as u16)
                 });
             if rawdata.blacks() == &[0_u16, 0, 0, 0] {
+                probe!(self.probe, "cr2.static_black", "true");
                 rawdata.set_blacks([black; 4]);
             }
             rawdata.set_whites([white; 4]);

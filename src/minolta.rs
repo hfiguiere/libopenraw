@@ -136,6 +136,7 @@ pub(crate) struct MrwFile {
     reader: Rc<Viewer>,
     container: OnceCell<MrwContainer>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl MrwFile {
@@ -144,11 +145,15 @@ impl MrwFile {
             reader,
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 }
 
 impl RawFileImpl for MrwFile {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         self.container();
         *self
@@ -165,7 +170,11 @@ impl RawFileImpl for MrwFile {
             let view = Viewer::create_view(&self.reader, 0).expect("Created view");
             let mut container = MrwContainer::new(view);
             container.load().expect("Failed to load container");
-
+            probe!(
+                self.probe,
+                "raw.container.endian",
+                &format!("{:?}", container.endian())
+            );
             container
         })
     }
@@ -179,6 +188,7 @@ impl RawFileImpl for MrwFile {
                 // Old files have the thumbnail in the Exif entry `MNOTE_MINOLTA_THUMBNAIL`.
                 let buffer = if let Some(preview) = makernote.entry(exif::MNOTE_MINOLTA_THUMBNAIL) {
                     // e.data() is incorrect.
+                    probe!(self.probe, "mrw.old_thumbnail", "true");
                     preview
                         .offset()
                         .map(|offset| ifd.load_buffer8(offset as u64, preview.count as u64))
@@ -242,6 +252,7 @@ impl RawFileImpl for MrwFile {
                 2 * rawinfo.x * rawinfo.y
             } as u64;
             let mut rawdata = if rawinfo.is_compressed {
+                probe!(self.probe, "mrw.packed", "true");
                 let raw = container.load_buffer8(cfa_offset, cfa_len);
                 if skip_decompress {
                     RawImage::with_data8(
@@ -284,10 +295,12 @@ impl RawFileImpl for MrwFile {
                 .find(|m| m.camera == self.type_id())
                 .map(|m| (m.black, m.white))
             {
+                probe!(self.probe, "mrw.whites_blacks", "true");
                 rawdata.set_whites([white; 4]);
                 rawdata.set_blacks([black; 4]);
             }
             if let Some(wb) = container.get_wb() {
+                probe!(self.probe, "mrw.wb", "true");
                 rawdata.set_as_shot_neutral(&wb);
             }
 

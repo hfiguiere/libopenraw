@@ -780,6 +780,7 @@ pub(crate) struct ArwFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl ArwFile {
@@ -789,6 +790,7 @@ impl ArwFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 
@@ -911,6 +913,9 @@ impl ArwFile {
 }
 
 impl RawFileImpl for ArwFile {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| {
             if let Some(maker_note) = self.maker_note_ifd() {

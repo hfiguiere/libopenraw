@@ -29,6 +29,9 @@ use once_cell::sync::Lazy;
 mod dump;
 #[macro_use]
 mod utils;
+#[cfg(feature = "probe")]
+#[macro_use]
+mod probe;
 
 mod apple;
 mod bitmap;
@@ -67,6 +70,8 @@ pub use bitmap::{Bitmap, Image, Point, Rect, Size};
 pub use colour::ColourSpace;
 pub use dump::Dump;
 pub use mosaic::Pattern as CfaPattern;
+#[cfg(feature = "probe")]
+pub use probe::Probe;
 pub use rawfile::{RawFile, RawFileHandle, RawFileImpl};
 pub use rawimage::RawImage;
 pub use render::{RenderingOptions, RenderingStage};

@@ -2,7 +2,7 @@
 /*
  * libopenraw - jpeg.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -48,6 +48,7 @@ pub(crate) struct JpegFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl JpegFile {
@@ -57,11 +58,15 @@ impl JpegFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 }
 
 impl RawFileImpl for JpegFile {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| TypeId(vendor::JPEG, 0))
     }

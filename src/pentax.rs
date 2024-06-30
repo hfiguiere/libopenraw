@@ -2,7 +2,7 @@
 /*
  * libopenraw - pentax.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -335,6 +335,7 @@ pub(crate) struct PefFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl PefFile {
@@ -344,11 +345,15 @@ impl PefFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 }
 
 impl RawFileImpl for PefFile {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| {
             if let Some(maker_note) = self.maker_note_ifd() {
@@ -381,6 +386,11 @@ impl RawFileImpl for PefFile {
                 self.type_(),
             );
             container.load(None).expect("PEF container error");
+            probe!(
+                self.probe,
+                "raw.container.endian",
+                &format!("{:?}", container.endian())
+            );
             container
         })
     }
@@ -455,9 +465,11 @@ impl RawFileImpl for PefFile {
                             Some(())
                         });
                     if let Some(blacks) = mnote.uint_value_array(exif::MNOTE_PENTAX_BLACK_POINT) {
+                        probe!(self.probe, "pef.blacks", "true");
                         rawdata.set_blacks(utils::to_quad(&blacks));
                     }
                     if let Some(white) = mnote.uint_value(exif::MNOTE_PENTAX_WHITELEVEL) {
+                        probe!(self.probe, "pef.whites", "true");
                         rawdata.set_whites([white as u16; 4]);
                     } else if let Some((black, white)) = MATRICES
                         .iter()
@@ -465,10 +477,12 @@ impl RawFileImpl for PefFile {
                         .map(|m| (m.black, m.white))
                     {
                         if white != 0 {
+                            probe!(self.probe, "pef.whites.static", "true");
                             rawdata.set_whites([white; 4]);
                         }
                         // If black isn't already set.
                         if rawdata.blacks()[0] == 0 {
+                            probe!(self.probe, "pef.blacks.static", "true");
                             rawdata.set_blacks([black; 4]);
                         }
                     }
@@ -477,8 +491,14 @@ impl RawFileImpl for PefFile {
                         let g = wb[1] as f64;
                         let wb = [g / wb[0] as f64, 1.0, g / wb[3] as f64];
                         rawdata.set_as_shot_neutral(&wb);
+                        probe!(self.probe, "pef.wb", "true");
                     }
                 }
+                probe!(
+                    self.probe,
+                    "pef.compression",
+                    &format!("{:?}", rawdata.compression())
+                );
                 // XXX decompress
 
                 rawdata

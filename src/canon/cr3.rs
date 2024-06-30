@@ -51,6 +51,7 @@ pub(crate) struct Cr3File {
     type_id: OnceCell<TypeId>,
     container: OnceCell<mp4::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl Cr3File {
@@ -60,11 +61,15 @@ impl Cr3File {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 }
 
 impl RawFileImpl for Cr3File {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| {
             if let Some(maker_note) = self.maker_note_ifd() {

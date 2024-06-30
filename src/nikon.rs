@@ -189,6 +189,7 @@ pub(crate) struct NefFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl NefFile {
@@ -198,6 +199,7 @@ impl NefFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 
@@ -208,13 +210,21 @@ impl NefFile {
                 mnote
                     .value::<String>(exif::MNOTE_NIKON_QUALITY)
                     .map(|value| value.trim() == "NRW")
+                    .map(|value| {
+                        if value {
+                            probe!(self.probe, "nef.is_nrw", "true");
+                        }
+                        value
+                    })
             })
             .unwrap_or(false)
     }
 
     /// The Raw file is from a D100.
     fn is_d100(&self) -> bool {
-        self.type_id() == nikon!(D100)
+        let is_d100 = self.type_id() == nikon!(D100);
+        probe!(self.probe, "nef.is_d100", is_d100);
+        is_d100
     }
 
     /// Unpack Nikon.
@@ -223,6 +233,7 @@ impl NefFile {
         if self.is_d100() {
             width += 6;
         }
+        probe!(self.probe, "nef.nikon_packed_raw", "true");
         let height = rawdata.height();
         let bpc = rawdata.bpc();
         let block_size: usize = match bpc {
@@ -280,6 +291,18 @@ impl NefFile {
                 let header0 = view.read_u8()?;
                 let header1 = view.read_u8()?;
 
+                probe!(self.probe, "nef.compression_curve", "true");
+
+                probe!(
+                    self.probe,
+                    "nef.compression_curve.header0",
+                    &format!("0x{header0:x}")
+                );
+                probe!(
+                    self.probe,
+                    "nef.compression_curve.header1",
+                    &format!("0x{header1:x}")
+                );
                 if header0 == 0x49 {
                     // some interesting stuff at 2110
                     // XXX we need to implement this.
@@ -299,20 +322,24 @@ impl NefFile {
                 // header0 == 0x46 -> lossless
                 if header0 == 0x44 || header0 == 0x49 {
                     if bpc == 12 {
+                        probe!(self.probe, "nef.compression_curve.huffman", "lossy_12");
                         curve.huffman = Some(&diffiterator::LOSSY_12BIT);
                         log::debug!("12 bits lossy {}", bpc);
                         header_ok = true;
                     } else if bpc == 14 {
+                        probe!(self.probe, "nef.compression_curve.huffman", "lossy_14");
                         curve.huffman = Some(&diffiterator::LOSSY_14BIT);
                         log::debug!("14 bits lossy {}", bpc);
                         header_ok = true;
                     }
                 } else if header0 == 0x46 {
                     if bpc == 14 {
+                        probe!(self.probe, "nef.compression_curve.huffman", "lossless_14");
                         curve.huffman = Some(&diffiterator::LOSSLESS_14BIT);
                         log::debug!("14 bits lossless");
                         header_ok = true;
                     } else if bpc == 12 {
+                        probe!(self.probe, "nef.compression_curve.huffman", "lossless_12");
                         // curve.huffman = Some(&diffiterator::LOSSLESS_12BIT);
                         log::debug!("12 bits lossless");
                         log::error!("12 bits lossless isn't yet supported");
@@ -345,6 +372,7 @@ impl NefFile {
                             + curve.curve[i - i % step + step] as usize * (i % step))
                             / step) as u16;
                     }
+                    probe!(self.probe, "nef.compression_curve.computed", "true");
                     // split flag is at offset 562.
                     // XXX
                 } else if header0 != 0x46 && nelems <= 0x4001 {
@@ -357,6 +385,7 @@ impl NefFile {
                         return Err(Error::UnexpectedEOF);
                     }
                     ceiling = nelems;
+                    probe!(self.probe, "nef.compression_curve.direct", "true");
                 }
 
                 let black = curve.curve[0];
@@ -380,6 +409,7 @@ impl NefFile {
                 err
             })
             .and_then(|curve| {
+                probe!(self.probe, "nef.compress_quantized", "true");
                 let rows = rawdata.height() as usize;
                 let raw_columns = rawdata.width() as usize;
                 // XXX not always true
@@ -416,10 +446,16 @@ impl NefFile {
             })
     }
 
-    fn encrypted_white_balance(mnote: &Dir, entry: &tiff::Entry) -> Option<[f64; 3]> {
+    fn encrypted_white_balance(&self, mnote: &Dir, entry: &tiff::Entry) -> Option<[f64; 3]> {
+        probe!(self.probe, "nef.wb.encrypted", "true");
         let data = entry.data();
         let version = &data[0..4];
         let endian = mnote.endian();
+        probe!(
+            self.probe,
+            "nef.wb.encrypted.version",
+            &String::from_utf8_lossy(version)
+        );
         if version == b"0100" && data.len() >= 80 {
             let r = endian.read_u16(&data[72..]) as f64;
             let b = endian.read_u16(&data[74..]) as f64;
@@ -436,14 +472,16 @@ impl NefFile {
     }
 
     /// Extract the while balance mostly from NRW files.
-    fn nrw_white_balance(entry: &tiff::Entry) -> Option<[f64; 3]> {
+    fn nrw_white_balance(&self, entry: &tiff::Entry) -> Option<[f64; 3]> {
         let data = entry.data();
         if data.len() == 2560 {
+            probe!(self.probe, "nef.wb.nrw2560", "true");
             let data = &data[1248..];
             let r = BigEndian::read_u16(data) as f64;
             let b = BigEndian::read_u16(&data[2..]) as f64;
             Some([256.0 / r, 1.0, 256.0 / b])
         } else if &data[0..4] == b"NRW " {
+            probe!(self.probe, "nef.wb.nrw", "true");
             let offset = if &data[4..8] != b"0100" && entry.count > 72 {
                 56
             } else if entry.count > 1572 {
@@ -452,6 +490,7 @@ impl NefFile {
                 log::error!("ColorBalanceA format unknown");
                 return None;
             };
+            probe!(self.probe, "nef.wb.nrw.offset", offset);
             let data = &data[offset..];
             let r = (LittleEndian::read_u32(data) << 2) as f64;
             let g =
@@ -471,6 +510,7 @@ impl NefFile {
                 // Some NRW have this tag, so take it before
                 // `ColorBalanceA` (see [`nrw_white_balance`])
                 if entry.count >= 4 {
+                    probe!(self.probe, "nef.wb.nikon", "true");
                     entry.float_value_array(mnote.endian()).map(|v| {
                         let mut g = v[2];
                         if g <= 0.0 {
@@ -479,12 +519,13 @@ impl NefFile {
                         [1.0 / v[0], g, 1.0 / v[1]]
                     })
                 } else {
+                    probe!(self.probe, "nef.wb.nikon", "false");
                     None
                 }
             } else if let Some(entry) = mnote.entry(exif::MNOTE_NIKON_COLOR_BALANCE) {
-                Self::encrypted_white_balance(mnote, entry)
+                self.encrypted_white_balance(mnote, entry)
             } else if let Some(entry) = mnote.entry(exif::MNOTE_NIKON_COLOR_BALANCE_A) {
-                Self::nrw_white_balance(entry)
+                self.nrw_white_balance(entry)
             } else {
                 None
             }
@@ -493,6 +534,9 @@ impl NefFile {
 }
 
 impl RawFileImpl for NefFile {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| {
             self.container();
@@ -508,6 +552,11 @@ impl RawFileImpl for NefFile {
             let mut container =
                 tiff::Container::new(view, vec![(tiff::IfdType::Main, None)], self.type_());
             container.load(None).expect("NEF container error");
+            probe!(
+                self.probe,
+                "raw.container.endian",
+                &format!("{:?}", container.endian())
+            );
             container
         })
     }
@@ -568,6 +617,7 @@ impl RawFileImpl for NefFile {
                     })
                     .and_then(|rawdata| {
                         let compression = rawdata.compression();
+                        probe!(self.probe, "nef.compression", &format!("{compression:?}"));
                         if self.is_d100() {
                             self.unpack_nikon(rawdata)
                         } else if compression == tiff::Compression::None {
@@ -584,6 +634,8 @@ impl RawFileImpl for NefFile {
                             }
                         } else if self.is_nrw() {
                             // XXX decompression not yet supported
+                            // is this a thing?
+                            probe!(self.probe, "nef.is_nrw_compression", "true");
                             log::error!("NRW compression unsupported");
                             Ok(rawdata)
                         } else {

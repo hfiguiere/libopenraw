@@ -86,6 +86,7 @@ pub(crate) struct CrwFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<ciff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    probe: Option<crate::Probe>,
 }
 
 impl CrwFile {
@@ -95,6 +96,7 @@ impl CrwFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            probe: None,
         })
     }
 
@@ -249,6 +251,9 @@ impl CrwFile {
 }
 
 impl RawFileImpl for CrwFile {
+    #[cfg(feature = "probe")]
+    probe_imp!();
+
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| {
             self.container();
