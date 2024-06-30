@@ -32,7 +32,7 @@ use rayon::prelude::*;
 
 use crate::bitmap::{Bitmap, Rect};
 use crate::container;
-use crate::container::RawContainer;
+use crate::container::{Endian, RawContainer};
 use crate::io::Viewer;
 use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::tiff;
@@ -289,6 +289,8 @@ impl OrfFile {
                         12,
                         tiff::Compression::Olympus,
                         data8.len(),
+                        // Olympus is little endian.
+                        Endian::Little,
                     )
                     .ok()
                 } else if data8.len() == (height * width * 3 / 2) as usize {

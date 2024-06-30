@@ -26,12 +26,14 @@ mod raf;
 
 use std::collections::HashMap;
 use std::convert::{TryFrom, TryInto};
+use std::io::{Seek, SeekFrom};
 use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
 use crate::bitmap::{Point, Rect, Size};
-use crate::container::RawContainer;
+use crate::camera_ids::fujifilm;
+use crate::container::{Endian, RawContainer};
 use crate::decompress;
 use crate::io::Viewer;
 use crate::mosaic::Pattern;
@@ -352,7 +354,13 @@ impl RawFileImpl for RafFile {
                     )
                     .map_err(|_| Error::FormatError)?
                 } else {
-                    Pattern::Rggb
+                    match self.type_id().1 {
+                        fujifilm::X10 | fujifilm::XF1 => {
+                            probe!(self.probe, "raf.cfa.bggr", true);
+                            Pattern::Bggr
+                        }
+                        _ => Pattern::Rggb,
+                    }
                 };
 
                 log::debug!("RAF raw props {:x}", raw_props);
@@ -404,16 +412,18 @@ impl RawFileImpl for RafFile {
                 if cfa_offset == 0 || cfa_len == 0 {
                     return Err(Error::NotFound);
                 }
-
+                probe!(self.probe, "raf.raw.bps", bps);
                 let mut rawdata = if !compressed {
-                    let unpacked = decompress::unpack(
-                        raw_container,
+                    let mut view = raw_container.borrow_view_mut();
+                    view.seek(SeekFrom::Start(cfa_offset))?;
+                    let unpacked = decompress::unpack_from_reader(
+                        &mut *view,
                         raw_size.width,
                         raw_size.height,
                         bps,
                         tiff::Compression::None,
-                        cfa_offset,
                         cfa_len as usize,
+                        Endian::Little,
                     )
                     .map_err(|err| {
                         log::error!("RAF failed to unpack {}", err);

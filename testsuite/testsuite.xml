@@ -1297,7 +1297,61 @@
       <rawMinValue>255 254 254 255</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawAsShotNeutral>0.6508620689655172 1 0.6608315098468271 NaN</rawAsShotNeutral>
-      <rawMd5>36143</rawMd5>
+      <rawMd5>1845</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>RAF - X-A1 - XA1.RAF</name>
+    <file>/home/hub/samples/raf/X-A1/XA1.RAF</file>
+    <results>
+      <rawType>RAF</rawType>
+      <rawTypeId>917541</rawTypeId>
+      <makerNoteCount>53</makerNoteCount>
+      <makerNoteId>Exif.Fujifilm</makerNoteId>
+      <exifMake>FUJIFILM</exifMake>
+      <exifModel>X-A1</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>1920 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>851376 8857</thumbDataSizes>
+      <thumbMd5>14811 64712</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>33669120</rawDataSize>
+      <rawDataDimensions>5120 3288</rawDataDimensions>
+      <rawDataActiveArea>28 12 4896 3264</rawDataActiveArea>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>255 255 255 255</rawMinValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
+      <rawAsShotNeutral>0.4748427672955975 1 0.705607476635514 NaN</rawAsShotNeutral>
+      <rawMd5>61893</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
+    <name>RAF - X10 - S0011035.RAF</name>
+    <file>/var/home/hub/samples/raf/X-10/S0011035.RAF</file>
+    <results>
+      <rawType>RAF</rawType>
+      <rawTypeId>917522</rawTypeId>
+      <makerNoteCount>53</makerNoteCount>
+      <makerNoteId>Exif.Fujifilm</makerNoteId>
+      <exifMake>FUJIFILM</exifMake>
+      <exifModel>X10</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>2048 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>788085 9187</thumbDataSizes>
+      <thumbMd5>47829 64807</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>12623872</rawDataSize>
+      <rawDataDimensions>2944 2144</rawDataDimensions>
+      <rawDataActiveArea>64 14 2816 2116</rawDataActiveArea>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>256 256 256 256</rawMinValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
+      <rawAsShotNeutral>0.5468483816013628 1 0.5477815699658704 NaN</rawAsShotNeutral>
+      <rawMd5>854</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -1324,7 +1378,7 @@
       <rawMinValue>255 255 255 255</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawAsShotNeutral>0.578544061302682 1 0.4575757575757576 NaN</rawAsShotNeutral>
-      <rawMd5>26116</rawMd5>
+      <rawMd5>11196</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>

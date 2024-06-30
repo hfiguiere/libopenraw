@@ -31,7 +31,7 @@ pub(crate) use tiled::TiledLJpeg;
 
 use std::io::{Read, Seek, SeekFrom};
 
-use crate::container::RawContainer;
+use crate::container::{Endian, RawContainer};
 use crate::tiff;
 use crate::{Error, Result};
 
@@ -173,10 +173,19 @@ pub(crate) fn unpack(
     let mut view = container.borrow_view_mut();
     view.seek(SeekFrom::Start(offset))?;
 
-    unpack_from_reader(&mut *view, width, height, bpc, compression, byte_len)
+    unpack_from_reader(
+        &mut *view,
+        width,
+        height,
+        bpc,
+        compression,
+        byte_len,
+        container.endian(),
+    )
 }
 
-/// Unpack from a reader into a 16-bits buffer.
+/// Unpack from a reader into a 16-bits buffer. `endian` is used when
+/// compression is `None`.
 pub(crate) fn unpack_from_reader(
     reader: &mut dyn Read,
     width: u32,
@@ -184,6 +193,7 @@ pub(crate) fn unpack_from_reader(
     bpc: u16,
     compression: tiff::Compression,
     byte_len: usize,
+    endian: Endian,
 ) -> Result<Vec<u16>> {
     log::debug!(
         "Unpack {} bytes {} x {} - compression {:?}",
@@ -224,11 +234,14 @@ pub(crate) fn unpack_from_reader(
             n @ 10 | n @ 14 => written += unpack_bento16(&block, n, width as usize, &mut out_data)?,
             12 => {
                 written += match compression {
-                    tiff::Compression::NikonPack
-                    | tiff::Compression::PentaxPack
-                    | tiff::Compression::None => {
+                    tiff::Compression::NikonPack | tiff::Compression::PentaxPack => {
                         unpack_be12to16(&block, &mut out_data, compression)?
                     }
+                    tiff::Compression::None => match endian {
+                        Endian::Little => unpack_le12to16(&block, &mut out_data, compression)?,
+                        Endian::Big => unpack_be12to16(&block, &mut out_data, compression)?,
+                        _ => unreachable!(),
+                    },
                     tiff::Compression::Olympus => {
                         unpack_le12to16(&block, &mut out_data, compression)?
                     }
