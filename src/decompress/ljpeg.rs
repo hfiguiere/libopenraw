@@ -2,7 +2,7 @@
 /*
  * libopenraw - decompress/ljpeg.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -60,6 +60,7 @@ use std::io::SeekFrom;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
+use super::bit_reader::BitReader;
 use super::sliced_buffer::SlicedBuffer;
 use crate::bitmap::ImageBuffer;
 use crate::rawfile::ReadAndSeek;
@@ -105,15 +106,6 @@ const M_APP0: u8 = 0xe0;
 const M_TEM: u8 = 0x01;
 
 //const M_ERROR:u8 = 0x100
-
-const BITS_PER_LONG: u8 = 8 * std::mem::size_of::<i32>() as u8;
-const MIN_GET_BITS: u8 = BITS_PER_LONG - 7; // max value for long get_buffer
-
-// bmask[n] is mask for n rightmost bits
-const BMASK: [u16; 17] = [
-    0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F, 0x007F, 0x00FF, 0x01FF, 0x03FF, 0x07FF,
-    0x0FFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF,
-];
 
 // Lossless JPEG specifies data precision to be from 2 to 16 bits/sample.
 const MIN_PRECISION_BITS: u8 = 2;
@@ -690,101 +682,6 @@ impl LJpeg {
     }
 }
 
-/// Bit reader state
-struct BitReader {
-    bits_left: u8,
-    buffer: u32,
-}
-
-impl BitReader {
-    pub fn new() -> BitReader {
-        BitReader {
-            bits_left: 0,
-            buffer: 0,
-        }
-    }
-
-    /// Discard current bits and return the number of whole bytes that were
-    /// left
-    #[inline]
-    fn discard_bits(&mut self) -> u8 {
-        let nbytes = self.bits_left / 8;
-        self.bits_left = 0;
-
-        nbytes
-    }
-
-    #[inline]
-    fn show_bits8(&mut self, reader: &mut dyn ReadAndSeek) -> Result<u16> {
-        if self.bits_left < 8 {
-            self.fill_bit_buffer(reader, 8)?;
-        }
-
-        Ok(((self.buffer >> (self.bits_left - 8)) & 0xff) as u16)
-    }
-
-    #[inline]
-    fn flush_bits(&mut self, nbits: u8) {
-        self.bits_left -= nbits;
-    }
-
-    #[inline]
-    fn get_bits(&mut self, reader: &mut dyn ReadAndSeek, nbits: u8) -> Result<u16> {
-        if nbits >= 17 {
-            return Err(Error::Decompression(format!(
-                "LJPEG: Tried to request {nbits} bits (max 16), JPEG is likely corrupt"
-            )));
-        }
-        if self.bits_left < nbits {
-            self.fill_bit_buffer(reader, nbits)?;
-        }
-        self.bits_left -= nbits;
-        Ok((self.buffer >> self.bits_left) as u16 & BMASK[nbits as usize])
-    }
-
-    #[inline]
-    fn get_bit(&mut self, reader: &mut dyn ReadAndSeek) -> Result<u16> {
-        if self.bits_left == 0 {
-            self.fill_bit_buffer(reader, 1)?;
-        }
-
-        self.bits_left -= 1;
-        Ok(((self.buffer >> self.bits_left) & 1) as u16)
-    }
-
-    // Load up the bit buffer with at least nbits
-    // Process any stuffed bytes at this time.
-    fn fill_bit_buffer(&mut self, reader: &mut dyn ReadAndSeek, nbits: u8) -> Result<()> {
-        while self.bits_left < MIN_GET_BITS {
-            let mut c = reader.read_u8()?;
-            // If it's 0xFF, check and discard stuffed zero byte
-            if c == 0xff {
-                let c2 = reader.read_u8()?;
-                if c2 != 0 {
-                    // Oops, it's actually a marker indicating end of
-                    // compressed data.  Better put it back for use later.
-                    reader.seek(SeekFrom::Current(-2))?;
-                    // There should be enough bits still left in the data
-                    // segment; if so, just break out of the while loop.
-                    if self.bits_left > nbits {
-                        break;
-                    }
-                    // Uh-oh.  Corrupted data: stuff zeroes into the data
-                    // stream, since this sometimes occurs when we are on the
-                    // last show_bits(8) during decoding of the Huffman
-                    // segment.
-                    c = 0;
-                }
-            }
-            // OK, load c into getBuffer
-            self.buffer = (self.buffer << 8) | c as u32;
-            self.bits_left += 8;
-        }
-
-        Ok(())
-    }
-}
-
 // One of the following structures is created for each huffman coding
 // table.  We use the same structure for encoding and decoding, so there
 // may be some extra fields for encoding that aren't used in the decoding
@@ -1218,68 +1115,6 @@ mod test {
     use crate::utils;
 
     use super::LJpeg;
-    use super::{BitReader, BITS_PER_LONG, MIN_GET_BITS};
-
-    #[test]
-    fn test_bit_reader() {
-        // Note: don't use 0b1111_1111 for a byte as fill_bit_buffer
-        // will use it to mark the end of the stream
-        let bits = vec![
-            0b1010_1010,
-            0b0101_0101,
-            0b1101_1011,
-            0b0011_0011,
-            0b1010_1010,
-            0b0101_0101,
-            0b1101_1011,
-            0b0011_0011,
-            0b1010_1010,
-            0b0101_0101,
-            0b1101_1011,
-            0b0011_0011,
-            0b1010_1010,
-            0b0101_0101,
-            0b1101_1011,
-            0b0011_0011,
-        ];
-
-        let mut io = std::io::Cursor::new(bits);
-        let mut br = BitReader::new();
-
-        assert_eq!(BITS_PER_LONG, 32);
-        assert_eq!(MIN_GET_BITS, 25);
-
-        assert_eq!(br.buffer, 0);
-        assert_eq!(br.bits_left, 0);
-        assert_eq!(br.discard_bits(), 0);
-        assert_eq!(br.buffer, 0);
-        assert_eq!(br.bits_left, 0);
-
-        assert!(matches!(br.show_bits8(&mut io), Ok(0b1010_1010)));
-        assert_eq!(br.bits_left, 32);
-        assert_eq!(br.buffer, 0b1010_1010_0101_0101_1101_1011_0011_0011);
-        assert!(matches!(br.show_bits8(&mut io), Ok(0b1010_1010)));
-
-        assert_eq!(br.discard_bits(), 4);
-        // this doesn't clear the buffer
-        assert_eq!(br.bits_left, 0);
-
-        assert!(matches!(br.fill_bit_buffer(&mut io, 8), Ok(())));
-        assert_eq!(br.bits_left, 32);
-        assert_eq!(br.buffer, 0b1010_1010_0101_0101_1101_1011_0011_0011);
-        assert!(matches!(br.show_bits8(&mut io), Ok(0b1010_1010)));
-
-        assert!(matches!(br.get_bits(&mut io, 8), Ok(0b1010_1010)));
-        assert_eq!(br.bits_left, 24);
-        assert_eq!(br.buffer, 0b1010_1010_0101_0101_1101_1011_0011_0011);
-
-        assert!(matches!(br.get_bit(&mut io), Ok(0)));
-        assert_eq!(br.bits_left, 23);
-        assert!(matches!(br.get_bit(&mut io), Ok(1)));
-        assert_eq!(br.bits_left, 22);
-
-        // XXX test fill_bit_buffer encountering 0xff
-    }
 
     #[test]
     fn test_jpeg() {

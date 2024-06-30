@@ -21,6 +21,7 @@
 
 //! Decompression
 
+mod bit_reader;
 mod ljpeg;
 mod sliced_buffer;
 mod tiled;

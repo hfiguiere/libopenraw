@@ -62,6 +62,7 @@ RUST_FILES = Cargo.lock \
 	src/colour/matrix.rs \
 	src/container.rs \
 	src/decompress.rs \
+	src/decompress/bit_reader.rs \
 	src/decompress/ljpeg.rs \
 	src/decompress/sliced_buffer.rs \
 	src/decompress/tiled.rs \
