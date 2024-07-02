@@ -355,7 +355,7 @@ impl RawFileImpl for RafFile {
                     .map_err(|_| Error::FormatError)?
                 } else {
                     match self.type_id().1 {
-                        fujifilm::X10 | fujifilm::XF1 => {
+                        fujifilm::X10 | fujifilm::XF1 | fujifilm::XS1 => {
                             probe!(self.probe, "raf.cfa.bggr", true);
                             Pattern::Bggr
                         }
