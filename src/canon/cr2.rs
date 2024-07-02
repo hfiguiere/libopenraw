@@ -107,8 +107,7 @@ impl Cr2File {
                 decompressor.set_slices(slices);
             }
 
-            let mut io = std::io::Cursor::new(data);
-            decompressor.decompress(&mut io, &self.probe).map(|buffer| {
+            decompressor.decompress(&data, &self.probe).map(|buffer| {
                 RawImage::with_image_buffer(buffer, DataType::Raw, Pattern::default())
             })
         }

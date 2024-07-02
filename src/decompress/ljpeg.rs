@@ -56,14 +56,9 @@
 
 //! Lossless JPEG decompressor.
 
-use std::io::SeekFrom;
-
-use byteorder::{BigEndian, ReadBytesExt};
-
-use super::bit_reader::BitReader;
+use super::bit_reader::{BitReader, LJpegBitReader};
 use super::sliced_buffer::SlicedBuffer;
 use crate::bitmap::ImageBuffer;
-use crate::rawfile::ReadAndSeek;
 use crate::{Error, Result};
 
 const M_SOF0: u8 = 0xc0;
@@ -142,7 +137,6 @@ pub struct LJpeg {
     cur_row: usize,
     prev_row: usize,
     mcu_row: Vec<Vec<Mcu>>,
-    bit_reader: BitReader,
 }
 
 impl LJpeg {
@@ -154,7 +148,6 @@ impl LJpeg {
             cur_row: 0,
             prev_row: 1,
             mcu_row: Vec::new(),
-            bit_reader: BitReader::new(),
         }
     }
 
@@ -172,14 +165,15 @@ impl LJpeg {
     /// Pass `true` to `tiled` if it's an actual tiled file.
     pub fn decompress_buffer(
         &mut self,
-        reader: &mut dyn ReadAndSeek,
+        buffer: &[u8],
         tiled: bool,
         probe: &Option<crate::Probe>,
     ) -> Result<Tile> {
         let mut dc_info = DecompressInfo::default();
 
-        self.read_file_header(&mut dc_info, reader)?;
-        self.read_scan_header(&mut dc_info, reader)?;
+        let mut bit_reader = LJpegBitReader::new(buffer);
+        self.read_file_header(&mut dc_info, &mut bit_reader)?;
+        self.read_scan_header(&mut dc_info, &mut bit_reader)?;
 
         if dc_info.image_width == 0 || dc_info.image_height == 0 {
             return Err(Error::JpegFormat(format!(
@@ -244,8 +238,8 @@ impl LJpeg {
         };
         // XXX RawImage::set_slices?
         self.decoder_struct_init(&mut dc_info)?;
-        self.huff_decoder_init(&mut dc_info)?;
-        self.decode_image(&mut dc_info, reader, &mut output)?;
+        self.huff_decoder_init(&mut dc_info, &mut bit_reader)?;
+        self.decode_image(&mut dc_info, &mut bit_reader, &mut output)?;
 
         Ok(Tile {
             height,
@@ -259,16 +253,16 @@ impl LJpeg {
 
     #[cfg(any(feature = "fuzzing", feature = "bench"))]
     /// Used to fuzz or bench the decompressor that is otherwise crate only.
-    pub fn discard_decompress(&mut self, reader: &mut dyn ReadAndSeek) -> Result<()> {
-        self.decompress(reader, &None).map(|_| ())
+    pub fn discard_decompress(&mut self, buffer: &[u8]) -> Result<()> {
+        self.decompress(buffer, &None).map(|_| ())
     }
 
     pub(crate) fn decompress(
         &mut self,
-        reader: &mut dyn ReadAndSeek,
+        buffer: &[u8],
         probe: &Option<crate::Probe>,
     ) -> Result<ImageBuffer<u16>> {
-        let tile = self.decompress_buffer(reader, false, probe)?;
+        let tile = self.decompress_buffer(buffer, false, probe)?;
         Ok(ImageBuffer::with_data(
             tile.buf,
             tile.width,
@@ -278,15 +272,11 @@ impl LJpeg {
         ))
     }
 
-    fn read_file_header(
-        &self,
-        dc: &mut DecompressInfo,
-        reader: &mut dyn ReadAndSeek,
-    ) -> Result<()> {
+    fn read_file_header(&self, dc: &mut DecompressInfo, reader: &mut LJpegBitReader) -> Result<()> {
         // Demand an SOI marker at the start of the file --- otherwise it's
         // probably not a JPEG file at all.
-        let c = reader.read_u8()?;
-        let c2 = reader.read_u8()?;
+        let c = reader.read_u8();
+        let c2 = reader.read_u8();
         if c != 0xff || c2 != M_SOI {
             return Err(Error::Decompression(format!(
                 "LJPEG: Not a JPEG file. Marker is {c:x} {c2:x}"
@@ -307,7 +297,7 @@ impl LJpeg {
     fn read_scan_header(
         &self,
         dc: &mut DecompressInfo,
-        reader: &mut dyn ReadAndSeek,
+        reader: &mut LJpegBitReader,
     ) -> Result<bool> {
         let c = dc.process_tables(reader)?;
 
@@ -362,8 +352,12 @@ impl LJpeg {
         Ok(())
     }
 
-    fn huff_decoder_init(&mut self, dc: &mut DecompressInfo) -> Result<()> {
-        self.bit_reader.discard_bits(); // just reset it all.
+    fn huff_decoder_init(
+        &mut self,
+        dc: &mut DecompressInfo,
+        bit_reader: &mut LJpegBitReader,
+    ) -> Result<()> {
+        bit_reader.discard(); // just reset it all.
 
         for ci in 0..dc.comps_in_scan {
             let compptr = &dc.cur_comp_info[ci as usize];
@@ -395,7 +389,7 @@ impl LJpeg {
     fn decode_image(
         &mut self,
         dc: &mut DecompressInfo,
-        reader: &mut dyn ReadAndSeek,
+        reader: &mut LJpegBitReader,
         output: &mut SlicedBuffer<ComponentType>,
     ) -> Result<()> {
         let image_width = dc.image_width;
@@ -447,7 +441,7 @@ impl LJpeg {
                     // Section F.2.2.1: decode the difference
                     let s = self.huff_decode(dctbl, reader)? as u8;
                     let d = if s != 0 {
-                        extend(self.bit_reader.get_bits(reader, s)?, s)
+                        extend(reader.get_bits(s)?, s)
                     } else {
                         0
                     };
@@ -471,7 +465,7 @@ impl LJpeg {
                         // Section F.2.2.1: decode the difference
                         let s = self.huff_decode(dctbl, reader)? as u8;
                         let d = if s != 0 {
-                            extend(self.bit_reader.get_bits(reader, s)?, s)
+                            extend(reader.get_bits(s)?, s)
                         } else {
                             0
                         };
@@ -506,27 +500,27 @@ impl LJpeg {
     fn process_restart(
         &mut self,
         dc: &mut DecompressInfo,
-        reader: &mut dyn ReadAndSeek,
+        reader: &mut LJpegBitReader,
     ) -> Result<()> {
         // Throw away any unused bits remaining in bit buffer
-        let _nbytes = self.bit_reader.discard_bits();
+        reader.discard();
 
         // Scan for next JPEG marker
         let mut c = 0;
         while c == 0 {
             // nbytes += 1;
-            c = reader.read_u8()?;
+            c = reader.read_u8();
             // skip any non-FF bytes
             while c != 0xff {
                 // nbytes += 1;
-                c = reader.read_u8()?;
+                c = reader.read_u8();
             }
 
-            c = reader.read_u8()?;
+            c = reader.read_u8();
             // skip any duplicate FFs
             while c == 0xff {
                 //  we don't increment nbytes here since extra FFs are legal
-                c = reader.read_u8()?;
+                c = reader.read_u8();
             }
         } // repeat if it was a stuffed FF/00
 
@@ -552,7 +546,7 @@ impl LJpeg {
     fn decode_first_row(
         &mut self,
         dc: &mut DecompressInfo,
-        reader: &mut dyn ReadAndSeek,
+        reader: &mut LJpegBitReader,
     ) -> Result<()> {
         let pr = dc.data_precision;
         let pt = dc.pt;
@@ -567,7 +561,7 @@ impl LJpeg {
                 // Section F.2.2.1: decode the difference
                 let s = self.huff_decode(dctbl, reader)? as u8;
                 let d = if s != 0 {
-                    extend(self.bit_reader.get_bits(reader, s)?, s)
+                    extend(reader.get_bits(s)?, s)
                 } else {
                     0
                 };
@@ -592,7 +586,7 @@ impl LJpeg {
                     // Section F.2.2.1: decode the difference
                     let s = self.huff_decode(dctbl, reader)? as u8;
                     let d = if s != 0 {
-                        extend(self.bit_reader.get_bits(reader, s)?, s)
+                        extend(reader.get_bits(s)?, s)
                     } else {
                         0
                     };
@@ -615,20 +609,20 @@ impl LJpeg {
 
     // Taken from Figure F.16: extract next coded symbol from
     // input stream.
-    fn huff_decode(&mut self, htbl: &HuffmanTable, reader: &mut dyn ReadAndSeek) -> Result<u16> {
+    fn huff_decode(&mut self, htbl: &HuffmanTable, reader: &mut LJpegBitReader) -> Result<u16> {
         let rv: u16;
         // If the huffman code is less than 8 bits, we can use the fast
         // table lookup to get its value.  It's more than 8 bits about
         // 3-4% of the time.
-        let mut code = self.bit_reader.show_bits8(reader)? as i32;
+        let mut code = reader.peek(8)? as i32;
         if htbl.numbits[code as usize] != 0 {
-            self.bit_reader.flush_bits(htbl.numbits[code as usize]);
+            reader.consume(htbl.numbits[code as usize]);
             rv = htbl.value[code as usize] as u16;
         } else {
-            self.bit_reader.flush_bits(8);
+            reader.consume(8);
             let mut l: usize = 8;
             while code > htbl.maxcode[l] {
-                let temp = self.bit_reader.get_bit(reader)? as i32;
+                let temp = reader.get_bits(1)? as i32;
                 code = (code << 1) | temp;
                 l += 1;
             }
@@ -914,7 +908,7 @@ impl DecompressInfo {
         self.restart_interval = 0;
     }
 
-    fn process_tables(&mut self, reader: &mut dyn ReadAndSeek) -> Result<u8> {
+    fn process_tables(&mut self, reader: &mut LJpegBitReader) -> Result<u8> {
         loop {
             let c = self.next_marker(reader)?;
             match c {
@@ -935,12 +929,12 @@ impl DecompressInfo {
         }
     }
 
-    fn get_sof(&mut self, reader: &mut dyn ReadAndSeek) -> Result<()> {
-        let length = reader.read_u16::<BigEndian>()?;
-        self.data_precision = reader.read_u8()?;
-        self.image_height = reader.read_u16::<BigEndian>()?;
-        self.image_width = reader.read_u16::<BigEndian>()?;
-        self.num_components = reader.read_u8()?;
+    fn get_sof(&mut self, reader: &mut LJpegBitReader) -> Result<()> {
+        let length = reader.read_u16();
+        self.data_precision = reader.read_u8();
+        self.image_height = reader.read_u16();
+        self.image_width = reader.read_u16();
+        self.num_components = reader.read_u8();
 
         // We don't support files in which the image height is initially
         // specified as 0 and is later redefined by DNL.  As long as we
@@ -967,21 +961,21 @@ impl DecompressInfo {
         for ci in 0..self.num_components {
             let compptr = &mut self.comp_info[ci as usize];
             compptr.component_index = ci as u16;
-            compptr.component_id = reader.read_u8()? as u16;
-            let c = reader.read_u8()?;
+            compptr.component_id = reader.read_u8() as u16;
+            let c = reader.read_u8();
             compptr.h_samp_factor = ((c >> 4) & 15) as u16;
             compptr.v_samp_factor = (c & 15) as u16;
-            reader.read_u8()?; // skip Tq
+            reader.read_u8(); // skip Tq
         }
 
         Ok(())
     }
 
-    fn get_dht(&mut self, reader: &mut dyn ReadAndSeek) -> Result<()> {
+    fn get_dht(&mut self, reader: &mut LJpegBitReader) -> Result<()> {
         // length as a signed i32 is safer
-        let mut length = reader.read_u16::<BigEndian>()? as i32 - 2;
+        let mut length = reader.read_u16() as i32 - 2;
         while length > 0 {
-            let index = reader.read_u8()?;
+            let index = reader.read_u8();
 
             if index >= 4 {
                 return Err(Error::JpegFormat(format!("LJPEG: Bogus DHT index {index}")));
@@ -994,7 +988,7 @@ impl DecompressInfo {
             htblptr.bits[0] = 0;
             let mut count = 0_u16;
             for i in 1..=16 {
-                let b = reader.read_u8()?;
+                let b = reader.read_u8();
                 htblptr.bits[i] = b;
                 count += b as u16;
             }
@@ -1003,37 +997,37 @@ impl DecompressInfo {
                 return Err(Error::JpegFormat("LJPEG: Bogus DHT counts".into()));
             }
             for i in 0_usize..count as usize {
-                htblptr.huffval[i] = reader.read_u8()?;
+                htblptr.huffval[i] = reader.read_u8();
             }
             length -= 1 + 16 + count as i32;
         }
         Ok(())
     }
 
-    fn skip_variable(&self, reader: &mut dyn ReadAndSeek) -> Result<()> {
-        let length = reader.read_u16::<BigEndian>()?;
+    fn skip_variable(&self, reader: &mut LJpegBitReader) -> Result<()> {
+        let length = reader.read_u16();
         if length < 2 {
             return Err(Error::JpegFormat("LJPEG: invalid variable length".into()));
         }
         let length = length - 2;
-        reader.seek(SeekFrom::Current(length as i64))?;
+        reader.skip(length as usize);
 
         Ok(())
     }
 
-    fn next_marker(&self, reader: &mut dyn ReadAndSeek) -> Result<u8> {
+    fn next_marker(&self, reader: &mut LJpegBitReader) -> Result<u8> {
         let mut c;
 
         loop {
             // skip any non-FF bytes
-            c = reader.read_u8()?;
+            c = reader.read_u8();
             while c != 0xff {
-                c = reader.read_u8()?;
+                c = reader.read_u8();
             }
 
-            c = reader.read_u8()?;
+            c = reader.read_u8();
             while c == 0xff {
-                c = reader.read_u8()?;
+                c = reader.read_u8();
             }
             if c != 0 {
                 break;
@@ -1043,32 +1037,32 @@ impl DecompressInfo {
         Ok(c)
     }
 
-    fn get_dri(&mut self, reader: &mut dyn ReadAndSeek) -> Result<()> {
-        if reader.read_u16::<BigEndian>()? != 4 {
+    fn get_dri(&mut self, reader: &mut LJpegBitReader) -> Result<()> {
+        if reader.read_u16() != 4 {
             return Err(Error::JpegFormat("LJPEG: Invalid DRI length.".into()));
         }
-        self.restart_interval = reader.read_u16::<BigEndian>()?;
+        self.restart_interval = reader.read_u16();
         Ok(())
     }
 
     /// Process APP0 marker.
-    fn get_app0(&self, reader: &mut dyn ReadAndSeek) -> Result<()> {
-        let length = reader.read_u16::<BigEndian>()?;
+    fn get_app0(&self, reader: &mut LJpegBitReader) -> Result<()> {
+        let length = reader.read_u16();
         if length < 2 {
             return Err(Error::JpegFormat("LJPEG: Invalid APP0 length.".into()));
         }
         let length = length - 2;
-        reader.seek(SeekFrom::Current(length as i64))?;
+        reader.skip(length as usize);
         Ok(())
     }
 
-    fn get_sos(&mut self, reader: &mut dyn ReadAndSeek) -> Result<()> {
-        let mut length = reader.read_u16::<BigEndian>()?;
+    fn get_sos(&mut self, reader: &mut LJpegBitReader) -> Result<()> {
+        let mut length = reader.read_u16();
         if length < 3 {
             return Err(Error::JpegFormat("LJPEG: invalid SOS length".into()));
         }
 
-        let n = reader.read_u8()?;
+        let n = reader.read_u8();
         self.comps_in_scan = n as u16;
         length -= 3;
 
@@ -1077,8 +1071,8 @@ impl DecompressInfo {
         }
 
         for i in 0..n {
-            let cc = reader.read_u8()? as u16;
-            let c = reader.read_u8()?;
+            let cc = reader.read_u8() as u16;
+            let c = reader.read_u8();
             length -= 2;
 
             let mut ci = 0;
@@ -1100,9 +1094,9 @@ impl DecompressInfo {
             self.cur_comp_info[i as usize] = compptr.clone();
         }
 
-        self.ss = reader.read_u8()?;
-        reader.read_u8()?;
-        let c = reader.read_u8()?;
+        self.ss = reader.read_u8();
+        reader.skip(1);
+        let c = reader.read_u8();
         self.pt = c & 0x0f;
 
         Ok(())
@@ -1123,6 +1117,8 @@ fn extend(x: u16, s: u8) -> i32 {
 
 #[cfg(test)]
 mod test {
+    use std::io::Read;
+
     use crate::utils;
 
     use super::LJpeg;
@@ -1133,9 +1129,10 @@ mod test {
 
         let io = std::fs::File::open("test/ljpegtest1.jpg");
         assert!(io.is_ok());
-        let io = io.unwrap();
-        let mut buffered = std::io::BufReader::new(io);
-        let rawdata = decompressor.decompress(&mut buffered, &None);
+        let mut io = io.unwrap();
+        let mut data = Vec::<u8>::default();
+        io.read_to_end(&mut data).expect("Couldn't read");
+        let rawdata = decompressor.decompress(&data, &None);
 
         assert!(rawdata.is_ok());
         let rawdata = rawdata.unwrap();

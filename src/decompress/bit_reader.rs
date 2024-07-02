@@ -19,11 +19,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-use std::io::SeekFrom;
+use byteorder::{BigEndian, ByteOrder};
 
-use byteorder::ReadBytesExt;
-
-use crate::rawfile::ReadAndSeek;
 use crate::{Error, Result};
 
 const BITS_PER_LONG: u8 = 8 * std::mem::size_of::<i32>() as u8;
@@ -35,80 +32,95 @@ const BMASK: [u16; 17] = [
     0x0FFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF,
 ];
 
-/// Bit reader state
-pub(crate) struct BitReader {
-    bits_left: u8,
-    buffer: u32,
-}
-
-impl BitReader {
-    pub fn new() -> BitReader {
-        BitReader {
-            bits_left: 0,
-            buffer: 0,
-        }
-    }
-
-    /// Discard current bits and return the number of whole bytes that were
-    /// left
-    #[inline]
-    pub(crate) fn discard_bits(&mut self) -> u8 {
-        let nbytes = self.bits_left / 8;
-        self.bits_left = 0;
-
-        nbytes
-    }
+/// BitReader trait to define a common interface.
+pub(crate) trait BitReader {
+    fn peek(&mut self, nbits: u8) -> Result<u16>;
+    fn consume(&mut self, nbits: u8);
 
     #[inline]
-    pub(crate) fn show_bits8(&mut self, reader: &mut dyn ReadAndSeek) -> Result<u16> {
-        if self.bits_left < 8 {
-            self.fill_bit_buffer(reader, 8)?;
-        }
-
-        Ok(((self.buffer >> (self.bits_left - 8)) & 0xff) as u16)
-    }
-
-    #[inline]
-    pub(crate) fn flush_bits(&mut self, nbits: u8) {
-        self.bits_left -= nbits;
-    }
-
-    #[inline]
-    pub(crate) fn get_bits(&mut self, reader: &mut dyn ReadAndSeek, nbits: u8) -> Result<u16> {
+    fn get_bits(&mut self, nbits: u8) -> Result<u16> {
         if nbits >= 17 {
             return Err(Error::Decompression(format!(
-                "LJPEG: Tried to request {nbits} bits (max 16), JPEG is likely corrupt"
+                "BitReader: Tried to request {nbits} bits (max 16)."
             )));
         }
+        let value = self.peek(nbits);
+        self.consume(nbits);
+
+        value
+    }
+}
+
+/// JPEG bit reader. It allows also reading u8 and u16
+/// and handle markers in he stream.
+pub(crate) struct LJpegBitReader<'a> {
+    buffer: &'a [u8],
+    pos: usize,
+    bits_left: u8,
+    bits: u32,
+}
+
+impl<'a> BitReader for LJpegBitReader<'a> {
+    fn peek(&mut self, nbits: u8) -> Result<u16> {
         if self.bits_left < nbits {
-            self.fill_bit_buffer(reader, nbits)?;
+            self.fill_bit_buffer(nbits)?;
         }
-        self.bits_left -= nbits;
-        Ok((self.buffer >> self.bits_left) as u16 & BMASK[nbits as usize])
+
+        Ok(((self.bits >> (self.bits_left - nbits)) & BMASK[nbits as usize] as u32) as u16)
     }
 
-    #[inline]
-    pub(crate) fn get_bit(&mut self, reader: &mut dyn ReadAndSeek) -> Result<u16> {
-        if self.bits_left == 0 {
-            self.fill_bit_buffer(reader, 1)?;
-        }
+    fn consume(&mut self, nbits: u8) {
+        self.bits_left -= nbits;
+    }
+}
 
-        self.bits_left -= 1;
-        Ok(((self.buffer >> self.bits_left) & 1) as u16)
+impl<'a> LJpegBitReader<'a> {
+    pub fn new(buffer: &'a [u8]) -> LJpegBitReader {
+        LJpegBitReader {
+            buffer,
+            pos: 0,
+            bits_left: 0,
+            bits: 0,
+        }
+    }
+
+    /// Read a byte out of the buffer.
+    pub(crate) fn read_u8(&mut self) -> u8 {
+        let b = self.buffer[self.pos];
+        self.pos += 1;
+        b
+    }
+
+    /// Read an u16 from the bit reader. JPEG is always BigEndian.
+    pub(crate) fn read_u16(&mut self) -> u16 {
+        let b = BigEndian::read_u16(&self.buffer[self.pos..]);
+        self.pos += 2;
+        b
+    }
+
+    /// Skip `seek` bytes.
+    pub(crate) fn skip(&mut self, seek: usize) {
+        self.pos += seek;
+    }
+
+    /// Discard current bits.
+    #[inline]
+    pub(crate) fn discard(&mut self) {
+        self.bits_left = 0;
     }
 
     // Load up the bit buffer with at least nbits
     // Process any stuffed bytes at this time.
-    fn fill_bit_buffer(&mut self, reader: &mut dyn ReadAndSeek, nbits: u8) -> Result<()> {
+    fn fill_bit_buffer(&mut self, nbits: u8) -> Result<()> {
         while self.bits_left < MIN_GET_BITS {
-            let mut c = reader.read_u8()?;
+            let mut c = self.read_u8();
             // If it's 0xFF, check and discard stuffed zero byte
             if c == 0xff {
-                let c2 = reader.read_u8()?;
+                let c2 = self.read_u8();
                 if c2 != 0 {
                     // Oops, it's actually a marker indicating end of
                     // compressed data.  Better put it back for use later.
-                    reader.seek(SeekFrom::Current(-2))?;
+                    self.pos -= 2;
                     // There should be enough bits still left in the data
                     // segment; if so, just break out of the while loop.
                     if self.bits_left > nbits {
@@ -122,7 +134,7 @@ impl BitReader {
                 }
             }
             // OK, load c into getBuffer
-            self.buffer = (self.buffer << 8) | c as u32;
+            self.bits = (self.bits << 8) | c as u32;
             self.bits_left += 8;
         }
 
@@ -132,10 +144,10 @@ impl BitReader {
 
 #[cfg(test)]
 mod test {
-    use super::{BitReader, BITS_PER_LONG, MIN_GET_BITS};
+    use super::{BitReader, LJpegBitReader, BITS_PER_LONG, MIN_GET_BITS};
 
     #[test]
-    fn test_bit_reader() {
+    fn test_ljpeg_bit_reader() {
         // Note: don't use 0b1111_1111 for a byte as fill_bit_buffer
         // will use it to mark the end of the stream
         let bits = vec![
@@ -157,39 +169,38 @@ mod test {
             0b0011_0011,
         ];
 
-        let mut io = std::io::Cursor::new(bits);
-        let mut br = BitReader::new();
+        let mut br = LJpegBitReader::new(&bits);
 
         assert_eq!(BITS_PER_LONG, 32);
         assert_eq!(MIN_GET_BITS, 25);
 
-        assert_eq!(br.buffer, 0);
+        assert_eq!(br.bits, 0);
         assert_eq!(br.bits_left, 0);
-        assert_eq!(br.discard_bits(), 0);
-        assert_eq!(br.buffer, 0);
+        br.discard();
+        assert_eq!(br.bits, 0);
         assert_eq!(br.bits_left, 0);
 
-        assert!(matches!(br.show_bits8(&mut io), Ok(0b1010_1010)));
+        assert!(matches!(br.peek(8), Ok(0b1010_1010)));
         assert_eq!(br.bits_left, 32);
-        assert_eq!(br.buffer, 0b1010_1010_0101_0101_1101_1011_0011_0011);
-        assert!(matches!(br.show_bits8(&mut io), Ok(0b1010_1010)));
+        assert_eq!(br.bits, 0b1010_1010_0101_0101_1101_1011_0011_0011);
+        assert!(matches!(br.peek(8), Ok(0b1010_1010)));
 
-        assert_eq!(br.discard_bits(), 4);
+        br.discard();
         // this doesn't clear the buffer
         assert_eq!(br.bits_left, 0);
 
-        assert!(matches!(br.fill_bit_buffer(&mut io, 8), Ok(())));
+        assert!(matches!(br.fill_bit_buffer(8), Ok(())));
         assert_eq!(br.bits_left, 32);
-        assert_eq!(br.buffer, 0b1010_1010_0101_0101_1101_1011_0011_0011);
-        assert!(matches!(br.show_bits8(&mut io), Ok(0b1010_1010)));
+        assert_eq!(br.bits, 0b1010_1010_0101_0101_1101_1011_0011_0011);
+        assert!(matches!(br.peek(8), Ok(0b1010_1010)));
 
-        assert!(matches!(br.get_bits(&mut io, 8), Ok(0b1010_1010)));
+        assert!(matches!(br.get_bits(8), Ok(0b1010_1010)));
         assert_eq!(br.bits_left, 24);
-        assert_eq!(br.buffer, 0b1010_1010_0101_0101_1101_1011_0011_0011);
+        assert_eq!(br.bits, 0b1010_1010_0101_0101_1101_1011_0011_0011);
 
-        assert!(matches!(br.get_bit(&mut io), Ok(0)));
+        assert!(matches!(br.get_bits(1), Ok(0)));
         assert_eq!(br.bits_left, 23);
-        assert!(matches!(br.get_bit(&mut io), Ok(1)));
+        assert!(matches!(br.get_bits(1), Ok(1)));
         assert_eq!(br.bits_left, 22);
 
         // XXX test fill_bit_buffer encountering 0xff

@@ -197,8 +197,7 @@ impl DngFile {
                         if let Some(data) = rawdata.data8() {
                             // We can get away with passing `is_raw` to false in DNG.
                             let mut decompressor = decompress::LJpeg::new(false);
-                            let mut io = std::io::Cursor::new(data);
-                            decompressor.decompress(&mut io, &self.probe).map(|buffer| {
+                            decompressor.decompress(data, &self.probe).map(|buffer| {
                                 rawdata.set_with_buffer(buffer);
                                 rawdata.set_data_type(DataType::Raw);
                                 rawdata

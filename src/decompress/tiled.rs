@@ -86,11 +86,10 @@ impl TiledLJpeg {
                 .par_iter()
                 .map(|tile| {
                     log::debug!("Decompressing tile");
-                    let mut buffer = std::io::Cursor::new(tile.as_slice());
                     // Tiles should be fine to have `is_raw` set to false.
                     let mut decompressor = LJpeg::new(false);
                     decompressor
-                        .decompress_buffer(&mut buffer, true, &None)
+                        .decompress_buffer(tile.as_slice(), true, &None)
                         .ok()
                 })
                 .map(|tile| {
