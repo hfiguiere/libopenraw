@@ -111,12 +111,12 @@ Canon CRW CHDK           N N N N N N N N N N N
 
 Nikon NEF                Y Y Y Y Y Y N Y Y   B
 Nikon NRW                Y         Y N Y Y B B
-Olympus ORF              Y Y Y Y Y Y N Y Y B Y
+Olympus ORF              Y Y Y Y Y Y N Y Y Y Y
 Adobe DNG                Y Y B Y Y Y Y Y Y Y Y
 GoPro GPR                Y Y N Y Y Y Y Y X N Y
 Sony SR2                 Y Y N Y N Y N Y Y Y
 Sony ARW                 Y Y N Y N Y N Y Y
-Pentax PEF               Y Y N Y Y Y N Y Y B Y
+Pentax PEF               Y Y Y Y Y Y N Y Y B Y
 Epson ERF                Y Y Y Y Y Y N Y Y Y Y
 Minolta MRW              Y Y Y N Y Y N Y Y Y Y
 Panasonic RAW            Y Y N Y Y Y Y N Y B Y

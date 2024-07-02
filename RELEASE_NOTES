@@ -8,12 +8,17 @@ What's (visibly) new in 0.4.0-alpha.7
 - Extract White Balance coefficients.
 - Extract Exif GPSInfo.
 - DNG: decompress the tiles.
-- Fujifilm RAF: get black and white levels.
-- Olympus ORF: get active area, black levels.
+- Fujifilm RAF: get black and white levels. Fix decoding for non X-Trans
+  X-series.
+- Olympus ORF:
+  - Get active area, black levels.
+  - Fix decompression for XZ-2 XZ-10, SH-2, SP565UZ, SP500UZ,
+    SP510, SP550 and SP350
+- Pentax: decompress the raw data.
 - Sony ARW: improved parsing of A100 files.
 - Properly set black & white files for DNG, ERF, PEF, CR2, CRW.
 - Support rendering to sRGB with proper colours.
-- 25 new cameras listed.
+- 27 new cameras listed.
 - 1 camera properly identified.
 
 What's (visibly) new in 0.3.7
