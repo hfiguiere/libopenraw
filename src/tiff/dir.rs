@@ -250,18 +250,29 @@ impl Dir {
                     );
                 }
 
-                if &data[0..16] == b"LEICA CAMERA AG\0" && file_type == RawType::Rw2 {
-                    // Rebadged Panasonic
-                    // Leica C-Lux
-                    // Leica V-Lux 5
-                    // Leica D-Lux 7
-                    return Dir::new_makernote(
-                        b"Exif.Panasonic\0",
-                        container,
-                        offset + 18,
-                        0,
-                        &panasonic::MNOTE_TAG_NAMES,
-                    );
+                if &data[0..16] == b"LEICA CAMERA AG\0" {
+                    if file_type == RawType::Rw2 {
+                        // Rebadged Panasonic
+                        // Leica C-Lux
+                        // Leica V-Lux 5
+                        // Leica D-Lux 7
+                        return Dir::new_makernote(
+                            b"Exif.Panasonic\0",
+                            container,
+                            offset + 18,
+                            0,
+                            &panasonic::MNOTE_TAG_NAMES,
+                        );
+                    } else if file_type == RawType::Dng {
+                        // Leica D-Lux 8 (DNG)
+                        return Dir::new_makernote(
+                            b"Exif.Leica5\0",
+                            container,
+                            offset + 18,
+                            0,
+                            &leica::MNOTE_TAG_NAMES_5,
+                        );
+                    }
                 }
 
                 if &data[0..5] == b"LEICA" {
