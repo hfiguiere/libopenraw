@@ -84,6 +84,7 @@ lazy_static::lazy_static! {
         leica!("M8 Digital Camera", M8),
         leica!("M9 Digital Camera", M9),
         leica!("M Monochrom", M_MONOCHROM),
+        leica!("LEICA D-Lux 8", DLUX_8),
         leica!("LEICA M (Typ 240)", M_TYP240),
         leica!("LEICA M MONOCHROM (Typ 246)", M_MONOCHROM_TYP246),
         leica!("LEICA M10", M10),
