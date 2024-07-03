@@ -35,6 +35,7 @@ use crate::bitmap::{Point, Rect, Size};
 use crate::camera_ids::fujifilm;
 use crate::container::{Endian, RawContainer};
 use crate::decompress;
+use crate::decompress::bit_reader::BitReaderLe32;
 use crate::io::Viewer;
 use crate::mosaic::Pattern;
 use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
@@ -415,20 +416,33 @@ impl RawFileImpl for RafFile {
                 probe!(self.probe, "raf.raw.bps", bps);
                 let mut rawdata = if !compressed {
                     let mut view = raw_container.borrow_view_mut();
-                    view.seek(SeekFrom::Start(cfa_offset))?;
-                    let unpacked = decompress::unpack_from_reader(
-                        &mut *view,
-                        raw_size.width,
-                        raw_size.height,
-                        bps,
-                        tiff::Compression::None,
-                        cfa_len as usize,
-                        Endian::Little,
-                    )
-                    .map_err(|err| {
-                        log::error!("RAF failed to unpack {}", err);
-                        err
-                    })?;
+                    let unpacked = if bps == 14 {
+                        let mut unpacked =
+                            Vec::with_capacity(raw_size.width as usize * raw_size.height as usize);
+                        let view = crate::io::Viewer::create_subview(&view, cfa_offset)?;
+                        let mut reader = BitReaderLe32::new(view);
+                        decompress::unpack_14to16(
+                            &mut reader,
+                            raw_size.width as usize * raw_size.height as usize,
+                            &mut unpacked,
+                        )?;
+                        unpacked
+                    } else {
+                        view.seek(SeekFrom::Start(cfa_offset))?;
+                        decompress::unpack_from_reader(
+                            &mut *view,
+                            raw_size.width,
+                            raw_size.height,
+                            bps,
+                            tiff::Compression::None,
+                            cfa_len as usize,
+                            Endian::Little,
+                        )
+                        .map_err(|err| {
+                            log::error!("RAF failed to unpack {}", err);
+                            err
+                        })?
+                    };
                     RawImage::with_data16(
                         raw_size.width,
                         raw_size.height,

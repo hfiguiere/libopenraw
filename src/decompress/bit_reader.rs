@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-use byteorder::{BigEndian, ByteOrder};
+use byteorder::{BigEndian, ByteOrder, LittleEndian, ReadBytesExt};
 
 use crate::{Error, Result};
 
@@ -48,6 +48,39 @@ pub(crate) trait BitReader {
         self.consume(nbits);
 
         value
+    }
+}
+
+/// Load bits from Little Endien 32bits.
+pub(crate) struct BitReaderLe32<R> {
+    reader: std::io::BufReader<R>,
+    bits_left: u8,
+    bits: u64,
+}
+
+impl<R: std::io::Read> BitReaderLe32<R> {
+    pub fn new(reader: R) -> BitReaderLe32<R> {
+        BitReaderLe32 {
+            reader: std::io::BufReader::new(reader),
+            bits_left: 0,
+            bits: 0,
+        }
+    }
+}
+
+impl<R: std::io::Read> BitReader for BitReaderLe32<R> {
+    fn peek(&mut self, nbits: u8) -> Result<u16> {
+        if self.bits_left < nbits {
+            let b = self.reader.read_u32::<LittleEndian>()? as u64;
+            self.bits = (self.bits << 32) | b;
+            self.bits_left += 32;
+        }
+
+        Ok(((self.bits >> (self.bits_left - nbits)) & ((1 << nbits) - 1) as u64) as u16)
+    }
+
+    fn consume(&mut self, nbits: u8) {
+        self.bits_left -= nbits;
     }
 }
 

@@ -21,7 +21,7 @@
 
 //! Decompression
 
-mod bit_reader;
+pub(crate) mod bit_reader;
 mod ljpeg;
 mod sliced_buffer;
 mod tiled;
@@ -34,6 +34,7 @@ use std::io::{Read, Seek, SeekFrom};
 use crate::container::{Endian, RawContainer};
 use crate::tiff;
 use crate::{Error, Result};
+use bit_reader::BitReader;
 
 /// Unpack n-bits into 16-bits values
 /// out_len is the number of expected 16-bits pixel.
@@ -47,6 +48,25 @@ fn unpack_bento16(input: &[u8], n: u16, out_len: usize, out_data: &mut Vec<u16>)
     let mut written = 0_usize;
     for _ in 0..out_len {
         let t = reader.read_u16(n as u8)?;
+        out_data.push(t);
+        written += 1;
+    }
+    Ok(written)
+}
+
+/// Unpack 14 bits using a custom BitReader.
+/// Returns the number of values read.
+pub(crate) fn unpack_14to16<R>(
+    reader: &mut R,
+    out_len: usize,
+    out_data: &mut Vec<u16>,
+) -> Result<usize>
+where
+    R: BitReader,
+{
+    let mut written = 0_usize;
+    while written < out_len {
+        let t = reader.get_bits(14)?;
         out_data.push(t);
         written += 1;
     }
