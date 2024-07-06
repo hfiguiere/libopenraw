@@ -40,6 +40,7 @@ use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::{Dir, Ifd};
+use crate::utils;
 use crate::{
     DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
 };
@@ -645,6 +646,13 @@ impl RawFileImpl for NefFile {
                         }
                     })
                     .map(|mut rawdata| {
+                        if let Some(blacks) = self
+                            .ifd(tiff::IfdType::MakerNote)
+                            .and_then(|dir| dir.uint_value_array(exif::MNOTE_NIKON_BLACK_LEVEL))
+                        {
+                            probe!(self.probe, "nef.blacks.mnote", true);
+                            rawdata.set_blacks(utils::to_quad(&blacks));
+                        }
                         if let Some(wb) = self.white_balance() {
                             rawdata.set_as_shot_neutral(&wb);
                         }

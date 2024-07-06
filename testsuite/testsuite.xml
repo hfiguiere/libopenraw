@@ -440,6 +440,33 @@
     </results>
   </test>
   <test>
+    <name>NEF - NIKON D810 - DSC_1884.NEF Uncompressed 14 bits</name>
+    <file>/home/hub/samples/raw-pixls-us-data/Nikon/D810/DSC_1884.NEF</file>
+    <source>https://raw.pixls.us/getfile.php/2032/nice/Nikon%20-%20D810%20-%2014bit%20uncompressed%20(3:2).NEF</source>
+    <results>
+      <rawType>NEF</rawType>
+      <rawTypeId>131129</rawTypeId>
+      <makerNoteCount>63</makerNoteCount>
+      <makerNoteId>Exif.Nikon</makerNoteId>
+      <exifMake>NIKON CORPORATION</exifMake>
+      <exifModel>NIKON D810</exifModel>
+      <thumbNum>4</thumbNum>
+      <thumbSizes>160 7360 1620 640</thumbSizes>
+      <thumbFormats>8RGB JPEG JPEG JPEG</thumbFormats>
+      <thumbDataSizes>57600 2302373 818246 156082</thumbDataSizes>
+      <thumbMd5>4047 27780 35492 40296</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>72737280</rawDataSize>
+      <rawDataDimensions>7380 4928</rawDataDimensions>
+      <rawCfaPattern>RGGB</rawCfaPattern>
+      <rawMinValue>600 600 600 600</rawMinValue>
+      <rawMaxValue>16383 16383 16383 16383</rawMaxValue>
+      <rawAsShotNeutral>0.4629294755877034 1 0.8448844884488449 NaN</rawAsShotNeutral>
+      <rawMd5>43097</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>NEF-test D90</name>
     <file>/home/hub/samples/nef/D90/D90hMULTII0100.NEF</file>
     <source disabled="1">http://216.18.212.226/PRODS/D90/FULLRES/D90hMULTII0100.NEF</source>
@@ -467,7 +494,7 @@
     </results>
   </test>
   <test>
-    <name>NEF-test D90 - 2</name>
+    <name>NEF-test D90 - 12 bits lossy compressed</name>
     <file>/home/hub/samples/nef/D90/Nikon%20-%20D90%20-%2012bit%20compressed%20(Lossy%20(type%202))%20(3:2).NEF</file>
     <source>https://raw.pixls.us/getfile.php/1325/nice/Nikon%20-%20D90%20-%2012bit%20compressed%20(Lossy%20(type%202))%20(3:2).NEF</source>
     <results>
