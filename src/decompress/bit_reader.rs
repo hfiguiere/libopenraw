@@ -80,7 +80,8 @@ impl<R: std::io::Read> BitReader for BitReaderLe32<R> {
     }
 
     fn consume(&mut self, nbits: u8) {
-        self.bits_left -= nbits;
+        // XXX should we use saturating_sub() instead?
+        self.bits_left -= std::cmp::min(nbits, self.bits_left);
     }
 }
 
