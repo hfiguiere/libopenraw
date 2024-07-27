@@ -37,6 +37,19 @@ pub(crate) struct ImageBuffer<T> {
 }
 
 impl<T> ImageBuffer<T> {
+    pub(crate) fn new(width: u32, height: u32, bpc: u16, cc: u32) -> Self
+    where
+        T: Default + Clone,
+    {
+        Self {
+            data: vec![T::default(); width as usize * height as usize],
+            width,
+            height,
+            bpc,
+            cc,
+        }
+    }
+
     /// Create an image buffer.
     pub(crate) fn with_data(data: Vec<T>, width: u32, height: u32, bpc: u16, cc: u32) -> Self {
         Self {
@@ -60,6 +73,16 @@ impl<T> ImageBuffer<T> {
         let pixel = &self.data[pos..pos + self.cc as usize];
 
         Some(pixel.to_vec())
+    }
+
+    #[inline]
+    /// Return a mut pixel value.
+    // XXX make sure to handle overflows.
+    pub(crate) fn mut_pixel_at(&mut self, row: usize, col: usize, c: usize) -> &mut T
+    where
+        T: Copy,
+    {
+        &mut self.data[row * self.width as usize * self.cc as usize + col * self.cc as usize + c]
     }
 }
 

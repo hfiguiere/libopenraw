@@ -48,12 +48,14 @@ impl From<&Pattern> for PatternType {
 }
 
 /// A pattern colour component.
-#[derive(Clone, Copy, Debug, PartialEq, TryFromPrimitive)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, TryFromPrimitive)]
 #[repr(u8)]
 pub enum PatternColour {
     Red = 0,
     Green = 1,
     Blue = 2,
+    #[default]
+    Unknown = 255,
 }
 
 impl PatternColour {
@@ -62,6 +64,7 @@ impl PatternColour {
             Self::Red => 'R',
             Self::Green => 'G',
             Self::Blue => 'B',
+            _ => unreachable!(),
         }
     }
 }
@@ -143,17 +146,51 @@ impl Pattern {
         self.into()
     }
 
+    pub fn width(&self) -> usize {
+        match *self {
+            Self::Empty => 0,
+            Self::Rggb => 2,
+            Self::Gbrg => 2,
+            Self::Bggr => 2,
+            Self::Grbg => 2,
+            // XXX inacurate. will do for now
+            Self::NonRgb22(_) => 6,
+        }
+    }
+
+    pub fn height(&self) -> usize {
+        match *self {
+            Self::Empty => 0,
+            Self::Rggb => 2,
+            Self::Gbrg => 2,
+            Self::Bggr => 2,
+            Self::Grbg => 2,
+            // XXX inacurate. will do for now
+            Self::NonRgb22(_) => 6,
+        }
+    }
+
     /// Return the pattern colour array
-    pub fn pattern(&self) -> Vec<PatternColour> {
+    pub fn pattern(&self) -> &[PatternColour] {
         use PatternColour::*;
         match *self {
-            Self::Empty => Vec::default(),
-            Self::Rggb => vec![Red, Green, Green, Blue],
-            Self::Gbrg => vec![Green, Blue, Red, Green],
-            Self::Bggr => vec![Blue, Green, Green, Red],
-            Self::Grbg => vec![Green, Red, Blue, Green],
-            Self::NonRgb22(ref p) => p.clone(),
+            Self::Empty => &[],
+            Self::Rggb => &[Red, Green, Green, Blue],
+            Self::Gbrg => &[Green, Blue, Red, Green],
+            Self::Bggr => &[Blue, Green, Green, Red],
+            Self::Grbg => &[Green, Red, Blue, Green],
+            Self::NonRgb22(ref p) => p,
         }
+    }
+}
+
+impl std::ops::Index<(usize, usize)> for Pattern {
+    type Output = PatternColour;
+
+    fn index(&self, index: (usize, usize)) -> &Self::Output {
+        assert!(index.0 < self.width());
+        assert!(index.1 < self.height());
+        &self.pattern()[index.1 * self.width() + index.0]
     }
 }
 

@@ -49,9 +49,63 @@ pub(crate) trait BitReader {
 
         value
     }
+
+    #[inline]
+    /// Consume all leading zeros.
+    fn consume_zerobits(&mut self) -> u32 {
+        const NUM_BITS: u32 = u16::BITS - 1;
+        let mut count = 0;
+        loop {
+            // u16::leading_zeros require at least one bit set.
+            let bits = (self.peek(NUM_BITS as u8).unwrap() << 1) | 0x1;
+            let n = bits.leading_zeros();
+            self.consume(n as u8);
+            count += n;
+            // less than a whole batch of contiguous zero, it's the end
+            if n != NUM_BITS {
+                break;
+            }
+        }
+        count
+    }
 }
 
-/// Load bits from Little Endien 32bits.
+/// Load bits from Big Endian 32bits.
+// XXX make this a generic on ByteOrder
+pub(crate) struct BitReaderBe32<R> {
+    reader: std::io::BufReader<R>,
+    bits_left: u8,
+    bits: u64,
+}
+
+impl<R: std::io::Read> BitReaderBe32<R> {
+    pub fn new(reader: R) -> BitReaderBe32<R> {
+        BitReaderBe32 {
+            reader: std::io::BufReader::new(reader),
+            bits_left: 0,
+            bits: 0,
+        }
+    }
+}
+
+impl<R: std::io::Read> BitReader for BitReaderBe32<R> {
+    fn peek(&mut self, nbits: u8) -> Result<u16> {
+        if self.bits_left < nbits {
+            let b = self.reader.read_u32::<BigEndian>()? as u64;
+            self.bits = (self.bits << 32) | b;
+            self.bits_left += 32;
+        }
+
+        Ok(((self.bits >> (self.bits_left - nbits)) & ((1_u32 << nbits) - 1) as u64) as u16)
+    }
+
+    fn consume(&mut self, nbits: u8) {
+        self.bits_left -= nbits;
+        self.bits &= (1 << self.bits_left) - 1;
+    }
+}
+
+/// Load bits from Little Endian 32bits.
 pub(crate) struct BitReaderLe32<R> {
     reader: std::io::BufReader<R>,
     bits_left: u8,
@@ -68,7 +122,7 @@ impl<R: std::io::Read> BitReaderLe32<R> {
     }
 }
 
-impl<R: std::io::Read> BitReader for BitReaderLe32<R> {
+impl<R: std::io::Read + std::io::Seek> BitReader for BitReaderLe32<R> {
     fn peek(&mut self, nbits: u8) -> Result<u16> {
         if self.bits_left < nbits {
             let b = self.reader.read_u32::<LittleEndian>()? as u64;
@@ -76,7 +130,7 @@ impl<R: std::io::Read> BitReader for BitReaderLe32<R> {
             self.bits_left += 32;
         }
 
-        Ok(((self.bits >> (self.bits_left - nbits)) & ((1 << nbits) - 1) as u64) as u16)
+        Ok(((self.bits >> (self.bits_left - nbits)) & ((1_u32 << nbits) - 1) as u64) as u16)
     }
 
     fn consume(&mut self, nbits: u8) {
@@ -178,7 +232,7 @@ impl<'a> LJpegBitReader<'a> {
 
 #[cfg(test)]
 mod test {
-    use super::{BitReader, LJpegBitReader, BITS_PER_LONG, MIN_GET_BITS};
+    use super::{BitReader, BitReaderBe32, LJpegBitReader, BITS_PER_LONG, MIN_GET_BITS};
 
     #[test]
     fn test_ljpeg_bit_reader() {
@@ -238,5 +292,16 @@ mod test {
         assert_eq!(br.bits_left, 22);
 
         // XXX test fill_bit_buffer encountering 0xff
+    }
+
+    #[test]
+    fn test_zerobits() {
+        let src = vec![0_u8, 0, 0, 1, 0, 0, 0, 0];
+
+        let cursor = std::io::Cursor::new(&src);
+        let mut reader = BitReaderBe32::new(cursor);
+
+        let zeros = reader.consume_zerobits();
+        assert_eq!(zeros, 31);
     }
 }

@@ -71,6 +71,7 @@ RUST_FILES = Cargo.lock \
 	src/epson.rs \
 	src/factory.rs \
 	src/fujifilm.rs \
+	src/fujifilm/decompress.rs \
 	src/fujifilm/matrices.rs \
 	src/fujifilm/raf.rs \
 	src/io.rs \

@@ -21,6 +21,7 @@
 
 //! Fujifilm RAF format
 
+mod decompress;
 mod matrices;
 mod raf;
 
@@ -34,7 +35,7 @@ use once_cell::unsync::OnceCell;
 use crate::bitmap::{Point, Rect, Size};
 use crate::camera_ids::fujifilm;
 use crate::container::{Endian, RawContainer};
-use crate::decompress;
+use crate::decompress as unpack;
 use crate::decompress::bit_reader::BitReaderLe32;
 use crate::io::Viewer;
 use crate::mosaic::Pattern;
@@ -284,7 +285,7 @@ impl RawFileImpl for RafFile {
         }
     }
 
-    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawImage> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         self.container();
         let raw_container = self.container.get().unwrap();
         raw_container
@@ -367,8 +368,9 @@ impl RawFileImpl for RafFile {
                 log::debug!("RAF raw props {:x}", raw_props);
                 let layout = raw_props & 0xff000000 >> 24 >> 7;
                 probe!(self.probe, "raf.layout", layout);
+                // This is unclear how significant it is as on X-Trans
+                // compressed this is 0.
                 let compression = (raw_props & 0xff0000) >> 18 & 8;
-                probe!(self.probe, "raf.compression", compression);
                 let compressed = compression != 0;
                 log::debug!("compressed {compressed}");
 
@@ -407,6 +409,7 @@ impl RawFileImpl for RafFile {
                 } else {
                     cfa_offset = raw_container.cfa_offset() as u64 + 2048;
                     cfa_len = raw_container.cfa_len() as u64 - 2048;
+                    // XXX likely 12 is incorrect for 14.
                     bps = if compressed { 12 } else { 16 };
                 }
                 // Invalid value.
@@ -414,6 +417,9 @@ impl RawFileImpl for RafFile {
                     return Err(Error::NotFound);
                 }
                 probe!(self.probe, "raf.raw.bps", bps);
+                let compressed =
+                    cfa_len < (bps as u64 * raw_size.width as u64 * raw_size.height as u64 / 8);
+                probe!(self.probe, "raf.compressed", compressed);
                 let mut rawdata = if !compressed {
                     let mut view = raw_container.borrow_view_mut();
                     let unpacked = if bps == 14 {
@@ -421,15 +427,19 @@ impl RawFileImpl for RafFile {
                             Vec::with_capacity(raw_size.width as usize * raw_size.height as usize);
                         let view = crate::io::Viewer::create_subview(&view, cfa_offset)?;
                         let mut reader = BitReaderLe32::new(view);
-                        decompress::unpack_14to16(
+                        unpack::unpack_14to16(
                             &mut reader,
                             raw_size.width as usize * raw_size.height as usize,
                             &mut unpacked,
-                        )?;
+                        )
+                        .map_err(|err| {
+                            log::error!("RAF failed to unpack 14 bits {err}");
+                            err
+                        })?;
                         unpacked
                     } else {
                         view.seek(SeekFrom::Start(cfa_offset))?;
-                        decompress::unpack_from_reader(
+                        unpack::unpack_from_reader(
                             &mut *view,
                             raw_size.width,
                             raw_size.height,
@@ -452,16 +462,31 @@ impl RawFileImpl for RafFile {
                         mosaic,
                     )
                 } else {
-                    // XXX decompress is not supported yet
                     let raw = raw_container.load_buffer8(cfa_offset, cfa_len);
-                    RawImage::with_data8(
-                        raw_size.width,
-                        raw_size.height,
-                        bps,
-                        DataType::CompressedRaw,
-                        raw,
-                        mosaic,
-                    )
+                    let mut rawbuffer = None;
+                    if !skip_decompress {
+                        rawbuffer = decompress::decompress_fuji(
+                            &raw,
+                            raw_size.width as usize,
+                            raw_size.height as usize,
+                            bps as usize,
+                            &mosaic,
+                        )
+                        .ok();
+                    }
+
+                    if let Some(rawbuffer) = rawbuffer {
+                        RawImage::with_image_buffer(rawbuffer, DataType::Raw, mosaic)
+                    } else {
+                        RawImage::with_data8(
+                            raw_size.width,
+                            raw_size.height,
+                            bps,
+                            DataType::CompressedRaw,
+                            raw,
+                            mosaic,
+                        )
+                    }
                 };
 
                 rawdata.set_blacks(utils::to_quad(&blacks));

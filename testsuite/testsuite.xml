@@ -1410,6 +1410,33 @@
     </results>
   </test>
   <test>
+    <name>RAF - X-T3 Compressed - DSCF1100.RAF</name>
+    <file>/var/home/hub/samples/raf/X-T3/DSCF1100.RAF</file>
+    <results>
+      <rawType>RAF</rawType>
+      <rawTypeId>917540</rawTypeId>
+      <makerNoteCount>66</makerNoteCount>
+      <makerNoteId>Exif.Fujifilm</makerNoteId>
+      <exifMake>FUJIFILM</exifMake>
+      <exifModel>X-T3</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>4416 160</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>4535565 9243</thumbDataSizes>
+      <thumbMd5>17175 50644</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>42747264</rawDataSize>
+      <rawDataDimensions>6384 3348</rawDataDimensions>
+      <rawDataActiveArea>630 9 4992 3328</rawDataActiveArea>
+      <rawCfaPattern>NON_RGB22</rawCfaPattern>
+      <rawMinValue>1020 1020 1020 1020</rawMinValue>
+      <rawMaxValue>16383 16383 16383 16383</rawMaxValue>
+      <rawAsShotNeutral>0.5224913494809689 1 0.5752380952380952 NaN</rawAsShotNeutral>
+      <rawMd5>50132</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
+  <test>
     <name>RAW-test Panasonic L1</name>
     <file>/home/hub/samples/raw/Panasonic-L1/Panasonic - DMC-L1 - 4:3.RAW</file>
     <source>https://raw.pixls.us/getfile.php/706/nice/Panasonic%20-%20DMC-L1%20-%204:3.RAW</source>
