@@ -5,6 +5,7 @@
 
 use std::cell::{RefCell, RefMut};
 use std::collections::{BTreeMap, HashMap};
+use std::convert::TryFrom;
 use std::io::{Read, Seek, SeekFrom};
 
 use byteorder::{BigEndian, ReadBytesExt};
@@ -401,6 +402,8 @@ pub(super) const TAG_SENSOR_DIMENSION: u16 = 0x100;
 pub(super) const TAG_IMG_TOP_LEFT: u16 = 0x110;
 /// Width Height of activate area
 pub(super) const TAG_IMG_HEIGHT_WIDTH: u16 = 0x111;
+// Aspect Ratio. w / h.
+const TAG_IMG_ASPECT_RATIO: u16 = 0x115;
 const TAG_OUTPUT_HEIGHT_WIDTH: u16 = 0x121;
 /// Some info about the RAW. Sametime called "layout".
 pub(super) const TAG_RAW_INFO: u16 = 0x130;
@@ -409,6 +412,8 @@ pub(super) const TAG_CFA_PATTERN: u16 = 0x131;
 /// White balance, "old style". The presence of this seems to
 /// correlate with the raw data no being a TIFF container.
 pub(super) const TAG_WB_OLD: u16 = 0x2ff0;
+const TAG_EXPOSURE_BIAS: u16 = 0x9650;
+const TAG_RAF_DATA: u16 = 0xc000;
 
 // TIFF tags
 
@@ -431,15 +436,27 @@ pub(super) const FUJI_TAG_RAW_BLACK_LEVEL_GRB: u16 = 0xf00a;
 /// White balance coefficients.
 pub(super) const FUJI_TAG_RAW_WB_GRB: u16 = 0xf00e;
 
+#[derive(Clone, Copy, Default)]
+enum RafTagType {
+    #[default]
+    U32,
+    U16x2,
+    U16x4,
+    Bytes,
+}
+
 lazy_static::lazy_static! {
-    static ref META_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
-        (TAG_SENSOR_DIMENSION, "SensorDimension"),
-        (TAG_IMG_TOP_LEFT, "ImageTopLeft"),
-        (TAG_IMG_HEIGHT_WIDTH, "ImageHeightWidth"),
-        (TAG_OUTPUT_HEIGHT_WIDTH, "OutputHeightWidth"),
-        (TAG_RAW_INFO, "RawInfo"),
-        (TAG_CFA_PATTERN, "CfaPattern"),
-        (TAG_WB_OLD, "WhiteBalanceOld"),
+    static ref META_TAG_NAMES: HashMap<u16, (&'static str, RafTagType)> = HashMap::from([
+        (TAG_SENSOR_DIMENSION, ("SensorDimension", RafTagType::U16x2)),
+        (TAG_IMG_TOP_LEFT, ("ImageTopLeft", RafTagType::U16x2)),
+        (TAG_IMG_HEIGHT_WIDTH, ("ImageHeightWidth", RafTagType::U16x2)),
+        (TAG_IMG_ASPECT_RATIO, ("ImageAspectRatio", RafTagType::U16x2)),
+        (TAG_OUTPUT_HEIGHT_WIDTH, ("OutputHeightWidth", RafTagType::U16x2)),
+        (TAG_RAW_INFO, ("RawInfo", RafTagType::U32)),
+        (TAG_CFA_PATTERN, ("CfaPattern", RafTagType::Bytes)),
+        (TAG_WB_OLD, ("WhiteBalanceOld", RafTagType::U16x4)),
+        (TAG_EXPOSURE_BIAS, ("ExposureBias", RafTagType::U32)),
+        (TAG_RAF_DATA, ("RafData", RafTagType::Bytes)),
     ]);
 }
 
@@ -455,7 +472,7 @@ impl std::fmt::Display for Value {
             Self::Int(n) => write!(f, "0x{n:08x}"),
             Self::Bytes(b) => {
                 if b.len() > 36 {
-                    write!(f, "bytes len={}", b.len())
+                    write!(f, "bytes {:?}... len={}", &b[0..36], b.len())
                 } else {
                     write!(f, "bytes {b:?} len={}", b.len())
                 }
@@ -574,7 +591,18 @@ impl Dump for MetaContainer {
         {
             let indent = indent + 1;
             for (tag, value) in &self.tags {
-                let tag_name = META_TAG_NAMES.get(tag).unwrap_or(&"");
+                let (tag_name, tag_type) = META_TAG_NAMES
+                    .get(tag)
+                    .cloned()
+                    .unwrap_or((&"", RafTagType::default()));
+                let value = match tag_type {
+                    RafTagType::U32 => format!("{value}"),
+                    RafTagType::U16x2 => Size::try_from(value)
+                        .map(|size| format!("{}, {}", size.width, size.height))
+                        .unwrap_or_default(),
+                    RafTagType::Bytes => format!("{value}"),
+                    _ => String::default(),
+                };
                 dump_writeln!(
                     out,
                     indent,
