@@ -421,58 +421,71 @@ impl RawFileImpl for RafFile {
                     cfa_len < (bps as u64 * raw_size.width as u64 * raw_size.height as u64 / 8);
                 probe!(self.probe, "raf.compressed", compressed);
                 let mut rawdata = if !compressed {
-                    let mut view = raw_container.borrow_view_mut();
-                    let unpacked = if bps == 14 {
-                        let mut unpacked =
-                            Vec::with_capacity(raw_size.width as usize * raw_size.height as usize);
-                        let view = crate::io::Viewer::create_subview(&view, cfa_offset)?;
-                        let mut reader = BitReaderLe32::new(view);
-                        unpack::unpack_14to16(
-                            &mut reader,
-                            raw_size.width as usize * raw_size.height as usize,
-                            &mut unpacked,
-                        )
-                        .map_err(|err| {
-                            log::error!("RAF failed to unpack 14 bits {err}");
-                            err
-                        })?;
-                        unpacked
-                    } else {
-                        view.seek(SeekFrom::Start(cfa_offset))?;
-                        unpack::unpack_from_reader(
-                            &mut *view,
+                    if cfa_len == (2 * raw_size.width as u64 * raw_size.height as u64) {
+                        let buffer = raw_container.load_buffer16_le(cfa_offset, cfa_len);
+                        RawImage::with_data16(
                             raw_size.width,
                             raw_size.height,
-                            bps,
-                            tiff::Compression::None,
-                            cfa_len as usize,
-                            Endian::Little,
-                        )
-                        .map_err(|err| {
-                            log::error!("RAF failed to unpack {}", err);
-                            err
-                        })?
-                    };
-                    RawImage::with_data16(
-                        raw_size.width,
-                        raw_size.height,
-                        16,
-                        DataType::Raw,
-                        unpacked,
-                        mosaic,
-                    )
+                            16,
+                            DataType::Raw,
+                            buffer,
+                            mosaic,
+                            )
+                    } else {
+                        let mut view = raw_container.borrow_view_mut();
+                        println!("bps {bps}");
+                        let unpacked = if bps == 14 {
+                            let mut unpacked =
+                                Vec::with_capacity(raw_size.width as usize * raw_size.height as usize);
+                            let view = crate::io::Viewer::create_subview(&view, cfa_offset)?;
+                            let mut reader = BitReaderLe32::new(view);
+                            unpack::unpack_14to16(
+                                &mut reader,
+                                raw_size.width as usize * raw_size.height as usize,
+                                &mut unpacked,
+                            )
+                            .map_err(|err| {
+                                log::error!("RAF failed to unpack 14 bits {err}");
+                                err
+                            })?;
+                            unpacked
+                        } else {
+                            view.seek(SeekFrom::Start(cfa_offset))?;
+                            unpack::unpack_from_reader(
+                                &mut *view,
+                                raw_size.width,
+                                raw_size.height,
+                                bps,
+                                tiff::Compression::None,
+                                cfa_len as usize,
+                                Endian::Little,
+                                )
+                                .map_err(|err| {
+                                    log::error!("RAF failed to unpack {}", err);
+                                    err
+                                })?
+                        };
+                        RawImage::with_data16(
+                            raw_size.width,
+                            raw_size.height,
+                            16,
+                            DataType::Raw,
+                            unpacked,
+                            mosaic,
+                            )
+                    }
                 } else {
                     let raw = raw_container.load_buffer8(cfa_offset, cfa_len);
                     let mut rawbuffer = None;
                     if !skip_decompress {
-                        rawbuffer = decompress::decompress_fuji(
-                            &raw,
-                            raw_size.width as usize,
-                            raw_size.height as usize,
-                            bps as usize,
-                            &mosaic,
-                        )
-                        .ok();
+                            rawbuffer = decompress::decompress_fuji(
+                                &raw,
+                                raw_size.width as usize,
+                                raw_size.height as usize,
+                                bps as usize,
+                                &mosaic,
+                                )
+                            .ok();
                     }
 
                     if let Some(rawbuffer) = rawbuffer {
