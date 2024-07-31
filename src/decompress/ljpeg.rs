@@ -128,7 +128,8 @@ pub struct LJpeg {
     /// Canon-style slices. The format of the slices vector is as follow
     /// * N col1 col2
     /// * N is the number of repeat for col1. The total
-    /// number of slices is always N+1
+    ///   number of slices is always N+1.
+    ///
     /// This is for Canon CR2.
     slices: Option<Vec<u32>>,
     /// The decompressed data is raw CFA. Safe to be false on DNG.

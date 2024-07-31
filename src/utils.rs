@@ -70,9 +70,9 @@ pub(crate) fn to_u8_slice<T>(slice: &[T]) -> &[u8] {
 /// Will fallback (slower path) if
 /// * there is no nul terminator.
 /// * there are many nuls after the string.
+///
 /// This is used for Exif and RAF file where the strings are nul
-/// terminated.
-/// We use lossy from utf8.
+///   terminated. We use lossy from utf8.
 pub(crate) fn from_maybe_nul_terminated(buf: &[u8]) -> String {
     if let Ok(cstr) = std::ffi::CStr::from_bytes_with_nul(buf) {
         cstr.to_string_lossy().to_string()
