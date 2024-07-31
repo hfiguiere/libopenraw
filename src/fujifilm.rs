@@ -433,7 +433,6 @@ impl RawFileImpl for RafFile {
                         )
                     } else {
                         let mut view = raw_container.borrow_view_mut();
-                        println!("bps {bps}");
                         let unpacked = if bps == 14 {
                             let mut unpacked = Vec::with_capacity(
                                 raw_size.width as usize * raw_size.height as usize,
