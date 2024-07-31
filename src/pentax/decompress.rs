@@ -246,23 +246,6 @@ pub trait BitPump {
 
         val
     }
-
-    #[inline(always)]
-    fn peek_ibits(&mut self, num: u32) -> i32 {
-        self.peek_bits(num) as i32
-    }
-
-    #[inline(always)]
-    fn get_ibits(&mut self, num: u32) -> i32 {
-        self.get_bits(num) as i32
-    }
-
-    // Sign extend ibits
-    #[inline(always)]
-    fn get_ibits_sextended(&mut self, num: u32) -> i32 {
-        let val = self.get_ibits(num);
-        val.wrapping_shl(32 - num).wrapping_shr(32 - num)
-    }
 }
 
 #[derive(Default)]
