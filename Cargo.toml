@@ -56,6 +56,12 @@ capi = ["libc"]
 dump = []
 ## Build fuzzing support
 fuzzing = ["afl"]
+## MP4 module (just to make Rust happy)
+3gpp = []
+meta-xml = []
+missing-pixi-permitted = []
+mp4v = []
+unstable-api = []
 
 # For flamegraph
 [profile.release]
