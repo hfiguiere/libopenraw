@@ -5,25 +5,30 @@ THIS IS A PRE-RELEASE.
 Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
-  - Panasonic G100D*. Colour atrices for S9.
+  - Panasonic G100D*. Colour matrices for S9.
+  - Leica D-Lux 8.
   - Nikon Z6 III*.
 
 New features:
 
   - Pentax: handle compressed files.
+  - Fujfilm: decompress RAF X- and GFX- series.
 
 Bug fixes:
 
-  - Fujifilm: Fix decoding for X-100, X-10, X-F1.
+  - Fujifilm: Fix decoding for X-100, X-10, X-F1, and unpacked raw (GFX and
+    X-Trans).
   - Olympus ORF: Fix decompression for XZ-2 XZ-10, SH-2, SP565UZ, SP500UZ,
     SP510, SP550 and SP350
   - Nikon: Fix detection of NRW. Allow uncompressed NRW (Nikon A1000) that
     worked coincidentally because of this bug.
+  - Nikon: Extract black values from MakerNote if available.
 
 Internal:
 
   - Added testsuite for Olympus XZ-10 and SP565UZ.
   - Added probe.
+  - Use Rust 2021.
 
 libopenraw 0.4.0-alpha.6 - 2024/06/23
 

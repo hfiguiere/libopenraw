@@ -9,16 +9,17 @@ What's (visibly) new in 0.4.0-alpha.7
 - Extract Exif GPSInfo.
 - DNG: decompress the tiles.
 - Fujifilm RAF: get black and white levels. Fix decoding for non X-Trans
-  X-series.
+  X-series. Decompress the raw data.
+- Leica: Support Leica D-Lux MakerNote in DNG (D-Lux 8).
 - Olympus ORF:
   - Get active area, black levels.
   - Fix decompression for XZ-2 XZ-10, SH-2, SP565UZ, SP500UZ,
     SP510, SP550 and SP350
 - Pentax: decompress the raw data.
 - Sony ARW: improved parsing of A100 files.
-- Properly set black & white files for DNG, ERF, PEF, CR2, CRW.
+- Properly set black & white files for DNG, ERF, PEF, CR2, CRW, RAF.
 - Support rendering to sRGB with proper colours.
-- 27 new cameras listed.
+- 28 new cameras listed.
 - 1 camera properly identified.
 
 What's (visibly) new in 0.3.7

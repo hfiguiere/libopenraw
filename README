@@ -10,6 +10,9 @@ Code below src/mp4/parse is released under MPL-2.0 license. See the
 MPL-2.0 file.  It is a modified version of
 https://github.com/mozilla/mp4parse-rust
 
+Some files may be individually licensed under LGPL-2.1-or-later. See
+the SPDX license info built-in.
+
 Code of Conduct:
 ================
 
@@ -45,7 +48,7 @@ with a C API. There the standard layout for a Rust crate applies, and
 `lib/` contains the crate part to build the dynamic library for the C
 API.
 
-Supported file format:
+Supported file formats
 ======================
 
 Here are the supported file formats. For details per-camera, see
@@ -81,16 +84,16 @@ Supported formats:
 
   T  Tested and proven to work. (I have a sample.)
   Y  Yes, it is there. (Untested as I do not have a sample but the format
-     is known to be similar.) Yes, it is for the whole format.
+     is known to be similar) Yes, it is for the whole format.
   N  Not supported.
-  B  Known to be Broken. (Needs to be fixed. I have a sample but further
-     work is required.)
+  B  Known to be Broken on some models. (Needs to be fixed. Further work
+     is required)
   X  Not needed.
   #  Sample file needed.
 
-                          ThNail
-                         /  CFA compressed bitstream
-                         | /  CFA decompress
+                          Thumbnail
+                         /  Raw bitstream
+                         | /  Raw decompression
                          | | /  Orientation Tag
                          | | | /  Bayer Type
                          | | | | /  Type ID
@@ -100,28 +103,24 @@ Supported formats:
                          | | | | | | | | /  Rendering
                          | | | | | | | | | /  White Balance
                          | | | | | | | | | | /
-                         | | | | | | | | | | |
 Canon CR2                Y Y Y Y Y Y Y Y Y Y Y
 Canon CR3                Y Y N Y Y Y Y Y Y N N
 Canon CRW                Y Y Y Y Y Y Y Y Y B Y
-
 Canon CRW CHDK           N N N N N N N N N N N
 (unofficial firmware)
-
-
-Nikon NEF                Y Y Y Y Y Y N Y Y   B
-Nikon NRW                Y         Y N Y Y B B
+Nikon NEF                Y B Y Y Y Y N Y Y B B
+Nikon NRW                Y     Y   Y N Y Y B B
 Olympus ORF              Y Y Y Y Y Y N Y Y Y Y
-Adobe DNG                Y Y B Y Y Y Y Y Y Y Y
+Adobe DNG                Y Y Y Y Y Y Y Y Y Y Y
 GoPro GPR                Y Y N Y Y Y Y Y X N Y
 Sony SR2                 Y Y N Y N Y N Y Y Y
 Sony ARW                 Y Y N Y N Y N Y Y
 Pentax PEF               Y Y Y Y Y Y N Y Y B Y
-Epson ERF                Y Y Y Y Y Y N Y Y Y Y
-Minolta MRW              Y Y Y N Y Y N Y Y Y Y
+Epson ERF                Y Y X Y Y Y N Y Y Y Y
+Minolta MRW              Y Y X N Y Y N Y Y Y Y
 Panasonic RAW            Y Y N Y Y Y Y N Y B Y
 Panasonic RW2            Y Y N Y Y Y Y N Y N
-FujiFilm RAF             Y Y N Y N Y N Y Y B
+FujiFilm RAF             Y Y Y Y N Y Y Y Y B Y
 
 
 Unsupported
