@@ -137,8 +137,8 @@ struct GradientList {
 }
 
 impl Strip {
-    fn line_height(&self) -> usize {
-        self.cfa.height()
+    const fn line_height() -> usize {
+        6
     }
 
     // how many vertical lines does this block encode?
@@ -163,7 +163,7 @@ impl Strip {
     // where vertically does this block start?
     fn offset_y(&self, line: usize) -> usize {
         debug_assert!(line < (self.height() as usize));
-        self.line_height() * line
+        Self::line_height() * line
     }
 
     // where horizontally does this block start?
@@ -550,9 +550,10 @@ impl CompressedBlock {
             *g = XT_LINE_G2 + i;
         }
         let cfa_width = strip.cfa.width();
-        for row_count in 0..strip.line_height() {
+        let cfa_height = strip.cfa.height();
+        for row_count in 0..Strip::line_height() {
             for pixel_count in 0..strip.width() {
-                let line_idx = match strip.cfa[(row_count, pixel_count % cfa_width)] {
+                let line_idx = match strip.cfa[(row_count % cfa_height, pixel_count % cfa_width)] {
                     PatternColour::Red => line_buf_r[row_count >> 1],
                     PatternColour::Green => line_buf_g[row_count],
                     PatternColour::Blue => line_buf_b[row_count >> 1],
