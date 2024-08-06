@@ -21,6 +21,8 @@
 
 #![doc = include_str!("../doc/benchmarks.md")]
 
+use std::io::Read;
+
 const FILES: [&str; 12] = [
     "Apple/iPhone XS/IMG_1105.dng",
     "Canon/EOS 10D/CRW_7673.CRW",
@@ -81,9 +83,10 @@ fn ljpeg_benchmark(c: &mut Criterion) {
     c.bench_function("ljpeg", |b| {
         b.iter(|| {
             let mut decompressor = LJpeg::new(false);
-            let io = std::fs::File::open("test/ljpegtest1.jpg").expect("Couldn't open");
-            let mut buffered = std::io::BufReader::new(io);
-            let _ = decompressor.discard_decompress(&mut buffered);
+            let mut io = std::fs::File::open("test/ljpegtest1.jpg").expect("Couldn't open");
+            let mut buffer = Vec::<u8>::new();
+            io.read_to_end(&mut buffer).expect("Couldn't read");
+            let _ = decompressor.discard_decompress(&buffer);
         });
     });
 }
