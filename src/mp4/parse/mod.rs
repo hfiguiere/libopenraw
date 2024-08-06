@@ -1261,10 +1261,10 @@ mod media_data_box_tests {
     #[test]
     #[should_panic(expected = "usize overflow")]
     fn extent_with_length_which_overflows_usize_panics() {
-        let mdat = MediaDataBox::at_offset(std::u64::MAX - 1, vec![1; 5]);
+        let mdat = MediaDataBox::at_offset(u64::MAX - 1, vec![1; 5]);
         let extent = Extent::WithLength {
-            offset: std::u64::MAX,
-            len: std::usize::MAX,
+            offset: u64::MAX,
+            len: usize::MAX,
         };
 
         mdat.get(&extent);
@@ -1274,10 +1274,8 @@ mod media_data_box_tests {
     // because the range end is unbounded, we don't calculate it.
     #[test]
     fn extent_to_end_which_overflows_usize() {
-        let mdat = MediaDataBox::at_offset(std::u64::MAX - 1, vec![1; 5]);
-        let extent = Extent::ToEnd {
-            offset: std::u64::MAX,
-        };
+        let mdat = MediaDataBox::at_offset(u64::MAX - 1, vec![1; 5]);
+        let extent = Extent::ToEnd { offset: u64::MAX };
 
         assert_eq!(mdat.get(&extent), Some(&[1, 1, 1, 1][..]));
     }
@@ -3493,7 +3491,7 @@ fn parse_mdhd<T: Read>(
 )> {
     let mdhd = read_mdhd(f)?;
     let duration = match mdhd.duration {
-        std::u64::MAX => None,
+        u64::MAX => None,
         duration => Some(TrackScaledTime::<u64>(duration, track.id)),
     };
     if mdhd.timescale == 0 {
