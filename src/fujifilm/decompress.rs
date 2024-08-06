@@ -243,7 +243,7 @@ impl Strip {
 
         let mut pump = if self.offset + self.size == src.len() {
             let cursor = std::io::Cursor::new(&src[self.offset..]);
-            BitReaderBe32::new(cursor) // use extra bytes from OptBuffer
+            BitReaderBe32::new(cursor)
         } else {
             let extra_bytes = 16;
             let cursor =
@@ -327,16 +327,15 @@ impl Strip {
     }
 }
 
-/// We need an OptBuffer here, because the buffer is divided
-/// into multiple strips and each strip is feed into a BitPump.
-/// Each pump need as litte bit more overhead at the end.
-/// For the final strip, we need the extra bytes from OptBuffer
-/// to prevent out-of-range errors in BitPump.
+/// We need a bit bigger buffer here, because the buffer is divided
+/// into multiple strips and each strip is feed into a BitReader.
+/// Each reader needs a litte bit more overhead at the end.
+/// For the final strip, we need the extra bytes from the buffer
+/// to prevent out-of-range errors in BitReader.
 pub(super) fn decompress_fuji(
     buf: &[u8],
     width: usize,
     height: usize,
-    _bps: usize,
     corrected_cfa: &Pattern,
 ) -> Result<PixU16> {
     let mut stream = std::io::Cursor::new(buf);

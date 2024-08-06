@@ -475,14 +475,15 @@ impl RawFileImpl for RafFile {
                         )
                     }
                 } else {
-                    let raw = raw_container.load_buffer8(cfa_offset, cfa_len);
+                    let mut raw = raw_container.load_buffer8(cfa_offset, cfa_len);
+                    // The decompressor needs some extra bytes. We add 16.
+                    raw.extend(&[0; 16]);
                     let mut rawbuffer = None;
                     if !skip_decompress {
                         rawbuffer = decompress::decompress_fuji(
                             &raw,
                             raw_size.width as usize,
                             raw_size.height as usize,
-                            bps as usize,
                             &mosaic,
                         )
                         .ok();
