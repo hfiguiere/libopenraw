@@ -594,7 +594,7 @@ impl Dump for MetaContainer {
                 let (tag_name, tag_type) = META_TAG_NAMES
                     .get(tag)
                     .cloned()
-                    .unwrap_or((&"", RafTagType::default()));
+                    .unwrap_or(("", RafTagType::default()));
                 let value = match tag_type {
                     RafTagType::U32 => format!("{value}"),
                     RafTagType::U16x2 => Size::try_from(value)
