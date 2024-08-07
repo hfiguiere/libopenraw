@@ -54,9 +54,6 @@ pub fn log2ceil(mut states: usize) -> usize {
     bits
 }
 
-/// XXX remove this. Just to ease porting for now.
-type PixU16 = ImageBuffer<u16>;
-
 // XXX REMOVE THIS !!!!!
 /// An ugly hack to get multiple mutable references to Pix2D
 pub struct SharedPix2D<T> {
@@ -236,7 +233,7 @@ impl Strip {
         header: &Header,
         params: &Params,
         q_bases: Option<&[u8]>,
-        out: &mut PixU16,
+        out: &mut ImageBuffer<u16>,
     ) {
         let mut info_block = CompressedBlock::new(header, params);
         log::debug!("Fuji strip offset: {}, len: {}", self.offset, self.size);
@@ -337,7 +334,7 @@ pub(super) fn decompress_fuji(
     width: usize,
     height: usize,
     corrected_cfa: &Pattern,
-) -> Result<PixU16> {
+) -> Result<ImageBuffer<u16>> {
     let mut stream = std::io::Cursor::new(buf);
     let header = Header {
         signature: stream.read_u16::<BigEndian>().unwrap(),
@@ -533,7 +530,7 @@ impl CompressedBlock {
     }
 
     /// Copy line from decoding buffer to output
-    fn copy_line<F>(&self, strip: &Strip, cur_line: usize, index_f: F, out: &mut PixU16)
+    fn copy_line<F>(&self, strip: &Strip, cur_line: usize, index_f: F, out: &mut ImageBuffer<u16>)
     where
         F: Fn(usize) -> usize,
     {
@@ -569,13 +566,13 @@ impl CompressedBlock {
     }
 
     /// Copy line by Bayer pattern
-    fn copy_line_to_bayer(&self, strip: &Strip, cur_line: usize, out: &mut PixU16) {
+    fn copy_line_to_bayer(&self, strip: &Strip, cur_line: usize, out: &mut ImageBuffer<u16>) {
         let index = |pixel_count: usize| -> usize { pixel_count >> 1 };
         self.copy_line(strip, cur_line, index, out);
     }
 
     /// Copy line by X-Trans pattern
-    fn copy_line_to_xtrans(&self, strip: &Strip, cur_line: usize, out: &mut PixU16) {
+    fn copy_line_to_xtrans(&self, strip: &Strip, cur_line: usize, out: &mut ImageBuffer<u16>) {
         let index = |pixel_count: usize| -> usize {
             (((pixel_count * 2 / 3) & 0x7FFFFFFE) | ((pixel_count % 3) & 1))
                 + ((pixel_count % 3) >> 1)
