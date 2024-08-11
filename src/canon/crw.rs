@@ -25,7 +25,6 @@
 pub(crate) mod ciff;
 mod decompress;
 
-use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 use std::rc::Rc;
 
@@ -52,32 +51,6 @@ use crate::{
 use super::matrices::MATRICES;
 use ciff::Heap;
 use decompress::Decompress;
-
-lazy_static::lazy_static! {
-    static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
-        canon!("Canon EOS D30" , EOS_D30),
-        canon!("Canon EOS D60" , EOS_D60),
-        canon!("Canon EOS 10D" , EOS_10D),
-        canon!("Canon EOS DIGITAL REBEL", DIGITAL_REBEL),
-        canon!("Canon EOS 300D DIGITAL", EOS_300D),
-        canon!("Canon PowerShot G1", G1),
-        canon!("Canon PowerShot G2", G2),
-        canon!("Canon PowerShot G3", G3),
-        canon!("Canon PowerShot G5", G5),
-        canon!("Canon PowerShot G6", G6),
-        // G7 is CHDK, So remove from the list from now.
-        //    canon!("Canon PowerShot G7", G7),
-        canon!("Canon PowerShot Pro1", PRO1),
-        canon!("Canon PowerShot Pro70", PRO70),
-        canon!("Canon PowerShot Pro90 IS", PRO90),
-        canon!("Canon PowerShot S30", S30),
-        canon!("Canon PowerShot S40", S40),
-        canon!("Canon PowerShot S45", S45),
-        canon!("Canon PowerShot S50", S50),
-        canon!("Canon PowerShot S60", S60),
-        canon!("Canon PowerShot S70", S70),
-    ]);
-}
 
 #[derive(Debug)]
 /// Canon CRW File
@@ -257,10 +230,26 @@ impl RawFileImpl for CrwFile {
     fn identify_id(&self) -> TypeId {
         *self.type_id.get_or_init(|| {
             self.container();
+
             let container = self.container.get().unwrap();
             container
-                .make_or_model(exif::EXIF_TAG_MODEL)
-                .and_then(|model| MAKE_TO_ID_MAP.get(model.as_str()).copied())
+                .exif_info()
+                .and_then(|heap| {
+                    heap.records()
+                        .get(&ciff::Tag::CanonModelID)
+                        .and_then(|r| r.data(container))
+                        .and_then(|data| {
+                            if let ciff::RecordData::DWord(id) = data {
+                                return canon::CANON_MODEL_ID_MAP.get(&id[0]).copied();
+                            }
+                            None
+                        })
+                })
+                .or_else(|| {
+                    container
+                        .make_or_model(exif::EXIF_TAG_MODEL)
+                        .and_then(|model| super::MAKE_TO_ID_MAP.get(model.as_str()).copied())
+                })
                 .unwrap_or(canon!(UNKNOWN))
         })
     }

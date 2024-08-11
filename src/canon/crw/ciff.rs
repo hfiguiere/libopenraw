@@ -343,7 +343,7 @@ impl RecordEntry {
         }
     }
 
-    fn data(&self, container: &Container) -> Option<RecordData> {
+    pub(super) fn data(&self, container: &Container) -> Option<RecordData> {
         match self.data {
             Record::InRec(_) => self.inline_data(container),
             Record::InHeap((pos, len)) => match self.type_() {
