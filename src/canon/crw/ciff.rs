@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/crw/ciff.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,10 +22,9 @@
 pub(crate) mod container;
 
 use std::collections::BTreeMap;
-use std::convert::TryFrom;
 use std::io::{Read, Seek, SeekFrom};
 
-use num_enum::{IntoPrimitive, TryFromPrimitive};
+use num_enum::{FromPrimitive, IntoPrimitive};
 
 use crate::container::{Endian, RawContainer};
 use crate::io;
@@ -37,16 +36,15 @@ pub(crate) use container::Container;
 const STORAGELOC_MASK: u16 = 0xc000;
 /// Format of the data
 const FORMAT_MASK: u16 = 0x3800;
-/// Include the format, because the last
-/// part is non significant
-//const TAGCODE_MASK: u16 = 0x3fff;
+/// Include the format, as it is significant
+const TAGCODE_MASK: u16 = 0x3fff;
 
 /// Tags for the CIFF records.
 ///
 /// List made by a combination of the CIFF spec and
 /// what exifprobe by Duane H. Hesser has.
 #[derive(
-    Copy, Clone, Debug, Ord, Eq, PartialEq, PartialOrd, TryFromPrimitive, IntoPrimitive, Hash,
+    Copy, Clone, Debug, Ord, Eq, PartialEq, PartialOrd, FromPrimitive, IntoPrimitive, Hash,
 )]
 #[repr(u16)]
 pub(super) enum Tag {
@@ -68,15 +66,20 @@ pub(super) enum Tag {
     ShutterReleaseTiming = 0x1011,
     ReleaseSetting = 0x1016,
     BaseISO = 0x101c,
+    ExifISO = 0x1028,
     FocalLength = 0x1029,
     ShotInfo = 0x102a,
     ColourInfo2 = 0x102c,
     CameraSettings = 0x102d,
+    WhiteSample = 0x1030,
     SensorInfo = 0x1031,
     CustomFunctions = 0x1033,
     PictureInfo = 0x1038,
+    CanonFileInfo = 0x1093, // From ExifTool
     WhiteBalanceTable = 0x10a9,
+    ColourTemperature = 0x10ae,
     ColourSpace = 0x10b4,
+    RawJpgInfo = 0x10b5,
 
     ImageSpace = 0x1803,
     RecordId = 0x1804,
@@ -89,7 +92,9 @@ pub(super) enum Tag {
     MeasuredEv = 0x1814,
     FileNumber = 0x1817,
     ExposureInfo = 0x1818,
+    CanonModelID = 0x1834,
     DecoderTable = 0x1835,
+    SerialNumberFormat = 0x183b,
 
     RawImageData = 0x2005,
     JpegImage = 0x2007,
@@ -104,49 +109,37 @@ pub(super) enum Tag {
     ExifInformation = 0x300b,
 
     // All the unknown fields.
+    Unknown0006 = 0x0006,
     Unknown0036 = 0x0036,
     Unknown003f = 0x003f,
     Unknown0040 = 0x0040,
     Unknown0041 = 0x0041,
+    Unknown1014 = 0x1014,
     Unknown1026 = 0x1026,
-    Unknown1030 = 0x1030,
     Unknown103c = 0x103c,
     Unknown107f = 0x107f,
     Unknown1039 = 0x1039,
-    Unknown1093 = 0x1093,
     Unknown10c0 = 0x10c0,
     Unknown10c1 = 0x10c1,
     Unknown10c2 = 0x10c2,
     Unknown10aa = 0x10aa,
     Unknown10ad = 0x10ad,
     Unknown10a8 = 0x10a8,
-    Unknown10ae = 0x10ae,
     Unknown10af = 0x10af,
-    Unknown10b5 = 0x10b5,
+    Unknown1805 = 0x1805,
+    Unknown1812 = 0x1812,
     Unknown1819 = 0x1819,
-    Unknown183b = 0x183b,
-    Unknown4006 = 0x4006,
-    // Seems to be the camera region
-    Unknown480d = 0x480d,
-    Unknown500a = 0x500a,
-    // BodySenstivity? (first u32 only)
-    Unknown501c = 0x501c,
-    Unknown5028 = 0x5028,
-    Unknown5029 = 0x5029,
-    Unknown5034 = 0x5034,
-    Unknown5803 = 0x5803,
-    Unknown5804 = 0x5804,
-    // BodyID (first u16 only)
-    Unknown580b = 0x580b,
-    Unknown5814 = 0x5814,
-    Unknown5817 = 0x5817,
-    Unknown5834 = 0x5834,
 
     #[num_enum(default)]
     Other = 0xffff,
 }
 
 impl Tag {
+    fn from_tagcode(tagcode: u16) -> Tag {
+        let type_code = tagcode & TAGCODE_MASK;
+        Self::from_primitive(type_code)
+    }
+
     /// Return the record type based on the tag value.
     fn record_type(&self) -> RecordType {
         use RecordType::*;
@@ -274,7 +267,7 @@ impl RecordEntry {
             Record::InHeap((offset, len))
         };
 
-        let tag = Tag::try_from(type_code).map_err(|_| Error::FormatError)?;
+        let tag = Tag::from_tagcode(type_code);
         if tag == Tag::Other {
             log::error!("Unknown tag {:x}", type_code);
         }
