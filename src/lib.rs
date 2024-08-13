@@ -82,6 +82,8 @@ pub use tiff::Ifd;
 pub use decompress::LJpeg;
 #[cfg(any(feature = "fuzzing", feature = "bench"))]
 pub use olympus::decompress::decompress_olympus;
+#[cfg(feature = "book")]
+pub use canon::print_models as canon_print_models;
 
 pub use rawfile::rawfile_from_file;
 pub use rawfile::rawfile_from_io;
@@ -301,7 +303,7 @@ impl From<Type> for String {
 }
 
 /// Type ID (vendor, model)
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Eq, Debug, Hash, PartialEq)]
 pub struct TypeId(u16, u16);
 
 impl std::fmt::Display for TypeId {

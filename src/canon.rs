@@ -216,6 +216,25 @@ lazy_static::lazy_static! {
 
 pub use tiff::exif::generated::MNOTE_CANON_TAG_NAMES as MNOTE_TAG_NAMES;
 
+/// This function will output the list of camera ID with names.
+/// This is only useful to generate document.
+#[cfg(feature = "book")]
+pub fn print_models() {
+    let id_to_name =
+        multimap::MultiMap::<TypeId, &str>::from_iter(MAKE_TO_ID_MAP.iter().map(|v| (*v.1, *v.0)));
+    let mut models = CANON_MODEL_ID_MAP.iter().collect::<Vec<_>>();
+    models.sort_by(|m1, m2| m1.0.cmp(m2.0));
+    for model in models {
+        let name = id_to_name.get_vec(model.1);
+        println!(
+            "| 0x{:08x} | {} |",
+            model.0,
+            name.map(|v| v.join(", "))
+                .unwrap_or_else(|| model.1.to_string())
+        );
+    }
+}
+
 lazy_static! {
     /// Map the Canon IDs to `TypeId`. This is the most reliable way for Canon
     static ref CANON_MODEL_ID_MAP: HashMap<u32, TypeId> = HashMap::from([
