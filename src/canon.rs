@@ -211,6 +211,8 @@ lazy_static::lazy_static! {
         canon!("Canon EOS-1D X Mark III", EOS_1DXMKIII),
         canon!("Canon EOS M6 Mark II", EOS_M6MKII),
         canon!("Canon EOS 90D", EOS_90D),
+        canon!("Canon EOS R1", EOS_R1),
+        canon!("Canon EOS R5m2", EOS_R5MKII),
     ]);
 }
 
@@ -358,6 +360,8 @@ lazy_static! {
         canon!(0x80000481, EOS_R6MKII),
         canon!(0x80000487, EOS_R8),
         canon!(0x80000498, EOS_R100),
+        canon!(0x80000495, EOS_R1),
+        canon!(0x80000496, EOS_R5MKII),
     ]);
 }
 
