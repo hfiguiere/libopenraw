@@ -166,6 +166,7 @@ lazy_static::lazy_static! {
         sony!(393, ZVE1),
         sony!(394, ILCE6700),
         sony!(395, ZV1M2),
+        sony!(399, ZVE10M2),
     ]);
 
     static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
@@ -264,6 +265,7 @@ lazy_static::lazy_static! {
         sony!("ZV-1M2", ZV1M2),
         sony!("ZV-E1", ZVE1),
         sony!("ZV-E10", ZVE10),
+        sony!("ZV-E10M2", ZVE10M2),
         ("Lunar", TypeId(vendor::HASSELBLAD, hasselblad::LUNAR)),
     ]);
 

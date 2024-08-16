@@ -732,6 +732,7 @@ pub mod sony {
     pub const ZV1M2: u16 = 94;
     pub const ILME_FX3: u16 = 95;
     pub const ILCE9M3: u16 = 96;
+    pub const ZVE10M2: u16 = 97;
 }
 
 /// Panasonic type IDs
