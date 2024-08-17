@@ -269,7 +269,7 @@ lazy_static::lazy_static! {
         ("Lunar", TypeId(vendor::HASSELBLAD, hasselblad::LUNAR)),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 95] = [
+    static ref MATRICES: [BuiltinMatrix; 96] = [
         BuiltinMatrix::new(
             sony!(A100),
             0,
@@ -742,6 +742,11 @@ lazy_static::lazy_static! {
             128,
             0,
             [ 6355, -2067, -490, -3653, 11542, 2400, -406, 1258, 5506 ] ),
+        BuiltinMatrix::new(
+            sony!(ZVE10M2),
+            128,
+            0,
+            [ 6972, -2408, -600, -4330, 12101, 2515, -388, 1277, 5847 ] ),
         /* The Hasselblad Lunar is like a Nex7 */
         BuiltinMatrix::new(
             TypeId(vendor::HASSELBLAD, hasselblad::LUNAR),
