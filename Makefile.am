@@ -27,6 +27,7 @@ RUST_FILES = Cargo.lock \
 	Cargo.toml \
 	benches/the_benchmark.rs \
 	src/apple.rs \
+	src/bin/canon_models.rs \
 	src/bin/fuzz-ljpeg.rs \
 	src/bin/fuzz-olymdecompress.rs \
 	src/bin/fuzz-rawfile.rs \
