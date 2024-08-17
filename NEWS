@@ -5,9 +5,11 @@ THIS IS A PRE-RELEASE.
 Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
+  - Canon R5MkII*, R1*.
   - Panasonic G100D*. Colour matrices for S9.
   - Leica D-Lux 8.
   - Nikon Z6 III*.
+  - Sony ZV-E10 II*.
 
 New features:
 

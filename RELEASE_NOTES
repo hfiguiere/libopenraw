@@ -19,7 +19,7 @@ What's (visibly) new in 0.4.0-alpha.7
 - Sony ARW: improved parsing of A100 files.
 - Properly set black & white files for DNG, ERF, PEF, CR2, CRW, RAF.
 - Support rendering to sRGB with proper colours.
-- 28 new cameras listed.
+- 31 new cameras listed.
 - 1 camera properly identified.
 
 What's (visibly) new in 0.3.7
