@@ -19,6 +19,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+//![deny(broken_intra_doc_links)]
+//![warn(missing_docs)]
+
 // For mp4::parse
 #[macro_use]
 extern crate log;

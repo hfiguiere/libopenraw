@@ -25,7 +25,7 @@
 
 //! Pentax decompression
 //!
-//! Adapted from https://github.com/pedrocr/rawloader/blob/master/src/decoders/pef.rs
+//! Adapted from <https://github.com/pedrocr/rawloader/blob/master/src/decoders/pef.rs>
 
 use std::io::BufRead;
 
