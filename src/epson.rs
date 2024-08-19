@@ -26,7 +26,6 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::bitmap;
 use crate::camera_ids;
 use crate::camera_ids::vendor;
 use crate::colour::BuiltinMatrix;
@@ -183,7 +182,7 @@ impl RawFileImpl for ErfFile {
                                 })
                                 .and_then(|a| {
                                     if a.len() >= 4 {
-                                        rawdata.set_active_area(Some(bitmap::Rect {
+                                        rawdata.set_active_area(Some(crate::Rect {
                                             x: a[0] as u32,
                                             y: a[1] as u32,
                                             width: a[2] as u32,

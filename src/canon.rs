@@ -31,10 +31,8 @@ use std::collections::HashMap;
 
 use lazy_static::lazy_static;
 
-use super::TypeId;
-use crate::bitmap::Rect;
-use crate::tiff;
-use crate::tiff::{exif, Dir, Ifd};
+use crate::tiff::{self, exif, Dir, Ifd};
+use crate::{Rect, TypeId};
 use colour::ColourFormat;
 pub(crate) use cr2::Cr2File;
 pub(crate) use cr3::Cr3File;

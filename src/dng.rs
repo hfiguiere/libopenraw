@@ -26,7 +26,7 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::bitmap::{Bitmap, Rect};
+use crate::bitmap::Bitmap;
 use crate::camera_ids::{
     adobe, apple, blackmagic, dji, gopro, hasselblad, nokia, samsung, sigma, vendor, xiaoyi, zeiss,
 };
@@ -41,7 +41,8 @@ use crate::tiff;
 use crate::tiff::{exif, Ifd};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Type,
+    TypeId,
 };
 
 lazy_static::lazy_static! {

@@ -11,7 +11,6 @@ use std::io::{Read, Seek, SeekFrom};
 use byteorder::{BigEndian, ReadBytesExt};
 use once_cell::unsync::OnceCell;
 
-use crate::bitmap::{Point, Size};
 use crate::container;
 use crate::container::RawContainer;
 use crate::io::{View, Viewer};
@@ -20,7 +19,7 @@ use crate::metadata;
 use crate::tiff;
 use crate::utils;
 use crate::Type as RawType;
-use crate::{Dump, Error, Result};
+use crate::{Dump, Error, Point, Result, Size};
 
 #[derive(Debug, Default)]
 /// Just a list of offset/length
@@ -624,7 +623,7 @@ mod test {
     use std::convert::TryFrom;
 
     use super::Value;
-    use crate::bitmap::{Point, Size};
+    use crate::{Point, Size};
 
     #[test]
     fn test_value_convert() {

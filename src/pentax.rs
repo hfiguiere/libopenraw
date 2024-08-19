@@ -26,7 +26,7 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::bitmap::{Bitmap, Point, Rect, Size};
+use crate::bitmap::Bitmap;
 use crate::colour::BuiltinMatrix;
 use crate::container::RawContainer;
 use crate::io::Viewer;
@@ -35,7 +35,8 @@ use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    DataType, Dump, Error, Point, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
+    Size, Type, TypeId,
 };
 
 mod decompress;

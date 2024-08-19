@@ -26,7 +26,6 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::bitmap;
 use crate::colour::BuiltinMatrix;
 use crate::container::{Endian, RawContainer};
 use crate::decompress;
@@ -1020,7 +1019,7 @@ impl RawFileImpl for Rw2File {
                 w = 0;
             }
 
-            raw_data.set_active_area(Some(bitmap::Rect {
+            raw_data.set_active_area(Some(crate::Rect {
                 x: x as u32,
                 y: y as u32,
                 width: w as u32,

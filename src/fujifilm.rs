@@ -32,7 +32,6 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
-use crate::bitmap::{Point, Rect, Size};
 use crate::camera_ids::fujifilm;
 use crate::container::{Endian, RawContainer};
 use crate::decompress as unpack;
@@ -46,7 +45,8 @@ use crate::tiff;
 use crate::tiff::{exif, Ifd};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    DataType, Dump, Error, Point, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
+    Size, Type, TypeId,
 };
 
 use matrices::MATRICES;

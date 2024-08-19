@@ -123,45 +123,6 @@ pub trait Image: Bitmap {
     fn data16(&self) -> Option<&[u16]>;
 }
 
-/// Rectangle struct.
-#[derive(Clone, Debug, Default, PartialEq)]
-pub struct Rect {
-    pub x: u32,
-    pub y: u32,
-    pub width: u32,
-    pub height: u32,
-}
-
-impl Rect {
-    pub fn new(origin: Point, size: Size) -> Rect {
-        Rect {
-            x: origin.x,
-            y: origin.y,
-            width: size.width,
-            height: size.height,
-        }
-    }
-
-    /// Generate a `Vec<u32>` with the values in x, y, w, h order.
-    pub fn to_vec(&self) -> Vec<u32> {
-        [self.x, self.y, self.width, self.height].to_vec()
-    }
-}
-
-/// Point struct
-#[derive(Debug, PartialEq)]
-pub struct Point {
-    pub x: u32,
-    pub y: u32,
-}
-
-/// Size struct
-#[derive(Debug, PartialEq)]
-pub struct Size {
-    pub width: u32,
-    pub height: u32,
-}
-
 /// Encapsulate data 8 or 16 bits
 pub(crate) enum Data {
     Data8(Vec<u8>),

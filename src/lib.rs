@@ -48,6 +48,7 @@ mod dng;
 mod epson;
 mod factory;
 mod fujifilm;
+mod geometry;
 mod identify;
 mod io;
 mod jpeg;
@@ -69,9 +70,10 @@ mod sony;
 mod thumbnail;
 pub mod tiff;
 
-pub use bitmap::{Bitmap, Image, Point, Rect, Size};
+pub use bitmap::{Bitmap, Image};
 pub use colour::ColourSpace;
 pub use dump::Dump;
+pub use geometry::{Point, Rect, Size};
 pub use mosaic::Pattern as CfaPattern;
 #[cfg(feature = "probe")]
 pub use probe::Probe;

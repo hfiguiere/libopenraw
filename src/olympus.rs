@@ -30,7 +30,7 @@ use std::rc::Rc;
 use once_cell::unsync::OnceCell;
 use rayon::prelude::*;
 
-use crate::bitmap::{Bitmap, Rect};
+use crate::bitmap::Bitmap;
 use crate::container;
 use crate::container::{Endian, RawContainer};
 use crate::io::Viewer;
@@ -40,7 +40,8 @@ use crate::tiff::{exif, Ifd};
 use crate::tiff::{IfdType, LoaderFixup};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Type,
+    TypeId,
 };
 pub use tiff::exif::generated::MNOTE_OLYMPUS_TAG_NAMES as MNOTE_TAG_NAMES;
 use tiff::exif::generated::{
