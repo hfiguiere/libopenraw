@@ -19,7 +19,7 @@ use crate::metadata;
 use crate::tiff;
 use crate::utils;
 use crate::Type as RawType;
-use crate::{Dump, Error, Point, Result, Size};
+use crate::{AspectRatio, Dump, Error, Point, Result, Size};
 
 #[derive(Debug, Default)]
 /// Just a list of offset/length
@@ -401,8 +401,8 @@ pub(super) const TAG_SENSOR_DIMENSION: u16 = 0x100;
 pub(super) const TAG_IMG_TOP_LEFT: u16 = 0x110;
 /// Width Height of activate area
 pub(super) const TAG_IMG_HEIGHT_WIDTH: u16 = 0x111;
-// Aspect Ratio. w / h.
-const TAG_IMG_ASPECT_RATIO: u16 = 0x115;
+// Aspect Ratio. h / w
+pub(super) const TAG_IMG_ASPECT_RATIO: u16 = 0x115;
 const TAG_OUTPUT_HEIGHT_WIDTH: u16 = 0x121;
 /// Some info about the RAW. Sametime called "layout".
 pub(super) const TAG_RAW_INFO: u16 = 0x130;
@@ -479,6 +479,21 @@ impl std::fmt::Display for Value {
         }
     }
 }
+
+impl std::convert::TryFrom<&Value> for AspectRatio {
+    type Error = crate::Error;
+    fn try_from(v: &Value) -> Result<Self> {
+        match v {
+            Value::Int(n) => {
+                let h = (n & 0xffff0000) >> 16;
+                let w = n & 0x0000ffff;
+                Ok(AspectRatio(w, h))
+            }
+            _ => Err(Error::InvalidFormat),
+        }
+    }
+}
+
 impl std::convert::TryFrom<&Value> for Point {
     type Error = crate::Error;
     fn try_from(v: &Value) -> Result<Self> {

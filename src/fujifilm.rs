@@ -45,8 +45,8 @@ use crate::tiff;
 use crate::tiff::{exif, Ifd};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, Point, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
-    Size, Type, TypeId,
+    AspectRatio, DataType, Dump, Error, Point, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect,
+    Result, Size, Type, TypeId,
 };
 
 use matrices::MATRICES;
@@ -311,7 +311,14 @@ impl RawFileImpl for RafFile {
                             .and_then(|size| Size::try_from(size).ok())
                             .map(|size| Rect::new(topleft, size))
                     });
-
+                let aspect_ratio = container
+                    .value(raf::TAG_IMG_ASPECT_RATIO)
+                    .and_then(|aspect_ratio| AspectRatio::try_from(aspect_ratio).ok());
+                let crop = aspect_ratio.and_then(|aspect_ratio| {
+                    active_area
+                        .as_ref()
+                        .map(|active_area| aspect_ratio.crop_into(active_area))
+                });
                 let raw_props = container
                     .value(raf::TAG_RAW_INFO)
                     .and_then(|v| match v {
@@ -506,6 +513,7 @@ impl RawFileImpl for RafFile {
                 rawdata.set_blacks(utils::to_quad(&blacks));
                 rawdata.set_whites([((1 << bps as u32) - 1) as u16; 4]);
                 rawdata.set_active_area(active_area);
+                rawdata.set_user_crop(crop, aspect_ratio);
                 if let Some(wb) = wb {
                     rawdata.set_as_shot_neutral(&wb);
                 }

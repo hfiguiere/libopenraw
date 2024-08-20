@@ -170,7 +170,12 @@ fn extract_rawdata(
         println!("\tFormat: {:?}", rawdata.data_type());
         println!("\tSize: {}x{}", rawdata.width(), rawdata.height());
         println!("\tActive area: {:?}", rawdata.active_area());
-        println!("\tUser crop: {:?}", rawdata.user_crop());
+        print!("\tUser crop: {:?}", rawdata.user_crop());
+        if let Some(aspect_ratio) = rawdata.user_aspect_ratio() {
+            println!(" {}", aspect_ratio);
+        } else {
+            println!();
+        }
         println!("\tBayer Type: {:?}", rawdata.mosaic_pattern());
         let bpc = rawdata.bpc();
         println!("\tBpc: {bpc}");
