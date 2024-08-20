@@ -335,12 +335,16 @@ impl RawFileImpl for DngFile {
                                     height: rawdata.height(),
                                 })
                             });
-                        rawdata.set_active_area(active_area);
+                        rawdata.set_active_area(active_area.clone());
+                        let active_area = active_area.unwrap();
                         let user_crop = Some(Rect::default()).and_then(|_| {
                             let origin = dir
                                 .uint_value_array(exif::DNG_TAG_DEFAULT_CROP_ORIGIN)
                                 .and_then(|v| if v.len() < 2 { None } else { Some(v) })
-                                .map(|v| Point { x: v[0], y: v[1] })?;
+                                .map(|v| Point {
+                                    x: v[0] + active_area.x,
+                                    y: v[1] + active_area.y,
+                                })?;
                             let size = dir
                                 .uint_value_array(exif::DNG_TAG_DEFAULT_CROP_SIZE)
                                 .and_then(|v| if v.len() < 2 { None } else { Some(v) })
