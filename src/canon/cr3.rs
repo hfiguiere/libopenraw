@@ -204,6 +204,22 @@ impl RawFileImpl for Cr3File {
                 .maker_note_ifd()
                 .and_then(super::SensorInfo::new)
                 .map(|s| s.0);
+
+            if let Some(aspect_info) =
+                self.maker_note_ifd()
+                    .and_then(super::AspectInfo::new)
+                    .map(|mut aspect_info| {
+                        probe!(self.probe, "cr3.aspect_info", true);
+                        if let Some(sensor_info) = &sensor_info {
+                            aspect_info.1.x += sensor_info.x;
+                            aspect_info.1.y += sensor_info.y;
+                        }
+                        aspect_info
+                    })
+            {
+                rawdata.set_user_crop(Some(aspect_info.1), aspect_info.0);
+            }
+
             rawdata.set_active_area(sensor_info);
 
             Ok(rawdata)

@@ -32,7 +32,7 @@ use std::collections::HashMap;
 use lazy_static::lazy_static;
 
 use crate::tiff::{self, exif, Dir, Ifd};
-use crate::{Rect, TypeId};
+use crate::{AspectRatio, Rect, TypeId};
 use colour::ColourFormat;
 pub(crate) use cr2::Cr2File;
 pub(crate) use cr3::Cr3File;
@@ -379,6 +379,45 @@ pub(crate) fn identify_from_maker_note(maker_note: &tiff::Dir) -> TypeId {
         log::error!("Canon model ID tag not found");
     }
     canon!(UNKNOWN)
+}
+
+pub(crate) struct AspectInfo(Option<AspectRatio>, Rect);
+
+impl AspectInfo {
+    /// Load the `AspectInfo` from the MakerNote
+    pub fn new(maker_note: &Dir) -> Option<Self> {
+        maker_note
+            .entry(exif::MNOTE_CANON_ASPECT_INFO)
+            .and_then(|e| e.uint_value_array(maker_note.endian()))
+            .and_then(Self::parse)
+    }
+
+    /// Parse the `AspectInfo` from the array of u16
+    fn parse(aspect_info: Vec<u32>) -> Option<AspectInfo> {
+        if aspect_info.len() < 5 {
+            return None;
+        }
+        let aspect_ratio = match aspect_info[0] {
+            0 | 12 | 13 => Some(AspectRatio(3, 2)),
+            1 => Some(AspectRatio(1, 1)),
+            2 | 258 => Some(AspectRatio(4, 3)),
+            7 => Some(AspectRatio(16, 9)),
+            8 => Some(AspectRatio(4, 5)),
+            _ => {
+                log::error!("Unknown aspect ratio {}", aspect_info[0]);
+                None
+            }
+        };
+        Some(AspectInfo(
+            aspect_ratio,
+            Rect {
+                x: aspect_info[3],
+                y: aspect_info[4],
+                width: aspect_info[1],
+                height: aspect_info[2],
+            },
+        ))
+    }
 }
 
 /// SensorInfo currently only contain the active area (x, y, w, h)

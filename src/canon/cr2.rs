@@ -28,7 +28,7 @@ use once_cell::unsync::OnceCell;
 
 use crate::bitmap::Bitmap;
 use crate::canon;
-use crate::canon::ColourFormat;
+use crate::canon::{ColourFormat, SensorInfo};
 use crate::container::RawContainer;
 use crate::decompress;
 use crate::io::Viewer;
@@ -248,13 +248,26 @@ impl Cr2File {
             skip_decompress,
         )?;
 
-        let sensor_info = self
-            .ifd(tiff::IfdType::MakerNote)
-            .and_then(super::SensorInfo::new)
-            .map(|sensor_info| {
-                probe!(self.probe, "cr2.sensor_info", "true");
-                sensor_info.0
-            });
+        let maker_note_ifd = self.maker_note_ifd();
+        let sensor_info = maker_note_ifd.and_then(SensorInfo::new).map(|sensor_info| {
+            probe!(self.probe, "cr2.sensor_info", "true");
+            sensor_info.0
+        });
+        if let Some(aspect_info) =
+            maker_note_ifd
+                .and_then(super::AspectInfo::new)
+                .map(|mut aspect_info| {
+                    probe!(self.probe, "cr2.aspect_info", true);
+                    if let Some(sensor_info) = &sensor_info {
+                        aspect_info.1.x += sensor_info.x;
+                        aspect_info.1.y += sensor_info.y;
+                    }
+                    aspect_info
+                })
+        {
+            rawdata.set_user_crop(Some(aspect_info.1), aspect_info.0);
+        }
+
         rawdata.set_active_area(sensor_info);
         rawdata.set_mosaic_pattern(self.detect_mosaic_pattern(cfa_ifd));
 
