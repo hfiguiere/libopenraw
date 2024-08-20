@@ -729,6 +729,7 @@
       <rawDataSize>20656128</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
       <rawDataActiveArea>0 0 3936 2624</rawDataActiveArea>
+      <rawDataUserCrop>8 8 3872 2592</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -757,6 +758,7 @@
       <rawDataSize>20134656</rawDataSize>
       <rawDataDimensions>3884 2592</rawDataDimensions>
       <rawDataActiveArea>0 0 3884 2592</rawDataActiveArea>
+      <rawDataUserCrop>4 4 3876 2584</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>65535 65535 65535 65535</rawMaxValue>
@@ -785,6 +787,7 @@
       <rawDataSize>20681920</rawDataSize>
       <rawDataDimensions>3920 2638</rawDataDimensions>
       <rawDataActiveArea>0 0 3920 2638</rawDataActiveArea>
+      <rawDataUserCrop>2 2 3916 2634</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>16383 16383 16383 16383</rawMaxValue>
@@ -830,6 +833,7 @@
       <rawDataSize>32537600</rawDataSize>
       <rawDataDimensions>4960 3280</rawDataDimensions>
       <rawDataActiveArea>0 0 4944 3280</rawDataActiveArea>
+      <rawDataUserCrop>8 8 4928 3264</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -858,6 +862,7 @@
       <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>
       <rawDataActiveArea>28 28 3648 2736</rawDataActiveArea>
+      <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>60 61 61 60</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -885,6 +890,7 @@
       <rawDataSize>16826880</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
       <rawDataActiveArea>32 5 3264 2448</rawDataActiveArea>
+      <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>63 63 63 63</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -913,6 +919,7 @@
       <rawDataSize>16826880</rawDataSize>
       <rawDataDimensions>3360 2504</rawDataDimensions>
       <rawDataActiveArea>33 30 3264 2448</rawDataActiveArea>
+      <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>63 63 63 63</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -941,6 +948,7 @@
       <rawDataSize>16072000</rawDataSize>
       <rawDataDimensions>3280 2450</rawDataDimensions>
       <rawDataActiveArea>59 63 3136 2352</rawDataActiveArea>
+      <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>82 87 82 86</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -969,6 +977,7 @@
       <rawDataSize>16072000</rawDataSize>
       <rawDataDimensions>3280 2450</rawDataDimensions>
       <rawDataActiveArea>54 49 3136 2352</rawDataActiveArea>
+      <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>70 70 70 70</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -996,6 +1005,7 @@
       <rawDataSize>25288800</rawDataSize>
       <rawDataDimensions>4100 3084</rawDataDimensions>
       <rawDataActiveArea>28 28 4032 3024</rawDataActiveArea>
+      <rawDataUserCrop>28 28 4032 3024</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>64 64 64 64</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -1024,6 +1034,7 @@
       <rawDataSize>25288800</rawDataSize>
       <rawDataDimensions>4100 3084</rawDataDimensions>
       <rawDataActiveArea>28 30 4032 3024</rawDataActiveArea>
+      <rawDataUserCrop>28 30 4032 3024</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>64 64 64 64</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -1051,6 +1062,7 @@
       <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>
       <rawDataActiveArea>50 26 3648 2736</rawDataActiveArea>
+      <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -1079,6 +1091,7 @@
       <rawDataSize>20832000</rawDataSize>
       <rawDataDimensions>3720 2800</rawDataDimensions>
       <rawDataActiveArea>52 44 3648 2736</rawDataActiveArea>
+      <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>73 73 73 73</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -1107,6 +1120,7 @@
       <rawDataSize>23824320</rawDataSize>
       <rawDataDimensions>3984 2990</rawDataDimensions>
       <rawDataActiveArea>8 14 3968 2976</rawDataActiveArea>
+      <rawDataUserCrop>8 179 3968 2646</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMinValue>200 200 200 200</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -1135,6 +1149,7 @@
       <rawDataSize>20086048</rawDataSize>
       <rawDataDimensions>3664 2741</rawDataDimensions>
       <rawDataActiveArea>0 0 3664 2741</rawDataActiveArea>
+      <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>

@@ -170,6 +170,7 @@ fn extract_rawdata(
         println!("\tFormat: {:?}", rawdata.data_type());
         println!("\tSize: {}x{}", rawdata.width(), rawdata.height());
         println!("\tActive area: {:?}", rawdata.active_area());
+        println!("\tUser crop: {:?}", rawdata.user_crop());
         println!("\tBayer Type: {:?}", rawdata.mosaic_pattern());
         let bpc = rawdata.bpc();
         println!("\tBpc: {bpc}");

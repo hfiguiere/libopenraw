@@ -95,6 +95,12 @@ pub struct Results {
         default
     )]
     pub raw_data_active_area: Option<Vec<u32>>,
+    #[serde(
+        deserialize_with = "from_list",
+        serialize_with = "to_list",
+        default
+    )]
+    pub raw_data_user_crop: Option<Vec<u32>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_cfa_pattern: Option<String>,
     #[serde(
@@ -138,7 +144,7 @@ where
                 .join(" "),
         )
     } else {
-        serializer.serialize_none()
+        serializer.serialize_str("NONE")
     }
 }
 
@@ -150,6 +156,9 @@ where
     <T as FromStr>::Err: Display,
 {
     let s: String = Deserialize::deserialize(deserializer)?;
+    if s == "NONE" {
+        return Ok(None);
+    }
     let v: Vec<&str> = s.split(' ').collect();
     let mut ints = vec![];
     for num in v {
@@ -249,6 +258,10 @@ pub fn make_results(rawfile: &dyn RawFile) -> Results {
         .ok()
         .and_then(|rawdata| rawdata.active_area())
         .map(Rect::to_vec);
+    let raw_data_user_crop = rawdata
+        .ok()
+        .and_then(|rawdata| rawdata.user_crop())
+        .map(Rect::to_vec);
     let raw_cfa_pattern = rawdata
         .map(|rawdata| rawdata.mosaic_pattern().to_string())
         .ok();
@@ -283,6 +296,7 @@ pub fn make_results(rawfile: &dyn RawFile) -> Results {
         raw_data_size,
         raw_data_dimensions,
         raw_data_active_area,
+        raw_data_user_crop,
         raw_cfa_pattern,
         raw_min_value,
         raw_max_value,

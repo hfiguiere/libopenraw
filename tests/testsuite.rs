@@ -94,6 +94,20 @@ fn raw_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
         );
     }
 
+    // user crop
+    if let Some(ref raw_data_user_crop) = results.raw_data_user_crop {
+        count += 1;
+        assert_eq!(raw_data_user_crop.len(), 4, "Incorrect user crop");
+        let user_crop = rawdata.user_crop();
+        assert!(user_crop.is_some(), "No user crop found");
+        let user_crop = user_crop.unwrap();
+        assert_eq!(
+            raw_data_user_crop,
+            &user_crop.to_vec(),
+            "Incorrect user crop"
+        );
+    }
+
     // CFA pattern
     if let Some(ref raw_cfa_pattern) = results.raw_cfa_pattern {
         count += 1;

@@ -555,6 +555,8 @@ impl RawFileImpl for OrfFile {
                             }
                         }
                         let active_area = Some(Rect::default()).and_then(|_| {
+                            // Note: in a DNG, it sets the active area to
+                            // 0, 0, width, height.
                             probe!(self.probe, "orf.ip.active_area", "true");
                             let y = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_TOP)?;
                             let x = ip_dir.uint_value(exif::ORF_TAG_IP_CROP_LEFT)?;
@@ -568,8 +570,30 @@ impl RawFileImpl for OrfFile {
                             })
                         });
                         if active_area.is_some() {
-                            data.set_active_area(active_area);
+                            data.set_active_area(active_area.clone());
                         }
+                        let user_crop = Some(Rect::default()).and_then(|_| {
+                            probe!(self.probe, "orf.ip.user_crop", "true");
+                            let values = ip_dir.uint_value_array(exif::ORF_TAG_IP_ASPECT_FRAME)?;
+                            if values.len() < 4 {
+                                return None;
+                            }
+                            let x = values[0];
+                            let y = values[1];
+                            let mut crop = Rect {
+                                x,
+                                y,
+                                width: values[2] + 1 - x,
+                                height: values[3] + 1 - y,
+                            };
+                            if let Some(active_area) = active_area {
+                                crop.x += active_area.x;
+                                crop.y += active_area.y;
+                            }
+
+                            Some(crop)
+                        });
+                        data.set_user_crop(user_crop, None);
                     }
                 }
                 if let Some(wb) = wb {

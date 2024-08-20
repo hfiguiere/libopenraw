@@ -23,7 +23,6 @@
 
 use nalgebra::{matrix, Matrix3, Vector3};
 
-use super::{Bitmap, DataType, Error, Image, Rect, Result};
 use crate::bitmap::{Data, ImageBuffer};
 use crate::colour::ColourMatrix;
 use crate::mosaic::Pattern;
@@ -31,6 +30,7 @@ use crate::render::{self, gamma_correct_f, gamma_correct_srgb, RenderingOptions,
 use crate::tiff::exif;
 use crate::utils;
 use crate::{tiff, ColourSpace};
+use crate::{AspectRatio, Bitmap, DataType, Error, Image, Rect, Result};
 
 /// RAW Data extracted from the file.
 #[derive(Debug, Default)]
@@ -55,6 +55,10 @@ pub struct RawImage {
     compression: tiff::Compression,
     /// Sensor active area
     active_area: Option<Rect>,
+    /// The user crop. Maybe combined by `user_aspect_ratio`.
+    user_crop: Option<Rect>,
+    /// The user set aspect ratio. Doesn't imply the presence of `user_crop`.
+    user_aspect_ratio: Option<AspectRatio>,
     /// The mosaic pattern
     mosaic_pattern: Pattern,
     /// The neutral camera white balance
@@ -86,6 +90,8 @@ impl RawImage {
             data_type,
             data: Data::Data8(data),
             active_area: None,
+            user_crop: None,
+            user_aspect_ratio: None,
             whites: [0, 0, 0, 0],
             blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
@@ -113,6 +119,8 @@ impl RawImage {
             data_type,
             data: Data::Tiled((data, tile_size)),
             active_area: None,
+            user_crop: None,
+            user_aspect_ratio: None,
             whites: [0, 0, 0, 0],
             blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
@@ -140,6 +148,8 @@ impl RawImage {
             data_type,
             data: Data::Data16(data),
             active_area: None,
+            user_crop: None,
+            user_aspect_ratio: None,
             whites: [0, 0, 0, 0],
             blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
@@ -163,6 +173,8 @@ impl RawImage {
             data_type,
             data: Data::Data16(buffer.data),
             active_area: None,
+            user_crop: None,
+            user_aspect_ratio: None,
             whites: [0, 0, 0, 0],
             blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
@@ -200,6 +212,20 @@ impl RawImage {
     /// Set the sensor active area.
     pub fn set_active_area(&mut self, rect: Option<Rect>) {
         self.active_area = rect;
+    }
+
+    pub fn user_crop(&self) -> Option<&Rect> {
+        self.user_crop.as_ref()
+    }
+
+    pub fn user_aspect_ratio(&self) -> Option<AspectRatio> {
+        self.user_aspect_ratio
+    }
+
+    /// Set the user crop.
+    pub fn set_user_crop(&mut self, crop: Option<Rect>, aspect_ratio: Option<AspectRatio>) {
+        self.user_crop = crop;
+        self.user_aspect_ratio = aspect_ratio;
     }
 
     /// Retrieve the White balance as RGBx multiplier values.

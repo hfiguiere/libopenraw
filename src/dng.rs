@@ -41,8 +41,8 @@ use crate::tiff;
 use crate::tiff::{exif, Ifd};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Type,
-    TypeId,
+    DataType, Dump, Error, Point, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
+    Size, Type, TypeId,
 };
 
 lazy_static::lazy_static! {
@@ -336,6 +336,21 @@ impl RawFileImpl for DngFile {
                                 })
                             });
                         rawdata.set_active_area(active_area);
+                        let user_crop = Some(Rect::default()).and_then(|_| {
+                            let origin = dir
+                                .uint_value_array(exif::DNG_TAG_DEFAULT_CROP_ORIGIN)
+                                .and_then(|v| if v.len() < 2 { None } else { Some(v) })
+                                .map(|v| Point { x: v[0], y: v[1] })?;
+                            let size = dir
+                                .uint_value_array(exif::DNG_TAG_DEFAULT_CROP_SIZE)
+                                .and_then(|v| if v.len() < 2 { None } else { Some(v) })
+                                .map(|v| Size {
+                                    width: v[0],
+                                    height: v[1],
+                                })?;
+                            Some(Rect::new(origin, size))
+                        });
+                        rawdata.set_user_crop(user_crop, None);
                         if let Some(blacks) = dir.uint_value_array(exif::DNG_TAG_BLACK_LEVEL) {
                             rawdata.set_blacks(utils::to_quad(&blacks));
                         }

@@ -145,8 +145,8 @@ pub const DNG_TAG_UNIQUE_CAMERA_MODEL: u16 = 0xc614;
 pub const DNG_TAG_LINEARIZATION_TABLE: u16 = 0xc618;
 pub const DNG_TAG_BLACK_LEVEL: u16 = 0xc61a;
 pub const DNG_TAG_WHITE_LEVEL: u16 = 0xc61d;
-pub const _DNG_TAG_DEFAULT_CROP_ORIGIN: u16 = 0xc61f;
-pub const _DNG_TAG_DEFAULT_CROP_SIZE: u16 = 0xc620;
+pub const DNG_TAG_DEFAULT_CROP_ORIGIN: u16 = 0xc61f;
+pub const DNG_TAG_DEFAULT_CROP_SIZE: u16 = 0xc620;
 pub const DNG_TAG_COLORMATRIX1: u16 = 0xc621;
 pub const DNG_TAG_COLORMATRIX2: u16 = 0xc622;
 pub const _DNG_TAG_CAMERA_CALIBRATION1: u16 = 0xc623;
@@ -201,6 +201,7 @@ pub const ORF_TAG_IP_CROP_LEFT: u16 = 0x0612;
 pub const ORF_TAG_IP_CROP_TOP: u16 = 0x0613;
 pub const ORF_TAG_IP_CROP_WIDTH: u16 = 0x0614;
 pub const ORF_TAG_IP_CROP_HEIGHT: u16 = 0x0615;
+pub const ORF_TAG_IP_ASPECT_FRAME: u16 = 0x1113;
 /// Focus Info IFD
 pub const ORF_TAG_FOCUS_INFO: u16 = 0x2050;
 /// Raw Info IFD
