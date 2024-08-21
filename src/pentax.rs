@@ -35,8 +35,8 @@ use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, Point, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
-    Size, Type, TypeId,
+    AspectRatio, DataType, Dump, Error, Point, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect,
+    Result, Size, Type, TypeId,
 };
 
 mod decompress;
@@ -440,7 +440,7 @@ impl RawFileImpl for PefFile {
             .and_then(|dir| tiff::tiff_get_rawdata(container, dir, self.type_()))
             .map(|mut rawdata| {
                 if let Some(mnote) = self.ifd(tiff::IfdType::MakerNote) {
-                    mnote
+                    let user_crop = mnote
                         .entry(exif::MNOTE_PENTAX_IMAGEAREAOFFSET)
                         .and_then(|e| {
                             let pt = e.value_array::<u16>(container.endian()).and_then(|a| {
@@ -464,11 +464,32 @@ impl RawFileImpl for PefFile {
                                     })
                                 })
                             {
-                                rawdata.set_active_area(Some(Rect::new(pt, sz)));
+                                probe!(self.probe, "pef.user_crop", true);
+                                Some(Rect::new(pt, sz))
+                            } else {
+                                None
                             }
-
-                            Some(())
                         });
+                    let aspect_ratio =
+                        mnote
+                            .value::<u8>(exif::MNOTE_PENTAX_ASPECT_RATIO)
+                            .and_then(|v| {
+                                probe!(self.probe, "pef.aspect_ratio", v);
+                                match v {
+                                    0 => Some(AspectRatio(4, 3)),
+                                    1 => Some(AspectRatio(3, 2)),
+                                    2 => Some(AspectRatio(16, 9)),
+                                    3 => Some(AspectRatio(1, 1)),
+                                    _ => None,
+                                }
+                            });
+                    rawdata.set_user_crop(user_crop, aspect_ratio);
+                    rawdata.set_active_area(Some(Rect {
+                        x: 0,
+                        y: 0,
+                        width: rawdata.width(),
+                        height: rawdata.height(),
+                    }));
                     if let Some(blacks) = mnote.uint_value_array(exif::MNOTE_PENTAX_BLACK_POINT) {
                         probe!(self.probe, "pef.blacks", "true");
                         rawdata.set_blacks(utils::to_quad(&blacks));

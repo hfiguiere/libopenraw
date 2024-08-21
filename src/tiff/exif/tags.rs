@@ -252,6 +252,7 @@ pub const MNOTE_PENTAX_MODEL_ID: u16 = 0x05;
 pub const MNOTE_PENTAX_IMAGEAREAOFFSET: u16 = 0x38;
 pub const MNOTE_PENTAX_RAWIMAGESIZE: u16 = 0x39;
 pub const MNOTE_PENTAX_WHITELEVEL: u16 = 0x7e;
+pub const MNOTE_PENTAX_ASPECT_RATIO: u16 = 0x80;
 pub const MNOTE_PENTAX_BLACK_POINT: u16 = 0x200;
 // These seem to be wb coefficients
 pub const MNOTE_PENTAX_WHITE_BALANCE: u16 = 0x201;

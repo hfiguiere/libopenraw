@@ -684,7 +684,8 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>20656128</rawDataSize>
       <rawDataDimensions>3936 2624</rawDataDimensions>
-      <rawDataActiveArea>8 8 3872 2592</rawDataActiveArea>
+      <rawDataActiveArea>0 0 3936 2624</rawDataActiveArea>
+      <rawDataUserCrop>8 8 3872 2592</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMd5>49129</rawMd5>
       <rawMinValue>0 0 0 0</rawMinValue>
@@ -712,7 +713,8 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>12305920</rawDataSize>
       <rawDataDimensions>3040 2024</rawDataDimensions>
-      <rawDataActiveArea>19 11 3008 2008</rawDataActiveArea>
+      <rawDataActiveArea>0 0 3040 2024</rawDataActiveArea>
+      <rawDataUserCrop>19 11 3008 2008</rawDataUserCrop>
       <rawCfaPattern>RGGB</rawCfaPattern>
       <rawMd5>52932</rawMd5>
       <rawMinValue>0 0 0 0</rawMinValue>
