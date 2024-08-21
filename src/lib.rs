@@ -83,12 +83,12 @@ pub use render::{RenderingOptions, RenderingStage};
 pub use thumbnail::Thumbnail;
 pub use tiff::Ifd;
 
+#[cfg(feature = "book")]
+pub use canon::print_models as canon_print_models;
 #[cfg(any(feature = "fuzzing", feature = "bench"))]
 pub use decompress::LJpeg;
 #[cfg(any(feature = "fuzzing", feature = "bench"))]
 pub use olympus::decompress::decompress_olympus;
-#[cfg(feature = "book")]
-pub use canon::print_models as canon_print_models;
 
 pub use rawfile::rawfile_from_file;
 pub use rawfile::rawfile_from_io;
