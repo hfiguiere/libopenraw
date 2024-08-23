@@ -42,7 +42,8 @@ use crate::tiff::exif;
 use crate::tiff::{Dir, Ifd};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Type,
+    TypeId,
 };
 
 use diffiterator::{CfaIterator, DiffIterator};
@@ -666,6 +667,23 @@ impl RawFileImpl for NefFile {
                         if let Some(wb) = self.white_balance() {
                             rawdata.set_as_shot_neutral(&wb);
                         }
+
+                        let user_crop = self
+                            .maker_note_ifd()
+                            .and_then(|dir| dir.uint_value_array(exif::MNOTE_NIKON_CROP_AREA))
+                            .map(|user_crop| Rect {
+                                x: user_crop[0],
+                                y: user_crop[1],
+                                width: user_crop[2],
+                                height: user_crop[3],
+                            });
+                        rawdata.set_user_crop(user_crop, None);
+                        rawdata.set_active_area(Some(Rect {
+                            x: 0,
+                            y: 0,
+                            width: rawdata.width(),
+                            height: rawdata.height(),
+                        }));
                         rawdata
                     })
             })
