@@ -405,7 +405,8 @@ impl NefFile {
     }
 
     fn decompress_nikon_quantized(&self, mut rawdata: RawImage) -> Result<RawImage> {
-        self.get_compression_curve(&mut rawdata)
+        let new_data = self
+            .get_compression_curve(&mut rawdata)
             .map_err(|err| {
                 log::error!("Get compression curve failed {}", err);
                 err
@@ -439,13 +440,22 @@ impl NefFile {
                         }
                     }
                 }
-
-                let mut rawdata = rawdata.replace_data(new_data);
                 rawdata.set_width(columns as u32);
                 rawdata.set_whites([(1 << rawdata.bpc()) - 1; 4]);
-                rawdata.set_data_type(DataType::Raw);
-                Ok(rawdata)
-            })
+                Ok(new_data)
+            });
+        match new_data {
+            // This is not supported yet, just return the compressed data.
+            Err(Error::NotSupported) | Err(Error::NotFound) => return Ok(rawdata),
+            Err(e) => return Err(e),
+            _ => {}
+        }
+
+        new_data.map(|new_data| {
+            let mut rawdata = rawdata.replace_data(new_data);
+            rawdata.set_data_type(DataType::Raw);
+            rawdata
+        })
     }
 
     fn encrypted_white_balance(&self, mnote: &Dir, entry: &tiff::Entry) -> Option<[f64; 3]> {
@@ -642,7 +652,7 @@ impl RawFileImpl for NefFile {
                             Ok(rawdata)
                         } else {
                             log::error!("Invalid compression {:?}", compression);
-                            Err(Error::InvalidFormat)
+                            Ok(rawdata)
                         }
                     })
                     .map(|mut rawdata| {
