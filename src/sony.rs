@@ -832,7 +832,13 @@ impl ArwFile {
         };
         tiff::tiff_get_rawdata_with_endian(container, dir, self.type_(), rawdata_endian).map(
             |mut rawimage| {
-                let active_area = dir
+                rawimage.set_active_area(Some(Rect {
+                    x: 0,
+                    y: 0,
+                    width: rawimage.width(),
+                    height: rawimage.height(),
+                }));
+                let user_crop = dir
                     .uint_value_array(exif::ARW_TAG_SONY_CROP_TOP_LEFT)
                     .and_then(|top_left| {
                         if top_left.len() < 2 {
@@ -852,14 +858,8 @@ impl ArwFile {
                                     height: size[1],
                                 })
                             })
-                    })
-                    .unwrap_or_else(|| Rect {
-                        x: 0,
-                        y: 0,
-                        width: rawimage.width(),
-                        height: rawimage.height(),
                     });
-                rawimage.set_active_area(Some(active_area));
+                rawimage.set_user_crop(user_crop, None);
                 if let Some(wb) = dir.int_value_array(exif::ARW_TAG_WB_RGGB_LEVELS).map(|v| {
                     let g = v[1] as f64;
                     [g / v[0] as f64, 1.0, g / v[3] as f64]
