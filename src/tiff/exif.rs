@@ -371,35 +371,24 @@ impl std::fmt::Display for SRational {
     }
 }
 
-#[repr(u16)]
-#[derive(Copy, Clone, Debug, Default)]
+#[repr(u32)]
+#[derive(Copy, Clone, Debug, Default, TryFromPrimitive)]
 /// Exif photometric interpretation
 pub enum PhotometricInterpretation {
     #[default]
     None = 0,
     BlackIsZero = 1,
     Rgb = 2,
+    TransparencyMask = 4,
     YCbCr = 6,
 
     // RAW only
     CFA = 32803,
     LinearRaw = 34892,
-}
-
-impl std::convert::TryFrom<u32> for PhotometricInterpretation {
-    type Error = crate::Error;
-
-    fn try_from(v: u32) -> crate::Result<PhotometricInterpretation> {
-        use PhotometricInterpretation::*;
-        match v {
-            1 => Ok(BlackIsZero),
-            2 => Ok(Rgb),
-            6 => Ok(YCbCr),
-            32803 => Ok(CFA),
-            34892 => Ok(LinearRaw),
-            _ => Err(Self::Error::InvalidFormat),
-        }
-    }
+    /// Depth map. (DNG)
+    Depth = 51177,
+    /// Semantic mask. (DNG)
+    PhotometricMask = 52527,
 }
 
 #[repr(u32)]

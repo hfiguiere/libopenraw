@@ -30,6 +30,7 @@ mod iterator;
 use std::convert::TryFrom;
 
 use byteorder::{BigEndian, LittleEndian};
+use num_enum::FromPrimitive;
 
 use crate::container::{Endian, RawContainer};
 use crate::decompress;
@@ -45,7 +46,7 @@ pub(crate) use exif::TagType;
 pub(crate) use iterator::Iterator;
 
 #[repr(u32)]
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, FromPrimitive)]
 /// TIFF (a RAW) compression values
 pub enum Compression {
     /// Unknown - this value is never a valid one
@@ -53,17 +54,22 @@ pub enum Compression {
     Unknown = 0,
     /// No compression
     None = 1,
+    /// LZW
+    Lzw = 5,
     /// JPEG compression
     Jpeg = 6,
     /// Losless JPEG compression (like in DNG)
     LJpeg = 7,
-    /// Deflate (ZIP)
+    /// Deflate (ZIP) DNG 1.4
     Deflate = 8,
+    /// Found .GPR files.
+    GoPro = 9,
     /// Sony ARW compression
     Arw = 32767,
     /// Nikon packed, also used by Epson ERF.
     NikonPack = 32769,
-    /// Pentax packed (12be)
+    /// Pentax packed (12be) - also seems to be PackBits in the
+    /// TIFF specification.
     PentaxPack = 32773,
     /// Panasonic raw 1
     PanasonicRaw1 = 34316,
@@ -75,33 +81,15 @@ pub enum Compression {
     PanasonicRaw3 = 34828,
     /// Panasonic raw 4
     PanasonicRaw4 = 34830,
-    /// DNG Lossy JPEG
+    /// DNG 1.4 Lossy JPEG
     DngLossy = 34892,
+    /// JPEG XL (DNG 1.7)
+    JepgXl = 52546,
     /// What everybody seems to use
     Custom = 65535,
     // XXX figure out Olympus compression value
     // Olympus compression
     Olympus = 65536,
-}
-
-impl From<u32> for Compression {
-    /// 0 and any unknown value will yield `Unknown`
-    fn from(v: u32) -> Compression {
-        use Compression::*;
-
-        match v {
-            1 => None,
-            6 => Jpeg,
-            7 => LJpeg,
-            32767 => Arw,
-            32769 => NikonPack,
-            32773 => PentaxPack,
-            34713 => NikonQuantized,
-            65535 => Custom,
-            65536 => Olympus,
-            _ => Unknown,
-        }
-    }
 }
 
 /// Type of IFD
