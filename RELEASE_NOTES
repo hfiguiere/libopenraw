@@ -7,6 +7,7 @@ What's (visibly) new in 0.4.0-alpha.7
   - Old Panasonic raw files have a separate type.
 - Extract White Balance coefficients.
 - Extract Exif GPSInfo.
+- Extract user crop.
 - DNG: decompress the tiles.
 - Fujifilm RAF: get black and white levels. Fix decoding for non X-Trans
   X-series. Decompress the raw data.
@@ -19,7 +20,7 @@ What's (visibly) new in 0.4.0-alpha.7
 - Sony ARW: improved parsing of A100 files.
 - Properly set black & white files for DNG, ERF, PEF, CR2, CRW, RAF.
 - Support rendering to sRGB with proper colours.
-- 31 new cameras listed.
+- 40 new cameras listed.
 - 1 camera properly identified.
 
 What's (visibly) new in 0.3.7

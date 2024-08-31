@@ -1,3 +1,22 @@
+libopenraw 0.4.0-alpha.8 -
+
+Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
+
+  - Apple iPhone 15 Pro Max.
+  - DJI Air 3, Inspire 3.
+  - Google Pixel XL, 3 XL, 4 XL, 7a, 8 Pro, 9 Pro.
+
+New features:
+
+  - Extract the user crop (CR2, CR3, DNG, GPR, NEF, ORF, PEF, RAF, ARW,
+    RW2, RAW).
+
+Internal:
+
+  - Testsuite for user crop and user aspect ratio.
+  - (Alpha) Fix the AsShotNeutral C++ testsuite.
+
 libopenraw 0.4.0-alpha.7 - 2024/08/17
 
 THIS IS A PRE-RELEASE.
@@ -58,7 +77,7 @@ Bug fixes:
   - (Alpha) Fixed white balance for Canon G11, G5X, G7X MkII (and
     possibly others).
   - Improved parsing of Sony A100 files.
-  - (Alpha) Fix rendering for Sony R1 (SRF).
+  - (Alpha) Fix rendering for Sony R1 (SR2).
   - Fix black levels in Olympus ORF.
 
 New features:
