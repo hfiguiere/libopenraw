@@ -52,6 +52,7 @@ pub mod vendor {
     pub const ZEISS: u16 = 21;
     pub const DJI: u16 = 22;
     pub const NOKIA: u16 = 23;
+    pub const GOOGLE: u16 = 24;
     /// JPEG isn't a vendor.
     pub const JPEG: u16 = 1000;
 }
@@ -1008,4 +1009,13 @@ pub mod dji {
 
 pub mod nokia {
     pub const LUMIA_1020: u16 = 1;
+}
+
+/// Google
+pub mod google {
+    pub const PIXEL_3_XL: u16 = 1;
+    pub const PIXEL_4_XL: u16 = 2;
+    pub const PIXEL_7A: u16 = 3;
+    pub const PIXEL_8_PRO: u16 = 4;
+    pub const PIXEL_9_PRO: u16 = 6;
 }

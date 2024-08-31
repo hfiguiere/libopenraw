@@ -28,7 +28,8 @@ use once_cell::unsync::OnceCell;
 
 use crate::bitmap::Bitmap;
 use crate::camera_ids::{
-    adobe, apple, blackmagic, dji, gopro, hasselblad, nokia, samsung, sigma, vendor, xiaoyi, zeiss,
+    adobe, apple, blackmagic, dji, google, gopro, hasselblad, nokia, samsung, sigma, vendor,
+    xiaoyi, zeiss,
 };
 use crate::container::RawContainer;
 use crate::decompress;
@@ -161,6 +162,11 @@ lazy_static::lazy_static! {
         ( "FC7303", TypeId(vendor::DJI, dji::FC7303) ),
         ( "DJI Osmo Action", TypeId(vendor::DJI, dji::OSMO_ACTION) ),
         ( "Lumia 1020", TypeId(vendor::NOKIA, nokia::LUMIA_1020) ),
+        ( "Pixel 3 XL", TypeId(vendor::GOOGLE, google::PIXEL_3_XL) ),
+        ( "Pixel 4 XL", TypeId(vendor::GOOGLE, google::PIXEL_4_XL) ),
+        ( "Pixel 7a", TypeId(vendor::GOOGLE, google::PIXEL_7A) ),
+        ( "Pixel 8 Pro", TypeId(vendor::GOOGLE, google::PIXEL_8_PRO) ),
+        ( "Pixel 9 Pro", TypeId(vendor::GOOGLE, google::PIXEL_9_PRO) ),
 //        ( 0, TypeId(vendor::ADOBE, adobe::DNG_GENERIC) ),
     ]);
 }
