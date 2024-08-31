@@ -104,7 +104,7 @@ private:
     bool testRawCfaPattern(const std::string& result);
     bool testRawMinValue(const std::string& result);
     bool testRawMaxValue(const std::string& result);
-    bool testRawAsShotNeutral(const std::string&);
+    bool testRawAsShotNeutral(const std::string& result);
     bool testRawMd5(const std::string& result);
     bool testRawDecompressedMd5(const std::string& result);
     bool testMetaOrientation(const std::string& result);

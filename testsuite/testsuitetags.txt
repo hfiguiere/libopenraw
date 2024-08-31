@@ -11,6 +11,7 @@ thumbSizes
 thumbFormats
 thumbDataSizes
 thumbMd5
+rawAsShotNeutral
 rawDataType
 rawDataSize
 rawDataDimensions

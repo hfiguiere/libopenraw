@@ -45,6 +45,7 @@ static const std::set<int> tests_set = {
     XML_rawCfaPattern,
     XML_rawMinValue,
     XML_rawMaxValue,
+    XML_rawAsShotNeutral,
     XML_rawMd5,
     XML_rawDecompressedMd5,
     XML_metaOrientation,
@@ -106,6 +107,7 @@ xml::ContextPtr TestContext::startElement(int32_t element)
     case XML_rawCfaPattern:
     case XML_rawMinValue:
     case XML_rawMaxValue:
+    case XML_rawAsShotNeutral:
     case XML_rawMd5:
     case XML_rawDecompressedMd5:
     case XML_metaOrientation:

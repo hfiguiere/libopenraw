@@ -93,6 +93,31 @@ std::string to_string(const std::vector<T> &v)
         return _success;            \
     }
 
+// Float comparison has nan != nan. Here we want nan == nan for the sake to
+// testing.
+static bool floats_equals(const std::vector<double> & a, const std::vector<double> & b)
+{
+    if (a.size() != b.size()) {
+        return false;
+    }
+    for (size_t i = 0; i < a.size(); i++) {
+        if (a[i] != b[i] && !std::isnan(a[i]) && !std::isnan(b[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+#define RETURN_TEST_EQUALS_OF(a,b) \
+    {                               \
+        bool _success = floats_equals(a, b);     \
+        if(!_success) {             \
+            std::cerr << boost::format("FAILED: %1% on equality. found '%2%', expected '%3%'\n") \
+                % __FUNCTION__ % to_string(a) % to_string(b);           \
+        }                           \
+        return _success;            \
+    }
+
 #define RETURN_TEST_EQUALS_O(a,b) \
     {                               \
         bool _success = (a == b);   \
@@ -725,9 +750,9 @@ bool Test::testRawMaxValue(const std::string & result)
 
 bool Test::testRawAsShotNeutral(const std::string & result)
 {
-    if(m_rawdata == NULL) {
+    if (m_rawdata == NULL) {
         m_rawdata = loadRawData(m_rawfile);
-        if(m_rawdata == NULL) {
+        if (m_rawdata == NULL) {
             RETURN_FAIL("failed to get rawData");
         }
     }
@@ -749,7 +774,7 @@ bool Test::testRawAsShotNeutral(const std::string & result)
     }
     std::vector<double> wb = { 0, 0, 0, 0 };
     or_rawdata_as_shot_neutral(m_rawdata.get(), wb.data());
-    RETURN_TEST_EQUALS_O(wb, v2);
+    RETURN_TEST_EQUALS_OF(wb, v2);
 }
 
 bool Test::testRawMd5(const std::string & result)
@@ -907,6 +932,9 @@ int Test::run()
             break;
         case XML_rawMaxValue:
             pass = testRawMaxValue(elem.second);
+            break;
+        case XML_rawAsShotNeutral:
+            pass = testRawAsShotNeutral(elem.second);
             break;
         case XML_rawMd5:
             pass = testRawMd5(elem.second);
