@@ -964,6 +964,7 @@ pub mod apple {
     pub const IPHONE_13_PRO: u16 = 7;
     pub const IPHONE_14: u16 = 8;
     pub const IPHONE_15_PRO: u16 = 9;
+    pub const IPHONE_15_PRO_MAX: u16 = 10;
 }
 
 /// Sigma

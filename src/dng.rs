@@ -137,6 +137,7 @@ lazy_static::lazy_static! {
         ( "iPhone 13 Pro", TypeId(vendor::APPLE, apple::IPHONE_13_PRO) ),
         ( "iPhone 14", TypeId(vendor::APPLE, apple::IPHONE_14) ),
         ( "iPhone 15 Pro", TypeId(vendor::APPLE, apple::IPHONE_15_PRO) ),
+        ( "iPhone 15 Pro Max", TypeId(vendor::APPLE, apple::IPHONE_15_PRO_MAX) ),
         ( "iPhone SE", TypeId(vendor::APPLE, apple::IPHONE_SE) ),
         ( "iPhone XS", TypeId(vendor::APPLE, apple::IPHONE_XS) ),
         ( "Blackmagic Pocket Cinema Camera", TypeId(vendor::BLACKMAGIC,
