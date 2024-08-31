@@ -1546,7 +1546,9 @@
       <rawDataType>RAW</rawDataType>
       <rawDataSize>15039918</rawDataSize>
       <rawDataDimensions>3177 2367</rawDataDimensions>
-      <rawDataActiveArea>16 7 3136 2352</rawDataActiveArea>
+      <rawDataActiveArea>0 0 3177 2367</rawDataActiveArea>
+      <rawDataUserCrop>16 7 3136 2352</rawDataUserCrop>
+      <rawDataUserAspectRatio>NONE</rawDataUserAspectRatio>
       <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -1574,7 +1576,9 @@
       <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>11664384</rawDataSize>
       <rawDataDimensions>3710 2751</rawDataDimensions>
-      <rawDataActiveArea>16 7 3648 2736</rawDataActiveArea>
+      <rawDataActiveArea>0 0 3710 2751</rawDataActiveArea>
+      <rawDataUserCrop>16 7 3648 2736</rawDataUserCrop>
+      <rawDataUserAspectRatio>NONE</rawDataUserAspectRatio>
       <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
@@ -1602,7 +1606,9 @@
       <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>
-      <rawDataActiveArea>8 8 4608 3456</rawDataActiveArea>
+      <rawDataActiveArea>0 0 4816 3472</rawDataActiveArea>
+      <rawDataUserCrop>8 8 4608 3456</rawDataUserCrop>
+      <rawDataUserAspectRatio>NONE</rawDataUserAspectRatio>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <rawMinValue>128 128 127 128</rawMinValue>
       <rawMaxValue>2111 2111 2111 2111</rawMaxValue>
@@ -1630,7 +1636,9 @@
       <rawDataType>COMP_RAW</rawDataType>
       <rawDataSize>19120128</rawDataSize>
       <rawDataDimensions>4816 3472</rawDataDimensions>
-      <rawDataActiveArea>8 8 4608 3456</rawDataActiveArea>
+      <rawDataActiveArea>0 0 4816 3472</rawDataActiveArea>
+      <rawDataUserCrop>8 8 4608 3456</rawDataUserCrop>
+      <rawDataUserAspectRatio>NONE</rawDataUserAspectRatio>
       <rawCfaPattern>BGGR</rawCfaPattern>
       <rawMinValue>128 128 128 128</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>

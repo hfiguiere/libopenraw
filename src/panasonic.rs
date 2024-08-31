@@ -39,7 +39,8 @@ use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::{Dir, Ifd, LoaderFixup};
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    Bitmap, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
+    Type, TypeId,
 };
 
 macro_rules! panasonic {
@@ -997,6 +998,14 @@ impl RawFileImpl for Rw2File {
                 probe!(self.probe, "rw2.compression.value", compression);
                 raw_data.set_compression((compression as u32).into());
             }
+
+            raw_data.set_active_area(Some(Rect {
+                x: 0,
+                y: 0,
+                width: raw_data.width(),
+                height: raw_data.height(),
+            }));
+
             let x = cfa
                 .value::<u16>(exif::RW2_TAG_SENSOR_LEFTBORDER)
                 .unwrap_or(0) as i32;
@@ -1019,12 +1028,13 @@ impl RawFileImpl for Rw2File {
                 w = 0;
             }
 
-            raw_data.set_active_area(Some(crate::Rect {
+            let user_crop = Rect {
                 x: x as u32,
                 y: y as u32,
                 width: w as u32,
                 height: h as u32,
-            }));
+            };
+            raw_data.set_user_crop(Some(user_crop), None);
 
             let wr = cfa
                 .uint_value(exif::RW2_TAG_LINEARITY_LIMIT_RED)
