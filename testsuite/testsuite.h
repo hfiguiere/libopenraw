@@ -99,6 +99,7 @@ private:
     bool testRawDataSize(const std::string& result);
     bool testRawDataDimensions(const std::string& result);
     bool testRawDataActiveArea(const std::string& result);
+    bool testRawDataUserCrop(const std::string& result);
     bool testRawCfaPattern(const std::string& result);
     bool testRawMinValue(const std::string& result);
     bool testRawMaxValue(const std::string& result);

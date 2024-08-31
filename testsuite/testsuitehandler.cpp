@@ -2,7 +2,7 @@
 /*
  * libopenraw - testsuitehandler.cpp
  *
- * Copyright (C) 2008-2018 Hubert Figuiere
+ * Copyright (C) 2008-2024 Hubert Figuiere
  * Copyright (C) 2008 Novell, Inc.
  *
  * This library is free software: you can redistribute it and/or
@@ -50,6 +50,7 @@ static const std::set<int> tests_set = {
     XML_exifModel,
     XML_makerNoteCount,
     XML_makerNoteId,
+    XML_rawDataUserCrop,
 };
 
 TestContext::TestContext(const xml::HandlerPtr& handler, TestSuite* ts,
@@ -99,6 +100,7 @@ xml::ContextPtr TestContext::startElement(int32_t element)
     case XML_rawDataSize:
     case XML_rawDataDimensions:
     case XML_rawDataActiveArea:
+    case XML_rawDataUserCrop:
     case XML_rawCfaPattern:
     case XML_rawMinValue:
     case XML_rawMaxValue:

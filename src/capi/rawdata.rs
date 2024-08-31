@@ -260,6 +260,41 @@ extern "C" fn or_rawdata_get_active_area(
 }
 
 #[no_mangle]
+extern "C" fn or_rawdata_get_user_crop(
+    rawdata: ORRawDataRef,
+    x: *mut u32,
+    y: *mut u32,
+    width: *mut u32,
+    height: *mut u32,
+) -> or_error {
+    if !rawdata.is_null() {
+        let rawdata = unsafe { &*rawdata };
+        let user_crop = rawdata.user_crop();
+        if user_crop.is_none() {
+            // XXX Not sure what we expect here
+            return or_error::NOT_FOUND;
+        }
+        let user_crop = user_crop.unwrap();
+        if !x.is_null() {
+            unsafe { *x = user_crop.x };
+        }
+        if !y.is_null() {
+            unsafe { *y = user_crop.y };
+        }
+        if !width.is_null() {
+            unsafe { *width = user_crop.width };
+        }
+        if !height.is_null() {
+            unsafe { *height = user_crop.height };
+        }
+
+        or_error::NONE
+    } else {
+        or_error::NOT_AREF
+    }
+}
+
+#[no_mangle]
 extern "C" fn or_rawdata_get_mosaicinfo(rawdata: ORRawDataRef) -> ORMosaicInfoRef {
     if !rawdata.is_null() {
         let rawdata = unsafe { &*rawdata };

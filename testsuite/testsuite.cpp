@@ -576,6 +576,44 @@ bool Test::testRawDataActiveArea(const std::string & result)
     RETURN_TEST(x == rx && y == ry && w == rw && h == rh, result);
 }
 
+bool Test::testRawDataUserCrop(const std::string & result)
+{
+    if(m_rawdata == NULL) {
+        m_rawdata = loadRawData(m_rawfile);
+        if(m_rawdata == NULL) {
+            RETURN_FAIL("failed to get rawData");
+        }
+    }
+    bool is_none = (result == "NONE");
+
+    uint32_t x, y, w, h;
+    if (!is_none) {
+        std::vector< std::string > v;
+        boost::split(v, result, boost::is_any_of(" "));
+        if(v.size() != 4) {
+            RETURN_FAIL("mismatch number of elements from expected result");
+        }
+        try {
+            x = boost::lexical_cast<uint32_t>(v[0]);
+            y = boost::lexical_cast<uint32_t>(v[1]);
+            w = boost::lexical_cast<uint32_t>(v[2]);
+            h = boost::lexical_cast<uint32_t>(v[3]);
+        }
+        catch(...)
+        {
+            RETURN_FAIL("conversion failed");
+        }
+    }
+    uint32_t rx, ry, rw, rh;
+    rx = ry = rw = rh = 0;
+    auto res = or_rawdata_get_user_crop(m_rawdata.get(), &rx, &ry, &rw, &rh);
+    if (is_none) {
+        RETURN_TEST(res == OR_ERROR_NOT_FOUND, result);
+    } else {
+        RETURN_TEST(x == rx && y == ry && w == rw && h == rh, result);
+    }
+}
+
 bool Test::testRawCfaPattern(const std::string & result)
 {
     if(m_rawdata == NULL) {
@@ -818,6 +856,9 @@ int Test::run()
             break;
         case XML_rawDataActiveArea:
             pass = testRawDataActiveArea(elem.second);
+            break;
+        case XML_rawDataUserCrop:
+            pass = testRawDataUserCrop(elem.second);
             break;
         case XML_rawCfaPattern:
             pass = testRawCfaPattern(elem.second);

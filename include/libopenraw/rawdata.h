@@ -89,6 +89,24 @@ extern "C" {
 							   uint32_t *x, uint32_t *y,
 							   uint32_t *width, uint32_t *height);
 
+	/** @brief Get the user crop for the raw data.
+	 *
+	 * The user crop is where the final image rectangle is.  On some
+	 * cameras it is a user chosen format that sets a different aspect
+	 * ratio.
+	 *
+	 * @param rawdata the RawData object
+	 * @param [out] x the X origin
+	 * @param [out] y the Y origin
+	 * @param [out] width the width
+	 * @param [out] height the height.
+	 * @return an error code or %OR_ERROR_NONE in case of success.
+	 */
+	or_error
+	or_rawdata_get_user_crop(ORRawDataRef rawdata,
+							 uint32_t *x, uint32_t *y,
+							 uint32_t *width, uint32_t *height);
+
 	/** @brief Return the bits per component
 	 *
 	 * @return the number of bits per component in the RAW data.

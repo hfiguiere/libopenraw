@@ -15,6 +15,7 @@ rawDataType
 rawDataSize
 rawDataDimensions
 rawDataActiveArea
+rawDataUserCrop
 rawCfaPattern
 rawMinValue
 rawMaxValue
