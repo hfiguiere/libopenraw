@@ -40,6 +40,8 @@ static const std::set<int> tests_set = {
     XML_rawDataSize,
     XML_rawDataDimensions,
     XML_rawDataActiveArea,
+    XML_rawDataUserCrop,
+    XML_rawDataUserAspectRatio,
     XML_rawCfaPattern,
     XML_rawMinValue,
     XML_rawMaxValue,
@@ -50,7 +52,6 @@ static const std::set<int> tests_set = {
     XML_exifModel,
     XML_makerNoteCount,
     XML_makerNoteId,
-    XML_rawDataUserCrop,
 };
 
 TestContext::TestContext(const xml::HandlerPtr& handler, TestSuite* ts,
@@ -101,6 +102,7 @@ xml::ContextPtr TestContext::startElement(int32_t element)
     case XML_rawDataDimensions:
     case XML_rawDataActiveArea:
     case XML_rawDataUserCrop:
+    case XML_rawDataUserAspectRatio:
     case XML_rawCfaPattern:
     case XML_rawMinValue:
     case XML_rawMaxValue:

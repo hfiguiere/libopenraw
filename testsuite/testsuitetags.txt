@@ -16,6 +16,7 @@ rawDataSize
 rawDataDimensions
 rawDataActiveArea
 rawDataUserCrop
+rawDataUserAspectRatio
 rawCfaPattern
 rawMinValue
 rawMaxValue

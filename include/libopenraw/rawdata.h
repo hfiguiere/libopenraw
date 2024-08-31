@@ -107,6 +107,22 @@ extern "C" {
 							 uint32_t *x, uint32_t *y,
 							 uint32_t *width, uint32_t *height);
 
+	/** @brief Get the user aspect ratio for the raw data.
+	 *
+	 * The user aspect ratio is the final image aspect ratio.  On some
+	 * cameras it is a user chosen aspect ratio and is in lieu of a
+	 * user crop. If a user crop is available this value is
+	 * informational.
+	 *
+	 * @param rawdata the RawData object
+	 * @param [out] width the width factor.
+	 * @param [out] height the height factor.
+	 * @return an error code or %OR_ERROR_NONE in case of success.
+	 */
+	or_error
+	or_rawdata_get_user_aspect_ratio(ORRawDataRef rawdata,
+									 uint32_t *width, uint32_t *height);
+
 	/** @brief Return the bits per component
 	 *
 	 * @return the number of bits per component in the RAW data.

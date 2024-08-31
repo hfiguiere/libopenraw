@@ -26,7 +26,7 @@ use crate::{
     colour::ColourSpace,
     or_unwrap,
     render::{RenderingOptions, RenderingStage},
-    Bitmap, Image, RawImage,
+    AspectRatio, Bitmap, Image, RawImage,
 };
 
 /// Pointer to a [`RawImage`] object exported to the C API.
@@ -289,6 +289,30 @@ extern "C" fn or_rawdata_get_user_crop(
         }
 
         or_error::NONE
+    } else {
+        or_error::NOT_AREF
+    }
+}
+
+#[no_mangle]
+extern "C" fn or_rawdata_get_user_aspect_ratio(
+    rawdata: ORRawDataRef,
+    width: *mut u32,
+    height: *mut u32,
+) -> or_error {
+    if !rawdata.is_null() {
+        let rawdata = unsafe { &*rawdata };
+        if let Some(AspectRatio(w, h)) = rawdata.user_aspect_ratio() {
+            if !width.is_null() {
+                unsafe { *width = w };
+            }
+            if !height.is_null() {
+                unsafe { *height = h };
+            }
+            or_error::NONE
+        } else {
+            or_error::NOT_FOUND
+        }
     } else {
         or_error::NOT_AREF
     }

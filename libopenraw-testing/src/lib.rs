@@ -101,6 +101,13 @@ pub struct Results {
         default
     )]
     pub raw_data_user_crop: Option<Vec<u32>>,
+    #[serde(
+        deserialize_with = "from_list",
+        serialize_with = "to_list",
+        default
+    )]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub raw_data_user_aspect_ratio: Option<Vec<u32>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_cfa_pattern: Option<String>,
     #[serde(
@@ -262,6 +269,10 @@ pub fn make_results(rawfile: &dyn RawFile) -> Results {
         .ok()
         .and_then(|rawdata| rawdata.user_crop())
         .map(Rect::to_vec);
+    let raw_data_user_aspect_ratio = rawdata
+        .ok()
+        .and_then(|rawdata| rawdata.user_aspect_ratio())
+        .map(|aspect_ratio| vec![aspect_ratio.0, aspect_ratio.1]);
     let raw_cfa_pattern = rawdata
         .map(|rawdata| rawdata.mosaic_pattern().to_string())
         .ok();
@@ -297,6 +308,7 @@ pub fn make_results(rawfile: &dyn RawFile) -> Results {
         raw_data_dimensions,
         raw_data_active_area,
         raw_data_user_crop,
+        raw_data_user_aspect_ratio,
         raw_cfa_pattern,
         raw_min_value,
         raw_max_value,

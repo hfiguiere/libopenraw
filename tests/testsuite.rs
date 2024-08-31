@@ -108,6 +108,24 @@ fn raw_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
         );
     }
 
+    // user aspect ratio
+    if let Some(ref raw_data_user_aspect_ratio) = results.raw_data_user_aspect_ratio {
+        count += 1;
+        assert_eq!(
+            raw_data_user_aspect_ratio.len(),
+            2,
+            "Incorrect user aspect ratio"
+        );
+        let user_aspect_ratio = rawdata.user_aspect_ratio();
+        assert!(user_aspect_ratio.is_some(), "No user aspect_ratio found");
+        let user_aspect_ratio = user_aspect_ratio.unwrap();
+        assert_eq!(
+            raw_data_user_aspect_ratio,
+            &vec![user_aspect_ratio.0, user_aspect_ratio.1],
+            "Incorrect user aspect ratio"
+        );
+    }
+
     // CFA pattern
     if let Some(ref raw_cfa_pattern) = results.raw_cfa_pattern {
         count += 1;
