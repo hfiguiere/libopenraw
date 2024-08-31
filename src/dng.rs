@@ -160,6 +160,8 @@ lazy_static::lazy_static! {
         ( "FC3582", TypeId(vendor::DJI, dji::FC3582) ),
         ( "FC6310", TypeId(vendor::DJI, dji::FC6310) ),
         ( "FC7303", TypeId(vendor::DJI, dji::FC7303) ),
+        ( "FC4280", TypeId(vendor::DJI, dji::FC4280) ),
+        ( "FC8284", TypeId(vendor::DJI, dji::FC8284) ),
         ( "DJI Osmo Action", TypeId(vendor::DJI, dji::OSMO_ACTION) ),
         ( "Lumia 1020", TypeId(vendor::NOKIA, nokia::LUMIA_1020) ),
         ( "Pixel XL", TypeId(vendor::GOOGLE, google::PIXEL_XL) ),

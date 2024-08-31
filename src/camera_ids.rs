@@ -1005,6 +1005,10 @@ pub mod dji {
     pub const FC220: u16 = 4;
     pub const FC6310: u16 = 5;
     pub const FC3582: u16 = 6;
+    /// DJI Inspire 3
+    pub const FC4280: u16 = 7;
+    /// DJI Air 3
+    pub const FC8284: u16 = 8;
 }
 
 pub mod nokia {
