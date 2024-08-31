@@ -37,8 +37,8 @@ use crate::tiff::exif::{self, ExifValue};
 use crate::tiff::{Dir, Ifd, LoaderFixup};
 use crate::{tiff, utils};
 use crate::{
-    Bitmap, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
-    Type, TypeId,
+    AspectRatio, Bitmap, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage,
+    Rect, Result, Type, TypeId,
 };
 
 macro_rules! sony {
@@ -823,6 +823,161 @@ impl ArwFile {
         Ok(container)
     }
 
+    fn camera_settings(&self, endian: Endian) -> Option<Vec<u16>> {
+        let dir = self.maker_note_ifd()?;
+        dir.entry(exif::MNOTE_SONY_CAMERA_SETTINGS)?
+            .value_array::<u16>(endian)
+    }
+
+    fn camera_settings3(&self) -> Option<Vec<u8>> {
+        let dir = self.maker_note_ifd()?;
+        dir.entry(exif::MNOTE_SONY_CAMERA_SETTINGS)?
+            .value_array::<u8>(Endian::Little)
+    }
+
+    /// Decipher table for some Sony tags including 0x2010. Source
+    /// ExifTool.
+    ///
+    /// It is built using the following code:
+    /// ```
+    /// let cipher_table = (0..256).map(|v|
+    ///         ((v as u32 * v as u32 * v as u32) % 249 ) as u8
+    /// ).collect::<Vec<_>>();
+    ///
+    /// let mut decipher_table = vec![0_u8; 256];
+    /// cipher_table.iter().enumerate().for_each(|(i, v)| {
+    ///     if i < 249 {
+    ///         decipher_table[*v as usize] = i as u8;
+    ///     } else {
+    ///         decipher_table[i] = i as u8;
+    ///     }
+    /// });
+    /// ```
+    const DECIPHER_TABLE: [u8; 256] = [
+        0, 1, 50, 177, 10, 14, 135, 40, 2, 204, 202, 173, 27, 220, 8, 237, 100, 134, 240, 79, 140,
+        108, 184, 203, 105, 196, 44, 3, 151, 182, 147, 124, 20, 243, 226, 62, 48, 142, 215, 96, 28,
+        161, 171, 55, 236, 117, 190, 35, 21, 106, 89, 63, 208, 185, 150, 181, 80, 39, 136, 227,
+        129, 148, 224, 192, 4, 92, 198, 232, 95, 75, 112, 56, 159, 130, 128, 81, 43, 197, 69, 73,
+        155, 33, 82, 83, 84, 133, 11, 93, 97, 218, 123, 85, 38, 36, 7, 110, 54, 91, 71, 183, 217,
+        74, 162, 223, 191, 18, 37, 188, 30, 127, 86, 234, 16, 230, 207, 103, 77, 60, 145, 131, 225,
+        49, 179, 111, 244, 5, 138, 70, 200, 24, 118, 104, 189, 172, 146, 42, 19, 233, 15, 163, 122,
+        219, 61, 212, 231, 58, 26, 87, 175, 32, 66, 178, 158, 195, 139, 242, 213, 211, 164, 126,
+        31, 152, 156, 238, 116, 165, 166, 167, 216, 94, 176, 180, 52, 206, 168, 121, 119, 90, 193,
+        137, 174, 154, 17, 51, 157, 245, 57, 25, 101, 120, 22, 113, 210, 169, 68, 99, 64, 41, 186,
+        160, 143, 228, 214, 59, 132, 13, 194, 78, 88, 221, 153, 34, 107, 201, 187, 23, 6, 229, 125,
+        102, 67, 98, 246, 205, 53, 144, 46, 65, 141, 109, 170, 9, 115, 149, 12, 241, 29, 222, 76,
+        47, 45, 247, 209, 114, 235, 239, 72, 199, 248, 249, 250, 251, 252, 253, 254, 255,
+    ];
+
+    fn decipher(data: &mut [u8]) {
+        data.iter_mut()
+            .for_each(|v| *v = Self::DECIPHER_TABLE[*v as usize]);
+    }
+
+    /// Decipher the content of tag 0x2010
+    fn camera_settings_2010(&self) -> Option<Vec<u8>> {
+        let dir = self.maker_note_ifd()?;
+        dir.entry(exif::MNOTE_SONY_CAMERA_SETTINGS_2010)?
+            .value_array::<u8>(Endian::Little)
+            .map(|mut data| {
+                Self::decipher(&mut data);
+                data
+            })
+    }
+
+    /// AspectRatio as found in tag 0x2010. The structure might differ so
+    /// get it at the specified `offset`.
+    fn aspect_ratio_2010(&self, offset: usize) -> Option<AspectRatio> {
+        let camera_settings = self.camera_settings_2010()?;
+        match camera_settings[offset] {
+            0 => Some(AspectRatio(16, 9)),
+            1 => Some(AspectRatio(4, 3)),
+            2 => Some(AspectRatio(3, 2)),
+            3 => Some(AspectRatio(1, 1)),
+            5 =>
+            /* Panorama */
+            {
+                None
+            }
+            _ => None,
+        }
+    }
+
+    fn aspect_ratio_cs(&self, offset: usize) -> Option<AspectRatio> {
+        let camera_settings = self.camera_settings(Endian::Big)?;
+        match camera_settings[offset] {
+            1 => Some(AspectRatio(3, 2)),
+            2 => Some(AspectRatio(16, 9)),
+            _ => None,
+        }
+    }
+
+    fn aspect_ratio_cs3(&self) -> Option<AspectRatio> {
+        let camera_settings = self.camera_settings3()?;
+        match camera_settings[10] {
+            4 => Some(AspectRatio(3, 2)),
+            8 => Some(AspectRatio(16, 9)),
+            _ => None,
+        }
+    }
+
+    fn aspect_ratio(&self) -> Option<AspectRatio> {
+        use camera_ids::sony::*;
+        // Heuristics based off ExifTool
+        match self.type_id().1 {
+            A200 | A300 | A350 | A700 | A850 | A900 => {
+                // CameraSettings, idx = 85, BigEndian
+                probe!(self.probe, "arw.aspect_ratio.cs1", true);
+                self.aspect_ratio_cs(85)
+            },
+            A230 | A290 | A330 | A380 /* also A390 */ => {
+                // CameraSettings2, idx = 85, BigEndian
+                probe!(self.probe, "arw.aspect_ratio.cs2", true);
+                self.aspect_ratio_cs(85)
+            },
+            SLTA33 | SLTA35 | SLTA55 | A450 | A500 | A550 | A560 | A580 |
+            NEX3 | NEX5 | NEXC3 /*| NEXVG10E */ => {
+                // CameraSettings3, idx = 10, LittleEndian
+                probe!(self.probe, "arw.aspect_ratio.cs3", true);
+                self.aspect_ratio_cs3()
+            },
+            SLTA58 | SLTA99 | ILCE3000 /* and ILCE3500 */ | NEX3N | NEX5R |
+            NEX5T | NEX6 /* | NEXVG30 | NEXVG900 */ | RX100 | RX1 | RX1R => {
+                // ExifTool 2010e
+                probe!(self.probe, "arw.aspect_ratio.2010e", true);
+                self.aspect_ratio_2010(6444)
+            },
+            RX100M2 => {
+                // ExifTool 2010f
+                probe!(self.probe, "arw.aspect_ratio.2010f", true);
+                self.aspect_ratio_2010(6444)
+            }
+            RX10 | RX100M3 | ILCE7 | ILCE7R | ILCE7S | ILCE7M2 | ILCE5000 |
+            ILCE5100 | ILCE6000 | ILCEQX1 | ILCA68 | ILCA77M2 => {
+                // ExifTool 2010g
+                probe!(self.probe, "arw.aspect_ratio.2010g", true);
+                self.aspect_ratio_2010(6488)
+            }
+            RX0 | RX1RM2 | RX10M2 | RX10M3 | RX100M4 | RX100M5 | ILCE6300 |
+            ILCE6500 | ILCE7RM2 | ILCE7SM2 | ILCA99M2 => {
+                // ExifTool 2010h
+                probe!(self.probe, "arw.aspect_ratio.2010h", true);
+                self.aspect_ratio_2010(6444)
+            }
+            ILCE6100 | ILCE6400 | ILCE6600 | ILCE7C | ILCE7M3 | ILCE7RM3 |
+            ILCE7RM4 | ILCE9 | ILCE9M2 | RX0M2 | RX10M4 | RX100M6 | RX100M5A |
+            RX100M7 | HX99 | ZV1 | ZV1M2 /* | ZV1F */ | ZVE10 => {
+                // ExifTool 2010i
+                probe!(self.probe, "arw.aspect_ratio.2010i", true);
+                self.aspect_ratio_2010(6284)
+            }
+            _ => {
+                probe!(self.probe, "arw.aspect_ratio.unknown", true);
+                None
+            }
+        }
+    }
+
     fn load_rawdata_arw(&self, dir: &Dir) -> Result<RawImage> {
         let container = self.container.get().unwrap();
         let rawdata_endian = if self.type_id().1 == camera_ids::sony::R1 {
@@ -859,7 +1014,8 @@ impl ArwFile {
                                 })
                             })
                     });
-                rawimage.set_user_crop(user_crop, None);
+                let aspect_ratio = self.aspect_ratio();
+                rawimage.set_user_crop(user_crop, aspect_ratio);
                 if let Some(wb) = dir.int_value_array(exif::ARW_TAG_WB_RGGB_LEVELS).map(|v| {
                     let g = v[1] as f64;
                     [g / v[0] as f64, 1.0, g / v[3] as f64]

@@ -290,6 +290,8 @@ pub const MNOTE_NIKON_PREVIEWIFD_START: u16 = 0x201;
 pub const MNOTE_NIKON_PREVIEWIFD_LENGTH: u16 = 0x202;
 
 /* Sony MakerNote */
+pub const MNOTE_SONY_CAMERA_SETTINGS: u16 = 0x0114;
+pub const MNOTE_SONY_CAMERA_SETTINGS_2010: u16 = 0x2010;
 pub const MNOTE_SONY_MODEL_ID: u16 = 0xb001;
 
 /* Minolta MakerNote */
