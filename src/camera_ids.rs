@@ -1018,4 +1018,5 @@ pub mod google {
     pub const PIXEL_7A: u16 = 3;
     pub const PIXEL_8_PRO: u16 = 4;
     pub const PIXEL_9_PRO: u16 = 6;
+    pub const PIXEL_XL: u16 = 7;
 }
