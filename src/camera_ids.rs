@@ -1018,10 +1018,15 @@ pub mod nokia {
 
 /// Google
 pub mod google {
-    pub const PIXEL_3_XL: u16 = 1;
-    pub const PIXEL_4_XL: u16 = 2;
-    pub const PIXEL_7A: u16 = 3;
-    pub const PIXEL_8_PRO: u16 = 4;
-    pub const PIXEL_9_PRO: u16 = 6;
-    pub const PIXEL_XL: u16 = 7;
+    pub const PIXEL_XL: u16 = 1;
+    pub const PIXEL_2_XL: u16 = 2;
+    pub const PIXEL_3A: u16 = 3;
+    pub const PIXEL_3_XL: u16 = 4;
+    pub const PIXEL_4A: u16 = 5;
+    pub const PIXEL_4_XL: u16 = 6;
+    pub const PIXEL_6_PRO: u16 = 7;
+    pub const PIXEL_7A: u16 = 8;
+    pub const PIXEL_7_PRO: u16 = 9;
+    pub const PIXEL_8_PRO: u16 = 10;
+    pub const PIXEL_9_PRO: u16 = 11;
 }
