@@ -382,6 +382,12 @@ impl RawFileImpl for DngFile {
                         {
                             rawdata.set_as_shot_neutral(&as_shot_wb);
                         }
+                        else if let Some(as_shot_xy) = self
+                            .main_ifd()
+                            .and_then(|dir| dir.float_value_array(exif::DNG_TAG_AS_SHOT_WHITE_XY))
+                        {
+                            rawdata.set_as_shot_white_xy((as_shot_xy[0], as_shot_xy[1]));
+                        }
                         rawdata
                     })
                     .map_err(|err| {

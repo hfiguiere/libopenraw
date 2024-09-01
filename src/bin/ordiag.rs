@@ -197,7 +197,13 @@ fn extract_rawdata(
         if rawdata.linearization_table().is_some() {
             println!("\tHas a linearization table.");
         }
-        println!("\tAs Shot Neutral = {:?}", rawdata.as_shot_neutral());
+        if let Some(as_shot) = rawdata.as_shot_neutral() {
+            println!("\tAs Shot Neutral = {:?}", as_shot);
+        } else if let Some(as_shot_xy) = rawdata.as_shot_white_xy() {
+            println!("\tAs Shot XY = {:?}", as_shot_xy);
+        } else {
+            println!("\tNo White balance");
+        }
         if let Ok((origin, _)) = rawfile.colour_matrix(1) {
             println!("\tColour Matrix Origin: {origin:?}");
         }

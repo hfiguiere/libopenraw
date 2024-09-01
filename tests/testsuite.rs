@@ -158,15 +158,16 @@ fn raw_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
         count += 1;
         // This is necessary because in Rust f64::NAN != f64::NAN.
         // So we assume that if the third value is NAN we can ignore them
-        if raw_as_shot_neutral[3].is_nan() && rawdata.as_shot_neutral()[3].is_nan() {
+        let as_shot_neutral = rawdata.as_shot_neutral().expect("No as shot neutral found");
+        if raw_as_shot_neutral[3].is_nan() && as_shot_neutral[3].is_nan() {
             assert_eq!(
-                rawdata.as_shot_neutral()[0..3],
+                as_shot_neutral[0..3],
                 raw_as_shot_neutral[0..3],
                 "Incorrect WB"
             );
         } else {
             assert_eq!(
-                &rawdata.as_shot_neutral().to_vec(),
+                &as_shot_neutral.to_vec(),
                 raw_as_shot_neutral,
                 "Incorrect WB"
             );

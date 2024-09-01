@@ -322,7 +322,7 @@
       <rawCfaPattern>NONE</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>0 0 0 0</rawMaxValue>
-      <rawAsShotNeutral>0 0 0 0</rawAsShotNeutral>
+      <rawAsShotNeutral>NONE</rawAsShotNeutral>
       <rawMd5>1969</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -612,7 +612,7 @@
       <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>0 0 0 0</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
-      <rawAsShotNeutral>0 0 0 0</rawAsShotNeutral>
+      <rawAsShotNeutral>NONE</rawAsShotNeutral>
       <rawMd5>54892</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
@@ -1380,7 +1380,7 @@
       <rawCfaPattern>GRBG</rawCfaPattern>
       <rawMinValue>511 511 511 511</rawMinValue>
       <rawMaxValue>16383 16383 16383 16383</rawMaxValue>
-      <rawAsShotNeutral>0 0 0 0</rawAsShotNeutral>
+      <rawAsShotNeutral>NONE</rawAsShotNeutral>
       <rawMd5>20839</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>

@@ -187,6 +187,19 @@ extern "C" {
 	or_error
 	or_rawdata_as_shot_neutral(ORRawDataRef rawdata, double *wb);
 
+	/** @brief Return the as shot white balance as XY chromacity.
+	 *
+	 *
+	 * @param rawdata the raw data object
+	 * @param [out] x a pointer double to copy the value X into. It is a
+	 *    programming error to pass NULL.
+	 * @param [out] y a pointer to double to copy the value Y into. It is a
+	 *    programming error to pass NULL.
+	 * @return the error code.
+	 */
+	or_error
+	or_rawdata_as_shot_white_xy(ORRawDataRef rawdata, double *x, double *y);
+
 	/** @brief Get the colour matrix.
 	 * @param rawdata the raw data object
 	 * @param index the matrix index.

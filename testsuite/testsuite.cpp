@@ -756,25 +756,32 @@ bool Test::testRawAsShotNeutral(const std::string & result)
             RETURN_FAIL("failed to get rawData");
         }
     }
-    std::vector<std::string> v;
-    boost::split(v, result, boost::is_any_of(" "));
-    if (v.size() != 4) {
-        RETURN_FAIL("mismatch number of elements");
-    }
+
+    bool is_none = (result == "NONE");
     std::vector<double> v2;
-    for (const auto & s : v)
-    {
-        try {
-            v2.push_back(boost::lexical_cast<double>(s));
+    if (!is_none) {
+        std::vector<std::string> v;
+        boost::split(v, result, boost::is_any_of(" "));
+        if (v.size() != 4) {
+            RETURN_FAIL("mismatch number of elements");
         }
-        catch(...)
-        {
-            RETURN_FAIL("conversion failed");
+        for (const auto & s : v) {
+            try {
+                v2.push_back(boost::lexical_cast<double>(s));
+            }
+            catch(...)
+            {
+                RETURN_FAIL("conversion failed");
+            }
         }
     }
     std::vector<double> wb = { 0, 0, 0, 0 };
-    or_rawdata_as_shot_neutral(m_rawdata.get(), wb.data());
-    RETURN_TEST_EQUALS_OF(wb, v2);
+    auto res = or_rawdata_as_shot_neutral(m_rawdata.get(), wb.data());
+    if (is_none) {
+        RETURN_TEST(res == OR_ERROR_NOT_FOUND, result);
+    } else {
+        RETURN_TEST_EQUALS_OF(wb, v2);
+    }
 }
 
 bool Test::testRawMd5(const std::string & result)

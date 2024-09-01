@@ -32,6 +32,16 @@ use crate::utils;
 use crate::{tiff, ColourSpace};
 use crate::{AspectRatio, Bitmap, DataType, Error, Image, Rect, Result};
 
+#[derive(Default, Debug)]
+enum AsShot {
+    #[default]
+    None,
+    /// The white balance neutral RGB_.
+    Neutral([f64; 4]),
+    /// The white balance XY chromacity
+    WhiteXy(f64, f64),
+}
+
 /// RAW Data extracted from the file.
 #[derive(Debug, Default)]
 pub struct RawImage {
@@ -61,8 +71,8 @@ pub struct RawImage {
     user_aspect_ratio: Option<AspectRatio>,
     /// The mosaic pattern
     mosaic_pattern: Pattern,
-    /// The neutral camera white balance
-    as_shot_neutral: [f64; 4],
+    /// The camera white balance either as neutral or xy chromacity.
+    as_shot: AsShot,
     /// Colour matrices
     matrices: [ColourMatrix; 2],
     /// Linearization table. len = 2^bpc
@@ -97,7 +107,7 @@ impl RawImage {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
-            as_shot_neutral: [0_f64; 4],
+            as_shot: AsShot::None,
             matrices: [ColourMatrix::default(), ColourMatrix::default()],
             linearization_table: None,
         }
@@ -126,7 +136,7 @@ impl RawImage {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
-            as_shot_neutral: [0_f64; 4],
+            as_shot: AsShot::None,
             matrices: [ColourMatrix::default(), ColourMatrix::default()],
             linearization_table: None,
         }
@@ -155,7 +165,7 @@ impl RawImage {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
-            as_shot_neutral: [0_f64; 4],
+            as_shot: AsShot::None,
             matrices: [ColourMatrix::default(), ColourMatrix::default()],
             linearization_table: None,
         }
@@ -180,7 +190,7 @@ impl RawImage {
             compression: tiff::Compression::Unknown,
             photom_int: exif::PhotometricInterpretation::CFA,
             mosaic_pattern,
-            as_shot_neutral: [0_f64; 4],
+            as_shot: AsShot::None,
             matrices: [ColourMatrix::default(), ColourMatrix::default()],
             linearization_table: None,
         }
@@ -233,20 +243,38 @@ impl RawImage {
     /// Usually on RGB raw data `x` will be NAN. These multipliers are
     /// usually normalized around a 1.0 multiplier value for Green.
     /// For a white balanced RGB image, returns `[1.0, 1.0, 1.0, NAN]`
-    pub fn as_shot_neutral(&self) -> &[f64] {
-        &self.as_shot_neutral
+    pub fn as_shot_neutral(&self) -> Option<&[f64]> {
+        if let AsShot::Neutral(wb) = &self.as_shot {
+            Some(wb)
+        } else {
+            None
+        }
     }
 
     /// Set the white balance.
     pub fn set_as_shot_neutral(&mut self, as_shot: &[f64]) {
-        self.as_shot_neutral[0] = as_shot[0];
-        self.as_shot_neutral[1] = as_shot[1];
-        self.as_shot_neutral[2] = as_shot[2];
-        self.as_shot_neutral[3] = if as_shot.len() > 3 {
+        let mut as_shot_neutral = [0_f64; 4];
+        as_shot_neutral[0] = as_shot[0];
+        as_shot_neutral[1] = as_shot[1];
+        as_shot_neutral[2] = as_shot[2];
+        as_shot_neutral[3] = if as_shot.len() > 3 {
             as_shot[3]
         } else {
             f64::NAN
         };
+        self.as_shot = AsShot::Neutral(as_shot_neutral);
+    }
+
+    pub fn set_as_shot_white_xy(&mut self, as_shot_xy: (f64, f64)) {
+        self.as_shot = AsShot::WhiteXy(as_shot_xy.0, as_shot_xy.1);
+    }
+
+    pub fn as_shot_white_xy(&self) -> Option<(f64, f64)> {
+        if let AsShot::WhiteXy(x, y) = &self.as_shot {
+            Some((*x, *y))
+        } else {
+            None
+        }
     }
 
     /// Set the width of the Rawdata. Use with caution.

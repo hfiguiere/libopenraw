@@ -165,11 +165,33 @@ extern "C" fn or_rawdata_levels(
 // As shot neutral white balance.
 extern "C" fn or_rawdata_as_shot_neutral(rawdata: ORRawDataRef, wb: *mut f64) -> or_error {
     or_unwrap!(rawdata, or_error::NOT_AREF, {
-        let rwb = rawdata.as_shot_neutral();
-        unsafe {
-            wb.copy_from_nonoverlapping(rwb.as_ptr(), 4);
+        if let Some(rwb) = &rawdata.as_shot_neutral() {
+            unsafe {
+                wb.copy_from_nonoverlapping(rwb.as_ptr(), 4);
+            }
+            or_error::NONE
+        } else {
+            or_error::NOT_FOUND
         }
-        or_error::NONE
+    })
+}
+
+#[no_mangle]
+// As shot white balance XY chromacity.
+extern "C" fn or_rawdata_as_shot_white_xy(rawdata: ORRawDataRef, x: *mut f64, y: *mut f64) -> or_error {
+    or_unwrap!(rawdata, or_error::NOT_AREF, {
+        if x.is_null() || y.is_null() {
+            return or_error::NOT_AREF;
+        }
+        if let Some(rwb) = &rawdata.as_shot_white_xy() {
+            unsafe {
+                *x = rwb.0;
+                *y = rwb.1;
+            }
+            or_error::NONE
+        } else {
+            or_error::NOT_FOUND
+        }
     })
 }
 

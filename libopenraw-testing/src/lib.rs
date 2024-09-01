@@ -278,7 +278,8 @@ pub fn make_results(rawfile: &dyn RawFile) -> Results {
         .ok();
     let raw_min_value = rawdata.map(|rawdata| rawdata.blacks().to_vec()).ok();
     let raw_max_value = rawdata.map(|rawdata| rawdata.whites().to_vec()).ok();
-    let raw_as_shot_neutral = rawdata.map(|rawdata| rawdata.as_shot_neutral().to_vec()).ok();
+    let raw_as_shot_neutral = rawdata.ok().and_then(|rawdata| rawdata.as_shot_neutral())
+        .map(|as_shot| as_shot.to_vec());
     let raw_md5 = rawdata
         .ok()
         .and_then(|rawdata| {
