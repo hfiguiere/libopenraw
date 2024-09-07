@@ -192,6 +192,7 @@ pub(crate) struct NefFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
 }
 
@@ -202,6 +203,7 @@ impl NefFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            #[cfg(feature = "probe")]
             probe: None,
         })
     }

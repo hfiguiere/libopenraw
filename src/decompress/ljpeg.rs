@@ -168,7 +168,7 @@ impl LJpeg {
         &mut self,
         buffer: &[u8],
         tiled: bool,
-        probe: &Option<crate::Probe>,
+        #[cfg(feature = "probe")] probe: &Option<crate::Probe>,
     ) -> Result<Tile> {
         let mut dc_info = DecompressInfo::default();
 
@@ -261,9 +261,14 @@ impl LJpeg {
     pub(crate) fn decompress(
         &mut self,
         buffer: &[u8],
-        probe: &Option<crate::Probe>,
+        #[cfg(feature = "probe")] probe: &Option<crate::Probe>,
     ) -> Result<ImageBuffer<u16>> {
-        let tile = self.decompress_buffer(buffer, false, probe)?;
+        let tile = self.decompress_buffer(
+            buffer,
+            false,
+            #[cfg(feature = "probe")]
+            probe,
+        )?;
         Ok(ImageBuffer::with_data(
             tile.buf,
             tile.width,

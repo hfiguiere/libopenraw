@@ -35,6 +35,14 @@ mod utils;
 #[cfg(feature = "probe")]
 #[macro_use]
 mod probe;
+#[cfg(not(feature = "probe"))]
+#[macro_use]
+mod probe {
+    #[macro_export]
+    macro_rules! probe {
+        ( $audit:expr, $key:expr, $value:expr ) => {};
+    }
+}
 
 mod apple;
 mod bitmap;

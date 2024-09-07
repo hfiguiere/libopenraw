@@ -729,6 +729,7 @@ pub(crate) struct Rw2File {
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
     jpeg_preview: OnceCell<Option<jpeg::Container>>,
+    #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
 }
 
@@ -740,6 +741,7 @@ impl Rw2File {
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
             jpeg_preview: OnceCell::new(),
+            #[cfg(feature = "probe")]
             probe: None,
         })
     }

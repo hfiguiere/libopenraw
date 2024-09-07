@@ -186,6 +186,7 @@ pub(crate) struct DngFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
 }
 
@@ -196,6 +197,7 @@ impl DngFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            #[cfg(feature = "probe")]
             probe: None,
         })
     }
@@ -214,14 +216,24 @@ impl DngFile {
                         if let Some(data) = rawdata.data8() {
                             // We can get away with passing `is_raw` to false in DNG.
                             let mut decompressor = decompress::LJpeg::new(false);
-                            decompressor.decompress(data, &self.probe).map(|buffer| {
-                                rawdata.set_with_buffer(buffer);
-                                rawdata.set_data_type(DataType::Raw);
-                                rawdata
-                            })
+                            decompressor
+                                .decompress(
+                                    data,
+                                    #[cfg(feature = "probe")]
+                                    &self.probe,
+                                )
+                                .map(|buffer| {
+                                    rawdata.set_with_buffer(buffer);
+                                    rawdata.set_data_type(DataType::Raw);
+                                    rawdata
+                                })
                         } else if rawdata.tile_data().is_some() {
                             let decompressor = decompress::TiledLJpeg::new();
-                            decompressor.decompress(rawdata, &self.probe)
+                            decompressor.decompress(
+                                rawdata,
+                                #[cfg(feature = "probe")]
+                                &self.probe,
+                            )
                         } else {
                             log::error!("No data to decompress LJPEG");
                             Ok(rawdata)
@@ -381,8 +393,7 @@ impl RawFileImpl for DngFile {
                             .and_then(|dir| dir.float_value_array(exif::DNG_TAG_AS_SHOT_NEUTRAL))
                         {
                             rawdata.set_as_shot_neutral(&as_shot_wb);
-                        }
-                        else if let Some(as_shot_xy) = self
+                        } else if let Some(as_shot_xy) = self
                             .main_ifd()
                             .and_then(|dir| dir.float_value_array(exif::DNG_TAG_AS_SHOT_WHITE_XY))
                         {

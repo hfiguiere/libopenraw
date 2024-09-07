@@ -48,6 +48,7 @@ pub(crate) struct JpegFile {
     type_id: OnceCell<TypeId>,
     container: OnceCell<Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
 }
 
@@ -58,6 +59,7 @@ impl JpegFile {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            #[cfg(feature = "probe")]
             probe: None,
         })
     }

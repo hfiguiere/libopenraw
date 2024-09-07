@@ -50,6 +50,7 @@ pub(crate) struct Cr2File {
     type_id: OnceCell<TypeId>,
     container: OnceCell<tiff::Container>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
 }
 
@@ -60,6 +61,7 @@ impl Cr2File {
             type_id: OnceCell::new(),
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            #[cfg(feature = "probe")]
             probe: None,
         })
     }
@@ -107,9 +109,15 @@ impl Cr2File {
                 decompressor.set_slices(slices);
             }
 
-            decompressor.decompress(&data, &self.probe).map(|buffer| {
-                RawImage::with_image_buffer(buffer, DataType::Raw, Pattern::default())
-            })
+            decompressor
+                .decompress(
+                    &data,
+                    #[cfg(feature = "probe")]
+                    &self.probe,
+                )
+                .map(|buffer| {
+                    RawImage::with_image_buffer(buffer, DataType::Raw, Pattern::default())
+                })
         }
     }
 

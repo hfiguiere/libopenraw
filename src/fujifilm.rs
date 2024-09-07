@@ -158,6 +158,7 @@ pub(crate) struct RafFile {
     reader: Rc<Viewer>,
     container: OnceCell<raf::RafContainer>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
 }
 
@@ -167,6 +168,7 @@ impl RafFile {
             reader,
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            #[cfg(feature = "probe")]
             probe: None,
         })
     }

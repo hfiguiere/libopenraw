@@ -78,7 +78,11 @@ impl TiledLJpeg {
     }
 
     /// Decompress the RawImage into a new RawImage.
-    pub fn decompress(&self, rawdata: RawImage, probe: &Option<crate::Probe>) -> Result<RawImage> {
+    pub fn decompress(
+        &self,
+        rawdata: RawImage,
+        #[cfg(feature = "probe")] probe: &Option<crate::Probe>,
+    ) -> Result<RawImage> {
         if let Some(tiles) = rawdata.tile_data() {
             probe!(probe, "ljpeg.tiled", "true");
             let tile_size = rawdata.tile_size();
@@ -89,7 +93,12 @@ impl TiledLJpeg {
                     // Tiles should be fine to have `is_raw` set to false.
                     let mut decompressor = LJpeg::new(false);
                     decompressor
-                        .decompress_buffer(tile.as_slice(), true, &None)
+                        .decompress_buffer(
+                            tile.as_slice(),
+                            true,
+                            #[cfg(feature = "probe")]
+                            &None,
+                        )
                         .ok()
                 })
                 .map(|tile| {

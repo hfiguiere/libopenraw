@@ -29,6 +29,7 @@ use libopenraw::{
     rawfile_from_file, DataType, Error, Ifd, Image, RawFile, RawImage, Result, Thumbnail,
 };
 
+#[cfg(feature = "probe")]
 #[derive(Clone, Copy, PartialEq)]
 enum ProbeType {
     None,
@@ -45,7 +46,9 @@ pub fn main() {
     opts.optflag("t", "", "Extract thumbnails");
     opts.optflag("R", "", "Extract Raw data");
     opts.optflag("n", "", "No decompression");
+    #[cfg(feature = "probe")]
     opts.optflag("p", "probe", "Probe file");
+    #[cfg(feature = "probe")]
     opts.optflag("P", "probe-only", "Only probe file (unimplemented)");
 
     let matches = match opts.parse(&args[1..]) {
@@ -68,6 +71,7 @@ pub fn main() {
     let extract_raw = matches.opt_present("R");
     let skip_decompress = matches.opt_present("n");
     let dev_mode = matches.opt_present("D");
+    #[cfg(feature = "probe")]
     let probe = if matches.opt_present("P") {
         ProbeType::ProbeOnly
     } else if matches.opt_present("p") {
@@ -83,6 +87,7 @@ pub fn main() {
             extract_raw,
             skip_decompress,
             dev_mode,
+            #[cfg(feature = "probe")]
             probe,
         );
     }
@@ -249,7 +254,7 @@ fn process_file(
     extract_raw: bool,
     skip_decompress: bool,
     dev_mode: bool,
-    probe: ProbeType,
+    #[cfg(feature = "probe")] probe: ProbeType,
 ) {
     info!("Diags {}", p);
 

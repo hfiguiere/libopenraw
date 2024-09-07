@@ -113,3 +113,8 @@ bench = false
 name = "canon_models"
 required-features = ["book"]
 bench = false
+
+[[bin]]
+name = "probe"
+required-features = ["probe"]
+bench = false

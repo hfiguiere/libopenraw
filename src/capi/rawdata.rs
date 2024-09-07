@@ -178,7 +178,11 @@ extern "C" fn or_rawdata_as_shot_neutral(rawdata: ORRawDataRef, wb: *mut f64) ->
 
 #[no_mangle]
 // As shot white balance XY chromacity.
-extern "C" fn or_rawdata_as_shot_white_xy(rawdata: ORRawDataRef, x: *mut f64, y: *mut f64) -> or_error {
+extern "C" fn or_rawdata_as_shot_white_xy(
+    rawdata: ORRawDataRef,
+    x: *mut f64,
+    y: *mut f64,
+) -> or_error {
     or_unwrap!(rawdata, or_error::NOT_AREF, {
         if x.is_null() || y.is_null() {
             return or_error::NOT_AREF;

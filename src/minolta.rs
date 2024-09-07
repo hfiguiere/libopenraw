@@ -136,6 +136,7 @@ pub(crate) struct MrwFile {
     reader: Rc<Viewer>,
     container: OnceCell<MrwContainer>,
     thumbnails: OnceCell<ThumbnailStorage>,
+    #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
 }
 
@@ -145,6 +146,7 @@ impl MrwFile {
             reader,
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
+            #[cfg(feature = "probe")]
             probe: None,
         })
     }
