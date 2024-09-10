@@ -1,4 +1,4 @@
-libopenraw 0.4.0-alpha.8 -
+libopenraw 0.4.0-alpha.8 - 2024/09/10
 
 Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
