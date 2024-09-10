@@ -12,6 +12,10 @@ New features:
   - Extract the user crop (CR2, CR3, DNG, GPR, NEF, ORF, PEF, RAF, ARW,
     RW2, RAW).
 
+Bug fixes:
+
+  - (Alpha) API: Removed the `Image` trait and `data16()` is now in `Bitmap`.
+
 Internal:
 
   - Testsuite for user crop and user aspect ratio.
