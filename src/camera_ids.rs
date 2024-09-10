@@ -990,6 +990,7 @@ pub mod gopro {
 pub mod hasselblad {
     pub const LUNAR: u16 = 1;
     pub const L1D_20C: u16 = 2;
+    /// DJI Mavic 3 Pro
     pub const L2D_20C: u16 = 3;
 }
 
