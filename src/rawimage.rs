@@ -30,7 +30,7 @@ use crate::render::{self, gamma_correct_f, gamma_correct_srgb, RenderingOptions,
 use crate::tiff::exif;
 use crate::utils;
 use crate::{tiff, ColourSpace};
-use crate::{AspectRatio, Bitmap, DataType, Error, Image, Rect, Result};
+use crate::{AspectRatio, Bitmap, DataType, Error, Rect, Result};
 
 #[derive(Default, Debug)]
 enum AsShot {
@@ -608,9 +608,7 @@ impl Bitmap for RawImage {
             _ => None,
         }
     }
-}
 
-impl Image for RawImage {
     fn data16(&self) -> Option<&[u16]> {
         match self.data {
             Data::Data16(ref d) => Some(d),

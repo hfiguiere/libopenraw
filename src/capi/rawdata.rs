@@ -26,7 +26,7 @@ use crate::{
     colour::ColourSpace,
     or_unwrap,
     render::{RenderingOptions, RenderingStage},
-    AspectRatio, Bitmap, Image, RawImage,
+    AspectRatio, Bitmap, RawImage,
 };
 
 /// Pointer to a [`RawImage`] object exported to the C API.

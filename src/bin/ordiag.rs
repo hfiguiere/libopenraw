@@ -25,9 +25,7 @@ use simple_logger::SimpleLogger;
 
 use libopenraw::metadata::Value;
 use libopenraw::Bitmap;
-use libopenraw::{
-    rawfile_from_file, DataType, Error, Ifd, Image, RawFile, RawImage, Result, Thumbnail,
-};
+use libopenraw::{rawfile_from_file, DataType, Error, Ifd, RawFile, RawImage, Result, Thumbnail};
 
 #[cfg(feature = "probe")]
 #[derive(Clone, Copy, PartialEq)]

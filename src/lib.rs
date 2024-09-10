@@ -78,7 +78,7 @@ mod sony;
 mod thumbnail;
 pub mod tiff;
 
-pub use bitmap::{Bitmap, Image};
+pub use bitmap::Bitmap;
 pub use colour::ColourSpace;
 pub use dump::Dump;
 pub use geometry::{AspectRatio, Point, Rect, Size};

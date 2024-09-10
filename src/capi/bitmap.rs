@@ -2,7 +2,7 @@
 /*
  * libopenraw - capi/bitmap.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2024 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,7 +21,7 @@
 
 //! This contain all the `or_bitmapdata_*` APIs.
 
-use crate::{or_unwrap, Bitmap, DataType, Image, RawImage};
+use crate::{or_unwrap, Bitmap, DataType, RawImage};
 
 use super::{or_data_type, or_error};
 

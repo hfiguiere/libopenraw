@@ -23,7 +23,7 @@ use getopts::Options;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
 
-use libopenraw::{rawfile_from_file, Bitmap, Image, RenderingOptions};
+use libopenraw::{rawfile_from_file, Bitmap, RenderingOptions};
 
 pub fn main() {
     let args: Vec<String> = std::env::args().collect();

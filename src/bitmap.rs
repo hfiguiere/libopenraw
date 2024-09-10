@@ -114,13 +114,10 @@ pub trait Bitmap {
     fn bpc(&self) -> u16;
     /// Image data in 8 bits
     fn data8(&self) -> Option<&[u8]>;
-}
-
-/// An `Image` is a more comprehensive `Bitmap` with 16-bits
-/// support.
-pub trait Image: Bitmap {
-    /// Image data in 16 bits
-    fn data16(&self) -> Option<&[u16]>;
+    /// Image data in 16 bits. `None` by default
+    fn data16(&self) -> Option<&[u16]> {
+        None
+    }
 }
 
 /// Encapsulate data 8 or 16 bits
