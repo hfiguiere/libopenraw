@@ -35,6 +35,7 @@ RUST_FILES = Cargo.lock \
 	src/bin/metadata.rs \
 	src/bin/ordiag.rs \
 	src/bin/ordump.rs \
+	src/bin/probe.rs \
 	src/bin/rawdata.rs \
 	src/bin/test-ljpeg.rs \
 	src/bin/test-rawfile.rs \
