@@ -103,12 +103,17 @@ impl Dir {
             _ => {
                 // The size of this buffer should be adjusted depending on
                 // what the various detection need.
-                let mut data = [0_u8; 16];
+                let mut data = [0_u8; 19];
                 {
                     let mut view = container.borrow_view_mut();
                     view.seek(SeekFrom::Start(offset as u64))?;
                     view.read_exact(&mut data)?;
                 }
+
+                log::debug!(
+                    "MakerNote offset {offset} data {:?}",
+                    String::from_utf8_lossy(&data)
+                );
 
                 if file_type == RawType::Arw {
                     let mut padding = 0;
@@ -433,6 +438,10 @@ impl Dir {
 
                 // Others
 
+                // Seitz 617, unknown format, doesn't look like an IFD.
+                if &data[0..19] == b"SEITZ PHOTOTECHNIK\0" {
+                    return Err(Error::InvalidFormat);
+                }
                 // SilverFast scanner. (Plustek)
                 // Doesn't follow the standard.
                 if &data[0..5] == b"LSI1\0" {

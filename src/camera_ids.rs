@@ -53,6 +53,7 @@ pub mod vendor {
     pub const DJI: u16 = 22;
     pub const NOKIA: u16 = 23;
     pub const GOOGLE: u16 = 24;
+    pub const SEITZ: u16 = 25;
     /// JPEG isn't a vendor.
     pub const JPEG: u16 = 1000;
 }
@@ -1030,4 +1031,9 @@ pub mod google {
     pub const PIXEL_7_PRO: u16 = 9;
     pub const PIXEL_8_PRO: u16 = 10;
     pub const PIXEL_9_PRO: u16 = 11;
+}
+
+pub mod seitz {
+    // aka Seitz 6x17 Digital
+    pub const ROUNDHSOT_D3: u16 = 1;
 }
