@@ -53,6 +53,7 @@ test/testoption
 test/missingcoefficients
 test/*.log
 test/*.trs
+testsuite/testsuite.xml.overrides
 testsuite/test_xmlhandler
 testsuite/testsuitetags.h
 testsuite/testsuitetags.cpp
