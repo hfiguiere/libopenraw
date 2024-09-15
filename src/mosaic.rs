@@ -25,6 +25,7 @@ use num_enum::TryFromPrimitive;
 
 /// C friendly enum for Pattern types.
 #[repr(u8)]
+#[derive(Debug)]
 pub enum PatternType {
     None = 0,
     NonRgb22 = 1,

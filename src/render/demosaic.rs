@@ -68,7 +68,12 @@ pub(crate) fn bimedian(
         PatternType::Grbg => 1,
         PatternType::Gbrg => 2,
         PatternType::Rggb => 3,
-        _ => return Err(Error::InvalidFormat),
+        _ => {
+            return {
+                log::error!("Unsupported pattern {:?}", pattern.pattern_type());
+                Err(Error::InvalidFormat)
+            }
+        }
     };
 
     let mut dst: Vec<f64> = vec![0.0; input.width as usize * input.height as usize * 3];
