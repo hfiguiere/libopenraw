@@ -113,7 +113,11 @@ pub trait RawContainer {
             Data::Offset(ref offset) => {
                 let mut view = self.borrow_view_mut();
                 if offset.offset + offset.len > view.len() {
-                    log::error!("Thumbmail too big");
+                    log::error!(
+                        "Thumbnail too big. offset {:?} view len = {}",
+                        offset,
+                        view.len()
+                    );
                     return Err(Error::FormatError);
                 }
                 let mut data = uninit_vec!(offset.len as usize);
