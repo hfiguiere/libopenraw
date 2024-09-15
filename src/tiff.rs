@@ -476,12 +476,9 @@ pub(crate) fn ifd_locate_thumbnail(
     thumbnails: &mut Vec<(u32, thumbnail::ThumbDesc)>,
 ) {
     let mut data_type = DataType::Unknown;
-    let subtype = if let Some(subtype) = dir.value::<u32>(exif::EXIF_TAG_NEW_SUBFILE_TYPE) {
-        subtype
-    } else {
-        // XXX check if we are in the Raw IFD. We don't know this here.
-        1
-    };
+    let subtype = dir
+        .value::<u32>(exif::EXIF_TAG_NEW_SUBFILE_TYPE)
+        .unwrap_or(1);
     if subtype == 1 {
         let photom_int = dir
             .value::<u16>(exif::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
