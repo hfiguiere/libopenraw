@@ -21,14 +21,17 @@
 
 //! Panasonic camera support (and some Leica)
 
+pub mod decompress;
+
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use num_enum::FromPrimitive;
 use once_cell::unsync::OnceCell;
 
 use crate::colour::BuiltinMatrix;
 use crate::container::{Endian, RawContainer};
-use crate::decompress;
+use crate::decompress::unpack_be12to16;
 use crate::io::Viewer;
 use crate::jpeg;
 use crate::leica;
@@ -37,7 +40,7 @@ use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::exif;
-use crate::tiff::{Dir, Ifd, LoaderFixup};
+use crate::tiff::{Compression, Dir, Ifd, LoaderFixup};
 use crate::{
     Bitmap, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
     Type, TypeId,
@@ -962,48 +965,84 @@ impl RawFileImpl for Rw2File {
                 probe!(self.probe, "rw2.compression", "panasonic");
                 DataType::CompressedRaw
             };
-            let mut raw_data = match data_type {
+            let compression = cfa
+                .value::<u16>(exif::RW2_TAG_IMAGE_COMPRESSION)
+                .map(|c| Compression::from_primitive(c as u32))
+                .unwrap_or(Compression::Unknown);
+            match compression {
+                Compression::Unknown => {}
+                _ => {
+                    probe!(self.probe, "rw2.compression.value", compression as u16);
+                }
+            }
+            let (compression, mut raw_data) = match data_type {
                 DataType::CompressedRaw => {
-                    let raw = self.container().load_buffer8(offset.offset, offset.len);
-                    RawImage::with_data8(
-                        width,
-                        height,
-                        bpc,
-                        data_type,
-                        raw,
-                        mosaic_pattern.unwrap_or_default(),
-                    )
+                    if skip_decompress {
+                        let raw = self.container().load_buffer8(offset.offset, offset.len);
+                        (
+                            compression,
+                            RawImage::with_data8(
+                                width,
+                                height,
+                                bpc,
+                                data_type,
+                                raw,
+                                mosaic_pattern.unwrap_or_default(),
+                            ),
+                        )
+                    } else {
+                        let raw = match compression {
+                            Compression::None | Compression::Unknown => {
+                                return Err(Error::InvalidParam)
+                            }
+                            Compression::PanasonicRaw1 => decompress::panasonic_raw1(
+                                &self.container().load_buffer8(offset.offset, offset.len),
+                            )?,
+                            _ => return Err(Error::Unimplemented),
+                        };
+                        (
+                            Compression::None,
+                            RawImage::with_data16(
+                                width,
+                                height,
+                                bpc,
+                                DataType::Raw,
+                                raw,
+                                mosaic_pattern.unwrap_or_default(),
+                            ),
+                        )
+                    }
                 }
                 DataType::Raw => {
                     let raw = if packed {
                         log::debug!("Panasonic: packed data");
                         let raw = self.container().load_buffer8(offset.offset, offset.len);
                         let mut out = Vec::with_capacity(width as usize * height as usize);
-                        decompress::unpack_be12to16(&raw, &mut out, tiff::Compression::None)?;
+                        unpack_be12to16(&raw, &mut out, tiff::Compression::None)?;
                         out
                     } else {
                         log::debug!("Panasonic: unpacked data");
-                        if skip_decompress {
-                            self.container().load_buffer16(offset.offset, offset.len)
-                        } else {
-                            log::info!("Panasonic compression not implemented");
-                            return Err(Error::Unimplemented);
-                        }
+                        self.container().load_buffer16(offset.offset, offset.len)
                     };
-                    RawImage::with_data16(
-                        width,
-                        height,
-                        bpc,
-                        data_type,
-                        raw,
-                        mosaic_pattern.unwrap_or_default(),
+                    (
+                        compression,
+                        RawImage::with_data16(
+                            width,
+                            height,
+                            bpc,
+                            data_type,
+                            raw,
+                            mosaic_pattern.unwrap_or_default(),
+                        ),
                     )
                 }
                 _ => return Err(Error::NotFound),
             };
-            if let Some(compression) = cfa.value::<u16>(exif::RW2_TAG_IMAGE_COMPRESSION) {
-                probe!(self.probe, "rw2.compression.value", compression);
-                raw_data.set_compression((compression as u32).into());
+            match compression {
+                Compression::Unknown => {}
+                _ => {
+                    raw_data.set_compression((compression as u32).into());
+                }
             }
 
             raw_data.set_active_area(Some(Rect {
