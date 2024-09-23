@@ -891,7 +891,7 @@ impl RawFileImpl for Rw2File {
         }
     }
 
-    fn load_rawdata(&self, _skip_decompress: bool) -> Result<RawImage> {
+    fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         if let Some(cfa) = self.ifd(tiff::IfdType::Raw) {
             let offset: thumbnail::DataOffset =
                 if let Some(offset) = cfa.uint_value(exif::RW2_TAG_RAW_OFFSET) {
@@ -983,7 +983,12 @@ impl RawFileImpl for Rw2File {
                         out
                     } else {
                         log::debug!("Panasonic: unpacked data");
-                        self.container().load_buffer16(offset.offset, offset.len)
+                        if skip_decompress {
+                            self.container().load_buffer16(offset.offset, offset.len)
+                        } else {
+                            log::info!("Panasonic compression not implemented");
+                            return Err(Error::Unimplemented);
+                        }
                     };
                     RawImage::with_data16(
                         width,
