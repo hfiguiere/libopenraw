@@ -974,41 +974,32 @@ impl RawFileImpl for Rw2File {
                 .unwrap_or(Compression::Unknown);
             let (compression, mut raw_data) = match data_type {
                 DataType::CompressedRaw => {
-                    if skip_decompress {
-                        let raw = self.container().load_buffer8(offset.offset, offset.len);
-                        (
-                            compression,
-                            RawImage::with_data8(
-                                width,
-                                height,
-                                bpc,
-                                data_type,
-                                raw,
-                                mosaic_pattern.unwrap_or_default(),
-                            ),
-                        )
+                    let pattern = mosaic_pattern.unwrap_or_default();
+                    let buffer = self.container().load_buffer8(offset.offset, offset.len);
+                    if !skip_decompress && compression == Compression::PanasonicRaw1 {
+                        decompress::panasonic_raw1(&buffer).ok().map(|raw| {
+                            (
+                                Compression::None,
+                                RawImage::with_data16(
+                                    width,
+                                    height,
+                                    bpc,
+                                    DataType::Raw,
+                                    raw,
+                                    pattern.clone(),
+                                ),
+                            )
+                        })
                     } else {
-                        let raw = match compression {
-                            Compression::None | Compression::Unknown => {
-                                return Err(Error::InvalidParam)
-                            }
-                            Compression::PanasonicRaw1 => decompress::panasonic_raw1(
-                                &self.container().load_buffer8(offset.offset, offset.len),
-                            )?,
-                            _ => return Err(Error::Unimplemented),
-                        };
-                        (
-                            Compression::None,
-                            RawImage::with_data16(
-                                width,
-                                height,
-                                bpc,
-                                DataType::Raw,
-                                raw,
-                                mosaic_pattern.unwrap_or_default(),
-                            ),
-                        )
+                        None
                     }
+                    .or_else(|| {
+                        Some((
+                            compression,
+                            RawImage::with_data8(width, height, bpc, data_type, buffer, pattern),
+                        ))
+                    })
+                    .unwrap()
                 }
                 DataType::Raw => {
                     let raw = if packed {
