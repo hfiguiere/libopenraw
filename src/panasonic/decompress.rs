@@ -19,7 +19,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/*! The algorithm from dcraw, turned into a readable and analyzeable form. */
+/*! The algorithm from dcraw, turned into a readable and analyzeable form.
+
+Additional, human-readable reference from https://www.dpreview.com/forums/post/40154581 (but this doesn't mention that the first *nonzero* pixel is lossless).
+*/
 
 use crate::{Error, Result};
 
