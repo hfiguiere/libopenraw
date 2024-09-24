@@ -967,14 +967,11 @@ impl RawFileImpl for Rw2File {
             };
             let compression = cfa
                 .value::<u16>(exif::RW2_TAG_IMAGE_COMPRESSION)
-                .map(|c| Compression::from_primitive(c as u32))
+                .map(|c| {
+                    probe!(self.probe, "rw2.compression.value", c);
+                    Compression::from_primitive(c as u32)
+                })
                 .unwrap_or(Compression::Unknown);
-            match compression {
-                Compression::Unknown => {}
-                _ => {
-                    probe!(self.probe, "rw2.compression.value", compression as u16);
-                }
-            }
             let (compression, mut raw_data) = match data_type {
                 DataType::CompressedRaw => {
                     if skip_decompress {
