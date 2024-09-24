@@ -102,6 +102,7 @@ RUST_FILES = Cargo.lock \
 	src/olympus/decompress.rs \
 	src/olympus/matrices.rs \
 	src/panasonic.rs \
+	src/panasonic/decompress.rs \
 	src/pentax.rs \
 	src/pentax/decompress.rs \
 	src/probe.rs \
