@@ -109,6 +109,7 @@ lazy_static::lazy_static! {
         leica!("LEICA Q (Typ 116)", Q_TYP116),
         leica!("LEICA Q2", Q2),
         leica!("LEICA Q3", Q3),
+        leica!("LEICA Q3 43", Q3_43),
         leica!("LEICA CL", CL),
         leica!("LEICA SL2-S", SL2S),
         leica!("LEICA Q2 MONO", Q2_MONOCHROM),
