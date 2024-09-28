@@ -896,6 +896,7 @@ impl RawFileImpl for Rw2File {
 
     fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
         if let Some(cfa) = self.ifd(tiff::IfdType::Raw) {
+            let mut has_raw_offset = false;
             let offset: thumbnail::DataOffset =
                 if let Some(offset) = cfa.uint_value(exif::RW2_TAG_RAW_OFFSET) {
                     if offset as u64 > self.reader.length() {
@@ -904,6 +905,7 @@ impl RawFileImpl for Rw2File {
                     let len = self.reader.length() - offset as u64;
                     log::debug!("Panasonic Raw offset: {}", offset);
                     probe!(self.probe, "rw2.raw_offset", true);
+                    has_raw_offset = true;
                     thumbnail::DataOffset {
                         offset: offset as u64,
                         len,
@@ -928,20 +930,26 @@ impl RawFileImpl for Rw2File {
             let bpc = cfa
                 .value::<u16>(exif::RW2_TAG_IMAGE_BITSPERSAMPLE)
                 .unwrap_or(16);
+            probe!(self.probe, "rw2.bps", bpc);
             let pixel_count = width.checked_mul(height).ok_or_else(|| {
                 log::error!("Panasonic: dimensions too large");
                 Error::FormatError
             })?;
+            let raw_format = cfa.value::<u16>(exif::RW2_TAG_IMAGE_RAWFORMAT);
+            if let Some(raw_format) = raw_format {
+                probe!(self.probe, "rw2.raw_format", raw_format);
+            }
 
-            let mosaic_pattern =
-                cfa.value::<u16>(exif::RW2_TAG_IMAGE_CFAPATTERN)
-                    .map(|p| match p {
-                        1 => Pattern::Rggb,
-                        2 => Pattern::Grbg,
-                        3 => Pattern::Gbrg,
-                        4 => Pattern::Bggr,
-                        _ => Pattern::default(),
-                    });
+            let mosaic_pattern = cfa.value::<u16>(exif::RW2_TAG_IMAGE_CFAPATTERN).map(|p| {
+                probe!(self.probe, "rw2.pattern.value", p);
+                match p {
+                    1 => Pattern::Rggb,
+                    2 => Pattern::Grbg,
+                    3 => Pattern::Gbrg,
+                    4 => Pattern::Bggr,
+                    _ => Pattern::default(),
+                }
+            });
 
             // in the case of TIFF Raw offset, the byte count is incorrect
             if offset.offset > self.reader.length() {
@@ -953,7 +961,10 @@ impl RawFileImpl for Rw2File {
                 "real_len {real_len} width {width} height {height} pixel_count {pixel_count}"
             );
             let mut packed = false;
-            let data_type = if real_len >= (pixel_count * 2) as u64 {
+            let data_type = if has_raw_offset {
+                probe!(self.probe, "rw2.compression", "panasonic");
+                DataType::CompressedRaw
+            } else if real_len >= (pixel_count * 2) as u64 {
                 probe!(self.probe, "rw2.compression", "unpacked");
                 DataType::Raw
             } else if real_len >= (pixel_count * 3 / 2) as u64 {
