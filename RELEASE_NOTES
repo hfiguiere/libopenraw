@@ -1,4 +1,4 @@
-What's (visibly) new in 0.4.0-alpha.7
+What's (visibly) new in 0.4.0-alpha.8
 =====================================
 
 - Complete rewrite in Rust.
@@ -16,11 +16,13 @@ What's (visibly) new in 0.4.0-alpha.7
   - Get active area, black levels.
   - Fix decompression for XZ-2 XZ-10, SH-2, SP565UZ, SP500UZ,
     SP510, SP550 and SP350
+- Panasonic: decompress the raw data.
 - Pentax: decompress the raw data.
 - Sony ARW: improved parsing of A100 files.
-- Properly set black & white files for DNG, ERF, PEF, CR2, CRW, RAF.
+- Properly set black & white files for DNG, ERF, PEF, CR2, CRW, RAF, RAW,
+  RW2.
 - Support rendering to sRGB with proper colours.
-- 40 new cameras listed.
+- 41 new cameras listed.
 - 1 camera properly identified.
 
 What's (visibly) new in 0.3.7

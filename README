@@ -82,7 +82,6 @@ How to build:
 Supported formats:
 ==================
 
-  T  Tested and proven to work. (I have a sample.)
   Y  Yes, it is there. (Untested as I do not have a sample but the format
      is known to be similar) Yes, it is for the whole format.
   N  Not supported.
@@ -90,7 +89,7 @@ Supported formats:
      is required)
   X  Not needed.
   #  Sample file needed.
-
+```
                           Thumbnail
                          /  Raw bitstream
                          | /  Raw decompression
@@ -119,20 +118,21 @@ Sony ARW                 Y Y N Y N Y N Y Y     Y
 Pentax PEF               Y Y Y Y Y Y N Y Y Y Y Y
 Epson ERF                Y Y X Y Y Y N Y Y Y Y X
 Minolta MRW              Y Y X N Y Y N Y Y Y Y X
-Panasonic RAW            Y Y N Y Y Y Y N Y B Y Y
-Panasonic RW2            Y Y N Y Y Y Y N Y N Y Y
-FujiFilm RAF             Y Y Y Y N Y Y Y Y B Y Y
-
+Panasonic RAW            Y Y X Y Y Y Y Y Y B Y Y
+Panasonic RW2            Y Y B Y Y Y Y Y Y Y Y Y
+FujiFilm RAF             Y Y Y Y Y Y Y Y Y B Y Y
+```
 
 Unsupported
 -----------
+```
 Sony SRF                 N N N N N N N N
 Kodak DCR                N N N N N N N N
 Kodak KDC                N N N N N N N N
 Foveon X3F               N N N N N N N N
 Mamiya MEF               N N N N N N N N
 Samsung SRW              N N N N N N N N
-
+```
 
 Test suite
 ==========
@@ -195,3 +195,8 @@ libexif:
   https://libexif.github.io/
 exifprobe:
   https://github.com/hfiguiere/exifprobe/
+
+Contributors
+============
+
+- DorotaC
