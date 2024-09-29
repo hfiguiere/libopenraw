@@ -19,10 +19,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/*! The algorithm from dcraw, turned into a readable and analyzeable form.
-
-Additional, human-readable reference from https://www.dpreview.com/forums/post/40154581 (but this doesn't mention that the first *nonzero* pixel is lossless).
-*/
+//! The algorithm from dcraw, turned into a readable and analyzeable form.
+//!
+//! Additional, human-readable reference from
+//! https://www.dpreview.com/forums/post/40154581 (but this doesn't
+//! mention that the first *nonzero* pixel is lossless).
 
 use crate::{Error, Result};
 
@@ -30,7 +31,9 @@ use crate::{Error, Result};
 struct ReverseBits(pub [u8; 16]);
 
 impl ReverseBits {
-    /// Gets up to 8 bits from the group. Starting with the last byte. Most significant bits of each byte go first into most significant bits of output. See test if this is confusing.
+    /// Gets up to 8 bits from the group. Starting with the last
+    /// byte. Most significant bits of each byte go first into most
+    /// significant bits of output. See test if this is confusing.
     pub fn get(&self, bit_index: usize, count: u8) -> u8 {
         let (data, _byte_index, bit_offset) = self.get_internal(bit_index, count);
         let mask = !(!0u16 << count) as u8;
@@ -69,7 +72,8 @@ fn decode_next_px(j: u8, shift: u8, prev: u16) -> u16 {
         let j = j as u16;
         // This is the lossy part.
         if magnitude > prev || shift == 4 {
-            // If shift > 0 then previous pixel data gets replaced, accidental LSBs get carried from old value.
+            // If shift > 0 then previous pixel data gets replaced,
+            // accidental LSBs get carried from old value.
             (j << shift) | (prev & !(!0 << shift))
         } else {
             // If shift > 0 then the encoder dropped the LSBs.
@@ -85,17 +89,21 @@ fn decode_next_px(j: u8, shift: u8, prev: u16) -> u16 {
 }
 
 /// Returns pixels and shift anomaly for each chunk.
-/// Every chunk contains pixels of 2 colors, with the initial pixels stored losslessly.
+/// Every chunk contains pixels of 2 colors, with the initial pixels
+/// stored losslessly.
 /// Pixels are composed of either 8 or 12 bits.
 /// Zero pixels are 8 bits.
-/// Then, the first nonzero pixel of each color is 12 bits, requiring an additional read of 4 bits.
+/// Then, the first nonzero pixel of each color is 12 bits, requiring
+/// an additional read of 4 bits.
 /// Following pixels are 8 bits.
 fn decode_chunk(bits: ReverseBits) -> [u16; 14] {
-    /* This is written in a streaming, mutable fashion: every access to bits must be in order.
-     * The bit fields within a chunk are not constant and depend on previous reads.
-     */
+    // This is written in a streaming, mutable fashion: every access
+    // to bits must be in order.  The bit fields within a chunk are
+    // not constant and depend on previous reads.
+    //
     let mut bits = BitsCursor::new(bits);
-    // Tracks whether a nonzero pixel was encountered in this color. Colors alternate.
+    // Tracks whether a nonzero pixel was encountered in this
+    // color. Colors alternate.
     let mut color_nonzero = [false, false];
     let mut out = [0u16; 14];
 
@@ -127,10 +135,15 @@ fn decode_chunk(bits: ReverseBits) -> [u16; 14] {
             } else {
                 load_initial_px(coloridx, &mut color_nonzero, &mut bits)
             };
-            /* TODO (done? this seems to be the "first nonzero pixel is lossless" problem):
+            /* TODO (done? this seems to be the "first nonzero pixel
+             * is lossless" problem):
              * dcraw code does an odd thing:
-             * it will read extra 4 bits for the last 2 pixels if there's all 0's in the chunk. This should send the stream out of whack.
-             * The pana_bits reader strongly suggests that the stream of data is separated into 16-byte chunks, so reading another byte (or half-byte if interrupted) would contradict it.
+             * it will read extra 4 bits for the last 2 pixels if
+             * there's all 0's in the chunk. This should send the
+             * stream out of whack.  The pana_bits reader strongly
+             * suggests that the stream of data is separated into
+             * 16-byte chunks, so reading another byte (or half-byte
+             * if interrupted) would contradict it.
              */
             out[px_allidx] = px;
         }
@@ -147,7 +160,10 @@ fn chunk_to_offset(idx: usize) -> usize {
     }
 }
 
-/// Each block of 0x4000 bytes is split into 16-byte groups. First group starts in the middle of the block, reaching the end the groups wrap back to start of the block, splitting the boundary one into two halves.
+/// Each block of 0x4000 bytes is split into 16-byte groups. First
+/// group starts in the middle of the block, reaching the end the
+/// groups wrap back to start of the block, splitting the boundary one
+/// into two halves.
 fn block_get_chunk(data: &[u8], chunk_idx: usize) -> [u8; 16] {
     let block_idx = chunk_idx * 16 / 0x4000;
     let block = &data[block_idx * 0x4000..][..0x4000];
