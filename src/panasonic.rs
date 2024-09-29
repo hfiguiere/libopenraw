@@ -31,7 +31,6 @@ use once_cell::unsync::OnceCell;
 
 use crate::colour::BuiltinMatrix;
 use crate::container::{Endian, RawContainer};
-use crate::decompress::unpack_be12to16;
 use crate::io::Viewer;
 use crate::jpeg;
 use crate::leica;
@@ -1005,6 +1004,7 @@ impl RawFileImpl for Rw2File {
                         None
                     }
                     .or_else(|| {
+                        log::error!("Panasonic decompression failed");
                         Some((
                             compression,
                             RawImage::with_data8(width, height, bpc, data_type, buffer, pattern),
@@ -1016,9 +1016,18 @@ impl RawFileImpl for Rw2File {
                     let raw = if packed {
                         log::debug!("Panasonic: packed data");
                         let raw = self.container().load_buffer8(offset.offset, offset.len);
-                        let mut out = Vec::with_capacity(width as usize * height as usize);
-                        unpack_be12to16(&raw, &mut out, tiff::Compression::None)?;
-                        out
+                        let len = raw.len();
+                        let mut buf = std::io::Cursor::new(raw);
+                        crate::decompress::unpack_from_reader(
+                            &mut buf,
+                            width,
+                            height,
+                            12,
+                            tiff::Compression::PanasonicRaw1,
+                            len,
+                            // Panasonic is little endian.
+                            Endian::Little,
+                        )?
                     } else {
                         log::debug!("Panasonic: unpacked data");
                         // Uncompressed Panasonic raw data is LE 12

@@ -135,7 +135,9 @@ pub(crate) fn unpack_le12to16(
     out_data: &mut Vec<u16>,
     compression: tiff::Compression,
 ) -> Result<usize> {
-    let pad = if compression == tiff::Compression::Olympus {
+    let pad = if compression == tiff::Compression::Olympus
+        || compression == tiff::Compression::PanasonicRaw1
+    {
         1_usize
     } else {
         0_usize
@@ -227,6 +229,7 @@ pub(crate) fn unpack_from_reader(
         12 => {
             if compression == tiff::Compression::NikonPack
                 || compression == tiff::Compression::Olympus
+                || compression == tiff::Compression::PanasonicRaw1
             {
                 ((width / 2 * 3) + width / 10) as usize
             } else {
@@ -262,7 +265,7 @@ pub(crate) fn unpack_from_reader(
                         Endian::Big => unpack_be12to16(&block, &mut out_data, compression)?,
                         _ => unreachable!(),
                     },
-                    tiff::Compression::Olympus => {
+                    tiff::Compression::Olympus | tiff::Compression::PanasonicRaw1 => {
                         unpack_le12to16(&block, &mut out_data, compression)?
                     }
                     _ => unreachable!(),
