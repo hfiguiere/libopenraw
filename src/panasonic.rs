@@ -520,7 +520,7 @@ lazy_static::lazy_static! {
         BuiltinMatrix::new(
             panasonic!(LX1),
             0,
-            0,
+            3971,
             [ 10704, -4187, -1230, -8314, 15952, 2501, -920, 945, 8927 ] ),
         BuiltinMatrix::new(
             panasonic!(LX2),
@@ -1021,7 +1021,13 @@ impl RawFileImpl for Rw2File {
                         out
                     } else {
                         log::debug!("Panasonic: unpacked data");
-                        self.container().load_buffer16(offset.offset, offset.len)
+                        // Uncompressed Panasonic raw data is LE 12
+                        // bits to the left: ie the 4 least
+                        // significant bits are discarded.
+                        let mut buffer =
+                            self.container().load_buffer16_le(offset.offset, offset.len);
+                        buffer.iter_mut().for_each(|v| *v >>= 4);
+                        buffer
                     };
                     (
                         compression,
