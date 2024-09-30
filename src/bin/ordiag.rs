@@ -132,12 +132,14 @@ fn save_raw(p: &str, rawdata: &RawImage) -> Result<usize> {
         let mut amount = 0;
         let raw = std::path::PathBuf::from(format!("{stem}_RAW.pgm"));
         if let Some(d) = rawdata.data16() {
+            let white = (1 << rawdata.bpc()) - 1;
             let mut f = std::fs::File::create(&raw)?;
             amount += f.write(b"P5\n")?;
             amount += f.write(format!("{} {}\n", rawdata.width(), rawdata.height()).as_bytes())?;
-            amount += f.write(format!("{}\n", (1 << rawdata.bpc()) - 1).as_bytes())?;
+            amount += f.write(format!("{white}\n").as_bytes())?;
             for b in d {
-                f.write_u16::<BigEndian>(*b)?;
+                let value = std::cmp::min(*b, white);
+                f.write_u16::<BigEndian>(value)?;
                 amount += 2;
             }
             eprintln!("Written Raw {raw:?}: {amount} bytes");
