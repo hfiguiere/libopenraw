@@ -28,7 +28,7 @@ use once_cell::unsync::OnceCell;
 
 use crate::bitmap::Bitmap;
 use crate::camera_ids::{
-    adobe, apple, blackmagic, dji, google, gopro, hasselblad, nokia, samsung, sealife, seitz,
+    adobe, apple, blackmagic, dji, google, gopro, hasselblad, nokia, pixii, samsung, sealife, seitz,
     sigma, vendor, xiaoyi, zeiss,
 };
 use crate::container::RawContainer;
@@ -179,6 +179,8 @@ lazy_static::lazy_static! {
         ( "Pixel 9 Pro", TypeId(vendor::GOOGLE, google::PIXEL_9_PRO) ),
         ( "Seitz 6x17 Digital", TypeId(vendor::SEITZ, seitz::ROUNDHSOT_D3) ),
         ( "SEALIFE DC2000", TypeId(vendor::SEALIFE, sealife::DC2000) ),
+        ( "PIXII (A1112)", TypeId(vendor::PIXII, pixii::A1112) ),
+        ( "Pixii Camera (A1571)", TypeId(vendor::PIXII, pixii::A1571) ),
 //        ( 0, TypeId(vendor::ADOBE, adobe::DNG_GENERIC) ),
     ]);
 }

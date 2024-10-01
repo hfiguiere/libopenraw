@@ -55,6 +55,7 @@ pub mod vendor {
     pub const GOOGLE: u16 = 24;
     pub const SEITZ: u16 = 25;
     pub const SEALIFE: u16 = 26;
+    pub const PIXII: u16 = 27;
     /// JPEG isn't a vendor.
     pub const JPEG: u16 = 1000;
 }
@@ -1043,4 +1044,10 @@ pub mod seitz {
 
 pub mod sealife {
     pub const DC2000: u16 = 1;
+}
+
+pub mod pixii {
+    pub const A1112: u16 = 1;
+    pub const A1571: u16 = 2;
+    pub const _A2572: u16 = 3;
 }
