@@ -26,7 +26,7 @@ use crate::fuji;
 use crate::TypeId;
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 71] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 72] = [
         BuiltinMatrix::new(
             fuji!(F550EXR),
             0,
@@ -258,6 +258,12 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 10413, -3996, -993, -3721, 11640, 2361, -733, 1540, 6011 ] ),
+        // XM5 is just a guess ATM, that it's the same sensor as the XS20.
+        BuiltinMatrix::new(
+            fuji!(XM5),
+            0,
+            0,
+            [ 12836, -5909, -1032, -3086, 11132, 2236, -35, 872, 5330 ] ),
         BuiltinMatrix::new(
             fuji!(XT1),
             0,

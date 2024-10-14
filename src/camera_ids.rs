@@ -942,6 +942,7 @@ pub mod fujifilm {
     pub const XT50: u16 = 69;
     pub const GFX100_II: u16 = 70;
     pub const X100VI: u16 = 71;
+    pub const XM5: u16 = 72;
 }
 
 /// Black Magic

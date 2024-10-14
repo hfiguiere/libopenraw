@@ -128,6 +128,7 @@ lazy_static::lazy_static! {
         fuji!("X-E3", XE3),
         fuji!("X-E4", XE4),
         fuji!("X-M1", XM1),
+        fuji!("X-M5", XM5),
         fuji!("X-T1", XT1),
         fuji!("X-T10", XT10),
         fuji!("X-T100", XT100),
