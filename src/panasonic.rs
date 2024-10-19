@@ -210,7 +210,7 @@ lazy_static::lazy_static! {
         leica!("C (Typ 112)", C_TYP112),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 100] = [
+    static ref MATRICES: [BuiltinMatrix; 101] = [
         BuiltinMatrix::new(
             panasonic!(CM1),
             15,
@@ -351,6 +351,12 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 13639, -5535, -1371, -1698, 9633, 2430, 316, 1152, 4108 ] ),
+        // This is just a guess. We assume it's the same as FZ80.
+        BuiltinMatrix::new(
+            panasonic!(DC_FZ45),
+            0,
+            0,
+            [ 11532, -4324, -1066, -2375, 10847, 1749, -564, 1699, 4351 ] ),
         BuiltinMatrix::new(
             panasonic!(FZ50),
             0,
