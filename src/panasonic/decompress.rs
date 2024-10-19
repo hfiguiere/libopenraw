@@ -184,7 +184,7 @@ fn iter_chunks(data: &[u8]) -> impl Iterator<Item = [u8; 16]> + '_ {
     (0..(data.len() / 16)).map(|i| block_get_chunk(data, i))
 }
 
-pub fn panasonic_raw1(data: &[u8]) -> Result<Vec<u16>> {
+pub(super) fn panasonic_raw1(data: &[u8]) -> Result<Vec<u16>> {
     if data.len() % 0x4000 == 0 {
         let mut out: Vec<u16> = vec![0; data.len() * 14 / 16];
         iter_chunks(data)
