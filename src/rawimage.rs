@@ -481,9 +481,17 @@ impl RawImage {
         let pattern = self.mosaic_pattern();
         match self.photom_int {
             exif::PhotometricInterpretation::CFA => match pattern {
-                Pattern::NonRgb22(_) => {
-                    log::error!("xtrans not yet supported");
-                    Err(Error::InvalidFormat)
+                Pattern::NonRgb22(ref xtrans) => {
+                    let output_size = self.output_size();
+                    unsafe {
+                        render::xtrans::xtrans_interpolate(
+                            buffer,
+                            xtrans,
+                            output_size.width as usize,
+                            output_size.height as usize,
+                            4,
+                        )
+                    }
                 }
                 Pattern::Rggb | Pattern::Gbrg | Pattern::Bggr | Pattern::Grbg => {
                     render::demosaic::bimedian(&buffer, pattern)

@@ -21,6 +21,7 @@
 
 pub(crate) mod demosaic;
 pub(crate) mod grayscale;
+pub(crate) mod xtrans;
 
 use num_enum::TryFromPrimitive;
 

@@ -109,7 +109,6 @@ impl ImageBuffer<u16> {
     /// Set `ncolor` to `self.cc` to not perform a downsampling.
     /// # Assert
     /// Assert if `ncolor` is > `self.cc`
-    #[allow(dead_code)]
     pub(crate) fn into_f64_downsample(self, ncolor: usize) -> ImageBuffer<f64> {
         let old_ncolor = self.cc as usize;
         assert!(old_ncolor >= ncolor);
