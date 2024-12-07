@@ -148,7 +148,7 @@ pub(crate) struct LJpegBitReader<'a> {
     bits: u32,
 }
 
-impl<'a> BitReader for LJpegBitReader<'a> {
+impl BitReader for LJpegBitReader<'_> {
     fn peek(&mut self, nbits: u8) -> Result<u16> {
         if self.bits_left < nbits {
             self.fill_bit_buffer(nbits)?;
@@ -163,7 +163,7 @@ impl<'a> BitReader for LJpegBitReader<'a> {
 }
 
 impl<'a> LJpegBitReader<'a> {
-    pub fn new(buffer: &'a [u8]) -> LJpegBitReader {
+    pub fn new(buffer: &'a [u8]) -> LJpegBitReader<'a> {
         LJpegBitReader {
             buffer,
             pos: 0,

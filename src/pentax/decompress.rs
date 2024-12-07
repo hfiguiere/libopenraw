@@ -284,7 +284,7 @@ pub struct BitPumpMSB<'a> {
 }
 
 impl<'a> BitPumpMSB<'a> {
-    pub fn new(src: &'a [u8]) -> BitPumpMSB {
+    pub fn new(src: &'a [u8]) -> BitPumpMSB<'a> {
         BitPumpMSB {
             buffer: src,
             pos: 0,
@@ -294,7 +294,7 @@ impl<'a> BitPumpMSB<'a> {
     }
 }
 
-impl<'a> BitPump for BitPumpMSB<'a> {
+impl BitPump for BitPumpMSB<'_> {
     #[inline(always)]
     fn peek_bits(&mut self, num: u32) -> u32 {
         if num > self.nbits {

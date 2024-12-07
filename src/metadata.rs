@@ -149,7 +149,7 @@ pub struct Iterator<'a> {
     stack: Vec<InnerIter<'a>>,
 }
 
-impl<'a> Iterator<'a> {
+impl Iterator<'_> {
     /// Return the current IFD if there is one.
     pub(crate) fn dir(&self) -> Option<&Dir> {
         match self.inner {
@@ -159,7 +159,7 @@ impl<'a> Iterator<'a> {
     }
 }
 
-impl<'a> std::iter::Iterator for Iterator<'a> {
+impl std::iter::Iterator for Iterator<'_> {
     type Item = Metadata;
 
     fn next(&mut self) -> Option<Self::Item> {

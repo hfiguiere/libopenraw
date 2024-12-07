@@ -50,7 +50,7 @@ impl<'a> Iterator<'a> {
     }
 }
 
-impl<'a> std::iter::Iterator for Iterator<'a> {
+impl std::iter::Iterator for Iterator<'_> {
     type Item = Metadata;
 
     fn next(&mut self) -> Option<Self::Item> {
