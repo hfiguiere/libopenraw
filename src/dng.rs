@@ -28,8 +28,8 @@ use once_cell::unsync::OnceCell;
 
 use crate::bitmap::Bitmap;
 use crate::camera_ids::{
-    adobe, apple, blackmagic, dji, google, gopro, hasselblad, nokia, pixii, samsung, sealife, seitz,
-    sigma, vendor, xiaoyi, zeiss,
+    adobe, apple, blackmagic, dji, google, gopro, hasselblad, nokia, pixii, samsung, sealife,
+    seitz, sigma, vendor, xiaoyi, zeiss,
 };
 use crate::container::RawContainer;
 use crate::decompress;

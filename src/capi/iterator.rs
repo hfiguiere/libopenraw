@@ -48,8 +48,7 @@ pub type ORMetadataRef = *const ORMetadata;
 pub struct ORMetadataIterator<'a>(
     pub metadata::Iterator<'a>,
     // We need to keep the raw file alive, but we never read it.
-    #[allow(dead_code)]
-    pub ORRawFile,
+    #[allow(dead_code)] pub ORRawFile,
     pub Option<ORMetadata>,
 );
 
