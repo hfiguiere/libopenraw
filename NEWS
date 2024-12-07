@@ -3,11 +3,23 @@ libopenraw 0.4.0-alpha.9 -
 Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
+  - Fujifilm X-M5*
   - Leica Q3 43
+  - Nikon Z5 II*
+  - Pixii A1112 and A1571
+  - Sealife DC2000
+  - Sony A1 II*
 
 New features:
 
   - Panasonic decompression. (contributed by DorotaC)
+
+Bug fixes:
+
+  - (Alpha) Panasonic: fix uncompressed raw loading (L1, LX1, etc).
+  - Panasonic: Fix the colour matrices for GX80/GX85 and GX7MK2.
+  - Panasonic: Added matrices for DC-FZ45
+  - (Alpha) ordiag: Fix an overflow when saving the raw data.
 
 Contributors:
 
