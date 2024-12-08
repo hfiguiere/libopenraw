@@ -8,7 +8,7 @@ use std::collections::{BTreeMap, HashMap};
 use std::convert::TryFrom;
 use std::io::{Read, Seek, SeekFrom};
 
-use byteorder::{BigEndian, ReadBytesExt};
+use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
 use once_cell::unsync::OnceCell;
 
 use crate::container;
@@ -438,10 +438,16 @@ pub(super) const FUJI_TAG_RAW_WB_GRB: u16 = 0xf00e;
 #[derive(Clone, Copy, Default)]
 enum RafTagType {
     #[default]
+    /// An U32
     U32,
+    /// A pair of U16
     U16x2,
+    /// A quad of U16g
     U16x4,
+    /// A bunch of Bytes.
     Bytes,
+    /// A bunch of U32.
+    U32s,
 }
 
 lazy_static::lazy_static! {
@@ -455,7 +461,7 @@ lazy_static::lazy_static! {
         (TAG_CFA_PATTERN, ("CfaPattern", RafTagType::Bytes)),
         (TAG_WB_OLD, ("WhiteBalanceOld", RafTagType::U16x4)),
         (TAG_EXPOSURE_BIAS, ("ExposureBias", RafTagType::U32)),
-        (TAG_RAF_DATA, ("RafData", RafTagType::Bytes)),
+        (TAG_RAF_DATA, ("RafData", RafTagType::U32s)),
     ]);
 }
 
@@ -463,6 +469,7 @@ lazy_static::lazy_static! {
 pub(super) enum Value {
     Int(u32),
     Bytes(Vec<u8>),
+    U32s(Vec<u32>),
 }
 
 impl std::fmt::Display for Value {
@@ -474,6 +481,13 @@ impl std::fmt::Display for Value {
                     write!(f, "bytes {:?}... len={}", &b[0..36], b.len())
                 } else {
                     write!(f, "bytes {b:?} len={}", b.len())
+                }
+            }
+            Self::U32s(b) => {
+                if b.len() > 36 {
+                    write!(f, "U32s {:?}... len={}", &b[0..36], b.len())
+                } else {
+                    write!(f, "U32s {b:?} len={}", b.len())
                 }
             }
         }
@@ -563,6 +577,10 @@ impl MetaContainer {
             let value = if sz == 4 {
                 let v = view.read_u32::<BigEndian>()?;
                 Value::Int(v)
+            } else if tag == TAG_RAF_DATA {
+                let mut v = uninit_vec!(sz as usize);
+                view.read_u32_into::<LittleEndian>(&mut v)?;
+                Value::U32s(v)
             } else {
                 let mut v = uninit_vec!(sz as usize);
                 view.read_exact(&mut v)?;
@@ -615,6 +633,7 @@ impl Dump for MetaContainer {
                         .map(|size| format!("{}, {}", size.width, size.height))
                         .unwrap_or_default(),
                     RafTagType::Bytes => format!("{value}"),
+                    RafTagType::U32s => format!("{value}"),
                     _ => String::default(),
                 };
                 dump_writeln!(
