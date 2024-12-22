@@ -30,7 +30,7 @@ use crate::render::{self, gamma_correct_f, gamma_correct_srgb, RenderingOptions,
 use crate::tiff::exif;
 use crate::utils;
 use crate::{tiff, ColourSpace};
-use crate::{AspectRatio, Bitmap, DataType, Error, Rect, Result};
+use crate::{AspectRatio, Bitmap, DataType, Error, Rect, Result, Size};
 
 #[derive(Default, Debug)]
 enum AsShot {
@@ -69,6 +69,8 @@ pub struct RawImage {
     user_crop: Option<Rect>,
     /// The user set aspect ratio. Doesn't imply the presence of `user_crop`.
     user_aspect_ratio: Option<AspectRatio>,
+    /// Optional output size. If missing it's `width` and `height`.
+    output_size: Option<Size>,
     /// The mosaic pattern
     mosaic_pattern: Pattern,
     /// The camera white balance either as neutral or xy chromacity.
@@ -102,6 +104,7 @@ impl RawImage {
             active_area: None,
             user_crop: None,
             user_aspect_ratio: None,
+            output_size: None,
             whites: [0, 0, 0, 0],
             blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
@@ -131,6 +134,7 @@ impl RawImage {
             active_area: None,
             user_crop: None,
             user_aspect_ratio: None,
+            output_size: None,
             whites: [0, 0, 0, 0],
             blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
@@ -160,6 +164,7 @@ impl RawImage {
             active_area: None,
             user_crop: None,
             user_aspect_ratio: None,
+            output_size: None,
             whites: [0, 0, 0, 0],
             blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
@@ -185,6 +190,7 @@ impl RawImage {
             active_area: None,
             user_crop: None,
             user_aspect_ratio: None,
+            output_size: None,
             whites: [0, 0, 0, 0],
             blacks: [0, 0, 0, 0],
             compression: tiff::Compression::Unknown,
@@ -236,6 +242,23 @@ impl RawImage {
     pub fn set_user_crop(&mut self, crop: Option<Rect>, aspect_ratio: Option<AspectRatio>) {
         self.user_crop = crop;
         self.user_aspect_ratio = aspect_ratio;
+    }
+
+    /// Return the output size. If unset it's just width and height.
+    pub fn output_size(&self) -> Size {
+        if let Some(output_size) = self.output_size {
+            output_size
+        } else {
+            Size {
+                width: self.width,
+                height: self.height,
+            }
+        }
+    }
+
+    /// Set the output size.
+    pub fn set_output_size(&mut self, width: u32, height: u32) {
+        self.output_size = Some(Size { width, height });
     }
 
     /// Retrieve the White balance as RGBx multiplier values.

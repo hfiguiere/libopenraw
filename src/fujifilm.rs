@@ -513,6 +513,28 @@ impl RawFileImpl for RafFile {
                     }
                 };
 
+                if let Some(v) = container.value(raf::TAG_RAF_DATA) {
+                    use crate::fujifilm::raf::Value;
+                    if let Value::U32s(v) = v {
+                        // The content of the tag is undocumented.
+                        // But it is assumed that as long as a value is
+                        // bigger than width then it's not right.
+                        let mut idx = 0_usize;
+                        while v[idx] >= raw_size.width && idx < v.len() {
+                            idx += 1;
+                        }
+                        // We definitely want the index in probe in case
+                        // it's out of bounds.
+                        probe!(self.probe, "raf.raw.out.index", idx);
+                        if idx + 1 < v.len() {
+                            let output_w = v[idx];
+                            let output_h = v[idx + 1];
+                            probe!(self.probe, "raf.raw.out.width", output_w);
+                            probe!(self.probe, "raf.raw.out.height", output_h);
+                            rawdata.set_output_size(output_w, output_h);
+                        }
+                    }
+                };
                 rawdata.set_blacks(utils::to_quad(&blacks));
                 rawdata.set_whites([((1 << bps as u32) - 1) as u16; 4]);
                 rawdata.set_active_area(active_area);

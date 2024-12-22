@@ -174,6 +174,11 @@ fn extract_rawdata(
         println!("Found rawdata:");
         println!("\tFormat: {:?}", rawdata.data_type());
         println!("\tSize: {}x{}", rawdata.width(), rawdata.height());
+        let output_size = rawdata.output_size();
+        println!(
+            "\tOutput Size: {}x{}",
+            output_size.width, output_size.height
+        );
         println!("\tActive area: {:?}", rawdata.active_area());
         print!("\tUser crop: {:?}", rawdata.user_crop());
         if let Some(aspect_ratio) = rawdata.user_aspect_ratio() {

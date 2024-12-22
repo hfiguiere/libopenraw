@@ -412,7 +412,7 @@ pub(super) const TAG_CFA_PATTERN: u16 = 0x131;
 /// correlate with the raw data no being a TIFF container.
 pub(super) const TAG_WB_OLD: u16 = 0x2ff0;
 const TAG_EXPOSURE_BIAS: u16 = 0x9650;
-const TAG_RAF_DATA: u16 = 0xc000;
+pub(super) const TAG_RAF_DATA: u16 = 0xc000;
 
 // TIFF tags
 
