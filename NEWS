@@ -1,4 +1,4 @@
-libopenraw 0.4.0-alpha.9 -
+libopenraw 0.4.0-alpha.9 - 2024/12/24
 
 Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
@@ -18,8 +18,9 @@ Bug fixes:
 
   - (Alpha) Panasonic: fix uncompressed raw loading (L1, LX1, etc).
   - Panasonic: Fix the colour matrices for GX80/GX85 and GX7MK2.
-  - Panasonic: Added matrices for DC-FZ45
+  - Panasonic: Added matrices for DC-FZ45.
   - (Alpha) ordiag: Fix an overflow when saving the raw data.
+  - (Alpha) Get the output size for RAF.
 
 Contributors:
 
