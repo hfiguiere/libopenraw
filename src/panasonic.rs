@@ -2,7 +2,7 @@
 /*
  * libopenraw - panasonic.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -144,6 +144,7 @@ lazy_static::lazy_static! {
         panasonic!("DC-GH5S", GH5S),
         panasonic!("DC-GH5M2", GH5M2),
         panasonic!("DC-GH6", GH6),
+        panasonic!("DC-GH7", GH7),
         panasonic!("DMC-GM1", GM1),
         panasonic!("DMC-GM1S", GM1S),
         panasonic!("DMC-GM5", GM5),
@@ -210,7 +211,7 @@ lazy_static::lazy_static! {
         leica!("C (Typ 112)", C_TYP112),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 101] = [
+    static ref MATRICES: [BuiltinMatrix; 102] = [
         BuiltinMatrix::new(
             panasonic!(CM1),
             15,
@@ -507,6 +508,11 @@ lazy_static::lazy_static! {
             15,
             0,
             [ 7949, -3491, -710, -3435, 11681, 1977, -503, 1622, 5065 ] ),
+        BuiltinMatrix::new(
+            panasonic!(GH7),
+            15,
+            0,
+            [ 8573, -3575, -678, -4252, 12079, 2451, -808, 2524, 5936 ] ),
         BuiltinMatrix::new(
             panasonic!(GM1),
             15,

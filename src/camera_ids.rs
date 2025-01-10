@@ -2,7 +2,7 @@
 /*
  * libopenraw - camera_ids.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -868,6 +868,7 @@ pub mod panasonic {
     pub const G9M2: u16 = 88;
     pub const FX150: u16 = 89;
     pub const DC_G100D: u16 = 90;
+    pub const GH7: u16 = 91;
 }
 
 /// Fujifilm type IDs
