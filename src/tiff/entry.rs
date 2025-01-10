@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/entry.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -95,7 +95,7 @@ impl Entry {
         Entry {
             id,
             type_: TagType::Ascii as i16,
-            count: string.as_bytes().len() as u32,
+            count: string.len() as u32,
             data: DataBytes::External(string.as_bytes().to_vec()),
         }
     }
