@@ -726,6 +726,7 @@ pub mod sony {
     pub const ILCE1: u16 = 82;
     pub const ILCE7M4: u16 = 83;
     pub const ILCEQX1: u16 = 84;
+    pub const UMCR10C: u16 = ILCEQX1;
     pub const A350: u16 = 85;
     pub const A300: u16 = 86;
     pub const ILCE7RM3A: u16 = 87;

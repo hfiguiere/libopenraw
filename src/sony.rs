@@ -268,6 +268,7 @@ lazy_static::lazy_static! {
         sony!("ZV-E1", ZVE1),
         sony!("ZV-E10", ZVE10),
         sony!("ZV-E10M2", ZVE10M2),
+        sony!("UMC-R10C", UMCR10C),
         ("Lunar", TypeId(vendor::HASSELBLAD, hasselblad::LUNAR)),
     ]);
 
