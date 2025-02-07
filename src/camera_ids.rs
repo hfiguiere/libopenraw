@@ -608,6 +608,7 @@ pub mod olympus {
     pub const OM5: u16 = 63;
     pub const TG7: u16 = 64;
     pub const OM1II: u16 = 65;
+    pub const OM3: u16 = 66;
 }
 
 /// Samsung type IDs

@@ -2,7 +2,7 @@
 /*
  * libopenraw - olympus.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -130,6 +130,7 @@ lazy_static::lazy_static! {
         olympus!("E-M10MarkIV     ", EM10IV),
         olympus!("OM-1            ", OM1),
         olympus!("OM-1MarkII      ", OM1II),
+        olympus!("OM-3            ", OM3),
         olympus!("OM-5            ", OM5),
         olympus!("STYLUS1         ", STYLUS1),
         olympus!("STYLUS1,1s      ", STYLUS1_1S),

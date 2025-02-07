@@ -25,7 +25,7 @@ use crate::olympus;
 use crate::TypeId;
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 65] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 66] = [
     BuiltinMatrix::new( olympus!(E1),
       0,
       0,
@@ -239,6 +239,10 @@ lazy_static::lazy_static! {
       0,
       [ 9488, -3984, -714, -2887, 10945, 2229, -137, 960, 5786 ] ),
     BuiltinMatrix::new( olympus!(OM1II),
+      0,
+      0,
+      [ 9090, -3590, -756, -3252, 11396, 2109, -318, 1059, 5606 ] ),
+    BuiltinMatrix::new( olympus!(OM3),
       0,
       0,
       [ 9090, -3590, -756, -3252, 11396, 2109, -318, 1059, 5606 ] ),
