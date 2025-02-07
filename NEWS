@@ -1,6 +1,11 @@
 libopenraw 0.4.0-alpha.10 -
 
+Camera support:
+  [ a * denote that static WB coefficients have been included, unless DNG ]
 
+  - Panasonic GH7*
+  - OM System OM-3*
+  - Sony UMC-R10C (alias)
 
 libopenraw 0.4.0-alpha.9 - 2024/12/24
 

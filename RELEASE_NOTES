@@ -25,7 +25,7 @@ What's (visibly) new in 0.4.0-alpha.10
 - Properly set black & white files for DNG, ERF, PEF, CR2, CRW, RAF,
   RAW, RW2.
 - Support rendering to sRGB with proper colours.
-- 47 new cameras listed.
+- 50 new cameras listed.
 - 1 camera properly identified.
 
 What's (visibly) new in 0.3.7
