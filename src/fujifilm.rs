@@ -381,6 +381,7 @@ impl RawFileImpl for RafFile {
                 // This is unclear how significant it is as on X-Trans
                 // compressed this is 0.
                 let compression = ((raw_props & 0xff0000) >> 18) & 8;
+                probe!(self.probe, "raf.compression", compression);
                 let compressed = compression != 0;
                 log::debug!("compressed {compressed}");
 
