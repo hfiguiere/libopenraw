@@ -2,7 +2,7 @@
 /*
  * libopenraw - auditor.rs
  *
- * Copyright (C) 2024 Hubert Figuière
+ * Copyright (C) 2024-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,7 +20,7 @@
  */
 
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 #[macro_export]
 macro_rules! probe {
@@ -51,7 +51,7 @@ macro_rules! probe_imp {
 /// A class to gather features and quirks from the parsing.
 #[derive(Debug, Default)]
 pub struct Probe {
-    audit: RefCell<HashMap<String, String>>,
+    audit: RefCell<BTreeMap<String, String>>,
 }
 
 impl Probe {
