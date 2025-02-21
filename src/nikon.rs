@@ -2,7 +2,7 @@
 /*
  * libopenraw - nikon.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -361,7 +361,7 @@ impl NefFile {
                 let nelems = view.read_endian_u16(container.endian()).unwrap_or(0);
                 log::debug!("Num elems {}", nelems);
 
-                let mut ceiling: u16 = 1 << bpc & 0x7fff;
+                let mut ceiling: u16 = (1 << bpc) & 0x7fff;
                 let mut step = 0_usize;
                 if nelems > 1 {
                     step = (ceiling / (nelems - 1)) as usize;

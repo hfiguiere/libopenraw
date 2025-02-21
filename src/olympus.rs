@@ -258,14 +258,14 @@ impl OrfFile {
             let in_slice = &buf[i..];
             let out_slice = &mut out[o..];
 
-            out_slice[0] = (in_slice[3] as u16) << 4 | in_slice[2] as u16 >> 4;
-            out_slice[1] = (in_slice[2] as u16 & 0x0f) << 8 | in_slice[1] as u16;
-            out_slice[2] = (in_slice[0] as u16) << 4 | in_slice[7] as u16 >> 4;
-            out_slice[3] = (in_slice[7] as u16 & 0x0f) << 8 | in_slice[6] as u16;
-            out_slice[4] = (in_slice[5] as u16) << 4 | in_slice[4] as u16 >> 4;
-            out_slice[5] = (in_slice[4] as u16 & 0x0f) << 8 | in_slice[11] as u16;
-            out_slice[6] = (in_slice[10] as u16) << 4 | in_slice[9] as u16 >> 4;
-            out_slice[7] = (in_slice[9] as u16 & 0x0f) << 8 | in_slice[8] as u16;
+            out_slice[0] = ((in_slice[3] as u16) << 4) | (in_slice[2] as u16 >> 4);
+            out_slice[1] = ((in_slice[2] as u16 & 0x0f) << 8) | in_slice[1] as u16;
+            out_slice[2] = ((in_slice[0] as u16) << 4) | (in_slice[7] as u16 >> 4);
+            out_slice[3] = ((in_slice[7] as u16 & 0x0f) << 8) | in_slice[6] as u16;
+            out_slice[4] = ((in_slice[5] as u16) << 4) | (in_slice[4] as u16 >> 4);
+            out_slice[5] = ((in_slice[4] as u16 & 0x0f) << 8) | in_slice[11] as u16;
+            out_slice[6] = ((in_slice[10] as u16) << 4) | (in_slice[9] as u16 >> 4);
+            out_slice[7] = ((in_slice[9] as u16 & 0x0f) << 8) | in_slice[8] as u16;
 
             i += 12;
             o += 8;

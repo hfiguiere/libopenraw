@@ -2,7 +2,7 @@
 /*
  * libopenraw - fujifilm.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -376,11 +376,11 @@ impl RawFileImpl for RafFile {
                 };
 
                 log::debug!("RAF raw props {:x}", raw_props);
-                let layout = raw_props & 0xff000000 >> 24 >> 7;
+                let layout = (raw_props & 0xff000000) >> 24 >> 7;
                 probe!(self.probe, "raf.layout", layout);
                 // This is unclear how significant it is as on X-Trans
                 // compressed this is 0.
-                let compression = (raw_props & 0xff0000) >> 18 & 8;
+                let compression = ((raw_props & 0xff0000) >> 18) & 8;
                 let compressed = compression != 0;
                 log::debug!("compressed {compressed}");
 

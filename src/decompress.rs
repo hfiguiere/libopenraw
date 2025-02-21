@@ -2,7 +2,7 @@
 /*
  * libopenraw - decompress.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -115,8 +115,8 @@ pub(crate) fn unpack_be12to16(
             let i2 = input[src] as u16;
             src += 1;
 
-            let o0 = i0 << 4 | i1 >> 4;
-            let o1 = (i1 & 0xf) << 8 | i2;
+            let o0 = (i0 << 4) | (i1 >> 4);
+            let o1 = ((i1 & 0xf) << 8) | i2;
 
             out_data.push(o0);
             out_data.push(o1);

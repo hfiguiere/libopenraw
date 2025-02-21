@@ -44,7 +44,7 @@ impl ReverseBits {
         let bit_index = 16 * 8 - bit_index - count as usize;
         let byte_index = bit_index / 8;
         let data =
-            (*self.0.get(byte_index + 1).unwrap_or(&0) as u16) << 8 | self.0[byte_index] as u16;
+            ((*self.0.get(byte_index + 1).unwrap_or(&0) as u16) << 8) | self.0[byte_index] as u16;
         let bit_offset = bit_index % 8;
         (data, byte_index, bit_offset)
     }
@@ -115,7 +115,7 @@ fn decode_chunk(bits: ReverseBits) -> [u16; 14] {
             nonzero[color_idx] = true;
             bits.next(4) as u16
         };
-        (top as u16) << 4 | bottom
+        ((top as u16) << 4) | bottom
     }
 
     // 2 initial pixels
