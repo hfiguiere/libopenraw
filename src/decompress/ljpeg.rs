@@ -2,7 +2,7 @@
 /*
  * libopenraw - decompress/ljpeg.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -443,7 +443,7 @@ impl LJpeg {
             for cur_comp in 0..comps_in_scan as usize {
                 let ci = dc.mcu_membership[cur_comp];
                 let compptr = &dc.cur_comp_info[ci as usize];
-                if let Some(ref dctbl) = &dc.dc_huff_tbl_ptrs[compptr.dc_tbl_no as usize] {
+                if let Some(dctbl) = &dc.dc_huff_tbl_ptrs[compptr.dc_tbl_no as usize] {
                     // Section F.2.2.1: decode the difference
                     let s = self.huff_decode(dctbl, reader)? as u8;
                     let d = if s != 0 {
@@ -467,7 +467,7 @@ impl LJpeg {
                     if compptr.dc_tbl_no as usize >= dc.dc_huff_tbl_ptrs.len() {
                         return Err(Error::JpegFormat("LJPEG: invalid dc_tbl_no".into()));
                     }
-                    if let Some(ref dctbl) = &dc.dc_huff_tbl_ptrs[compptr.dc_tbl_no as usize] {
+                    if let Some(dctbl) = &dc.dc_huff_tbl_ptrs[compptr.dc_tbl_no as usize] {
                         // Section F.2.2.1: decode the difference
                         let s = self.huff_decode(dctbl, reader)? as u8;
                         let d = if s != 0 {
@@ -563,7 +563,7 @@ impl LJpeg {
         for cur_comp in 0..comps_in_scan {
             let ci = dc.mcu_membership[cur_comp as usize];
             let compptr = &dc.cur_comp_info[ci as usize];
-            if let Some(ref dctbl) = dc.dc_huff_tbl_ptrs[compptr.dc_tbl_no as usize] {
+            if let Some(dctbl) = &dc.dc_huff_tbl_ptrs[compptr.dc_tbl_no as usize] {
                 // Section F.2.2.1: decode the difference
                 let s = self.huff_decode(dctbl, reader)? as u8;
                 let d = if s != 0 {
@@ -588,7 +588,7 @@ impl LJpeg {
             for cur_comp in 0..comps_in_scan {
                 let ci = dc.mcu_membership[cur_comp as usize];
                 let compptr = &dc.cur_comp_info[ci as usize];
-                if let Some(ref dctbl) = dc.dc_huff_tbl_ptrs[compptr.dc_tbl_no as usize] {
+                if let Some(dctbl) = &dc.dc_huff_tbl_ptrs[compptr.dc_tbl_no as usize] {
                     // Section F.2.2.1: decode the difference
                     let s = self.huff_decode(dctbl, reader)? as u8;
                     let d = if s != 0 {

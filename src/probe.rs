@@ -25,7 +25,7 @@ use std::collections::BTreeMap;
 #[macro_export]
 macro_rules! probe {
     ( $audit:expr, $key:expr, $value:expr ) => {{
-        if let Some(ref probe) = $audit {
+        if let Some(probe) = &$audit {
             probe.set($key, $value)
         }
     }};

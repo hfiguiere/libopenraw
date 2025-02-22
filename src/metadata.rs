@@ -70,16 +70,16 @@ impl Value {
 
     fn value_into_string(&self, idx: usize) -> String {
         match self {
-            Self::Int(ref v) => v[idx].to_string(),
-            Self::SInt(ref v) => v[idx].to_string(),
+            Self::Int(v) => v[idx].to_string(),
+            Self::SInt(v) => v[idx].to_string(),
             Self::String(s) => utils::from_maybe_nul_terminated(s),
-            Self::Float(ref v) => v[idx].to_string(),
-            Self::Double(ref v) => v[idx].to_string(),
-            Self::Rational(ref v) => v[idx].to_string(),
-            Self::SRational(ref v) => v[idx].to_string(),
-            Self::Bytes(ref v) => v[idx].to_string(),
-            Self::SBytes(ref v) => v[idx].to_string(),
-            Self::Invalid(ref v) => v[idx].to_string(),
+            Self::Float(v) => v[idx].to_string(),
+            Self::Double(v) => v[idx].to_string(),
+            Self::Rational(v) => v[idx].to_string(),
+            Self::SRational(v) => v[idx].to_string(),
+            Self::Bytes(v) => v[idx].to_string(),
+            Self::SBytes(v) => v[idx].to_string(),
+            Self::Invalid(v) => v[idx].to_string(),
         }
     }
 
