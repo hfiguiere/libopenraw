@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/dir.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -95,6 +95,7 @@ impl Dir {
                 return Dir::new_makernote(
                     b"Exif.Canon\0",
                     container,
+                    container::Endian::Unset,
                     offset,
                     0,
                     &canon::MNOTE_TAG_NAMES,
@@ -124,6 +125,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Sony5\0",
                         container,
+                        container::Endian::Unset,
                         offset + padding,
                         0,
                         &sony::MNOTE_TAG_NAMES,
@@ -134,6 +136,7 @@ impl Dir {
                         return Dir::new_makernote(
                             b"Exif.Nikon2\0",
                             container,
+                            container::Endian::Unset,
                             offset + 8,
                             offset + 8,
                             &nikon::MNOTE_TAG_NAMES_2,
@@ -143,6 +146,7 @@ impl Dir {
                         return Dir::new_makernote(
                             b"Exif.Nikon\0",
                             container,
+                            container::Endian::Unset,
                             offset + 18,
                             offset + 10,
                             &nikon::MNOTE_TAG_NAMES,
@@ -152,6 +156,7 @@ impl Dir {
                         return Dir::new_makernote(
                             b"Exif.NikonX\0",
                             container,
+                            container::Endian::Unset,
                             offset,
                             offset,
                             &MNOTE_EMPTY_TAGS,
@@ -164,6 +169,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.NikonHeaderless\0",
                         container,
+                        container::Endian::Unset,
                         offset,
                         0,
                         &nikon::MNOTE_TAG_NAMES,
@@ -174,6 +180,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Olympus2\0",
                         container,
+                        container::Endian::Unset,
                         offset + 12,
                         offset,
                         &olympus::MNOTE_TAG_NAMES,
@@ -184,6 +191,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Olympus2\0",
                         container,
+                        container::Endian::Unset,
                         offset + 16,
                         offset,
                         &olympus::MNOTE_TAG_NAMES,
@@ -194,6 +202,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Olympus\0",
                         container,
+                        container::Endian::Unset,
                         offset + 8,
                         0,
                         &olympus::MNOTE_TAG_NAMES,
@@ -206,6 +215,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Epson\0",
                         container,
+                        container::Endian::Unset,
                         offset + 8,
                         0,
                         &epson::MNOTE_TAG_NAMES,
@@ -217,6 +227,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Pentax\0",
                         container,
+                        container::Endian::Unset,
                         offset + 6,
                         0,
                         &pentax::MNOTE_TAG_NAMES,
@@ -228,6 +239,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Pentax\0",
                         container,
+                        container::Endian::Unset,
                         offset + 10,
                         offset,
                         &pentax::MNOTE_TAG_NAMES,
@@ -239,6 +251,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Panasonic\0",
                         container,
+                        container::Endian::Unset,
                         offset + 12,
                         0,
                         &panasonic::MNOTE_TAG_NAMES,
@@ -249,6 +262,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Ricoh\0",
                         container,
+                        container::Endian::Unset,
                         offset + 8,
                         0,
                         &ricoh::MNOTE_TAG_NAMES,
@@ -264,6 +278,7 @@ impl Dir {
                         return Dir::new_makernote(
                             b"Exif.Panasonic\0",
                             container,
+                            container::Endian::Unset,
                             offset + 18,
                             0,
                             &panasonic::MNOTE_TAG_NAMES,
@@ -273,6 +288,7 @@ impl Dir {
                         return Dir::new_makernote(
                             b"Exif.Leica5\0",
                             container,
+                            container::Endian::Unset,
                             offset + 18,
                             0,
                             &leica::MNOTE_TAG_NAMES_5,
@@ -287,6 +303,7 @@ impl Dir {
                             return Dir::new_makernote(
                                 b"Exif.Panasonic\0",
                                 container,
+                                container::Endian::Unset,
                                 offset + 8,
                                 0,
                                 &panasonic::MNOTE_TAG_NAMES,
@@ -296,6 +313,7 @@ impl Dir {
                             return Dir::new_makernote(
                                 b"Exif.Leica2\0",
                                 container,
+                                container::Endian::Unset,
                                 offset + 8,
                                 offset,
                                 &leica::MNOTE_TAG_NAMES_2,
@@ -310,6 +328,7 @@ impl Dir {
                                 return Dir::new_makernote(
                                     b"Exif.Leica5\0",
                                     container,
+                                    container::Endian::Unset,
                                     offset + 8, 0,
                                     &leica::MNOTE_TAG_NAMES_5,
                                 ),
@@ -323,6 +342,7 @@ impl Dir {
                                 return Dir::new_makernote(
                                     b"Leica5\0",
                                     container,
+                                    container::Endian::Unset,
                                     offset + 8,
                                     offset,
                                     &leica::MNOTE_TAG_NAMES_5,
@@ -336,6 +356,7 @@ impl Dir {
                         return Dir::new_makernote(
                             b"Exif.Leica6\0",
                             container,
+                            container::Endian::Unset,
                             offset + 8,
                             0,
                             &leica::MNOTE_TAG_NAMES_6,
@@ -347,6 +368,7 @@ impl Dir {
                         return Dir::new_makernote(
                             b"Exif.Leica4\0",
                             container,
+                            container::Endian::Unset,
                             offset + 8,
                             offset,
                             &leica::MNOTE_TAG_NAMES_4,
@@ -358,6 +380,7 @@ impl Dir {
                         return Dir::new_makernote(
                             b"Exif.Leica9\0",
                             container,
+                            container::Endian::Unset,
                             offset + 8,
                             0,
                             &leica::MNOTE_TAG_NAMES_9,
@@ -369,6 +392,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Xiaoyi\0",
                         container,
+                        container::Endian::Unset,
                         offset + 12,
                         offset,
                         // XXX we have no idea.
@@ -380,6 +404,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Apple\0",
                         container,
+                        container::Endian::Unset,
                         offset + 14,
                         offset,
                         &apple::MNOTE_TAG_NAMES,
@@ -391,6 +416,7 @@ impl Dir {
                         Dir::new_makernote(
                             b"Exif.Samsung1a\0",
                             container,
+                            container::Endian::Unset,
                             offset,
                             offset,
                             &MNOTE_EMPTY_TAGS,
@@ -399,6 +425,7 @@ impl Dir {
                         Dir::new_makernote(
                             b"Exif.Samsung1b\0",
                             container,
+                            container::Endian::Unset,
                             offset,
                             offset,
                             &MNOTE_EMPTY_TAGS,
@@ -410,6 +437,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Fujifilm\0",
                         container,
+                        container::Endian::Little,
                         offset + 12,
                         offset,
                         &fujifilm::MNOTE_TAG_NAMES,
@@ -420,6 +448,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Sigma\0",
                         container,
+                        container::Endian::Unset,
                         offset + 10,
                         0,
                         &sigma::MNOTE_TAG_NAMES,
@@ -430,6 +459,7 @@ impl Dir {
                     return Dir::new_makernote(
                         b"Exif.Minolta\0",
                         container,
+                        container::Endian::Unset,
                         offset,
                         offset,
                         &minolta::MNOTE_TAG_NAMES,
@@ -454,20 +484,36 @@ impl Dir {
                 }
             }
         }
-        Dir::new_makernote(b"\0", container, offset, 0, &MNOTE_EMPTY_TAGS)
+        Dir::new_makernote(
+            b"\0",
+            container,
+            container::Endian::Unset,
+            offset,
+            0,
+            &MNOTE_EMPTY_TAGS,
+        )
     }
 
     /// Create a new MakerNote with `id`. `offset` is the offset in the container
     /// while `mnote_offset` is the offset to apply from inside the MakerNote.
     /// `tag_names` allow custom display of tags.
+    /// Passing `container::Endian::Unset` for `endian` mean that the endian from
+    /// container shall be used. It's the default behaviour. But sometime it is necessary
+    /// to do expicitely override the endian like Fujifilm.
     pub(crate) fn new_makernote(
         id: &[u8],
         container: &dyn container::RawContainer,
+        endian: container::Endian,
         offset: u32,
         mnote_offset: u32,
         tag_names: &'static HashMap<u16, &'static str>,
     ) -> Result<Dir> {
-        if let Ok(mut dir) = match container.endian() {
+        let endian = if endian == container::Endian::Unset {
+            container.endian()
+        } else {
+            endian
+        };
+        if let Ok(mut dir) = match endian {
             container::Endian::Little => {
                 let mut view = container.borrow_view_mut();
                 Dir::read::<LittleEndian>(&mut view, offset, mnote_offset, IfdType::MakerNote)
