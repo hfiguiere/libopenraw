@@ -871,6 +871,7 @@ pub mod panasonic {
     pub const FX150: u16 = 89;
     pub const DC_G100D: u16 = 90;
     pub const GH7: u16 = 91;
+    pub const DC_S1RM2: u16 = 92;
 }
 
 /// Fujifilm type IDs
