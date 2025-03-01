@@ -982,6 +982,7 @@ pub mod apple {
 pub mod sigma {
     pub const FP: u16 = 1;
     pub const FP_L: u16 = 2;
+    pub const BF: u16 = 3;
 }
 
 /// GoPro

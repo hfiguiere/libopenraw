@@ -2,7 +2,7 @@
 /*
  * libopenraw - dng.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -145,6 +145,7 @@ lazy_static::lazy_static! {
                                                     blackmagic::POCKET_CINEMA) ),
         ( "SIGMA fp", TypeId(vendor::SIGMA, sigma::FP) ),
         ( "SIGMA fp L", TypeId(vendor::SIGMA, sigma::FP_L) ),
+        ( "Sigma BF", TypeId(vendor::SIGMA, sigma::BF) ),
         ( "L1D-20c", TypeId(vendor::HASSELBLAD, hasselblad::L1D_20C) ),
         ( "L2D-20c", TypeId(vendor::HASSELBLAD, hasselblad::L2D_20C) ),
         ( "FUSION", TypeId(vendor::GOPRO, gopro::FUSION) ),
