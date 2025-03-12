@@ -2,7 +2,7 @@
 /*
  * libopenraw - container.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -29,8 +29,8 @@ use byteorder::{BigEndian, ByteOrder, LittleEndian, NativeEndian, ReadBytesExt};
 use crate::io::View;
 use crate::metadata;
 use crate::thumbnail::{Data, ThumbDesc, Thumbnail};
+use crate::Result;
 use crate::Type as RawType;
-use crate::{Error, Result};
 
 /// Endian of the container
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -112,15 +112,19 @@ pub trait RawContainer {
             Data::Bytes(ref b) => b.clone(),
             Data::Offset(ref offset) => {
                 let mut view = self.borrow_view_mut();
-                if offset.offset + offset.len > view.len() {
-                    log::error!(
-                        "Thumbnail too big. offset {:?} view len = {}",
+                let mut len = offset.len;
+                if offset.offset + len > view.len() {
+                    // Ricoh GXR A16 have a thumbnail size that goes past EOF
+                    // Just readjust the size to go to the end and load that.
+                    // It seems to work. Worst case scenario it still doesn't.
+                    log::warn!(
+                        "Thumbnail too big. offset {:?} view len = {}. Readjusting.",
                         offset,
                         view.len()
                     );
-                    return Err(Error::FormatError);
+                    len = view.len() - offset.offset;
                 }
-                let mut data = uninit_vec!(offset.len as usize);
+                let mut data = uninit_vec!(len as usize);
                 view.seek(SeekFrom::Start(offset.offset))?;
                 view.read_exact(data.as_mut_slice())?;
                 data
