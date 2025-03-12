@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawfile.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,7 +28,7 @@ use log::{debug, error};
 use num_enum::TryFromPrimitive;
 
 use super::{Error, RawImage, Result, Type, TypeId};
-use crate::colour::MatrixOrigin;
+use crate::colour::{BuiltinMatrix, MatrixOrigin};
 use crate::container::RawContainer;
 use crate::factory;
 use crate::identify;
@@ -97,7 +97,17 @@ pub trait RawFileImpl {
     /// If `skip_decompress` is true then the decompression will not be performed.
     fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage>;
 
+    /// Default implementation for looking up the builtin matrix.
+    fn builtin_colour_matrix(&self, matrices: &[BuiltinMatrix]) -> Result<Vec<f64>> {
+        matrices
+            .iter()
+            .find(|m| m.camera == self.identify_id())
+            .map(|m| Vec::from(m.matrix))
+            .ok_or(Error::NotFound)
+    }
+
     /// Get the builtin colour matrix for this file.
+    /// This should call `builtin_colour_matrix` with the format specific array.
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>>;
 
     #[cfg(feature = "probe")]

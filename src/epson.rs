@@ -2,7 +2,7 @@
 /*
  * libopenraw - epson.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -220,11 +220,7 @@ impl RawFileImpl for ErfFile {
     }
 
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>> {
-        MATRICES
-            .iter()
-            .find(|m| m.camera == self.type_id())
-            .map(|m| Vec::from(m.matrix))
-            .ok_or(Error::NotFound)
+        self.builtin_colour_matrix(&*MATRICES)
     }
 }
 

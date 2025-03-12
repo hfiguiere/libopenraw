@@ -1168,11 +1168,7 @@ impl RawFileImpl for Rw2File {
     }
 
     fn get_builtin_colour_matrix(&self) -> Result<Vec<f64>> {
-        MATRICES
-            .iter()
-            .find(|m| m.camera == self.type_id())
-            .map(|m| Vec::from(m.matrix))
-            .ok_or(Error::NotFound)
+        self.builtin_colour_matrix(&*MATRICES)
     }
 }
 
