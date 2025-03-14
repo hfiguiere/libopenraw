@@ -2,7 +2,7 @@
 /*
  * libopenraw - lib.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -102,8 +102,22 @@ pub use rawfile::rawfile_from_file;
 pub use rawfile::rawfile_from_io;
 pub use rawfile::rawfile_from_memory;
 
+/// Implement a `context` to display a message on error.
+pub trait Context {
+    fn context(self, message: &str) -> Self;
+}
+
 /// Standard Result for libopenraw
 pub type Result<T> = std::result::Result<T, Error>;
+
+impl<T> Context for Result<T> {
+    fn context(self, message: &str) -> Self {
+        if let Err(err) = &self {
+            log::error!("{message}: {err}");
+        }
+        self
+    }
+}
 
 use mp4::parse as mp4parse;
 
