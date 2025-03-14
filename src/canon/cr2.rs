@@ -38,7 +38,8 @@ use crate::rawfile::ThumbnailStorage;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    Context, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type,
+    TypeId,
 };
 
 use super::matrices::MATRICES;
@@ -48,7 +49,7 @@ use super::matrices::MATRICES;
 pub(crate) struct Cr2File {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
-    container: OnceCell<tiff::Container>,
+    container: OnceCell<Box<tiff::Container>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
@@ -67,13 +68,13 @@ impl Cr2File {
     }
 
     fn is_cr2(&self) -> bool {
-        let id = self.type_id();
-        if id != canon!(EOS_1D) && id != canon!(EOS_1DS) {
-            probe!(self.probe, "cr2.is_cr2", "true");
-            true
-        } else {
-            false
+        if let Ok(type_id) = self.type_id() {
+            if type_id != canon!(EOS_1D) && type_id != canon!(EOS_1DS) {
+                probe!(self.probe, "cr2.is_cr2", "true");
+                return true;
+            }
         }
+        false
     }
 
     /// Get the raw bytes.
@@ -86,7 +87,7 @@ impl Cr2File {
         slices: &[u32],
         skip_decompress: bool,
     ) -> Result<RawImage> {
-        let data = self.container().load_buffer8(offset, byte_len);
+        let data = self.container()?.load_buffer8(offset, byte_len);
         if (data.len() as u64) != byte_len {
             log::warn!("Size mismatch for data. Moving on");
         }
@@ -157,7 +158,7 @@ impl Cr2File {
 
     /// Load the `RawImage` from old Canon raw TIF files.
     fn load_tif_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
-        self.container();
+        self.container()?;
         let container = self.container.get().unwrap();
 
         probe!(self.probe, "cr2.tiff_raw", "true");
@@ -194,7 +195,7 @@ impl Cr2File {
 
     /// Load the `RawImage` for actual CR2 files.
     fn load_cr2_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
-        self.container();
+        self.container()?;
         let container = self.container.get().unwrap();
 
         let cfa_ifd = self.ifd(tiff::IfdType::Raw).ok_or_else(|| {
@@ -312,53 +313,58 @@ impl RawFileImpl for Cr2File {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        *self.type_id.get_or_init(|| {
-            if let Some(maker_note) = self.maker_note_ifd() {
-                super::identify_from_maker_note(maker_note)
-            } else {
-                log::error!("MakerNote not found");
-                canon!(UNKNOWN)
-            }
-        })
+    fn identify_id(&self) -> Result<TypeId> {
+        self.type_id
+            .get_or_try_init(|| {
+                if let Some(maker_note) = self.maker_note_ifd() {
+                    Ok(super::identify_from_maker_note(maker_note))
+                } else {
+                    log::error!("MakerNote not found");
+                    Ok(canon!(UNKNOWN))
+                }
+            })
+            .copied()
     }
 
     /// Return a lazily loaded `tiff::Container`
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = tiff::Container::new(
-                // XXX non CR2 have a different layout
-                view,
-                vec![
-                    (tiff::IfdType::Main, None),
-                    (tiff::IfdType::Other, None),
-                    (tiff::IfdType::Other, None),
-                    (tiff::IfdType::Raw, None),
-                ],
-                self.type_(),
-            );
-            container.load(None).expect("TIFF container error");
-            probe!(
-                self.probe,
-                "raw.container.endian",
-                &format!("{:?}", container.endian())
-            );
-            container
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                let mut container = tiff::Container::new(
+                    // XXX non CR2 have a different layout
+                    view,
+                    vec![
+                        (tiff::IfdType::Main, None),
+                        (tiff::IfdType::Other, None),
+                        (tiff::IfdType::Other, None),
+                        (tiff::IfdType::Raw, None),
+                    ],
+                    self.type_(),
+                );
+                container.load(None).context("TIFF container error")?;
+                probe!(
+                    self.probe,
+                    "raw.container.endian",
+                    &format!("{:?}", container.endian())
+                );
+                Ok(Box::new(container))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
-            self.container();
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
+            self.container()?;
             let container = self.container.get().unwrap();
-            ThumbnailStorage::with_thumbnails(tiff::tiff_thumbnails(container))
+            Ok(ThumbnailStorage::with_thumbnails(tiff::tiff_thumbnails(
+                container,
+            )))
         })
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
-        self.container();
+        self.container().ok()?;
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Raw => {
@@ -381,6 +387,7 @@ impl RawFileImpl for Cr2File {
     }
 
     fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
+        let type_id = self.type_id()?;
         if self.is_cr2() {
             self.load_cr2_rawdata(skip_decompress)
         } else {
@@ -391,7 +398,7 @@ impl RawFileImpl for Cr2File {
             let bpc = rawdata.bpc();
             let (black, white) = MATRICES
                 .iter()
-                .find(|m| m.camera == self.type_id())
+                .find(|m| m.camera == type_id)
                 .map(|m| {
                     (
                         m.black,
@@ -435,7 +442,7 @@ impl Dump for Cr2File {
         dump_writeln!(out, indent, "<Canon CR2 File>");
         {
             let indent = indent + 1;
-            self.container();
+            let _ = self.container();
             self.container.get().unwrap().write_dump(out, indent);
         }
         dump_writeln!(out, indent, "</Canon CR2 File>");

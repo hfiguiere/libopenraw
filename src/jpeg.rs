@@ -2,7 +2,7 @@
 /*
  * libopenraw - jpeg.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -38,7 +38,8 @@ use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::{exif, Dir, Ifd};
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    Context, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type,
+    TypeId,
 };
 
 #[derive(Debug)]
@@ -46,7 +47,7 @@ use crate::{
 pub(crate) struct JpegFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
-    container: OnceCell<Container>,
+    container: OnceCell<Box<Container>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
@@ -69,22 +70,25 @@ impl RawFileImpl for JpegFile {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        *self.type_id.get_or_init(|| TypeId(vendor::JPEG, 0))
+    fn identify_id(&self) -> Result<TypeId> {
+        self.type_id
+            .get_or_try_init(|| Ok(TypeId(vendor::JPEG, 0)))
+            .copied()
     }
 
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            Container::new(view, Type::Jpeg)
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                Ok(Box::new(Container::new(view, Type::Jpeg)))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
             let mut thumbnails = vec![];
-            self.container();
+            self.container()?;
             let container = self.container.get().unwrap();
             container.exif().and_then(|exif| {
                 let dir = exif.directory(1)?;
@@ -105,12 +109,12 @@ impl RawFileImpl for JpegFile {
 
                 Some(())
             });
-            ThumbnailStorage::with_thumbnails(thumbnails)
+            Ok(ThumbnailStorage::with_thumbnails(thumbnails))
         })
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
-        self.container();
+        self.container().ok()?;
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main | tiff::IfdType::Raw => None,
@@ -141,7 +145,7 @@ impl Dump for JpegFile {
         dump_writeln!(out, indent, "<JPEG File>");
         {
             let indent = indent + 1;
-            self.container();
+            let _ = self.container();
             self.container.get().unwrap().write_dump(out, indent);
         }
         dump_writeln!(out, indent, "</JPEG File>");

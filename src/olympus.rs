@@ -40,8 +40,8 @@ use crate::tiff::{exif, Ifd};
 use crate::tiff::{IfdType, LoaderFixup};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Type,
-    TypeId,
+    Context, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
+    Type, TypeId,
 };
 pub use tiff::exif::generated::MNOTE_OLYMPUS_TAG_NAMES as MNOTE_TAG_NAMES;
 use tiff::exif::generated::{
@@ -166,7 +166,7 @@ impl LoaderFixup for OrfFixup {
 pub(crate) struct OrfFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
-    container: OnceCell<tiff::Container>,
+    container: OnceCell<Box<tiff::Container>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
@@ -186,7 +186,7 @@ impl OrfFile {
 
     /// Return the CFA dir
     fn cfa_dir(&self) -> Option<&tiff::Dir> {
-        self.container();
+        self.container().ok()?;
         self.container.get().unwrap().directory(0)
     }
 
@@ -410,36 +410,40 @@ impl RawFileImpl for OrfFile {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        *self.type_id.get_or_init(|| {
-            self.container();
-            let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(olympus!(UNKNOWN))
-        })
+    fn identify_id(&self) -> Result<TypeId> {
+        self.type_id
+            .get_or_try_init(|| {
+                self.container()?;
+                let container = self.container.get().unwrap();
+                Ok(tiff::identify_with_exif(container, &MAKE_TO_ID_MAP)
+                    .unwrap_or(olympus!(UNKNOWN)))
+            })
+            .copied()
     }
 
     /// Return a lazily loaded `tiff::Container`
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container =
-                tiff::Container::new(view, vec![(IfdType::Main, None)], self.type_());
-            container
-                .load(Some(Box::new(OrfFixup {})))
-                .expect("Olympus IFD container error");
-            probe!(
-                self.probe,
-                "raw.container.endian",
-                &format!("{:?}", container.endian())
-            );
-            container
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                let mut container =
+                    tiff::Container::new(view, vec![(IfdType::Main, None)], self.type_());
+                container
+                    .load(Some(Box::new(OrfFixup {})))
+                    .context("Olympus IFD container error")?;
+                probe!(
+                    self.probe,
+                    "raw.container.endian",
+                    &format!("{:?}", container.endian())
+                );
+                Ok(Box::new(container))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
-            self.container();
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
+            self.container()?;
             let container = self.container.get().unwrap();
             let mut thumbnails = tiff::tiff_thumbnails(container);
             self.maker_note_ifd().and_then(|mnote| {
@@ -473,12 +477,12 @@ impl RawFileImpl for OrfFile {
                 })
             });
 
-            ThumbnailStorage::with_thumbnails(thumbnails)
+            Ok(ThumbnailStorage::with_thumbnails(thumbnails))
         })
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
-        self.container();
+        self.container().ok()?;
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main => container.directory(0),
@@ -493,7 +497,7 @@ impl RawFileImpl for OrfFile {
         self.ifd(IfdType::Raw)
             .ok_or(Error::NotFound)
             .and_then(|cfa| {
-                self.container();
+                self.container()?;
                 tiff::tiff_get_rawdata(self.container.get().unwrap(), cfa, self.type_())
             })
             .map(|mut data| {
@@ -623,7 +627,7 @@ impl Dump for OrfFile {
         dump_writeln!(out, indent, "<Olympus ORF File>");
         {
             let indent = indent + 1;
-            self.container();
+            let _ = self.container();
             self.container.get().unwrap().write_dump(out, indent);
             if let Some(mnote) = self.maker_note_ifd() {
                 if let Some(dir) = self.olympus_cs_ifd(mnote) {

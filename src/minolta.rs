@@ -42,7 +42,8 @@ use crate::rawfile::{RawFileHandleType, ThumbnailStorage};
 use crate::thumbnail;
 use crate::tiff::{self, exif, Ifd, IfdType};
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    Context, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type,
+    TypeId,
 };
 
 macro_rules! minolta {
@@ -134,7 +135,7 @@ lazy_static::lazy_static! {
 /// Sources <http://www.dalibor.cz/software/minolta-raw-mrw-file-format>
 pub(crate) struct MrwFile {
     reader: Rc<Viewer>,
-    container: OnceCell<MrwContainer>,
+    container: OnceCell<Box<MrwContainer>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
@@ -156,35 +157,38 @@ impl RawFileImpl for MrwFile {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        self.container();
-        *self
+    fn identify_id(&self) -> Result<TypeId> {
+        self.container()?;
+        Ok(self
             .container
             .get()
             .and_then(|container| MODEL_ID_MAP.get(&container.version.as_str()))
-            .unwrap_or(&minolta!(UNKNOWN))
+            .unwrap_or(&minolta!(UNKNOWN)))
+        .copied()
     }
 
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            log::debug!("Creating mrw container");
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = MrwContainer::new(view);
-            container.load().expect("Failed to load container");
-            probe!(
-                self.probe,
-                "raw.container.endian",
-                &format!("{:?}", container.endian())
-            );
-            container
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                log::debug!("Creating mrw container");
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                let mut container = MrwContainer::new(view);
+                container.load().context("Failed to load container")?;
+                probe!(
+                    self.probe,
+                    "raw.container.endian",
+                    &format!("{:?}", container.endian())
+                );
+                Ok(Box::new(container))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
     /// MRW files have only one preview, 640x480, in the MakerNote.
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
             let mut thumbnails = vec![];
+            self.container()?;
             if let Some(makernote) = self.ifd(tiff::IfdType::MakerNote) {
                 let ifd = self.container.get().unwrap().ifd_container();
                 // Old files have the thumbnail in the Exif entry `MNOTE_MINOLTA_THUMBNAIL`.
@@ -223,14 +227,14 @@ impl RawFileImpl for MrwFile {
                     ));
                 }
             }
-            ThumbnailStorage::with_thumbnails(thumbnails)
+            Ok(ThumbnailStorage::with_thumbnails(thumbnails))
         })
     }
 
     /// In a MRW file, all comes out of the IFD container from the `TTW`
     /// block.
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
-        self.container();
+        self.container().ok()?;
         let ifd = self.container.get().unwrap().ifd_container();
         match ifd_type {
             tiff::IfdType::Raw | tiff::IfdType::Main => ifd.directory(0),
@@ -243,7 +247,7 @@ impl RawFileImpl for MrwFile {
     /// The raw data is after all the blocks. The PRD give some info like
     /// the dimensions and the bits per sample.
     fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
-        self.container();
+        self.container()?;
         if let Some(container) = self.container.get() {
             let rawinfo = container.minolta_prd()?;
 
@@ -292,9 +296,10 @@ impl RawFileImpl for MrwFile {
                     rawinfo.mosaic,
                 )
             };
+            let id = self.type_id()?;
             if let Some((black, white)) = MATRICES
                 .iter()
-                .find(|m| m.camera == self.type_id())
+                .find(|m| m.camera == id)
                 .map(|m| (m.black, m.white))
             {
                 probe!(self.probe, "mrw.whites_blacks", "true");
@@ -327,7 +332,7 @@ impl Dump for MrwFile {
     #[cfg(feature = "dump")]
     fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
         dump_writeln!(out, indent, "<Minolta MRW File>");
-        self.container();
+        let _ = self.container();
         self.container.get().unwrap().write_dump(out, indent + 1);
         dump_writeln!(out, indent, "</Minolat MRW File>");
     }

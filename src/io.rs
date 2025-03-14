@@ -2,7 +2,7 @@
 /*
  * libopenraw - io.rs
  *
- * Copyright (C) 2022 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,7 +22,7 @@
 //! Abstract the IO to allow for "stacking".
 
 use std::cell::{RefCell, RefMut};
-use std::io::{Error, ErrorKind, Read, Result, SeekFrom};
+use std::io::{ErrorKind, Read, SeekFrom};
 use std::rc::{Rc, Weak};
 
 use byteorder::{BigEndian, ByteOrder, LittleEndian, ReadBytesExt};
@@ -30,6 +30,7 @@ use byteorder::{BigEndian, ByteOrder, LittleEndian, ReadBytesExt};
 use crate::container::Endian;
 use crate::rawfile::ReadAndSeek;
 use crate::utils;
+use crate::{Error, Result};
 
 /// This trait exists because `from_le_bytes()` and `from_be_bytes`
 /// can't be used on a generics `T` as there is no bound for primitive types.
@@ -102,10 +103,10 @@ impl Viewer {
     /// Create a view at offset.
     pub fn create_view(viewer: &Rc<Viewer>, offset: u64) -> Result<View> {
         if offset > viewer.length() {
-            return Err(Error::new(
+            return Err(Error::from(std::io::Error::new(
                 ErrorKind::Other,
                 "create_view: offset beyond EOF.",
-            ));
+            )));
         }
         View::new(viewer, offset, viewer.length() - offset)
     }
@@ -114,13 +115,18 @@ impl Viewer {
     pub fn create_subview(view: &View, offset: u64) -> Result<View> {
         view.inner
             .upgrade()
-            .ok_or_else(|| Error::new(ErrorKind::Other, "failed to acquire Rc"))
+            .ok_or_else(|| {
+                Error::from(std::io::Error::new(
+                    ErrorKind::Other,
+                    "failed to acquire Rc",
+                ))
+            })
             .and_then(|viewer| {
                 if offset > viewer.length() {
-                    return Err(Error::new(
+                    return Err(Error::from(std::io::Error::new(
                         ErrorKind::Other,
                         "create_subview: offset beyond EOF.",
-                    ));
+                    )));
                 }
                 View::new(&viewer, offset, viewer.length() - offset)
             })
@@ -247,7 +253,7 @@ impl View {
 }
 
 impl std::io::Read for View {
-    fn read(&mut self, buf: &mut [u8]) -> Result<usize> {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
         let inner = self.inner.upgrade().expect("Couldn't upgrade inner");
         let mut io = inner.get_io();
         io.read(buf)
@@ -255,7 +261,7 @@ impl std::io::Read for View {
 }
 
 impl std::io::Seek for View {
-    fn seek(&mut self, pos: SeekFrom) -> Result<u64> {
+    fn seek(&mut self, pos: SeekFrom) -> std::io::Result<u64> {
         let inner = self.inner.upgrade().expect("Couldn't upgrade inner");
         let mut io = inner.get_io();
         io.seek(match pos {

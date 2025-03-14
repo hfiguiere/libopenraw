@@ -2,7 +2,7 @@
 /*
  * libopenraw - bin/metadata.rs
  *
- * Copyright (C) 2023-2024 Hubert Figuière
+ * Copyright (C) 2023-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -64,13 +64,15 @@ fn process_file(p: &str) {
     if let Ok(rawfile) = rawfile_from_file(p, None) {
         log::info!("Metadata raw file {}", p);
 
-        for metadata in rawfile.metadata() {
-            println!(
-                "{} ({}) => {:?}",
-                metadata.0,
-                type_to_string(metadata.2),
-                metadata.1.into_string(false)
-            );
+        if let Some(iterator) = rawfile.metadata() {
+            for metadata in iterator {
+                println!(
+                    "{} ({}) => {:?}",
+                    metadata.0,
+                    type_to_string(metadata.2),
+                    metadata.1.into_string(false)
+                );
+            }
         }
     }
 }

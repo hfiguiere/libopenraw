@@ -2,7 +2,7 @@
 /*
  * libopenraw - libopenraw-testing.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -95,17 +95,9 @@ pub struct Results {
         default
     )]
     pub raw_data_active_area: Option<Vec<u32>>,
-    #[serde(
-        deserialize_with = "from_list",
-        serialize_with = "to_list",
-        default
-    )]
+    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
     pub raw_data_user_crop: Option<Vec<u32>>,
-    #[serde(
-        deserialize_with = "from_list",
-        serialize_with = "to_list",
-        default
-    )]
+    #[serde(deserialize_with = "from_list", serialize_with = "to_list", default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_data_user_aspect_ratio: Option<Vec<u32>>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -202,7 +194,7 @@ impl Test {
 
 pub fn make_results(rawfile: &dyn RawFile) -> Results {
     let raw_type = Some(rawfile.type_().into());
-    let raw_type_id = Some(rawfile.type_id().into());
+    let raw_type_id = rawfile.type_id().map(|id| id.into()).ok();
     let exif_make = rawfile
         .metadata_value("Exif.Image.Make")
         .as_ref()
@@ -222,37 +214,46 @@ pub fn make_results(rawfile: &dyn RawFile) -> Results {
         .map(|s| s.to_string_lossy().to_string());
 
     let thumbnail_sizes = rawfile.thumbnail_sizes();
-    let thumb_num = Some(thumbnail_sizes.len() as u32);
-    let thumb_sizes = Some(thumbnail_sizes.to_vec());
+    let thumb_num = thumbnail_sizes.map(|sizes| sizes.len() as u32);
+    let thumb_sizes = thumbnail_sizes.map(|sizes| sizes.to_vec());
 
     let thumbnails = rawfile.thumbnails();
-    let thumb_formats = Some(
-        thumbnails
-            .thumbnails
-            .iter()
-            .map(|t| t.1.data_type.into())
-            .collect::<Vec<String>>()
-            .join(" "),
-    );
-    let thumb_data_sizes = Some(
-        thumbnails
-            .thumbnails
-            .iter()
-            .map(|t| t.1.data_size() as u32)
-            .collect(),
-    );
-    let thumb_md5 = Some(
-        thumbnails
-            .thumbnails
-            .iter()
-            .flat_map(|t| {
-                rawfile
-                    .thumbnail(t.0)
-                    .ok()
-                    .and_then(|t| t.data8().map(raw_checksum))
-            })
-            .collect(),
-    );
+    let thumb_formats = thumbnails
+        .as_ref()
+        .map(|thumbnails| {
+            thumbnails
+                .thumbnails
+                .iter()
+                .map(|t| t.1.data_type.into())
+                .collect::<Vec<String>>()
+                .join(" ")
+        })
+        .ok();
+    let thumb_data_sizes = thumbnails
+        .as_ref()
+        .map(|thumbnails| {
+            thumbnails
+                .thumbnails
+                .iter()
+                .map(|t| t.1.data_size() as u32)
+                .collect()
+        })
+        .ok();
+    let thumb_md5 = thumbnails
+        .as_ref()
+        .map(|thumbnails| {
+            thumbnails
+                .thumbnails
+                .iter()
+                .flat_map(|t| {
+                    rawfile
+                        .thumbnail(t.0)
+                        .ok()
+                        .and_then(|t| t.data8().map(raw_checksum))
+                })
+                .collect()
+        })
+        .ok();
 
     let rawdata = rawfile.raw_data(false);
     let rawdata = rawdata.as_ref();
@@ -278,7 +279,9 @@ pub fn make_results(rawfile: &dyn RawFile) -> Results {
         .ok();
     let raw_min_value = rawdata.map(|rawdata| rawdata.blacks().to_vec()).ok();
     let raw_max_value = rawdata.map(|rawdata| rawdata.whites().to_vec()).ok();
-    let raw_as_shot_neutral = rawdata.ok().and_then(|rawdata| rawdata.as_shot_neutral())
+    let raw_as_shot_neutral = rawdata
+        .ok()
+        .and_then(|rawdata| rawdata.as_shot_neutral())
         .map(|as_shot| as_shot.to_vec());
     let raw_md5 = rawdata
         .ok()

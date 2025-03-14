@@ -2,7 +2,7 @@
 /*
  * libopenraw - capi/iterator.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -46,7 +46,7 @@ pub type ORMetadataRef = *const ORMetadata;
 
 /// Metadata iterator. It keeps the ORRawFile.
 pub struct ORMetadataIterator<'a>(
-    pub metadata::Iterator<'a>,
+    pub Option<metadata::Iterator<'a>>,
     // We need to keep the raw file alive, but we never read it.
     #[allow(dead_code)] pub ORRawFile,
     pub Option<ORMetadata>,
@@ -67,7 +67,7 @@ extern "C" fn or_metadata_iterator_free(iterator: ORMetadataIteratorRef) {
 #[no_mangle]
 extern "C" fn or_metadata_iterator_next(iterator: ORMetadataIteratorRef) -> libc::c_int {
     or_unwrap_mut!(iterator, 0, {
-        let item = iterator.0.next();
+        let item = iterator.0.as_mut().and_then(|iter| iter.next());
         let r = if item.is_some() { 1 } else { 0 };
         iterator.2 = item.map(ORMetadata::from);
         r
@@ -95,7 +95,8 @@ extern "C" fn or_metadata_iterator_get_dir(iterator: ORMetadataIteratorRef) -> O
         std::ptr::null(),
         iterator
             .0
-            .dir()
+            .as_ref()
+            .and_then(|iter| iter.dir())
             .map(|dir| dir as ORIfdDirRef)
             .unwrap_or_else(std::ptr::null)
     )

@@ -41,8 +41,8 @@ use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::{Compression, Dir, Ifd, LoaderFixup};
 use crate::{
-    Bitmap, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
-    Type, TypeId,
+    Bitmap, Context, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect,
+    Result, Type, TypeId,
 };
 
 macro_rules! panasonic {
@@ -746,7 +746,7 @@ impl LoaderFixup for Rw2Fixup {
 pub(crate) struct Rw2File {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
-    container: OnceCell<tiff::Container>,
+    container: OnceCell<Box<tiff::Container>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     jpeg_preview: OnceCell<Option<jpeg::Container>>,
     #[cfg(feature = "probe")]
@@ -811,42 +811,46 @@ impl RawFileImpl for Rw2File {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        *self.type_id.get_or_init(|| {
-            self.container();
-            let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(panasonic!(UNKNOWN))
-        })
+    fn identify_id(&self) -> Result<TypeId> {
+        self.type_id
+            .get_or_try_init(|| {
+                self.container()?;
+                let container = self.container.get().unwrap();
+                Ok(tiff::identify_with_exif(container, &MAKE_TO_ID_MAP)
+                    .unwrap_or(panasonic!(UNKNOWN)))
+            })
+            .copied()
     }
 
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = tiff::Container::new(
-                view,
-                vec![
-                    (tiff::IfdType::Main, Some(&RAW_TAG_NAMES)),
-                    (tiff::IfdType::Other, None),
-                    (tiff::IfdType::Other, None),
-                    (tiff::IfdType::Other, None),
-                ],
-                self.type_(),
-            );
-            container
-                .load(Some(Box::new(Rw2Fixup {})))
-                .expect("Rw2 container error");
-            probe!(
-                self.probe,
-                "raw.container.endian",
-                &format!("{:?}", container.endian())
-            );
-            container
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                let mut container = tiff::Container::new(
+                    view,
+                    vec![
+                        (tiff::IfdType::Main, Some(&RAW_TAG_NAMES)),
+                        (tiff::IfdType::Other, None),
+                        (tiff::IfdType::Other, None),
+                        (tiff::IfdType::Other, None),
+                    ],
+                    self.type_(),
+                );
+                container
+                    .load(Some(Box::new(Rw2Fixup {})))
+                    .context("Rw2 container error")?;
+                probe!(
+                    self.probe,
+                    "raw.container.endian",
+                    &format!("{:?}", container.endian())
+                );
+                Ok(Box::new(container))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
             let mut thumbnails = vec![];
             if let Some(jpeg) = self.jpeg_preview() {
                 if let Some(jpeg_offset) = self.jpeg_data_offset() {
@@ -893,12 +897,12 @@ impl RawFileImpl for Rw2File {
                 }
             }
 
-            ThumbnailStorage::with_thumbnails(thumbnails)
+            Ok(ThumbnailStorage::with_thumbnails(thumbnails))
         })
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
-        self.container();
+        self.container().ok()?;
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main | tiff::IfdType::Raw => container.directory(0),
@@ -1003,7 +1007,7 @@ impl RawFileImpl for Rw2File {
             let (compression, mut raw_data) = match data_type {
                 DataType::CompressedRaw => {
                     let pattern = mosaic_pattern.unwrap_or_default();
-                    let buffer = self.container().load_buffer8(offset.offset, offset.len);
+                    let buffer = self.container()?.load_buffer8(offset.offset, offset.len);
                     if !skip_decompress && compression == Compression::PanasonicRaw1 {
                         decompress::panasonic_raw1(&buffer).ok().map(|raw| {
                             (
@@ -1033,7 +1037,7 @@ impl RawFileImpl for Rw2File {
                 DataType::Raw => {
                     let raw = if packed {
                         log::debug!("Panasonic: packed data");
-                        let raw = self.container().load_buffer8(offset.offset, offset.len);
+                        let raw = self.container()?.load_buffer8(offset.offset, offset.len);
                         let len = raw.len();
                         let mut buf = std::io::Cursor::new(raw);
                         crate::decompress::unpack_from_reader(
@@ -1051,8 +1055,9 @@ impl RawFileImpl for Rw2File {
                         // Uncompressed Panasonic raw data is LE 12
                         // bits to the left: ie the 4 least
                         // significant bits are discarded.
-                        let mut buffer =
-                            self.container().load_buffer16_le(offset.offset, offset.len);
+                        let mut buffer = self
+                            .container()?
+                            .load_buffer16_le(offset.offset, offset.len);
                         buffer.iter_mut().for_each(|v| *v >>= 4);
                         buffer
                     };
@@ -1187,7 +1192,7 @@ impl Dump for Rw2File {
         dump_writeln!(out, indent, "<Panasonic RW2 File>");
         {
             let indent = indent + 1;
-            self.container();
+            let _ = self.container();
             let container = self.container.get().unwrap();
             container.write_dump(out, indent);
             if let Some(camera_tiff) = self.main_ifd().and_then(|dir| {

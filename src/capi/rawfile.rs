@@ -2,7 +2,7 @@
 /*
  * libopenraw - capi/rawfile.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -124,7 +124,11 @@ extern "C" fn or_rawfile_get_type(rawfile: ORRawFileRef) -> or_rawfile_type {
 /// A returned value of `0` denote either an error or a an unknown file.
 /// A non null invalid `rawfile` is undefined behaviour.
 extern "C" fn or_rawfile_get_typeid(rawfile: ORRawFileRef) -> or_rawfile_typeid {
-    or_unwrap!(rawfile, 0, rawfile.0.identify_id().into())
+    or_unwrap!(
+        rawfile,
+        0,
+        rawfile.0.identify_id().map(|id| id.into()).unwrap_or(0)
+    )
 }
 
 #[no_mangle]
@@ -135,7 +139,11 @@ extern "C" fn or_rawfile_get_typeid(rawfile: ORRawFileRef) -> or_rawfile_typeid 
 /// 16 LSb of the returned value.
 /// A non null invalid `rawfile` is undefined behaviour.
 extern "C" fn or_rawfile_get_vendorid(rawfile: ORRawFileRef) -> or_rawfile_typeid {
-    or_unwrap!(rawfile, 0, rawfile.0.identify_id().0.into())
+    or_unwrap!(
+        rawfile,
+        0,
+        rawfile.0.identify_id().map(|id| id.0.into()).unwrap_or(0)
+    )
 }
 
 #[no_mangle]
@@ -204,12 +212,14 @@ extern "C" fn or_rawfile_get_thumbnail_sizes(
     size: *mut libc::size_t,
 ) -> *const u32 {
     or_unwrap!(rawfile, std::ptr::null(), {
-        let sizes = rawfile.0.thumbnail_sizes();
-        if !size.is_null() {
-            unsafe { *size = sizes.len() };
+        if let Some(sizes) = rawfile.0.thumbnail_sizes() {
+            if !size.is_null() {
+                unsafe { *size = sizes.len() };
+            }
+            // sizes belong to the rawfile.
+            return sizes.as_ptr();
         }
-        // sizes belong to the rawfile.
-        sizes.as_ptr()
+        std::ptr::null()
     })
 }
 

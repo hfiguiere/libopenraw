@@ -2,7 +2,7 @@
 /*
  * libopenraw - the_benchmark.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -53,9 +53,10 @@ pub fn ordiag_benchmark(c: &mut Criterion) {
             b.iter(|| {
                 let rawfile = rawfile_from_file(&file, None);
                 if let Ok(rawfile) = rawfile {
-                    let sizes = rawfile.thumbnail_sizes();
-                    for size in sizes {
-                        let _ = rawfile.thumbnail(*size);
+                    if let Some(sizes) = rawfile.thumbnail_sizes() {
+                        for size in sizes {
+                            let _ = rawfile.thumbnail(*size);
+                        }
                     }
                     let _ = rawfile.raw_data(false);
                 }

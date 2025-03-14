@@ -44,8 +44,8 @@ use crate::tiff;
 use crate::tiff::exif;
 use crate::tiff::Dir;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Size, Type,
-    TypeId,
+    Context, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
+    Size, Type, TypeId,
 };
 
 use super::matrices::MATRICES;
@@ -57,7 +57,7 @@ use decompress::Decompress;
 pub(crate) struct CrwFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
-    container: OnceCell<ciff::Container>,
+    container: OnceCell<Box<ciff::Container>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
@@ -100,7 +100,8 @@ impl CrwFile {
     const CRW_WB_DEFAULT_OFFSET: u64 = 120;
 
     fn crw_wb_offset(&self) -> u64 {
-        match self.type_id().1 {
+        let model_id = self.type_id().map(|id| id.1).unwrap_or(0);
+        match model_id {
             canon_id::PRO1 | canon_id::G6 | canon_id::S60 | canon_id::S70 => 96,
             _ => Self::CRW_WB_DEFAULT_OFFSET,
         }
@@ -229,46 +230,49 @@ impl RawFileImpl for CrwFile {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        *self.type_id.get_or_init(|| {
-            self.container();
+    fn identify_id(&self) -> Result<TypeId> {
+        self.type_id
+            .get_or_try_init(|| {
+                self.container()?;
 
-            let container = self.container.get().unwrap();
-            container
-                .exif_info()
-                .and_then(|heap| {
-                    heap.records()
-                        .get(&ciff::Tag::CanonModelID)
-                        .and_then(|r| r.data(container))
-                        .and_then(|data| {
-                            if let ciff::RecordData::DWord(id) = data {
-                                return canon::CANON_MODEL_ID_MAP.get(&id[0]).copied();
-                            }
-                            None
-                        })
-                })
-                .or_else(|| {
-                    container
-                        .make_or_model(exif::EXIF_TAG_MODEL)
-                        .and_then(|model| super::MAKE_TO_ID_MAP.get(model.as_str()).copied())
-                })
-                .unwrap_or(canon!(UNKNOWN))
-        })
+                let container = self.container.get().unwrap();
+                Ok(container
+                    .exif_info()
+                    .and_then(|heap| {
+                        heap.records()
+                            .get(&ciff::Tag::CanonModelID)
+                            .and_then(|r| r.data(container))
+                            .and_then(|data| {
+                                if let ciff::RecordData::DWord(id) = data {
+                                    return canon::CANON_MODEL_ID_MAP.get(&id[0]).copied();
+                                }
+                                None
+                            })
+                    })
+                    .or_else(|| {
+                        container
+                            .make_or_model(exif::EXIF_TAG_MODEL)
+                            .and_then(|model| super::MAKE_TO_ID_MAP.get(model.as_str()).copied())
+                    })
+                    .unwrap_or(canon!(UNKNOWN)))
+            })
+            .copied()
     }
 
     /// Return a lazily loaded `tiff::Container`
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            ciff::Container::new(view)
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                Ok(Box::new(ciff::Container::new(view)))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
             let mut thumbnails = Vec::new();
-            self.container();
+            self.container()?;
             let container = self.container.get().unwrap();
             let heap = container.heap();
             heap.records().get(&ciff::Tag::JpegImage).and_then(|r| {
@@ -299,12 +303,12 @@ impl RawFileImpl for CrwFile {
                     None
                 }
             });
-            ThumbnailStorage::with_thumbnails(thumbnails)
+            Ok(ThumbnailStorage::with_thumbnails(thumbnails))
         })
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
-        self.container();
+        self.container().ok()?;
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main => container.main_ifd(),
@@ -314,7 +318,7 @@ impl RawFileImpl for CrwFile {
     }
 
     fn load_rawdata(&self, skip_decompression: bool) -> Result<RawImage> {
-        self.container();
+        self.container()?;
         let container = self.container.get().unwrap();
 
         let mut component_bit_depth = 12;
@@ -383,13 +387,14 @@ impl RawFileImpl for CrwFile {
                                     &container.borrow_view_mut(),
                                     pos as u64,
                                 )?;
+                                let type_id = self.type_id()?;
                                 decompressor
                                     .decompress(&mut view)
                                     .map(|mut rawdata| {
                                         let bpc = 10_u32;
                                         let (black, white) = MATRICES
                                             .iter()
-                                            .find(|m| m.camera == self.type_id())
+                                            .find(|m| m.camera == type_id)
                                             .map(|m| {
                                                 (
                                                     m.black,
@@ -445,8 +450,10 @@ impl Dump for CrwFile {
         dump_writeln!(out, indent, "<Canon CRW File>");
         {
             let indent = indent + 1;
-            self.container();
-            self.container.get().unwrap().write_dump(out, indent);
+            let _ = self.container().context("Container error");
+            if let Some(container) = self.container.get() {
+                container.write_dump(out, indent);
+            }
         }
         dump_writeln!(out, indent, "</Canon CRW File>");
     }

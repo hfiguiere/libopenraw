@@ -2,7 +2,7 @@
 /*
  * libopenraw - bin/ordiag.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -274,8 +274,13 @@ fn process_file(
 
             println!("Raw type: {:?}", rawfile.type_());
             println!("MIME type: {}", rawfile.mime_type());
-            println!("Vendor id: {}", rawfile.vendor_id());
-            println!("Type id: {:?}", rawfile.type_id());
+            if let Ok(type_id) = rawfile.type_id() {
+                println!("Vendor id: {}", rawfile.vendor_id().unwrap());
+                println!("Type id: {:?}", type_id);
+            } else {
+                println!("Couldn't guess file type ID");
+                return;
+            }
             if let Some(make) = rawfile
                 .metadata_value("Exif.Image.Make")
                 .as_ref()
@@ -298,25 +303,26 @@ fn process_file(
                 println!("Unique Camera Model: {:?}", unique);
             }
 
-            let sizes = rawfile.thumbnail_sizes();
-            println!("Thumbnail sizes: {:?}", &sizes);
-            for size in sizes {
-                let thumb = rawfile.thumbnail(*size);
-                match thumb {
-                    Ok(ref thumb) => {
-                        println!("\tThumbnail size: {} x {}", thumb.width(), thumb.height());
-                        println!("\tFormat: {:?}", thumb.data_type());
-                        println!(
-                            "\tSize: {} bytes",
-                            thumb.data8().map(|d| d.len()).unwrap_or(0)
-                        );
+            if let Some(sizes) = rawfile.thumbnail_sizes() {
+                println!("Thumbnail sizes: {:?}", &sizes);
+                for size in sizes {
+                    let thumb = rawfile.thumbnail(*size);
+                    match thumb {
+                        Ok(ref thumb) => {
+                            println!("\tThumbnail size: {} x {}", thumb.width(), thumb.height());
+                            println!("\tFormat: {:?}", thumb.data_type());
+                            println!(
+                                "\tSize: {} bytes",
+                                thumb.data8().map(|d| d.len()).unwrap_or(0)
+                            );
 
-                        if extract_thumbnails {
-                            save_thumbnail(p, thumb);
+                            if extract_thumbnails {
+                                save_thumbnail(p, thumb);
+                            }
                         }
-                    }
-                    Err(err) => {
-                        eprintln!("Failed to fetch preview for {size}: {err}");
+                        Err(err) => {
+                            eprintln!("Failed to fetch preview for {size}: {err}");
+                        }
                     }
                 }
             }

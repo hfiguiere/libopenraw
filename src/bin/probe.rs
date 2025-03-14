@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 /*
- * libopenraw - bin/ordiag.rs
+ * libopenraw - bin/probe.rs
  *
- * Copyright (C) 2024 Hubert Figuière
+ * Copyright (C) 2024-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -62,10 +62,11 @@ fn process_file(p: &str) {
             use std::rc::Rc;
             Rc::get_mut(rawfile).unwrap().set_probe(true);
 
-            let sizes = rawfile.thumbnail_sizes();
-            for size in sizes {
-                // is this needed for the probe?
-                let _ = rawfile.thumbnail(*size);
+            if let Some(sizes) = rawfile.thumbnail_sizes() {
+                for size in sizes {
+                    // is this needed for the probe?
+                    let _ = rawfile.thumbnail(*size);
+                }
             }
 
             let _rawdata = rawfile.raw_data(false);

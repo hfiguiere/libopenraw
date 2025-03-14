@@ -45,8 +45,8 @@ use crate::tiff;
 use crate::tiff::{exif, Ifd};
 use crate::utils;
 use crate::{
-    AspectRatio, DataType, Dump, Error, Point, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect,
-    Result, Size, Type, TypeId,
+    AspectRatio, Context, DataType, Dump, Error, Point, RawFile, RawFileHandle, RawFileImpl,
+    RawImage, Rect, Result, Size, Type, TypeId,
 };
 
 use matrices::MATRICES;
@@ -157,7 +157,7 @@ lazy_static::lazy_static! {
 #[derive(Debug)]
 pub(crate) struct RafFile {
     reader: Rc<Viewer>,
-    container: OnceCell<raf::RafContainer>,
+    container: OnceCell<Box<raf::RafContainer>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
@@ -179,35 +179,36 @@ impl RawFileImpl for RafFile {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        self.container();
+    fn identify_id(&self) -> Result<TypeId> {
+        self.container()?;
         let container = self.container.get().unwrap();
         let model = container.get_model();
-        MAKE_TO_ID_MAP
+        Ok(MAKE_TO_ID_MAP
             .get(&model)
             .copied()
-            .unwrap_or(fuji!(UNKNOWN))
+            .unwrap_or(fuji!(UNKNOWN)))
     }
 
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = raf::RafContainer::new(view);
-            container.load().expect("Raf container error");
-            probe!(
-                self.probe,
-                "raw.container.endian",
-                &format!("{:?}", container.endian())
-            );
-            container
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                let mut container = raf::RafContainer::new(view);
+                container.load().context("Raf container error")?;
+                probe!(
+                    self.probe,
+                    "raw.container.endian",
+                    &format!("{:?}", container.endian())
+                );
+                Ok(Box::new(container))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
             let mut thumbnails = Vec::new();
-            self.container();
+            self.container()?;
             let container = self.container.get().unwrap();
             if let Some(jpeg) = container.jpeg_preview() {
                 let width = jpeg.width();
@@ -264,12 +265,12 @@ impl RawFileImpl for RafFile {
                         None
                     });
             }
-            ThumbnailStorage::with_thumbnails(thumbnails)
+            Ok(ThumbnailStorage::with_thumbnails(thumbnails))
         })
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
-        self.container();
+        self.container().ok()?;
         let raw_container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main => raw_container
@@ -289,7 +290,7 @@ impl RawFileImpl for RafFile {
     }
 
     fn load_rawdata(&self, skip_decompress: bool) -> Result<RawImage> {
-        self.container();
+        self.container()?;
         let raw_container = self.container.get().unwrap();
         raw_container
             .meta_container()
@@ -366,7 +367,8 @@ impl RawFileImpl for RafFile {
                     )
                     .map_err(|_| Error::FormatError)?
                 } else {
-                    match self.type_id().1 {
+                    let type_id = self.type_id()?;
+                    match type_id.1 {
                         fujifilm::X10 | fujifilm::XF1 | fujifilm::XS1 => {
                             probe!(self.probe, "raf.cfa.bggr", true);
                             Pattern::Bggr
@@ -563,7 +565,7 @@ impl Dump for RafFile {
     #[cfg(feature = "dump")]
     fn write_dump<W: std::io::Write + ?Sized>(&self, out: &mut W, indent: u32) {
         dump_writeln!(out, indent, "<Fujifilm RAF File>");
-        self.container();
+        let _ = self.container();
         self.container.get().unwrap().write_dump(out, indent + 1);
         dump_writeln!(out, indent, "</Fujfilm RAF File>");
     }

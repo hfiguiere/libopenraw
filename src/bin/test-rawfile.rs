@@ -5,9 +5,10 @@ fn main() {
     let _ = libopenraw::rawfile_from_file(&args[1], None)
         .and_then(|rawfile| {
             let _ = rawfile.type_id();
-            let sizes = rawfile.thumbnail_sizes();
-            for size in sizes {
-                let _ = rawfile.thumbnail(*size)?;
+            if let Some(sizes) = rawfile.thumbnail_sizes() {
+                for size in sizes {
+                    let _ = rawfile.thumbnail(*size)?;
+                }
             }
 
             let _ = rawfile.raw_data(false)?;

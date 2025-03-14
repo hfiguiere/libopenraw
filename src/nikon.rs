@@ -42,8 +42,8 @@ use crate::tiff::exif;
 use crate::tiff::{Dir, Ifd};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result, Type,
-    TypeId,
+    Context, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Rect, Result,
+    Type, TypeId,
 };
 
 use diffiterator::{CfaIterator, DiffIterator};
@@ -191,7 +191,7 @@ impl CompressionInfo {
 pub(crate) struct NefFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
-    container: OnceCell<tiff::Container>,
+    container: OnceCell<Box<tiff::Container>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
@@ -228,7 +228,11 @@ impl NefFile {
 
     /// The Raw file is from a D100.
     fn is_d100(&self) -> bool {
-        let is_d100 = self.type_id() == nikon!(D100);
+        let is_d100 = if let Ok(id) = self.type_id() {
+            id == nikon!(D100)
+        } else {
+            false
+        };
         probe!(self.probe, "nef.is_d100", is_d100);
         is_d100
     }
@@ -553,33 +557,36 @@ impl RawFileImpl for NefFile {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        *self.type_id.get_or_init(|| {
-            self.container();
-            let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(nikon!(UNKNOWN))
-        })
+    fn identify_id(&self) -> Result<TypeId> {
+        self.type_id
+            .get_or_try_init(|| {
+                self.container()?;
+                let container = self.container.get().unwrap();
+                Ok(tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(nikon!(UNKNOWN)))
+            })
+            .copied()
     }
 
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container =
-                tiff::Container::new(view, vec![(tiff::IfdType::Main, None)], self.type_());
-            container.load(None).expect("NEF container error");
-            probe!(
-                self.probe,
-                "raw.container.endian",
-                &format!("{:?}", container.endian())
-            );
-            container
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                let mut container =
+                    tiff::Container::new(view, vec![(tiff::IfdType::Main, None)], self.type_());
+                container.load(None).context("NEF container error")?;
+                probe!(
+                    self.probe,
+                    "raw.container.endian",
+                    &format!("{:?}", container.endian())
+                );
+                Ok(Box::new(container))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
-            self.container();
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
+            self.container()?;
             let container = self.container.get().unwrap();
             let mut thumbnails = tiff::tiff_thumbnails(container);
 
@@ -603,12 +610,12 @@ impl RawFileImpl for NefFile {
                             .ok()
                     });
             }
-            ThumbnailStorage::with_thumbnails(thumbnails)
+            Ok(ThumbnailStorage::with_thumbnails(thumbnails))
         })
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
-        self.container();
+        self.container().ok()?;
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main => container.directory(0),
@@ -709,7 +716,7 @@ impl Dump for NefFile {
         dump_writeln!(out, indent, "<Nikon NEF File>");
         {
             let indent = indent + 1;
-            self.container();
+            let _ = self.container();
             self.container.get().unwrap().write_dump(out, indent);
         }
         dump_writeln!(out, indent, "</Nikon NEF File>");

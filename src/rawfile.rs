@@ -70,19 +70,19 @@ impl ThumbnailStorage {
 /// for a new type of RAW file
 pub trait RawFileImpl {
     /// Will identify ID. Ensure it's cached.
-    fn identify_id(&self) -> TypeId;
+    fn identify_id(&self) -> Result<TypeId>;
 
     /// Return the main continer.
-    fn container(&self) -> &dyn RawContainer;
+    fn container(&self) -> Result<&dyn RawContainer>;
 
     /// Return the thumbnails. Implementation lazy load them
-    fn thumbnails(&self) -> &ThumbnailStorage;
+    fn thumbnails(&self) -> Result<&ThumbnailStorage>;
 
     /// Get the thumbnail for the exact size.
     fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
-        let thumbnails = &self.thumbnails().thumbnails;
+        let thumbnails = &self.thumbnails()?.thumbnails;
         if let Some((_, desc)) = thumbnails.iter().find(|t| t.0 == size) {
-            self.container().make_thumbnail(desc)
+            self.container()?.make_thumbnail(desc)
         } else {
             log::warn!("Thumbnail size {} not found", size);
             Err(Error::NotFound)
@@ -99,9 +99,10 @@ pub trait RawFileImpl {
 
     /// Default implementation for looking up the builtin matrix.
     fn builtin_colour_matrix(&self, matrices: &[BuiltinMatrix]) -> Result<Vec<f64>> {
+        let type_id = self.identify_id()?;
         matrices
             .iter()
-            .find(|m| m.camera == self.identify_id())
+            .find(|m| m.camera == type_id)
             .map(|m| Vec::from(m.matrix))
             .ok_or(Error::NotFound)
     }
@@ -186,7 +187,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
     fn type_(&self) -> Type;
 
     /// Return the type ID
-    fn type_id(&self) -> TypeId {
+    fn type_id(&self) -> Result<TypeId> {
         self.identify_id()
     }
 
@@ -196,13 +197,13 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
     }
 
     /// Return the vendor ID
-    fn vendor_id(&self) -> u16 {
-        self.identify_id().0
+    fn vendor_id(&self) -> Result<u16> {
+        self.identify_id().map(|id| id.0)
     }
 
     /// The rawfile thumbnail sizes
-    fn thumbnail_sizes(&self) -> &[u32] {
-        &self.thumbnails().sizes
+    fn thumbnail_sizes(&self) -> Option<&[u32]> {
+        Some(&self.thumbnails().ok()?.sizes)
     }
 
     /// Return the thumbnail of at least size
@@ -216,7 +217,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
             return Err(Error::InvalidParam);
         }
 
-        let sizes = &self.thumbnails().sizes;
+        let sizes = &self.thumbnails()?.sizes;
         if sizes.is_empty() {
             error!("No thumbnail available");
             return Err(Error::NotFound);
@@ -298,8 +299,8 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
 
     /// Get a metadata iterator. This will iterate over
     /// all the metadata for the raw file.
-    fn metadata(&self) -> metadata::Iterator {
-        self.container().dir_iterator()
+    fn metadata(&self) -> Option<metadata::Iterator> {
+        Some(self.container().ok()?.dir_iterator())
     }
 
     /// Get the metadata value
@@ -430,17 +431,17 @@ mod test {
         #[cfg(feature = "probe")]
         probe_imp!();
 
-        fn identify_id(&self) -> TypeId {
-            TypeId::default()
+        fn identify_id(&self) -> Result<TypeId> {
+            Ok(TypeId::default())
         }
 
-        fn container(&self) -> &dyn RawContainer {
-            &self.container
+        fn container(&self) -> Result<&dyn RawContainer> {
+            Ok(&self.container)
         }
 
-        fn thumbnails(&self) -> &ThumbnailStorage {
-            self.thumbnails.get_or_init(|| {
-                ThumbnailStorage::with_thumbnails(vec![
+        fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+            self.thumbnails.get_or_try_init(|| {
+                Ok(ThumbnailStorage::with_thumbnails(vec![
                     (
                         160,
                         ThumbDesc {
@@ -468,12 +469,12 @@ mod test {
                             data: Data::Bytes(vec![]),
                         },
                     ),
-                ])
+                ]))
             })
         }
 
         fn thumbnail_for_size(&self, size: u32) -> Result<Thumbnail> {
-            let sizes = &self.thumbnails().sizes;
+            let sizes = &self.thumbnails()?.sizes;
             if sizes.contains(&size) {
                 Ok(Thumbnail::with_data(size, size, DataType::Jpeg, vec![]))
             } else {

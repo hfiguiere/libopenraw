@@ -179,7 +179,6 @@ impl RafContainer {
                 }
                 let container =
                     Viewer::create_subview(&self.view.borrow_mut(), self.offsets.cfa_offset as u64)
-                        .map_err(Error::from)
                         .map(|view| tiff::Container::new(view, vec![], RawType::Raf))
                         .and_then(|mut container| {
                             container.load(None)?;
@@ -197,7 +196,6 @@ impl RafContainer {
             return None;
         }
         let container = Viewer::create_subview(&self.view.borrow_mut(), offset as u64)
-            .map_err(Error::from)
             .map(MetaContainer::new)
             .and_then(|mut container| {
                 container.load()?;

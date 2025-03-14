@@ -39,7 +39,8 @@ use crate::thumbnail;
 use crate::tiff;
 use crate::tiff::Dir;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    Context, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type,
+    TypeId,
 };
 
 use super::matrices::MATRICES;
@@ -49,7 +50,7 @@ use super::matrices::MATRICES;
 pub(crate) struct Cr3File {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
-    container: OnceCell<mp4::Container>,
+    container: OnceCell<Box<mp4::Container>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
@@ -72,34 +73,37 @@ impl RawFileImpl for Cr3File {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        *self.type_id.get_or_init(|| {
-            if let Some(maker_note) = self.maker_note_ifd() {
-                super::identify_from_maker_note(maker_note)
-            } else {
-                log::error!("MakerNote not found");
-                canon!(UNKNOWN)
-            }
-        })
+    fn identify_id(&self) -> Result<TypeId> {
+        self.type_id
+            .get_or_try_init(|| {
+                if let Some(maker_note) = self.maker_note_ifd() {
+                    Ok(super::identify_from_maker_note(maker_note))
+                } else {
+                    log::error!("MakerNote not found");
+                    Ok(canon!(UNKNOWN))
+                }
+            })
+            .copied()
     }
 
     /// Returns a lazily loaded [`mp4::Container`].
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container = mp4::Container::new(view, self.type_());
-            container.load().expect("MP4 container error");
-            container
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                let mut container = mp4::Container::new(view, self.type_());
+                container.load().context("MP4 container error")?;
+                Ok(Box::new(container))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
     /// Returns a lazily loaded set of [thumbnails][thumbnail::ThumbDesc].
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
             use thumbnail::{Data, DataOffset};
 
-            self.container();
+            self.container()?;
             let container = self.container.get().unwrap();
             let mut thumbnails = Vec::new();
             if let Ok(craw_header) = container.craw_header() {
@@ -157,12 +161,12 @@ impl RawFileImpl for Cr3File {
                 let dim = std::cmp::max(desc.width, desc.height);
                 thumbnails.push((dim, desc));
             }
-            ThumbnailStorage::with_thumbnails(thumbnails)
+            Ok(ThumbnailStorage::with_thumbnails(thumbnails))
         })
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
-        self.container();
+        self.container().ok()?;
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main => container.metadata_block(0).and_then(|c| c.1.directory(0)),
@@ -174,7 +178,7 @@ impl RawFileImpl for Cr3File {
 
     /// Load the [`RawImage`] and return it.
     fn load_rawdata(&self, _skip_decompression: bool) -> Result<RawImage> {
-        self.container();
+        self.container()?;
         let container = self.container.get().unwrap();
 
         if !container.is_track_video(2).unwrap_or(false) {
@@ -249,7 +253,7 @@ impl Dump for Cr3File {
         // dump container
         {
             let indent = indent + 1;
-            self.container();
+            let _ = self.container();
             self.container.get().unwrap().write_dump(out, indent);
         }
         dump_writeln!(out, indent, "</Canon CR3 File>");

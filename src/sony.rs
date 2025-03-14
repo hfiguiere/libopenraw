@@ -37,8 +37,8 @@ use crate::tiff::exif::{self, ExifValue};
 use crate::tiff::{Dir, Ifd, LoaderFixup};
 use crate::{tiff, utils};
 use crate::{
-    AspectRatio, Bitmap, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage,
-    Rect, Result, Type, TypeId,
+    AspectRatio, Bitmap, Context, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl,
+    RawImage, Rect, Result, Type, TypeId,
 };
 
 macro_rules! sony {
@@ -794,7 +794,7 @@ impl LoaderFixup for ArwFixup {
 pub(crate) struct ArwFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
-    container: OnceCell<tiff::Container>,
+    container: OnceCell<Box<tiff::Container>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
@@ -934,8 +934,9 @@ impl ArwFile {
 
     fn aspect_ratio(&self) -> Option<AspectRatio> {
         use camera_ids::sony::*;
+        let id = self.type_id().ok()?;
         // Heuristics based off ExifTool
-        match self.type_id().1 {
+        match id.1 {
             A200 | A300 | A350 | A700 | A850 | A900 => {
                 // CameraSettings, idx = 85, BigEndian
                 probe!(self.probe, "arw.aspect_ratio.cs1", true);
@@ -991,7 +992,8 @@ impl ArwFile {
 
     fn load_rawdata_arw(&self, dir: &Dir) -> Result<RawImage> {
         let container = self.container.get().unwrap();
-        let rawdata_endian = if self.type_id().1 == camera_ids::sony::R1 {
+        let type_id = self.type_id()?;
+        let rawdata_endian = if type_id.1 == camera_ids::sony::R1 {
             Endian::Big
         } else {
             container.endian()
@@ -1037,7 +1039,7 @@ impl ArwFile {
                 // Make this in a common area.
                 let levels = MATRICES
                     .iter()
-                    .find(|m| m.camera == self.type_id())
+                    .find(|m| m.camera == type_id)
                     .map(|m| (m.black, m.white));
 
                 if let Some(blacks) = dir.uint_value_array(exif::ARW_TAG_BLACK_LEVELS) {
@@ -1090,49 +1092,55 @@ impl RawFileImpl for ArwFile {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        *self.type_id.get_or_init(|| {
-            if let Some(maker_note) = self.maker_note_ifd() {
-                if let Some(id) = maker_note.uint_value(exif::MNOTE_SONY_MODEL_ID) {
-                    log::debug!("Sony model ID: {:x} ({})", id, id);
-                    return SONY_MODEL_ID_MAP
-                        .get(&id)
-                        .copied()
-                        .unwrap_or(sony!(UNKNOWN));
-                } else {
-                    log::error!("Sony model ID tag not found");
+    fn identify_id(&self) -> Result<TypeId> {
+        self.type_id
+            .get_or_try_init(|| {
+                self.container()?;
+                if let Some(maker_note) = self.maker_note_ifd() {
+                    if let Some(id) = maker_note.uint_value(exif::MNOTE_SONY_MODEL_ID) {
+                        log::debug!("Sony model ID: {:x} ({})", id, id);
+                        return Ok(SONY_MODEL_ID_MAP
+                            .get(&id)
+                            .copied()
+                            .unwrap_or(sony!(UNKNOWN)));
+                    } else {
+                        log::error!("Sony model ID tag not found");
+                    }
                 }
-            }
-            // The A100 is broken we use a fallback
-            // But when it's no longer broken, we might be able to get away with this
-            let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(sony!(UNKNOWN))
-        })
+                // The A100 is broken we use a fallback
+                // But when it's no longer broken, we might be able to get away with this
+                let container = self.container.get().unwrap();
+                Ok(tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(sony!(UNKNOWN)))
+            })
+            .copied()
     }
 
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container =
-                tiff::Container::new(view, vec![(tiff::IfdType::Main, None)], self.type_());
-            container
-                .load(Some(Box::<ArwFixup>::default()))
-                .expect("Arw container error");
-            container
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                let mut container =
+                    tiff::Container::new(view, vec![(tiff::IfdType::Main, None)], self.type_());
+                container
+                    .load(Some(Box::<ArwFixup>::default()))
+                    .context("Arw container error")?;
+                Ok(Box::new(container))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
-            self.container();
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
+            self.container()?;
             let container = self.container.get().unwrap();
-            ThumbnailStorage::with_thumbnails(tiff::tiff_thumbnails(container))
+            Ok(ThumbnailStorage::with_thumbnails(tiff::tiff_thumbnails(
+                container,
+            )))
         })
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&Dir> {
-        self.container();
+        self.container().ok()?;
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main => container.directory(0),
@@ -1181,7 +1189,7 @@ impl Dump for ArwFile {
         dump_writeln!(out, indent, "<Sony ARW File>");
         {
             let indent = indent + 1;
-            self.container();
+            let _ = self.container();
             self.container.get().unwrap().write_dump(out, indent);
         }
         dump_writeln!(out, indent, "</Sony ARW File>");

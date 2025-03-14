@@ -38,7 +38,8 @@ use crate::tiff;
 use crate::tiff::{exif, Ifd, IfdType};
 use crate::utils;
 use crate::{
-    DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type, TypeId,
+    Context, DataType, Dump, Error, RawFile, RawFileHandle, RawFileImpl, RawImage, Result, Type,
+    TypeId,
 };
 
 /// The MakerNote tag names. It's actually the same as Olympus.
@@ -83,7 +84,7 @@ lazy_static::lazy_static! {
 pub(crate) struct ErfFile {
     reader: Rc<Viewer>,
     type_id: OnceCell<TypeId>,
-    container: OnceCell<tiff::Container>,
+    container: OnceCell<Box<tiff::Container>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
@@ -106,29 +107,32 @@ impl RawFileImpl for ErfFile {
     #[cfg(feature = "probe")]
     probe_imp!();
 
-    fn identify_id(&self) -> TypeId {
-        *self.type_id.get_or_init(|| {
-            self.container();
-            let container = self.container.get().unwrap();
-            tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(epson!(UNKNOWN))
-        })
+    fn identify_id(&self) -> Result<TypeId> {
+        self.type_id
+            .get_or_try_init(|| {
+                self.container()?;
+                let container = self.container.get().unwrap();
+                Ok(tiff::identify_with_exif(container, &MAKE_TO_ID_MAP).unwrap_or(epson!(UNKNOWN)))
+            })
+            .copied()
     }
 
     /// Return a lazily loaded `tiff::Container`
-    fn container(&self) -> &dyn RawContainer {
-        self.container.get_or_init(|| {
-            // XXX we should be faillible here.
-            let view = Viewer::create_view(&self.reader, 0).expect("Created view");
-            let mut container =
-                tiff::Container::new(view, vec![(IfdType::Main, None)], self.type_());
-            container.load(None).expect("IFD container error");
-            container
-        })
+    fn container(&self) -> Result<&dyn RawContainer> {
+        self.container
+            .get_or_try_init(|| {
+                let view = Viewer::create_view(&self.reader, 0).context("Error creating view")?;
+                let mut container =
+                    tiff::Container::new(view, vec![(IfdType::Main, None)], self.type_());
+                container.load(None).context("IFD container error")?;
+                Ok(Box::new(container))
+            })
+            .map(|b| b.as_ref() as &dyn RawContainer)
     }
 
-    fn thumbnails(&self) -> &ThumbnailStorage {
-        self.thumbnails.get_or_init(|| {
-            self.container();
+    fn thumbnails(&self) -> Result<&ThumbnailStorage> {
+        self.thumbnails.get_or_try_init(|| {
+            self.container()?;
             let container = self.container.get().unwrap();
             let mut thumbnails = tiff::tiff_thumbnails(container);
             self.maker_note_ifd().and_then(|mnote| {
@@ -147,12 +151,12 @@ impl RawFileImpl for ErfFile {
                 })
             });
 
-            ThumbnailStorage::with_thumbnails(thumbnails)
+            Ok(ThumbnailStorage::with_thumbnails(thumbnails))
         })
     }
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
-        self.container();
+        self.container().ok()?;
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main => container.directory(0),
@@ -170,7 +174,7 @@ impl RawFileImpl for ErfFile {
                 Error::NotFound
             })
             .and_then(|ifd| {
-                self.container();
+                self.container()?;
                 tiff::tiff_get_rawdata(self.container.get().unwrap(), ifd, self.type_()).map(
                     |mut rawdata| {
                         self.maker_note_ifd().and_then(|mnote| {
@@ -236,7 +240,7 @@ impl Dump for ErfFile {
         dump_writeln!(out, indent, "<Epson ERF File>");
         {
             let indent = indent + 1;
-            self.container();
+            let _ = self.container();
             self.container.get().unwrap().write_dump(out, indent);
         }
         dump_writeln!(out, indent, "</Epson ERF File>");

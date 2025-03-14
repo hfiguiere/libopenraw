@@ -2,7 +2,7 @@
 /*
  * libopenraw - test/testsuite.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -194,10 +194,12 @@ fn raw_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
 
 fn thumbnail_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
     let mut count = 0;
+    let thumbnail_sizes = rawfile
+        .thumbnail_sizes()
+        .expect("Couldn't check thumbnail sizes.");
     // Check the number of thumbnails
     if let Some(thumb_num) = results.thumb_num {
         count += 1;
-        let thumbnail_sizes = rawfile.thumbnail_sizes();
         assert_eq!(
             thumb_num as usize,
             thumbnail_sizes.len(),
@@ -207,7 +209,6 @@ fn thumbnail_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
 
     if let Some(ref sizes) = results.thumb_sizes {
         count += 1;
-        let thumbnail_sizes = rawfile.thumbnail_sizes();
         assert_eq!(
             thumbnail_sizes.len(),
             sizes.len(),
@@ -221,9 +222,9 @@ fn thumbnail_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
         }
     }
 
+    let thumbnails = rawfile.thumbnails().expect("Couldn't get thumbnails");
     if let Some(ref thumb_formats) = results.thumb_formats {
         count += 1;
-        let thumbnails = rawfile.thumbnails();
         let formats: Vec<DataType> = thumb_formats.split(' ').map(DataType::from).collect();
 
         assert_eq!(
@@ -241,7 +242,6 @@ fn thumbnail_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
 
     if let Some(ref data_sizes) = results.thumb_data_sizes {
         count += 1;
-        let thumbnails = rawfile.thumbnails();
         assert_eq!(
             thumbnails.thumbnails.len(),
             data_sizes.len(),
@@ -258,7 +258,6 @@ fn thumbnail_test(results: &Results, rawfile: &dyn RawFile) -> u32 {
 
     if let Some(ref md5s) = results.thumb_md5 {
         count += 1;
-        let thumbnails = rawfile.thumbnails();
         assert_eq!(
             thumbnails.thumbnails.len(),
             md5s.len(),
@@ -304,11 +303,12 @@ impl TestRun for Results {
             );
         }
         // Check RAW file ID
+        let type_id = rawfile.type_id().expect("Couldn't find type ID");
         if let Some(raw_type_id) = self.raw_type_id {
             count += 1;
             assert_eq!(
                 TypeId::from(raw_type_id),
-                rawfile.type_id(),
+                type_id,
                 "Incorrect Raw file TypeID"
             );
         }
