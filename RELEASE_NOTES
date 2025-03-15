@@ -11,6 +11,7 @@ What's (visibly) new in 0.4.0-alpha.10
 - DNG: decompress the tiles.
 - Fujifilm RAF: get black and white levels. Fix decoding for non
   X-Trans X-series. Decompress the raw data.
+  - Fix maker note on SPro2 and others.
 - Leica: Support Leica D-Lux MakerNote in DNG (D-Lux 8).
 - Olympus ORF:
   - Get active area, black levels.
@@ -25,7 +26,7 @@ What's (visibly) new in 0.4.0-alpha.10
 - Properly set black & white files for DNG, ERF, PEF, CR2, CRW, RAF,
   RAW, RW2.
 - Support rendering to sRGB with proper colours.
-- 50 new cameras listed.
+- 52 new cameras listed.
 - 1 camera properly identified.
 
 What's (visibly) new in 0.3.7

@@ -3,9 +3,18 @@ libopenraw 0.4.0-alpha.10 -
 Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
-  - Panasonic GH7*
+  - Panasonic GH7*, S1RII*.
   - OM System OM-3*
+  - Sigma BF (DNG)
   - Sony UMC-R10C (alias)
+
+Bug fixes:
+
+  - Fujifilm: Fix makernotes on SPro2 and other Big Endian files.
+  - Update to latest Rust compiler.
+  - Fix thumbnails on Ricoh GXR A16 DNG files.
+  - Now opening the RAW file can fail without panic. More API return
+    Result<>
 
 libopenraw 0.4.0-alpha.9 - 2024/12/24
 
