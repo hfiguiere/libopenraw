@@ -378,12 +378,14 @@ impl RawFileImpl for RafFile {
                 };
 
                 log::debug!("RAF raw props {:x}", raw_props);
+                probe!(self.probe, "raf.raw_props", format!("0x{raw_props:08x}"));
+                // layout is the LSB of raw_props. First byte as it is bigendian.
                 let layout = (raw_props & 0xff000000) >> 24 >> 7;
-                probe!(self.probe, "raf.layout", layout);
+                probe!(self.probe, "raf.raw_props.layout", layout);
                 // This is unclear how significant it is as on X-Trans
                 // compressed this is 0.
-                let compression = ((raw_props & 0xff0000) >> 18) & 8;
-                probe!(self.probe, "raf.compression", compression);
+                let compression = ((raw_props & 0x00ff0000) >> 16) & 8;
+                probe!(self.probe, "raf.raw_props.compression", compression);
                 let compressed = compression != 0;
                 log::debug!("compressed {compressed}");
 
