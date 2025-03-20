@@ -110,7 +110,7 @@
       <rawDataDimensions>5360 3516</rawDataDimensions>
       <rawDataActiveArea>168 56 5184 3456</rawDataActiveArea>
       <rawDataUserCrop>168 56 5184 3456</rawDataUserCrop>
-      <rawDataUserAspectRatio>NONE</rawDataUserAspectRatio>
+      <rawDataUserAspectRatio>3 2</rawDataUserAspectRatio>
       <rawCfaPattern>GBRG</rawCfaPattern>
       <rawMinValue>2046 2046 2049 2049</rawMinValue>
       <rawMaxValue>13584 13584 13584 13584</rawMaxValue>

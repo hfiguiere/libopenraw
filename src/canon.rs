@@ -398,7 +398,8 @@ impl AspectInfo {
             return None;
         }
         let aspect_ratio = match aspect_info[0] {
-            0 | 12 | 13 => Some(AspectRatio(3, 2)),
+            // 256 seen on 7D firmware 2.0.3
+            0 | 12 | 13 | 256 => Some(AspectRatio(3, 2)),
             1 => Some(AspectRatio(1, 1)),
             2 | 258 => Some(AspectRatio(4, 3)),
             7 => Some(AspectRatio(16, 9)),
