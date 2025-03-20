@@ -84,6 +84,7 @@ lazy_static::lazy_static! {
         fuji!("GFX 100", GFX100),
         fuji!("GFX100 II", GFX100_II),
         fuji!("GFX100S", GFX100S),
+        fuji!("GFX100RF", GFX100RF),
         fuji!("FinePix F550EXR", F550EXR),
         fuji!("FinePix F700  ", F700),
         fuji!("FinePix F810   ", F810),
@@ -315,13 +316,31 @@ impl RawFileImpl for RafFile {
                             .and_then(|size| Size::try_from(size).ok())
                             .map(|size| Rect::new(topleft, size))
                     });
+                let lens_crop = container
+                    .value(raf::TAG_CROPPED)
+                    .and_then(|cropped| u32::try_from(cropped).ok())
+                    .map(|cropped| (cropped & 0x00000001) == 1)
+                    .unwrap_or(false);
+                let user_crop = if lens_crop {
+                    container
+                        .value(raf::TAG_CROP_TOP_LEFT)
+                        .and_then(|topleft| Point::try_from(topleft).ok())
+                        .and_then(|topleft| {
+                            container
+                                .value(raf::TAG_CROP_HEIGHT_WIDTH)
+                                .and_then(|size| Size::try_from(size).ok())
+                                .map(|size| Rect::new(topleft, size))
+                        })
+                } else {
+                    active_area.clone()
+                };
                 let aspect_ratio = container
                     .value(raf::TAG_IMG_ASPECT_RATIO)
                     .and_then(|aspect_ratio| AspectRatio::try_from(aspect_ratio).ok());
                 let crop = aspect_ratio.and_then(|aspect_ratio| {
-                    active_area
+                    user_crop
                         .as_ref()
-                        .map(|active_area| aspect_ratio.crop_into(active_area))
+                        .map(|user_crop| aspect_ratio.crop_into(user_crop))
                 });
                 let raw_props = container
                     .value(raf::TAG_RAW_INFO)

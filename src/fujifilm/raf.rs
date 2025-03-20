@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-Copyright: (C) 2022-2023 Hubert Figuière
+// SPDX-Copyright: (C) 2022-2025 Hubert Figuière
 
 //! RAF specific containers and type
 
@@ -399,10 +399,16 @@ pub(super) const TAG_SENSOR_DIMENSION: u16 = 0x100;
 pub(super) const TAG_IMG_TOP_LEFT: u16 = 0x110;
 /// Width Height of activate area
 pub(super) const TAG_IMG_HEIGHT_WIDTH: u16 = 0x111;
-// Aspect Ratio. h / w
+/// Aspect Ratio. h / w
 pub(super) const TAG_IMG_ASPECT_RATIO: u16 = 0x115;
+/// Set to 1 on GFX100RF when using "lens crop".
+pub(super) const TAG_CROPPED: u16 = 0x117;
+/// Cropped top left before aspect ratio.
+pub(super) const TAG_CROP_TOP_LEFT: u16 = 0x118;
+/// Cropped dimensions before aspect ratio.
+pub(super) const TAG_CROP_HEIGHT_WIDTH: u16 = 0x119;
 const TAG_OUTPUT_HEIGHT_WIDTH: u16 = 0x121;
-/// Some info about the RAW. Sametime called "layout".
+/// Some info about the RAW. Sometime called "layout".
 pub(super) const TAG_RAW_INFO: u16 = 0x130;
 /// Colour Filter Array pattern
 pub(super) const TAG_CFA_PATTERN: u16 = 0x131;
@@ -454,6 +460,9 @@ lazy_static::lazy_static! {
         (TAG_IMG_TOP_LEFT, ("ImageTopLeft", RafTagType::U16x2)),
         (TAG_IMG_HEIGHT_WIDTH, ("ImageHeightWidth", RafTagType::U16x2)),
         (TAG_IMG_ASPECT_RATIO, ("ImageAspectRatio", RafTagType::U16x2)),
+        (TAG_CROPPED, ("Cropped", RafTagType::U32)),
+        (TAG_CROP_TOP_LEFT, ("CropTopLeft", RafTagType::U16x2)),
+        (TAG_CROP_HEIGHT_WIDTH, ("CropHeightWidth", RafTagType::U16x2)),
         (TAG_OUTPUT_HEIGHT_WIDTH, ("OutputHeightWidth", RafTagType::U16x2)),
         (TAG_RAW_INFO, ("RawInfo", RafTagType::U32)),
         (TAG_CFA_PATTERN, ("CfaPattern", RafTagType::Bytes)),
@@ -488,6 +497,16 @@ impl std::fmt::Display for Value {
                     write!(f, "U32s {b:?} len={}", b.len())
                 }
             }
+        }
+    }
+}
+
+impl std::convert::TryFrom<&Value> for u32 {
+    type Error = crate::Error;
+    fn try_from(v: &Value) -> Result<Self> {
+        match v {
+            Value::Int(n) => Ok(*n),
+            _ => Err(Error::InvalidFormat),
         }
     }
 }

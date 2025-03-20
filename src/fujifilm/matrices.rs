@@ -2,7 +2,7 @@
 /*
  * libopenraw - fujifilm/matrices.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,7 +26,7 @@ use crate::fuji;
 use crate::TypeId;
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 72] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 73] = [
         BuiltinMatrix::new(
             fuji!(F550EXR),
             0,
@@ -390,5 +390,10 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199 ] ),
+        BuiltinMatrix::new(
+            fuji!(GFX100RF),
+            0,
+            0,
+            [ 12806, -5779, -1110, -3546, 11507, 2318, -177, 995, 5715 ] ),
     ];
 }
