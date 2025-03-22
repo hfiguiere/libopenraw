@@ -332,7 +332,7 @@ pub static ref EXIF_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
     ( 0x923b, "CIP3Sheet" ),
     ( 0x923c, "CIP3Side" ),
     ( 0x923f, "StoNits" ),
-    ( 0x927c, "MakerNoteApple" ),
+    ( 0x927c, "MakerNote" ),
     ( 0x9286, "UserComment" ),
     ( 0x9290, "SubSecTime" ),
     ( 0x9291, "SubSecTimeOriginal" ),
