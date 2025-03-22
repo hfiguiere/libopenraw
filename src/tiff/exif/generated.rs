@@ -1077,6 +1077,7 @@ pub static ref MNOTE_OLYMPUS_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fr
     ( 0x404, "SerialNumber" ),
     ( 0x405, "Firmware" ),
     ( 0xe00, "PrintIM" ),
+    ( 0xe80, "EsponWB" ),
     ( 0xf00, "DataDump" ),
     ( 0xf01, "DataDump2" ),
     ( 0xf04, "ZoomedPreviewStart" ),
@@ -2161,4 +2162,3 @@ pub static ref RAW_PANASONIC_CAMERAIFD_TAG_NAMES: HashMap<u16, &'static str> = H
     ( 0x3600, "WhiteBalanceDetected" ),
     ]);
 }
-
