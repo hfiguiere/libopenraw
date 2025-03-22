@@ -479,7 +479,7 @@ pub static ref EXIF_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
     ( 0xc631, "ChromaBlurRadius" ),
     ( 0xc632, "AntiAliasStrength" ),
     ( 0xc633, "ShadowScale" ),
-    ( 0xc634, "SR2Private" ),
+    ( 0xc634, "DNGPrivateData" ),
     ( 0xc635, "MakerNoteSafety" ),
     ( 0xc640, "RawImageSegmentation" ),
     ( 0xc65a, "CalibrationIlluminant1" ),
