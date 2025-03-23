@@ -246,6 +246,18 @@ impl Dir {
                     );
                 }
 
+                // Ricoh post Pentax merger
+                if &data[0..6] == b"RICOH\0" {
+                    return Dir::new_makernote(
+                        b"Exif.Pentax\0",
+                        container,
+                        container::Endian::Unset,
+                        offset + 8,
+                        offset + 8,
+                        &pentax::MNOTE_TAG_NAMES,
+                    );
+                }
+
                 // Panasonic
                 if &data[0..10] == b"Panasonic\0" {
                     return Dir::new_makernote(
@@ -455,6 +467,12 @@ impl Dir {
                     );
                 }
 
+                // This is the Maker Note found in the Sigma fp
+                // that also has the regular one in the DNG Private.
+                if &data[0..16] == b"SIGMA_EXTH_SPPA\0" {
+                    return Err(Error::UnsupportedMakerNote);
+                }
+
                 if &data[10..14] == b"MLT0" {
                     return Dir::new_makernote(
                         b"Exif.Minolta\0",
@@ -464,6 +482,16 @@ impl Dir {
                         offset,
                         &minolta::MNOTE_TAG_NAMES,
                     );
+                }
+
+                if &data[0..6] == b"Nokia\0" {
+                    log::debug!("Nokia MakerNote (Unknown)");
+                    return Err(Error::UnsupportedMakerNote);
+                }
+
+                if &data[0..6] == b"Adobe\0" {
+                    log::debug!("Adobe Converted MakerNote");
+                    return Err(Error::UnsupportedMakerNote);
                 }
 
                 // Others
@@ -480,6 +508,11 @@ impl Dir {
                 // Google Pixel
                 // BLOB
                 if &data[0..4] == b"HDRP" {
+                    return Err(Error::UnsupportedMakerNote);
+                }
+                // Hasselblad/DJI
+                // BLOB
+                if &data[0..13] == b"[ae_dbg_info:" {
                     return Err(Error::UnsupportedMakerNote);
                 }
             }
