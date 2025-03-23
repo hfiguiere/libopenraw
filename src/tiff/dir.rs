@@ -679,18 +679,26 @@ impl Dir {
             })
     }
 
-    /// Get the MakerNote IFD from the directory
+    /// Get the Maker Note IFD from the `tag`.
+    pub(crate) fn mnote_ifd_for_tag(&self, container: &tiff::Container, tag: u16) -> Option<Dir> {
+        self.entry(tag).and_then(|e| e.offset()).and_then(|offset| {
+            Dir::create_maker_note(container, offset)
+                .map_err(|e| {
+                    log::warn!("Coudln't create maker_note: {}", e);
+                    e
+                })
+                .ok()
+        })
+    }
+
+    /// Get the Maker Note IFD from the directory
     pub(crate) fn get_mnote_ifd(&self, container: &tiff::Container) -> Option<Dir> {
-        self.entry(exif::EXIF_TAG_MAKER_NOTE)
-            .and_then(|e| e.offset())
-            .and_then(|offset| {
-                Dir::create_maker_note(container, offset)
-                    .map_err(|e| {
-                        log::warn!("Coudln't create maker_note: {}", e);
-                        e
-                    })
-                    .ok()
-            })
+        self.mnote_ifd_for_tag(container, exif::EXIF_TAG_MAKER_NOTE)
+    }
+
+    /// Get the Maker Note IFD from the directory
+    pub(crate) fn get_dng_private_ifd(&self, container: &tiff::Container) -> Option<Dir> {
+        self.mnote_ifd_for_tag(container, exif::DNG_TAG_DNG_PRIVATE)
     }
 
     /// Get the GPSInfo IFD from the directory

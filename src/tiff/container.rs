@@ -37,7 +37,7 @@ use crate::jpeg;
 use crate::metadata;
 use crate::thumbnail;
 use crate::tiff::exif::TagMap;
-use crate::tiff::{Dir, Entry, IfdType};
+use crate::tiff::{exif, Dir, Entry, IfdType};
 use crate::Type as RawType;
 use crate::{DataType, Dump, Error, Result};
 
@@ -73,6 +73,8 @@ pub(crate) struct Container {
     exif_ifd: OnceCell<Option<Dir>>,
     /// The MakerNote IFD
     mnote_ifd: OnceCell<Option<Dir>>,
+    /// The DNG Private IFD
+    dng_private_ifd: OnceCell<Option<Dir>>,
     raw_type: RawType,
     /// Loader fixup for quirks (ie almost TIFF)
     pub(crate) loader_fixup: Option<Box<dyn LoaderFixup>>,
@@ -87,6 +89,7 @@ impl std::fmt::Debug for Container {
             .field("dir_map", &self.dir_map)
             .field("exif_ifd", &self.exif_ifd)
             .field("mnote_ifd", &self.mnote_ifd)
+            .field("dng_private_ifd", &self.dng_private_ifd)
             .field("raw_type", &self.raw_type)
             .field(
                 "loader_fixup",
@@ -141,6 +144,7 @@ impl Container {
             dir_map,
             exif_ifd: OnceCell::new(),
             mnote_ifd: OnceCell::new(),
+            dng_private_ifd: OnceCell::new(),
             raw_type,
             loader_fixup: None,
         }
@@ -325,6 +329,17 @@ impl Container {
             .as_ref()
     }
 
+    /// Lazily load the MakerNote and return it.
+    pub(crate) fn dng_private_dir(&self) -> Option<&Dir> {
+        self.dng_private_ifd
+            .get_or_init(|| {
+                log::debug!("Loading MakerNote (DNG Private)");
+                self.directory(0)?
+                    .mnote_ifd_for_tag(self, exif::DNG_TAG_DNG_PRIVATE)
+            })
+            .as_ref()
+    }
+
     /// Add the thumbnail from data in the container
     pub(crate) fn add_thumbnail_from_stream(
         &self,
@@ -405,6 +420,9 @@ impl Dump for Container {
                     if let Some(mnote_dir) = exif_dir.get_mnote_ifd(self) {
                         mnote_dir.write_dump(out, indent + 2);
                     }
+                }
+                if let Some(dng_private_data) = dir.get_dng_private_ifd(self) {
+                    dng_private_data.write_dump(out, indent + 1);
                 }
                 if let Some(gps_dir) = dir.get_gpsinfo_ifd(self) {
                     gps_dir.write_dump(out, indent + 1);

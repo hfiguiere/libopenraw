@@ -42,10 +42,11 @@ use super::exif::{ExifValue, Rational, SRational, TagType};
 enum DataBytes {
     /// Inline data. In the IFD byte order.
     Inline([u8; 4]),
-    /// External data loaded from the contain in the IFD byte order.
+    /// External data loaded from the container in the IFD byte order.
     External(Vec<u8>),
     /// Offset of the data in the container. This is only for
-    /// `Undefined` entry types. Use `Entry::offset()` to retrieve it.
+    /// `Undefined` or `Byte` entry types. Use `Entry::offset()` to
+    /// retrieve it.
     Offset(u32, Vec<u8>),
 }
 
@@ -156,7 +157,7 @@ impl Entry {
         let data = self.load_data_impl(actual_offset, view)?;
 
         let bytes = data.len();
-        if self.type_ == TagType::Undefined as i16 {
+        if self.type_ == TagType::Undefined as i16 || self.type_ == TagType::Byte as i16 {
             self.set_offset(offset, data);
         } else {
             self.data = DataBytes::External(data);

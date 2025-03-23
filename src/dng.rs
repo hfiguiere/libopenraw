@@ -318,8 +318,9 @@ impl RawFileImpl for DngFile {
 
     fn ifd(&self, ifd_type: tiff::IfdType) -> Option<&tiff::Dir> {
         self.container().ok()?;
+        let container = self.container.get()?;
         match ifd_type {
-            tiff::IfdType::Main => self.container.get().unwrap().directory(0),
+            tiff::IfdType::Main => container.directory(0),
             tiff::IfdType::Raw => {
                 // This is the TIFF/EP way.
                 // XXX eventually refactor for NEF
@@ -329,14 +330,17 @@ impl RawFileImpl for DngFile {
                         probe!(self.probe, "dng.main_is_primary", "true");
                         Some(dir)
                     } else {
-                        dir.get_sub_ifds(self.container.get().unwrap())
+                        dir.get_sub_ifds(container)
                             .iter()
                             .find(|subdir| subdir.is_primary())
                     }
                 })
             }
-            tiff::IfdType::Exif => self.container.get().unwrap().exif_dir(),
-            tiff::IfdType::MakerNote => self.container.get().unwrap().mnote_dir(),
+            tiff::IfdType::Exif => container.exif_dir(),
+            tiff::IfdType::MakerNote => container.mnote_dir().or_else(|| {
+                log::debug!("No MakerNote, switch to DNGPrivateData");
+                container.dng_private_dir()
+            }),
             _ => None,
         }
     }
