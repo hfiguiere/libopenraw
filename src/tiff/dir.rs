@@ -470,17 +470,17 @@ impl Dir {
 
                 // Seitz 617, unknown format, doesn't look like an IFD.
                 if &data[0..19] == b"SEITZ PHOTOTECHNIK\0" {
-                    return Err(Error::InvalidFormat);
+                    return Err(Error::UnsupportedMakerNote);
                 }
                 // SilverFast scanner. (Plustek)
                 // Doesn't follow the standard.
                 if &data[0..5] == b"LSI1\0" {
-                    return Err(Error::InvalidFormat);
+                    return Err(Error::UnsupportedMakerNote);
                 }
                 // Google Pixel
                 // BLOB
                 if &data[0..4] == b"HDRP" {
-                    return Err(Error::InvalidFormat);
+                    return Err(Error::UnsupportedMakerNote);
                 }
             }
         }

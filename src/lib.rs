@@ -133,6 +133,9 @@ pub enum Error {
     /// File format is unrecognized
     #[error("Unrecognized format")]
     UnrecognizedFormat,
+    /// Maker Note not supported
+    #[error("Unsupported Maker Note")]
+    UnsupportedMakerNote,
     /// Not supported
     #[error("Operation not supported")]
     NotSupported,
