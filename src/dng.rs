@@ -447,7 +447,9 @@ impl Dump for DngFile {
         {
             let indent = indent + 1;
             let _ = self.container();
-            self.container.get().unwrap().write_dump(out, indent);
+            if let Some(container) = self.container.get() {
+                container.write_dump(out, indent);
+            }
         }
         dump_writeln!(out, indent, "</DNG File>");
     }
