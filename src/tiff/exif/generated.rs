@@ -1642,6 +1642,14 @@ pub static ref MNOTE_LEICA2_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fro
 
 lazy_static::lazy_static! {
 /// Exif tag names
+pub static ref MNOTE_LEICA3_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+    ( 0xb, "SerialInfo" ),
+    ( 0xd, "WB_RGBLevels" ),
+    ]);
+}
+
+lazy_static::lazy_static! {
+/// Exif tag names
 pub static ref MNOTE_LEICA4_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
     ( 0x3000, "Subdir3000" ),
     ( 0x3100, "Subdir3100" ),

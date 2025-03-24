@@ -93,6 +93,7 @@ output_table(\%Image::ExifTool::Olympus::FocusInfo, "mnote_olympus_fi_tag_names"
 output_table(\%Image::ExifTool::Olympus::RawInfo, "mnote_olympus_ri_tag_names");
 output_table(\%Image::ExifTool::Panasonic::Main, "mnote_panasonic_tag_names");
 output_table(\%Image::ExifTool::Panasonic::Leica2, "mnote_leica2_tag_names");
+output_table(\%Image::ExifTool::Panasonic::Leica3, "mnote_leica3_tag_names");
 output_table(\%Image::ExifTool::Panasonic::Leica4, "mnote_leica4_tag_names");
 output_table(\%Image::ExifTool::Panasonic::Leica5, "mnote_leica5_tag_names");
 output_table(\%Image::ExifTool::Panasonic::Leica6, "mnote_leica6_tag_names");

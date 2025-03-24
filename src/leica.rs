@@ -2,7 +2,7 @@
 /*
  * libopenraw - leica.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -43,6 +43,7 @@ macro_rules! leica {
 }
 
 pub use tiff::exif::generated::MNOTE_LEICA2_TAG_NAMES as MNOTE_TAG_NAMES_2;
+pub use tiff::exif::generated::MNOTE_LEICA3_TAG_NAMES as MNOTE_TAG_NAMES_3;
 pub use tiff::exif::generated::MNOTE_LEICA4_TAG_NAMES as MNOTE_TAG_NAMES_4;
 pub use tiff::exif::generated::MNOTE_LEICA5_TAG_NAMES as MNOTE_TAG_NAMES_5;
 pub use tiff::exif::generated::MNOTE_LEICA6_TAG_NAMES as MNOTE_TAG_NAMES_6;
