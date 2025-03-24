@@ -998,8 +998,9 @@ impl ArwFile {
         } else {
             container.endian()
         };
-        tiff::tiff_get_rawdata_with_endian(container, dir, self.type_(), rawdata_endian).map(
-            |mut rawimage| {
+        container
+            .rawdata_with_endian(dir, self.type_(), rawdata_endian)
+            .map(|mut rawimage| {
                 rawimage.set_active_area(Some(Rect {
                     x: 0,
                     y: 0,
@@ -1053,8 +1054,7 @@ impl ArwFile {
                     rawimage.set_whites([white; 4]);
                 }
                 rawimage
-            },
-        )
+            })
     }
 
     fn load_rawdata_a100(&self, dir: &Dir) -> Result<RawImage> {
@@ -1133,9 +1133,7 @@ impl RawFileImpl for ArwFile {
         self.thumbnails.get_or_try_init(|| {
             self.container()?;
             let container = self.container.get().unwrap();
-            Ok(ThumbnailStorage::with_thumbnails(tiff::tiff_thumbnails(
-                container,
-            )))
+            Ok(ThumbnailStorage::with_thumbnails(container.thumbnails()))
         })
     }
 
@@ -1148,7 +1146,7 @@ impl RawFileImpl for ArwFile {
                 if self.is_a100() {
                     container.directory(0)
                 } else {
-                    tiff::tiff_locate_raw_ifd(container)
+                    container.locate_raw_ifd()
                 }
             }
             tiff::IfdType::Exif => container.exif_dir(),

@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/container.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,16 +30,17 @@ use log::error;
 use once_cell::unsync::OnceCell;
 
 use crate::container;
-use crate::container::RawContainer;
+use crate::container::{Endian, RawContainer};
+use crate::decompress;
 use crate::io;
 use crate::io::View;
 use crate::jpeg;
 use crate::metadata;
 use crate::thumbnail;
 use crate::tiff::exif::TagMap;
-use crate::tiff::{exif, Dir, Entry, IfdType};
+use crate::tiff::{exif, Compression, Dir, Entry, Ifd, IfdType};
 use crate::Type as RawType;
-use crate::{DataType, Dump, Error, Result};
+use crate::{DataType, Dump, Error, RawImage, Result, Type};
 
 pub(crate) type DirIterator<'a> = std::slice::Iter<'a, Dir>;
 
@@ -338,6 +339,285 @@ impl Container {
                     .mnote_ifd_for_tag(self, exif::DNG_TAG_DNG_PRIVATE)
             })
             .as_ref()
+    }
+
+    /// Find the Raw IFD
+    pub(crate) fn locate_raw_ifd(&self) -> Option<&Dir> {
+        let dir = self.directory(0)?;
+
+        if dir.is_primary() {
+            log::debug!("dir0 is primary");
+            return Some(dir);
+        }
+        dir.get_sub_ifds(self).iter().find(|d| d.is_primary())
+    }
+
+    /// Get the raw data
+    pub(crate) fn rawdata(&self, dir: &Dir, file_type: Type) -> Result<RawImage> {
+        self.rawdata_with_endian(dir, file_type, self.endian())
+    }
+
+    /// Get the raw data with a specific endian for the data.
+    pub(crate) fn rawdata_with_endian(
+        &self,
+        dir: &Dir,
+        file_type: Type,
+        endian: Endian,
+    ) -> Result<RawImage> {
+        let mut offset = 0_u32;
+
+        let mut bpc = dir
+            .value::<u16>(exif::EXIF_TAG_BITS_PER_SAMPLE)
+            .or_else(|| {
+                log::error!("Unable to get bits per sample");
+                None
+            })
+            .unwrap_or(0);
+
+        let mut tile_bytes: Option<Vec<u32>> = None;
+        let mut tile_offsets: Option<Vec<u32>> = None;
+        let mut tile_size: Option<(u32, u32)> = None;
+        let byte_len = dir
+            .value::<u32>(exif::EXIF_TAG_STRIP_OFFSETS)
+            .and_then(|v| {
+                offset = v;
+                let entry = dir.entry(exif::EXIF_TAG_STRIP_BYTE_COUNTS).or_else(|| {
+                    log::debug!("byte len not found");
+                    // XXX this might trigger the or_else below
+                    None
+                })?;
+                // In case of overflow, we'll return None
+                entry
+                    .value_array::<u32>(dir.endian())
+                    .map(|a| a.iter().try_fold(0_u32, |sum, &x| sum.checked_add(x)))?
+            })
+            .or_else(|| {
+                tile_bytes = dir
+                    .entry(exif::TIFF_TAG_TILE_BYTECOUNTS)
+                    .and_then(|e| e.value_array::<u32>(dir.endian()));
+                // In case of overflow, we'll return 0 via the unwrap().
+                let tile_bytes_total = tile_bytes
+                    .as_ref()
+                    .and_then(|a| a.iter().try_fold(0_u32, |sum, &x| sum.checked_add(x)))
+                    .unwrap_or(0);
+                tile_offsets = dir
+                    .entry(exif::TIFF_TAG_TILE_OFFSETS)
+                    .and_then(|e| e.value_array::<u32>(dir.endian()));
+                // the tile are individual JPEGS....
+                let x = dir.uint_value(exif::TIFF_TAG_TILE_WIDTH).unwrap_or(0);
+                let y = dir.uint_value(exif::TIFF_TAG_TILE_LENGTH).unwrap_or(0);
+                tile_size = Some((x, y));
+                Some(tile_bytes_total)
+            })
+            .ok_or(Error::NotFound)?;
+
+        let x = dir
+            .uint_value(exif::EXIF_TAG_IMAGE_WIDTH)
+            .or_else(|| {
+                log::debug!("x not found");
+                None
+            })
+            .ok_or(Error::NotFound)?;
+        let y = dir
+            .uint_value(exif::EXIF_TAG_IMAGE_LENGTH)
+            .or_else(|| {
+                log::debug!("y not found");
+                None
+            })
+            .ok_or(Error::NotFound)?;
+        // This will fail if the multiply overflow.
+        let pixel_count = x
+            .checked_mul(y)
+            // if v overflow when muliplied my 2, then it's too big.
+            .and_then(|v| if v > u32::MAX / 2 { None } else { Some(v) })
+            .ok_or(Error::FormatError)?;
+        // Check for excessively large byte_len: pixel_count * 2 should be
+        // a proper limit. But we can't make this an error. iPhone 15 Pro
+        // files trigger it. The actual file length will catch excessive
+        // length.
+        if byte_len > pixel_count * 2 {
+            log::warn!(
+                "TIFF: Raw byte length {byte_len} too large for pixel count {pixel_count} * 2."
+            );
+        }
+        if byte_len as u64 > self.borrow_view_mut().len() {
+            log::error!("TIFF: Raw byte length too large for file size.");
+            return Err(Error::FormatError);
+        }
+        let photom_int = dir
+            .uint_value(exif::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
+            .and_then(|v| exif::PhotometricInterpretation::try_from(v).ok())
+            .unwrap_or(exif::PhotometricInterpretation::CFA);
+
+        let compression = dir
+            .uint_value(exif::EXIF_TAG_COMPRESSION)
+            .map(Compression::from)
+            .map(|compression| {
+                if file_type == Type::Orf && byte_len < pixel_count.checked_mul(2).unwrap_or(0) {
+                    log::debug!("ORF, setting bpc to 12 and data to compressed.");
+                    bpc = 12;
+                    Compression::Olympus
+                } else {
+                    compression
+                }
+            })
+            .unwrap_or(Compression::None);
+
+        let linearization_table = dir
+            .entry(exif::DNG_TAG_LINEARIZATION_TABLE)
+            .and_then(|entry| entry.value_array::<u16>(dir.endian()));
+        let data_type = match compression {
+            Compression::None | Compression::NikonPack | Compression::PentaxPack => DataType::Raw,
+            _ => DataType::CompressedRaw,
+        };
+        // Here a D100 would have compression = NikonQuantized.
+        // But it'll trickle down the Nikon code.
+
+        // Get the mosaic info
+        let mosaic_pattern = super::get_mosaic_info(dir).or_else(|| {
+            log::debug!("Trying mosaic data in Exif");
+            self.exif_dir()
+                .as_ref()
+                .and_then(|exif| super::get_mosaic_info(exif))
+        });
+        log::debug!("mosaic_pattern {:?}", mosaic_pattern);
+
+        // More that 32bits per component is invalid: corrupt file likely.
+        if bpc > 32 {
+            log::error!("TIFF: bpc {} is invalid", bpc);
+            return Err(Error::FormatError);
+        }
+        let actual_bpc = bpc;
+        if (bpc == 12 || bpc == 14)
+            && (compression == Compression::None)
+            && byte_len == (pixel_count * 2)
+        {
+            // it's 12 or 14 bpc, but we have 16 bpc data.
+            log::debug!("setting bpc from {} to 16", bpc);
+            bpc = 16;
+        }
+        let mut rawdata = if data_type == DataType::CompressedRaw {
+            if tile_bytes.is_some() && tile_offsets.is_some() {
+                let tile_bytes = tile_bytes.as_ref().unwrap();
+                let tile_offsets = tile_offsets.as_ref().unwrap();
+                let data = std::iter::zip(tile_offsets, tile_bytes)
+                    .map(|(offset, byte_len)| {
+                        // If we exceed file boundaries, return empty buffers
+                        if *offset as u64 > self.borrow_view_mut().len() {
+                            log::error!("TIFF: trying to load tile past EOF");
+                            vec![]
+                        } else if *byte_len as u64 + *offset as u64 > self.borrow_view_mut().len() {
+                            log::error!("TIFF: byte length for tile exceed file size");
+                            vec![]
+                        } else {
+                            self.load_buffer8(*offset as u64, *byte_len as u64)
+                        }
+                    })
+                    .collect();
+                RawImage::new_tiled(
+                    x,
+                    y,
+                    actual_bpc,
+                    data_type,
+                    data,
+                    tile_size.unwrap(),
+                    mosaic_pattern.unwrap_or_default(),
+                )
+            } else {
+                let data = self.load_buffer8(offset as u64, byte_len as u64);
+                RawImage::with_data8(
+                    x,
+                    y,
+                    actual_bpc,
+                    data_type,
+                    data,
+                    mosaic_pattern.unwrap_or_default(),
+                )
+            }
+        } else if bpc == 16 {
+            let data = if endian == Endian::Big {
+                self.load_buffer16_be(offset as u64, byte_len as u64)
+            } else {
+                self.load_buffer16_le(offset as u64, byte_len as u64)
+            };
+            RawImage::with_data16(
+                x,
+                y,
+                actual_bpc,
+                data_type,
+                data,
+                mosaic_pattern.unwrap_or_default(),
+            )
+        } else if bpc == 10 || bpc == 12 || bpc == 14 {
+            let data = decompress::unpack(
+                self,
+                x,
+                y,
+                bpc,
+                compression,
+                offset as u64,
+                byte_len as usize,
+            )?;
+            RawImage::with_data16(
+                x,
+                y,
+                actual_bpc,
+                data_type,
+                data,
+                mosaic_pattern.unwrap_or_default(),
+            )
+        } else if bpc == 8 {
+            let data = self.load_buffer8(offset as u64, byte_len as u64);
+            // XXX is this efficient?
+            RawImage::with_data16(
+                x,
+                y,
+                bpc,
+                data_type,
+                data.iter().map(|v| *v as u16).collect(),
+                mosaic_pattern.unwrap_or_default(),
+            )
+        } else {
+            log::error!("Invalid RAW format, unsupported bpc {}", bpc);
+            return Err(Error::InvalidFormat);
+        };
+
+        rawdata.set_linearization_table(linearization_table);
+        // XXX maybe we don't need the if
+        rawdata.set_compression(if data_type == DataType::CompressedRaw {
+            compression
+        } else {
+            Compression::None
+        });
+        rawdata.set_photometric_interpretation(photom_int);
+        if rawdata.whites()[0] == 0 {
+            let white: u32 = (1_u32 << actual_bpc) - 1;
+            rawdata.set_whites([white as u16; 4]);
+        }
+
+        Ok(rawdata)
+    }
+
+    /// Get the thumbnails out of a TIFF
+    pub(crate) fn thumbnails(&self) -> Vec<(u32, thumbnail::ThumbDesc)> {
+        let mut thumbnails = Vec::new();
+
+        let dirs = self.dirs();
+        for dir in dirs {
+            if dir.ifd_type() == IfdType::Raw {
+                continue;
+            }
+            dir.locate_thumbnail(self, &mut thumbnails);
+
+            let subdirs = dir.get_sub_ifds(self);
+            for subdir in subdirs {
+                subdir.locate_thumbnail(self, &mut thumbnails);
+            }
+        }
+
+        log::debug!("Found {} thumbnails", thumbnails.len());
+
+        thumbnails
     }
 
     /// Add the thumbnail from data in the container

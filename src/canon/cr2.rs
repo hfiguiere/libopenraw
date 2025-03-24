@@ -357,9 +357,7 @@ impl RawFileImpl for Cr2File {
         self.thumbnails.get_or_try_init(|| {
             self.container()?;
             let container = self.container.get().unwrap();
-            Ok(ThumbnailStorage::with_thumbnails(tiff::tiff_thumbnails(
-                container,
-            )))
+            Ok(ThumbnailStorage::with_thumbnails(container.thumbnails()))
         })
     }
 

@@ -34,7 +34,8 @@ use crate::canon;
 use crate::container::{self, RawContainer};
 use crate::epson;
 use crate::fujifilm;
-use crate::io::View;
+use crate::io::{self, View};
+use crate::jpeg;
 use crate::leica;
 use crate::minolta;
 use crate::nikon;
@@ -44,12 +45,13 @@ use crate::pentax;
 use crate::ricoh;
 use crate::sigma;
 use crate::sony;
+use crate::thumbnail;
 use crate::tiff::{self, exif, TagType};
 use crate::utils;
 #[cfg(feature = "dump")]
 use crate::Dump;
 use crate::Type as RawType;
-use crate::{Error, Result};
+use crate::{DataType, Error, Result};
 
 use super::{Entry, Ifd, IfdType};
 
@@ -819,6 +821,122 @@ impl Dir {
         })
     }
 
+    pub(crate) fn locate_thumbnail(
+        &self,
+        container: &dyn RawContainer,
+        thumbnails: &mut Vec<(u32, thumbnail::ThumbDesc)>,
+    ) {
+        let mut data_type = DataType::Unknown;
+        let subtype = self
+            .value::<u32>(exif::EXIF_TAG_NEW_SUBFILE_TYPE)
+            .unwrap_or(1);
+        if subtype == 1 {
+            let photom_int = self
+                .value::<u16>(exif::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
+                .unwrap_or(exif::PhotometricInterpretation::Rgb as u16);
+            let mut x = self.uint_value(exif::EXIF_TAG_IMAGE_WIDTH).unwrap_or(0);
+            let mut y = self.uint_value(exif::EXIF_TAG_IMAGE_LENGTH).unwrap_or(0);
+            let compression = self.value::<u16>(exif::EXIF_TAG_COMPRESSION).unwrap_or(0);
+            let mut byte_count = self
+                .value::<u32>(exif::EXIF_TAG_STRIP_BYTE_COUNTS)
+                .unwrap_or(0);
+            let mut offset = 0;
+            let mut got_it = false;
+            if let Some(v) = self.value::<u32>(exif::EXIF_TAG_STRIP_OFFSETS) {
+                offset = v;
+                got_it = true;
+            }
+            if !got_it || compression == 6 || compression == 7 {
+                if !got_it {
+                    byte_count = self
+                        .value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH)
+                        .unwrap_or(0);
+                    if let Some(v) = self.value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT) {
+                        got_it = true;
+                        offset = v;
+                    }
+                }
+                if got_it {
+                    // workaround for CR2 files where 8RGB data is marked
+                    // as JPEG. Check the real data size.
+                    if x != 0 && y != 0 {
+                        let pixel_count = x.checked_mul(y).and_then(|count| count.checked_mul(3));
+                        if pixel_count.is_none() || byte_count >= pixel_count.unwrap() {
+                            // We ignore this, it's 8RGB in a Canon CR2 file.
+                            // See bug 72270
+                            log::debug!("8RGB as JPEG or invalid pixel count. Will ignore.");
+                            data_type = DataType::Unknown
+                        } else {
+                            data_type = DataType::Jpeg;
+                        }
+                    } else {
+                        data_type = DataType::Jpeg;
+                        if x == 0 || y == 0 {
+                            if let Ok(view) = io::Viewer::create_subview(
+                                &container.borrow_view_mut(),
+                                offset as u64,
+                            ) {
+                                let jpeg = jpeg::Container::new(view, container.raw_type());
+                                x = jpeg.width() as u32;
+                                y = jpeg.height() as u32;
+                                log::debug!("Found JPEG dimensions x={} y={}", x, y);
+                            } else {
+                                // XXX load the JFIF stream and get the dimensions.
+                                log::error!("Couldn't get JPEG dimensions.");
+                            }
+                        } else {
+                            log::debug!("JPEG (supposed) dimensions x={} y={}", x, y);
+                        }
+                    }
+                }
+            } else if photom_int == exif::PhotometricInterpretation::YCbCr as u16 {
+                log::warn!("Unsupported YCbCr photometric interpretation in non JPEG.");
+            } else {
+                log::debug!("Found strip offsets");
+                if x != 0 && y != 0 {
+                    // See bug 72270 - some CR2 have 16 bpc RGB thumbnails.
+                    // by default it is RGB8. Unless stated otherwise.
+                    let mut is_rgb8 = true;
+                    if let Some(arr) = self
+                        .entry(exif::EXIF_TAG_BITS_PER_SAMPLE)
+                        .and_then(|e| e.value_array::<u16>(self.endian()))
+                        .or_else(|| {
+                            log::debug!("Error getting bpc");
+                            None
+                        })
+                    {
+                        for bpc in arr {
+                            is_rgb8 = bpc == 8;
+                            if !is_rgb8 {
+                                log::debug!("bpc != 8 {}", bpc);
+                                break;
+                            }
+                        }
+                    }
+                    if is_rgb8 {
+                        data_type = DataType::PixmapRgb8;
+                    }
+                }
+            }
+            if data_type != DataType::Unknown {
+                let dim = std::cmp::max(x, y);
+                if dim > 0 {
+                    // XXX compute
+                    // offset += offset();
+                    let desc = thumbnail::ThumbDesc {
+                        width: x,
+                        height: y,
+                        data_type,
+                        data: thumbnail::Data::Offset(thumbnail::DataOffset {
+                            offset: offset as u64,
+                            len: byte_count as u64,
+                        }),
+                    };
+                    thumbnails.push((dim, desc));
+                }
+            }
+        }
+    }
     /// Get sub IFDs. The vec is empty if none is found.
     pub(crate) fn get_sub_ifds(&self, container: &tiff::Container) -> &Vec<Dir> {
         self.sub_ifds.get_or_init(|| {

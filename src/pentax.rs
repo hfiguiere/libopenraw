@@ -413,7 +413,7 @@ impl RawFileImpl for PefFile {
         self.thumbnails.get_or_try_init(|| {
             self.container()?;
             let container = self.container.get().unwrap();
-            let mut thumbnails = tiff::tiff_thumbnails(container);
+            let mut thumbnails = container.thumbnails();
 
             self.ifd(tiff::IfdType::MakerNote).and_then(|mnote| {
                 // The MakerNote has a MNOTE_PENTAX_PREVIEW_IMAGE_SIZE
@@ -447,7 +447,7 @@ impl RawFileImpl for PefFile {
         let container = self.container.get().unwrap();
         self.ifd(tiff::IfdType::Raw)
             .ok_or(Error::NotFound)
-            .and_then(|dir| tiff::tiff_get_rawdata(container, dir, self.type_()))
+            .and_then(|dir| container.rawdata(dir, self.type_()))
             .map(|mut rawdata| {
                 if let Some(mnote) = self.ifd(tiff::IfdType::MakerNote) {
                     let user_crop = mnote

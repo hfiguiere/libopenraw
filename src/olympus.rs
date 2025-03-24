@@ -445,7 +445,7 @@ impl RawFileImpl for OrfFile {
         self.thumbnails.get_or_try_init(|| {
             self.container()?;
             let container = self.container.get().unwrap();
-            let mut thumbnails = tiff::tiff_thumbnails(container);
+            let mut thumbnails = container.thumbnails();
             self.maker_note_ifd().and_then(|mnote| {
                 mnote.entry(exif::ORF_TAG_THUMBNAIL_IMAGE).map(|e| {
                     container.add_thumbnail_from_entry(e, mnote.mnote_offset, &mut thumbnails)
@@ -498,7 +498,7 @@ impl RawFileImpl for OrfFile {
             .ok_or(Error::NotFound)
             .and_then(|cfa| {
                 self.container()?;
-                tiff::tiff_get_rawdata(self.container.get().unwrap(), cfa, self.type_())
+                self.container.get().unwrap().rawdata(cfa, self.type_())
             })
             .map(|mut data| {
                 let width = data.width();

@@ -134,7 +134,7 @@ impl RawFileImpl for ErfFile {
         self.thumbnails.get_or_try_init(|| {
             self.container()?;
             let container = self.container.get().unwrap();
-            let mut thumbnails = tiff::tiff_thumbnails(container);
+            let mut thumbnails = container.thumbnails();
             self.maker_note_ifd().and_then(|mnote| {
                 mnote.entry(exif::ERF_TAG_PREVIEW_IMAGE).map(|e| {
                     let mut data = Vec::from(e.data());
@@ -160,7 +160,7 @@ impl RawFileImpl for ErfFile {
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main => container.directory(0),
-            tiff::IfdType::Raw => tiff::tiff_locate_raw_ifd(container),
+            tiff::IfdType::Raw => container.locate_raw_ifd(),
             tiff::IfdType::Exif => container.exif_dir(),
             tiff::IfdType::MakerNote => container.mnote_dir(),
             _ => None,
@@ -175,8 +175,11 @@ impl RawFileImpl for ErfFile {
             })
             .and_then(|ifd| {
                 self.container()?;
-                tiff::tiff_get_rawdata(self.container.get().unwrap(), ifd, self.type_()).map(
-                    |mut rawdata| {
+                self.container
+                    .get()
+                    .unwrap()
+                    .rawdata(ifd, self.type_())
+                    .map(|mut rawdata| {
                         self.maker_note_ifd().and_then(|mnote| {
                             mnote
                                 .entry(exif::MNOTE_EPSON_SENSORAREA)
@@ -218,8 +221,7 @@ impl RawFileImpl for ErfFile {
                             None::<()>
                         });
                         rawdata
-                    },
-                )
+                    })
             })
     }
 

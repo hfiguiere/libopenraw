@@ -588,7 +588,7 @@ impl RawFileImpl for NefFile {
         self.thumbnails.get_or_try_init(|| {
             self.container()?;
             let container = self.container.get().unwrap();
-            let mut thumbnails = tiff::tiff_thumbnails(container);
+            let mut thumbnails = container.thumbnails();
 
             // Get the preview in the makernote
             if let Some(mnote) = self.ifd(tiff::IfdType::MakerNote) {
@@ -619,7 +619,7 @@ impl RawFileImpl for NefFile {
         let container = self.container.get().unwrap();
         match ifd_type {
             tiff::IfdType::Main => container.directory(0),
-            tiff::IfdType::Raw => tiff::tiff_locate_raw_ifd(container),
+            tiff::IfdType::Raw => container.locate_raw_ifd(),
             tiff::IfdType::Exif => container.exif_dir(),
             tiff::IfdType::MakerNote => container.mnote_dir(),
             _ => None,
@@ -633,7 +633,10 @@ impl RawFileImpl for NefFile {
                 Error::NotFound
             })
             .and_then(|dir| {
-                tiff::tiff_get_rawdata(self.container.get().unwrap(), dir, self.type_())
+                self.container
+                    .get()
+                    .unwrap()
+                    .rawdata(dir, self.type_())
                     .map_err(|err| {
                         log::error!("NEF get rawdata failed {}", err);
                         err

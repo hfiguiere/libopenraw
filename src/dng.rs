@@ -299,7 +299,7 @@ impl RawFileImpl for DngFile {
         self.thumbnails.get_or_try_init(|| {
             self.container()?;
             let container = self.container.get().unwrap();
-            let mut thumbnails = tiff::tiff_thumbnails(container);
+            let mut thumbnails = container.thumbnails();
             self.maker_note_ifd().and_then(|mnote| {
                 if mnote.id() == b"Leica6\0" {
                     // File with Leica6 MakerNote (Leica M Typ-240) have a
@@ -354,7 +354,8 @@ impl RawFileImpl for DngFile {
             .and_then(|dir| {
                 self.container()?;
                 let container = self.container.get().unwrap();
-                tiff::tiff_get_rawdata(container, dir, self.type_())
+                container
+                    .rawdata(dir, self.type_())
                     .map(|mut rawdata| {
                         let active_area = dir
                             .entry(exif::DNG_TAG_ACTIVE_AREA)
