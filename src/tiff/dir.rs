@@ -445,6 +445,11 @@ impl Dir {
                     };
                 }
 
+                if &data[0..8] == b"samsung:" {
+                    log::debug!("samsung: MakerNote (Unknown)");
+                    return Err(Error::UnsupportedMakerNote);
+                }
+
                 if &data[0..8] == b"FUJIFILM" {
                     return Dir::new_makernote(
                         b"Exif.Fujifilm\0",
@@ -517,6 +522,7 @@ impl Dir {
                 }
             }
         }
+
         Dir::new_makernote(
             b"\0",
             container,
