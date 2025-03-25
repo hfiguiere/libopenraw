@@ -628,28 +628,29 @@ impl Dump for OrfFile {
         {
             let indent = indent + 1;
             let _ = self.container();
-            self.container.get().unwrap().write_dump(out, indent);
+            let container = self.container.get().unwrap();
+            container.write_dump(out, indent);
             if let Some(mnote) = self.maker_note_ifd() {
                 if let Some(dir) = self.olympus_cs_ifd(mnote) {
-                    dir.write_dump(out, indent);
+                    dir.write_dump_dir(out, container, indent);
                 }
                 if let Some(dir) = self.olympus_ip_ifd(mnote) {
-                    dir.write_dump(out, indent);
+                    dir.write_dump_dir(out, container, indent);
                 }
                 if let Some(dir) = self.olympus_rd_ifd(mnote) {
-                    dir.write_dump(out, indent);
+                    dir.write_dump_dir(out, container, indent);
                 }
                 if let Some(dir) = self.olympus_rd2_ifd(mnote) {
-                    dir.write_dump(out, indent);
+                    dir.write_dump_dir(out, container, indent);
                 }
                 if let Some(dir) = self.olympus_fi_ifd(mnote) {
-                    dir.write_dump(out, indent);
+                    dir.write_dump_dir(out, container, indent);
                 }
                 if let Some(dir) = self.olympus_eq_ifd(mnote) {
-                    dir.write_dump(out, indent);
+                    dir.write_dump_dir(out, container, indent);
                 }
                 if let Some(dir) = self.olympus_ri_ifd(mnote) {
-                    dir.write_dump(out, indent);
+                    dir.write_dump_dir(out, container, indent);
                 }
             }
         }

@@ -1204,7 +1204,7 @@ impl Dump for Rw2File {
                 )
             }) {
                 if let Some(camera_ifd) = camera_tiff.directory(0) {
-                    camera_ifd.write_dump(out, indent);
+                    camera_ifd.write_dump_dir(out, &camera_tiff, indent);
                 }
             }
         }

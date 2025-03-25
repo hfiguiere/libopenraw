@@ -694,23 +694,7 @@ impl Dump for Container {
         {
             let indent = indent + 1;
             for dir in dirs {
-                dir.write_dump(out, indent);
-                if let Some(exif_dir) = dir.get_exif_ifd(self) {
-                    exif_dir.write_dump(out, indent + 1);
-                    if let Some(mnote_dir) = exif_dir.get_mnote_ifd(self) {
-                        mnote_dir.write_dump(out, indent + 2);
-                    }
-                }
-                if let Some(dng_private_data) = dir.get_dng_private_ifd(self) {
-                    dng_private_data.write_dump(out, indent + 1);
-                }
-                if let Some(gps_dir) = dir.get_gpsinfo_ifd(self) {
-                    gps_dir.write_dump(out, indent + 1);
-                }
-                let subdirs = dir.get_sub_ifds(self);
-                for subdir in subdirs {
-                    subdir.write_dump(out, indent + 1);
-                }
+                dir.write_dump_dir(out, self, indent);
             }
         }
         dump_writeln!(out, indent, "</TIFF Container>");

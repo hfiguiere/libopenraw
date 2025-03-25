@@ -359,7 +359,7 @@ impl Dump for RafContainer {
                             Some(&super::MNOTE_FUJIFILM_RAWIFD_TAG_NAMES),
                         )
                     }) {
-                        dir.write_dump(out, indent);
+                        dir.write_dump_dir(out, cfa_container, indent);
                     }
                 } else {
                     dump_writeln!(out, indent, "ERROR: CFA container not found");
@@ -380,7 +380,7 @@ impl Dump for RafContainer {
                                 Some(&super::MNOTE_FUJIFILM_RAWIFD_TAG_NAMES),
                             )
                         }) {
-                            dir.write_dump(out, indent);
+                            dir.write_dump_dir(out, cfa_container, indent);
                         }
                     } else {
                         dump_writeln!(out, indent, "ERROR: Extra CFA container not found");

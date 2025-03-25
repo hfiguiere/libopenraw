@@ -48,8 +48,6 @@ use crate::sony;
 use crate::thumbnail;
 use crate::tiff::{self, exif, TagType};
 use crate::utils;
-#[cfg(feature = "dump")]
-use crate::Dump;
 use crate::Type as RawType;
 use crate::{DataType, Error, Result};
 
@@ -990,31 +988,9 @@ impl Dir {
     pub fn tag_name(&self, id: u16) -> &'static str {
         self.tag_names.get(&id).unwrap_or(&"")
     }
-}
 
-impl Ifd for Dir {
-    fn ifd_type(&self) -> IfdType {
-        self.type_
-    }
-
-    fn endian(&self) -> container::Endian {
-        self.endian
-    }
-
-    /// Return the number of entries.
-    fn num_entries(&self) -> usize {
-        self.entries.len()
-    }
-
-    /// Return the entry for the `tag`.
-    fn entry(&self, tag: u16) -> Option<&Entry> {
-        self.entries.get(&tag)
-    }
-}
-
-#[cfg(feature = "dump")]
-impl Dump for Dir {
-    fn write_dump<W>(&self, out: &mut W, indent: u32)
+    #[cfg(feature = "dump")]
+    pub(crate) fn write_dump_dir<W>(&self, out: &mut W, container: &tiff::Container, indent: u32)
     where
         W: std::io::Write + ?Sized,
     {
@@ -1035,8 +1011,44 @@ impl Dump for Dir {
                 let args = HashMap::from([("tag_name", String::from(tag_name))]);
                 entry.write_dump_entry(out, indent, self.endian(), args);
             }
+            if let Some(exif_dir) = self.get_exif_ifd(container) {
+                exif_dir.write_dump_dir(out, container, indent);
+            }
+            if let Some(mnote_dir) = self.get_mnote_ifd(container) {
+                mnote_dir.write_dump_dir(out, container, indent);
+            }
+            if let Some(dng_private_data) = self.get_dng_private_ifd(container) {
+                dng_private_data.write_dump_dir(out, container, indent);
+            }
+            if let Some(gps_dir) = self.get_gpsinfo_ifd(container) {
+                gps_dir.write_dump_dir(out, container, indent);
+            }
+            let subdirs = self.get_sub_ifds(container);
+            for subdir in subdirs {
+                subdir.write_dump_dir(out, container, indent);
+            }
         }
         dump_writeln!(out, indent, "</IFD>");
+    }
+}
+
+impl Ifd for Dir {
+    fn ifd_type(&self) -> IfdType {
+        self.type_
+    }
+
+    fn endian(&self) -> container::Endian {
+        self.endian
+    }
+
+    /// Return the number of entries.
+    fn num_entries(&self) -> usize {
+        self.entries.len()
+    }
+
+    /// Return the entry for the `tag`.
+    fn entry(&self, tag: u16) -> Option<&Entry> {
+        self.entries.get(&tag)
     }
 }
 
