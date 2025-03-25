@@ -86,7 +86,7 @@ impl Dir {
     }
 
     pub(crate) fn create_maker_note(
-        container: &dyn container::RawContainer,
+        container: &crate::tiff::Container,
         offset: u32,
     ) -> Result<Dir> {
         let file_type = container.raw_type();
@@ -99,242 +99,261 @@ impl Dir {
                     offset,
                     0,
                     &canon::MNOTE_TAG_NAMES,
-                )
-            }
-            _ => {
-                // The size of this buffer should be adjusted depending on
-                // what the various detection need.
-                let mut data = [0_u8; 19];
-                {
-                    let mut view = container.borrow_view_mut();
-                    view.seek(SeekFrom::Start(offset as u64))?;
-                    view.read_exact(&mut data)?;
-                }
-
-                log::debug!(
-                    "MakerNote offset {offset} data {:?}",
-                    String::from_utf8_lossy(&data)
                 );
-
-                if file_type == RawType::Arw {
-                    let mut padding = 0;
-                    // A100 has padding.
-                    if &data[0..9] == b"SONY DSC " {
-                        padding = 12
-                    }
-                    return Dir::new_makernote(
-                        b"Exif.Sony5\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + padding,
-                        0,
-                        &sony::MNOTE_TAG_NAMES,
-                    );
-                }
-                if &data[0..6] == b"Nikon\0" {
-                    if data[6] == 1 {
+            }
+            RawType::Dng => {
+                if let Some(model) = container
+                    .directory(0)
+                    .and_then(|dir| dir.entry(exif::EXIF_TAG_MODEL))
+                    .and_then(|entry| entry.string_value())
+                {
+                    if model == "R9 - Digital Back DMR" {
                         return Dir::new_makernote(
-                            b"Exif.Nikon2\0",
-                            container,
-                            container::Endian::Unset,
-                            offset + 8,
-                            offset + 8,
-                            &nikon::MNOTE_TAG_NAMES_2,
-                        );
-                    } else if data[6] == 2 {
-                        // this one has an endian / TIFF header after the magic
-                        return Dir::new_makernote(
-                            b"Exif.Nikon\0",
-                            container,
-                            container::Endian::Unset,
-                            offset + 18,
-                            offset + 10,
-                            &nikon::MNOTE_TAG_NAMES,
-                        );
-                    } else {
-                        log::error!("Unidentified Nikon makernote");
-                        return Dir::new_makernote(
-                            b"Exif.NikonX\0",
+                            b"Exif.Leica3\0",
                             container,
                             container::Endian::Unset,
                             offset,
-                            offset,
-                            &MNOTE_EMPTY_TAGS,
+                            0,
+                            &leica::MNOTE_TAG_NAMES_3,
                         );
                     }
                 }
-                // Headerless Nikon.
-                if file_type == RawType::Nef {
-                    // Found on D1, D1X, D1H
-                    return Dir::new_makernote(
-                        b"Exif.NikonHeaderless\0",
-                        container,
-                        container::Endian::Unset,
-                        offset,
-                        0,
-                        &nikon::MNOTE_TAG_NAMES,
-                    );
-                }
+            }
+            _ => {}
+        }
+        // The size of this buffer should be adjusted depending on
+        // what the various detection need.
+        let mut data = [0_u8; 19];
+        {
+            let mut view = container.borrow_view_mut();
+            view.seek(SeekFrom::Start(offset as u64))?;
+            view.read_exact(&mut data)?;
+        }
 
-                if &data[0..8] == b"OLYMPUS\0" {
-                    return Dir::new_makernote(
-                        b"Exif.Olympus2\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + 12,
-                        offset,
-                        &olympus::MNOTE_TAG_NAMES,
-                    );
-                }
+        log::debug!(
+            "MakerNote offset {offset} data {:?}",
+            String::from_utf8_lossy(&data)
+        );
 
-                if &data[0..9] == b"OM SYSTEM" {
-                    return Dir::new_makernote(
-                        b"Exif.Olympus2\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + 16,
-                        offset,
-                        &olympus::MNOTE_TAG_NAMES,
-                    );
-                }
+        if file_type == RawType::Arw {
+            let mut padding = 0;
+            // A100 has padding.
+            if &data[0..9] == b"SONY DSC " {
+                padding = 12
+            }
+            return Dir::new_makernote(
+                b"Exif.Sony5\0",
+                container,
+                container::Endian::Unset,
+                offset + padding,
+                0,
+                &sony::MNOTE_TAG_NAMES,
+            );
+        }
+        if &data[0..6] == b"Nikon\0" {
+            if data[6] == 1 {
+                return Dir::new_makernote(
+                    b"Exif.Nikon2\0",
+                    container,
+                    container::Endian::Unset,
+                    offset + 8,
+                    offset + 8,
+                    &nikon::MNOTE_TAG_NAMES_2,
+                );
+            } else if data[6] == 2 {
+                // this one has an endian / TIFF header after the magic
+                return Dir::new_makernote(
+                    b"Exif.Nikon\0",
+                    container,
+                    container::Endian::Unset,
+                    offset + 18,
+                    offset + 10,
+                    &nikon::MNOTE_TAG_NAMES,
+                );
+            } else {
+                log::error!("Unidentified Nikon makernote");
+                return Dir::new_makernote(
+                    b"Exif.NikonX\0",
+                    container,
+                    container::Endian::Unset,
+                    offset,
+                    offset,
+                    &MNOTE_EMPTY_TAGS,
+                );
+            }
+        }
+        // Headerless Nikon.
+        if file_type == RawType::Nef {
+            // Found on D1, D1X, D1H
+            return Dir::new_makernote(
+                b"Exif.NikonHeaderless\0",
+                container,
+                container::Endian::Unset,
+                offset,
+                0,
+                &nikon::MNOTE_TAG_NAMES,
+            );
+        }
 
-                if &data[0..6] == b"OLYMP\0" {
-                    return Dir::new_makernote(
-                        b"Exif.Olympus\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + 8,
-                        0,
-                        &olympus::MNOTE_TAG_NAMES,
-                    );
-                }
+        if &data[0..8] == b"OLYMPUS\0" {
+            return Dir::new_makernote(
+                b"Exif.Olympus2\0",
+                container,
+                container::Endian::Unset,
+                offset + 12,
+                offset,
+                &olympus::MNOTE_TAG_NAMES,
+            );
+        }
 
-                // EPSON R-D1, use Olympus
-                // XXX deal with endian.
-                if &data[0..6] == b"EPSON\0" {
-                    return Dir::new_makernote(
-                        b"Exif.Epson\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + 8,
-                        0,
-                        &epson::MNOTE_TAG_NAMES,
-                    );
-                }
+        if &data[0..9] == b"OM SYSTEM" {
+            return Dir::new_makernote(
+                b"Exif.Olympus2\0",
+                container,
+                container::Endian::Unset,
+                offset + 16,
+                offset,
+                &olympus::MNOTE_TAG_NAMES,
+            );
+        }
 
-                // Pentax Asahi Optical Corporation (pre Ricoh merger)
-                if &data[0..4] == b"AOC\0" {
-                    return Dir::new_makernote(
-                        b"Exif.Pentax\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + 6,
-                        0,
-                        &pentax::MNOTE_TAG_NAMES,
-                    );
-                }
+        if &data[0..6] == b"OLYMP\0" {
+            return Dir::new_makernote(
+                b"Exif.Olympus\0",
+                container,
+                container::Endian::Unset,
+                offset + 8,
+                0,
+                &olympus::MNOTE_TAG_NAMES,
+            );
+        }
 
-                // Pentax post Ricoh merger
-                if &data[0..8] == b"PENTAX \0" {
-                    return Dir::new_makernote(
-                        b"Exif.Pentax\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + 10,
-                        offset,
-                        &pentax::MNOTE_TAG_NAMES,
-                    );
-                }
+        // EPSON R-D1, use Olympus
+        // XXX deal with endian.
+        if &data[0..6] == b"EPSON\0" {
+            return Dir::new_makernote(
+                b"Exif.Epson\0",
+                container,
+                container::Endian::Unset,
+                offset + 8,
+                0,
+                &epson::MNOTE_TAG_NAMES,
+            );
+        }
 
-                // Ricoh post Pentax merger
-                if &data[0..6] == b"RICOH\0" {
-                    return Dir::new_makernote(
-                        b"Exif.Pentax\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + 8,
-                        offset + 8,
-                        &pentax::MNOTE_TAG_NAMES,
-                    );
-                }
+        // Pentax Asahi Optical Corporation (pre Ricoh merger)
+        if &data[0..4] == b"AOC\0" {
+            return Dir::new_makernote(
+                b"Exif.Pentax\0",
+                container,
+                container::Endian::Unset,
+                offset + 6,
+                0,
+                &pentax::MNOTE_TAG_NAMES,
+            );
+        }
 
-                // Panasonic
-                if &data[0..10] == b"Panasonic\0" {
+        // Pentax post Ricoh merger
+        if &data[0..8] == b"PENTAX \0" {
+            return Dir::new_makernote(
+                b"Exif.Pentax\0",
+                container,
+                container::Endian::Unset,
+                offset + 10,
+                offset,
+                &pentax::MNOTE_TAG_NAMES,
+            );
+        }
+
+        // Ricoh post Pentax merger
+        if &data[0..6] == b"RICOH\0" {
+            return Dir::new_makernote(
+                b"Exif.Pentax\0",
+                container,
+                container::Endian::Unset,
+                offset + 8,
+                offset + 8,
+                &pentax::MNOTE_TAG_NAMES,
+            );
+        }
+
+        // Panasonic
+        if &data[0..10] == b"Panasonic\0" {
+            return Dir::new_makernote(
+                b"Exif.Panasonic\0",
+                container,
+                container::Endian::Unset,
+                offset + 12,
+                0,
+                &panasonic::MNOTE_TAG_NAMES,
+            );
+        }
+
+        if &data[0..6] == b"Ricoh\0" {
+            return Dir::new_makernote(
+                b"Exif.Ricoh\0",
+                container,
+                container::Endian::Unset,
+                offset + 8,
+                0,
+                &ricoh::MNOTE_TAG_NAMES,
+            );
+        }
+
+        if &data[0..16] == b"LEICA CAMERA AG\0" {
+            if file_type == RawType::Rw2 {
+                // Rebadged Panasonic
+                // Leica C-Lux
+                // Leica V-Lux 5
+                // Leica D-Lux 7
+                return Dir::new_makernote(
+                    b"Exif.Panasonic\0",
+                    container,
+                    container::Endian::Unset,
+                    offset + 18,
+                    0,
+                    &panasonic::MNOTE_TAG_NAMES,
+                );
+            } else if file_type == RawType::Dng {
+                // Leica D-Lux 8 (DNG)
+                return Dir::new_makernote(
+                    b"Exif.Leica5\0",
+                    container,
+                    container::Endian::Unset,
+                    offset + 18,
+                    0,
+                    &leica::MNOTE_TAG_NAMES_5,
+                );
+            }
+        }
+
+        if &data[0..5] == b"LEICA" {
+            if &data[5..8] == b"\0\0\0" {
+                if file_type == RawType::Rw2 {
+                    // Panasonic
                     return Dir::new_makernote(
                         b"Exif.Panasonic\0",
                         container,
                         container::Endian::Unset,
-                        offset + 12,
+                        offset + 8,
                         0,
                         &panasonic::MNOTE_TAG_NAMES,
                     );
-                }
-
-                if &data[0..6] == b"Ricoh\0" {
+                } else {
+                    // Leica M8
                     return Dir::new_makernote(
-                        b"Exif.Ricoh\0",
+                        b"Exif.Leica2\0",
                         container,
                         container::Endian::Unset,
                         offset + 8,
-                        0,
-                        &ricoh::MNOTE_TAG_NAMES,
+                        offset,
+                        &leica::MNOTE_TAG_NAMES_2,
                     );
                 }
+            }
 
-                if &data[0..16] == b"LEICA CAMERA AG\0" {
-                    if file_type == RawType::Rw2 {
-                        // Rebadged Panasonic
-                        // Leica C-Lux
-                        // Leica V-Lux 5
-                        // Leica D-Lux 7
-                        return Dir::new_makernote(
-                            b"Exif.Panasonic\0",
-                            container,
-                            container::Endian::Unset,
-                            offset + 18,
-                            0,
-                            &panasonic::MNOTE_TAG_NAMES,
-                        );
-                    } else if file_type == RawType::Dng {
-                        // Leica D-Lux 8 (DNG)
-                        return Dir::new_makernote(
-                            b"Exif.Leica5\0",
-                            container,
-                            container::Endian::Unset,
-                            offset + 18,
-                            0,
-                            &leica::MNOTE_TAG_NAMES_5,
-                        );
-                    }
-                }
-
-                if &data[0..5] == b"LEICA" {
-                    if &data[5..8] == b"\0\0\0" {
-                        if file_type == RawType::Rw2 {
-                            // Panasonic
-                            return Dir::new_makernote(
-                                b"Exif.Panasonic\0",
-                                container,
-                                container::Endian::Unset,
-                                offset + 8,
-                                0,
-                                &panasonic::MNOTE_TAG_NAMES,
-                            );
-                        } else {
-                            // Leica M8
-                            return Dir::new_makernote(
-                                b"Exif.Leica2\0",
-                                container,
-                                container::Endian::Unset,
-                                offset + 8,
-                                offset,
-                                &leica::MNOTE_TAG_NAMES_2,
-                            );
-                        }
-                    }
-
-                    if data[5] == 0 && data[7] == 0 {
-                        match data[6] {
+            if data[5] == 0 && data[7] == 0 {
+                match data[6] {
                             0x08..=0x0a =>
                             // Leica Q Typ 116, SL (Type 601), Q3 (0x0a)
                                 return Dir::new_makernote(
@@ -361,166 +380,164 @@ impl Dir {
                                 ),
                             _ => {}
                         }
-                    }
-
-                    // Leica M (Typ 240)
-                    if data[5] == 0x0 && data[6] == 0x02 && data[7] == 0xff {
-                        return Dir::new_makernote(
-                            b"Exif.Leica6\0",
-                            container,
-                            container::Endian::Unset,
-                            offset + 8,
-                            0,
-                            &leica::MNOTE_TAG_NAMES_6,
-                        );
-                    }
-
-                    // Leica M9/Monochrom
-                    if data[5] == b'0' && data[6] == 0x03 && data[7] == 0 {
-                        return Dir::new_makernote(
-                            b"Exif.Leica4\0",
-                            container,
-                            container::Endian::Unset,
-                            offset + 8,
-                            offset,
-                            &leica::MNOTE_TAG_NAMES_4,
-                        );
-                    }
-
-                    // Leica M10
-                    if data[5] == 0 && data[6] == 0x02 && data[7] == 0 {
-                        return Dir::new_makernote(
-                            b"Exif.Leica9\0",
-                            container,
-                            container::Endian::Unset,
-                            offset + 8,
-                            0,
-                            &leica::MNOTE_TAG_NAMES_9,
-                        );
-                    }
-                }
-
-                if &data[0..8] == b"YI     \0" {
-                    return Dir::new_makernote(
-                        b"Exif.Xiaoyi\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + 12,
-                        offset,
-                        // XXX we have no idea.
-                        &MNOTE_EMPTY_TAGS,
-                    );
-                }
-
-                if &data[0..10] == b"Apple iOS\0" {
-                    return Dir::new_makernote(
-                        b"Exif.Apple\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + 14,
-                        offset,
-                        &apple::MNOTE_TAG_NAMES,
-                    );
-                }
-
-                if &data[0..4] == b"STMN" {
-                    return if &data[8..12] == b"\0\0\0\0" {
-                        Dir::new_makernote(
-                            b"Exif.Samsung1a\0",
-                            container,
-                            container::Endian::Unset,
-                            offset,
-                            offset,
-                            &MNOTE_EMPTY_TAGS,
-                        )
-                    } else {
-                        Dir::new_makernote(
-                            b"Exif.Samsung1b\0",
-                            container,
-                            container::Endian::Unset,
-                            offset,
-                            offset,
-                            &MNOTE_EMPTY_TAGS,
-                        )
-                    };
-                }
-
-                if &data[0..8] == b"samsung:" {
-                    log::debug!("samsung: MakerNote (Unknown)");
-                    return Err(Error::UnsupportedMakerNote);
-                }
-
-                if &data[0..8] == b"FUJIFILM" {
-                    return Dir::new_makernote(
-                        b"Exif.Fujifilm\0",
-                        container,
-                        container::Endian::Little,
-                        offset + 12,
-                        offset,
-                        &fujifilm::MNOTE_TAG_NAMES,
-                    );
-                }
-
-                if &data[0..6] == b"SIGMA\0" {
-                    return Dir::new_makernote(
-                        b"Exif.Sigma\0",
-                        container,
-                        container::Endian::Unset,
-                        offset + 10,
-                        0,
-                        &sigma::MNOTE_TAG_NAMES,
-                    );
-                }
-
-                // This is the Maker Note found in the Sigma fp
-                // that also has the regular one in the DNG Private.
-                if &data[0..16] == b"SIGMA_EXTH_SPPA\0" {
-                    return Err(Error::UnsupportedMakerNote);
-                }
-
-                if &data[10..14] == b"MLT0" {
-                    return Dir::new_makernote(
-                        b"Exif.Minolta\0",
-                        container,
-                        container::Endian::Unset,
-                        offset,
-                        offset,
-                        &minolta::MNOTE_TAG_NAMES,
-                    );
-                }
-
-                if &data[0..6] == b"Nokia\0" {
-                    log::debug!("Nokia MakerNote (Unknown)");
-                    return Err(Error::UnsupportedMakerNote);
-                }
-
-                if &data[0..6] == b"Adobe\0" {
-                    log::debug!("Adobe Converted MakerNote");
-                    return Err(Error::UnsupportedMakerNote);
-                }
-
-                // Others
-
-                // Seitz 617, unknown format, doesn't look like an IFD.
-                if &data[0..19] == b"SEITZ PHOTOTECHNIK\0" {
-                    return Err(Error::UnsupportedMakerNote);
-                }
-                // SilverFast scanner. (Plustek)
-                // Doesn't follow the standard.
-                if &data[0..5] == b"LSI1\0" {
-                    return Err(Error::UnsupportedMakerNote);
-                }
-                // Google Pixel
-                // BLOB
-                if &data[0..4] == b"HDRP" {
-                    return Err(Error::UnsupportedMakerNote);
-                }
-                // Hasselblad/DJI
-                // BLOB
-                if &data[0..13] == b"[ae_dbg_info:" {
-                    return Err(Error::UnsupportedMakerNote);
-                }
             }
+
+            // Leica M (Typ 240)
+            if data[5] == 0x0 && data[6] == 0x02 && data[7] == 0xff {
+                return Dir::new_makernote(
+                    b"Exif.Leica6\0",
+                    container,
+                    container::Endian::Unset,
+                    offset + 8,
+                    0,
+                    &leica::MNOTE_TAG_NAMES_6,
+                );
+            }
+
+            // Leica M9/Monochrom
+            if data[5] == b'0' && data[6] == 0x03 && data[7] == 0 {
+                return Dir::new_makernote(
+                    b"Exif.Leica4\0",
+                    container,
+                    container::Endian::Unset,
+                    offset + 8,
+                    offset,
+                    &leica::MNOTE_TAG_NAMES_4,
+                );
+            }
+
+            // Leica M10
+            if data[5] == 0 && data[6] == 0x02 && data[7] == 0 {
+                return Dir::new_makernote(
+                    b"Exif.Leica9\0",
+                    container,
+                    container::Endian::Unset,
+                    offset + 8,
+                    0,
+                    &leica::MNOTE_TAG_NAMES_9,
+                );
+            }
+        }
+
+        if &data[0..8] == b"YI     \0" {
+            return Dir::new_makernote(
+                b"Exif.Xiaoyi\0",
+                container,
+                container::Endian::Unset,
+                offset + 12,
+                offset,
+                // XXX we have no idea.
+                &MNOTE_EMPTY_TAGS,
+            );
+        }
+
+        if &data[0..10] == b"Apple iOS\0" {
+            return Dir::new_makernote(
+                b"Exif.Apple\0",
+                container,
+                container::Endian::Unset,
+                offset + 14,
+                offset,
+                &apple::MNOTE_TAG_NAMES,
+            );
+        }
+
+        if &data[0..4] == b"STMN" {
+            return if &data[8..12] == b"\0\0\0\0" {
+                Dir::new_makernote(
+                    b"Exif.Samsung1a\0",
+                    container,
+                    container::Endian::Unset,
+                    offset,
+                    offset,
+                    &MNOTE_EMPTY_TAGS,
+                )
+            } else {
+                Dir::new_makernote(
+                    b"Exif.Samsung1b\0",
+                    container,
+                    container::Endian::Unset,
+                    offset,
+                    offset,
+                    &MNOTE_EMPTY_TAGS,
+                )
+            };
+        }
+
+        if &data[0..8] == b"samsung:" {
+            log::debug!("samsung: MakerNote (Unknown)");
+            return Err(Error::UnsupportedMakerNote);
+        }
+
+        if &data[0..8] == b"FUJIFILM" {
+            return Dir::new_makernote(
+                b"Exif.Fujifilm\0",
+                container,
+                container::Endian::Little,
+                offset + 12,
+                offset,
+                &fujifilm::MNOTE_TAG_NAMES,
+            );
+        }
+
+        if &data[0..6] == b"SIGMA\0" {
+            return Dir::new_makernote(
+                b"Exif.Sigma\0",
+                container,
+                container::Endian::Unset,
+                offset + 10,
+                0,
+                &sigma::MNOTE_TAG_NAMES,
+            );
+        }
+
+        // This is the Maker Note found in the Sigma fp
+        // that also has the regular one in the DNG Private.
+        if &data[0..16] == b"SIGMA_EXTH_SPPA\0" {
+            return Err(Error::UnsupportedMakerNote);
+        }
+
+        if &data[10..14] == b"MLT0" {
+            return Dir::new_makernote(
+                b"Exif.Minolta\0",
+                container,
+                container::Endian::Unset,
+                offset,
+                offset,
+                &minolta::MNOTE_TAG_NAMES,
+            );
+        }
+
+        if &data[0..6] == b"Nokia\0" {
+            log::debug!("Nokia MakerNote (Unknown)");
+            return Err(Error::UnsupportedMakerNote);
+        }
+
+        if &data[0..6] == b"Adobe\0" {
+            log::debug!("Adobe Converted MakerNote");
+            return Err(Error::UnsupportedMakerNote);
+        }
+
+        // Others
+
+        // Seitz 617, unknown format, doesn't look like an IFD.
+        if &data[0..19] == b"SEITZ PHOTOTECHNIK\0" {
+            return Err(Error::UnsupportedMakerNote);
+        }
+        // SilverFast scanner. (Plustek)
+        // Doesn't follow the standard.
+        if &data[0..5] == b"LSI1\0" {
+            return Err(Error::UnsupportedMakerNote);
+        }
+        // Google Pixel
+        // BLOB
+        if &data[0..4] == b"HDRP" {
+            return Err(Error::UnsupportedMakerNote);
+        }
+        // Hasselblad/DJI
+        // BLOB
+        if &data[0..13] == b"[ae_dbg_info:" {
+            return Err(Error::UnsupportedMakerNote);
         }
 
         Dir::new_makernote(
