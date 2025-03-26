@@ -2106,6 +2106,22 @@ pub static ref MNOTE_SONY_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from(
 
 lazy_static::lazy_static! {
 /// Exif tag names
+pub static ref MNOTE_DJI_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+    ( 0x1, "Make" ),
+    ( 0x3, "SpeedX" ),
+    ( 0x4, "SpeedY" ),
+    ( 0x5, "SpeedZ" ),
+    ( 0x6, "Pitch" ),
+    ( 0x7, "Yaw" ),
+    ( 0x8, "Roll" ),
+    ( 0x9, "CameraPitch" ),
+    ( 0xa, "CameraYaw" ),
+    ( 0xb, "CameraRoll" ),
+    ]);
+}
+
+lazy_static::lazy_static! {
+/// Exif tag names
 pub static ref RAW_PANASONIC_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
     ( 0x1, "PanasonicRawVersion" ),
     ( 0x2, "SensorWidth" ),

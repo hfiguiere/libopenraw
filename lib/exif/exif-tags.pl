@@ -6,6 +6,7 @@
 use Image::ExifTool::Exif;
 use Image::ExifTool::Apple;
 use Image::ExifTool::Canon;
+use Image::ExifTool::DJI;
 use Image::ExifTool::FujiFilm;
 use Image::ExifTool::Minolta;
 use Image::ExifTool::Nikon;
@@ -102,6 +103,7 @@ output_table(\%Image::ExifTool::Pentax::Main, "mnote_pentax_tag_names");
 output_table(\%Image::ExifTool::Ricoh::Main, "mnote_ricoh_tag_names");
 output_table(\%Image::ExifTool::Sigma::Main, "mnote_sigma_tag_names");
 output_table(\%Image::ExifTool::Sony::Main, "mnote_sony_tag_names");
+output_table(\%Image::ExifTool::DJI::Main, "mnote_dji_tag_names");
 
 output_table(\%Image::ExifTool::PanasonicRaw::Main, "raw_panasonic_tag_names");
 output_table(\%Image::ExifTool::PanasonicRaw::CameraIFD, "raw_panasonic_cameraifd_tag_names");
