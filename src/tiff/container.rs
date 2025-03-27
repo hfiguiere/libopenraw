@@ -244,7 +244,7 @@ impl Container {
                     (IfdType::Other, None)
                 };
                 if let Ok(dir) = if t.0 == IfdType::MakerNote {
-                    Dir::create_maker_note(self, dir_offset)
+                    Dir::create_maker_note(self, dir_offset, exif::EXIF_TAG_MAKER_NOTE)
                 } else {
                     self.dir_at(
                         &mut self.view.borrow_mut(),

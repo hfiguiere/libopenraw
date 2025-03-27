@@ -88,6 +88,7 @@ impl Dir {
     pub(crate) fn create_maker_note(
         container: &crate::tiff::Container,
         offset: u32,
+        source: u16,
     ) -> Result<Dir> {
         let file_type = container.raw_type();
         match file_type {
@@ -540,6 +541,11 @@ impl Dir {
             return Err(Error::UnsupportedMakerNote);
         }
 
+        // Default in DNGPrivate isn't an IFD.
+        if source == exif::DNG_TAG_DNG_PRIVATE {
+            return Err(Error::UnsupportedMakerNote);
+        }
+
         Dir::new_makernote(
             b"\0",
             container,
@@ -738,7 +744,7 @@ impl Dir {
     /// Get the Maker Note IFD from the `tag`.
     pub(crate) fn mnote_ifd_for_tag(&self, container: &tiff::Container, tag: u16) -> Option<Dir> {
         self.entry(tag).and_then(|e| e.offset()).and_then(|offset| {
-            Dir::create_maker_note(container, offset)
+            Dir::create_maker_note(container, offset, tag)
                 .map_err(|e| {
                     log::warn!("Coudln't create maker_note: {}", e);
                     e
