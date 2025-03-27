@@ -541,6 +541,11 @@ impl Dir {
             return Err(Error::UnsupportedMakerNote);
         }
 
+        // Insta360
+        if &data[0..19] == b"2_1483.473_1528.204" {
+            return Err(Error::UnsupportedMakerNote);
+        }
+
         // Default in DNGPrivate isn't an IFD.
         if source == exif::DNG_TAG_DNG_PRIVATE {
             return Err(Error::UnsupportedMakerNote);
