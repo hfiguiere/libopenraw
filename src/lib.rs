@@ -52,6 +52,7 @@ mod capi;
 mod colour;
 mod container;
 mod decompress;
+mod dji;
 mod dng;
 mod epson;
 mod factory;

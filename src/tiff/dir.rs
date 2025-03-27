@@ -32,6 +32,7 @@ use once_cell::unsync::OnceCell;
 use crate::apple;
 use crate::canon;
 use crate::container::{self, RawContainer};
+use crate::dji;
 use crate::epson;
 use crate::fujifilm;
 use crate::io::{self, View};
@@ -116,6 +117,22 @@ impl Dir {
                             offset,
                             0,
                             &leica::MNOTE_TAG_NAMES_3,
+                        );
+                    }
+                }
+                if let Some(make) = container
+                    .directory(0)
+                    .and_then(|dir| dir.entry(exif::EXIF_TAG_MAKE))
+                    .and_then(|entry| entry.string_value())
+                {
+                    if make == "DJI" && source == exif::EXIF_TAG_MAKER_NOTE {
+                        return Dir::new_makernote(
+                            b"Exif.DJI\0",
+                            container,
+                            container::Endian::Unset,
+                            offset,
+                            0,
+                            &dji::MNOTE_TAG_NAMES,
                         );
                     }
                 }
