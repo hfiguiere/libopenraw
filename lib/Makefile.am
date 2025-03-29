@@ -1,7 +1,4 @@
 
-AM_CPPFLAGS = -I$(top_srcdir)/include @BOOST_CPPFLAGS@
-
-
 EXTRA_DIST = \
 	exif/exif-tags.pl
 
@@ -9,10 +6,6 @@ update_tags:
 	$(srcdir)/exif/exif-tags.pl > $(srcdir)/../src/tiff/exif/generated.rs
 
 pkgconfig_DATA = libopenraw-0.4.pc
-
-noinst_HEADERS = \
-	option.hpp \
-	$(NULL)
 
 lib_LTLIBRARIES = libopenraw.la
 

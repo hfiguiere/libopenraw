@@ -28,10 +28,9 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <stack>
 #include <string>
-
-#include "../lib/option.hpp"
 
 namespace xml {
 
@@ -71,7 +70,7 @@ public:
     ~Handler();
 
     int32_t getTagId(const xmlChar* tag);
-    Option<std::string> getAttribute(const char* name);
+    std::optional<std::string> getAttribute(const char* name);
     bool process();
 
 protected:

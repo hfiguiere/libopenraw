@@ -93,19 +93,19 @@ int32_t Handler::getTagId(const xmlChar *tag)
     return iter->second;
 }
 
-Option<std::string> Handler::getAttribute(const char* name)
+std::optional<std::string> Handler::getAttribute(const char* name)
 {
     if (!m_reader) {
         fprintf(stderr, "m_reader is NULL\n");
-        return OptionNone();
+        return std::nullopt;
     }
     xmlChar* attr = xmlTextReaderGetAttribute(m_reader, (const xmlChar*)name);
     if (attr == NULL) {
-        return OptionNone();
+        return std::nullopt;
     }
     std::string sattr(reinterpret_cast<const char*>(attr));
     xmlFree(attr);
-    return option_some(std::move(sattr));
+    return std::optional<std::string>(std::move(sattr));
 }
 
 bool Handler::process()
