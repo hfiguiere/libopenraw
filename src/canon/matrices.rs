@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon/matrices.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -24,7 +24,7 @@ use crate::colour::BuiltinMatrix;
 use crate::TypeId;
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 119] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 120] = [
     /* CRW */
     BuiltinMatrix::new( canon!(EOS_D30),
       0,
@@ -510,6 +510,10 @@ lazy_static::lazy_static! {
       0,
       0,
       [ 8971, -2022, -1242, -5405, 13249, 2380, -1280, 2483, 6072 ] ),
+    BuiltinMatrix::new( canon!(V1),
+      0,
+      0,
+      [ 12600, -4747, -2027, -6110, 15868, -28, 110, 479, 6011 ] ),
     ];
 
 }

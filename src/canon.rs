@@ -2,7 +2,7 @@
 /*
  * libopenraw - canon.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -211,6 +211,7 @@ lazy_static::lazy_static! {
         canon!("Canon EOS 90D", EOS_90D),
         canon!("Canon EOS R1", EOS_R1),
         canon!("Canon EOS R5m2", EOS_R5MKII),
+        canon!("Canon PowerShot V1", V1),
     ]);
 }
 
@@ -360,6 +361,7 @@ lazy_static! {
         canon!(0x80000498, EOS_R100),
         canon!(0x80000495, EOS_R1),
         canon!(0x80000496, EOS_R5MKII),
+        canon!(0x80000497, V1),
     ]);
 }
 
