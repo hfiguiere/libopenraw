@@ -947,8 +947,7 @@ impl Dir {
                     // by default it is RGB8. Unless stated otherwise.
                     let mut is_rgb8 = true;
                     if let Some(arr) = self
-                        .entry(exif::EXIF_TAG_BITS_PER_SAMPLE)
-                        .and_then(|e| e.value_array::<u16>(self.endian()))
+                        .u16_value_array(exif::EXIF_TAG_BITS_PER_SAMPLE)
                         .or_else(|| {
                             log::debug!("Error getting bpc");
                             None
