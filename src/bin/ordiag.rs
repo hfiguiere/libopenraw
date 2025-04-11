@@ -91,12 +91,22 @@ pub fn main() {
     }
 }
 
-fn make_thumbnail_name(p: &str, thumb: &Thumbnail) -> Option<std::path::PathBuf> {
+fn make_thumbnail_name(p: &str, t: DataType, thumb: &Thumbnail) -> Option<std::path::PathBuf> {
+    let ext = match t {
+        DataType::Jpeg => "jpg",
+        DataType::Jxl => "jxl",
+        _ => unreachable!(),
+    };
     std::path::PathBuf::from(p)
         .file_stem()
         .and_then(|s| s.to_str())
         .map(|stem| {
-            std::path::PathBuf::from(format!("{}_{}x{}.jpg", stem, thumb.width(), thumb.height()))
+            std::path::PathBuf::from(format!(
+                "{}_{}x{}.{ext}",
+                stem,
+                thumb.width(),
+                thumb.height()
+            ))
         })
 }
 
@@ -104,8 +114,8 @@ fn save_thumbnail(p: &str, thumb: &Thumbnail) {
     use std::io::Write;
 
     match thumb.data_type() {
-        DataType::Jpeg => {
-            if let Some(fname) = make_thumbnail_name(p, thumb) {
+        DataType::Jpeg | DataType::Jxl => {
+            if let Some(fname) = make_thumbnail_name(p, thumb.data_type(), thumb) {
                 if let Some(d) = thumb.data8() {
                     let mut f = std::fs::File::create(&fname).expect("Couldn't open file");
                     let amount = f.write(d).expect("Couldn't write thumbnail");

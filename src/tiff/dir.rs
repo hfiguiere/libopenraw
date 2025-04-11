@@ -870,6 +870,28 @@ impl Dir {
         })
     }
 
+    // Locate a JPEG XL bitstream.
+    fn locate_jxl(&self) -> Option<thumbnail::DataOffset> {
+        let len = self.uint_value_array(exif::TIFF_TAG_TILE_BYTECOUNTS)?;
+        let offset = self.uint_value_array(exif::TIFF_TAG_TILE_OFFSETS)?;
+        if len.len() > 1 || offset.len() > 1 {
+            return None;
+        }
+
+        Some(thumbnail::DataOffset {
+            offset: offset[0] as u64,
+            len: len[0] as u64,
+        })
+    }
+
+    // Locate a JPEG bitstream
+    fn locate_jpeg(&self) -> Option<thumbnail::DataOffset> {
+        let len = self.value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH)? as u64;
+        let offset = self.value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT)? as u64;
+
+        Some(thumbnail::DataOffset { offset, len })
+    }
+
     pub(crate) fn locate_thumbnail(
         &self,
         container: &dyn RawContainer,
@@ -895,14 +917,26 @@ impl Dir {
                 offset = v;
                 got_it = true;
             }
-            if !got_it || compression == 6 || compression == 7 {
+            if !got_it || compression == 6 || compression == 7 || compression == 52546 {
+                data_type = match compression {
+                    6 | 7 => DataType::Jpeg,
+                    52546 => DataType::Jxl,
+                    // That is not unreachable because some CR2
+                    // thumbnails have no compression marker.
+                    _ => DataType::Unknown,
+                };
                 if !got_it {
-                    byte_count = self
-                        .value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH)
-                        .unwrap_or(0);
-                    if let Some(v) = self.value::<u32>(exif::EXIF_TAG_JPEG_INTERCHANGE_FORMAT) {
+                    if let Some(data_offset) = self.locate_jpeg() {
+                        byte_count = data_offset.len as u32;
+                        offset = data_offset.offset as u32;
+                        data_type = DataType::Jpeg;
                         got_it = true;
-                        offset = v;
+                    } else if let Some(data_offset) = self.locate_jxl() {
+                        byte_count = data_offset.len as u32;
+                        offset = data_offset.offset as u32;
+                        got_it = true;
+                    } else {
+                        data_type = DataType::Unknown;
                     }
                 }
                 if got_it {
@@ -915,11 +949,10 @@ impl Dir {
                             // See bug 72270
                             log::debug!("8RGB as JPEG or invalid pixel count. Will ignore.");
                             data_type = DataType::Unknown
-                        } else {
-                            data_type = DataType::Jpeg;
                         }
                     } else {
-                        data_type = DataType::Jpeg;
+                        // What do we do with JXL? This might only apply
+                        // for JPEG.
                         if x == 0 || y == 0 {
                             if let Ok(view) = io::Viewer::create_subview(
                                 &container.borrow_view_mut(),
@@ -985,6 +1018,7 @@ impl Dir {
             }
         }
     }
+
     /// Get sub IFDs. The vec is empty if none is found.
     pub(crate) fn get_sub_ifds(&self, container: &tiff::Container) -> &Vec<Dir> {
         self.sub_ifds.get_or_init(|| {

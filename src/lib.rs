@@ -192,6 +192,8 @@ pub enum Error {
 pub enum DataType {
     /// JPEG stream
     Jpeg,
+    /// JPEG XL
+    Jxl,
     /// RGB8 Pixmap
     PixmapRgb8,
     /// RGB8 Pixmap
@@ -222,6 +224,7 @@ impl From<DataType> for String {
     fn from(t: DataType) -> String {
         match t {
             DataType::Jpeg => "JPEG",
+            DataType::Jxl => "JXL",
             DataType::Raw => "RAW",
             DataType::PixmapRgb8 => "8RGB",
             DataType::PixmapRgb16 => "16RGB",

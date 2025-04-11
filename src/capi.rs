@@ -2,7 +2,7 @@
 /*
  * libopenraw - capi/mod.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -177,6 +177,8 @@ pub enum or_data_type {
     RAW = 6,
     /// Compressed RAW container
     COMPRESSED_RAW = 7,
+    /// JPEG XL
+    JXL = 8,
 
     /// Unknown data type. Unlikely.
     UNKNOWN = 100,
@@ -186,6 +188,7 @@ impl From<DataType> for or_data_type {
     fn from(dt: DataType) -> Self {
         match dt {
             DataType::Jpeg => Self::JPEG,
+            DataType::Jxl => Self::JXL,
             DataType::PixmapRgb8 => Self::PIXMAP_8RGB,
             DataType::PixmapRgb16 => Self::PIXMAP_16RGB,
             DataType::CompressedRaw => Self::COMPRESSED_RAW,
