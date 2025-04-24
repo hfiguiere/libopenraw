@@ -448,6 +448,8 @@ enum RafTagType {
     U16x2,
     /// A quad of U16g
     U16x4,
+    /// A pair of S16.
+    S16x2,
     /// A bunch of Bytes.
     Bytes,
     /// A bunch of U32.
@@ -467,7 +469,7 @@ lazy_static::lazy_static! {
         (TAG_RAW_INFO, ("RawInfo", RafTagType::U32)),
         (TAG_CFA_PATTERN, ("CfaPattern", RafTagType::Bytes)),
         (TAG_WB_OLD, ("WhiteBalanceOld", RafTagType::U16x4)),
-        (TAG_EXPOSURE_BIAS, ("ExposureBias", RafTagType::U32)),
+        (TAG_EXPOSURE_BIAS, ("ExposureBias", RafTagType::S16x2)),
         (TAG_RAF_DATA, ("RafData", RafTagType::U32s)),
     ]);
 }
@@ -477,6 +479,7 @@ pub(super) enum Value {
     Int(u32),
     Bytes(Vec<u8>),
     U32s(Vec<u32>),
+    S16s(Vec<i16>),
 }
 
 impl std::fmt::Display for Value {
@@ -495,6 +498,13 @@ impl std::fmt::Display for Value {
                     write!(f, "U32s {:?}... len={}", &b[0..36], b.len())
                 } else {
                     write!(f, "U32s {b:?} len={}", b.len())
+                }
+            }
+            Self::S16s(b) => {
+                if b.len() > 36 {
+                    write!(f, "S16s {:?}... len={}", &b[0..36], b.len())
+                } else {
+                    write!(f, "S16s {b:?} len={}", b.len())
                 }
             }
         }
@@ -591,7 +601,11 @@ impl MetaContainer {
         for _ in 0..count {
             let tag = view.read_u16::<BigEndian>()?;
             let sz = view.read_u16::<BigEndian>()?;
-            let value = if sz == 4 {
+            let value = if tag == TAG_EXPOSURE_BIAS {
+                let mut v = uninit_vec!(2);
+                view.read_i16_into::<BigEndian>(&mut v)?;
+                Value::S16s(v)
+            } else if sz == 4 {
                 let v = view.read_u32::<BigEndian>()?;
                 Value::Int(v)
             } else if tag == TAG_RAF_DATA {
@@ -649,8 +663,22 @@ impl Dump for MetaContainer {
                     RafTagType::U16x2 => Size::try_from(value)
                         .map(|size| format!("{}, {}", size.width, size.height))
                         .unwrap_or_default(),
-                    RafTagType::Bytes => format!("{value}"),
-                    RafTagType::U32s => format!("{value}"),
+                    RafTagType::Bytes | RafTagType::U32s => format!("{value}"),
+                    RafTagType::S16x2 => match value {
+                        Value::S16s(values) => {
+                            format!(
+                                "{}/{}: {}",
+                                values[0],
+                                values[1],
+                                if values[1] != 0 {
+                                    values[0] as f32 / values[1] as f32
+                                } else {
+                                    f32::INFINITY
+                                }
+                            )
+                        }
+                        _ => format!("{value}"),
+                    },
                     _ => String::default(),
                 };
                 dump_writeln!(
