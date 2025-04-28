@@ -749,6 +749,7 @@ pub(crate) struct Rw2File {
     container: OnceCell<Box<tiff::Container>>,
     thumbnails: OnceCell<ThumbnailStorage>,
     jpeg_preview: OnceCell<Option<jpeg::Container>>,
+    jpeg_large_preview: OnceCell<Option<jpeg::Container>>,
     #[cfg(feature = "probe")]
     probe: Option<crate::Probe>,
 }
@@ -761,6 +762,7 @@ impl Rw2File {
             container: OnceCell::new(),
             thumbnails: OnceCell::new(),
             jpeg_preview: OnceCell::new(),
+            jpeg_large_preview: OnceCell::new(),
             #[cfg(feature = "probe")]
             probe: None,
         })
@@ -785,9 +787,9 @@ impl Rw2File {
         }
     }
 
-    fn jpeg_data_offset(&self) -> Option<thumbnail::DataOffset> {
+    fn jpeg_data_offset(&self, tag: u16) -> Option<thumbnail::DataOffset> {
         self.ifd(tiff::IfdType::Main).and_then(|dir| {
-            dir.entry(exif::RW2_TAG_JPEG_FROM_RAW).and_then(|entry| {
+            dir.entry(tag).and_then(|entry| {
                 let offset = entry.offset()? as u64;
                 let len = entry.count as u64;
                 Some(thumbnail::DataOffset { offset, len })
@@ -798,10 +800,23 @@ impl Rw2File {
     fn jpeg_preview(&self) -> Option<&jpeg::Container> {
         self.jpeg_preview
             .get_or_init(|| {
-                self.jpeg_data_offset().and_then(|offset| {
-                    let view = Viewer::create_view(&self.reader, offset.offset).ok()?;
-                    Some(jpeg::Container::new(view, self.type_()))
-                })
+                self.jpeg_data_offset(exif::RW2_TAG_JPEG_FROM_RAW)
+                    .and_then(|offset| {
+                        let view = Viewer::create_view(&self.reader, offset.offset).ok()?;
+                        Some(jpeg::Container::new(view, self.type_()))
+                    })
+            })
+            .as_ref()
+    }
+
+    fn jpeg_large_preview(&self) -> Option<&jpeg::Container> {
+        self.jpeg_large_preview
+            .get_or_init(|| {
+                self.jpeg_data_offset(exif::RW2_TAG_JPEG_FROM_RAW2)
+                    .and_then(|offset| {
+                        let view = Viewer::create_view(&self.reader, offset.offset).ok()?;
+                        Some(jpeg::Container::new(view, self.type_()))
+                    })
             })
             .as_ref()
     }
@@ -853,7 +868,7 @@ impl RawFileImpl for Rw2File {
         self.thumbnails.get_or_try_init(|| {
             let mut thumbnails = vec![];
             if let Some(jpeg) = self.jpeg_preview() {
-                if let Some(jpeg_offset) = self.jpeg_data_offset() {
+                if let Some(jpeg_offset) = self.jpeg_data_offset(exif::RW2_TAG_JPEG_FROM_RAW) {
                     // The JPEG preview has a preview.
                     jpeg.exif().and_then(|exif| {
                         let dir = exif.directory(1)?;
@@ -876,7 +891,6 @@ impl RawFileImpl for Rw2File {
                                 }),
                             },
                         ));
-
                         probe!(self.probe, "rw2.jpeg_preview.thumbnail", "true");
                         Some(())
                     });
@@ -896,7 +910,24 @@ impl RawFileImpl for Rw2File {
                     ));
                 }
             }
-
+            // This is the larger preview.
+            if let Some(jpeg) = self.jpeg_large_preview() {
+                if let Some(jpeg_offset) = self.jpeg_data_offset(exif::RW2_TAG_JPEG_FROM_RAW2) {
+                    let width = jpeg.width() as u32;
+                    let height = jpeg.height() as u32;
+                    probe!(self.probe, "rw2.jpeg_large_preview", "true");
+                    let dim = std::cmp::max(width, height);
+                    thumbnails.push((
+                        dim,
+                        thumbnail::ThumbDesc {
+                            width,
+                            height,
+                            data_type: DataType::Jpeg,
+                            data: thumbnail::Data::Offset(jpeg_offset),
+                        },
+                    ));
+                }
+            }
             Ok(ThumbnailStorage::with_thumbnails(thumbnails))
         })
     }

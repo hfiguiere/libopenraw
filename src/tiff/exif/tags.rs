@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/exif/tags.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -243,6 +243,7 @@ pub const RW2_TAG_IMAGE_RAWFORMAT: u16 = 0x002d;
 pub const RW2_TAG_JPEG_FROM_RAW: u16 = 0x002e;
 pub const RW2_TAG_RAW_OFFSET: u16 = 0x0118;
 pub const RW2_TAG_CAMERA_IFD: u16 = 0x0120;
+pub const RW2_TAG_JPEG_FROM_RAW2: u16 = 0x0127;
 
 /* Pentax MakerNote tags */
 pub const _MNOTE_PENTAX_PREVIEW_IMAGE_SIZE: u16 = 0x02;
