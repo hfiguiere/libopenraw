@@ -281,8 +281,8 @@ impl LJpeg {
     fn read_file_header(&self, dc: &mut DecompressInfo, reader: &mut LJpegBitReader) -> Result<()> {
         // Demand an SOI marker at the start of the file --- otherwise it's
         // probably not a JPEG file at all.
-        let c = reader.read_u8();
-        let c2 = reader.read_u8();
+        let c = reader.read_u8()?;
+        let c2 = reader.read_u8()?;
         if c != 0xff || c2 != M_SOI {
             return Err(Error::Decompression(format!(
                 "LJPEG: Not a JPEG file. Marker is {c:x} {c2:x}"
@@ -515,18 +515,18 @@ impl LJpeg {
         let mut c = 0;
         while c == 0 {
             // nbytes += 1;
-            c = reader.read_u8();
+            c = reader.read_u8()?;
             // skip any non-FF bytes
             while c != 0xff {
                 // nbytes += 1;
-                c = reader.read_u8();
+                c = reader.read_u8()?;
             }
 
-            c = reader.read_u8();
+            c = reader.read_u8()?;
             // skip any duplicate FFs
             while c == 0xff {
                 //  we don't increment nbytes here since extra FFs are legal
-                c = reader.read_u8();
+                c = reader.read_u8()?;
             }
         } // repeat if it was a stuffed FF/00
 
@@ -937,10 +937,10 @@ impl DecompressInfo {
 
     fn get_sof(&mut self, reader: &mut LJpegBitReader) -> Result<()> {
         let length = reader.read_u16();
-        self.data_precision = reader.read_u8();
+        self.data_precision = reader.read_u8()?;
         self.image_height = reader.read_u16();
         self.image_width = reader.read_u16();
-        self.num_components = reader.read_u8();
+        self.num_components = reader.read_u8()?;
 
         // We don't support files in which the image height is initially
         // specified as 0 and is later redefined by DNL.  As long as we
@@ -967,11 +967,11 @@ impl DecompressInfo {
         for ci in 0..self.num_components {
             let compptr = &mut self.comp_info[ci as usize];
             compptr.component_index = ci as u16;
-            compptr.component_id = reader.read_u8() as u16;
-            let c = reader.read_u8();
+            compptr.component_id = reader.read_u8()? as u16;
+            let c = reader.read_u8()?;
             compptr.h_samp_factor = ((c >> 4) & 15) as u16;
             compptr.v_samp_factor = (c & 15) as u16;
-            reader.read_u8(); // skip Tq
+            reader.read_u8()?; // skip Tq
         }
 
         Ok(())
@@ -981,7 +981,7 @@ impl DecompressInfo {
         // length as a signed i32 is safer
         let mut length = reader.read_u16() as i32 - 2;
         while length > 0 {
-            let index = reader.read_u8();
+            let index = reader.read_u8()?;
 
             if index >= 4 {
                 return Err(Error::JpegFormat(format!("LJPEG: Bogus DHT index {index}")));
@@ -994,7 +994,7 @@ impl DecompressInfo {
             htblptr.bits[0] = 0;
             let mut count = 0_u16;
             for i in 1..=16 {
-                let b = reader.read_u8();
+                let b = reader.read_u8()?;
                 htblptr.bits[i] = b;
                 count += b as u16;
             }
@@ -1003,7 +1003,7 @@ impl DecompressInfo {
                 return Err(Error::JpegFormat("LJPEG: Bogus DHT counts".into()));
             }
             for i in 0_usize..count as usize {
-                htblptr.huffval[i] = reader.read_u8();
+                htblptr.huffval[i] = reader.read_u8()?;
             }
             length -= 1 + 16 + count as i32;
         }
@@ -1026,14 +1026,14 @@ impl DecompressInfo {
 
         loop {
             // skip any non-FF bytes
-            c = reader.read_u8();
+            c = reader.read_u8()?;
             while c != 0xff {
-                c = reader.read_u8();
+                c = reader.read_u8()?;
             }
 
-            c = reader.read_u8();
+            c = reader.read_u8()?;
             while c == 0xff {
-                c = reader.read_u8();
+                c = reader.read_u8()?;
             }
             if c != 0 {
                 break;
@@ -1068,7 +1068,7 @@ impl DecompressInfo {
             return Err(Error::JpegFormat("LJPEG: invalid SOS length".into()));
         }
 
-        let n = reader.read_u8();
+        let n = reader.read_u8()?;
         self.comps_in_scan = n as u16;
         length -= 3;
 
@@ -1077,8 +1077,8 @@ impl DecompressInfo {
         }
 
         for i in 0..n {
-            let cc = reader.read_u8() as u16;
-            let c = reader.read_u8();
+            let cc = reader.read_u8()? as u16;
+            let c = reader.read_u8()?;
             length -= 2;
 
             let mut ci = 0;
@@ -1100,9 +1100,9 @@ impl DecompressInfo {
             self.cur_comp_info[i as usize] = compptr.clone();
         }
 
-        self.ss = reader.read_u8();
+        self.ss = reader.read_u8()?;
         reader.skip(1);
-        let c = reader.read_u8();
+        let c = reader.read_u8()?;
         self.pt = c & 0x0f;
 
         Ok(())

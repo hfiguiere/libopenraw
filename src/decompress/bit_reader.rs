@@ -173,10 +173,14 @@ impl<'a> LJpegBitReader<'a> {
     }
 
     /// Read a byte out of the buffer.
-    pub(crate) fn read_u8(&mut self) -> u8 {
+    pub(crate) fn read_u8(&mut self) -> Result<u8> {
+        if self.pos >= self.buffer.len() {
+            return Err(Error::BufferTooSmall);
+        }
+        // XXX maybe use get_unchecked here, as unsafe.
         let b = self.buffer[self.pos];
         self.pos += 1;
-        b
+        Ok(b)
     }
 
     /// Read an u16 from the bit reader. JPEG is always BigEndian.
@@ -201,10 +205,10 @@ impl<'a> LJpegBitReader<'a> {
     // Process any stuffed bytes at this time.
     fn fill_bit_buffer(&mut self, nbits: u8) -> Result<()> {
         while self.bits_left < MIN_GET_BITS {
-            let mut c = self.read_u8();
+            let mut c = self.read_u8()?;
             // If it's 0xFF, check and discard stuffed zero byte
             if c == 0xff {
-                let c2 = self.read_u8();
+                let c2 = self.read_u8()?;
                 if c2 != 0 {
                     // Oops, it's actually a marker indicating end of
                     // compressed data.  Better put it back for use later.
