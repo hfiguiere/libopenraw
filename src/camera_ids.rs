@@ -292,6 +292,7 @@ pub mod canon {
     pub const EOS_R5MKII: u16 = 122;
     pub const EOS_R1: u16 = 123;
     pub const V1: u16 = 124;
+    pub const EOS_R50V: u16 = 125;
 }
 
 /// Nikon type IDs

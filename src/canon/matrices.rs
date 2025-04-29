@@ -24,7 +24,7 @@ use crate::colour::BuiltinMatrix;
 use crate::TypeId;
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 120] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 121] = [
     /* CRW */
     BuiltinMatrix::new( canon!(EOS_D30),
       0,
@@ -458,6 +458,10 @@ lazy_static::lazy_static! {
       0,
       0,
       [ 9269, -2012, -1107, -3990, 11762, 2527, -569, 2093, 4913 ] ),
+    BuiltinMatrix::new( canon!(EOS_R50V),
+      0,
+      0,
+      [ 9089, -1810, -1209, -4294, 12116, 2454, -497, 1862, 4923 ] ),
     BuiltinMatrix::new( canon!(EOS_R6),
       0,
       0,

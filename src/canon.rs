@@ -212,6 +212,7 @@ lazy_static::lazy_static! {
         canon!("Canon EOS R1", EOS_R1),
         canon!("Canon EOS R5m2", EOS_R5MKII),
         canon!("Canon PowerShot V1", V1),
+        canon!("Canon EOS R50 V", EOS_R50V),
     ]);
 }
 
@@ -362,6 +363,7 @@ lazy_static! {
         canon!(0x80000495, EOS_R1),
         canon!(0x80000496, EOS_R5MKII),
         canon!(0x80000497, V1),
+        canon!(0x80000516, EOS_R50V),
     ]);
 }
 
