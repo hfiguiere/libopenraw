@@ -368,13 +368,13 @@ fn process_file(
 mod test {
 
     use super::make_thumbnail_name;
-    use libopenraw::{DataType, Thumbnail};
+    use libopenraw::{Bitmap, DataType, Thumbnail};
 
     #[test]
     fn test_make_thumbnail_name() {
         let filename: &str = "samples/dng/iphone-13-pro_1.57+IMG_0445.DNG";
         let thumbnail = Thumbnail::with_data(100, 75, DataType::Jpeg, vec![100, 120, 130]);
-        let n = make_thumbnail_name(filename, &thumbnail);
+        let n = make_thumbnail_name(filename, thumbnail.data_type(), &thumbnail);
         assert_eq!(
             n,
             Some(std::path::PathBuf::from(
