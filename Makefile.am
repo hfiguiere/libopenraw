@@ -68,6 +68,7 @@ RUST_FILES = Cargo.lock \
 	src/decompress/ljpeg.rs \
 	src/decompress/sliced_buffer.rs \
 	src/decompress/tiled.rs \
+	src/dji.rs \
 	src/dng.rs \
 	src/dump.rs \
 	src/epson.rs \
