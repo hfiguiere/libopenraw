@@ -137,6 +137,7 @@ lazy_static::lazy_static! {
         nikon!("NIKON Z 50", Z50),
         nikon!("NIKON Z50_2", Z50_2),
         nikon!("NIKON Z 5", Z5),
+        nikon!("NIKON Z5_2", Z5_2),
         nikon!("NIKON Z 8", Z8),
         nikon!("NIKON Z 9", Z9),
         nikon!("NIKON Z fc", ZFC),

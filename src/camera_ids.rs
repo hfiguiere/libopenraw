@@ -391,6 +391,7 @@ pub mod nikon {
     pub const ZF: u16 = 91;
     pub const Z6_3: u16 = 92;
     pub const Z50_2: u16 = 93;
+    pub const Z5_2: u16 = 94;
 }
 
 /// Leica type IDs

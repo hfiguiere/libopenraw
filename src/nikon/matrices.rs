@@ -26,7 +26,7 @@ use crate::nikon;
 use crate::TypeId;
 
 lazy_static::lazy_static! {
-    pub(super) static ref MATRICES: [BuiltinMatrix; 92] = [
+    pub(super) static ref MATRICES: [BuiltinMatrix; 93] = [
         BuiltinMatrix::new(
             nikon!(D1),
             0,
@@ -404,6 +404,12 @@ lazy_static::lazy_static! {
             0,
             0,
             [8695, -2558, -648, -5015, 12711, 2575, -1279, 2215, 7514],
+        ),
+        BuiltinMatrix::new(
+            nikon!(Z5_2),
+            0,
+            0,
+            [9874, -3784, -823, -4728, 12673, 2286, -648, 1513, 6375],
         ),
         BuiltinMatrix::new(
             nikon!(ZFC),
