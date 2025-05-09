@@ -151,6 +151,7 @@ lazy_static::lazy_static! {
         nikon!("COOLPIX P340", COOLPIX_P340),
         nikon!("COOLPIX P950", COOLPIX_P950),
         nikon!("COOLPIX P1000", COOLPIX_P1000),
+        nikon!("COOLPIX P1100", COOLPIX_P1100),
         nikon!("COOLPIX P6000", COOLPIX_P6000),
         nikon!("COOLPIX P7000", COOLPIX_P7000),
         nikon!("COOLPIX P7100", COOLPIX_P7100),
