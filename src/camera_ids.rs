@@ -805,7 +805,10 @@ pub mod panasonic {
     pub const FZ80: u16 = 41;
     pub const FZ82: u16 = FZ80;
     pub const FZ330: u16 = 42;
-    pub const TZ70: u16 = 43;
+    pub const ZS50: u16 = 43;
+    pub const TZ70: u16 = ZS50;
+    pub const TZ71: u16 = ZS50;
+
     pub const ZS60: u16 = 44;
     pub const TZ80: u16 = ZS60;
     pub const TZ81: u16 = ZS60;
@@ -864,10 +867,10 @@ pub mod panasonic {
     pub const FZ300: u16 = 80;
     pub const FZ70: u16 = 81;
     pub const FZ72: u16 = FZ70;
-    pub const ZS50: u16 = 82;
-    pub const TZ71: u16 = ZS50;
+
     pub const ZS70: u16 = 83;
     pub const TZ90: u16 = ZS70;
+    pub const TZ91: u16 = ZS70;
     pub const DC_S5M2: u16 = 84;
     pub const GF8: u16 = 85;
     pub const DC_S5M2X: u16 = 86;

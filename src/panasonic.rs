@@ -168,7 +168,6 @@ lazy_static::lazy_static! {
         panasonic!("DC-S5M2", DC_S5M2),
         panasonic!("DC-S5M2X", DC_S5M2X),
         panasonic!("DC-S9", DC_S9),
-        panasonic!("DMC-TZ70", TZ70),
         panasonic!("DMC-ZS60", ZS60),
         // Aliases to DMC-ZS60 (2)
         panasonic!("DMC-TZ80", TZ80),
@@ -192,9 +191,11 @@ lazy_static::lazy_static! {
         panasonic!("DMC-TZ60", TZ60),
         panasonic!("DMC-TZ61", TZ61),
         // Aliases to DMC-ZS50
+        panasonic!("DMC-TZ70", TZ70),
         panasonic!("DMC-TZ71", TZ71),
         // Aliases to DMC-ZS70
         panasonic!("DMC-TZ90", TZ90),
+        panasonic!("DMC-TZ91", TZ91),
 
         leica!("DIGILUX 2", DIGILUX2),
         leica!("DIGILUX 3", DIGILUX3),
@@ -212,7 +213,7 @@ lazy_static::lazy_static! {
         leica!("C (Typ 112)", C_TYP112),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 103] = [
+    static ref MATRICES: [BuiltinMatrix; 102] = [
         BuiltinMatrix::new(
             panasonic!(CM1),
             15,
@@ -579,11 +580,6 @@ lazy_static::lazy_static! {
             15,
             0xf96,
             [ 8025, -1942, -1050, -7920, 15904, 2100, -2456, 3005, 7039 ] ),
-        BuiltinMatrix::new(
-            panasonic!(TZ70),
-            15,
-            0,
-            [ 8802, -3135, -789, -3151, 11468, 1904, -550, 1745, 4810 ] ),
         BuiltinMatrix::new(
             panasonic!(ZS40),
             15,
