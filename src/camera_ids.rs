@@ -1029,6 +1029,8 @@ pub mod dji {
     pub const FC4280: u16 = 7;
     /// DJI Air 3
     pub const FC8284: u16 = 8;
+    /// DJI Mavic 3 Pro Cinema
+    pub const FC4382: u16 = 9;
 }
 
 pub mod nokia {
