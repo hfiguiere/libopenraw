@@ -168,6 +168,7 @@ lazy_static::lazy_static! {
         sony!(395, ZV1M2),
         sony!(399, ZVE10M2),
         sony!(400, ILCE1M2),
+        sony!(402, ILCE6400A),
     ]);
 
     static ref MAKE_TO_ID_MAP: tiff::MakeToIdMap = HashMap::from([
@@ -240,6 +241,7 @@ lazy_static::lazy_static! {
         sony!("ILCE-6100", ILCE6100),
         sony!("ILCE-6300", ILCE6300),
         sony!("ILCE-6400", ILCE6400),
+        sony!("ILCE-6400A", ILCE6400A),
         sony!("ILCE-6500", ILCE6500),
         sony!("ILCE-6600", ILCE6600),
         sony!("ILCE-6700", ILCE6700),
@@ -272,7 +274,7 @@ lazy_static::lazy_static! {
         ("Lunar", TypeId(vendor::HASSELBLAD, hasselblad::LUNAR)),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 97] = [
+    static ref MATRICES: [BuiltinMatrix; 98] = [
         BuiltinMatrix::new(
             sony!(A100),
             0,
@@ -610,6 +612,11 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 5973, -1695, -419, -3826, 11797, 2293, -639, 1398, 5789 ] ),
+        BuiltinMatrix::new(
+            sony!(ILCE6400A),
+            128,
+            0,
+            [ 7657, -2847, -607, -4083, 11966, 2389, -684, 1418, 5844 ] ),
         BuiltinMatrix::new(
             sony!(ILCE6500),
             0,
