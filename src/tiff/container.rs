@@ -22,7 +22,6 @@
 //! The IFD Container. Contains the IFD `Dir`
 
 use std::cell::{RefCell, RefMut};
-use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom};
 
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
@@ -200,7 +199,7 @@ impl Container {
         base_offset: u32,
         t: IfdType,
         id: Option<&'static str>,
-        tag_names: Option<&'static HashMap<u16, &'static str>>,
+        tag_names: Option<&'static exif::TagMap>,
     ) -> Result<Dir> {
         let mut dir = match *self.endian.borrow() {
             container::Endian::Little => Dir::read::<LittleEndian>(view, offset, base_offset, t),

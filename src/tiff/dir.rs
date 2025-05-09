@@ -47,7 +47,11 @@ use crate::ricoh;
 use crate::sigma;
 use crate::sony;
 use crate::thumbnail;
-use crate::tiff::{self, exif, TagType};
+use crate::tiff::{
+    self,
+    exif::{self, TagMap},
+    TagType,
+};
 use crate::utils;
 use crate::Type as RawType;
 use crate::{DataType, Error, Result};
@@ -56,7 +60,7 @@ use super::{Entry, Ifd, IfdType};
 
 lazy_static::lazy_static! {
     /// Empty tag list
-    static ref MNOTE_EMPTY_TAGS: HashMap<u16, &'static str> = HashMap::new();
+    static ref MNOTE_EMPTY_TAGS: TagMap = HashMap::new();
 }
 
 #[derive(Debug)]
@@ -76,7 +80,7 @@ pub struct Dir {
     /// Offset in MakerNote
     pub mnote_offset: u32,
     /// Tag names to decode.
-    pub(crate) tag_names: &'static HashMap<u16, &'static str>,
+    pub(crate) tag_names: &'static TagMap,
     /// SubIFs
     sub_ifds: OnceCell<Vec<Dir>>,
 }
@@ -590,7 +594,7 @@ impl Dir {
         endian: container::Endian,
         offset: u32,
         mnote_offset: u32,
-        tag_names: &'static HashMap<u16, &'static str>,
+        tag_names: &'static TagMap,
     ) -> Result<Dir> {
         let endian = if endian == container::Endian::Unset {
             container.endian()
@@ -814,7 +818,7 @@ impl Dir {
         &self,
         container: &tiff::Container,
         tag: u16,
-        tag_names: Option<&'static HashMap<u16, &'static str>>,
+        tag_names: Option<&'static TagMap>,
     ) -> Option<tiff::Container> {
         self.entry(tag).and_then(|e| e.offset()).and_then(|offset| {
             let view = container.borrow_view_mut();
@@ -838,7 +842,7 @@ impl Dir {
         container: &tiff::Container,
         tag: u16,
         id: Option<&'static str>,
-        tag_names: Option<&'static HashMap<u16, &'static str>>,
+        tag_names: Option<&'static TagMap>,
     ) -> Option<Dir> {
         self.entry(tag).and_then(|e| {
             if e.type_ == 13 || e.type_ == exif::TagType::Long as i16 {

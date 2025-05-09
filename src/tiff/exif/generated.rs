@@ -3,9 +3,11 @@
 //! This contain the tag names generated from ExifTool.
 
 use std::collections::HashMap;
+
+use crate::tiff::exif::TagMap;
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref EXIF_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref EXIF_TAG_NAMES: TagMap = HashMap::from([
     ( 0x1, "InteropIndex" ),
     ( 0x2, "InteropVersion" ),
     ( 0xb, "ProcessingSoftware" ),
@@ -599,7 +601,7 @@ pub static ref EXIF_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref GPSINFO_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref GPSINFO_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "GPSVersionID" ),
     ( 0x1, "GPSLatitudeRef" ),
     ( 0x2, "GPSLatitude" ),
@@ -637,7 +639,7 @@ pub static ref GPSINFO_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_APPLE_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_APPLE_TAG_NAMES: TagMap = HashMap::from([
     ( 0x1, "MakerNoteVersion" ),
     ( 0x2, "AEMatrix" ),
     ( 0x3, "RunTime" ),
@@ -685,7 +687,7 @@ pub static ref MNOTE_APPLE_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_CANON_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_CANON_TAG_NAMES: TagMap = HashMap::from([
     ( 0x1, "CanonCameraSettings" ),
     ( 0x2, "CanonFocalLength" ),
     ( 0x3, "CanonFlashInfo" ),
@@ -775,7 +777,7 @@ pub static ref MNOTE_CANON_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_FUJIFILM_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_FUJIFILM_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "Version" ),
     ( 0x10, "InternalSerialNumber" ),
     ( 0x1000, "Quality" ),
@@ -875,7 +877,7 @@ pub static ref MNOTE_FUJIFILM_TAG_NAMES: HashMap<u16, &'static str> = HashMap::f
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_FUJIFILM_RAWIFD_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_FUJIFILM_RAWIFD_TAG_NAMES: TagMap = HashMap::from([
     ( 0xf000, "FujiIFD" ),
     ( 0xf001, "RawImageFullWidth" ),
     ( 0xf002, "RawImageFullHeight" ),
@@ -894,7 +896,7 @@ pub static ref MNOTE_FUJIFILM_RAWIFD_TAG_NAMES: HashMap<u16, &'static str> = Has
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_MINOLTA_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_MINOLTA_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "MakerNoteVersion" ),
     ( 0x1, "MinoltaCameraSettingsOld" ),
     ( 0x3, "MinoltaCameraSettings" ),
@@ -929,7 +931,7 @@ pub static ref MNOTE_MINOLTA_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fr
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_NIKON_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_NIKON_TAG_NAMES: TagMap = HashMap::from([
     ( 0x1, "MakerNoteVersion" ),
     ( 0x2, "ISO" ),
     ( 0x3, "ColorMode" ),
@@ -1046,7 +1048,7 @@ pub static ref MNOTE_NIKON_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_NIKON2_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_NIKON2_TAG_NAMES: TagMap = HashMap::from([
     ( 0x3, "Quality" ),
     ( 0x4, "ColorMode" ),
     ( 0x5, "ImageAdjustment" ),
@@ -1060,7 +1062,7 @@ pub static ref MNOTE_NIKON2_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fro
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_OLYMPUS_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_OLYMPUS_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "MakerNoteVersion" ),
     ( 0x1, "MinoltaCameraSettingsOld" ),
     ( 0x3, "MinoltaCameraSettings" ),
@@ -1186,7 +1188,7 @@ pub static ref MNOTE_OLYMPUS_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fr
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_OLYMPUS_EQ_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_OLYMPUS_EQ_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "EquipmentVersion" ),
     ( 0x100, "CameraType2" ),
     ( 0x101, "SerialNumber" ),
@@ -1217,7 +1219,7 @@ pub static ref MNOTE_OLYMPUS_EQ_TAG_NAMES: HashMap<u16, &'static str> = HashMap:
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_OLYMPUS_CS_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_OLYMPUS_CS_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "CameraSettingsVersion" ),
     ( 0x100, "PreviewImageValid" ),
     ( 0x101, "PreviewImageStart" ),
@@ -1292,7 +1294,7 @@ pub static ref MNOTE_OLYMPUS_CS_TAG_NAMES: HashMap<u16, &'static str> = HashMap:
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_OLYMPUS_RD_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_OLYMPUS_RD_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "RawDevVersion" ),
     ( 0x100, "RawDevExposureBiasValue" ),
     ( 0x101, "RawDevWhiteBalanceValue" ),
@@ -1312,7 +1314,7 @@ pub static ref MNOTE_OLYMPUS_RD_TAG_NAMES: HashMap<u16, &'static str> = HashMap:
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_OLYMPUS_RD2_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_OLYMPUS_RD2_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "RawDevVersion" ),
     ( 0x100, "RawDevExposureBiasValue" ),
     ( 0x101, "RawDevWhiteBalance" ),
@@ -1342,7 +1344,7 @@ pub static ref MNOTE_OLYMPUS_RD2_TAG_NAMES: HashMap<u16, &'static str> = HashMap
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_OLYMPUS_IP_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_OLYMPUS_IP_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "ImageProcessingVersion" ),
     ( 0x100, "WB_RBLevels" ),
     ( 0x102, "WB_RBLevels3000K" ),
@@ -1411,7 +1413,7 @@ pub static ref MNOTE_OLYMPUS_IP_TAG_NAMES: HashMap<u16, &'static str> = HashMap:
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_OLYMPUS_FI_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_OLYMPUS_FI_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "FocusInfoVersion" ),
     ( 0x209, "AutoFocus" ),
     ( 0x210, "SceneDetect" ),
@@ -1439,7 +1441,7 @@ pub static ref MNOTE_OLYMPUS_FI_TAG_NAMES: HashMap<u16, &'static str> = HashMap:
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_OLYMPUS_RI_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_OLYMPUS_RI_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "RawInfoVersion" ),
     ( 0x100, "WB_RBLevelsUsed" ),
     ( 0x110, "WB_RBLevelsAuto" ),
@@ -1481,7 +1483,7 @@ pub static ref MNOTE_OLYMPUS_RI_TAG_NAMES: HashMap<u16, &'static str> = HashMap:
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_PANASONIC_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_PANASONIC_TAG_NAMES: TagMap = HashMap::from([
     ( 0x1, "ImageQuality" ),
     ( 0x2, "FirmwareVersion" ),
     ( 0x3, "WhiteBalance" ),
@@ -1617,7 +1619,7 @@ pub static ref MNOTE_PANASONIC_TAG_NAMES: HashMap<u16, &'static str> = HashMap::
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_LEICA2_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_LEICA2_TAG_NAMES: TagMap = HashMap::from([
     ( 0x300, "Quality" ),
     ( 0x302, "UserProfile" ),
     ( 0x303, "SerialNumber" ),
@@ -1642,7 +1644,7 @@ pub static ref MNOTE_LEICA2_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fro
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_LEICA3_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_LEICA3_TAG_NAMES: TagMap = HashMap::from([
     ( 0xb, "SerialInfo" ),
     ( 0xd, "WB_RGBLevels" ),
     ]);
@@ -1650,7 +1652,7 @@ pub static ref MNOTE_LEICA3_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fro
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_LEICA4_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_LEICA4_TAG_NAMES: TagMap = HashMap::from([
     ( 0x3000, "Subdir3000" ),
     ( 0x3100, "Subdir3100" ),
     ( 0x3400, "Subdir3400" ),
@@ -1660,7 +1662,7 @@ pub static ref MNOTE_LEICA4_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fro
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_LEICA5_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_LEICA5_TAG_NAMES: TagMap = HashMap::from([
     ( 0x303, "LensType" ),
     ( 0x305, "SerialNumber" ),
     ( 0x407, "OriginalFileName" ),
@@ -1677,7 +1679,7 @@ pub static ref MNOTE_LEICA5_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fro
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_LEICA6_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_LEICA6_TAG_NAMES: TagMap = HashMap::from([
     ( 0x300, "PreviewImage" ),
     ( 0x301, "UnknownBlock" ),
     ( 0x303, "LensType" ),
@@ -1691,7 +1693,7 @@ pub static ref MNOTE_LEICA6_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fro
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_LEICA9_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_LEICA9_TAG_NAMES: TagMap = HashMap::from([
     ( 0x304, "FocusDistance" ),
     ( 0x311, "ExternalSensorBrightnessValue" ),
     ( 0x312, "MeasuredLV" ),
@@ -1707,7 +1709,7 @@ pub static ref MNOTE_LEICA9_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fro
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_PENTAX_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_PENTAX_TAG_NAMES: TagMap = HashMap::from([
     ( 0x0, "PentaxVersion" ),
     ( 0x1, "PentaxModelType" ),
     ( 0x2, "PreviewImageSize" ),
@@ -1866,7 +1868,7 @@ pub static ref MNOTE_PENTAX_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fro
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_RICOH_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_RICOH_TAG_NAMES: TagMap = HashMap::from([
     ( 0x1, "MakerNoteType" ),
     ( 0x2, "FirmwareVersion" ),
     ( 0x5, "SerialNumber" ),
@@ -1916,7 +1918,7 @@ pub static ref MNOTE_RICOH_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_SIGMA_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_SIGMA_TAG_NAMES: TagMap = HashMap::from([
     ( 0x2, "SerialNumber" ),
     ( 0x3, "DriveMode" ),
     ( 0x4, "ResolutionMode" ),
@@ -1987,7 +1989,7 @@ pub static ref MNOTE_SIGMA_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_SONY_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_SONY_TAG_NAMES: TagMap = HashMap::from([
     ( 0x10, "CameraInfo" ),
     ( 0x20, "FocusInfo" ),
     ( 0x102, "Quality" ),
@@ -2106,7 +2108,7 @@ pub static ref MNOTE_SONY_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from(
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref MNOTE_DJI_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref MNOTE_DJI_TAG_NAMES: TagMap = HashMap::from([
     ( 0x1, "Make" ),
     ( 0x3, "SpeedX" ),
     ( 0x4, "SpeedY" ),
@@ -2122,7 +2124,7 @@ pub static ref MNOTE_DJI_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref RAW_PANASONIC_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref RAW_PANASONIC_TAG_NAMES: TagMap = HashMap::from([
     ( 0x1, "PanasonicRawVersion" ),
     ( 0x2, "SensorWidth" ),
     ( 0x3, "SensorHeight" ),
@@ -2182,7 +2184,7 @@ pub static ref RAW_PANASONIC_TAG_NAMES: HashMap<u16, &'static str> = HashMap::fr
 
 lazy_static::lazy_static! {
 /// Exif tag names
-pub static ref RAW_PANASONIC_CAMERAIFD_TAG_NAMES: HashMap<u16, &'static str> = HashMap::from([
+pub static ref RAW_PANASONIC_CAMERAIFD_TAG_NAMES: TagMap = HashMap::from([
     ( 0x1001, "MultishotOn" ),
     ( 0x1100, "FocusStepNear" ),
     ( 0x1101, "FocusStepCount" ),
@@ -2208,3 +2210,5 @@ pub static ref RAW_PANASONIC_CAMERAIFD_TAG_NAMES: HashMap<u16, &'static str> = H
     ( 0x3600, "WhiteBalanceDetected" ),
     ]);
 }
+
+// END AUTOGENERATED
