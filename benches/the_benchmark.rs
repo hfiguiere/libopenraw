@@ -27,7 +27,7 @@ const FILES: [&str; 12] = [
     "Apple/iPhone XS/IMG_1105.dng",
     "Canon/EOS 10D/CRW_7673.CRW",
     "Canon/EOS 20D/IMG_3893.CR2",
-    "Canon/Canon EOS R5/Canon_EOS_R5_CRAW_ISO_100_nocrop_nodual.CR3",
+    "Canon/EOS R5/Canon_EOS_R5_CRAW_ISO_100_nocrop_nodual.CR3",
     "Epson/R-D1/_EPS0672.ERF",
     "Fujifilm/X-Pro1/DSCF2131.RAF",
     "Leica/M8/L1030132.DNG",
@@ -51,15 +51,13 @@ pub fn ordiag_benchmark(c: &mut Criterion) {
         let file = dataset.join(file);
         c.bench_function(&bench_name, |b| {
             b.iter(|| {
-                let rawfile = rawfile_from_file(&file, None);
-                if let Ok(rawfile) = rawfile {
-                    if let Some(sizes) = rawfile.thumbnail_sizes() {
-                        for size in sizes {
-                            let _ = rawfile.thumbnail(*size);
-                        }
+                let rawfile = rawfile_from_file(&file, None).expect("RAW didn't decode");
+                if let Some(sizes) = rawfile.thumbnail_sizes() {
+                    for size in sizes {
+                        let _ = rawfile.thumbnail(*size);
                     }
-                    let _ = rawfile.raw_data(false);
                 }
+                let _ = rawfile.raw_data(false);
             })
         });
     }
