@@ -849,6 +849,7 @@ pub mod panasonic {
     pub const DC_G99: u16 = 69;
     pub const DC_G90: u16 = DC_G99;
     pub const DC_G91: u16 = DC_G99;
+    pub const DC_G97: u16 = DC_G99;
     pub const DC_G95D: u16 = DC_G99;
     pub const DC_S1H: u16 = 70;
     pub const DC_G100: u16 = 71;

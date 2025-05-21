@@ -132,6 +132,7 @@ lazy_static::lazy_static! {
         panasonic!("DC-G91", DC_G91),
         panasonic!("DC-G95", DC_G95),
         panasonic!("DC-G95D", DC_G95D),
+        panasonic!("DC-G97", DC_G97),
         panasonic!("DC-G99", DC_G99),
         panasonic!("DC-G100", DC_G100),
         panasonic!("DC-G100D", DC_G100D),

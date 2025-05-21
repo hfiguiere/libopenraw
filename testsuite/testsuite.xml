@@ -1648,4 +1648,33 @@
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
+  <test>
+    <name>RW2 - DC-G97 - _JOS3760.RW2</name>
+    <file>/home/hub/samples/raw-pixls-us-data/Panasonic/DC-G97/_JOS3760.RW2</file>
+    <source>https://raw.pixls.us/data/Panasonic/DC-G97/_JOS3760.RW2</source>
+    <results>
+      <rawType>RW2</rawType>
+      <rawTypeId>720965</rawTypeId>
+      <makerNoteCount>166</makerNoteCount>
+      <makerNoteId>Exif.Panasonic</makerNoteId>
+      <exifMake>Panasonic</exifMake>
+      <exifModel>DC-G97</exifModel>
+      <thumbNum>2</thumbNum>
+      <thumbSizes>160 1920</thumbSizes>
+      <thumbFormats>JPEG JPEG</thumbFormats>
+      <thumbDataSizes>4682 709934</thumbDataSizes>
+      <thumbMd5>21836 24488</thumbMd5>
+      <rawDataType>RAW</rawDataType>
+      <rawDataSize>41115648</rawDataSize>
+      <rawDataDimensions>5264 3904</rawDataDimensions>
+      <rawDataActiveArea>0 0 5264 3904</rawDataActiveArea>
+      <rawDataUserCrop>8 8 5184 3888</rawDataUserCrop>
+      <rawCfaPattern>BGGR</rawCfaPattern>
+      <rawMinValue>128 128 128 128</rawMinValue>
+      <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
+      <rawAsShotNeutral>0.463768115942029 1 0.4839319470699433 NaN</rawAsShotNeutral>
+      <rawMd5>7312</rawMd5>
+      <metaOrientation>1</metaOrientation>
+    </results>
+  </test>
 </testsuite>
