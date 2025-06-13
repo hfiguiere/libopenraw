@@ -3,9 +3,18 @@ libopenraw 0.4.0-alpha.11 -
 Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
 
+  - DJI FC4382 Mavic 3 Pro Cinema.
+  - Fujifilm X-E5*.
+  - Nikon Z 5 II*, Coolpix P1100*.
+  - Panasonic TZ-71* (Alias to TZ91), G97* (Alias to G99), S1II and S1IIE*.
+  - Sony 6400A* and RX100M7A*.
+
 New features:
 
 Bug fixes:
+
+  - Remove some unused C++ header file.
+  - Fix colour matrix for Sony A6400 and Sony RX100M7.
 
 libopenraw 0.4.0-alpha.10 - 2025/05/01
 

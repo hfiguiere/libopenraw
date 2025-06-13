@@ -1,4 +1,4 @@
-What's (visibly) new in 0.4.0-alpha.10
+What's (visibly) new in 0.4.0-alpha.11
 ======================================
 
 - Complete rewrite in Rust.
@@ -25,11 +25,13 @@ What's (visibly) new in 0.4.0-alpha.10
   - Fix the colour matrices for GX80/GX85 and GX7MK2.
   - Added matrices for DC-FZ45.
 - Pentax: decompress the raw data.
-- Sony ARW: improved parsing of A100 files.
+- Sony ARW:
+  - Improved parsing of A100 files.
+  - Fix colour matrices for Sony A6400 and Sony RX100M7.
 - Properly set black & white files for DNG, ERF, PEF, CR2, CRW, RAF,
   RAW, RW2.
 - Support rendering to sRGB with proper colours.
-- 55 new cameras listed.
+- 65 new cameras listed.
 - 1 camera properly identified.
 
 What's (visibly) new in 0.3.7
