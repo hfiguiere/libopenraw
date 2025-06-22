@@ -132,6 +132,7 @@ lazy_static::lazy_static! {
         olympus!("OM-1MarkII      ", OM1II),
         olympus!("OM-3            ", OM3),
         olympus!("OM-5            ", OM5),
+        olympus!("OM-5MarkII      ", OM5II),
         olympus!("STYLUS1         ", STYLUS1),
         olympus!("STYLUS1,1s      ", STYLUS1_1S),
         olympus!("PEN-F           ", PEN_F),
