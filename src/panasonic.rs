@@ -216,7 +216,7 @@ lazy_static::lazy_static! {
         leica!("C (Typ 112)", C_TYP112),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 103] = [
+    static ref MATRICES: [BuiltinMatrix; 104] = [
         BuiltinMatrix::new(
             panasonic!(CM1),
             15,
@@ -613,6 +613,11 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 9744, -3905, -779, -4899, 12807, 2324, -798, 1630, 5827 ] ),
+        BuiltinMatrix::new(
+            panasonic!(DC_S1M2),
+            0,
+            0,
+            [ 10730, -4442, -922, -4478, 12504, 2199, -380, 1198, 6039 ] ),
         BuiltinMatrix::new(
             panasonic!(DC_S1M2E),
             0,
