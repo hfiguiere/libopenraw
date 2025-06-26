@@ -192,7 +192,7 @@ fn extract_rawdata(
         println!("\tActive area: {:?}", rawdata.active_area());
         print!("\tUser crop: {:?}", rawdata.user_crop());
         if let Some(aspect_ratio) = rawdata.user_aspect_ratio() {
-            println!(" {}", aspect_ratio);
+            println!(" {aspect_ratio}");
         } else {
             println!();
         }
@@ -218,9 +218,9 @@ fn extract_rawdata(
             println!("\tHas a linearization table.");
         }
         if let Some(as_shot) = rawdata.as_shot_neutral() {
-            println!("\tAs Shot Neutral = {:?}", as_shot);
+            println!("\tAs Shot Neutral = {as_shot:?}");
         } else if let Some(as_shot_xy) = rawdata.as_shot_white_xy() {
-            println!("\tAs Shot XY = {:?}", as_shot_xy);
+            println!("\tAs Shot XY = {as_shot_xy:?}");
         } else {
             println!("\tNo White balance");
         }
@@ -286,7 +286,7 @@ fn process_file(
             println!("MIME type: {}", rawfile.mime_type());
             if let Ok(type_id) = rawfile.type_id() {
                 println!("Vendor id: {}", rawfile.vendor_id().unwrap());
-                println!("Type id: {:?}", type_id);
+                println!("Type id: {type_id:?}");
             } else {
                 println!("Couldn't guess file type ID");
                 return;
@@ -296,21 +296,21 @@ fn process_file(
                 .as_ref()
                 .and_then(Value::string)
             {
-                println!("Make: {:?}", make);
+                println!("Make: {make:?}");
             }
             if let Some(model) = rawfile
                 .metadata_value("Exif.Image.Model")
                 .as_ref()
                 .and_then(Value::string)
             {
-                println!("Model: {:?}", model);
+                println!("Model: {model:?}");
             }
             if let Some(unique) = rawfile
                 .metadata_value("Exif.Image.UniqueCameraModel")
                 .as_ref()
                 .and_then(Value::string)
             {
-                println!("Unique Camera Model: {:?}", unique);
+                println!("Unique Camera Model: {unique:?}");
             }
 
             if let Some(sizes) = rawfile.thumbnail_sizes() {

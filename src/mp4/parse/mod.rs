@@ -267,7 +267,7 @@ pub enum Error {
 
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{self:?}")
     }
 }
 
@@ -989,7 +989,7 @@ impl AvifContext {
             .get(item_id, BoxType::PixelInformationBox)?
         {
             Some(ItemProperty::Channels(pixi)) => Ok(pixi.bits_per_channel.as_slice()),
-            Some(other_property) => panic!("property key mismatch: {:?}", other_property),
+            Some(other_property) => panic!("property key mismatch: {other_property:?}"),
             None => Ok(&[]),
         }
     }
@@ -1000,7 +1000,7 @@ impl AvifContext {
             .get(self.primary_item.id, BoxType::ImageSpatialExtentsProperty)?
         {
             Some(ItemProperty::ImageSpatialExtents(ispe)) => Ok(ispe),
-            Some(other_property) => panic!("property key mismatch: {:?}", other_property),
+            Some(other_property) => panic!("property key mismatch: {other_property:?}"),
             None => {
                 fail_if(
                     self.strictness == ParseStrictness::Permissive,
@@ -1055,7 +1055,7 @@ impl AvifContext {
             .get(self.primary_item.id, BoxType::ImageRotation)?
         {
             Some(ItemProperty::Rotation(irot)) => Ok(*irot),
-            Some(other_property) => panic!("property key mismatch: {:?}", other_property),
+            Some(other_property) => panic!("property key mismatch: {other_property:?}"),
             None => Ok(ImageRotation::D0),
         }
     }
@@ -1066,7 +1066,7 @@ impl AvifContext {
             .get(self.primary_item.id, BoxType::ImageMirror)?
         {
             Some(ItemProperty::Mirroring(imir)) => Ok(imir),
-            Some(other_property) => panic!("property key mismatch: {:?}", other_property),
+            Some(other_property) => panic!("property key mismatch: {other_property:?}"),
             None => Ok(std::ptr::null()),
         }
     }
@@ -2416,7 +2416,7 @@ impl ItemPropertiesBox {
             Ok(Some(ItemProperty::AuxiliaryType(urn))) => {
                 urn.aux_type.as_slice() == "urn:mpeg:mpegB:cicp:systems:auxiliary:alpha".as_bytes()
             }
-            Ok(Some(other_property)) => panic!("property key mismatch: {:?}", other_property),
+            Ok(Some(other_property)) => panic!("property key mismatch: {other_property:?}"),
             Ok(None) => false,
             Err(e) => {
                 error!(

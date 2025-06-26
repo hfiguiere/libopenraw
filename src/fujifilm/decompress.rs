@@ -1188,7 +1188,7 @@ fn read_code<T: std::io::Read>(
     };
     // Validate code
     if code < 0 || code >= q_table.total_values {
-        panic!("Invalid code: {}", code);
+        panic!("Invalid code: {code}");
     }
     // Adjust code
     if (code & 1) != 0 {

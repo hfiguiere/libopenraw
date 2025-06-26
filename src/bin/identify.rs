@@ -64,7 +64,7 @@ pub fn main() {
         let rawfile = rawfile_from_file(&p, format);
         match rawfile {
             Ok(ref rawfile) => match rawfile.type_id() {
-                Ok(type_id) => println!("{} {}", name, type_id),
+                Ok(type_id) => println!("{name} {type_id}"),
                 Err(err) => println!("Error getting type id {name}: {err}"),
             },
             Err(err) => {
