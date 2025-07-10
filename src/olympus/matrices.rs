@@ -1,7 +1,7 @@
 /*
  * libopenraw - olympus/matrices.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -253,7 +253,7 @@ lazy_static::lazy_static! {
     BuiltinMatrix::new( olympus!(OM5II),
       0,
       0,
-      [ 11896, -5110, -1076, -3181, 11378, 2048, -519, 1224, 5166 ] ),
+      [ 12008, -5230, -1123, -2265, 10496, 2046, 69, 734, 4938 ] ),
     BuiltinMatrix::new( olympus!(EM1X),
       0,
       0,
