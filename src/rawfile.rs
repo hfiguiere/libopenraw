@@ -84,7 +84,7 @@ pub trait RawFileImpl {
         if let Some((_, desc)) = thumbnails.iter().find(|t| t.0 == size) {
             self.container()?.make_thumbnail(desc)
         } else {
-            log::warn!("Thumbnail size {} not found", size);
+            log::warn!("Thumbnail size {size} not found");
             Err(Error::NotFound)
         }
     }
@@ -210,7 +210,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
     fn thumbnail(&self, tsize: u32) -> Result<Thumbnail> {
         use std::cmp::Ordering;
 
-        debug!("Requested thumbnail of size {}", tsize);
+        debug!("Requested thumbnail of size {tsize}");
 
         if tsize == 0 {
             error!("0 is an invalid size");
@@ -258,7 +258,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
             return Err(Error::NotFound);
         }
 
-        debug!("Found thumbnail of size {}", found_size);
+        debug!("Found thumbnail of size {found_size}");
         self.thumbnail_for_size(found_size)
     }
 

@@ -205,7 +205,7 @@ impl OrfFile {
         } else if &buf[0..2] == b"MM" && buf[3] == b'R' && (buf[2] == b'O' || buf[2] == b'S') {
             Ok(container::Endian::Big)
         } else {
-            log::error!("Incorrect Olympus IFD magic: {:?}", buf);
+            log::error!("Incorrect Olympus IFD magic: {buf:?}");
             Err(Error::FormatError)
         }
     }
@@ -322,7 +322,7 @@ impl OrfFile {
                     probe!(self.probe, "orf.decompress.olympus", "true");
                     decompress_olympus(data8, width as usize, height as usize)
                         .map_err(|err| {
-                            log::error!("Decompression failed {}", err);
+                            log::error!("Decompression failed {err}");
                             err
                         })
                         .ok()
@@ -469,9 +469,7 @@ impl RawFileImpl for OrfFile {
                                 container.add_thumbnail_from_stream(start, len, &mut thumbnails);
                         } else {
                             log::error!(
-                                "ORF thumbnail valid but invalid start {} or len {}",
-                                start,
-                                len
+                                "ORF thumbnail valid but invalid start {start} or len {len}"
                             );
                         }
                     }

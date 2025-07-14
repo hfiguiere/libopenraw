@@ -91,13 +91,13 @@ pub(crate) fn unpack_be12to16(
     let mut src = 0_usize; // index in source
 
     if pad != 0 && (input.len() % 16) != 0 {
-        log::error!("be12to16 incorrect padding for {:?}.", compression);
+        log::error!("be12to16 incorrect padding for {compression:?}.");
         return Err(Error::Decompression(format!(
             "be12to16 incorrect padding for {compression:?}.",
         )));
     }
     if (rest % 3) != 0 {
-        log::error!("be12to16 incorrect rest for {:?}.", compression);
+        log::error!("be12to16 incorrect rest for {compression:?}.");
         return Err(Error::Decompression(format!(
             "be12to16 incorrect rest for {compression:?}.",
         )));
@@ -147,13 +147,13 @@ pub(crate) fn unpack_le12to16(
     let mut src = 0_usize; // index in source
 
     if pad != 0 && (input.len() % 16) != 0 {
-        log::error!("le12to16 incorrect padding for {:?}.", compression);
+        log::error!("le12to16 incorrect padding for {compression:?}.");
         return Err(Error::Decompression(format!(
             "le12to16 incorrect padding for {compression:?}.",
         )));
     }
     if (rest % 3) != 0 {
-        log::error!("le12to16 incorrect rest for {:?}.", compression);
+        log::error!("le12to16 incorrect rest for {compression:?}.");
         return Err(Error::Decompression(format!(
             "le12to16 incorrect rest for {compression:?}.",
         )));
@@ -217,13 +217,7 @@ pub(crate) fn unpack_from_reader(
     byte_len: usize,
     endian: Endian,
 ) -> Result<Vec<u16>> {
-    log::debug!(
-        "Unpack {} bytes {} x {} - compression {:?}",
-        byte_len,
-        width,
-        height,
-        compression
-    );
+    log::debug!("Unpack {byte_len} bytes {width} x {height} - compression {compression:?}");
     let block_size: usize = match bpc {
         10 => (width / 4 * 5) as usize,
         12 => {
@@ -238,11 +232,11 @@ pub(crate) fn unpack_from_reader(
         }
         14 => (width / 4 * 7) as usize,
         _ => {
-            log::warn!("Invalid BPC {}", bpc);
+            log::warn!("Invalid BPC {bpc}");
             return Err(Error::InvalidFormat);
         }
     };
-    log::debug!("Block size = {}", block_size);
+    log::debug!("Block size = {block_size}");
     let mut block = vec![0; block_size];
     let out_size = width as usize * height as usize;
     let mut out_data = Vec::with_capacity(out_size);
@@ -274,7 +268,7 @@ pub(crate) fn unpack_from_reader(
             _ => unreachable!(),
         }
     }
-    log::debug!("Unpacked {} pixels", written);
+    log::debug!("Unpacked {written} pixels");
 
     Ok(out_data)
 }

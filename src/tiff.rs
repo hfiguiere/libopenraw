@@ -167,7 +167,7 @@ fn convert_new_cfa_pattern(entry: &Entry) -> Option<Pattern> {
     let h = data[0];
     let v = data[1];
     if h != 2 && v != 2 {
-        log::error!("Invalid CFA pattern size {}x{}", h, v);
+        log::error!("Invalid CFA pattern size {h}x{v}");
         return None;
     }
 

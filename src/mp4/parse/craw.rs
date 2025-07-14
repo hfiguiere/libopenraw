@@ -152,6 +152,6 @@ pub(crate) fn parse_craw_header<T: Read>(f: &mut BMFFBox<T>) -> super::Result<Cr
         }
     }
 
-    debug!("{:?}", header);
+    debug!("{header:?}");
     Ok(header)
 }

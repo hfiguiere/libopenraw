@@ -101,7 +101,7 @@ pub fn decompress_olympus(input: &[u8], w: usize, h: usize) -> Result<Vec<u16>> 
 
                 if high == 12 {
                     high = (bits.read_u16(16 - nbits).map_err(|e| {
-                        log::error!("3 bits.skip(16 - {})", nbits);
+                        log::error!("3 bits.skip(16 - {nbits})");
                         e
                     })? >> 1) as i32;
                 }

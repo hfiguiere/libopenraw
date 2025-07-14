@@ -295,7 +295,7 @@ impl TestRun for Results {
                 std::fs::File::open(filename).expect("Couldn't open the file"),
             ));
             let rawfile = libopenraw::rawfile_from_io(file, None)
-                .unwrap_or_else(|_| panic!("Couldn't load raw file {}", filename));
+                .unwrap_or_else(|_| panic!("Couldn't load raw file {filename}"));
             assert_eq!(
                 Type::from(raw_type.as_str()),
                 rawfile.type_(),

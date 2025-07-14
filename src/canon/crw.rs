@@ -422,7 +422,7 @@ impl RawFileImpl for CrwFile {
                                         rawdata
                                     })
                                     .map_err(|err| {
-                                        log::error!("CRW error: {:?}", err);
+                                        log::error!("CRW error: {err:?}");
                                         err
                                     })
                             }

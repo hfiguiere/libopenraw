@@ -294,7 +294,7 @@ impl LJpeg {
         match c {
             M_SOF0 | M_SOF1 | M_SOF3 => dc.get_sof(reader)?,
             _ => {
-                log::warn!("Unsupported SOF marker type 0x{:x}", c);
+                log::warn!("Unsupported SOF marker type 0x{c:x}");
             }
         }
         Ok(())
@@ -314,7 +314,7 @@ impl LJpeg {
             }
             M_EOI => Ok(false),
             _ => {
-                log::warn!("Unexpected marker Ox{:x}", c);
+                log::warn!("Unexpected marker Ox{c:x}");
                 Ok(false)
             }
         }
@@ -669,7 +669,7 @@ impl LJpeg {
             6 => upper + ((left - diag) >> 1),
             7 => (left + upper) >> 1,
             _ => {
-                log::warn!("Undefined PSV {}", psv);
+                log::warn!("Undefined PSV {psv}");
                 0
             }
         }
@@ -928,7 +928,7 @@ impl DecompressInfo {
                 M_APP0 => self.get_app0(reader)?,
                 // these are all parameterless
                 M_RST0 | M_RST1 | M_RST2 | M_RST3 | M_RST4 | M_RST5 | M_RST6 | M_RST7 | M_TEM => {
-                    log::warn!("Unexpected marker: 0x{:x}", c)
+                    log::warn!("Unexpected marker: 0x{c:x}")
                 }
                 _ => self.skip_variable(reader)?,
             }

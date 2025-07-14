@@ -271,7 +271,7 @@ fn process_file(
     dev_mode: bool,
     #[cfg(feature = "probe")] probe: ProbeType,
 ) {
-    info!("Diags {}", p);
+    info!("Diags {p}");
 
     let mut rawfile = rawfile_from_file(p, None);
     match rawfile {

@@ -646,7 +646,7 @@ impl Dir {
             let count = view.read_u32::<E>()?;
             let mut data = [0_u8; 4];
             view.read_exact(&mut data)?;
-            debug!("Entry {:x} with type {} count {count} added", id, type_);
+            debug!("Entry {id:x} with type {type_} count {count} added");
             let mut entry = Entry::new(id, type_, count, data);
             if !entry.is_inline() {
                 let pos = view.stream_position()?;
@@ -760,7 +760,7 @@ impl Dir {
                         None,
                     )
                     .map_err(|e| {
-                        log::warn!("Coudln't get exif dir at {}: {}", offset, e);
+                        log::warn!("Coudln't get exif dir at {offset}: {e}");
                         e
                     })
                     .ok()
@@ -772,7 +772,7 @@ impl Dir {
         self.entry(tag).and_then(|e| e.offset()).and_then(|offset| {
             Dir::create_maker_note(container, offset, tag)
                 .map_err(|e| {
-                    log::warn!("Coudln't create maker_note: {}", e);
+                    log::warn!("Coudln't create maker_note: {e}");
                     e
                 })
                 .ok()
@@ -804,7 +804,7 @@ impl Dir {
                         Some(&exif::GPSINFO_TAG_NAMES),
                     )
                     .map_err(|e| {
-                        log::warn!("Coudln't get GPSInfo dir at {}: {}", offset, e);
+                        log::warn!("Coudln't get GPSInfo dir at {offset}: {e}");
                         e
                     })
                     .ok()
@@ -965,13 +965,13 @@ impl Dir {
                                 let jpeg = jpeg::Container::new(view, container.raw_type());
                                 x = jpeg.width() as u32;
                                 y = jpeg.height() as u32;
-                                log::debug!("Found JPEG dimensions x={} y={}", x, y);
+                                log::debug!("Found JPEG dimensions x={x} y={y}");
                             } else {
                                 // XXX load the JFIF stream and get the dimensions.
                                 log::error!("Couldn't get JPEG dimensions.");
                             }
                         } else {
-                            log::debug!("JPEG (supposed) dimensions x={} y={}", x, y);
+                            log::debug!("JPEG (supposed) dimensions x={x} y={y}");
                         }
                     }
                 }
@@ -993,7 +993,7 @@ impl Dir {
                         for bpc in arr {
                             is_rgb8 = bpc == 8;
                             if !is_rgb8 {
-                                log::debug!("bpc != 8 {}", bpc);
+                                log::debug!("bpc != 8 {bpc}");
                                 break;
                             }
                         }

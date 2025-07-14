@@ -295,7 +295,7 @@ impl Container {
         } else if &buf[0..4] == b"MM\x00\x2a" {
             Ok(container::Endian::Big)
         } else {
-            error!("Incorrect IFD magic: {:?}", buf);
+            error!("Incorrect IFD magic: {buf:?}");
             Err(Error::FormatError)
         }
     }
@@ -479,11 +479,11 @@ impl Container {
                 .as_ref()
                 .and_then(|exif| super::get_mosaic_info(exif))
         });
-        log::debug!("mosaic_pattern {:?}", mosaic_pattern);
+        log::debug!("mosaic_pattern {mosaic_pattern:?}");
 
         // More that 32bits per component is invalid: corrupt file likely.
         if bpc > 32 {
-            log::error!("TIFF: bpc {} is invalid", bpc);
+            log::error!("TIFF: bpc {bpc} is invalid");
             return Err(Error::FormatError);
         }
         let actual_bpc = bpc;
@@ -492,7 +492,7 @@ impl Container {
             && byte_len == (pixel_count * 2)
         {
             // it's 12 or 14 bpc, but we have 16 bpc data.
-            log::debug!("setting bpc from {} to 16", bpc);
+            log::debug!("setting bpc from {bpc} to 16");
             bpc = 16;
         }
         let mut rawdata = if data_type == DataType::CompressedRaw {
@@ -577,7 +577,7 @@ impl Container {
                 mosaic_pattern.unwrap_or_default(),
             )
         } else {
-            log::error!("Invalid RAW format, unsupported bpc {}", bpc);
+            log::error!("Invalid RAW format, unsupported bpc {bpc}");
             return Err(Error::InvalidFormat);
         };
 

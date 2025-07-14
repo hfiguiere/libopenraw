@@ -1112,7 +1112,7 @@ impl RawFileImpl for ArwFile {
                 self.container()?;
                 if let Some(maker_note) = self.maker_note_ifd() {
                     if let Some(id) = maker_note.uint_value(exif::MNOTE_SONY_MODEL_ID) {
-                        log::debug!("Sony model ID: {:x} ({})", id, id);
+                        log::debug!("Sony model ID: {id:x} ({id})");
                         return Ok(SONY_MODEL_ID_MAP
                             .get(&id)
                             .copied()

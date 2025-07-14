@@ -135,7 +135,7 @@ impl ColourFormat {
                 -4 => colour_data[333..337].try_into().ok(),
                 -3 => colour_data[264..268].try_into().ok(),
                 _ => {
-                    log::error!("Invalid version {} for {:?}", version, self);
+                    log::error!("Invalid version {version} for {self:?}");
                     None
                 }
             },
@@ -144,7 +144,7 @@ impl ColourFormat {
                 10 => colour_data[504..508].try_into().ok(),
                 11 => colour_data[728..732].try_into().ok(),
                 _ => {
-                    log::error!("Invalid version {} for {:?}", version, self);
+                    log::error!("Invalid version {version} for {self:?}");
                     None
                 }
             },
@@ -152,7 +152,7 @@ impl ColourFormat {
                 14 => colour_data[556..560].try_into().ok(),
                 12 | 13 | 15 => colour_data[778..782].try_into().ok(),
                 _ => {
-                    log::error!("Invalid version {} for {:?}", version, self);
+                    log::error!("Invalid version {version} for {self:?}");
                     None
                 }
             },

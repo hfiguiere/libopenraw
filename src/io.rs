@@ -267,7 +267,7 @@ impl std::io::Seek for View {
         io.seek(match pos {
             SeekFrom::Start(p) => {
                 if p > self.length {
-                    log::error!("Seeking past EOF {}", p);
+                    log::error!("Seeking past EOF {p}");
                     return Err(std::io::Error::from(std::io::ErrorKind::UnexpectedEof));
                 } else {
                     SeekFrom::Start(p + self.offset)

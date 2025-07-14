@@ -53,7 +53,7 @@ pub fn main() {
 }
 
 fn process_file(p: &str) {
-    info!("Probe {}", p);
+    info!("Probe {p}");
 
     let mut rawfile = rawfile_from_file(p, None);
 

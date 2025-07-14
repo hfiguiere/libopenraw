@@ -367,7 +367,7 @@ impl RawFileImpl for PefFile {
                 self.container()?;
                 if let Some(maker_note) = self.maker_note_ifd() {
                     if let Some(id) = maker_note.uint_value(exif::MNOTE_PENTAX_MODEL_ID) {
-                        log::debug!("Pentax model ID: {:x} ({})", id, id);
+                        log::debug!("Pentax model ID: {id:x} ({id})");
                         return Ok(PENTAX_MODEL_ID_MAP
                             .get(&id)
                             .copied()

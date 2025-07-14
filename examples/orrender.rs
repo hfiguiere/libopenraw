@@ -63,7 +63,7 @@ pub fn main() {
 
 fn process_file(p: &str, output: Option<&String>) -> libopenraw::Result<()> {
     if let Ok(rawfile) = rawfile_from_file(p, None) {
-        log::info!("Rendering raw file {}", p);
+        log::info!("Rendering raw file {p}");
 
         // Default options are Colour stage + SRgb.
         let options = RenderingOptions::default();

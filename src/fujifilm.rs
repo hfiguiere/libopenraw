@@ -243,7 +243,7 @@ impl RawFileImpl for RafFile {
                             decoder
                                 .read_info()
                                 .map_err(|e| {
-                                    log::error!("JPEG decoding error {}", e);
+                                    log::error!("JPEG decoding error {e}");
                                 })
                                 .ok()?;
                             let (width, height) =
@@ -397,7 +397,7 @@ impl RawFileImpl for RafFile {
                     }
                 };
 
-                log::debug!("RAF raw props {:x}", raw_props);
+                log::debug!("RAF raw props {raw_props:x}");
                 probe!(self.probe, "raf.raw_props", format!("0x{raw_props:08x}"));
                 // layout is the LSB of raw_props. First byte as it is bigendian.
                 let layout = (raw_props & 0xff000000) >> 24 >> 7;
@@ -496,7 +496,7 @@ impl RawFileImpl for RafFile {
                                 Endian::Little,
                             )
                             .map_err(|err| {
-                                log::error!("RAF failed to unpack {}", err);
+                                log::error!("RAF failed to unpack {err}");
                                 err
                             })?
                         };

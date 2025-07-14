@@ -348,7 +348,7 @@ pub(super) fn decompress_fuji(
         blocks_in_row: stream.read_u8().unwrap(),
         total_lines: stream.read_u16::<BigEndian>().unwrap(),
     };
-    log::debug!("Header: {:?}", header);
+    log::debug!("Header: {header:?}");
     if !header.is_valid(corrected_cfa) {
         log::error!("Invalid header");
         return Err(Error::Decompression("Fuji header is not valid".into()));
@@ -366,7 +366,7 @@ pub(super) fn decompress_fuji(
     );
 
     let params = Params::new(&header);
-    log::debug!("Params: {:?}", params);
+    log::debug!("Params: {params:?}");
 
     let block_sizes: Vec<usize> = (0..header.blocks_in_row)
         .map(|_| stream.read_u32::<BigEndian>().unwrap() as usize)

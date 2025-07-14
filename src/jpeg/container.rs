@@ -122,7 +122,7 @@ impl Container {
                     .borrow_mut()
                     .read_info()
                     .map_err(|err| {
-                        log::error!("JPEG decoding error: {}", err);
+                        log::error!("JPEG decoding error: {err}");
                         err
                     })
                     .ok()?;
@@ -136,7 +136,7 @@ impl Container {
                         let viewer = Viewer::new(io, length as u64);
                         let view = Viewer::create_view(&viewer, 0)
                             .map_err(|err| {
-                                log::error!("Failed to create view {}", err);
+                                log::error!("Failed to create view {err}");
                                 err
                             })
                             .ok()?;
@@ -148,7 +148,7 @@ impl Container {
                         exif.load(None)
                             .map(|_| (exif, viewer))
                             .map_err(|err| {
-                                log::warn!("Failed to load Exif: {}", err);
+                                log::warn!("Failed to load Exif: {err}");
                                 err
                             })
                             .ok()
@@ -170,7 +170,7 @@ impl Container {
                 .borrow_mut()
                 .read_info()
                 .map_err(|err| {
-                    log::error!("JPEG decoding error: {}", err);
+                    log::error!("JPEG decoding error: {err}");
                     err
                 })
                 .ok()?;

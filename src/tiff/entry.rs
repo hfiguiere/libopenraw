@@ -129,7 +129,7 @@ impl Entry {
     fn load_data_impl(&self, offset: u64, view: &mut View) -> Result<Vec<u8>> {
         let tag_type = TagType::try_from(self.type_).unwrap_or(TagType::Invalid);
         let data_size = exif::tag_unit_size(tag_type) * self.count as usize;
-        debug!("Loading data at {}: {} bytes", offset, data_size);
+        debug!("Loading data at {offset}: {data_size} bytes");
 
         view.seek(SeekFrom::Start(offset))?;
         if data_size > (view.len() - offset) as usize {

@@ -1432,7 +1432,7 @@ fn fail_if(violation: bool, message: &'static str) -> Result<()> {
     if violation {
         Err(Error::InvalidData(message))
     } else {
-        warn!("{}", message);
+        warn!("{message}");
         Ok(())
     }
 }
@@ -1680,7 +1680,7 @@ fn skip_box_content<T: Read>(src: &mut BMFFBox<T>) -> Result<()> {
     // Skip the contents of unknown chunks.
     let to_skip = {
         let header = src.get_header();
-        debug!("{:?} (skipped)", header);
+        debug!("{header:?} (skipped)");
         header
             .size
             .checked_sub(header.offset)
@@ -1695,7 +1695,7 @@ fn skip_box_remain<T: Read>(src: &mut BMFFBox<T>) -> Result<()> {
     let remain = {
         let header = src.get_header();
         let len = src.bytes_left();
-        debug!("remain {} (skipped) in {:?}", len, header);
+        debug!("remain {len} (skipped) in {header:?}");
         len
     };
     skip(src, remain)
@@ -1703,7 +1703,7 @@ fn skip_box_remain<T: Read>(src: &mut BMFFBox<T>) -> Result<()> {
 
 /// Read the contents of an AVIF file
 pub fn read_avif<T: Read>(f: &mut T, strictness: ParseStrictness) -> Result<AvifContext> {
-    debug!("read_avif(strictness: {:?})", strictness);
+    debug!("read_avif(strictness: {strictness:?})");
 
     let mut f = OffsetReader::new(f);
 
@@ -2223,8 +2223,7 @@ fn read_iprp<T: Read>(
                 .find(|e| association_entry.item_id == e.item_id)
             {
                 error!(
-                    "Duplicate ipma entries for item_id\n1: {:?}\n2: {:?}",
-                    previous_entry, association_entry
+                    "Duplicate ipma entries for item_id\n1: {previous_entry:?}\n2: {association_entry:?}"
                 );
                 // It's technically possible to make sense of this situation by merging ipma
                 // boxes, but this is a "shall" requirement, so we'd only do it in
@@ -2270,7 +2269,7 @@ fn read_iprp<T: Read>(
                         | ItemProperty::Mirroring(_)
                         | ItemProperty::Rotation(_) => {
                             if !a.essential {
-                                warn!("{:?} is invalid", property);
+                                warn!("{property:?} is invalid");
                                 // This is a "shall", but it is likely to change, so only
                                 // fail if using strict parsing.
                                 // See https://github.com/mozilla/mp4parse-rust/issues/284
@@ -2344,7 +2343,7 @@ fn read_iprp<T: Read>(
         properties,
         association_entries,
     };
-    trace!("read_iprp -> {:#?}", iprp);
+    trace!("read_iprp -> {iprp:#?}");
     Ok(iprp)
 }
 
@@ -2419,10 +2418,7 @@ impl ItemPropertiesBox {
             Ok(Some(other_property)) => panic!("property key mismatch: {other_property:?}"),
             Ok(None) => false,
             Err(e) => {
-                error!(
-                    "is_alpha: Error checking AuxiliaryTypeProperty ({}), returning false",
-                    e
-                );
+                error!("is_alpha: Error checking AuxiliaryTypeProperty ({e}), returning false");
                 false
             }
         }
@@ -2446,10 +2442,7 @@ impl ItemPropertiesBox {
             &[] => Ok(None),
             &[single_value] => Ok(Some(single_value)),
             multiple_values => {
-                error!(
-                    "Multiple values for {:?}: {:?}",
-                    property_type, multiple_values
-                );
+                error!("Multiple values for {property_type:?}: {multiple_values:?}");
                 // TODO: add test
                 Err(Error::InvalidData("conflicting item property values"))
             }
@@ -2718,7 +2711,7 @@ fn read_ipma<T: Read>(
         }
     }
 
-    trace!("read_ipma -> {:#?}", entries);
+    trace!("read_ipma -> {entries:#?}");
 
     Ok(entries)
 }
@@ -2773,7 +2766,7 @@ fn read_ipco<T: Read>(
                 // a record at the index to identify invalid indices in ipma boxes
                 skip_box_remain(&mut b)?;
                 let item_property = ItemProperty::Unsupported(other_box_type);
-                debug!("Storing empty record {:?}", item_property);
+                debug!("Storing empty record {item_property:?}");
                 Some(item_property)
             }
         } {
@@ -2936,7 +2929,7 @@ fn read_colr<T: Read>(
             FourCC::from(colour_type),
         )),
         _ => {
-            error!("read_colr colour_type: {:?}", colour_type);
+            error!("read_colr colour_type: {colour_type:?}");
             Err(Error::InvalidData(
                 "Unsupported colour_type for ColourInformationBox",
             ))
@@ -3219,7 +3212,7 @@ pub fn read_mp4<T: Read>(f: &mut T) -> Result<MediaContext> {
             BoxType::FileTypeBox => {
                 let ftyp = read_ftyp(&mut b)?;
                 found_ftyp = true;
-                debug!("{:?}", ftyp);
+                debug!("{ftyp:?}");
                 brand = Some(ftyp.major_brand);
             }
             BoxType::MovieBox => {
@@ -3262,7 +3255,7 @@ pub fn read_mp4<T: Read>(f: &mut T) -> Result<MediaContext> {
 /// See ISOBMFF (ISO 14496-12:2020) § 8.2.2
 fn parse_mvhd<T: Read>(f: &mut BMFFBox<T>) -> Result<Option<MediaTimeScale>> {
     let mvhd = read_mvhd(f)?;
-    debug!("{:?}", mvhd);
+    debug!("{mvhd:?}");
     if mvhd.timescale == 0 {
         return Err(Error::InvalidData("zero timescale in mdhd"));
     }
@@ -3319,16 +3312,16 @@ fn read_moov<T: Read>(f: &mut BMFFBox<T>, context: Option<MediaContext>) -> Resu
             }
             BoxType::MovieExtendsBox => {
                 mvex = Some(read_mvex(&mut b)?);
-                debug!("{:?}", mvex);
+                debug!("{mvex:?}");
             }
             BoxType::ProtectionSystemSpecificHeaderBox => {
                 let pssh = read_pssh(&mut b)?;
-                debug!("{:?}", pssh);
+                debug!("{pssh:?}");
                 psshs.push(pssh)?;
             }
             BoxType::UserdataBox => {
                 userdata = Some(read_udta(&mut b));
-                debug!("{:?}", userdata);
+                debug!("{userdata:?}");
                 if let Some(Err(_)) = userdata {
                     // There was an error parsing userdata. Such failures are not fatal to overall
                     // parsing, just skip the rest of the box.
@@ -3428,7 +3421,7 @@ fn read_trak<T: Read>(f: &mut BMFFBox<T>, track: &mut Track, brand: &FourCC) -> 
                 let tkhd = read_tkhd(&mut b)?;
                 track.track_id = Some(tkhd.track_id);
                 track.tkhd = Some(tkhd.clone());
-                debug!("{:?}", tkhd);
+                debug!("{tkhd:?}");
             }
             BoxType::EditBox => read_edts(&mut b, track)?,
             BoxType::MediaBox => read_mdia(&mut b, track, brand)?,
@@ -3471,7 +3464,7 @@ fn read_edts<T: Read>(f: &mut BMFFBox<T>, track: &mut Track) -> Result<()> {
                 if elst.edits.len() > 2 {
                     debug!("ignoring edit list with {} entries", elst.edits.len());
                 }
-                debug!("{:?}", elst);
+                debug!("{elst:?}");
             }
             _ => skip_box_content(&mut b)?,
         };
@@ -3509,7 +3502,7 @@ fn read_mdia<T: Read>(f: &mut BMFFBox<T>, track: &mut Track, brand: &FourCC) -> 
                 let (mdhd, duration, timescale) = parse_mdhd(&mut b, track)?;
                 track.duration = duration;
                 track.timescale = timescale;
-                debug!("{:?}", mdhd);
+                debug!("{mdhd:?}");
             }
             BoxType::HandlerBox => {
                 let hdlr = read_hdlr(&mut b, ParseStrictness::Permissive)?;
@@ -3520,7 +3513,7 @@ fn read_mdia<T: Read>(f: &mut BMFFBox<T>, track: &mut Track, brand: &FourCC) -> 
                     b"meta" => track.track_type = TrackType::Metadata,
                     _ => (),
                 }
-                debug!("{:?}", hdlr);
+                debug!("{hdlr:?}");
             }
             BoxType::MediaInformationBox => read_minf(&mut b, track, brand)?,
             _ => skip_box_content(&mut b)?,
@@ -3548,42 +3541,42 @@ fn read_stbl<T: Read>(f: &mut BMFFBox<T>, track: &mut Track, brand: &FourCC) -> 
         match b.head.name {
             BoxType::SampleDescriptionBox => {
                 let stsd = read_stsd(&mut b, track, brand)?;
-                debug!("{:?}", stsd);
+                debug!("{stsd:?}");
                 track.stsd = Some(stsd);
             }
             BoxType::TimeToSampleBox => {
                 let stts = read_stts(&mut b)?;
-                debug!("{:?}", stts);
+                debug!("{stts:?}");
                 track.stts = Some(stts);
             }
             BoxType::SampleToChunkBox => {
                 let stsc = read_stsc(&mut b)?;
-                debug!("{:?}", stsc);
+                debug!("{stsc:?}");
                 track.stsc = Some(stsc);
             }
             BoxType::SampleSizeBox => {
                 let stsz = read_stsz(&mut b)?;
-                debug!("{:?}", stsz);
+                debug!("{stsz:?}");
                 track.stsz = Some(stsz);
             }
             BoxType::ChunkOffsetBox => {
                 let stco = read_stco(&mut b)?;
-                debug!("{:?}", stco);
+                debug!("{stco:?}");
                 track.stco = Some(stco);
             }
             BoxType::ChunkLargeOffsetBox => {
                 let co64 = read_co64(&mut b)?;
-                debug!("{:?}", co64);
+                debug!("{co64:?}");
                 track.stco = Some(co64);
             }
             BoxType::SyncSampleBox => {
                 let stss = read_stss(&mut b)?;
-                debug!("{:?}", stss);
+                debug!("{stss:?}");
                 track.stss = Some(stss);
             }
             BoxType::CompositionOffsetBox => {
                 let ctts = read_ctts(&mut b)?;
-                debug!("{:?}", ctts);
+                debug!("{ctts:?}");
                 track.ctts = Some(ctts);
             }
             _ => skip_box_content(&mut b)?,
@@ -4114,7 +4107,7 @@ fn find_descriptor(data: &[u8], esds: &mut ES_Descriptor) -> Result<()> {
                 read_ds_descriptor(descriptor, esds)?;
             }
             _ => {
-                debug!("Unsupported descriptor, tag {}", tag);
+                debug!("Unsupported descriptor, tag {tag}");
             }
         }
 
@@ -4606,14 +4599,14 @@ fn read_video_sample_entry<T: Read>(src: &mut BMFFBox<T>, brand: &FourCC) -> Res
             if brand == &FourCC::from(*b"crx ") {
                 CodecType::CRAW
             } else {
-                debug!("Unsupported CRAW codec found in '{:?}'.", brand);
+                debug!("Unsupported CRAW codec found in '{brand:?}'.");
                 CodecType::Unknown
             }
         }
         BoxType::ProtectedVisualSampleEntry => CodecType::EncryptedVideo,
         BoxType::H263SampleEntry => CodecType::H263,
         _ => {
-            debug!("Unsupported video codec, box {:?} found", name);
+            debug!("Unsupported video codec, box {name:?} found");
             CodecType::Unknown
         }
     };
@@ -4655,7 +4648,7 @@ fn read_video_sample_entry<T: Read>(src: &mut BMFFBox<T>, brand: &FourCC) -> Res
                     .checked_sub(b.head.offset)
                     .expect("offset invalid");
                 let avcc = read_buf(&mut b.content, avcc_size)?;
-                debug!("{:?} (avcc)", avcc);
+                debug!("{avcc:?} (avcc)");
                 // TODO(kinetik): Parse avcC box?  For now we just stash the data.
                 codec_specific = Some(VideoCodecSpecific::AVCConfig(avcc));
             }
@@ -4669,7 +4662,7 @@ fn read_video_sample_entry<T: Read>(src: &mut BMFFBox<T>, brand: &FourCC) -> Res
                     .checked_sub(b.head.offset)
                     .expect("offset invalid");
                 let h263_dec_spec_struc = read_buf(&mut b.content, h263_dec_spec_struc_size)?;
-                debug!("{:?} (h263DecSpecStruc)", h263_dec_spec_struc);
+                debug!("{h263_dec_spec_struc:?} (h263DecSpecStruc)");
 
                 codec_specific = Some(VideoCodecSpecific::H263Config(h263_dec_spec_struc));
             }
@@ -4723,7 +4716,7 @@ fn read_video_sample_entry<T: Read>(src: &mut BMFFBox<T>, brand: &FourCC) -> Res
                     return Err(Error::InvalidData("malformed video sample entry"));
                 }
                 let sinf = read_sinf(&mut b)?;
-                debug!("{:?} (sinf)", sinf);
+                debug!("{sinf:?} (sinf)");
                 protection_info.push(sinf)?;
             }
             _ => {
@@ -4882,7 +4875,7 @@ fn read_audio_sample_entry<T: Read>(src: &mut BMFFBox<T>) -> Result<SampleEntry>
                     return Err(Error::InvalidData("malformed audio sample entry"));
                 }
                 let sinf = read_sinf(&mut b)?;
-                debug!("{:?} (sinf)", sinf);
+                debug!("{sinf:?} (sinf)");
                 codec_type = CodecType::EncryptedAudio;
                 protection_info.push(sinf)?;
             }

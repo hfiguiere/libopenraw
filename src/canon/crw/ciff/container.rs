@@ -383,7 +383,7 @@ impl Container {
             .get(&tag)
             .and_then(|r| r.heap(self))
             .or_else(|| {
-                log::error!("CIFF: Heap for {:?} not found", tag);
+                log::error!("CIFF: Heap for {tag:?} not found");
                 None
             })
     }

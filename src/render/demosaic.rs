@@ -191,8 +191,7 @@ mod test {
         assert_eq!(
             output.pixel_at(0, 0),
             Some(result),
-            "Demosaic {:?} Failed",
-            pattern
+            "Demosaic {pattern:?} Failed"
         );
     }
 

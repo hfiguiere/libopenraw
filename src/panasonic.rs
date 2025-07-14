@@ -791,7 +791,7 @@ impl Rw2File {
         if &buf[0..4] == b"IIU\0" {
             Ok(Endian::Little)
         } else {
-            log::error!("Incorrect Panasonic IFD magic: {:?}", buf);
+            log::error!("Incorrect Panasonic IFD magic: {buf:?}");
             Err(Error::FormatError)
         }
     }
@@ -964,7 +964,7 @@ impl RawFileImpl for Rw2File {
                         return Err(Error::FormatError);
                     }
                     let len = self.reader.length() - offset as u64;
-                    log::debug!("Panasonic Raw offset: {}", offset);
+                    log::debug!("Panasonic Raw offset: {offset}");
                     probe!(self.probe, "rw2.raw_offset", true);
                     has_raw_offset = true;
                     thumbnail::DataOffset {
@@ -979,7 +979,7 @@ impl RawFileImpl for Rw2File {
                         .uint_value(exif::EXIF_TAG_STRIP_BYTE_COUNTS)
                         .ok_or(Error::NotFound)? as u64;
                     probe!(self.probe, "rw2.raw_tiff_offset", true);
-                    log::debug!("Panasonic TIFF Raw offset: {} {} bytes", offset, len);
+                    log::debug!("Panasonic TIFF Raw offset: {offset} {len} bytes");
                     thumbnail::DataOffset { offset, len }
                 };
             let width = cfa

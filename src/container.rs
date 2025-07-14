@@ -151,7 +151,7 @@ pub trait RawContainer {
         }
         if let Ok(n) = view.read(data.as_mut_slice()) {
             if n < len as usize {
-                log::debug!("Short read {} < {}", n, len);
+                log::debug!("Short read {n} < {len}");
                 data.resize(n, 0);
             }
         } else {

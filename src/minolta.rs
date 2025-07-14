@@ -273,7 +273,7 @@ impl RawFileImpl for MrwFile {
                     let mut unpacked = Vec::with_capacity((rawinfo.x * rawinfo.y) as usize);
                     decompress::unpack_be12to16(&raw, &mut unpacked, tiff::Compression::None)
                         .map_err(|err| {
-                            log::error!("RAF failed to unpack {}", err);
+                            log::error!("RAF failed to unpack {err}");
                             err
                         })?;
                     RawImage::with_data16(

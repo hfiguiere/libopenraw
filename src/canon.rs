@@ -377,7 +377,7 @@ fn get_typeid_for_modelid(model_id: u32) -> TypeId {
 
 pub(crate) fn identify_from_maker_note(maker_note: &tiff::Dir) -> TypeId {
     if let Some(id) = maker_note.value::<u32>(exif::MNOTE_CANON_MODEL_ID) {
-        log::debug!("Canon model ID: {:x}", id);
+        log::debug!("Canon model ID: {id:x}");
         return get_typeid_for_modelid(id);
     } else {
         log::error!("Canon model ID tag not found");

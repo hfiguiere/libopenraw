@@ -251,11 +251,11 @@ impl NefFile {
         let block_size: usize = match bpc {
             12 => ((width / 2 * 3) + width / 10) as usize,
             _ => {
-                log::warn!("Invalid BPC {}", bpc);
+                log::warn!("Invalid BPC {bpc}");
                 return Err(Error::InvalidFormat);
             }
         };
-        log::debug!("block_size {} width {} ", block_size, width);
+        log::debug!("block_size {block_size} width {width} ");
 
         let data = rawdata.data8().ok_or(Error::NotFound)?;
 
@@ -272,7 +272,7 @@ impl NefFile {
             written +=
                 decompress::unpack_be12to16(block, &mut out_data, tiff::Compression::NikonPack)?;
         }
-        log::debug!("Unpacked {} pixels", written);
+        log::debug!("Unpacked {written} pixels");
 
         let mut rawdata = rawdata.replace_data(out_data);
         rawdata.set_data_type(DataType::Raw);
@@ -336,12 +336,12 @@ impl NefFile {
                     if bpc == 12 {
                         probe!(self.probe, "nef.compression_curve.huffman", "lossy_12");
                         curve.huffman = Some(&diffiterator::LOSSY_12BIT);
-                        log::debug!("12 bits lossy {}", bpc);
+                        log::debug!("12 bits lossy {bpc}");
                         header_ok = true;
                     } else if bpc == 14 {
                         probe!(self.probe, "nef.compression_curve.huffman", "lossy_14");
                         curve.huffman = Some(&diffiterator::LOSSY_14BIT);
-                        log::debug!("14 bits lossy {}", bpc);
+                        log::debug!("14 bits lossy {bpc}");
                         header_ok = true;
                     }
                 } else if header0 == 0x46 {
@@ -360,19 +360,19 @@ impl NefFile {
                     }
                 }
                 if !header_ok {
-                    log::error!("Wrong header, found {}-{}", header0, header1);
+                    log::error!("Wrong header, found {header0}-{header1}");
                     return Err(Error::FormatError);
                 }
 
                 let nelems = view.read_endian_u16(container.endian()).unwrap_or(0);
-                log::debug!("Num elems {}", nelems);
+                log::debug!("Num elems {nelems}");
 
                 let mut ceiling: u16 = (1 << bpc) & 0x7fff;
                 let mut step = 0_usize;
                 if nelems > 1 {
                     step = (ceiling / (nelems - 1)) as usize;
                 }
-                log::debug!("ceiling {}, step {}", ceiling, step);
+                log::debug!("ceiling {ceiling}, step {step}");
 
                 if header0 == 0x44 && header1 == 0x20 && step > 0 {
                     for i in 0..nelems {
@@ -393,7 +393,7 @@ impl NefFile {
                     // XXX It's likly not possible for the short read to appear.
                     // As an error might be thrown first.
                     if num_read < nelems as usize {
-                        log::error!("NEF short read of {} elems, expected {}", num_read, nelems);
+                        log::error!("NEF short read of {num_read} elems, expected {nelems}");
                         return Err(Error::UnexpectedEOF);
                     }
                     ceiling = nelems;
@@ -418,7 +418,7 @@ impl NefFile {
         let new_data = self
             .get_compression_curve(&mut rawdata)
             .map_err(|err| {
-                log::error!("Get compression curve failed {}", err);
+                log::error!("Get compression curve failed {err}");
                 err
             })
             .and_then(|curve| {
@@ -640,7 +640,7 @@ impl RawFileImpl for NefFile {
                     .unwrap()
                     .rawdata(dir, self.type_())
                     .map_err(|err| {
-                        log::error!("NEF get rawdata failed {}", err);
+                        log::error!("NEF get rawdata failed {err}");
                         err
                     })
                     .and_then(|rawdata| {
@@ -654,7 +654,7 @@ impl RawFileImpl for NefFile {
                             if !skip_decompress {
                                 log::debug!("Nikon quantized");
                                 self.decompress_nikon_quantized(rawdata).map_err(|err| {
-                                    log::error!("NEF quantized {}", err);
+                                    log::error!("NEF quantized {err}");
                                     err
                                 })
                             } else {
@@ -667,7 +667,7 @@ impl RawFileImpl for NefFile {
                             log::error!("NRW compression unsupported");
                             Ok(rawdata)
                         } else {
-                            log::error!("Invalid compression {:?}", compression);
+                            log::error!("Invalid compression {compression:?}");
                             Ok(rawdata)
                         }
                     })

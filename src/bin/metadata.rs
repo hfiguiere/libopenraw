@@ -62,7 +62,7 @@ fn type_to_string(t: i16) -> String {
 
 fn process_file(p: &str) {
     if let Ok(rawfile) = rawfile_from_file(p, None) {
-        log::info!("Metadata raw file {}", p);
+        log::info!("Metadata raw file {p}");
 
         if let Some(iterator) = rawfile.metadata() {
             for metadata in iterator {

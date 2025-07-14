@@ -269,7 +269,7 @@ impl RecordEntry {
 
         let tag = Tag::from_tagcode(type_code);
         if tag == Tag::Other {
-            log::error!("Unknown tag {:x}", type_code);
+            log::error!("Unknown tag {type_code:x}");
         }
         Ok(RecordEntry {
             type_code: tag,
@@ -496,7 +496,7 @@ impl Heap {
         view.seek(SeekFrom::Start(self.pos as u64 + self.len as u64 - 4))?;
         let heap_start = view.read_endian_u32(endian)?;
         if heap_start > self.len - 4 {
-            log::error!("CIFF Heap start out of range {}", heap_start);
+            log::error!("CIFF Heap start out of range {heap_start}");
             return Err(Error::FormatError);
         }
         view.seek(SeekFrom::Start(self.pos as u64 + heap_start as u64))?;
@@ -507,7 +507,7 @@ impl Heap {
                     self.records.insert(entry.type_code, entry);
                 })
                 .map_err(|err| {
-                    log::error!("Failed to read record: {}", err);
+                    log::error!("Failed to read record: {err}");
                     err
                 });
         }

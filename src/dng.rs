@@ -417,7 +417,7 @@ impl RawFileImpl for DngFile {
                         rawdata
                     })
                     .map_err(|err| {
-                        log::error!("Couldn't find DNG raw data {}", err);
+                        log::error!("Couldn't find DNG raw data {err}");
                         err
                     })
             })
