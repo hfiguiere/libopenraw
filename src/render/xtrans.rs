@@ -46,7 +46,7 @@ use crate::bitmap::ImageBuffer;
 use crate::mosaic::PatternColour;
 use crate::Result;
 
-static COLORS: usize = 3;
+static COLOURS: usize = 3;
 static RGB_CAM: [[f64; 4]; 3] = [
     [1.0, 0.0, 0.0, 0.0],
     [0.0, 1.0, 0.0, 0.0],
@@ -90,7 +90,7 @@ fn border_interpolate(image: &mut ImageBuffer<u16>, xtrans: &[PatternColour], bo
                 y = y.wrapping_add(1);
             }
             let f = fcol(row as isize, col as isize, xtrans) as usize;
-            for c in 0..COLORS {
+            for c in 0..COLOURS {
                 if c != f && sum[c.wrapping_add(4)] != 0 {
                     image.data[image_index(row, col, width) + c] =
                         (sum[c]).wrapping_div(sum[c.wrapping_add(4)]) as u16;
@@ -119,7 +119,7 @@ fn cielab(rgb: &[u16]) -> [i16; 3] {
     static XYZ_CAM: Lazy<[[f32; 4]; 3]> = Lazy::new(|| {
         let mut xyz_cam: [[f32; 4]; 3] = [[0.; 4]; 3];
         for i in 0..3 {
-            for j in 0..COLORS {
+            for j in 0..COLOURS {
                 let mut k = 0_usize;
                 xyz_cam[i][j] = k as f32;
                 while k < 3 {
@@ -135,7 +135,7 @@ fn cielab(rgb: &[u16]) -> [i16; 3] {
     });
 
     let mut xyz: [f32; 3] = [0.5; 3];
-    for (c, colours) in rgb.iter().enumerate().take(COLORS) {
+    for (c, colours) in rgb.iter().enumerate().take(COLOURS) {
         xyz[0] += XYZ_CAM[0][c] * *colours as f32;
         xyz[1] += XYZ_CAM[1][c] * *colours as f32;
         xyz[2] += XYZ_CAM[2][c] * *colours as f32;
@@ -230,7 +230,7 @@ pub(crate) unsafe fn xtrans_interpolate(
     let mut mcol: i32;
     let mut val: i32;
     let mut hm: [i32; 8] = [0; 8];
-    let mut color: [[i32; 8]; 3] = [[0; 8]; 3];
+    let mut colour: [[i32; 8]; 3] = [[0; 8]; 3];
     static ORTH: [isize; 12] = [1, 0, 0, 1, -1, 0, 0, -1, 1, 0, 0, 1];
     static PATT: [[isize; 16]; 2] = [
         [0, 1, 0, -1, 2, 0, -1, 0, 1, 1, 1, -1, 0, 0, 0, 0],
@@ -384,17 +384,17 @@ pub(crate) unsafe fn xtrans_interpolate(
                     let index = image_index(row as usize, col as usize, width);
                     pix = input.data[index..index + 4].as_mut_ptr() as *mut [u16; 4];
                     hex = (allhex[row as usize % 3][col as usize % 3][0]).as_mut_ptr();
-                    color[1][0] = 174
+                    colour[1][0] = 174
                         * ((*pix.offset(*hex.add(1) as isize))[1] as i32
                             + (*pix.offset(*hex as isize))[1] as i32)
                         - 46 * ((*pix.offset(2 * *hex.add(1) as isize))[1] as i32
                             + (*pix.offset(2 * *hex as isize))[1] as i32);
-                    color[1][1] = 223 * (*pix.offset(*hex.offset(3) as isize))[1] as i32
+                    colour[1][1] = 223 * (*pix.offset(*hex.offset(3) as isize))[1] as i32
                         + (*pix.offset(*hex.add(2) as isize))[1] as i32 * 33
                         + 92 * (*pix)[f] as i32
                         - (*pix.offset(-(*hex.add(2) as isize)))[f] as i32;
                     for c in 0..2_usize {
-                        color[1][2 + c] = 164 * (*pix.offset(*hex.add(4 + c) as isize))[1] as i32
+                        colour[1][2 + c] = 164 * (*pix.offset(*hex.add(4 + c) as isize))[1] as i32
                             + 92 * (*pix.offset(-2 * *hex.add(4 + c) as isize))[1] as i32
                             + 33 * (2 * (*pix)[f] as i32
                                 - (*pix.offset(3 * *hex.add(4 + c) as isize))[f] as i32
@@ -404,7 +404,7 @@ pub(crate) unsafe fn xtrans_interpolate(
                         (*rgb.offset(
                             (c as i32 ^ ((row - sgrow as i32) % 3 == 0) as i32) as isize,
                         ))[(row - top) as usize][(col - left) as usize][1] =
-                            lim(color[1][c] >> 8, (*pix)[1] as i32, (*pix)[3] as i32) as u16;
+                            lim(colour[1][c] >> 8, (*pix)[1] as i32, (*pix)[3] as i32) as u16;
                     }
                 }
             }
@@ -468,7 +468,7 @@ pub(crate) unsafe fn xtrans_interpolate(
                                 let g = 2 * (*rix)[1] as i32
                                     - (*rix.offset((i << c) as isize))[1] as i32
                                     - (*rix.offset((-i << c) as isize))[1] as i32;
-                                color[h as usize][d] = g
+                                colour[h as usize][d] = g
                                     + (*rix.offset((i << c) as isize))[h as usize] as i32
                                     + (*rix.offset((-i << c) as isize))[h as usize] as i32;
                                 if d > 1 {
@@ -488,12 +488,12 @@ pub(crate) unsafe fn xtrans_interpolate(
                             }
                             if d > 1 && d & 1 != 0 && diff[d - 1] < diff[d] {
                                 for c in 0..2_usize {
-                                    color[c * 2][d] = color[c * 2][d - 1];
+                                    colour[c * 2][d] = colour[c * 2][d - 1];
                                 }
                             }
                             if d < 2 || d & 1 != 0 {
                                 for c in 0..2_usize {
-                                    (*rix)[c * 2] = clip(color[c * 2][d] / 2) as u16;
+                                    (*rix)[c * 2] = clip(colour[c * 2][d] / 2) as u16;
                                 }
                                 rix = rix.add(UTS * UTS);
                             }
