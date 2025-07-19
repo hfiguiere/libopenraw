@@ -23,13 +23,14 @@
 
 use std::io::Read;
 
+const XTRANS_FILE: &str = "Fujifilm/X-Pro1/DSCF2131.RAF";
 const FILES: [&str; 12] = [
     "Apple/iPhone XS/IMG_1105.dng",
     "Canon/EOS 10D/CRW_7673.CRW",
     "Canon/EOS 20D/IMG_3893.CR2",
     "Canon/EOS R5/Canon_EOS_R5_CRAW_ISO_100_nocrop_nodual.CR3",
     "Epson/R-D1/_EPS0672.ERF",
-    "Fujifilm/X-Pro1/DSCF2131.RAF",
+    XTRANS_FILE,
     "Leica/M8/L1030132.DNG",
     // Nikon unpack
     "Nikon/D100/DSC_2376.NEF",
@@ -41,7 +42,7 @@ const FILES: [&str; 12] = [
 ];
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use libopenraw::{rawfile_from_file, LJpeg};
+use libopenraw::{rawfile_from_file, LJpeg, RenderingOptions, RenderingStage};
 
 pub fn ordiag_benchmark(c: &mut Criterion) {
     let dataset = std::env::var("RAWFILES_ROOT").expect("RAWFILES_ROOT not set");
@@ -90,5 +91,36 @@ fn ljpeg_benchmark(c: &mut Criterion) {
     });
 }
 
+/// Benchmmark X-Trans rendering.
+/// This assume the input file is apropriate as we don't choose the
+/// algorithm yet.
+fn xtrans_benchmark(c: &mut Criterion) {
+    let dataset = std::env::var("RAWFILES_ROOT").expect("RAWFILES_ROOT not set");
+    let dataset = std::path::PathBuf::from(dataset);
+    let file = XTRANS_FILE;
+    let bench_name = format!("xtrans-{file}");
+    let file = dataset.join(file);
+    let rawfile = rawfile_from_file(&file, None).expect("RAW didn't decode");
+    let options = RenderingOptions::default().with_stage(RenderingStage::Interpolation);
+    assert_eq!(
+        options.stage,
+        RenderingStage::Interpolation,
+        "we only want to benchmark interpolation"
+    );
+    let rawdata = rawfile.raw_data(false).expect("Couldn't get raw data");
+    c.bench_function(&bench_name, |b| {
+        b.iter(|| {
+            let _ = rawdata
+                .rendered_image(options.clone())
+                .expect("Rendering failed");
+        });
+    });
+}
+
 criterion_group!(benches, ordiag_benchmark, dump_benchmark, ljpeg_benchmark);
-criterion_main!(benches);
+criterion_group!(
+    name = render_benches;
+    config = Criterion::default().significance_level(0.1).sample_size(10);
+    targets = xtrans_benchmark
+);
+criterion_main!(benches, render_benches);
