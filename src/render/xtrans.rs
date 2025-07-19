@@ -39,7 +39,7 @@
 
 //! X-Trans demoisaicking using Frank Markesteijn's algorithm
 
-use libc::{free, malloc, memcpy};
+use libc::memcpy;
 use once_cell::sync::Lazy;
 
 use crate::bitmap::ImageBuffer;
@@ -243,8 +243,8 @@ pub(crate) unsafe fn xtrans_interpolate(
 
     let ndir: usize = if passes > 1 { 8 } else { 4 };
 
-    let buffer: *mut u8 = malloc(UTS * UTS * (ndir * 11 + 6)) as *mut u8;
-    assert!(!buffer.is_null(), "xtrans_interpolate()");
+    let mut buffer_vec = vec![0_u8; UTS * UTS * (ndir * 11 + 6)];
+    let buffer = buffer_vec.as_mut_ptr();
     let mut rgb: *mut [[[u16; 3]; UTS]; UTS] = buffer as *mut [[[u16; 3]; UTS]; UTS];
     let lab: *mut [[i16; 3]; UTS] =
         buffer.offset(TS * TS * (ndir as isize * 6)) as *mut [[i16; 3]; UTS];
@@ -713,7 +713,6 @@ pub(crate) unsafe fn xtrans_interpolate(
         }
         top += TS as i32 - 16;
     }
-    free(buffer as *mut libc::c_void);
     border_interpolate(&mut input, xtrans, 8);
     Ok(input.into_f64_downsample(3))
 }
