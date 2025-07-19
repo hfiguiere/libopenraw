@@ -480,7 +480,16 @@ impl RawImage {
     fn interpolate(&self, buffer: ImageBuffer<f64>) -> Result<ImageBuffer<f64>> {
         let pattern = self.mosaic_pattern();
         match self.photom_int {
-            exif::PhotometricInterpretation::CFA => render::demosaic::bimedian(&buffer, pattern),
+            exif::PhotometricInterpretation::CFA => match pattern {
+                Pattern::NonRgb22(_) => {
+                    log::error!("xtrans not yet supported");
+                    Err(Error::InvalidFormat)
+                }
+                Pattern::Rggb | Pattern::Gbrg | Pattern::Bggr | Pattern::Grbg => {
+                    render::demosaic::bimedian(&buffer, pattern)
+                }
+                _ => Err(Error::InvalidFormat),
+            },
             exif::PhotometricInterpretation::LinearRaw => render::grayscale::to_rgb(&buffer),
             _ => {
                 log::error!("Invalid photometric interpretation {:?}", self.photom_int);
