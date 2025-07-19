@@ -39,13 +39,13 @@
 
 //! X-Trans demoisaicking using Frank Markesteijn's algorithm
 
+use libc::{free, malloc, memcpy};
 use once_cell::sync::Lazy;
 
 use crate::bitmap::ImageBuffer;
 use crate::mosaic::PatternColour;
 use crate::Result;
 
-use libc::{free, malloc, memcpy};
 static COLORS: usize = 3;
 static RGB_CAM: [[f64; 4]; 3] = [
     [1.0, 0.0, 0.0, 0.0],
@@ -182,8 +182,14 @@ fn image_index(row: usize, col: usize, width: usize) -> usize {
     row * width * 4 + col * 4
 }
 
-// Convert the buffer to have the expected layout...
-// Also f64 -> u16.
+/// Convert the buffer `finput` to have the expected layout...  Also
+/// performs f64 -> u16.
+///
+/// The expected layout is chunky quad pixels with only the colour
+/// filter component value at the location set. So a red pixal in the
+/// mosaic would [ red, 0, 0, 0 ]
+///
+/// XXX move to floats.
 fn convert_buffer(finput: &ImageBuffer<f64>, xtrans: &[PatternColour]) -> ImageBuffer<u16> {
     let mut buffer = vec![0_u16; finput.height as usize * finput.width as usize * 4];
     for row in 0..finput.height as usize {
@@ -196,6 +202,16 @@ fn convert_buffer(finput: &ImageBuffer<f64>, xtrans: &[PatternColour]) -> ImageB
     ImageBuffer::with_data(buffer, finput.width, finput.height, 16, 4)
 }
 
+/// X-Trans interpolate.
+///
+/// `finput` is the raw data as a filtered pixmap.
+/// `xtrans` is the xtrans pattern.
+/// Output dimension are `output_width` and `output_height`
+/// `passes` should be between 1 and 3. The bigger the slower.
+///
+/// # Safety
+/// Currently use raw memory buffer and pointers due to the origin of
+/// the code.
 pub(crate) unsafe fn xtrans_interpolate(
     finput: ImageBuffer<f64>,
     xtrans: &[PatternColour],
