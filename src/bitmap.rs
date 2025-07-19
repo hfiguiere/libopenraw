@@ -101,6 +101,38 @@ impl ImageBuffer<f64> {
     }
 }
 
+impl ImageBuffer<u16> {
+    /// Convert an u16 buffer to f64 downsampling (binning) components.
+    /// This is currently only used for X-Trans due to the specifics of
+    /// the algortithm and its expectation of input.
+    ///
+    /// Set `ncolor` to `self.cc` to not perform a downsampling.
+    /// # Assert
+    /// Assert if `ncolor` is > `self.cc`
+    #[allow(dead_code)]
+    pub(crate) fn into_f64_downsample(self, ncolor: usize) -> ImageBuffer<f64> {
+        let old_ncolor = self.cc as usize;
+        assert!(old_ncolor >= ncolor);
+        ImageBuffer::<f64>::with_data(
+            self.data
+                .iter()
+                .enumerate()
+                .filter_map(|(idx, v)| {
+                    if idx % old_ncolor < ncolor {
+                        Some(*v as f64 / u16::MAX as f64)
+                    } else {
+                        None
+                    }
+                })
+                .collect(),
+            self.width,
+            self.height,
+            16,
+            ncolor as u32,
+        )
+    }
+}
+
 /// Trait for bitmap objects.
 pub trait Bitmap {
     fn data_type(&self) -> DataType;
@@ -140,5 +172,48 @@ impl std::fmt::Debug for Data {
             Self::Data16(ref v) => format!("Data(Data16([{}]))", v.len()),
             Self::Tiled((ref v, sz)) => format!("Data(Tiled([{}], {:?}))", v.len(), sz),
         })
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::ImageBuffer;
+
+    #[test]
+    fn test_into_f64_downsample() {
+        let mut data = [0_u16; 64];
+        data.iter_mut().enumerate().for_each(|(idx, value)| {
+            *value = idx as u16 + 1;
+        });
+
+        let buffer = ImageBuffer::with_data(data.into(), 4, 4, 16, 4);
+        assert_eq!(buffer.data[0], 1);
+        assert_eq!(buffer.data[3], 4);
+        assert_eq!(buffer.data[4], 5);
+
+        // No downsampling
+        let buffer2 = buffer.into_f64_downsample(4);
+        assert_eq!(buffer2.data[0], 1.0 / u16::MAX as f64);
+        assert_eq!(buffer2.data[3], 4.0 / u16::MAX as f64);
+        assert_eq!(buffer2.data[4], 5.0 / u16::MAX as f64);
+
+        // Downsampling with binning the 4th component.
+        let buffer = ImageBuffer::with_data(data.into(), 4, 4, 16, 4);
+        let buffer3 = buffer.into_f64_downsample(3);
+        assert_eq!(buffer3.data[0], 1.0 / u16::MAX as f64);
+        assert_eq!(buffer3.data[3], 5.0 / u16::MAX as f64);
+        assert_eq!(buffer3.data[4], 6.0 / u16::MAX as f64);
+    }
+
+    #[test]
+    #[should_panic(expected = "assertion failed")]
+    fn test_into_f64_downsample_assert() {
+        let mut data = [0_u16; 64];
+        data.iter_mut().enumerate().for_each(|(idx, value)| {
+            *value = idx as u16 + 1;
+        });
+
+        let buffer = ImageBuffer::with_data(data.into(), 4, 4, 16, 4);
+        _ = buffer.into_f64_downsample(5);
     }
 }
