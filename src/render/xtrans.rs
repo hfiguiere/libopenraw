@@ -221,14 +221,6 @@ pub(crate) unsafe fn xtrans_interpolate(
 ) -> Result<ImageBuffer<f64>> {
     let mut input = convert_buffer(&finput, xtrans);
     let width = input.width as usize;
-    let mut h: i32;
-    let mut i: i32;
-    let mut v: i32;
-    let mut top: i32;
-    let mut left: i32;
-    let mut mrow: i32;
-    let mut mcol: i32;
-    let mut val: i32;
     let mut hm: [i32; 8] = [0; 8];
     let mut colour: [[i32; 8]; 3] = [[0; 8]; 3];
     static ORTH: [isize; 12] = [1, 0, 0, 1, -1, 0, 0, -1, 1, 0, 0, 1];
@@ -237,8 +229,8 @@ pub(crate) unsafe fn xtrans_interpolate(
         [0, 1, 0, -2, 1, 0, -2, 0, 1, 1, -2, -2, 1, -1, -1, 1],
     ];
     static DIR: [isize; 4] = [1, TS, TS + 1, TS - 1];
-    let mut allhex: [[[[i16; 8]; 2]; 3]; 3] = [[[[0; 8]; 2]; 3]; 3];
-    let mut hex: *mut i16;
+    let mut allhex: [[[[isize; 8]; 2]; 3]; 3] = [[[[0; 8]; 2]; 3]; 3];
+    let mut hex: *mut isize;
     let mut min: u16;
     let mut max: u16;
     let mut sgrow: u16 = 0;
@@ -281,11 +273,10 @@ pub(crate) unsafe fn xtrans_interpolate(
                 }
                 if ng == g + 1 {
                     for c in 0..8_usize {
-                        v = (ORTH[d] * PATT[g][c * 2] + ORTH[d + 1] * PATT[g][c * 2 + 1]) as i32;
-                        h = (ORTH[d + 2] * PATT[g][c * 2] + ORTH[d + 3] * PATT[g][c * 2 + 1])
-                            as i32;
-                        allhex[row][col][0][c ^ (g * 2) & d] = (h + v * width as i32) as i16;
-                        allhex[row][col][1][c ^ (g * 2) & d] = (h + v * TS as i32) as i16;
+                        let v = ORTH[d] * PATT[g][c * 2] + ORTH[d + 1] * PATT[g][c * 2 + 1];
+                        let h = ORTH[d + 2] * PATT[g][c * 2] + ORTH[d + 3] * PATT[g][c * 2 + 1];
+                        allhex[row][col][0][c ^ (g * 2) & d] = (h + v * width as isize) as isize;
+                        allhex[row][col][1][c ^ (g * 2) & d] = (h + v * TS) as isize;
                     }
                 }
                 d += 2;
@@ -310,12 +301,12 @@ pub(crate) unsafe fn xtrans_interpolate(
                 hex = (allhex[row % 3][col % 3][0]).as_mut_ptr();
                 if max == 0 {
                     for c in 0..6_isize {
-                        val = (*pix.offset(*hex.offset(c) as isize))[1] as i32;
-                        if min as i32 > val {
-                            min = val as u16;
+                        let val = (*pix.offset(*hex.offset(c)))[1];
+                        if min > val {
+                            min = val;
                         }
-                        if (max as i32) < val {
-                            max = val as u16;
+                        if max < val {
+                            max = val;
                         }
                     }
                 }
@@ -348,12 +339,12 @@ pub(crate) unsafe fn xtrans_interpolate(
         }
         row += 1;
     }
-    top = 3;
+    let mut top = 3_i32;
     while top < output_height as i32 - 19 {
-        left = 3;
+        let mut left = 3_i32;
         while left < output_width as i32 - 19 {
-            mrow = std::cmp::min(top + TS as i32, output_height as i32 - 3);
-            mcol = std::cmp::min(left + TS as i32, output_width as i32 - 3);
+            let mut mrow = std::cmp::min(top + TS as i32, output_height as i32 - 3);
+            let mut mcol = std::cmp::min(left + TS as i32, output_width as i32 - 3);
             for row in top..mrow {
                 for col in left..mcol {
                     memcpy(
@@ -385,20 +376,19 @@ pub(crate) unsafe fn xtrans_interpolate(
                     pix = input.data[index..index + 4].as_mut_ptr() as *mut [u16; 4];
                     hex = (allhex[row as usize % 3][col as usize % 3][0]).as_mut_ptr();
                     colour[1][0] = 174
-                        * ((*pix.offset(*hex.add(1) as isize))[1] as i32
-                            + (*pix.offset(*hex as isize))[1] as i32)
-                        - 46 * ((*pix.offset(2 * *hex.add(1) as isize))[1] as i32
-                            + (*pix.offset(2 * *hex as isize))[1] as i32);
-                    colour[1][1] = 223 * (*pix.offset(*hex.offset(3) as isize))[1] as i32
-                        + (*pix.offset(*hex.add(2) as isize))[1] as i32 * 33
+                        * ((*pix.offset(*hex.add(1)))[1] as i32 + (*pix.offset(*hex))[1] as i32)
+                        - 46 * ((*pix.offset(2 * *hex.add(1)))[1] as i32
+                            + (*pix.offset(2 * *hex))[1] as i32);
+                    colour[1][1] = 223 * (*pix.offset(*hex.offset(3)))[1] as i32
+                        + (*pix.offset(*hex.add(2)))[1] as i32 * 33
                         + 92 * (*pix)[f] as i32
-                        - (*pix.offset(-(*hex.add(2) as isize)))[f] as i32;
+                        - (*pix.offset(-(*hex.add(2))))[f] as i32;
                     for c in 0..2_usize {
-                        colour[1][2 + c] = 164 * (*pix.offset(*hex.add(4 + c) as isize))[1] as i32
-                            + 92 * (*pix.offset(-2 * *hex.add(4 + c) as isize))[1] as i32
+                        colour[1][2 + c] = 164 * (*pix.offset(*hex.add(4 + c)))[1] as i32
+                            + 92 * (*pix.offset(-2 * *hex.add(4 + c)))[1] as i32
                             + 33 * (2 * (*pix)[f] as i32
-                                - (*pix.offset(3 * *hex.add(4 + c) as isize))[f] as i32
-                                - (*pix.offset(-3 * *hex.add(4 + c) as isize))[f] as i32);
+                                - (*pix.offset(3 * *hex.add(4 + c)))[f] as i32
+                                - (*pix.offset(-3 * *hex.add(4 + c)))[f] as i32);
                     }
                     for c in 0..4_usize {
                         (*rgb.offset(
@@ -440,10 +430,10 @@ pub(crate) unsafe fn xtrans_interpolate(
                                 .as_mut_ptr()
                                 .add(col - left as usize)
                                     as *mut [u16; 3];
-                                val = (*rix.offset(-2 * *hex.add(d) as isize))[1] as i32
-                                    + 2 * (*rix.offset(*hex.add(d) as isize))[1] as i32
-                                    - (*rix.offset(-2 * *hex.add(d) as isize))[f] as i32
-                                    - 2 * (*rix.offset(*hex.add(d) as isize))[f] as i32
+                                let val = (*rix.offset(-2 * *hex.add(d)))[1] as i32
+                                    + 2 * (*rix.offset(*hex.add(d)))[1] as i32
+                                    - (*rix.offset(-2 * *hex.add(d)))[f] as i32
+                                    - 2 * (*rix.offset(*hex.add(d)))[f] as i32
                                     + 3 * (*rix)[f] as i32;
                                 (*rix)[1] = lim(val / 3, (*pix)[1] as i32, (*pix)[3] as i32) as u16;
                             }
@@ -460,26 +450,22 @@ pub(crate) unsafe fn xtrans_interpolate(
                             .as_mut_ptr()
                             .offset((col - left) as isize)
                             as *mut [u16; 3];
-                        h = fcol(row as isize, col as isize + 1, xtrans) as i32;
+                        let mut h = fcol(row as isize, col as isize + 1, xtrans) as usize;
                         let mut diff = [0.; 6];
-                        i = 1;
+                        let mut i = 1_isize;
                         for d in 0..6_usize {
                             for c in 0..2 {
                                 let g = 2 * (*rix)[1] as i32
-                                    - (*rix.offset((i << c) as isize))[1] as i32
-                                    - (*rix.offset((-i << c) as isize))[1] as i32;
+                                    - (*rix.offset(i << c))[1] as i32
+                                    - (*rix.offset(-i << c))[1] as i32;
                                 colour[h as usize][d] = g
-                                    + (*rix.offset((i << c) as isize))[h as usize] as i32
-                                    + (*rix.offset((-i << c) as isize))[h as usize] as i32;
+                                    + (*rix.offset(i << c))[h as usize] as i32
+                                    + (*rix.offset(-i << c))[h as usize] as i32;
                                 if d > 1 {
-                                    let value = sqr(((*rix.offset((i << c) as isize))[1] as i32)
-                                        .wrapping_sub((*rix.offset((-i << c) as isize))[1] as i32)
-                                        .wrapping_sub(
-                                            (*rix.offset((i << c) as isize))[h as usize] as i32,
-                                        )
-                                        .wrapping_add(
-                                            (*rix.offset((-i << c) as isize))[h as usize] as i32,
-                                        ))
+                                    let value = sqr(((*rix.offset(i << c))[1] as i32)
+                                        .wrapping_sub((*rix.offset(-i << c))[1] as i32)
+                                        .wrapping_sub((*rix.offset(i << c))[h as usize] as i32)
+                                        .wrapping_add((*rix.offset(-i << c))[h as usize] as i32))
                                     .wrapping_add(sqr(g));
                                     diff[d] += value as f32;
                                 }
@@ -497,7 +483,7 @@ pub(crate) unsafe fn xtrans_interpolate(
                                 }
                                 rix = rix.add(UTS * UTS);
                             }
-                            i ^= TS as i32 ^ 1;
+                            i ^= TS ^ 1;
                             h ^= 2;
                         }
                         col += 3;
@@ -517,32 +503,29 @@ pub(crate) unsafe fn xtrans_interpolate(
                             .add(col - left as usize)
                             as *mut [u16; 3];
                         let c = if (row - sgrow as usize) % 3 != 0 {
-                            UTS
+                            TS
                         } else {
-                            1_usize
+                            1
                         };
-                        h = (3 * (c ^ UTS ^ 1)) as i32;
-                        for d in 0..4_usize {
-                            i = if d > 1
+                        let h = 3 * (c ^ TS ^ 1);
+                        for d in 0..4_isize {
+                            let i: isize = if d > 1
                                 || (d ^ c) & 1 != 0
-                                || (abs((*rix)[1] as i32 - (*rix.add(c))[1] as i32)
-                                    + abs((*rix)[1] as i32 - (*rix.offset(-(c as isize)))[1] as i32)
-                                    < 2 * (abs(
-                                        (*rix)[1] as i32 - (*rix.offset(h as isize))[1] as i32
-                                    ) + abs(
-                                        (*rix)[1] as i32 - (*rix.offset(-h as isize))[1] as i32
-                                    )))
+                                || (abs((*rix)[1] as i32 - (*rix.offset(c))[1] as i32)
+                                    + abs((*rix)[1] as i32 - (*rix.offset(-c))[1] as i32)
+                                    < 2 * (abs((*rix)[1] as i32 - (*rix.offset(h))[1] as i32)
+                                        + abs((*rix)[1] as i32 - (*rix.offset(-h))[1] as i32)))
                             {
-                                c as i32
+                                c
                             } else {
                                 h
                             };
                             (*rix)[f] = clip(
-                                ((*rix.offset(i as isize))[f] as i32
-                                    + (*rix.offset(-i as isize))[f] as i32
+                                ((*rix.offset(i))[f] as i32
+                                    + (*rix.offset(-i))[f] as i32
                                     + 2 * (*rix)[1] as i32
-                                    - (*rix.offset(i as isize))[1] as i32
-                                    - (*rix.offset(-i as isize))[1] as i32)
+                                    - (*rix.offset(i))[1] as i32
+                                    - (*rix.offset(-i))[1] as i32)
                                     / 2,
                             ) as u16;
                             rix = rix.offset(TS * TS);
@@ -563,16 +546,13 @@ pub(crate) unsafe fn xtrans_interpolate(
                                 while d < ndir {
                                     if *hex.add(d) + *hex.add(d + 1) != 0 {
                                         let g = 3 * (*rix)[1] as i32
-                                            - 2 * (*rix.offset(*hex.add(d) as isize))[1] as i32
-                                            - (*rix.offset(*hex.add(d + 1) as isize))[1] as i32;
+                                            - 2 * (*rix.offset(*hex.add(d)))[1] as i32
+                                            - (*rix.offset(*hex.add(d + 1)))[1] as i32;
                                         let mut c = 0_usize;
                                         while c < 4 {
                                             (*rix)[c] = clip(
-                                                (g + 2
-                                                    * (*rix.offset(*hex.add(d) as isize))[c]
-                                                        as i32
-                                                    + (*rix.offset(*hex.add(d + 1) as isize))[c]
-                                                        as i32)
+                                                (g + 2 * (*rix.offset(*hex.add(d)))[c] as i32
+                                                    + (*rix.offset(*hex.add(d + 1)))[c] as i32)
                                                     / 3,
                                             )
                                                 as u16;
@@ -580,14 +560,13 @@ pub(crate) unsafe fn xtrans_interpolate(
                                         }
                                     } else {
                                         let g = 2 * (*rix)[1] as i32
-                                            - (*rix.offset(*hex.add(d) as isize))[1] as i32
-                                            - (*rix.offset(*hex.add(d + 1) as isize))[1] as i32;
+                                            - (*rix.offset(*hex.add(d)))[1] as i32
+                                            - (*rix.offset(*hex.add(d + 1)))[1] as i32;
                                         let mut c = 0_usize;
                                         while c < 4 {
                                             (*rix)[c] = clip(
-                                                (g + (*rix.offset(*hex.add(d) as isize))[c] as i32
-                                                    + (*rix.offset(*hex.add(d + 1) as isize))[c]
-                                                        as i32)
+                                                (g + (*rix.offset(*hex.add(d)))[c] as i32
+                                                    + (*rix.offset(*hex.add(d + 1)))[c] as i32)
                                                     / 2,
                                             )
                                                 as u16;
@@ -657,9 +636,9 @@ pub(crate) unsafe fn xtrans_interpolate(
                     }
                     tr *= 8.0;
                     for d in 0..ndir {
-                        v = -1;
+                        let mut v = -1;
                         while v <= 1 {
-                            h = -1;
+                            let mut h = -1;
                             while h <= 1 {
                                 if (*drv.add(d))[(row as i32 + v) as usize]
                                     [(col as i32 + h) as usize]
@@ -689,9 +668,9 @@ pub(crate) unsafe fn xtrans_interpolate(
                 for col in first_col..mcol - 8 {
                     for (d, homogenous) in hm.iter_mut().enumerate().take(ndir) {
                         *homogenous = 0;
-                        v = -2;
+                        let mut v = -2;
                         while v <= 2 {
-                            h = -2;
+                            let mut h = -2;
                             while h <= 2 {
                                 *homogenous +=
                                     (*homo.add(d))[(row + v) as usize][(col + h) as usize] as i32;
