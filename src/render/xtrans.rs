@@ -233,9 +233,9 @@ pub(crate) unsafe fn xtrans_interpolate(
 
     log::debug!("{passes}-pass X-Trans interpolation...");
 
-    let ndir: i32 = if passes > 1 { 8 } else { 4 };
+    let ndir: usize = if passes > 1 { 8 } else { 4 };
 
-    let buffer: *mut u8 = malloc(UTS * UTS * (ndir as usize * 11 + 6)) as *mut u8;
+    let buffer: *mut u8 = malloc(UTS * UTS * (ndir * 11 + 6)) as *mut u8;
     assert!(!buffer.is_null(), "xtrans_interpolate()");
     let mut rgb: *mut [[[u16; 3]; UTS]; UTS] = buffer as *mut [[[u16; 3]; UTS]; UTS];
     let lab: *mut [[i16; 3]; UTS] =
@@ -544,7 +544,7 @@ pub(crate) unsafe fn xtrans_interpolate(
                                     as *mut [u16; 3];
                                 hex = (allhex[row % 3][col % 3][1]).as_mut_ptr();
                                 let mut d = 0_usize;
-                                while d < ndir as usize {
+                                while d < ndir {
                                     if *hex.add(d) + *hex.add(d + 1) != 0 {
                                         let g = 3 * (*rix)[1] as i32
                                             - 2 * (*rix.offset(*hex.add(d) as isize))[1] as i32
@@ -592,7 +592,7 @@ pub(crate) unsafe fn xtrans_interpolate(
             mcol -= left;
 
             /* Convert to CIELab and differentiate in all directions:	*/
-            for d in 0..(ndir as usize) {
+            for d in 0..ndir {
                 for row in 2..(mrow - 2) as usize {
                     for col in 2..(mcol - 2) as usize {
                         let rgb = unsafe {
@@ -630,17 +630,17 @@ pub(crate) unsafe fn xtrans_interpolate(
             }
 
             /* Build homogeneity maps from the derivatives: */
-            std::ptr::write_bytes(homo as *mut u8, 0, ndir as usize * UTS * UTS);
+            std::ptr::write_bytes(homo as *mut u8, 0, ndir * UTS * UTS);
             for row in 4..(mrow - 4) as usize {
                 for col in 4..(mcol - 4) as usize {
                     let mut tr = FLT_MAX;
-                    for d in 0..(ndir as usize) {
+                    for d in 0..ndir {
                         if tr > (*drv.add(d))[row][col] {
                             tr = (*drv.add(d))[row][col];
                         }
                     }
                     tr *= 8.0;
-                    for d in 0..(ndir as usize) {
+                    for d in 0..ndir {
                         v = -1;
                         while v <= 1 {
                             h = -1;
@@ -671,7 +671,7 @@ pub(crate) unsafe fn xtrans_interpolate(
             for row in first_row..mrow - 8 {
                 let first_col = if left < 8 { left } else { 8 };
                 for col in first_col..mcol - 8 {
-                    for (d, homogenous) in hm.iter_mut().enumerate().take(ndir as usize) {
+                    for (d, homogenous) in hm.iter_mut().enumerate().take(ndir) {
                         *homogenous = 0;
                         v = -2;
                         while v <= 2 {
@@ -684,7 +684,7 @@ pub(crate) unsafe fn xtrans_interpolate(
                             v += 1;
                         }
                     }
-                    for d in 0..(ndir - 4) as usize {
+                    for d in 0..(ndir - 4) {
                         if hm[d] < hm[d + 4] {
                             hm[d] = 0;
                         } else if hm[d] > hm[d + 4] {
@@ -692,14 +692,14 @@ pub(crate) unsafe fn xtrans_interpolate(
                         }
                     }
                     max = hm[0] as u16;
-                    for homogenous in hm.iter().take(ndir as usize).skip(1) {
+                    for homogenous in hm.iter().take(ndir).skip(1) {
                         if (max as i32) < *homogenous {
                             max = *homogenous as u16;
                         }
                     }
                     max = (max as i32 - (max as i32 >> 3)) as u16;
                     let mut avg: [i32; 4] = [0; 4];
-                    for (d, homogenous) in hm.iter().enumerate().take(ndir as usize) {
+                    for (d, homogenous) in hm.iter().enumerate().take(ndir) {
                         if *homogenous >= max as i32 {
                             for (c, average) in avg.iter_mut().enumerate().take(3) {
                                 *average += (*rgb.add(d))[row as usize][col as usize][c] as i32;
