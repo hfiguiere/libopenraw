@@ -135,10 +135,10 @@ fn cielab(rgb: &[u16]) -> [i16; 3] {
     });
 
     let mut xyz: [f32; 3] = [0.5; 3];
-    for c in 0..COLORS {
-        xyz[0] += XYZ_CAM[0][c] * rgb[c] as f32;
-        xyz[1] += XYZ_CAM[1][c] * rgb[c] as f32;
-        xyz[2] += XYZ_CAM[2][c] * rgb[c] as f32;
+    for (c, colours) in rgb.iter().enumerate().take(COLORS) {
+        xyz[0] += XYZ_CAM[0][c] * *colours as f32;
+        xyz[1] += XYZ_CAM[1][c] * *colours as f32;
+        xyz[2] += XYZ_CAM[2][c] * *colours as f32;
     }
     xyz[0] = CBRT[clip(xyz[0] as i32) as usize];
     xyz[1] = CBRT[clip(xyz[1] as i32) as usize];
@@ -245,6 +245,7 @@ pub(crate) unsafe fn xtrans_interpolate(
     let homo: *mut [[u8; UTS]; UTS] =
         buffer.offset(TS * TS * (ndir as isize * 10 + 6)) as *mut [[u8; UTS]; UTS];
     /* Map a green hexagon around each non-green pixel and vice versa:	*/
+    #[allow(clippy::needless_range_loop)]
     for row in 0..3_usize {
         for col in 0..3_usize {
             let mut d = 0_usize;
@@ -670,13 +671,13 @@ pub(crate) unsafe fn xtrans_interpolate(
             for row in first_row..mrow - 8 {
                 let first_col = if left < 8 { left } else { 8 };
                 for col in first_col..mcol - 8 {
-                    for d in 0..(ndir as usize) {
-                        hm[d] = 0;
+                    for (d, homogenous) in hm.iter_mut().enumerate().take(ndir as usize) {
+                        *homogenous = 0;
                         v = -2;
                         while v <= 2 {
                             h = -2;
                             while h <= 2 {
-                                hm[d] +=
+                                *homogenous +=
                                     (*homo.add(d))[(row + v) as usize][(col + h) as usize] as i32;
                                 h += 1;
                             }
@@ -691,17 +692,17 @@ pub(crate) unsafe fn xtrans_interpolate(
                         }
                     }
                     max = hm[0] as u16;
-                    for d in 1..(ndir as usize) {
-                        if (max as i32) < hm[d] {
-                            max = hm[d] as u16;
+                    for homogenous in hm.iter().take(ndir as usize).skip(1) {
+                        if (max as i32) < *homogenous {
+                            max = *homogenous as u16;
                         }
                     }
                     max = (max as i32 - (max as i32 >> 3)) as u16;
                     let mut avg: [i32; 4] = [0; 4];
-                    for d in 0..(ndir as usize) {
-                        if hm[d] >= max as i32 {
-                            for c in 0..3_usize {
-                                avg[c] += (*rgb.add(d))[row as usize][col as usize][c] as i32;
+                    for (d, homogenous) in hm.iter().enumerate().take(ndir as usize) {
+                        if *homogenous >= max as i32 {
+                            for (c, average) in avg.iter_mut().enumerate().take(3) {
+                                *average += (*rgb.add(d))[row as usize][col as usize][c] as i32;
                             }
                             avg[3] += 1;
                         }
