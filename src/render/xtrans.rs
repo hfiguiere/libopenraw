@@ -39,7 +39,6 @@
 
 //! X-Trans demoisaicking using Frank Markesteijn's algorithm
 
-use libc::memcpy;
 use once_cell::sync::Lazy;
 
 use crate::bitmap::ImageBuffer;
@@ -347,20 +346,18 @@ pub(crate) unsafe fn xtrans_interpolate(
             let mut mcol = std::cmp::min(left + TS as i32, output_width as i32 - 3);
             for row in top..mrow {
                 for col in left..mcol {
-                    memcpy(
-                        ((*rgb)[(row - top) as usize][(col - left) as usize]).as_mut_ptr()
-                            as *mut libc::c_void,
-                        input.data[image_index(row as usize, col as usize, width)..].as_ptr()
-                            as *const libc::c_void,
-                        6,
+                    std::ptr::copy_nonoverlapping(
+                        input.data[image_index(row as usize, col as usize, width)..].as_ptr(),
+                        ((*rgb)[(row - top) as usize][(col - left) as usize]).as_mut_ptr(),
+                        3,
                     );
                 }
             }
             for c in 0..3_usize {
-                memcpy(
-                    (*rgb.add(c + 1)).as_mut_ptr() as *mut libc::c_void,
-                    (*rgb).as_mut_ptr() as *const libc::c_void,
-                    ::core::mem::size_of::<[[[u16; 3]; 512]; 512]>(),
+                std::ptr::copy_nonoverlapping(
+                    (*rgb).as_ptr() as *const [[[u16; 3]; UTS]; UTS],
+                    (*rgb.add(c + 1)).as_mut_ptr() as *mut [[[u16; 3]; UTS]; UTS],
+                    1,
                 );
             }
 
@@ -403,11 +400,7 @@ pub(crate) unsafe fn xtrans_interpolate(
             while pass < passes {
                 if pass == 1 {
                     rgb = rgb.offset(4);
-                    memcpy(
-                        rgb as *mut libc::c_void,
-                        buffer as *const libc::c_void,
-                        4 * ::core::mem::size_of::<[[[u16; 3]; 512]; 512]>(),
-                    );
+                    std::ptr::copy_nonoverlapping(buffer as *const [[[u16; 3]; UTS]; UTS], rgb, 4);
                 }
 
                 /* Recalculate green from interpolated values of closer pixels:	*/
