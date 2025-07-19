@@ -1403,8 +1403,8 @@
       <thumbDataSizes>757744 8890</thumbDataSizes>
       <thumbMd5>18245 48222</thumbMd5>
       <rawDataType>RAW</rawDataType>
-      <rawDataSize>25531520</rawDataSize>
-      <rawDataDimensions>4448 2870</rawDataDimensions>
+      <rawDataSize>24739400</rawDataSize>
+      <rawDataDimensions>4310 2870</rawDataDimensions>
       <rawDataActiveArea>79 11 4288 2848</rawDataActiveArea>
       <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawDataUserAspectRatio>NONE</rawDataUserAspectRatio>
@@ -1412,7 +1412,7 @@
       <rawMinValue>255 254 254 255</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawAsShotNeutral>0.6508620689655172 1 0.6608315098468271 NaN</rawAsShotNeutral>
-      <rawMd5>1845</rawMd5>
+      <rawMd5>37022</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -1432,8 +1432,8 @@
       <thumbDataSizes>851376 8857</thumbDataSizes>
       <thumbMd5>14811 64712</thumbMd5>
       <rawDataType>RAW</rawDataType>
-      <rawDataSize>33669120</rawDataSize>
-      <rawDataDimensions>5120 3288</rawDataDimensions>
+      <rawDataSize>32564352</rawDataSize>
+      <rawDataDimensions>4952 3288</rawDataDimensions>
       <rawDataActiveArea>28 12 4896 3264</rawDataActiveArea>
       <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawDataUserAspectRatio>NONE</rawDataUserAspectRatio>
@@ -1441,7 +1441,7 @@
       <rawMinValue>255 255 255 255</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawAsShotNeutral>0.4748427672955975 1 0.705607476635514 NaN</rawAsShotNeutral>
-      <rawMd5>61893</rawMd5>
+      <rawMd5>20071</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -1461,8 +1461,8 @@
       <thumbDataSizes>788085 9187</thumbDataSizes>
       <thumbMd5>47829 64807</thumbMd5>
       <rawDataType>RAW</rawDataType>
-      <rawDataSize>12623872</rawDataSize>
-      <rawDataDimensions>2944 2144</rawDataDimensions>
+      <rawDataSize>12212224</rawDataSize>
+      <rawDataDimensions>2848 2144</rawDataDimensions>
       <rawDataActiveArea>64 14 2816 2116</rawDataActiveArea>
       <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawDataUserAspectRatio>NONE</rawDataUserAspectRatio>
@@ -1470,7 +1470,7 @@
       <rawMinValue>256 256 256 256</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawAsShotNeutral>0.5468483816013628 1 0.5477815699658704 NaN</rawAsShotNeutral>
-      <rawMd5>854</rawMd5>
+      <rawMd5>39612</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -1491,8 +1491,8 @@
       <thumbDataSizes>400511 10211</thumbDataSizes>
       <thumbMd5>38886 27133</thumbMd5>
       <rawDataType>RAW</rawDataType>
-      <rawDataSize>33669120</rawDataSize>
-      <rawDataDimensions>5120 3288</rawDataDimensions>
+      <rawDataSize>32564352</rawDataSize>
+      <rawDataDimensions>4952 3288</rawDataDimensions>
       <rawDataActiveArea>28 12 4896 3264</rawDataActiveArea>
       <rawDataUserCrop>NONE</rawDataUserCrop>
       <rawDataUserAspectRatio>NONE</rawDataUserAspectRatio>
@@ -1500,7 +1500,7 @@
       <rawMinValue>255 255 255 255</rawMinValue>
       <rawMaxValue>4095 4095 4095 4095</rawMaxValue>
       <rawAsShotNeutral>0.578544061302682 1 0.4575757575757576 NaN</rawAsShotNeutral>
-      <rawMd5>11196</rawMd5>
+      <rawMd5>21279</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>
@@ -1520,8 +1520,8 @@
       <thumbDataSizes>4535565 9243</thumbDataSizes>
       <thumbMd5>17175 50644</thumbMd5>
       <rawDataType>RAW</rawDataType>
-      <rawDataSize>42747264</rawDataSize>
-      <rawDataDimensions>6384 3348</rawDataDimensions>
+      <rawDataSize>37470816</rawDataSize>
+      <rawDataDimensions>5596 3348</rawDataDimensions>
       <rawDataActiveArea>630 9 4992 3328</rawDataActiveArea>
       <rawDataUserCrop>630 9 4992 3328</rawDataUserCrop>
       <rawDataUserAspectRatio>3 2</rawDataUserAspectRatio>
@@ -1529,7 +1529,7 @@
       <rawMinValue>1020 1020 1020 1020</rawMinValue>
       <rawMaxValue>16383 16383 16383 16383</rawMaxValue>
       <rawAsShotNeutral>0.5224913494809689 1 0.5752380952380952 NaN</rawAsShotNeutral>
-      <rawMd5>50132</rawMd5>
+      <rawMd5>5626</rawMd5>
       <metaOrientation>1</metaOrientation>
     </results>
   </test>

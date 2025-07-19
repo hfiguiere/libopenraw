@@ -2,7 +2,7 @@
 /*
  * libopenraw - rawimage.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -259,6 +259,23 @@ impl RawImage {
     /// Set the output size.
     pub fn set_output_size(&mut self, width: u32, height: u32) {
         self.output_size = Some(Size { width, height });
+    }
+
+    /// Shrink the width. It's mostly for Fujifilm.
+    // XXX avoid copying.
+    pub fn shrink_width(&mut self, width: usize) {
+        let old_width = self.width as usize;
+        let mut new_data = Vec::<u16>::with_capacity(self.height as usize * width);
+        if let Data::Data16(old_data) = &self.data {
+            for row in 0..self.height as usize {
+                let index = row * old_width;
+                new_data.extend_from_slice(&old_data[index..index + width]);
+            }
+            self.data = Data::Data16(new_data);
+            self.width = width as u32;
+        } else {
+            unreachable!();
+        }
     }
 
     /// Retrieve the White balance as RGBx multiplier values.

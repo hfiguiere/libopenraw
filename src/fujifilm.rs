@@ -175,6 +175,36 @@ impl RafFile {
             probe: None,
         })
     }
+
+    /// Extract the output size from the meta container.
+    fn output_size(&self, container: &raf::MetaContainer, raw_width: u32) -> Option<Size> {
+        if let Some(v) = container.value(raf::TAG_RAF_DATA) {
+            use crate::fujifilm::raf::Value;
+            if let Value::U32s(v) = v {
+                // The content of the tag is undocumented.
+                // But it is assumed that as long as a value is
+                // bigger than width then it's not right.
+                let mut idx = 0_usize;
+                while v[idx] >= raw_width && idx < v.len() {
+                    idx += 1;
+                }
+                // We definitely want the index in probe in case
+                // it's out of bounds.
+                probe!(self.probe, "raf.raw.out.index", idx);
+                if idx + 1 < v.len() {
+                    let output_w = v[idx];
+                    let output_h = v[idx + 1];
+                    probe!(self.probe, "raf.raw.out.width", output_w);
+                    probe!(self.probe, "raf.raw.out.height", output_h);
+                    return Some(Size {
+                        width: output_w,
+                        height: output_h,
+                    });
+                }
+            }
+        }
+        None
+    }
 }
 
 impl RawFileImpl for RafFile {
@@ -357,6 +387,7 @@ impl RawFileImpl for RafFile {
                 // It's an XTrans if there is a `TAG_CFA_PATTERN` and it has 36 elements.
                 let pattern = container.value(raf::TAG_CFA_PATTERN).and_then(|v| match v {
                     raf::Value::Bytes(pattern) => {
+                        println!("pattern {pattern:?}");
                         probe!(self.probe, "raf.cfa_pattern", true);
                         Some(pattern)
                     }
@@ -408,6 +439,8 @@ impl RawFileImpl for RafFile {
                 probe!(self.probe, "raf.raw_props.compression", compression);
                 let compressed = compression != 0;
                 log::debug!("compressed {compressed}");
+
+                let output_size = self.output_size(container, raw_size.width);
 
                 let mut cfa_offset: u64 = 0;
                 let mut cfa_len: u64 = 0;
@@ -538,28 +571,10 @@ impl RawFileImpl for RafFile {
                     }
                 };
 
-                if let Some(v) = container.value(raf::TAG_RAF_DATA) {
-                    use crate::fujifilm::raf::Value;
-                    if let Value::U32s(v) = v {
-                        // The content of the tag is undocumented.
-                        // But it is assumed that as long as a value is
-                        // bigger than width then it's not right.
-                        let mut idx = 0_usize;
-                        while v[idx] >= raw_size.width && idx < v.len() {
-                            idx += 1;
-                        }
-                        // We definitely want the index in probe in case
-                        // it's out of bounds.
-                        probe!(self.probe, "raf.raw.out.index", idx);
-                        if idx + 1 < v.len() {
-                            let output_w = v[idx];
-                            let output_h = v[idx + 1];
-                            probe!(self.probe, "raf.raw.out.width", output_w);
-                            probe!(self.probe, "raf.raw.out.height", output_h);
-                            rawdata.set_output_size(output_w, output_h);
-                        }
-                    }
-                };
+                if let Some(size) = output_size {
+                    rawdata.shrink_width(size.width as usize);
+                }
+
                 rawdata.set_blacks(utils::to_quad(&blacks));
                 rawdata.set_whites([((1 << bps as u32) - 1) as u16; 4]);
                 rawdata.set_active_area(active_area);
