@@ -244,14 +244,9 @@ pub(crate) fn xtrans_interpolate(
     let mut buffer = vec![0_u16; UTS * UTS * ndir * 3];
     let mut rgb = buffer.as_mut_ptr() as *mut [[[PixelType; 3]; UTS]; UTS];
 
-    let mut lab_vec = vec![0_i16; UTS * UTS * 3];
-    let lab = lab_vec.as_mut_ptr() as *mut [[i16; 3]; UTS];
-
-    let mut drv_vec = vec![0.0_f32; UTS * UTS * ndir];
-    let drv = drv_vec.as_mut_ptr() as *mut [[f32; UTS]; UTS];
-
-    let mut homo_vec = vec![0_u8; UTS * UTS * ndir];
-    let homo = homo_vec.as_mut_ptr() as *mut [[u8; UTS]; UTS];
+    let mut lab = vec![[[0_i16; 3]; UTS]; UTS];
+    let mut drv = vec![[[0.0_f32; UTS]; UTS]; ndir];
+    let mut homo = vec![[[0_u8; UTS]; UTS]; ndir];
 
     /* Map a green hexagon around each non-green pixel and vice versa:	*/
     #[allow(clippy::needless_range_loop)]
@@ -634,30 +629,33 @@ pub(crate) fn xtrans_interpolate(
 
             /* Convert to CIELab and differentiate in all directions:	*/
             for d in 0..ndir {
-                for row in 2..(mrow - 2) as usize {
-                    for col in 2..(mcol - 2) as usize {
+                for (row, lab_row) in lab.iter_mut().enumerate().take((mrow - 2) as usize).skip(2) {
+                    for (col, lab_value) in lab_row
+                        .iter_mut()
+                        .enumerate()
+                        .take((mcol - 2) as usize)
+                        .skip(2)
+                    {
                         let rgb = unsafe {
                             std::slice::from_raw_parts(((*rgb.add(d))[row][col]).as_ptr(), 3)
                         };
-                        let slab = cielab(rgb);
-                        unsafe {
-                            std::ptr::copy_nonoverlapping(
-                                slab.as_ptr(),
-                                ((*lab.add(row))[col]).as_mut_ptr(),
-                                3,
-                            )
-                        };
+                        *lab_value = cielab(rgb);
                     }
                 }
                 let f = DIR[d & 3];
-                for row in 3..(mrow - 3) as usize {
-                    for col in 3..(mcol - 3) as usize {
+                for (row, lab_row) in lab.iter_mut().enumerate().take((mrow - 3) as usize).skip(3) {
+                    for (col, lab_value) in lab_row
+                        .iter_mut()
+                        .enumerate()
+                        .take((mcol - 3) as usize)
+                        .skip(3)
+                    {
                         unsafe {
-                            lix = &mut *(*lab.add(row)).as_mut_ptr().add(col) as *mut [i16; 3];
+                            lix = &mut *(lab_value.as_mut_ptr() as *mut [i16; 3]);
                             let g = 2 * (*lix)[0] as i32
                                 - (*lix.offset(f))[0] as i32
                                 - (*lix.offset(-f))[0] as i32;
-                            (*drv.add(d))[row][col] = (sqr(g)
+                            drv[d][row][col] = (sqr(g)
                                 + sqr(2 * (*lix)[1] as i32
                                     - (*lix.offset(f))[1] as i32
                                     - (*lix.offset(-f))[1] as i32
@@ -673,17 +671,13 @@ pub(crate) fn xtrans_interpolate(
             }
 
             /* Build homogeneity maps from the derivatives: */
-            unsafe {
-                std::ptr::write_bytes(homo as *mut u8, 0, ndir * UTS * UTS);
-            }
+            homo.iter_mut().flatten().flatten().for_each(|v| *v = 0);
             for row in 4..(mrow - 4) as usize {
                 for col in 4..(mcol - 4) as usize {
                     let mut tr = FLT_MAX;
-                    for d in 0..ndir {
-                        unsafe {
-                            if tr > (*drv.add(d))[row][col] {
-                                tr = (*drv.add(d))[row][col];
-                            }
+                    for value in drv.iter().take(ndir) {
+                        if tr > value[row][col] {
+                            tr = value[row][col];
                         }
                     }
                     tr *= 8.0;
@@ -692,14 +686,10 @@ pub(crate) fn xtrans_interpolate(
                         while v <= 1 {
                             let mut h = -1;
                             while h <= 1 {
-                                unsafe {
-                                    if (*drv.add(d))[(row as i32 + v) as usize]
-                                        [(col as i32 + h) as usize]
-                                        <= tr
-                                    {
-                                        let fresh84 = &mut (*homo.add(d))[row][col];
-                                        *fresh84 += 1;
-                                    }
+                                if drv[d][(row as i32 + v) as usize][(col as i32 + h) as usize]
+                                    <= tr
+                                {
+                                    homo[d][row][col] += 1;
                                 }
                                 h += 1;
                             }
@@ -726,11 +716,8 @@ pub(crate) fn xtrans_interpolate(
                         while v <= 2 {
                             let mut h = -2;
                             while h <= 2 {
-                                unsafe {
-                                    *homogenous += (*homo.add(d))[(row + v) as usize]
-                                        [(col + h) as usize]
-                                        as i32;
-                                }
+                                *homogenous +=
+                                    homo[d][(row + v) as usize][(col + h) as usize] as i32;
                                 h += 1;
                             }
                             v += 1;
