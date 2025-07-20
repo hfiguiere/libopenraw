@@ -208,10 +208,7 @@ fn convert_buffer(finput: &ImageBuffer<f64>, xtrans: &[PatternColour]) -> ImageB
 /// Output dimension are `output_width` and `output_height`
 /// `passes` should be between 1 and 3. The bigger the slower.
 ///
-/// # Safety
-/// Currently use raw memory buffer and pointers due to the origin of
-/// the code.
-pub(crate) unsafe fn xtrans_interpolate(
+pub(crate) fn xtrans_interpolate(
     finput: ImageBuffer<f64>,
     xtrans: &[PatternColour],
     output_width: usize,
@@ -305,7 +302,7 @@ pub(crate) unsafe fn xtrans_interpolate(
                 hex = (allhex[row % 3][col % 3][0]).as_mut_ptr();
                 if max == 0 {
                     for c in 0..6_isize {
-                        let val = (*pix.offset(*hex.offset(c)))[1];
+                        let val = unsafe { (*pix.offset(*hex.offset(c)))[1] };
                         if min > val {
                             min = val;
                         }
@@ -314,8 +311,10 @@ pub(crate) unsafe fn xtrans_interpolate(
                         }
                     }
                 }
-                (*pix)[1] = min;
-                (*pix)[3] = max;
+                unsafe {
+                    (*pix)[1] = min;
+                    (*pix)[3] = max;
+                }
                 match (row - sgrow as usize) % 3 {
                     1 => {
                         if row < output_height - 3 {
@@ -351,19 +350,23 @@ pub(crate) unsafe fn xtrans_interpolate(
             let mut mcol = std::cmp::min(left + TS as i32, output_width as i32 - 3);
             for row in top..mrow {
                 for col in left..mcol {
-                    std::ptr::copy_nonoverlapping(
-                        input.data[image_index(row as usize, col as usize, width)..].as_ptr(),
-                        ((*rgb)[(row - top) as usize][(col - left) as usize]).as_mut_ptr(),
-                        3,
-                    );
+                    unsafe {
+                        std::ptr::copy_nonoverlapping(
+                            input.data[image_index(row as usize, col as usize, width)..].as_ptr(),
+                            ((*rgb)[(row - top) as usize][(col - left) as usize]).as_mut_ptr(),
+                            3,
+                        );
+                    }
                 }
             }
             for c in 0..3_usize {
-                std::ptr::copy_nonoverlapping(
-                    (*rgb).as_ptr() as *const [[[PixelType; 3]; UTS]; UTS],
-                    (*rgb.add(c + 1)).as_mut_ptr() as *mut [[[PixelType; 3]; UTS]; UTS],
-                    1,
-                );
+                unsafe {
+                    std::ptr::copy_nonoverlapping(
+                        (*rgb).as_ptr() as *const [[[PixelType; 3]; UTS]; UTS],
+                        (*rgb.add(c + 1)).as_mut_ptr() as *mut [[[PixelType; 3]; UTS]; UTS],
+                        1,
+                    );
+                }
             }
 
             /* Interpolate green horizontally, vertically, and along both diagonals: */
@@ -377,26 +380,34 @@ pub(crate) unsafe fn xtrans_interpolate(
                     let index = image_index(row as usize, col as usize, width);
                     pix = input.data[index..index + 4].as_mut_ptr() as *mut [PixelType; 4];
                     hex = (allhex[row as usize % 3][col as usize % 3][0]).as_mut_ptr();
-                    colour[1][0] = 174
-                        * ((*pix.offset(*hex.add(1)))[1] as i32 + (*pix.offset(*hex))[1] as i32)
-                        - 46 * ((*pix.offset(2 * *hex.add(1)))[1] as i32
-                            + (*pix.offset(2 * *hex))[1] as i32);
-                    colour[1][1] = 223 * (*pix.offset(*hex.offset(3)))[1] as i32
-                        + (*pix.offset(*hex.add(2)))[1] as i32 * 33
-                        + 92 * (*pix)[f] as i32
-                        - (*pix.offset(-(*hex.add(2))))[f] as i32;
+                    unsafe {
+                        colour[1][0] = 174
+                            * ((*pix.offset(*hex.add(1)))[1] as i32
+                                + (*pix.offset(*hex))[1] as i32)
+                            - 46 * ((*pix.offset(2 * *hex.add(1)))[1] as i32
+                                + (*pix.offset(2 * *hex))[1] as i32);
+                        colour[1][1] = 223 * (*pix.offset(*hex.offset(3)))[1] as i32
+                            + (*pix.offset(*hex.add(2)))[1] as i32 * 33
+                            + 92 * (*pix)[f] as i32
+                            - (*pix.offset(-(*hex.add(2))))[f] as i32;
+                    }
                     for c in 0..2_usize {
-                        colour[1][2 + c] = 164 * (*pix.offset(*hex.add(4 + c)))[1] as i32
-                            + 92 * (*pix.offset(-2 * *hex.add(4 + c)))[1] as i32
-                            + 33 * (2 * (*pix)[f] as i32
-                                - (*pix.offset(3 * *hex.add(4 + c)))[f] as i32
-                                - (*pix.offset(-3 * *hex.add(4 + c)))[f] as i32);
+                        unsafe {
+                            colour[1][2 + c] = 164 * (*pix.offset(*hex.add(4 + c)))[1] as i32
+                                + 92 * (*pix.offset(-2 * *hex.add(4 + c)))[1] as i32
+                                + 33 * (2 * (*pix)[f] as i32
+                                    - (*pix.offset(3 * *hex.add(4 + c)))[f] as i32
+                                    - (*pix.offset(-3 * *hex.add(4 + c)))[f] as i32);
+                        }
                     }
                     for c in 0..4_usize {
-                        (*rgb.offset(
-                            (c as i32 ^ ((row - sgrow as i32) % 3 == 0) as i32) as isize,
-                        ))[(row - top) as usize][(col - left) as usize][1] =
-                            lim(colour[1][c] >> 8, (*pix)[1] as i32, (*pix)[3] as i32) as PixelType;
+                        unsafe {
+                            (*rgb.offset(
+                                (c as i32 ^ ((row - sgrow as i32) % 3 == 0) as i32) as isize,
+                            ))[(row - top) as usize][(col - left) as usize][1] =
+                                lim(colour[1][c] >> 8, (*pix)[1] as i32, (*pix)[3] as i32)
+                                    as PixelType;
+                        }
                     }
                 }
             }
@@ -404,12 +415,14 @@ pub(crate) unsafe fn xtrans_interpolate(
             let mut pass: i32 = 0;
             while pass < passes {
                 if pass == 1 {
-                    rgb = rgb.offset(4);
-                    std::ptr::copy_nonoverlapping(
-                        buffer.as_ptr() as *const [[[PixelType; 3]; UTS]; UTS],
-                        rgb,
-                        4,
-                    );
+                    unsafe {
+                        rgb = rgb.offset(4);
+                        std::ptr::copy_nonoverlapping(
+                            buffer.as_ptr() as *const [[[PixelType; 3]; UTS]; UTS],
+                            rgb,
+                            4,
+                        );
+                    }
                 }
 
                 /* Recalculate green from interpolated values of closer pixels:	*/
@@ -425,20 +438,24 @@ pub(crate) unsafe fn xtrans_interpolate(
                             pix = input.data[index..index + 4].as_mut_ptr() as *mut [PixelType; 4];
                             hex = (allhex[row % 3][col % 3][1]).as_mut_ptr();
                             for d in 3..6_usize {
-                                rix = &mut *(*(*rgb
-                                    .add((d - 2) ^ ((row - sgrow as usize) % 3 == 0) as usize))
-                                .as_mut_ptr()
-                                .add(row - top as usize))
-                                .as_mut_ptr()
-                                .add(col - left as usize)
-                                    as *mut [PixelType; 3];
-                                let val = (*rix.offset(-2 * *hex.add(d)))[1] as i32
-                                    + 2 * (*rix.offset(*hex.add(d)))[1] as i32
-                                    - (*rix.offset(-2 * *hex.add(d)))[f] as i32
-                                    - 2 * (*rix.offset(*hex.add(d)))[f] as i32
-                                    + 3 * (*rix)[f] as i32;
-                                (*rix)[1] =
-                                    lim(val / 3, (*pix)[1] as i32, (*pix)[3] as i32) as PixelType;
+                                rix = unsafe {
+                                    &mut *(*(*rgb
+                                        .add((d - 2) ^ ((row - sgrow as usize) % 3 == 0) as usize))
+                                    .as_mut_ptr()
+                                    .add(row - top as usize))
+                                    .as_mut_ptr()
+                                    .add(col - left as usize)
+                                        as *mut [PixelType; 3]
+                                };
+                                unsafe {
+                                    let val = (*rix.offset(-2 * *hex.add(d)))[1] as i32
+                                        + 2 * (*rix.offset(*hex.add(d)))[1] as i32
+                                        - (*rix.offset(-2 * *hex.add(d)))[f] as i32
+                                        - 2 * (*rix.offset(*hex.add(d)))[f] as i32
+                                        + 3 * (*rix)[f] as i32;
+                                    (*rix)[1] = lim(val / 3, (*pix)[1] as i32, (*pix)[3] as i32)
+                                        as PixelType;
+                                }
                             }
                         }
                     }
@@ -449,28 +466,34 @@ pub(crate) unsafe fn xtrans_interpolate(
                 while row < mrow - 2 {
                     let mut col = (left - sgcol as i32 + 4) / 3 * 3 + sgcol as i32;
                     while col < mcol - 2 {
-                        rix = &mut *(*(*rgb).as_mut_ptr().offset((row - top) as isize))
-                            .as_mut_ptr()
-                            .offset((col - left) as isize)
-                            as *mut [PixelType; 3];
+                        rix = unsafe {
+                            &mut *(*(*rgb).as_mut_ptr().offset((row - top) as isize))
+                                .as_mut_ptr()
+                                .offset((col - left) as isize)
+                                as *mut [PixelType; 3]
+                        };
                         let mut h = fcol(row as isize, col as isize + 1, xtrans) as usize;
                         let mut diff = [0.; 6];
                         let mut i = 1_isize;
                         for d in 0..6_usize {
                             for c in 0..2 {
-                                let g = 2 * (*rix)[1] as i32
-                                    - (*rix.offset(i << c))[1] as i32
-                                    - (*rix.offset(-i << c))[1] as i32;
-                                colour[h as usize][d] = g
-                                    + (*rix.offset(i << c))[h as usize] as i32
-                                    + (*rix.offset(-i << c))[h as usize] as i32;
-                                if d > 1 {
-                                    let value = sqr(((*rix.offset(i << c))[1] as i32)
-                                        .wrapping_sub((*rix.offset(-i << c))[1] as i32)
-                                        .wrapping_sub((*rix.offset(i << c))[h as usize] as i32)
-                                        .wrapping_add((*rix.offset(-i << c))[h as usize] as i32))
-                                    .wrapping_add(sqr(g));
-                                    diff[d] += value as f32;
+                                unsafe {
+                                    let g = 2 * (*rix)[1] as i32
+                                        - (*rix.offset(i << c))[1] as i32
+                                        - (*rix.offset(-i << c))[1] as i32;
+                                    colour[h as usize][d] = g
+                                        + (*rix.offset(i << c))[h as usize] as i32
+                                        + (*rix.offset(-i << c))[h as usize] as i32;
+                                    if d > 1 {
+                                        let value = sqr(((*rix.offset(i << c))[1] as i32)
+                                            .wrapping_sub((*rix.offset(-i << c))[1] as i32)
+                                            .wrapping_sub((*rix.offset(i << c))[h as usize] as i32)
+                                            .wrapping_add(
+                                                (*rix.offset(-i << c))[h as usize] as i32,
+                                            ))
+                                        .wrapping_add(sqr(g));
+                                        diff[d] += value as f32;
+                                    }
                                 }
                                 h ^= 2;
                                 h = std::cmp::min(2, h);
@@ -482,9 +505,11 @@ pub(crate) unsafe fn xtrans_interpolate(
                             }
                             if d < 2 || d & 1 != 0 {
                                 for c in 0..2_usize {
-                                    (*rix)[c * 2] = clip(colour[c * 2][d] / 2) as PixelType;
+                                    unsafe {
+                                        (*rix)[c * 2] = clip(colour[c * 2][d] / 2) as PixelType
+                                    };
                                 }
-                                rix = rix.add(UTS * UTS);
+                                unsafe { rix = rix.add(UTS * UTS) };
                             }
                             i ^= TS ^ 1;
                             h ^= 2;
@@ -501,10 +526,12 @@ pub(crate) unsafe fn xtrans_interpolate(
                         if f == 1 {
                             continue;
                         }
-                        rix = &mut *(*(*rgb).as_mut_ptr().add(row - top as usize))
-                            .as_mut_ptr()
-                            .add(col - left as usize)
-                            as *mut [PixelType; 3];
+                        rix = unsafe {
+                            &mut *(*(*rgb).as_mut_ptr().add(row - top as usize))
+                                .as_mut_ptr()
+                                .add(col - left as usize)
+                                as *mut [PixelType; 3]
+                        };
                         let c = if (row - sgrow as usize) % 3 != 0 {
                             TS
                         } else {
@@ -512,26 +539,30 @@ pub(crate) unsafe fn xtrans_interpolate(
                         };
                         let h = 3 * (c ^ TS ^ 1);
                         for d in 0..4_isize {
-                            let i: isize = if d > 1
-                                || (d ^ c) & 1 != 0
-                                || (abs((*rix)[1] as i32 - (*rix.offset(c))[1] as i32)
-                                    + abs((*rix)[1] as i32 - (*rix.offset(-c))[1] as i32)
-                                    < 2 * (abs((*rix)[1] as i32 - (*rix.offset(h))[1] as i32)
-                                        + abs((*rix)[1] as i32 - (*rix.offset(-h))[1] as i32)))
-                            {
-                                c
-                            } else {
-                                h
+                            let i: isize = unsafe {
+                                if d > 1
+                                    || (d ^ c) & 1 != 0
+                                    || (abs((*rix)[1] as i32 - (*rix.offset(c))[1] as i32)
+                                        + abs((*rix)[1] as i32 - (*rix.offset(-c))[1] as i32)
+                                        < 2 * (abs((*rix)[1] as i32 - (*rix.offset(h))[1] as i32)
+                                            + abs((*rix)[1] as i32 - (*rix.offset(-h))[1] as i32)))
+                                {
+                                    c
+                                } else {
+                                    h
+                                }
                             };
-                            (*rix)[f] = clip(
-                                ((*rix.offset(i))[f] as i32
-                                    + (*rix.offset(-i))[f] as i32
-                                    + 2 * (*rix)[1] as i32
-                                    - (*rix.offset(i))[1] as i32
-                                    - (*rix.offset(-i))[1] as i32)
-                                    / 2,
-                            ) as PixelType;
-                            rix = rix.offset(TS * TS);
+                            unsafe {
+                                (*rix)[f] = clip(
+                                    ((*rix.offset(i))[f] as i32
+                                        + (*rix.offset(-i))[f] as i32
+                                        + 2 * (*rix)[1] as i32
+                                        - (*rix.offset(i))[1] as i32
+                                        - (*rix.offset(-i))[1] as i32)
+                                        / 2,
+                                ) as PixelType;
+                                rix = rix.offset(TS * TS);
+                            }
                         }
                     }
                 }
@@ -540,44 +571,56 @@ pub(crate) unsafe fn xtrans_interpolate(
                     if (row - sgrow as usize) % 3 != 0 {
                         for col in (left + 2) as usize..(mcol - 2) as usize {
                             if (col - sgcol as usize) % 3 != 0 {
-                                rix = &mut *(*(*rgb).as_mut_ptr().add(row - top as usize))
-                                    .as_mut_ptr()
-                                    .add(col - left as usize)
-                                    as *mut [PixelType; 3];
+                                rix = unsafe {
+                                    &mut *(*(*rgb).as_mut_ptr().add(row - top as usize))
+                                        .as_mut_ptr()
+                                        .add(col - left as usize)
+                                        as *mut [PixelType; 3]
+                                };
                                 hex = (allhex[row % 3][col % 3][1]).as_mut_ptr();
                                 let mut d = 0_usize;
                                 while d < ndir {
-                                    if *hex.add(d) + *hex.add(d + 1) != 0 {
-                                        let g = 3 * (*rix)[1] as i32
-                                            - 2 * (*rix.offset(*hex.add(d)))[1] as i32
-                                            - (*rix.offset(*hex.add(d + 1)))[1] as i32;
+                                    if unsafe { *hex.add(d) + *hex.add(d + 1) } != 0 {
+                                        let g = unsafe {
+                                            3 * (*rix)[1] as i32
+                                                - 2 * (*rix.offset(*hex.add(d)))[1] as i32
+                                                - (*rix.offset(*hex.add(d + 1)))[1] as i32
+                                        };
                                         let mut c = 0_usize;
                                         while c < 4 {
-                                            (*rix)[c] = clip(
-                                                (g + 2 * (*rix.offset(*hex.add(d)))[c] as i32
-                                                    + (*rix.offset(*hex.add(d + 1)))[c] as i32)
-                                                    / 3,
-                                            )
-                                                as PixelType;
+                                            unsafe {
+                                                (*rix)[c] = clip(
+                                                    (g + 2 * (*rix.offset(*hex.add(d)))[c] as i32
+                                                        + (*rix.offset(*hex.add(d + 1)))[c] as i32)
+                                                        / 3,
+                                                )
+                                                    as PixelType;
+                                            }
                                             c += 2;
                                         }
                                     } else {
-                                        let g = 2 * (*rix)[1] as i32
-                                            - (*rix.offset(*hex.add(d)))[1] as i32
-                                            - (*rix.offset(*hex.add(d + 1)))[1] as i32;
+                                        let g = unsafe {
+                                            2 * (*rix)[1] as i32
+                                                - (*rix.offset(*hex.add(d)))[1] as i32
+                                                - (*rix.offset(*hex.add(d + 1)))[1] as i32
+                                        };
                                         let mut c = 0_usize;
                                         while c < 4 {
-                                            (*rix)[c] = clip(
-                                                (g + (*rix.offset(*hex.add(d)))[c] as i32
-                                                    + (*rix.offset(*hex.add(d + 1)))[c] as i32)
-                                                    / 2,
-                                            )
-                                                as PixelType;
+                                            unsafe {
+                                                (*rix)[c] = clip(
+                                                    (g + (*rix.offset(*hex.add(d)))[c] as i32
+                                                        + (*rix.offset(*hex.add(d + 1)))[c] as i32)
+                                                        / 2,
+                                                )
+                                                    as PixelType;
+                                            }
                                             c += 2;
                                         }
                                     }
                                     d += 2;
-                                    rix = rix.add(UTS * UTS);
+                                    unsafe {
+                                        rix = rix.add(UTS * UTS);
+                                    }
                                 }
                             }
                         }
@@ -609,32 +652,38 @@ pub(crate) unsafe fn xtrans_interpolate(
                 let f = DIR[d & 3];
                 for row in 3..(mrow - 3) as usize {
                     for col in 3..(mcol - 3) as usize {
-                        lix = &mut *(*lab.add(row)).as_mut_ptr().add(col) as *mut [i16; 3];
-                        let g = 2 * (*lix)[0] as i32
-                            - (*lix.offset(f))[0] as i32
-                            - (*lix.offset(-f))[0] as i32;
-                        (*drv.add(d))[row][col] = (sqr(g)
-                            + sqr(2 * (*lix)[1] as i32
-                                - (*lix.offset(f))[1] as i32
-                                - (*lix.offset(-f))[1] as i32
-                                + g * 500 / 232)
-                            + sqr(2 * (*lix)[2] as i32
-                                - (*lix.offset(f))[2] as i32
-                                - (*lix.offset(-f))[2] as i32
-                                - g * 500 / 580))
-                            as f32;
+                        unsafe {
+                            lix = &mut *(*lab.add(row)).as_mut_ptr().add(col) as *mut [i16; 3];
+                            let g = 2 * (*lix)[0] as i32
+                                - (*lix.offset(f))[0] as i32
+                                - (*lix.offset(-f))[0] as i32;
+                            (*drv.add(d))[row][col] = (sqr(g)
+                                + sqr(2 * (*lix)[1] as i32
+                                    - (*lix.offset(f))[1] as i32
+                                    - (*lix.offset(-f))[1] as i32
+                                    + g * 500 / 232)
+                                + sqr(2 * (*lix)[2] as i32
+                                    - (*lix.offset(f))[2] as i32
+                                    - (*lix.offset(-f))[2] as i32
+                                    - g * 500 / 580))
+                                as f32;
+                        }
                     }
                 }
             }
 
             /* Build homogeneity maps from the derivatives: */
-            std::ptr::write_bytes(homo as *mut u8, 0, ndir * UTS * UTS);
+            unsafe {
+                std::ptr::write_bytes(homo as *mut u8, 0, ndir * UTS * UTS);
+            }
             for row in 4..(mrow - 4) as usize {
                 for col in 4..(mcol - 4) as usize {
                     let mut tr = FLT_MAX;
                     for d in 0..ndir {
-                        if tr > (*drv.add(d))[row][col] {
-                            tr = (*drv.add(d))[row][col];
+                        unsafe {
+                            if tr > (*drv.add(d))[row][col] {
+                                tr = (*drv.add(d))[row][col];
+                            }
                         }
                     }
                     tr *= 8.0;
@@ -643,12 +692,14 @@ pub(crate) unsafe fn xtrans_interpolate(
                         while v <= 1 {
                             let mut h = -1;
                             while h <= 1 {
-                                if (*drv.add(d))[(row as i32 + v) as usize]
-                                    [(col as i32 + h) as usize]
-                                    <= tr
-                                {
-                                    let fresh84 = &mut (*homo.add(d))[row][col];
-                                    *fresh84 += 1;
+                                unsafe {
+                                    if (*drv.add(d))[(row as i32 + v) as usize]
+                                        [(col as i32 + h) as usize]
+                                        <= tr
+                                    {
+                                        let fresh84 = &mut (*homo.add(d))[row][col];
+                                        *fresh84 += 1;
+                                    }
                                 }
                                 h += 1;
                             }
@@ -675,8 +726,11 @@ pub(crate) unsafe fn xtrans_interpolate(
                         while v <= 2 {
                             let mut h = -2;
                             while h <= 2 {
-                                *homogenous +=
-                                    (*homo.add(d))[(row + v) as usize][(col + h) as usize] as i32;
+                                unsafe {
+                                    *homogenous += (*homo.add(d))[(row + v) as usize]
+                                        [(col + h) as usize]
+                                        as i32;
+                                }
                                 h += 1;
                             }
                             v += 1;
@@ -700,7 +754,9 @@ pub(crate) unsafe fn xtrans_interpolate(
                     for (d, homogenous) in hm.iter().enumerate().take(ndir) {
                         if *homogenous >= max as i32 {
                             for (c, average) in avg.iter_mut().enumerate().take(3) {
-                                *average += (*rgb.add(d))[row as usize][col as usize][c] as i32;
+                                unsafe {
+                                    *average += (*rgb.add(d))[row as usize][col as usize][c] as i32;
+                                }
                             }
                             avg[3] += 1;
                         }
