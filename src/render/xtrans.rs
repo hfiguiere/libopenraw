@@ -45,6 +45,11 @@ use crate::bitmap::ImageBuffer;
 use crate::mosaic::PatternColour;
 use crate::Result;
 
+/// Pixel type.
+type PixelType = u16;
+/// Signed pixel type (for CIELab)
+type SignedPixelType = i16;
+
 static COLOURS: usize = 3;
 static RGB_CAM: [[f64; 4]; 3] = [
     [1.0, 0.0, 0.0, 0.0],
@@ -63,7 +68,7 @@ fn fcol(row: isize, col: isize, xtrans: &[PatternColour]) -> PatternColour {
     xtrans[((row + 6) as usize % 6) * 6 + ((col + 6) as usize % 6)]
 }
 
-fn border_interpolate(image: &mut ImageBuffer<u16>, xtrans: &[PatternColour], border: usize) {
+fn border_interpolate(image: &mut ImageBuffer<PixelType>, xtrans: &[PatternColour], border: usize) {
     let width = image.width as usize;
     let height = image.height as usize;
 
@@ -100,7 +105,7 @@ fn border_interpolate(image: &mut ImageBuffer<u16>, xtrans: &[PatternColour], bo
     }
 }
 
-fn cielab(rgb: &[u16]) -> [i16; 3] {
+fn cielab(rgb: &[PixelType]) -> [SignedPixelType; 3] {
     static D65_WHITE: [f64; 3] = [0.950456, 1.0, 1.088754];
     static CBRT: Lazy<[f32; 65536]> = Lazy::new(|| {
         let mut cbrt: [f32; 65536] = [0.; 65536];
@@ -143,9 +148,9 @@ fn cielab(rgb: &[u16]) -> [i16; 3] {
     xyz[1] = CBRT[clip(xyz[1] as i32) as usize];
     xyz[2] = CBRT[clip(xyz[1] as i32) as usize];
     [
-        (64.0 * (116.0 * xyz[1] - 16.0)) as i16,
-        (64.0 * 500.0 * (xyz[0] - xyz[1])) as i16,
-        (64.0 * 200.0 * (xyz[1] - xyz[2])) as i16,
+        (64.0 * (116.0 * xyz[1] - 16.0)) as SignedPixelType,
+        (64.0 * 500.0 * (xyz[0] - xyz[1])) as SignedPixelType,
+        (64.0 * 200.0 * (xyz[1] - xyz[2])) as SignedPixelType,
     ]
 }
 
@@ -189,13 +194,13 @@ fn image_index(row: usize, col: usize, width: usize) -> usize {
 /// mosaic would [ red, 0, 0, 0 ]
 ///
 /// XXX move to floats.
-fn convert_buffer(finput: &ImageBuffer<f64>, xtrans: &[PatternColour]) -> ImageBuffer<u16> {
+fn convert_buffer(finput: &ImageBuffer<f64>, xtrans: &[PatternColour]) -> ImageBuffer<PixelType> {
     let mut buffer = vec![0_u16; finput.height as usize * finput.width as usize * 4];
     for row in 0..finput.height as usize {
         for col in 0..finput.width as usize {
             let c = fcol(row as isize, col as isize, xtrans) as usize;
             buffer[image_index(row, col, finput.width as usize) + c] =
-                (finput.data[row * finput.width as usize + col] * (u16::MAX as f64)) as u16;
+                (finput.data[row * finput.width as usize + col] * (PixelType::MAX as f64)) as PixelType;
         }
     }
     ImageBuffer::with_data(buffer, finput.width, finput.height, 16, 4)
@@ -215,8 +220,6 @@ pub(crate) fn xtrans_interpolate(
     output_height: usize,
     passes: i32,
 ) -> Result<ImageBuffer<f64>> {
-    /// PixelTyype.
-    type PixelType = u16;
     let mut input = convert_buffer(&finput, xtrans);
     let width = input.width as usize;
     let mut hm: [i32; 8] = [0; 8];
@@ -235,7 +238,7 @@ pub(crate) fn xtrans_interpolate(
     let mut sgcol: u16 = 0;
     let mut rix: *mut [PixelType; 3];
     let mut pix: *mut [PixelType; 4];
-    let mut lix: *mut [i16; 3];
+    let mut lix: *mut [SignedPixelType; 3];
 
     log::debug!("{passes}-pass X-Trans interpolation...");
 
@@ -651,7 +654,7 @@ pub(crate) fn xtrans_interpolate(
                         .skip(3)
                     {
                         unsafe {
-                            lix = &mut *(lab_value.as_mut_ptr() as *mut [i16; 3]);
+                            lix = &mut *(lab_value.as_mut_ptr() as *mut [SignedPixelType; 3]);
                             let g = 2 * (*lix)[0] as i32
                                 - (*lix.offset(f))[0] as i32
                                 - (*lix.offset(-f))[0] as i32;
