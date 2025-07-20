@@ -242,15 +242,18 @@ pub(crate) unsafe fn xtrans_interpolate(
 
     let ndir: usize = if passes > 1 { 8 } else { 4 };
 
-    let mut buffer_vec = vec![0_u8; UTS * UTS * (ndir * 11 + 6)];
-    let buffer = buffer_vec.as_mut_ptr();
-    let mut rgb: *mut [[[u16; 3]; UTS]; UTS] = buffer as *mut [[[u16; 3]; UTS]; UTS];
-    let lab: *mut [[i16; 3]; UTS] =
-        buffer.offset(TS * TS * (ndir as isize * 6)) as *mut [[i16; 3]; UTS];
-    let drv: *mut [[f32; UTS]; UTS] =
-        buffer.offset(TS * TS * (ndir as isize * 6 + 6)) as *mut [[f32; UTS]; UTS];
-    let homo: *mut [[u8; UTS]; UTS] =
-        buffer.offset(TS * TS * (ndir as isize * 10 + 6)) as *mut [[u8; UTS]; UTS];
+    let mut buffer = vec![0_u16; UTS * UTS * ndir * 3];
+    let mut rgb = buffer.as_mut_ptr() as *mut [[[u16; 3]; UTS]; UTS];
+
+    let mut lab_vec = vec![0_i16; UTS * UTS * 3];
+    let lab = lab_vec.as_mut_ptr() as *mut [[i16; 3]; UTS];
+
+    let mut drv_vec = vec![0.0_f32; UTS * UTS * ndir];
+    let drv = drv_vec.as_mut_ptr() as *mut [[f32; UTS]; UTS];
+
+    let mut homo_vec = vec![0_u8; UTS * UTS * ndir];
+    let homo = homo_vec.as_mut_ptr() as *mut [[u8; UTS]; UTS];
+
     /* Map a green hexagon around each non-green pixel and vice versa:	*/
     #[allow(clippy::needless_range_loop)]
     for row in 0..3_usize {
@@ -400,7 +403,11 @@ pub(crate) unsafe fn xtrans_interpolate(
             while pass < passes {
                 if pass == 1 {
                     rgb = rgb.offset(4);
-                    std::ptr::copy_nonoverlapping(buffer as *const [[[u16; 3]; UTS]; UTS], rgb, 4);
+                    std::ptr::copy_nonoverlapping(
+                        buffer.as_ptr() as *const [[[u16; 3]; UTS]; UTS],
+                        rgb,
+                        4,
+                    );
                 }
 
                 /* Recalculate green from interpolated values of closer pixels:	*/
@@ -575,7 +582,7 @@ pub(crate) unsafe fn xtrans_interpolate(
                 }
                 pass += 1;
             }
-            rgb = buffer as *mut [[[u16; 3]; UTS]; UTS];
+            rgb = buffer.as_mut_ptr() as *mut [[[u16; 3]; UTS]; UTS];
             mrow -= top;
             mcol -= left;
 
