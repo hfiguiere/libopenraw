@@ -24,10 +24,12 @@
 use std::io::Read;
 
 const XTRANS_FILE: &str = "Fujifilm/X-Pro1/DSCF2131.RAF";
+const CANON_20D_FILE: &str = "Canon/EOS 20D/IMG_3893.CR2";
+const OLYMPUS_EP1_FILE: &str = "Olympus/E-P1/P1080385.ORF";
 const FILES: [&str; 12] = [
     "Apple/iPhone XS/IMG_1105.dng",
     "Canon/EOS 10D/CRW_7673.CRW",
-    "Canon/EOS 20D/IMG_3893.CR2",
+    CANON_20D_FILE,
     "Canon/EOS R5/Canon_EOS_R5_CRAW_ISO_100_nocrop_nodual.CR3",
     "Epson/R-D1/_EPS0672.ERF",
     XTRANS_FILE,
@@ -36,7 +38,7 @@ const FILES: [&str; 12] = [
     "Nikon/D100/DSC_2376.NEF",
     // Nikon Quantized
     "Nikon/D60/DSC_8294.NEF",
-    "Olympus/E-P1/P1080385.ORF",
+    OLYMPUS_EP1_FILE,
     "Pentax/K100D/IMGP1754.PEF",
     "Sony/ILCE-7RM4/DSC00395.ARW",
 ];
@@ -91,6 +93,31 @@ fn ljpeg_benchmark(c: &mut Criterion) {
     });
 }
 
+fn bimedian_benchmark(c: &mut Criterion) {
+    let dataset = std::env::var("RAWFILES_ROOT").expect("RAWFILES_ROOT not set");
+    let dataset = std::path::PathBuf::from(dataset);
+    let files = [CANON_20D_FILE, OLYMPUS_EP1_FILE];
+    for file in files {
+        let bench_name = format!("bimedian-{file}");
+        let file = dataset.join(file);
+        let rawfile = rawfile_from_file(&file, None).expect("RAW didn't decode");
+        let options = RenderingOptions::default().with_stage(RenderingStage::Interpolation);
+        assert_eq!(
+            options.stage,
+            RenderingStage::Interpolation,
+            "we only want to benchmark interpolation"
+        );
+        let rawdata = rawfile.raw_data(false).expect("Couldn't get raw data");
+        c.bench_function(&bench_name, |b| {
+            b.iter(|| {
+                let _ = rawdata
+                    .rendered_image(options.clone())
+                    .expect("Rendering failed");
+            });
+        });
+    }
+}
+
 /// Benchmmark X-Trans rendering.
 /// This assume the input file is apropriate as we don't choose the
 /// algorithm yet.
@@ -121,6 +148,6 @@ criterion_group!(benches, ordiag_benchmark, dump_benchmark, ljpeg_benchmark);
 criterion_group!(
     name = render_benches;
     config = Criterion::default().significance_level(0.1).sample_size(10);
-    targets = xtrans_benchmark
+    targets = xtrans_benchmark, bimedian_benchmark
 );
 criterion_main!(benches, render_benches);
