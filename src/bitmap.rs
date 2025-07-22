@@ -74,22 +74,22 @@ impl<T> ImageBuffer<T> {
         row * self.width * self.cc + col * self.cc
     }
 
-    /// Return the pixel RGB value at `x` and `y`.
-    pub(crate) fn pixel_at(&self, x: usize, y: usize) -> Option<Vec<T>>
+    /// Return the pixel RGB value at `row` and `col`.
+    pub(crate) fn pixel_at(&self, row: usize, col: usize) -> Option<&[T]>
     where
         T: Copy,
     {
-        if x > self.width || y > self.height {
+        if col > self.width || row > self.height {
             return None;
         }
-        let pos = self.pixel_index(y, x);
+        let pos = (row * self.width * self.cc) + col * self.cc;
         let pixel = &self.data[pos..pos + self.cc];
 
-        Some(pixel.to_vec())
+        Some(pixel)
     }
 
     #[inline]
-    /// Return a mut pixel value.
+    /// Return a mut pixel value at `row` and `col` for component `c`.
     // XXX make sure to handle overflows.
     pub(crate) fn mut_pixel_at(&mut self, row: usize, col: usize, c: usize) -> &mut T
     where

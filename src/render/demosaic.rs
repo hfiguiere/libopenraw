@@ -179,7 +179,7 @@ mod test {
     use super::bimedian;
 
     /// Demosaic. `result is the value of the pixel at 1,1.
-    fn test_demosaic(buffer: Vec<FloatPixel>, pattern: &Pattern, result: Vec<FloatPixel>) {
+    fn test_demosaic(buffer: Vec<FloatPixel>, pattern: &Pattern, result: &[FloatPixel]) {
         let image = ImageBuffer::with_data(buffer, 8, 8, 16, 1);
         let output = bimedian(&image, pattern);
         assert!(output.is_ok());
@@ -210,8 +210,8 @@ mod test {
             1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
         ];
 
-        test_demosaic(buffer.clone(), &Pattern::Rggb, vec![0.0, 1.0, 0.0]);
-        test_demosaic(buffer, &Pattern::Bggr, vec![0.0, 1.0, 0.0]);
+        test_demosaic(buffer.clone(), &Pattern::Rggb, &[0.0, 1.0, 0.0]);
+        test_demosaic(buffer, &Pattern::Bggr, &[0.0, 1.0, 0.0]);
     }
 
     #[test]
@@ -228,7 +228,7 @@ mod test {
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
         ];
 
-        test_demosaic(buffer.clone(), &Pattern::Gbrg, vec![0.0, 0.0, 1.0]);
-        test_demosaic(buffer, &Pattern::Grbg, vec![1.0, 0.0, 0.0]);
+        test_demosaic(buffer.clone(), &Pattern::Gbrg, &[0.0, 0.0, 1.0]);
+        test_demosaic(buffer, &Pattern::Grbg, &[1.0, 0.0, 0.0]);
     }
 }
