@@ -387,7 +387,6 @@ impl RawFileImpl for RafFile {
                 // It's an XTrans if there is a `TAG_CFA_PATTERN` and it has 36 elements.
                 let pattern = container.value(raf::TAG_CFA_PATTERN).and_then(|v| match v {
                     raf::Value::Bytes(pattern) => {
-                        println!("pattern {pattern:?}");
                         probe!(self.probe, "raf.cfa_pattern", true);
                         Some(pattern)
                     }
