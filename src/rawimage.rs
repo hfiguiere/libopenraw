@@ -518,8 +518,9 @@ impl RawImage {
         let xyz_camera = ab * cc * cm;
         let cam_xyz = xyz_camera.try_inverse().unwrap();
         // XYZ to RGB <https://en.wikipedia.org/wiki/SRGB#From_CIE_XYZ_to_sRGB>
+        // D65 illuminant - 2003 standard
         let xyz_rgb =
-            matrix![ 3.2406, -1.5372, -0.4986; -0.9689, 1.8758, 0.0415; 0.0557, -0.2040, 1.0570];
+            matrix![ 3.2406255, -1.5372080, -0.4986286; -0.9689307, 1.8757561, 0.0415175; 0.0557101, -0.2040211, 1.0569959];
         xyz_rgb * cam_xyz
     }
 
