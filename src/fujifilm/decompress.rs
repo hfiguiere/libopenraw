@@ -8,7 +8,7 @@
  * Copyright (C) 2017 Roman Lebedev
  * Copyright (C) 2022 Daniel Vogelbacher
  *
- * Copyright (C) 2024 Hubert Figuière
+ * Copyright (C) 2024-2025 Hubert Figuière
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General
@@ -409,7 +409,7 @@ pub(super) fn decompress_fuji(
 
     //  assert!(stream.remaining_bytes() <= 16);
 
-    let out = SharedPix2D::new(ImageBuffer::new(width as u32, height as u32, 16, 1));
+    let out = SharedPix2D::new(ImageBuffer::new(width, height, 16, 1));
 
     // Process each strip
     strips.par_iter().for_each(|strip| {

@@ -69,8 +69,8 @@ fn fcol(row: isize, col: isize, xtrans: &[PatternColour]) -> PatternColour {
 }
 
 fn border_interpolate(image: &mut ImageBuffer<PixelType>, xtrans: &[PatternColour], border: usize) {
-    let width = image.width as usize;
-    let height = image.height as usize;
+    let width = image.width;
+    let height = image.height;
 
     for row in 0..height {
         let mut col = 0_usize;
@@ -197,12 +197,12 @@ fn convert_buffer(
     finput: &ImageBuffer<FloatPixel>,
     xtrans: &[PatternColour],
 ) -> ImageBuffer<PixelType> {
-    let mut buffer = vec![0_u16; finput.height as usize * finput.width as usize * 4];
-    for row in 0..finput.height as usize {
-        for col in 0..finput.width as usize {
+    let mut buffer = vec![0_u16; finput.height * finput.width * 4];
+    for row in 0..finput.height {
+        for col in 0..finput.width {
             let c = fcol(row as isize, col as isize, xtrans) as usize;
-            buffer[image_index(row, col, finput.width as usize) + c] =
-                (finput.data[row * finput.width as usize + col] * (PixelType::MAX as FloatPixel))
+            buffer[image_index(row, col, finput.width) + c] =
+                (finput.data[row * finput.width + col] * (PixelType::MAX as FloatPixel))
                     as PixelType;
         }
     }

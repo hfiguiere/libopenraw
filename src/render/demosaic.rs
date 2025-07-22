@@ -76,11 +76,11 @@ pub(crate) fn bimedian(
         }
     };
 
-    let mut dst: Vec<FloatPixel> = vec![0.0; input.width as usize * input.height as usize * 3];
+    let mut dst: Vec<FloatPixel> = vec![0.0; input.width * input.height * 3];
 
     #[allow(non_snake_case)]
     // Offset to get the same column on next row (or previous if negative)
-    let DROW: usize = input.width as usize;
+    let DROW = input.width;
     // Offset to et the next or previous column
     const DCOL: usize = 1;
     // We start on column one of row one (0 based)
@@ -165,7 +165,7 @@ pub(crate) fn bimedian(
     // This is necessary to have a consistent size with the output.
     // Notably, the `image` crate doesn't like it.
     // The assumption is that the resize should shrink the buffer.
-    dst.resize((3 * out_w * out_h) as usize, 0.0);
+    dst.resize(3 * out_w * out_h, 0.0);
 
     Ok(ImageBuffer::with_data(dst, out_w, out_h, input.bpc, 3))
 }

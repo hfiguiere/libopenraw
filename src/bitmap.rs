@@ -28,21 +28,21 @@ use crate::{DataType, FloatPixel};
 /// carry pipeline input and ouput as dimensions can change.
 pub(crate) struct ImageBuffer<T> {
     pub(crate) data: Vec<T>,
-    pub(crate) width: u32,
-    pub(crate) height: u32,
+    pub(crate) width: usize,
+    pub(crate) height: usize,
     /// bits per channel
     pub(crate) bpc: u16,
     /// number of channel
-    pub(crate) cc: u32,
+    pub(crate) cc: usize,
 }
 
 impl<T> ImageBuffer<T> {
-    pub(crate) fn new(width: u32, height: u32, bpc: u16, cc: u32) -> Self
+    pub(crate) fn new(width: usize, height: usize, bpc: u16, cc: usize) -> Self
     where
         T: Default + Clone,
     {
         Self {
-            data: vec![T::default(); width as usize * height as usize],
+            data: vec![T::default(); width * height],
             width,
             height,
             bpc,
@@ -51,7 +51,13 @@ impl<T> ImageBuffer<T> {
     }
 
     /// Create an image buffer.
-    pub(crate) fn with_data(data: Vec<T>, width: u32, height: u32, bpc: u16, cc: u32) -> Self {
+    pub(crate) fn with_data(
+        data: Vec<T>,
+        width: usize,
+        height: usize,
+        bpc: u16,
+        cc: usize,
+    ) -> Self {
         Self {
             data,
             width,
@@ -62,15 +68,15 @@ impl<T> ImageBuffer<T> {
     }
 
     /// Return the pixel RGB value at `x` and `y`.
-    pub(crate) fn pixel_at(&self, x: u32, y: u32) -> Option<Vec<T>>
+    pub(crate) fn pixel_at(&self, x: usize, y: usize) -> Option<Vec<T>>
     where
         T: Copy,
     {
         if x > self.width || y > self.height {
             return None;
         }
-        let pos = ((y * self.width * self.cc) + x * self.cc) as usize;
-        let pixel = &self.data[pos..pos + self.cc as usize];
+        let pos = (y * self.width * self.cc) + x * self.cc;
+        let pixel = &self.data[pos..pos + self.cc];
 
         Some(pixel.to_vec())
     }
@@ -82,7 +88,7 @@ impl<T> ImageBuffer<T> {
     where
         T: Copy,
     {
-        &mut self.data[row * self.width as usize * self.cc as usize + col * self.cc as usize + c]
+        &mut self.data[row * self.width * self.cc + col * self.cc + c]
     }
 }
 
@@ -110,7 +116,7 @@ impl ImageBuffer<u16> {
     /// # Assert
     /// Assert if `ncolor` is > `self.cc`
     pub(crate) fn into_float_downsample(self, ncolor: usize) -> ImageBuffer<FloatPixel> {
-        let old_ncolor = self.cc as usize;
+        let old_ncolor = self.cc;
         assert!(old_ncolor >= ncolor);
         ImageBuffer::with_data(
             self.data
@@ -127,7 +133,7 @@ impl ImageBuffer<u16> {
             self.width,
             self.height,
             16,
-            ncolor as u32,
+            ncolor,
         )
     }
 }

@@ -45,9 +45,9 @@ enum AsShot {
 /// RAW Data extracted from the file.
 #[derive(Debug, Default)]
 pub struct RawImage {
-    /// Thumbnail width
+    /// Image width
     width: u32,
-    /// Thumbnail height
+    /// Image height
     height: u32,
     /// Type if the data
     data_type: DataType,
@@ -182,8 +182,8 @@ impl RawImage {
         mosaic_pattern: Pattern,
     ) -> Self {
         RawImage {
-            width: buffer.width,
-            height: buffer.height,
+            width: buffer.width as u32,
+            height: buffer.height as u32,
             bpc: buffer.bpc,
             data_type,
             data: Data::Data16(buffer.data),
@@ -205,8 +205,8 @@ impl RawImage {
     /// Reset the buffer from an `ImageBuffer<u16>`.
     /// This is usefull when decompressing.
     pub(crate) fn set_with_buffer(&mut self, buffer: ImageBuffer<u16>) {
-        self.width = buffer.width;
-        self.height = buffer.height;
+        self.width = buffer.width as u32;
+        self.height = buffer.height as u32;
         self.bpc = buffer.bpc;
         self.data = Data::Data16(buffer.data);
     }
@@ -559,7 +559,7 @@ impl RawImage {
                 let pos = row * width * 3;
                 let mut col = 0;
                 while col < width * 3 {
-                    let c = (pos + col) as usize;
+                    let c = pos + col;
                     let abc = Vector3::from_row_iterator(buffer.data[c..c + 3].iter().copied());
                     let rgb = cam_rgb * abc;
                     col += 3;
@@ -584,8 +584,8 @@ impl RawImage {
         if self.data_type() != DataType::Raw {
             return Err(Error::InvalidFormat);
         }
-        let x = self.width();
-        let y = self.height();
+        let x = self.width() as usize;
+        let y = self.height() as usize;
         let mut pattern = self.mosaic_pattern().clone();
         let data16 = ImageBuffer::with_data(
             self.data16().ok_or(Error::InvalidFormat)?.to_vec(),

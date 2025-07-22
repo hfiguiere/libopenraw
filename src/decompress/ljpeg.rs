@@ -271,8 +271,8 @@ impl LJpeg {
         )?;
         Ok(ImageBuffer::with_data(
             tile.buf,
-            tile.width,
-            tile.height,
+            tile.width as usize,
+            tile.height as usize,
             tile.bpc,
             1,
         ))
