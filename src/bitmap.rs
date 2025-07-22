@@ -67,6 +67,13 @@ impl<T> ImageBuffer<T> {
         }
     }
 
+    #[inline]
+    /// Calculate the index on the buffer for the pixel at `row`, `col`.
+    /// It return the index on component 0.
+    pub(crate) fn pixel_index(&self, row: usize, col: usize) -> usize {
+        row * self.width * self.cc + col * self.cc
+    }
+
     /// Return the pixel RGB value at `x` and `y`.
     pub(crate) fn pixel_at(&self, x: usize, y: usize) -> Option<Vec<T>>
     where
@@ -75,7 +82,7 @@ impl<T> ImageBuffer<T> {
         if x > self.width || y > self.height {
             return None;
         }
-        let pos = (y * self.width * self.cc) + x * self.cc;
+        let pos = self.pixel_index(y, x);
         let pixel = &self.data[pos..pos + self.cc];
 
         Some(pixel.to_vec())
@@ -88,7 +95,8 @@ impl<T> ImageBuffer<T> {
     where
         T: Copy,
     {
-        &mut self.data[row * self.width * self.cc + col * self.cc + c]
+        let index = self.pixel_index(row, col);
+        &mut self.data[index + c]
     }
 }
 

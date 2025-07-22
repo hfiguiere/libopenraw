@@ -86,7 +86,7 @@ fn border_interpolate(image: &mut ImageBuffer<PixelType>, xtrans: &[PatternColou
                     if y < height && x < width {
                         let f = fcol(y as isize, x as isize, xtrans) as usize;
                         sum[f] =
-                            sum[f].wrapping_add(image.data[image_index(y, x, width) + f] as u32);
+                            sum[f].wrapping_add(image.data[image.pixel_index(y, x) + f] as u32);
                         sum[f.wrapping_add(4)] = (sum[f.wrapping_add(4)]).wrapping_add(1);
                     }
                     x = x.wrapping_add(1);
@@ -96,8 +96,8 @@ fn border_interpolate(image: &mut ImageBuffer<PixelType>, xtrans: &[PatternColou
             let f = fcol(row as isize, col as isize, xtrans) as usize;
             for c in 0..COLOURS {
                 if c != f && sum[c.wrapping_add(4)] != 0 {
-                    image.data[image_index(row, col, width) + c] =
-                        (sum[c]).wrapping_div(sum[c.wrapping_add(4)]) as u16;
+                    let index = image.pixel_index(row, col);
+                    image.data[index + c] = (sum[c]).wrapping_div(sum[c.wrapping_add(4)]) as u16;
                 }
             }
             col = col.wrapping_add(1);
@@ -180,12 +180,6 @@ fn clip(x: i32) -> i32 {
 const UTS: usize = 512;
 const TS: isize = 512;
 
-// XXX should this be part of the ImageBuffer?
-#[inline]
-fn image_index(row: usize, col: usize, width: usize) -> usize {
-    row * width * 4 + col * 4
-}
-
 /// Convert the buffer `finput` to have the expected layout...  Also
 /// performs f64 -> u16.
 ///
@@ -197,16 +191,17 @@ fn convert_buffer(
     finput: &ImageBuffer<FloatPixel>,
     xtrans: &[PatternColour],
 ) -> ImageBuffer<PixelType> {
-    let mut buffer = vec![0_u16; finput.height * finput.width * 4];
+    let buffer = vec![0_u16; finput.height * finput.width * 4];
+    let mut image = ImageBuffer::with_data(buffer, finput.width, finput.height, 16, 4);
     for row in 0..finput.height {
         for col in 0..finput.width {
             let c = fcol(row as isize, col as isize, xtrans) as usize;
-            buffer[image_index(row, col, finput.width) + c] =
-                (finput.data[row * finput.width + col] * (PixelType::MAX as FloatPixel))
-                    as PixelType;
+            let index = image.pixel_index(row, col);
+            image.data[index + c] = (finput.data[finput.pixel_index(row, col)]
+                * (PixelType::MAX as FloatPixel)) as PixelType;
         }
     }
-    ImageBuffer::with_data(buffer, finput.width, finput.height, 16, 4)
+    image
 }
 
 /// X-Trans interpolate.
@@ -298,7 +293,7 @@ pub(crate) fn xtrans_interpolate(
                 min = !(max as i32) as PixelType;
                 min as i32 != 0
             }) {
-                let index = image_index(row, col, width);
+                let index = input.pixel_index(row, col);
                 pix = input.data[index..index + 4].as_mut_ptr() as *mut [PixelType; 4];
                 hex = (allhex[row % 3][col % 3][0]).as_mut_ptr();
                 if max == 0 {
@@ -353,7 +348,7 @@ pub(crate) fn xtrans_interpolate(
                 for col in left..mcol {
                     unsafe {
                         std::ptr::copy_nonoverlapping(
-                            input.data[image_index(row as usize, col as usize, width)..].as_ptr(),
+                            input.data[input.pixel_index(row as usize, col as usize)..].as_ptr(),
                             ((*rgb)[(row - top) as usize][(col - left) as usize]).as_mut_ptr(),
                             3,
                         );
@@ -378,7 +373,7 @@ pub(crate) fn xtrans_interpolate(
                         continue;
                     }
                     let f = f as usize;
-                    let index = image_index(row as usize, col as usize, width);
+                    let index = input.pixel_index(row as usize, col as usize);
                     pix = input.data[index..index + 4].as_mut_ptr() as *mut [PixelType; 4];
                     hex = (allhex[row as usize % 3][col as usize % 3][0]).as_mut_ptr();
                     unsafe {
@@ -435,7 +430,7 @@ pub(crate) fn xtrans_interpolate(
                                 continue;
                             }
                             let f = f as usize;
-                            let index = image_index(row, col, width);
+                            let index = input.pixel_index(row, col);
                             pix = input.data[index..index + 4].as_mut_ptr() as *mut [PixelType; 4];
                             hex = (allhex[row % 3][col % 3][1]).as_mut_ptr();
                             for d in 3..6_usize {
@@ -755,9 +750,8 @@ pub(crate) fn xtrans_interpolate(
                         }
                     }
                     for c in 0..3_usize {
-                        input.data
-                            [image_index((row + top) as usize, (col + left) as usize, width) + c] =
-                            (avg[c] / avg[3]) as PixelType;
+                        let index = input.pixel_index((row + top) as usize, (col + left) as usize);
+                        input.data[index + c] = (avg[c] / avg[3]) as PixelType;
                     }
                 }
             }
