@@ -30,7 +30,7 @@ use crate::render::{self, gamma_correct_f, gamma_correct_srgb, RenderingOptions,
 use crate::tiff::exif;
 use crate::utils;
 use crate::{tiff, ColourSpace};
-use crate::{AspectRatio, Bitmap, DataType, Error, Rect, Result, Size};
+use crate::{AspectRatio, Bitmap, DataType, Error, FloatPixel, Rect, Result, Size};
 
 #[derive(Default, Debug)]
 enum AsShot {
@@ -439,12 +439,12 @@ impl RawImage {
     ///   this is notable on Leica M8 files.
     /// - scale by range / white
     ///
-    fn linearize(&self, buffer: ImageBuffer<u16>) -> ImageBuffer<f64> {
+    fn linearize(&self, buffer: ImageBuffer<u16>) -> ImageBuffer<FloatPixel> {
         log::debug!("linearize");
         // XXX fix this to use the 4 component
         let white = self.whites()[0];
         let black = self.blacks()[0];
-        let range = (white - black) as f64;
+        let range = (white - black) as FloatPixel;
         let table = if self
             .linearization_table
             .as_ref()
@@ -460,24 +460,27 @@ impl RawImage {
             .data
             .iter()
             .map(|v| {
-                table.map(|t| t[*v as usize] as f64).unwrap_or_else(|| {
-                    if *v < black {
-                        0.0
-                    } else {
-                        (*v - black) as f64
-                    }
-                }) / range
+                table
+                    .map(|t| t[*v as usize] as FloatPixel)
+                    .unwrap_or_else(|| {
+                        if *v < black {
+                            0.0
+                        } else {
+                            (*v - black) as FloatPixel
+                        }
+                    })
+                    / range
             })
             .collect();
 
         let buffer =
-            ImageBuffer::<f64>::with_data(data, buffer.width, buffer.height, buffer.bpc, 1);
+            ImageBuffer::<FloatPixel>::with_data(data, buffer.width, buffer.height, buffer.bpc, 1);
         log::debug!("post-lin at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));
         buffer
     }
 
     /// Interplate the image buffer. Return a new buffer if successful.
-    fn interpolate(&self, buffer: ImageBuffer<f64>) -> Result<ImageBuffer<f64>> {
+    fn interpolate(&self, buffer: ImageBuffer<FloatPixel>) -> Result<ImageBuffer<FloatPixel>> {
         let pattern = self.mosaic_pattern();
         match self.photom_int {
             exif::PhotometricInterpretation::CFA => match pattern {
@@ -507,11 +510,11 @@ impl RawImage {
     /// Calculate the camera to RGB colour matrix using `cm`
     ///
     /// Currently analog balance and camera calibration are identity matrices
-    pub fn calculate_cam_rgb(cm: &Matrix3<f64>) -> Matrix3<f64> {
+    pub fn calculate_cam_rgb(cm: &Matrix3<FloatPixel>) -> Matrix3<FloatPixel> {
         // Camera calibration
-        let cc = Matrix3::<f64>::identity();
+        let cc = Matrix3::<FloatPixel>::identity();
         // Analog  balance
-        let ab = Matrix3::<f64>::identity();
+        let ab = Matrix3::<FloatPixel>::identity();
         let xyz_camera = ab * cc * cm;
         let cam_xyz = xyz_camera.try_inverse().unwrap();
         // XYZ to RGB <https://en.wikipedia.org/wiki/SRGB#From_CIE_XYZ_to_sRGB>
@@ -522,9 +525,9 @@ impl RawImage {
 
     pub(crate) fn colour_correct(
         &self,
-        mut buffer: ImageBuffer<f64>,
+        mut buffer: ImageBuffer<FloatPixel>,
         target: ColourSpace,
-    ) -> Result<ImageBuffer<f64>> {
+    ) -> Result<ImageBuffer<FloatPixel>> {
         if target != ColourSpace::SRgb {
             return Err(Error::Unimplemented);
         }
@@ -536,7 +539,13 @@ impl RawImage {
             cm = self
                 .colour_matrix(i)
                 .filter(|m| m.illuminant == exif::LightsourceValue::D65)
-                .map(|m| Matrix3::from_row_slice(&m.matrix));
+                .map(|m| {
+                    m.matrix
+                        .iter()
+                        .map(|v| *v as FloatPixel)
+                        .collect::<Vec<_>>()
+                })
+                .map(|m| Matrix3::from_row_slice(&m));
             if cm.is_some() {
                 break;
             }

@@ -108,6 +108,9 @@ pub trait Context {
     fn context(self, message: &str) -> Self;
 }
 
+/// Define our float pixel type
+pub type FloatPixel = f64;
+
 /// Standard Result for libopenraw
 pub type Result<T> = std::result::Result<T, Error>;
 

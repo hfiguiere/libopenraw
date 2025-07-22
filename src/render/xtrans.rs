@@ -43,7 +43,7 @@ use once_cell::sync::Lazy;
 
 use crate::bitmap::ImageBuffer;
 use crate::mosaic::PatternColour;
-use crate::Result;
+use crate::{FloatPixel, Result};
 
 /// Pixel type.
 type PixelType = u16;
@@ -193,14 +193,17 @@ fn image_index(row: usize, col: usize, width: usize) -> usize {
 /// filter component value at the location set. So a red pixal in the
 /// mosaic would [ red, 0, 0, 0 ]
 ///
-/// XXX move to floats.
-fn convert_buffer(finput: &ImageBuffer<f64>, xtrans: &[PatternColour]) -> ImageBuffer<PixelType> {
+fn convert_buffer(
+    finput: &ImageBuffer<FloatPixel>,
+    xtrans: &[PatternColour],
+) -> ImageBuffer<PixelType> {
     let mut buffer = vec![0_u16; finput.height as usize * finput.width as usize * 4];
     for row in 0..finput.height as usize {
         for col in 0..finput.width as usize {
             let c = fcol(row as isize, col as isize, xtrans) as usize;
             buffer[image_index(row, col, finput.width as usize) + c] =
-                (finput.data[row * finput.width as usize + col] * (PixelType::MAX as f64)) as PixelType;
+                (finput.data[row * finput.width as usize + col] * (PixelType::MAX as FloatPixel))
+                    as PixelType;
         }
     }
     ImageBuffer::with_data(buffer, finput.width, finput.height, 16, 4)
@@ -214,12 +217,12 @@ fn convert_buffer(finput: &ImageBuffer<f64>, xtrans: &[PatternColour]) -> ImageB
 /// `passes` should be between 1 and 3. The bigger the slower.
 ///
 pub(crate) fn xtrans_interpolate(
-    finput: ImageBuffer<f64>,
+    finput: ImageBuffer<FloatPixel>,
     xtrans: &[PatternColour],
     output_width: usize,
     output_height: usize,
     passes: i32,
-) -> Result<ImageBuffer<f64>> {
+) -> Result<ImageBuffer<FloatPixel>> {
     let mut input = convert_buffer(&finput, xtrans);
     let width = input.width as usize;
     let mut hm: [i32; 8] = [0; 8];
@@ -763,7 +766,7 @@ pub(crate) fn xtrans_interpolate(
         top += TS as i32 - 16;
     }
     border_interpolate(&mut input, xtrans, 8);
-    Ok(input.into_f64_downsample(3))
+    Ok(input.into_float_downsample(3))
 }
 
 #[cfg(test)]

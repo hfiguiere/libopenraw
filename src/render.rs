@@ -2,7 +2,7 @@
 /*
  * libopenraw - render.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -26,6 +26,7 @@ pub(crate) mod xtrans;
 use num_enum::TryFromPrimitive;
 
 use crate::colour::ColourSpace;
+use crate::FloatPixel;
 
 #[repr(u32)]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, PartialOrd, TryFromPrimitive)]
@@ -85,7 +86,7 @@ impl RenderingOptions {
 /// Gamma correct sRGB values
 ///
 /// Source <https://en.wikipedia.org/wiki/SRGB#From_CIE_XYZ_to_sRGB>
-pub fn gamma_correct_srgb(value: f64) -> f64 {
+pub fn gamma_correct_srgb(value: FloatPixel) -> FloatPixel {
     if value <= 0.0031308 {
         return value * 12.92;
     }
@@ -93,6 +94,6 @@ pub fn gamma_correct_srgb(value: f64) -> f64 {
 }
 
 /// Gamma correct pixel values. G is the gamma x10.
-pub fn gamma_correct_f<const G: u32>(value: f64) -> f64 {
-    value.powf(10.0 / G as f64)
+pub fn gamma_correct_f<const G: u32>(value: FloatPixel) -> FloatPixel {
+    value.powf(10.0 / G as FloatPixel)
 }

@@ -2,7 +2,7 @@
 /*
  * libopenraw - render/demosaic.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,11 +25,11 @@ use crate::bitmap::ImageBuffer;
 
 use crate::{
     mosaic::{Pattern, PatternType},
-    Error,
+    Error, FloatPixel,
 };
 
 /// Calculate the median of 4 float.
-fn m4(mut a: f64, mut b: f64, mut c: f64, d: f64) -> f64 {
+fn m4(mut a: FloatPixel, mut b: FloatPixel, mut c: FloatPixel, d: FloatPixel) -> FloatPixel {
     /* Sort ab */
     if a > b {
         std::mem::swap(&mut a, &mut b);
@@ -60,9 +60,9 @@ fn m4(mut a: f64, mut b: f64, mut c: f64, d: f64) -> f64 {
 
 /// Bimedian demosaic for 2x2 bayer CFA. Use float 0..1.0 range.
 pub(crate) fn bimedian(
-    input: &ImageBuffer<f64>,
+    input: &ImageBuffer<FloatPixel>,
     pattern: &Pattern,
-) -> crate::Result<ImageBuffer<f64>> {
+) -> crate::Result<ImageBuffer<FloatPixel>> {
     let npattern = match pattern.pattern_type() {
         PatternType::Bggr => 0,
         PatternType::Grbg => 1,
@@ -76,7 +76,7 @@ pub(crate) fn bimedian(
         }
     };
 
-    let mut dst: Vec<f64> = vec![0.0; input.width as usize * input.height as usize * 3];
+    let mut dst: Vec<FloatPixel> = vec![0.0; input.width as usize * input.height as usize * 3];
 
     #[allow(non_snake_case)]
     // Offset to get the same column on next row (or previous if negative)
@@ -90,9 +90,9 @@ pub(crate) fn bimedian(
 
     for y in 1..input.height - 1 {
         for x in 1..input.width - 1 {
-            let red: f64;
-            let green: f64;
-            let blue: f64;
+            let red: FloatPixel;
+            let green: FloatPixel;
+            let blue: FloatPixel;
 
             if (y + npattern % 2) % 2 == 0 {
                 if (x + npattern / 2) % 2 == 1 {
@@ -174,11 +174,12 @@ pub(crate) fn bimedian(
 mod test {
     use crate::bitmap::ImageBuffer;
     use crate::mosaic::Pattern;
+    use crate::FloatPixel;
 
     use super::bimedian;
 
     /// Demosaic. `result is the value of the pixel at 1,1.
-    fn test_demosaic(buffer: Vec<f64>, pattern: &Pattern, result: Vec<f64>) {
+    fn test_demosaic(buffer: Vec<FloatPixel>, pattern: &Pattern, result: Vec<FloatPixel>) {
         let image = ImageBuffer::with_data(buffer, 8, 8, 16, 1);
         let output = bimedian(&image, pattern);
         assert!(output.is_ok());
@@ -209,8 +210,8 @@ mod test {
             1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
         ];
 
-        test_demosaic(buffer.clone(), &Pattern::Rggb, vec![0.0_f64, 1.0, 0.0]);
-        test_demosaic(buffer, &Pattern::Bggr, vec![0.0_f64, 1.0, 0.0]);
+        test_demosaic(buffer.clone(), &Pattern::Rggb, vec![0.0, 1.0, 0.0]);
+        test_demosaic(buffer, &Pattern::Bggr, vec![0.0, 1.0, 0.0]);
     }
 
     #[test]
@@ -227,7 +228,7 @@ mod test {
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
         ];
 
-        test_demosaic(buffer.clone(), &Pattern::Gbrg, vec![0.0_f64, 0.0, 1.0]);
-        test_demosaic(buffer, &Pattern::Grbg, vec![1.0_f64, 0.0, 0.0]);
+        test_demosaic(buffer.clone(), &Pattern::Gbrg, vec![0.0, 0.0, 1.0]);
+        test_demosaic(buffer, &Pattern::Grbg, vec![1.0, 0.0, 0.0]);
     }
 }

@@ -2,7 +2,7 @@
 /*
  * libopenraw - grayscale.rs
  *
- * Copyright (C) 2023 Hubert Figuière
+ * Copyright (C) 2023-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,12 +20,12 @@
  */
 
 use crate::bitmap::ImageBuffer;
-use crate::{Error, Result};
+use crate::{Error, FloatPixel, Result};
 
 /// Convert a grayscale buffer to RGB
 ///
 /// It's done naively.
-pub(crate) fn to_rgb(buffer: &ImageBuffer<f64>) -> Result<ImageBuffer<f64>> {
+pub(crate) fn to_rgb(buffer: &ImageBuffer<FloatPixel>) -> Result<ImageBuffer<FloatPixel>> {
     if buffer.cc != 1 {
         return Err(Error::InvalidFormat);
     }
@@ -36,7 +36,7 @@ pub(crate) fn to_rgb(buffer: &ImageBuffer<f64>) -> Result<ImageBuffer<f64>> {
         .data
         .iter()
         .flat_map(|v| [*v, *v, *v])
-        .collect::<Vec<f64>>();
+        .collect::<Vec<FloatPixel>>();
 
     Ok(ImageBuffer::with_data(out, width, height, buffer.bpc, 3))
 }

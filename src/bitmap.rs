@@ -2,7 +2,7 @@
 /*
  * libopenraw - bitmap.rs
  *
- * Copyright (C) 2022-2023 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,7 +22,7 @@
 //! Trait and types for various bitmap data, iamges, etc. and other
 //! geometry.
 
-use crate::DataType;
+use crate::{DataType, FloatPixel};
 
 /// An image buffer carries the data and the dimension. It is used to
 /// carry pipeline input and ouput as dimensions can change.
@@ -86,12 +86,12 @@ impl<T> ImageBuffer<T> {
     }
 }
 
-impl ImageBuffer<f64> {
+impl ImageBuffer<FloatPixel> {
     pub(crate) fn into_u16(self) -> ImageBuffer<u16> {
         ImageBuffer::<u16>::with_data(
             self.data
                 .iter()
-                .map(|v| (*v * u16::MAX as f64).round() as u16)
+                .map(|v| (*v * u16::MAX as FloatPixel).round() as u16)
                 .collect(),
             self.width,
             self.height,
@@ -109,16 +109,16 @@ impl ImageBuffer<u16> {
     /// Set `ncolor` to `self.cc` to not perform a downsampling.
     /// # Assert
     /// Assert if `ncolor` is > `self.cc`
-    pub(crate) fn into_f64_downsample(self, ncolor: usize) -> ImageBuffer<f64> {
+    pub(crate) fn into_float_downsample(self, ncolor: usize) -> ImageBuffer<FloatPixel> {
         let old_ncolor = self.cc as usize;
         assert!(old_ncolor >= ncolor);
-        ImageBuffer::<f64>::with_data(
+        ImageBuffer::with_data(
             self.data
                 .iter()
                 .enumerate()
                 .filter_map(|(idx, v)| {
                     if idx % old_ncolor < ncolor {
-                        Some(*v as f64 / u16::MAX as f64)
+                        Some(*v as FloatPixel / u16::MAX as FloatPixel)
                     } else {
                         None
                     }
@@ -176,10 +176,12 @@ impl std::fmt::Debug for Data {
 
 #[cfg(test)]
 mod test {
+    use crate::FloatPixel;
+
     use super::ImageBuffer;
 
     #[test]
-    fn test_into_f64_downsample() {
+    fn test_into_float_downsample() {
         let mut data = [0_u16; 64];
         data.iter_mut().enumerate().for_each(|(idx, value)| {
             *value = idx as u16 + 1;
@@ -191,28 +193,28 @@ mod test {
         assert_eq!(buffer.data[4], 5);
 
         // No downsampling
-        let buffer2 = buffer.into_f64_downsample(4);
-        assert_eq!(buffer2.data[0], 1.0 / u16::MAX as f64);
-        assert_eq!(buffer2.data[3], 4.0 / u16::MAX as f64);
-        assert_eq!(buffer2.data[4], 5.0 / u16::MAX as f64);
+        let buffer2 = buffer.into_float_downsample(4);
+        assert_eq!(buffer2.data[0], 1.0 / u16::MAX as FloatPixel);
+        assert_eq!(buffer2.data[3], 4.0 / u16::MAX as FloatPixel);
+        assert_eq!(buffer2.data[4], 5.0 / u16::MAX as FloatPixel);
 
         // Downsampling with binning the 4th component.
         let buffer = ImageBuffer::with_data(data.into(), 4, 4, 16, 4);
-        let buffer3 = buffer.into_f64_downsample(3);
-        assert_eq!(buffer3.data[0], 1.0 / u16::MAX as f64);
-        assert_eq!(buffer3.data[3], 5.0 / u16::MAX as f64);
-        assert_eq!(buffer3.data[4], 6.0 / u16::MAX as f64);
+        let buffer3 = buffer.into_float_downsample(3);
+        assert_eq!(buffer3.data[0], 1.0 / u16::MAX as FloatPixel);
+        assert_eq!(buffer3.data[3], 5.0 / u16::MAX as FloatPixel);
+        assert_eq!(buffer3.data[4], 6.0 / u16::MAX as FloatPixel);
     }
 
     #[test]
     #[should_panic(expected = "assertion failed")]
-    fn test_into_f64_downsample_assert() {
+    fn test_into_float_downsample_assert() {
         let mut data = [0_u16; 64];
         data.iter_mut().enumerate().for_each(|(idx, value)| {
             *value = idx as u16 + 1;
         });
 
         let buffer = ImageBuffer::with_data(data.into(), 4, 4, 16, 4);
-        _ = buffer.into_f64_downsample(5);
+        _ = buffer.into_float_downsample(5);
     }
 }
