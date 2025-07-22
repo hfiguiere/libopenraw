@@ -26,7 +26,6 @@ missing
 /ltmain.sh
 /libtool
 /install-sh
-/Cargo.lock
 /compile
 /depcomp
 /test-driver
