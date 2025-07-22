@@ -32,6 +32,7 @@ use std::rc::Rc;
 
 use once_cell::unsync::OnceCell;
 
+use crate::bitmap::Bitmap;
 use crate::camera_ids::fujifilm;
 use crate::container::{Endian, RawContainer};
 use crate::decompress as unpack;
@@ -571,7 +572,9 @@ impl RawFileImpl for RafFile {
                 };
 
                 if let Some(size) = output_size {
-                    rawdata.shrink_width(size.width as usize);
+                    if rawdata.data_type() == DataType::Raw {
+                        rawdata.shrink_width(size.width as usize);
+                    }
                 }
 
                 rawdata.set_blacks(utils::to_quad(&blacks));
