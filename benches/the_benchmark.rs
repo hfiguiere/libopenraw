@@ -25,8 +25,9 @@ use std::io::Read;
 
 const XTRANS_FILE: &str = "Fujifilm/X-Pro1/DSCF2131.RAF";
 const CANON_20D_FILE: &str = "Canon/EOS 20D/IMG_3893.CR2";
+const LEICA_MONO_FILE: &str = "Leica/M Monochrom/L1000622.DNG";
 const OLYMPUS_EP1_FILE: &str = "Olympus/E-P1/P1080385.ORF";
-const FILES: [&str; 12] = [
+const FILES: [&str; 13] = [
     "Apple/iPhone XS/IMG_1105.dng",
     "Canon/EOS 10D/CRW_7673.CRW",
     CANON_20D_FILE,
@@ -34,6 +35,7 @@ const FILES: [&str; 12] = [
     "Epson/R-D1/_EPS0672.ERF",
     XTRANS_FILE,
     "Leica/M8/L1030132.DNG",
+    LEICA_MONO_FILE,
     // Nikon unpack
     "Nikon/D100/DSC_2376.NEF",
     // Nikon Quantized
@@ -118,6 +120,30 @@ fn bimedian_benchmark(c: &mut Criterion) {
     }
 }
 
+/// Benchmark the grayscale Linear rendering.
+fn grayscale_benchmark(c: &mut Criterion) {
+    let dataset = std::env::var("RAWFILES_ROOT").expect("RAWFILES_ROOT not set");
+    let dataset = std::path::PathBuf::from(dataset);
+    let file = LEICA_MONO_FILE;
+    let bench_name = format!("grayscale-{file}");
+    let file = dataset.join(file);
+    let rawfile = rawfile_from_file(&file, None).expect("RAW didn't decode");
+    let options = RenderingOptions::default().with_stage(RenderingStage::Interpolation);
+    assert_eq!(
+        options.stage,
+        RenderingStage::Interpolation,
+        "we only want to benchmark interpolation"
+    );
+    let rawdata = rawfile.raw_data(false).expect("Couldn't get raw data");
+    c.bench_function(&bench_name, |b| {
+        b.iter(|| {
+            let _ = rawdata
+                .rendered_image(options.clone())
+                .expect("Rendering failed");
+        });
+    });
+}
+
 /// Benchmmark X-Trans rendering.
 /// This assume the input file is apropriate as we don't choose the
 /// algorithm yet.
@@ -148,6 +174,6 @@ criterion_group!(benches, ordiag_benchmark, dump_benchmark, ljpeg_benchmark);
 criterion_group!(
     name = render_benches;
     config = Criterion::default().significance_level(0.1).sample_size(10);
-    targets = xtrans_benchmark, bimedian_benchmark
+    targets = xtrans_benchmark, bimedian_benchmark, grayscale_benchmark
 );
 criterion_main!(benches, render_benches);
