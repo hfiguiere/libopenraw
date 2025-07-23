@@ -21,10 +21,10 @@
 
 //! RAW data
 
-use nalgebra::{matrix, Matrix3, Vector3};
+use nalgebra::{Matrix3, Vector3};
 
 use crate::bitmap::{Data, ImageBuffer};
-use crate::colour::ColourMatrix;
+use crate::colour::{ColourMatrix, XYZ_RGB};
 use crate::mosaic::Pattern;
 use crate::render::{self, gamma_correct_f, gamma_correct_srgb, RenderingOptions, RenderingStage};
 use crate::tiff::exif;
@@ -517,11 +517,7 @@ impl RawImage {
         let ab = Matrix3::<FloatPixel>::identity();
         let xyz_camera = ab * cc * cm;
         let cam_xyz = xyz_camera.try_inverse().unwrap();
-        // XYZ to RGB <https://en.wikipedia.org/wiki/SRGB#From_CIE_XYZ_to_sRGB>
-        // D65 illuminant - 2003 standard
-        let xyz_rgb =
-            matrix![ 3.2406255, -1.5372080, -0.4986286; -0.9689307, 1.8757561, 0.0415175; 0.0557101, -0.2040211, 1.0569959];
-        xyz_rgb * cam_xyz
+        Matrix3::from_row_slice(&XYZ_RGB) * cam_xyz
     }
 
     pub(crate) fn colour_correct(

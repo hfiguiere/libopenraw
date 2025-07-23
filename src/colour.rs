@@ -26,6 +26,8 @@ mod matrix;
 pub use matrix::{BuiltinMatrix, ColourMatrix};
 use num_enum::TryFromPrimitive;
 
+use crate::FloatPixel;
+
 #[repr(C)]
 #[derive(Debug, Default)]
 /// Where the colour matrix comes from.
@@ -54,3 +56,16 @@ pub enum ColourSpace {
     /// Standard RGB.
     SRgb = 3,
 }
+
+/// XYZ to RGB matrix
+///
+/// <https://en.wikipedia.org/wiki/SRGB#From_CIE_XYZ_to_sRGB>
+/// Using D65 illuminant - 2003 standard
+///
+/// rgb = XYZ_RGB * xyz
+#[rustfmt::skip]
+pub(crate) const XYZ_RGB: [FloatPixel; 9] = [
+    3.2406255, -1.5372080, -0.4986286,
+    -0.9689307, 1.8757561, 0.0415175,
+    0.0557101, -0.2040211, 1.0569959
+];
