@@ -39,6 +39,7 @@
 
 //! X-Trans demoisaicking using Frank Markesteijn's algorithm
 
+use multiversion::multiversion;
 use once_cell::sync::Lazy;
 
 use crate::bitmap::ImageBuffer;
@@ -105,6 +106,12 @@ fn border_interpolate(image: &mut ImageBuffer<PixelType>, xtrans: &[PatternColou
     }
 }
 
+#[multiversion(targets(
+    "x86_64+avx+avx2+fma+bmi1+bmi2",
+    "x86_64+avx+avx2",
+    "x86+sse",
+    "aarch64+neon"
+))]
 fn cielab(rgb: &[PixelType]) -> [SignedPixelType; 3] {
     static D65_WHITE: [f64; 3] = [0.950456, 1.0, 1.088754];
     static CBRT: Lazy<[f32; 65536]> = Lazy::new(|| {
