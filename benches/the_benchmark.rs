@@ -95,6 +95,34 @@ fn ljpeg_benchmark(c: &mut Criterion) {
     });
 }
 
+fn colour_correct_benchmark(c: &mut Criterion) {
+    let dataset = std::env::var("RAWFILES_ROOT").expect("RAWFILES_ROOT not set");
+    let dataset = std::path::PathBuf::from(dataset);
+    let files = [CANON_20D_FILE, OLYMPUS_EP1_FILE];
+    for file in files {
+        let bench_name = format!("colour_correct-{file}");
+        let file = dataset.join(file);
+        let rawfile = rawfile_from_file(&file, None).expect("RAW didn't decode");
+        let options = RenderingOptions::default().with_stage(RenderingStage::Interpolation);
+        assert_eq!(
+            options.stage,
+            RenderingStage::Interpolation,
+            "we only want to benchmark interpolation"
+        );
+        let rawdata = rawfile.raw_data(false).expect("Couldn't get raw data");
+        let uncorrected_raw = rawdata.rendered_buffer(&options).expect("Rendering failed");
+
+        c.bench_function(&bench_name, |b| {
+            b.iter(|| {
+                let raw = uncorrected_raw.clone();
+                let _ = rawdata
+                    .colour_correct(raw, options.target)
+                    .expect("Couldn't colour correct");
+            });
+        });
+    }
+}
+
 fn bimedian_benchmark(c: &mut Criterion) {
     let dataset = std::env::var("RAWFILES_ROOT").expect("RAWFILES_ROOT not set");
     let dataset = std::path::PathBuf::from(dataset);
@@ -168,6 +196,6 @@ criterion_group!(benches, ordiag_benchmark, dump_benchmark, ljpeg_benchmark);
 criterion_group!(
     name = render_benches;
     config = Criterion::default().significance_level(0.1).sample_size(10);
-    targets = xtrans_benchmark, bimedian_benchmark, grayscale_benchmark
+    targets = xtrans_benchmark, bimedian_benchmark, grayscale_benchmark, colour_correct_benchmark
 );
 criterion_main!(benches, render_benches);

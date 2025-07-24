@@ -26,6 +26,7 @@ use crate::{DataType, FloatPixel};
 
 /// An image buffer carries the data and the dimension. It is used to
 /// carry pipeline input and ouput as dimensions can change.
+#[derive(Clone)]
 pub struct ImageBuffer<T> {
     pub(crate) data: Vec<T>,
     pub(crate) width: usize,
