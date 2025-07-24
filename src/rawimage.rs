@@ -484,7 +484,7 @@ impl RawImage {
         let pattern = self.mosaic_pattern();
         match self.photom_int {
             exif::PhotometricInterpretation::CFA => match pattern {
-                Pattern::NonRgb22(ref xtrans) => {
+                Pattern::NonRgb22(xtrans) => {
                     let output_size = self.output_size();
                     render::xtrans::xtrans_interpolate(
                         buffer,
