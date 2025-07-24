@@ -112,9 +112,7 @@ fn bimedian_benchmark(c: &mut Criterion) {
         let rawdata = rawfile.raw_data(false).expect("Couldn't get raw data");
         c.bench_function(&bench_name, |b| {
             b.iter(|| {
-                let _ = rawdata
-                    .rendered_image(options.clone())
-                    .expect("Rendering failed");
+                let _ = rawdata.rendered_image(&options).expect("Rendering failed");
             });
         });
     }
@@ -137,9 +135,7 @@ fn grayscale_benchmark(c: &mut Criterion) {
     let rawdata = rawfile.raw_data(false).expect("Couldn't get raw data");
     c.bench_function(&bench_name, |b| {
         b.iter(|| {
-            let _ = rawdata
-                .rendered_image(options.clone())
-                .expect("Rendering failed");
+            let _ = rawdata.rendered_image(&options).expect("Rendering failed");
         });
     });
 }
@@ -163,9 +159,7 @@ fn xtrans_benchmark(c: &mut Criterion) {
     let rawdata = rawfile.raw_data(false).expect("Couldn't get raw data");
     c.bench_function(&bench_name, |b| {
         b.iter(|| {
-            let _ = rawdata
-                .rendered_image(options.clone())
-                .expect("Rendering failed");
+            let _ = rawdata.rendered_image(&options).expect("Rendering failed");
         });
     });
 }

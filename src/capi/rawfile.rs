@@ -253,7 +253,7 @@ extern "C" fn or_rawfile_get_rendered_image(
     or_unwrap!(rawfile, std::ptr::null_mut(), {
         rawfile
             .0
-            .rendered_image(options)
+            .rendered_image(&options)
             .map(|r| Box::into_raw(Box::new(r)))
             .unwrap_or_else(|e| {
                 if !error.is_null() {

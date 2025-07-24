@@ -277,7 +277,7 @@ pub trait RawFile: RawFileImpl + crate::dump::DumpFile + std::fmt::Debug {
     }
 
     /// Render the image.
-    fn rendered_image(&self, options: RenderingOptions) -> Result<RawImage> {
+    fn rendered_image(&self, options: &RenderingOptions) -> Result<RawImage> {
         let raw_data = self.raw_data(false)?;
         raw_data.rendered_image(options)
     }

@@ -68,7 +68,7 @@ fn process_file(p: &str, output: Option<&String>) -> libopenraw::Result<()> {
         // Default options are Colour stage + SRgb.
         let options = RenderingOptions::default();
         let rawdata = rawfile.raw_data(false)?;
-        let rendered_image = rawdata.rendered_image(options)?;
+        let rendered_image = rawdata.rendered_image(&options)?;
         if let Some(output) = output {
             let width = rendered_image.width();
             let height = rendered_image.height();

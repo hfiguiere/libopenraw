@@ -520,7 +520,7 @@ impl RawImage {
         Matrix3::from_row_slice(&XYZ_RGB) * cam_xyz
     }
 
-    pub(crate) fn colour_correct(
+    pub fn colour_correct(
         &self,
         mut buffer: ImageBuffer<FloatPixel>,
         target: ColourSpace,
@@ -573,7 +573,7 @@ impl RawImage {
 
     /// Render the image using `options`. See `[render::RenderingOptions]`
     /// May return `Error::Unimplemented`.
-    pub fn rendered_image(&self, options: RenderingOptions) -> Result<RawImage> {
+    pub fn rendered_buffer(&self, options: &RenderingOptions) -> Result<ImageBuffer<FloatPixel>> {
         // XXX fix to properly handle the Raw stage.
         if options.stage == RenderingStage::Raw {
             return Err(Error::Unimplemented);
@@ -583,7 +583,6 @@ impl RawImage {
         }
         let x = self.width() as usize;
         let y = self.height() as usize;
-        let mut pattern = self.mosaic_pattern().clone();
         let data16 = ImageBuffer::with_data(
             self.data16().ok_or(Error::InvalidFormat)?.to_vec(),
             x,
@@ -596,7 +595,6 @@ impl RawImage {
         if options.stage >= RenderingStage::Interpolation {
             log::debug!("Interpolating");
             data = self.interpolate(data)?;
-            pattern = Pattern::Empty;
         }
 
         if options.stage >= RenderingStage::Colour {
@@ -623,6 +621,18 @@ impl RawImage {
             data.pixel_at(1000, 1000)
         );
 
+        Ok(data)
+    }
+
+    /// Render the image using `options`. See `[render::RenderingOptions]`
+    /// May return `Error::Unimplemented`.
+    pub fn rendered_image(&self, options: &RenderingOptions) -> Result<RawImage> {
+        let data = self.rendered_buffer(options)?;
+        let pattern = if options.stage >= RenderingStage::Interpolation {
+            Pattern::Empty
+        } else {
+            self.mosaic_pattern().clone()
+        };
         // XXX make sure to copy over other data from the rawimage.
         let data16 = data.into_u16();
         log::debug!(
