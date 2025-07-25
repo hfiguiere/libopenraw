@@ -160,14 +160,19 @@ lazy_static::lazy_static! {
         sony!(386, ILCE7RM3A),
         sony!(387, ILCE7RM4A),
         sony!(388, ILCE7M4),
+        // 389 - ZV1F - no raw.
         sony!(390, ILCE7RM5),
         sony!(391, ILME_FX30),
         sony!(392, ILCE9M3),
         sony!(393, ZVE1),
         sony!(394, ILCE6700),
         sony!(395, ZV1M2),
+        sony!(396, ILCE7CR),
+        sony!(397, ILCE7CM2),
+        // 398 - ILX-LR1
         sony!(399, ZVE10M2),
         sony!(400, ILCE1M2),
+        sony!(401, RX1RM3),
         sony!(402, ILCE6400A),
         sony!(404, RX100M7A),
     ]);
@@ -230,6 +235,7 @@ lazy_static::lazy_static! {
         sony!("DSC-RX1", RX1),
         sony!("DSC-RX1R", RX1R),
         sony!("DSC-RX1RM2", RX1RM2),
+        sony!("DSC-RX1RM3", RX1RM3),
         sony!("ILCA-68", ILCA68),
         sony!("ILCA-77M2", ILCA77M2),
         sony!("ILCA-99M2", ILCA99M2),
@@ -249,6 +255,8 @@ lazy_static::lazy_static! {
         sony!("ILCE-6700", ILCE6700),
         sony!("ILCE-7", ILCE7),
         sony!("ILCE-7C", ILCE7C),
+        sony!("ILCE-7CM2", ILCE7CM2),
+        sony!("ILCE-7CR", ILCE7CR),
         sony!("ILCE-7M2", ILCE7M2),
         sony!("ILCE-7M3", ILCE7M3),
         sony!("ILCE-7M4", ILCE7M4),
@@ -276,7 +284,7 @@ lazy_static::lazy_static! {
         ("Lunar", TypeId(vendor::HASSELBLAD, hasselblad::LUNAR)),
     ]);
 
-    static ref MATRICES: [BuiltinMatrix; 99] = [
+    static ref MATRICES: [BuiltinMatrix; 102] = [
         BuiltinMatrix::new(
             sony!(A100),
             0,
@@ -552,6 +560,12 @@ lazy_static::lazy_static! {
             0,
             0,
             [ 6629, -1900, -483, -4618, 12349, 2550, -622, 1381, 6514 ] ),
+        // Not sure. It's being said it is an a7CR.
+        BuiltinMatrix::new(
+            sony!(RX1RM3),
+            128,
+            0,
+            [ 8200, -2975, -719, -4296, 12053, 2532, -429, 1282, 5774 ] ),
         BuiltinMatrix::new(
             sony!(RX10),
             0,
@@ -714,6 +728,16 @@ lazy_static::lazy_static! {
             128,
             0,
             [ 7374, -2389, -551, -5435, 13162, 2519, -1006, 1795, 6552 ] ),
+        BuiltinMatrix::new(
+            sony!(ILCE7CM2),
+            128,
+            0,
+            [ 7460, -2365, -588, -5687, 13442, 2474, -624, 1156, 6584 ] ),
+        BuiltinMatrix::new(
+            sony!(ILCE7CR),
+            128,
+            0,
+            [ 8200, -2975, -719, -4296, 12053, 2532, -429, 1282, 5774 ] ),
         BuiltinMatrix::new(
             sony!(ILCE9),
             128,
