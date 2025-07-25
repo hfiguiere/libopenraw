@@ -32,7 +32,7 @@ use crate::utils;
 use crate::{tiff, ColourSpace};
 use crate::{AspectRatio, Bitmap, DataType, Error, FloatPixel, Rect, Result, Size};
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug)]
 enum AsShot {
     #[default]
     None,
@@ -43,7 +43,7 @@ enum AsShot {
 }
 
 /// RAW Data extracted from the file.
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct RawImage {
     /// Image width
     width: u32,

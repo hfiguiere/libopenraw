@@ -49,7 +49,7 @@ impl BuiltinMatrix {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct ColourMatrix {
     pub illuminant: exif::LightsourceValue,
     pub matrix: Vec<f64>,

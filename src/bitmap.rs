@@ -167,6 +167,7 @@ pub trait Bitmap {
 }
 
 /// Encapsulate data 8 or 16 bits
+#[derive(Clone)]
 pub(crate) enum Data {
     Data8(Vec<u8>),
     Data16(Vec<u16>),
