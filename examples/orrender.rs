@@ -30,6 +30,7 @@ pub fn main() {
 
     let mut opts = Options::new();
     opts.optflag("d", "", "Debug");
+    opts.optflag("w", "", "White balance");
     opts.optopt("o", "", "Set output file name", "OUTPUT");
 
     let matches = match opts.parse(&args[1..]) {
@@ -56,17 +57,19 @@ pub fn main() {
         .init()
         .unwrap();
 
+    let wb = matches.opt_present("w");
+
     for name in matches.free.iter() {
-        process_file(name, output.as_ref()).expect("Error processing");
+        process_file(name, wb, output.as_ref()).expect("Error processing");
     }
 }
 
-fn process_file(p: &str, output: Option<&String>) -> libopenraw::Result<()> {
+fn process_file(p: &str, wb: bool, output: Option<&String>) -> libopenraw::Result<()> {
     if let Ok(rawfile) = rawfile_from_file(p, None) {
         log::info!("Rendering raw file {p}");
 
         // Default options are Colour stage + SRgb.
-        let options = RenderingOptions::default();
+        let options = RenderingOptions::default().with_apply_wb(wb);
         let rawdata = rawfile.raw_data(false)?;
         let rendered_image = rawdata.rendered_image(&options)?;
         if let Some(output) = output {

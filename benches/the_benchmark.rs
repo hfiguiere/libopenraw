@@ -116,7 +116,7 @@ fn colour_correct_benchmark(c: &mut Criterion) {
             b.iter(|| {
                 let raw = uncorrected_raw.clone();
                 let _ = rawdata
-                    .colour_correct(raw, options.target)
+                    .colour_correct(raw, options.target, true)
                     .expect("Couldn't colour correct");
             });
         });

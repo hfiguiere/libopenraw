@@ -58,6 +58,8 @@ pub struct RenderingOptions {
     pub stage: RenderingStage,
     /// The colour space target for `RenderingStage::Colour`
     pub target: ColourSpace,
+    /// Whether to apply white balance during `RenderingStage::Colour`.
+    pub apply_wb: bool,
 }
 
 impl Default for RenderingOptions {
@@ -65,6 +67,7 @@ impl Default for RenderingOptions {
         RenderingOptions {
             stage: RenderingStage::Colour,
             target: ColourSpace::SRgb,
+            apply_wb: true,
         }
     }
 }
@@ -79,6 +82,12 @@ impl RenderingOptions {
     /// Set the rendering stage.
     pub fn with_stage(mut self, stage: RenderingStage) -> Self {
         self.stage = stage;
+        self
+    }
+
+    /// Set whether to apply white balance.
+    pub fn with_apply_wb(mut self, apply: bool) -> Self {
+        self.apply_wb = apply;
         self
     }
 }

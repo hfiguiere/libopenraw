@@ -524,6 +524,7 @@ impl RawImage {
         &self,
         mut buffer: ImageBuffer<FloatPixel>,
         target: ColourSpace,
+        apply_wb: bool,
     ) -> Result<ImageBuffer<FloatPixel>> {
         if target != ColourSpace::SRgb {
             return Err(Error::Unimplemented);
@@ -552,6 +553,19 @@ impl RawImage {
             let cam_rgb = Self::calculate_cam_rgb(&cm);
             log::debug!("pixel cam at 1000, 1000: {:?}", buffer.pixel_at(1000, 1000));
             log::debug!("Applying colour matrix");
+            let cam_rgb = if apply_wb {
+                log::debug!("Applying white balance");
+                self.as_shot_neutral()
+                    .map(|wb| {
+                        Matrix3::from_diagonal(&Vector3::from_row_iterator(wb.iter().copied()))
+                            .try_inverse()
+                            .unwrap()
+                            * cam_rgb
+                    })
+                    .unwrap_or(cam_rgb)
+            } else {
+                cam_rgb
+            };
             for row in 0..height {
                 let pos = row * width * 3;
                 let mut col = 0;
@@ -601,7 +615,7 @@ impl RawImage {
             match self.photom_int {
                 exif::PhotometricInterpretation::CFA => {
                     log::debug!("RGB colour correction");
-                    data = self.colour_correct(data, options.target)?;
+                    data = self.colour_correct(data, options.target, options.apply_wb)?;
                     data.data
                         .iter_mut()
                         .for_each(|v| *v = gamma_correct_srgb(*v));
