@@ -578,12 +578,11 @@ lazy_static::lazy_static! {
             128,
             0,
             [ 8161, -2947, -739, -4811, 12668, 2389, -437, 1229, 6524 ] ),
-        // Currently unsure if it is the right one.
         BuiltinMatrix::new(
             sony!(ILCE1M2),
             128,
             0,
-            [ 8161, -2947, -739, -4811, 12668, 2389, -437, 1229, 6524 ] ),
+            [ 10279, -3899, -1462, -7108, 16980, -168, -168, 544, 6116 ] ),
         BuiltinMatrix::new(
             sony!(ILCE3000),
             128,
