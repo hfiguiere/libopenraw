@@ -43,7 +43,7 @@ pub enum RenderingStage {
     Colour = 3,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 /// RenderingOptions
 ///
 /// ```rust
