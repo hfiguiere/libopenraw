@@ -2,7 +2,7 @@
 /*
  * libopenraw - tiff/exif.rs
  *
- * Copyright (C) 2022-2024 Hubert Figuière
+ * Copyright (C) 2022-2025 Hubert Figuière
  *
  * This library is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -372,18 +372,21 @@ impl std::fmt::Display for SRational {
 }
 
 #[repr(u32)]
-#[derive(Copy, Clone, Debug, Default, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, TryFromPrimitive)]
 /// Exif photometric interpretation
 pub enum PhotometricInterpretation {
     #[default]
     None = 0,
+    /// Monochrome.
     BlackIsZero = 1,
+    /// RGB.
     Rgb = 2,
     TransparencyMask = 4,
     YCbCr = 6,
 
-    // RAW only
+    /// Colour Filter Array: Raw only
     CFA = 32803,
+    /// Linear Raw
     LinearRaw = 34892,
     /// Depth map. (DNG)
     Depth = 51177,

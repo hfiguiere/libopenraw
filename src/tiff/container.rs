@@ -427,7 +427,7 @@ impl Container {
         // This will fail if the multiply overflow.
         let pixel_count = x
             .checked_mul(y)
-            // if v overflow when muliplied my 2, then it's too big.
+            // if v overflow when multiplied by 2, then it's too big.
             .and_then(|v| if v > u32::MAX / 2 { None } else { Some(v) })
             .ok_or(Error::FormatError)?;
         // Check for excessively large byte_len: pixel_count * 2 should be
@@ -445,7 +445,7 @@ impl Container {
         }
         let photom_int = dir
             .uint_value(exif::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
-            .and_then(|v| exif::PhotometricInterpretation::try_from(v).ok())
+            .and_then(|v| u32::try_into(v).ok())
             .unwrap_or(exif::PhotometricInterpretation::CFA);
 
         let compression = dir

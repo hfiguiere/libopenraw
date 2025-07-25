@@ -30,7 +30,7 @@ mod iterator;
 use std::convert::TryFrom;
 
 use byteorder::{BigEndian, LittleEndian};
-use num_enum::FromPrimitive;
+use num_enum::{FromPrimitive, TryFromPrimitive};
 
 use crate::container::Endian;
 use crate::mosaic::Pattern;
@@ -105,6 +105,30 @@ pub enum IfdType {
     SubIfd,
     /// Any other IFD
     Other,
+}
+
+/// Values for `NewSubFileType` tag.
+#[repr(u32)]
+#[derive(PartialEq, TryFromPrimitive)]
+pub enum NewSubFileType {
+    /// Main image.
+    Main = 0,
+    /// Preview image.
+    Preview = 1,
+    /// Transparency information. (DNG 1.4)
+    Transp = 4,
+    /// Transparency information for preview. (DNG 1.4)
+    PreviewTransp = 5,
+    /// Depth map. (DNG 1.5)
+    DepthMap = 8,
+    /// Depth map for preview. (DNG 1.5)
+    PreviewDepthMap = 9,
+    /// Enhanced image data. (DNG 1.5)
+    EnhancedData = 16,
+    /// Alternate preview. (DNG 1.2)
+    AltPreview = 0x10001,
+    /// Semantic mask. (DNG 1.6)
+    SemanticMask = 0x10004,
 }
 
 /// Trait for Ifd

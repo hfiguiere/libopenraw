@@ -27,6 +27,7 @@ use std::io::{Read, Seek, SeekFrom};
 
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt};
 use log::debug;
+use num_enum::TryFromPrimitive;
 use once_cell::unsync::OnceCell;
 
 use crate::apple;
@@ -50,7 +51,7 @@ use crate::thumbnail;
 use crate::tiff::{
     self,
     exif::{self, TagMap},
-    TagType,
+    NewSubFileType, TagType,
 };
 use crate::utils;
 use crate::Type as RawType;
@@ -904,11 +905,13 @@ impl Dir {
         let mut data_type = DataType::Unknown;
         let subtype = self
             .value::<u32>(exif::EXIF_TAG_NEW_SUBFILE_TYPE)
-            .unwrap_or(1);
-        if subtype == 1 {
+            .and_then(|v| NewSubFileType::try_from_primitive(v).ok())
+            .unwrap_or(NewSubFileType::Preview);
+        if subtype == NewSubFileType::Preview {
             let photom_int = self
                 .value::<u16>(exif::EXIF_TAG_PHOTOMETRIC_INTERPRETATION)
-                .unwrap_or(exif::PhotometricInterpretation::Rgb as u16);
+                .and_then(|v| exif::PhotometricInterpretation::try_from_primitive(v as u32).ok())
+                .unwrap_or(exif::PhotometricInterpretation::Rgb);
             let mut x = self.uint_value(exif::EXIF_TAG_IMAGE_WIDTH).unwrap_or(0);
             let mut y = self.uint_value(exif::EXIF_TAG_IMAGE_LENGTH).unwrap_or(0);
             let compression = self.value::<u16>(exif::EXIF_TAG_COMPRESSION).unwrap_or(0);
@@ -975,7 +978,7 @@ impl Dir {
                         }
                     }
                 }
-            } else if photom_int == exif::PhotometricInterpretation::YCbCr as u16 {
+            } else if photom_int == exif::PhotometricInterpretation::YCbCr {
                 log::warn!("Unsupported YCbCr photometric interpretation in non JPEG.");
             } else {
                 log::debug!("Found strip offsets");
