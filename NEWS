@@ -9,16 +9,19 @@ Camera support:
   - OM Systems OM-5 II*.
   - Panasonic TZ-71* (Alias to TZ91), G97* (Alias to G99), S1II* and
     S1IIE*.
-  - Sony 6400A* and RX100M7A*.
+  - Sony 6400A*, a7CR*, a7CII*, RX1RM3*, and RX100M7A*.
+    Fix coefficients for A1 II. (#26)
 
 New features:
 
   - X-Trans demosaicking.
+  - Apply White Balance. (#20)
 
 Bug fixes:
 
   - Remove some unused C++ header file.
   - Fix colour matrix for Sony A6400 and Sony RX100M7.
+  - (Alpha) Update the XYZ to RGB matrix to CIE 2003.
 
 libopenraw 0.4.0-alpha.10 - 2025/05/01
 
