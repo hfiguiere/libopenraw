@@ -41,11 +41,12 @@ thiserror = "2"
 [dev-dependencies]
 crc = "3.2.0"
 serde = { version = "^1", features = [ "derive" ] }
-serde-xml-rs = "^0.6"
+serde-xml-rs = "^0.8"
 criterion = { version = "0.7.0", features = ["html_reports"] }
 libopenraw-testing = { path = "libopenraw-testing" }
 image = { version = "0.25.1", features = [ "png", "jpeg" ], default-features = false }
 test-assembler = "0.1.2"
+xml-rs = "0.8"
 
 [features]
 default = ["dump", "bench", "capi", "probe"]

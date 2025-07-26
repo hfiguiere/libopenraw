@@ -376,7 +376,7 @@ impl TestRun for Results {
 #[derive(Debug, Deserialize, PartialEq)]
 #[serde(rename = "testsuite")]
 struct TestSuite {
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     tests: Vec<Test>,
     #[serde(skip)]
     stats: TestStats,
@@ -394,7 +394,7 @@ struct Override {
 #[derive(Debug, Deserialize, PartialEq)]
 #[serde(rename = "testsuite")]
 struct Overrides {
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     tests: Vec<Override>,
 }
 
@@ -448,8 +448,8 @@ impl TestSuite {
             if let Some(test) = entry.ok().and_then(|entry| {
                 let path = entry.path();
                 let file = std::fs::File::open(path).ok()?;
-                let config = serde_xml_rs::ParserConfig::new().trim_whitespace(false);
-                let event_reader = serde_xml_rs::EventReader::new_with_config(file, config);
+                let config = xml::ParserConfig::new().trim_whitespace(false);
+                let event_reader = xml::EventReader::new_with_config(file, config);
 
                 Test::deserialize(&mut Deserializer::new(event_reader)).ok()
             }) {
@@ -477,8 +477,8 @@ where
     let file = std::fs::File::open(path).expect("Failed to open");
     // By default serde will trim the whitespace at the end of CDATA.
     // We need it not to for the testsuite.
-    let config = serde_xml_rs::ParserConfig::new().trim_whitespace(false);
-    let event_reader = serde_xml_rs::EventReader::new_with_config(file, config);
+    let config = xml::ParserConfig::new().trim_whitespace(false);
+    let event_reader = xml::EventReader::new_with_config(file, config);
     let testsuite =
         TestSuite::deserialize(&mut Deserializer::new(event_reader)).expect("Deserialization");
 
