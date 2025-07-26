@@ -1,4 +1,4 @@
-libopenraw 0.4.0-alpha.11 -
+libopenraw 0.4.0-alpha.11 - 2025/07/25
 
 Camera support:
   [ a * denote that static WB coefficients have been included, unless DNG ]
@@ -19,9 +19,15 @@ New features:
 
 Bug fixes:
 
+  - API: Some consistency changes to the Rust API.
   - Remove some unused C++ header file.
   - Fix colour matrix for Sony A6400 and Sony RX100M7.
   - (Alpha) Update the XYZ to RGB matrix to CIE 2003.
+
+Internal:
+
+  - Added benchmark for xtrans and bimedian demosaic.
+  - Updated criterion (benchmark) and serde_xml (for testsuite).
 
 libopenraw 0.4.0-alpha.10 - 2025/05/01
 
